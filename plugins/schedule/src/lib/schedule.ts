@@ -9,7 +9,7 @@ import type Agent from '../app/extend/agent.ts';
 
 const debug = debuglog('egg/schedule/lib/schedule');
 
-export class Schedule {
+export class Scheduler {
   closed = false;
 
   #agent: Agent;

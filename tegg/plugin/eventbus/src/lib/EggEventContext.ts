@@ -1,6 +1,6 @@
 import type { Context, Application } from 'egg';
-import { AbstractEggContext, type EggContext } from '@eggjs/tegg-runtime';
-import { IdenticalUtil } from '@eggjs/tegg';
+import { AbstractEggContext, type EggContext as TEggContext } from '@eggjs/tegg-runtime';
+import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { EGG_CONTEXT, TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import type { ContextCreator } from '@eggjs/tegg-eventbus-runtime';
 
@@ -28,7 +28,7 @@ export function eggEventContextFactory(
     }
 
     static createContextFactory(app: Application): ContextCreator {
-      return (): EggContext => {
+      return (): TEggContext => {
         const eggCtx = app.createAnonymousContext();
         return new EggEventContext(eggCtx);
       };

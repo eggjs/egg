@@ -1,26 +1,27 @@
-import { Context } from 'egg';
+import type { Context } from 'egg';
 import type { EggContext as TEggContext } from '@eggjs/tegg-runtime';
 import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
-import { type EggProtoImplClass, PrototypeUtil, type QualifierInfo } from '@eggjs/tegg';
-import { type EggPrototype } from '@eggjs/tegg-metadata';
+import { type EggProtoImplClass, PrototypeUtil, type QualifierInfo } from '@eggjs/core-decorator';
+import type { EggPrototype } from '@eggjs/tegg-metadata';
 
 import { ctxLifecycleMiddleware } from '../../lib/ctx_lifecycle_middleware.ts';
 
-export default class TEggPluginContext extends Context {
+export default class TEggPluginContext {
   // [TEGG_CONTEXT]: TEggContext | undefined;
 
-  async beginModuleScope(func: () => Promise<void>): Promise<void> {
+  async beginModuleScope(this: Context, func: () => Promise<void>): Promise<void> {
     await ctxLifecycleMiddleware(this, func);
   }
 
   get teggContext(): TEggContext {
-    if (!this[TEGG_CONTEXT]) {
+    const ctx = this as unknown as Context;
+    if (!ctx[TEGG_CONTEXT]) {
       throw new Error('tegg context have not ready, should call after teggCtxLifecycleMiddleware');
     }
-    return this[TEGG_CONTEXT] as TEggContext;
+    return ctx[TEGG_CONTEXT] as TEggContext;
   }
 
-  async getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string): Promise<T> {
+  async getEggObject<T>(this: Context, clazz: EggProtoImplClass<T>, name?: string): Promise<T> {
     const protoObj = PrototypeUtil.getClazzProto(clazz as EggProtoImplClass);
     if (!protoObj) {
       throw new Error(`can not get proto for clazz ${clazz.name}`);
@@ -30,7 +31,7 @@ export default class TEggPluginContext extends Context {
     return eggObject.obj as T;
   }
 
-  async getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T> {
+  async getEggObjectFromName<T>(this: Context, name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T> {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [qualifiers];
     }

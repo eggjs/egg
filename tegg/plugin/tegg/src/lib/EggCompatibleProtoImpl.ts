@@ -7,10 +7,10 @@ import {
   type ObjectInitTypeLike,
   type QualifierInfo,
   QualifierUtil,
-  type Id,
-  IdenticalUtil,
   type QualifierValue,
-} from '@eggjs/tegg';
+} from '@eggjs/core-decorator';
+import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { type Id } from '@eggjs/tegg-types';
 import type { EggPrototype, InjectObjectProto, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
 
 export const COMPATIBLE_PROTO_IMPLE_TYPE = 'EGG_COMPATIBLE';

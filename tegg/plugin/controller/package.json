@@ -61,10 +61,12 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
+    "@eggjs/controller-decorator": "workspace:*",
+    "@eggjs/core-decorator": "workspace:*",
     "@eggjs/egg-module-common": "workspace:*",
     "@eggjs/router": "workspace:*",
-    "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
@@ -75,19 +77,20 @@
     "sdk-base": "catalog:"
   },
   "peerDependencies": {
-    "egg": "workspace:*",
-    "@eggjs/tegg-plugin": "workspace:*"
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@eggjs/module-test-util": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@eggjs/tracer": "workspace:*",
     "@types/node": "catalog:",
     "egg": "workspace:*",
-    "typescript": "catalog:",
     "tsdown": "catalog:",
+    "typescript": "catalog:",
     "unplugin-unused": "catalog:"
   },
   "publishConfig": {

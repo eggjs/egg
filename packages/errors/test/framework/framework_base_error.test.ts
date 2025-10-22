@@ -72,7 +72,7 @@ describe('test/framework/framework_base_error.test.ts', () => {
       const err = TestError.create('mock error', 'CODE', { data: 'data' });
       expect(err.module).toBe('TEST');
       expect(err.code).toBe('TEST_CODE');
-      expect(err.message).toBe('mock error [ https://eggjs.org/zh-cn/faq/TEST_CODE ]');
+      expect(err.message).toBe('mock error [ https://eggjs.org/faq/TEST_CODE ]');
       expect(err.serialNumber).toBe('CODE');
       expect(err.errorContext).toEqual({ data: 'data' });
       expect(err.stack).not.toContain('Function.create');

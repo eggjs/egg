@@ -44,19 +44,21 @@ describe('test/onerror.test.ts', () => {
   });
 
   it('should handle status:-1 as status:500', async () => {
-    await app
+    const res = await app
       .httpRequest()
       .get('/?status=-1')
-      .expect(/<h1 class="box">Error in &#x2F;\?status&#x3D;-1<\/h1>/)
+      // .expect(/<h1 class="box">Error in &#x2F;\?status&#x3D;-1<\/h1>/)
       .expect(500);
+    assert.match(res.text, /<h1 class="box">Error in &#x2F;\?status&#x3D;-1<\/h1>/);
   });
 
   it('should handle status:undefined as status:500', async () => {
-    await app
+    const res = await app
       .httpRequest()
       .get('/')
-      .expect(/<div class="context">test error<\/div>/)
+      // .expect(/<div class="context">test error<\/div>/)
       .expect(500);
+    assert.match(res.text, /<div class="context">test error<\/div>/);
   });
 
   it('should handle not exists file in stack without error', async () => {

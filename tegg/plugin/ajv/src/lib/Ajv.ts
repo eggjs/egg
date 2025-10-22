@@ -1,8 +1,9 @@
 import { type Schema, Ajv2019 } from 'ajv/dist/2019.js';
 import addFormats from '@eggjs/ajv-formats';
 import keyWords from '@eggjs/ajv-keywords';
-import { type Ajv as IAjv, AjvInvalidParamError } from '@eggjs/tegg/ajv';
-import { SingletonProto, AccessLevel, LifecycleInit } from '@eggjs/tegg';
+import { type Ajv as IAjv, AjvInvalidParamError } from '@eggjs/ajv-decorator';
+import { SingletonProto, AccessLevel } from '@eggjs/core-decorator';
+import { LifecycleInit } from '@eggjs/tegg-lifecycle';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

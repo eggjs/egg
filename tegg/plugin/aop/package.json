@@ -47,24 +47,26 @@
   },
   "dependencies": {
     "@eggjs/aop-decorator": "workspace:*",
+    "@eggjs/core-decorator": "workspace:*",
     "@eggjs/egg-module-common": "workspace:*",
-    "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-aop-runtime": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*"
   },
   "peerDependencies": {
-    "egg": "workspace:*",
-    "@eggjs/tegg-plugin": "workspace:*"
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@types/node": "catalog:",
     "egg": "workspace:*",
-    "typescript": "catalog:",
     "tsdown": "catalog:",
+    "typescript": "catalog:",
     "unplugin-unused": "catalog:"
   },
   "publishConfig": {

@@ -1,8 +1,9 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
-import { describe, it, afterEach } from 'vitest';
+
+import { describe, it, afterEach, expect } from 'vitest';
 import { mm } from '@eggjs/mock';
-import { type MockApplication, createApp, getFilepath } from '../../../utils.js';
+import { type MockApplication, createApp, getFilepath } from '../../../utils.ts';
 
 describe('test/lib/core/loader/config_loader.test.ts', () => {
   let app: MockApplication;
@@ -13,17 +14,7 @@ describe('test/lib/core/loader/config_loader.test.ts', () => {
   it('should get middlewares', async () => {
     app = createApp('apps/demo');
     await app.ready();
-    assert.deepStrictEqual(app.config.coreMiddleware, [
-      'meta',
-      'siteFile',
-      'notfound',
-      'static',
-      'bodyParser',
-      'overrideMethod',
-      'session',
-      'clusterAppMock',
-      'securities',
-    ]);
+    expect(app.config.coreMiddleware).toMatchSnapshot();
   });
 
   it('should get logger dir when unittest', async () => {

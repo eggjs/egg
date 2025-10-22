@@ -1,0 +1,7 @@
+{
+  "name": "app-port",
+  "eggModule": {
+    "name": "appPort"
+  },
+  "type": "module"
+}

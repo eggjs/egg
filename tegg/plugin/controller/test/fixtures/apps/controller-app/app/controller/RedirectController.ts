@@ -1,5 +1,5 @@
-import { Context as EggContext } from 'egg';
-import { Context, HTTPController, HTTPMethod, HTTPMethodEnum } from '@eggjs/tegg';
+import type { Context } from 'egg';
+import { HTTPContext, HTTPController, HTTPMethod, HTTPMethodEnum } from '@eggjs/tegg';
 
 @HTTPController()
 export class EdgeCaseController {
@@ -7,7 +7,7 @@ export class EdgeCaseController {
     method: HTTPMethodEnum.GET,
     path: '/redirect',
   })
-  async redirect(@Context() ctx: EggContext) {
+  async redirect(@HTTPContext() ctx: Context): Promise<void> {
     ctx.redirect('https://alipay.com');
   }
 

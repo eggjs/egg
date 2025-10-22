@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import type { Application, ILifecycleBoot } from 'egg';
-import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
+import { CrosscutAdviceFactory } from '@eggjs/aop-decorator';
 import {
   crossCutGraphHook,
   EggObjectAopHook,

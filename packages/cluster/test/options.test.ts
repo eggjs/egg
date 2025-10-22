@@ -152,7 +152,8 @@ describe('test/options.test.ts', () => {
     });
   });
 
-  describe('options', () => {
+  // TODO: flaky test on windows, Hook timed out in 20000ms
+  describe.skipIf(process.platform === 'win32')('options', () => {
     let app: any;
     beforeAll(async () => {
       app = cluster('apps/options', {

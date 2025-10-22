@@ -5,9 +5,9 @@ export class ScheduleMetadata<T> {
   scheduleData: T;
   immediate: boolean;
   disable: boolean;
-  env: undefined | Array<string>;
+  env?: string[];
 
-  constructor(type: ScheduleTypeLike, data: T, immediate: boolean, disable: boolean, env: undefined | Array<string>) {
+  constructor(type: ScheduleTypeLike, data: T, immediate: boolean, disable: boolean, env?: string[]) {
     this.type = type;
     this.scheduleData = data;
     this.immediate = immediate;

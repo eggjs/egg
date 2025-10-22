@@ -1,6 +1,6 @@
-import { defineConfigFactory, type EggConfigFactory } from 'egg';
+import type { EggAppInfo, PartialEggConfig } from 'egg';
 
-const factory: EggConfigFactory = defineConfigFactory(appInfo => {
+function configFactory(appInfo: EggAppInfo): PartialEggConfig {
   return {
     tegg: {
       readModuleOptions: {
@@ -10,6 +10,6 @@ const factory: EggConfigFactory = defineConfigFactory(appInfo => {
       },
     },
   };
-});
+}
 
-export default factory;
+export default configFactory;

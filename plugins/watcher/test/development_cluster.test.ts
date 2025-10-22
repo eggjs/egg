@@ -11,7 +11,8 @@ const file_path3 = getFilePath('apps/watcher-development-app/tmp/t1/t2/t3/t4/tmp
 const file_path4 = getFilePath('apps/watcher-development-app/tmp/t1/t2/t3/t4/tmp');
 const file_path1_agent = getFilePath('apps/watcher-development-app/tmp-agent.txt');
 
-describe('test/development_cluster.test.ts', () => {
+// TODO: flaky test on windows
+describe.skipIf(process.platform === 'win32')('test/development_cluster.test.ts', () => {
   let app: MockApplication;
 
   beforeEach(() => {

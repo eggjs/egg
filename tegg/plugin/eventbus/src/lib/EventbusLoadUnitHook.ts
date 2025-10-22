@@ -1,4 +1,5 @@
-import { EggQualifierAttribute, EggType, type LifecycleHook, QualifierUtil } from '@eggjs/tegg';
+import type { LifecycleHook } from '@eggjs/tegg-lifecycle';
+import { QualifierUtil, EggQualifierAttribute, EggType } from '@eggjs/core-decorator';
 import {
   EggLoadUnitType,
   EggPrototypeCreatorFactory,

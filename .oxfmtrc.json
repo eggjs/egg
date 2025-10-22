@@ -7,7 +7,7 @@
   "quoteProperties": "as-needed",
   "trailingCommas": "es5",
   // "semicolons": "always",
-  "arrowParentheses": "as-needed"
+  "arrowParentheses": "as-needed",
   // "bracketSpacing": true,
   // "bracketSameLine": false,
   // "attributePosition": "auto",
@@ -20,4 +20,11 @@
   //   "order": "asc",
   //   "ignoreCase": true
   // }
+  // FIXME: ignorePatterns not working
+  "ignorePatterns": [
+    "tegg/core/loader/test/fixtures/modules/loader-failed/AppRepo.ts",
+    "packages/core/test/fixtures/load_dirs/syntax_error/*",
+    "packages/core/test/fixtures/syntaxerror/*",
+    "packages/core/test/fixtures/load_context_syntax_error/**/*"
+  ]
 }

@@ -5,14 +5,13 @@ import {
   EggType,
   InitTypeQualifierAttribute,
   LoadUnitNameQualifierAttribute,
-  ModuleConfigs,
   ObjectInitType,
   PrototypeUtil,
   QualifierUtil,
-  type ModuleConfigHolder,
   ConfigSourceQualifierAttribute,
-} from '@eggjs/tegg';
-import { ModuleConfigUtil } from '@eggjs/tegg/helper';
+} from '@eggjs/core-decorator';
+import { ModuleConfigs, ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import type { ModuleConfigHolder } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 import { extend } from 'extend2';
 

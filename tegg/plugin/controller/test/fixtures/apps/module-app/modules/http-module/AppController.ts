@@ -1,5 +1,5 @@
-import { Context as EggContext } from 'egg';
-import { Context, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam } from '@eggjs/tegg';
+import type { Context } from 'egg';
+import { HTTPContext, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam } from '@eggjs/tegg';
 
 @HTTPController()
 export class AppController {
@@ -7,7 +7,13 @@ export class AppController {
     method: HTTPMethodEnum.GET,
     path: '/apps/:id',
   })
-  async get(@Context() ctx: EggContext, @HTTPParam() id: string) {
+  async get(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() id: string
+  ): Promise<{
+    traceId: string;
+    app: string;
+  }> {
     const traceId = ctx.tracer.traceId;
     return {
       traceId,

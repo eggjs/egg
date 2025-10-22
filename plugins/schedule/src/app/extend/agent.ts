@@ -2,7 +2,7 @@ import { Agent } from 'egg';
 
 import { BaseStrategy } from '../../lib/strategy/base.ts';
 import { TimerStrategy } from '../../lib/strategy/timer.ts';
-import { Schedule } from '../../lib/schedule.ts';
+import { Scheduler } from '../../lib/schedule.ts';
 
 const SCHEDULE = Symbol('agent schedule');
 
@@ -24,10 +24,10 @@ export default class ScheduleAgent extends Agent {
   /**
    * @member agent#schedule
    */
-  get schedule(): Schedule {
-    let schedule = this[SCHEDULE] as Schedule;
+  get schedule(): Scheduler {
+    let schedule = this[SCHEDULE] as Scheduler;
     if (!schedule) {
-      this[SCHEDULE] = schedule = new Schedule(this);
+      this[SCHEDULE] = schedule = new Scheduler(this);
     }
     return schedule;
   }

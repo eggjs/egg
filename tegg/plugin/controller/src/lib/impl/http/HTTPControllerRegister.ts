@@ -7,11 +7,11 @@ import {
   ControllerType,
   HTTPControllerMeta,
   HTTPMethodMeta,
-} from '@eggjs/tegg';
-import { type EggPrototype } from '@eggjs/tegg-metadata';
+} from '@eggjs/controller-decorator';
+import type { EggPrototype } from '@eggjs/tegg-metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 
-import { type ControllerRegister } from '../../ControllerRegister.ts';
+import type { ControllerRegister } from '../../ControllerRegister.ts';
 import { HTTPMethodRegister } from './HTTPMethodRegister.ts';
 import { RootProtoManager } from '../../RootProtoManager.ts';
 
@@ -62,6 +62,7 @@ export class HTTPControllerRegister implements ControllerRegister {
     }
     const allMethods = Array.from(methodMap.keys()).sort((a, b) => b.priority - a.priority);
 
+    // FIXME: why init method register twice?
     for (const method of allMethods) {
       const controllerProto = methodMap.get(method)!;
       const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as HTTPControllerMeta;
@@ -87,6 +88,8 @@ export class HTTPControllerRegister implements ControllerRegister {
         this.checkRouters,
         this.eggContainerFactory
       );
+      // Error: framework.RouterConflictError: register http controller GET AppController2.get failed, GET /apps/:id is conflict with exists rule /apps/:id [ https://eggjs.org/faq/TEGG_ROUTER_CONFLICT ]
+      // methodRegister.checkDuplicate();
       methodRegister.register(rootProtoManager);
     }
   }

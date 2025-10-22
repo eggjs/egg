@@ -1,0 +1,3 @@
+exports.teggEventbus = {
+  enable: false,
+};

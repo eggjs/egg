@@ -12,15 +12,15 @@ import {
   EggPrototypeCreatorFactory,
 } from '@eggjs/tegg-metadata';
 import {
-  type Id,
-  IdenticalUtil,
   type EggPrototypeName,
   type QualifierInfo,
   PrototypeUtil,
   InitTypeQualifierAttribute,
   LoadUnitNameQualifierAttribute,
   QualifierUtil,
-} from '@eggjs/tegg';
+} from '@eggjs/core-decorator';
+import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { type Id } from '@eggjs/tegg-types';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
 const debug = debuglog('egg/tegg/plugin/tegg/lib/AppLoadUnit');

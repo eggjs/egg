@@ -15,10 +15,12 @@ import {
   LoadUnitInstanceLifecycleUtil,
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { type EggProtoImplClass, IdenticalUtil, type RuntimeConfig, type QualifierInfo } from '@eggjs/tegg';
-import { Application } from 'egg';
+import type { EggProtoImplClass, QualifierInfo } from '@eggjs/core-decorator';
+import type { RuntimeConfig } from '@eggjs/tegg-types';
+import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import type { Application } from 'egg';
 
-export default class TEggPluginApplication extends Application {
+export default class TEggPluginApplication {
   // @eggjs/tegg-metadata should not depend by other egg plugins.
   // May make multi singleton instances.
   // So tegg-compatible should delegate the metadata factories
@@ -80,7 +82,7 @@ export default class TEggPluginApplication extends Application {
   }
 
   get runtimeConfig(): RuntimeConfig {
-    const config = this.config;
+    const config = (this as unknown as Application).config;
     return {
       baseDir: config.baseDir,
       env: config.env,

@@ -1,4 +1,4 @@
-import type { LifecycleHook } from '@eggjs/tegg';
+import type { LifecycleHook } from '@eggjs/tegg-lifecycle';
 import { IS_SCHEDULE, SCHEDULE_METADATA, type ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
 import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 

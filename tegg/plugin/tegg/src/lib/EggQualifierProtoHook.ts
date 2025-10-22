@@ -1,8 +1,11 @@
 import { debuglog } from 'node:util';
-import { type LoadUnitLifecycleContext, type LoadUnit } from '@eggjs/tegg-metadata';
-import { type LifecycleHook, PrototypeUtil, QualifierUtil, EggQualifierAttribute, EggType } from '@eggjs/tegg';
+
 import type { Application } from 'egg';
+import type { LoadUnitLifecycleContext, LoadUnit } from '@eggjs/tegg-metadata';
+import { PrototypeUtil, QualifierUtil, EggQualifierAttribute, EggType } from '@eggjs/core-decorator';
+import { type LifecycleHook } from '@eggjs/tegg-lifecycle';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
+
 import {
   APP_CLAZZ_BLACK_LIST,
   CONTEXT_CLAZZ_BLACK_LIST,

@@ -1,0 +1,51 @@
+{
+  "name": "helloworld-tegg",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Hello World example using tegg",
+  "egg": {
+    "typescript": true
+  },
+  "dependencies": {
+    "@eggjs/scripts": "workspace:",
+    "@eggjs/tracer": "workspace:*",
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "dev": "egg-bin dev",
+    "debug": "egg-bin debug",
+    "test": "vitest run",
+    "cov": "vitest run --coverage",
+    "lint": "eslint . --ext .ts",
+    "ci": "pnpm run lint && pnpm run cov",
+    "prepublishOnly": "pnpm run build",
+    "start": "egg-scripts start --daemon",
+    "stop": "egg-scripts stop",
+    "typecheck": "tsc --noEmit",
+    "build": "tsdown"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "exports": {
+    "./app": "./app.ts",
+    "./config/config.default": "./config/config.default.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      "./app": "./dist/app.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./package.json": "./package.json"
+    }
+  }
+}

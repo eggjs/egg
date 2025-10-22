@@ -1,5 +1,6 @@
 import type { EggPrototype, LoadUnit } from '@eggjs/tegg-metadata';
-import { type EggObjectName, type EggPrototypeName, IdenticalUtil } from '@eggjs/tegg';
+import type { EggObjectName, EggPrototypeName } from '@eggjs/core-decorator';
+import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import {
   type EggObject,
   type LoadUnitInstance,

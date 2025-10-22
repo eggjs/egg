@@ -6,7 +6,7 @@ import { FrameworkBaseError } from './framework_base_error.ts';
 const hostname = os.hostname();
 
 export class FrameworkErrorFormatter {
-  protected static faqPrefix = 'https://eggjs.org/zh-cn/faq';
+  protected static faqPrefix = 'https://eggjs.org/faq';
   /**
    * Custom framework error FAQ prefix
    */

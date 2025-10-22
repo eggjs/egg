@@ -1,5 +1,5 @@
 {
-  "name": "@examples/helloworld-typescript",
+  "name": "helloworld-typescript",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -8,7 +8,7 @@
     "typescript": true
   },
   "dependencies": {
-    "@eggjs/scripts": "catalog:",
+    "@eggjs/scripts": "workspace:",
     "@eggjs/tracer": "workspace:*",
     "egg": "workspace:*"
   },

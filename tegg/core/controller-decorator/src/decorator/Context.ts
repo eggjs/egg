@@ -4,7 +4,7 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
 import { MethodInfoUtil } from '../util/index.ts';
 
-export function Context() {
+export function InjectContext() {
   return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     assert.equal(
       typeof propertyKey,

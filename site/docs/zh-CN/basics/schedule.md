@@ -1,4 +1,4 @@
-# Schedule Controller
+# Schedule Controller 定时任务
 
 ## 使用场景
 
@@ -7,7 +7,7 @@
 ## 使用方法
 
 :::warning
-⚠️ 注意：**<font style="color:#DF2A3F;">不要将代码写在 app/schedule 路径下</font>**，因为 egg 默认会扫描该路径注册定时任务，会和使用装饰器方式有冲突。
+⚠️ 注意：**<font style="color:#DF2A3F;">不要将代码写在 `app/schedule` 路径下</font>**，因为 egg 默认会扫描该路径注册定时任务，会和使用装饰器方式有冲突。
 :::
 
 ### 普通定时任务
@@ -17,6 +17,8 @@
 使用 `Schedule` 装饰器标识一个类为定时任务控制器，该类要求必须包含一个名称为 `subscribe` 的方法。框架调度定时任务执行时，会调用 `Schedule` 注解类的 `subscribe` 方法执行。
 
 #### 开启插件
+
+egg 内置插件，默认开启。
 
 ```typescript
 export default {
@@ -32,7 +34,9 @@ export default {
 - `interval` 传值字符类型时，会通过 [ms](https://github.com/vercel/ms) 转换成毫秒数，例如 `5s`。
 
 ```typescript
-import { Inject, IntervalParams, Logger, Schedule, ScheduleType } from 'egg';
+// app/port/schedule/Demo.ts
+import { Inject, Logger } from 'egg';
+import { IntervalParams, Schedule, ScheduleType } from 'egg/schedule';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
@@ -70,12 +74,17 @@ export class IntervalScheduler {
 例如下列代码将会每日 3 点在每台机器上执行一次。
 
 ```typescript
-import { CronParams, Inject, Logger, Schedule, ScheduleType } from 'egg';
+// app/port/schedule/CronDemo.ts
+import { Inject, Logger } from 'egg';
+import { CronParams, Schedule, ScheduleType } from 'egg/schedule';
 
 @Schedule<CronParams>({
   type: ScheduleType.WORKER,
   scheduleData: {
+    // 每日 3 点执行一次
     cron: '0 0 3 * * *',
+    // 每 5 秒执行一次
+    // cron: '*/5 * * * * *',
   },
 })
 export class CronSubscriber {
@@ -96,7 +105,8 @@ export class CronSubscriber {
 - `all` 模式：每台机器上的每个 worker 都会执行这个定时任务。
 
 ```typescript
-import { Inject, IntervalParams, Logger, Schedule, ScheduleType } from 'egg';
+import { Inject, Logger } from 'egg';
+import { IntervalParams, Schedule, ScheduleType } from 'egg/schedule';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.ALL, // 所有 worker 都会执行
@@ -123,7 +133,8 @@ export class AllScheduler {
 - `env`：数组，仅在指定的环境下才启动该定时任务。
 
 ```typescript
-import { Inject, IntervalParams, Logger, Schedule, ScheduleType } from 'egg';
+import { Inject, Logger } from 'egg';
+import { IntervalParams, Schedule, ScheduleType } from 'egg/schedule';
 
 @Schedule<IntervalParams>(
   {

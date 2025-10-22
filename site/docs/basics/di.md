@@ -1,75 +1,74 @@
----
-title: 依赖注入
----
+# Dependency Injection
 
-# Proto
+## Proto
 
-在领域驱动开发中，一般我们会将逻辑放到 Service 中，在 egg 里，通过 Proto 来实现。
+In domain-driven development, we generally place logic in Services. In Egg.js, this is implemented through `Proto`.
 
-Proto 提供了可配置相关信息：
+`Proto` provides configurable information:
 
-- 实例化方式：每次请求实例化/全局单例
-- 访问级别：module 外是否可访问
-- 实例化名称
+- Instantiation method: instantiate per request / global singleton
+- Access level: whether accessible outside the `Module`
+- Instantiation name
 
-## 实例化方式
+## Instantiation Method
 
-包含了 ContextProto 和 SingletonProto 两种形式，具体细节可以查看下面的相关文档。
+Includes two forms: `ContextProto` and `SingletonProto`. For specific details, please refer to the documentation below.
 
-## 实例化名称
+## Instantiation Name
 
-十分关键，决定 `@Inject` 注入的实例应该是哪个。默认会把 Proto 类的首字母转为小写，如 UserAdapter 会转换为 userAdapter。如果有不符合预期的可以手动指定，比如：
+This is crucial as it determines which instance should be injected with `@Inject`. By default, the first letter of the Proto class is converted to lowercase, e.g., `UserAdapter` becomes `userAdapter`.
+If it doesn't meet expectations, you can manually specify it, for example:
 
 ```ts
-// MISTAdapter 的实例名称即为 mistAdapter
+// The instance name of MISTAdapter is mistAdapter
 @SingletonProto({ name: 'mistAdapter' })
 class MISTAdapter {}
 ```
 
-## 访问级别
+## Access Level
 
-Module 内所有的原型都能被同 Module 内的原型依赖（`@Inject`），只有 `accessLevel: PUBLIC`的原型可以被其它 Module 所访问。默认访问级别是 `PRIVATE`
+All prototypes within a Module can be depended on (`@Inject`) by other prototypes in the same Module. Only prototypes with `accessLevel: AccessLevel.PUBLIC` can be accessed by other Modules. The default access level is `AccessLevel.PRIVATE`
 
 ```ts
-app root dir
+root dir
 └── app
     └── module
         ├── fooModule
         │   ├── Private.ts
         │   ├── Public.ts
-        │   └── Access.ts  // 可以 Inject Private/Public
+        │   └── Access.ts  // Can Inject Private/Public
         └── barModule
-            └── Access.ts  // 只可以 Inject Public
+            └── Access.ts  // Can only Inject Public
 ```
 
 :::warning
-Module 内逻辑应尽可能高内聚，只对外暴露必要的接口
-并且一旦暴露意味着会产生依赖，接口代码变更需要自行考虑向下兼容问题
+Logic within a Module should be as cohesive as possible, exposing only necessary interfaces.
+Once exposed, dependencies are created, and you must consider backward compatibility when changing interface code.
 :::
 
 ## SingletonProto
 
-### 定义
+### Definition
 
-和 `ContextProto` 类似，整个应用生命周期只会实例化一个 `SingletonProto` 。
+Similar to `ContextProto`, only one `SingletonProto` will be instantiated during the entire application lifecycle.
 
-推荐默认使用 `SingletonProto`，可以提升应用性能，并且可以在 `SingletonProto` 里面注入 `ContextProto` 对象。
+It's recommended to use `SingletonProto` by default, as it can improve application performance, and you can inject `ContextProto` objects within `SingletonProto`.
 
 ```ts
 @SingletonProto({
-  // 原型的实例化名称，非必传
+  // The instantiation name of the prototype, optional
   name?: string;
 
-  // 对象是在 module 内可访问还是全局可访问
-  // 默认值为 AccessLevel.PRIVATE
+  // Whether the object is accessible within the module or globally
+  // Default value is AccessLevel.PRIVATE
   accessLevel?: AccessLevel;
 })
 ```
 
-### 示例
+### Example
 
 ```ts
-// service.ts
+// biz/HelloService.ts
 import { SingletonProto } from 'egg';
 
 @SingletonProto()
@@ -91,33 +90,33 @@ export class WorldService {
 
 ## ContextProto
 
-### 定义
+### Definition
 
-每次请求都会实例化一个 ContextProto。
+A `ContextProto` will be instantiated for each request.
 :::info
-绝大多数 service 都是无状态的，本身不会存储请求上下文，这种情况推荐使用 SingletonProto 即可。因为只需要全局初始化一个对象，而不需要每个请求都初始化一个对象（会导致应用性能下降）。
-对于需要存储请求上下文信息，并在多个 service 间共享的场景，则可以使用 ContextProto，以保证不同请求获取的对象是隔离的。
+Most `Service` classes are stateless and don't store request context. In such cases, it's recommended to use `SingletonProto` instead. This is because only one object needs to be initialized globally, rather than initializing an object for each request (which would degrade application performance).
+For scenarios that need to store request context information and share it across multiple `Service` classes, you can use `ContextProto` to ensure objects obtained by different requests are isolated.
 :::
 
 ```ts
 enum AccessLevel {
-  // 仅 module 内可访问
+  // Only accessible within module
   PRIVATE = 'PRIVATE',
-  // 全局可访问
+  // Globally accessible
   PUBLIC = 'PUBLIC',
 }
 
 @ContextProto({
-  // 原型的实例化名称，非必传
+  // The instantiation name of the prototype, optional
   name?: string;
 
-  // 对象是在 module 内可访问还是全局可访问
-  // 默认值为 AccessLevel.PRIVATE
+  // Whether the object is accessible within the module or globally
+  // Default value is AccessLevel.PRIVATE
   accessLevel?: AccessLevel;
 })
 ```
 
-### 示例
+### Example
 
 ```ts
 // service.ts
@@ -140,11 +139,11 @@ export class WorldService {
 }
 ```
 
-如何被注入使用
+How to inject and use it:
 
 ```ts
 import { Inject, ContextProto } from 'egg';
-import { HelloService, WorldService } from './service';
+import { HelloService, WorldService } from './service.ts';
 
 @ContextProto()
 export class UseProtoDemo {
@@ -183,37 +182,37 @@ export class UseProtoDemo {
 }
 </style>
 
-# Inject
+## Inject
 
-## 定义
+### Definition
 
-原型中可以依赖其他的原型，或者 egg 中的对象。通过 `@Inject` 注解来实现依赖注入
+Prototypes can depend on other prototypes or objects in Egg. Dependency injection is implemented through the `@Inject` decorator.
 
 ```ts
 @Inject(param?: {
-  // 注入对象的名称，在某些情况下一个原型可能有多个实例
-  // 比如说 egg 的 logger
-  // 默认为属性名称
+  // Name of the injected object, in some cases a prototype may have multiple instances
+  // For example, egg's logger
+  // Defaults to property name
   name?: string;
-  // 注入原型的名称
-  // 在某些情况不希望注入的原型和属性使用一个名称
-  // 默认为属性名称
+  // Name of the injected prototype
+  // In some cases you don't want the injected prototype to use the same name as the property
+  // Defaults to property name
   proto?: string;
 })
 ```
 
-## 示例
+### Example
 
 ```ts
-import { Inject, SingletonProto, EggLogger } from 'egg';
+import { Inject, SingletonProto, Logger } from 'egg';
 
 @SingletonProto()
 export class HelloService {
   @Inject()
-  fooService: FooService; // 注入其它原型实例
+  fooService: FooService; // Inject other prototype instances
 
   @Inject()
-  logger: EggLogger; // 注入 egg 对象
+  logger: Logger; // Inject egg objects
 
   async hello(user: User): Promise<string> {
     this.logger.info(`[HelloService] hello ${this.fooService.hello()}`);
@@ -221,21 +220,21 @@ export class HelloService {
 }
 ```
 
-## 使用说明
+### Usage Notes
 
-Inject 在使用时有一些点需要注意：
+There are several points to note when using Inject:
 
-- 原型之间不允许有循环依赖，比如 Proto A - inject -> Proto B - inject- > Proto A
-- 类似原型之间不允许有循环依赖，module 之间也不能有循环依赖
-- 一个 module 内不能有实例化方式和名称同时相同的原型
-- <font color=red>不可以注入 egg 的 ctx/app，用什么注入什么</font>
+- Circular dependencies are not allowed between prototypes, e.g., Proto A - inject -> Proto B - inject-> Proto A
+- Similarly, circular dependencies are not allowed between `Module`s
+- A `Module` cannot have prototypes with the same instantiation method and name
+- <font color=red>You cannot inject Egg's `ctx`/`app`, inject what you use</font>
 
-### Inject name 的作用
+#### The Role of Inject name
 
-可以让注入进来的实例名称和原型实例化不一样，这在使用别名时会比较有用
+It allows the injected instance name to be different from the prototype instantiation, which is useful when using aliases.
 
 ```ts
-/*** 定义原型 ***/
+/*** Define prototypes ***/
 @SingletonProto()
 export class HelloService {
   async hello(): Promise<string> {
@@ -252,23 +251,23 @@ export class WorldService {
   }
 }
 
-/*** 注入原型 ***/
+/*** Inject prototypes ***/
 @SingletonProto()
 class Foo {
   @Inject()
   helloService: HelloService;
 
   @Inject({ name: 'helloService' })
-  aliasHelloService: HelloService; // 等价于上面的 helloService
+  aliasHelloService: HelloService; // Equivalent to helloService above
 
   @Inject({ name: 'worldInterface' })
   worldService: WorldService;
 }
 ```
 
-### Inject 类型的作用
+#### The Role of Inject Type
 
-注入依赖的是 proto name 而不是类型，所以下面的代码照样可以运行
+Injection depends on the proto name, not the type, so the following code still works:
 
 ```ts
 import { Inject, SingletonProto } from 'egg';
@@ -276,17 +275,17 @@ import { Inject, SingletonProto } from 'egg';
 @SingletonProto()
 class Foo {
   @Inject()
-  drm: any; // 类型定义为 any 照样可以注入 Egg Context 上的 drm
+  redis: any; // Type defined as any can still inject redis from Egg Context
 }
 ```
 
-那么这里类型的作用仅仅是 Typescript 的类型提示（比如设置成 any，只是缺失了 drm sdk 的 API 提示）
+The role of the type here is only for TypeScript type hints (e.g., setting it to `any` just means missing Redis SDK API hints).
 
-## 兼容 Egg
+### Egg Compatibility
 
-Module 会自动去遍历 Context/Application 对象，获取其所有的属性，<strong>所有的属性</strong>都可以进行无缝的注入，比如下面常见的例子
+Module automatically traverses the `Context`/`Application` objects to get all their properties. <strong>All properties</strong> can be seamlessly injected, as in the common examples below:
 
-### 注入 Egg 配置
+#### Inject Egg Configuration
 
 ```ts
 import { Inject, SingletonProto, EggAppConfig } from 'egg';
@@ -302,12 +301,12 @@ class Foo {
 }
 ```
 
-### 注入 logger
+#### Inject logger
 
-专为 logger 做了优化，可以直接注入 custom logger
+Optimized specifically for logger, you can directly inject custom loggers:
 
 ```ts
-// config.ts
+// config/config.default.ts
 export default {
   customLogger: {
     fooLogger: {
@@ -317,31 +316,31 @@ export default {
 };
 ```
 
-代码中可以直接注入:
+You can directly inject in the code:
 
 ```ts
-import { Inject, SingletonProto, EggLogger } from 'egg';
+import { Inject, SingletonProto, Logger } from 'egg';
 
 @SingletonProto()
 class FooService {
-  // 注入 ${appname}-web.log
+  // Inject ${appname}-web.log
   @Inject()
-  logger: EggLogger;
+  logger: Logger;
 
-  // 注入 egg-web.log
+  // Inject egg-web.log
   @Inject()
-  coreLogger: EggLogger;
+  coreLogger: Logger;
 
-  // 注入 customLogger 名字为 fooLogger
+  // Inject customLogger named fooLogger
   @Inject()
-  fooLogger: EggLogger;
+  fooLogger: Logger;
 }
 ```
 
-### 注入 service
+#### Inject `Service`
 
 :::warning
-强烈建议把 egg service 的代码通过 Proto 重新封装再注入，对于已有模式的 service，可以通过下面的方式引入
+It is strongly recommended to re-encapsulate Egg Service code through `Proto` before injecting. For existing `Service` patterns, you can introduce them as follows:
 :::
 
 ```ts
@@ -349,7 +348,7 @@ import { EggLogger, Service, Inject, SingletonProto } from 'egg';
 
 @SingletonProto()
 class FooService {
-  // 注入整个 ctx.service，再获取对应需要的 xxxService
+  // Inject the entire ctx.service, then get the corresponding xxxService
   @Inject()
   service: Service;
 
@@ -359,27 +358,27 @@ class FooService {
 }
 ```
 
-### 注入 httpclient
+#### Inject `HttpClient`
 
 ```ts
-import { Inject, SingletonProto, EggHttpClient } from 'egg';
+import { Inject, SingletonProto, HttpClient } from 'egg';
 
 @SingletonProto()
 class Foo {
   @Inject()
-  httpclient: EggHttpClient;
+  httpClient: HttpClient;
 
   async bar() {
-    await this.httpclient.request('https://alipay.com');
+    await this.httpClient.request('https://alipay.com');
   }
 }
 ```
 
-### 注入 Egg 的方法
+#### Inject Egg Methods
 
-由于 Module 注入时，只可以注入对象，不能注入方法，如果需要使用现有 Egg 的方法，就需要对方法进行一定的封装。
+Since `Module` injection can only inject objects, not methods, if you need to use existing Egg methods, you need to encapsulate the methods.
 
-举个例子：假设 Context 上有一个方法是 `getHeader` ，在 module 中使用这个方法需要如何封装。
+For example: Suppose there's a method `getHeader` on `Context`. To use this method in `Module`, you need to encapsulate it as follows.
 
 ```ts
 // extend/context.ts
@@ -390,7 +389,7 @@ export default {
 };
 ```
 
-先将方法封装成一个对象。
+First, encapsulate the method as an object.
 
 ```ts
 // HeaderHelper.ts
@@ -405,7 +404,7 @@ class HeaderHelper {
 }
 ```
 
-再将对象放到 Context 扩展上即可。
+Then put the object on the `Context` extension.
 
 ```ts
 // extend/context.ts
@@ -421,21 +420,22 @@ export default {
 };
 ```
 
-## module 内原型名称冲突
+## Prototype Name Conflicts Within `Module`
 
-### 定义
+### Definition
 
-一个 module 内，有两个原型，原型名相同，实例化不同，这时直接 Inject 是不行的，module 无法理解具体需要哪个对象。这时就需要告知 module 需要注入的对象实例化方式是哪种。
+Within a `Module`, there are two prototypes with the same name but different instantiation methods. Direct `Inject` won't work because the `Module` cannot determine which object is needed.
+In this case, you need to tell the `Module` which instantiation method the injected object should use.
 
 ```ts
 @InitTypeQualifier(initType: ObjectInitType)
 ```
 
-### 示例
+### Example
 
 ```ts
 import {
-  EggLogger,
+  Logger,
   Inject,
   InitTypeQualifier,
   ObjectInitType,
@@ -445,45 +445,48 @@ import {
 @SingletonProto()
 export class HelloService {
   @Inject()
-  // 明确指定实例化方式为 CONTEXT 的 logger
+  // Explicitly specify logger with instantiation method CONTEXT
   @InitTypeQualifier(ObjectInitType.CONTEXT)
-  logger: EggLogger;
+  logger: Logger;
 }
 ```
 
-## module 间原型名称冲突
+## Prototype Name Conflicts Between `Module`s
 
-### 定义
+### Definition
 
-可能多个 module 都实现了名称为 HelloService 的原型，需要明确的告知 module 需要注入的原型来自哪个 module.
+Multiple `Module`s may implement a prototype named `HelloService`. You need to explicitly tell the `Module` which `Module` the injected prototype comes from.
 
 ```ts
 @ModuleQualifier(moduleName: string)
 ```
 
-### 示例
+### Example
 
 ```ts
-import { Inject, InitTypeQualifier, ObjectInitType, EggLogger } from 'egg';
+import { Inject, InitTypeQualifier, ObjectInitType, Logger } from 'egg';
 
 @SingletonProto()
 export class HelloService {
   @Inject()
-  // 明确指定使用来自 foo module 的 HelloAdapter
+  // Explicitly specify HelloAdapter from the foo `Module`
   @ModuleQualifier('foo')
   helloAdapter: HelloAdapter;
 }
 ```
 
-# Qualifier 动态注入
+## Qualifier Dynamic Injection
 
-## 使用场景
+### Use Cases
 
-我们代码中经常会在不同场景下有不同的实现，比较简单的做法是，在需要使用的地方去使用 if/else 或者 switch 去切换。但是这个面临的一个问题是，每次我们需要扩展一个类型时，至少需要修改两个地方，一个是增加实现，一个是在使用的地方增加代码分支。往往会产生遗漏，导致我们的代码出现问题。我们希望变更是收敛的，只要我们实现了就能动态的获取到。因此引入了动态注入的方式来解决这个问题。
+We often have different implementations for different scenarios in our code. A simple approach is to use if/else or switch at the point of use.
+However, this presents a problem: every time we need to extend a type, we need to modify at least two places - one is to add the implementation, and the other is to add a code branch where it's used.
+This often leads to omissions, causing issues in our code. We want changes to be converged, so that implementations are dynamically available once implemented.
+Therefore, dynamic injection was introduced to solve this problem.
 
-## 使用
+### Usage
 
-1. 定义一个抽象类和一个类型枚举。
+1. Define an abstract class and a type enum.
 
 ```typescript
 export enum HelloType {
@@ -497,37 +500,36 @@ export abstract class AbstractHello {
 }
 ```
 
-2. 定义一个自定义枚举。
+2. Define a custom enum.
 
 :::danger
-注意事项：
+Notes:
 
-- **ATTRIBUTE 不要重复了，可能会导致实现被覆盖**
-- **抽象类不要指定错了，可能导致实现被覆盖**
-
-:::
+- **Don't duplicate ATTRIBUTE, as it may cause implementations to be overwritten**
+- **Don't specify the wrong abstract class, as it may cause implementations to be overwritten**
+  :::
 
 ```typescript
 import { ImplDecorator, QualifierImplDecoratorUtil } from 'egg';
-import { HelloType } from '../HelloType';
-import { AbstractHello } from '../AbstractHello';
+import { HelloType } from '../HelloType.ts';
+import { AbstractHello } from '../AbstractHello.ts';
 
 export const HELLO_ATTRIBUTE = Symbol('HELLO_ATTRIBUTE');
 
-// 这个工具类可以实现类型检查
-// 1. 加了这个注解一定要实现抽象类
-// 2. 注解的参数一定是枚举值
+// This utility class can implement type checking
+// 1. With this annotation, you must implement the abstract class
+// 2. The annotation parameter must be an enum value
 export const Hello: ImplDecorator<AbstractHello, typeof HelloType> =
   QualifierImplDecoratorUtil.generatorDecorator(AbstractHello, HELLO_ATTRIBUTE);
 ```
 
-3. 实现抽象类。
+3. Implement the abstract class.
 
 ```typescript
 import { SingletonProto } from 'egg';
-import { Hello } from '../decorator/Hello';
-import { HelloType } from '../HelloType';
-import { AbstractHello } from '../AbstractHello';
+import { Hello } from '../decorator/Hello.ts';
+import { HelloType } from '../HelloType.ts';
+import { AbstractHello } from '../AbstractHello.ts';
 
 @SingletonProto()
 @Hello(HelloType.BAR)
@@ -538,12 +540,12 @@ export class BarHello extends AbstractHello {
 }
 ```
 
-4. 动态获取实现。
+4. Dynamically get the implementation.
 
 ```typescript
 import { EggObjectFactory, SingletonProto, Inject } from 'egg';
-import { HelloType } from './HelloType';
-import { AbstractHello } from './AbstractHello';
+import { HelloType } from './HelloType.ts';
+import { AbstractHello } from './AbstractHello.ts';
 
 @SingletonProto()
 export class HelloService {
@@ -560,12 +562,16 @@ export class HelloService {
 }
 ```
 
-## FAQ
+### Real-World Example
 
-- 如果我没有枚举，类型是无限扩展的怎么办？
+[cnpmcore/app/common/adapter/binary/AbstractBinary.ts](https://github.com/cnpm/cnpmcore/blob/b6c96defa4c61783e1bf9a1b5dbe2420918ab69a/app/common/adapter/binary/AbstractBinary.ts#L136)
+
+### FAQ
+
+- What if I don't have an enum and the type is infinitely extensible?
 
 ```typescript
-// 通过使用一个 record 来伪装成一个 enum
+// Use a record to masquerade as an enum
 type AnyEnum = Record<string, string>;
 
 export const Convertor: ImplDecorator<AbstractFoo, AnyEnum> =

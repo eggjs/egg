@@ -52,9 +52,11 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
+    "@eggjs/core-decorator": "workspace:*",
     "@eggjs/egg-module-common": "workspace:*",
-    "@eggjs/tegg": "workspace:*",
+    "@eggjs/eventbus-decorator": "workspace:*",
     "@eggjs/tegg-eventbus-runtime": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*"
   },
@@ -64,6 +66,7 @@
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",

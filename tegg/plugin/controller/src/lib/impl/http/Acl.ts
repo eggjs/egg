@@ -1,4 +1,5 @@
-import type { Next, EggContext, HTTPControllerMeta, HTTPMethodMeta, MiddlewareFunc } from '@eggjs/tegg';
+import type { Next, HTTPControllerMeta, HTTPMethodMeta, MiddlewareFunc } from '@eggjs/controller-decorator';
+import type { Context } from 'egg';
 
 export function aclMiddlewareFactory(
   controllerMeta: HTTPControllerMeta,
@@ -8,7 +9,7 @@ export function aclMiddlewareFactory(
     return;
   }
   const code = controllerMeta.getMethodAcl(methodMeta);
-  return async function aclMiddleware(ctx: EggContext, next: Next) {
+  return async function aclMiddleware(ctx: Context, next: Next) {
     try {
       // @ts-expect-error ctx.acl is implemented in extend/context.ts on top level plugin, framework or app
       await ctx.acl(code);

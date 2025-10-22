@@ -1,7 +1,7 @@
 import { debuglog } from 'node:util';
 
 import type { Application } from 'egg';
-import { PrototypeUtil } from '@eggjs/tegg';
+import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { EggPrototype } from '@eggjs/tegg-metadata';
 import { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
 

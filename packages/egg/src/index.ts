@@ -21,7 +21,7 @@ export { Singleton, type SingletonCreateMethod, type SingletonOptions } from '@e
 export * from './lib/error/index.ts';
 
 // export loggers
-export type { LoggerLevel, EggLogger } from 'egg-logger';
+export type { LoggerLevel, EggLogger, EggLogger as Logger } from 'egg-logger';
 
 // export httpClients
 export * from './lib/core/httpclient.ts';
@@ -91,3 +91,66 @@ export { BaseContextClass } from './lib/core/base_context_class.ts';
  * @member {Boot} Egg#Boot
  */
 export { BaseHookClass as Boot } from './lib/core/base_hook_class.ts';
+
+// export tegg decorators
+export {
+  AccessLevel,
+  Acl,
+  ObjectInitType,
+  type ObjectInitTypeLike,
+  type ObjectInfo,
+  type MultiInstancePrototypeGetObjectsContext,
+  QualifierUtil,
+  type EggProtoImplClass,
+  Inject,
+  InjectOptional,
+  EggQualifier,
+  EggType,
+  /**
+   * @example
+   * ```ts
+   * import { HTTPContext, Context } from 'egg';
+   *
+   * @HTTPController()
+   * export class FooController {
+   *   @HTTPMethod({
+   *     path: '/foo',
+   *     method: HTTPMethodEnum.GET,
+   *   })
+   * async bar(@HTTPContext() ctx: Context, id: number): Promise<void> {
+   *   console.log(ctx, id);
+   * }
+   * ```
+   */
+  HTTPContext,
+  HTTPRequest,
+  HTTPCookies,
+  Cookies,
+  HTTPController,
+  HTTPMethod,
+  HTTPMethodEnum,
+  HTTPBody,
+  HTTPQuery,
+  HTTPQueries,
+  HTTPParam,
+  HTTPHeaders,
+  HTTPParamType,
+  Host,
+  Middleware,
+  Event,
+  EventContext,
+  type EggObjectLifecycle,
+  LifecycleDestroy,
+  LifecycleInit,
+  LifecyclePostConstruct,
+  LifecyclePostInject,
+  LifecyclePreDestroy,
+  LifecyclePreInject,
+  LifecyclePreLoad,
+  SingletonProto,
+  MultiInstanceProto,
+  type ImplDecorator,
+  QualifierImplDecoratorUtil,
+  type EggObjectFactory,
+  type IncomingHttpHeaders,
+} from '@eggjs/tegg';

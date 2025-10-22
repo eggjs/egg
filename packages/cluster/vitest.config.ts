@@ -5,6 +5,7 @@ const config: UserWorkspaceConfig = defineProject({
     include: ['test/**/*.test.ts'],
     exclude: ['test/fixtures/**', '**/node_modules/**', '**/dist/**'],
     testTimeout: 25000,
+    hookTimeout: 25000,
   },
 });
 

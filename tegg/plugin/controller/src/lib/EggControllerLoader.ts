@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import globby from 'globby';
 import { LoaderUtil } from '@eggjs/tegg-loader';
-import type { EggProtoImplClass } from '@eggjs/tegg';
+import type { EggProtoImplClass } from '@eggjs/core-decorator';
 import type { Loader } from '@eggjs/tegg-types';
 
 export class EggControllerLoader implements Loader {

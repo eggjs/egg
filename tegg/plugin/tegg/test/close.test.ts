@@ -8,11 +8,12 @@ import { getAppBaseDir } from './utils.ts';
 describe('plugin/tegg/test/close.test.ts', () => {
   it('should clean lifecycle hooks', async () => {
     const app = mm.app({
-      baseDir: getAppBaseDir('schedule-app'),
+      baseDir: getAppBaseDir('close-test-app'),
     });
     await app.ready();
     await app.close();
 
+    // console.log(app.loadUnitLifecycleUtil.getLifecycleList());
     assert.equal(app.loadUnitLifecycleUtil.getLifecycleList().length, 0);
     assert.equal(app.loadUnitInstanceLifecycleUtil.getLifecycleList().length, 0);
     assert.equal(app.eggContextLifecycleUtil.getLifecycleList().length, 0);

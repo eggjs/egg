@@ -1,14 +1,15 @@
-import { Context } from 'egg';
+import type { Context } from 'egg';
 
 import { EggContextEventBus } from '../../lib/EggContextEventBus.ts';
 
 const EVENT_BUS = Symbol.for('context#eventBus');
 
-export default class EventBusContext extends Context {
+export default class EventBusContext {
   get eventBus(): EggContextEventBus {
-    if (!this[EVENT_BUS]) {
-      this[EVENT_BUS] = new EggContextEventBus(this);
+    const ctx = this as unknown as Context;
+    if (!ctx[EVENT_BUS]) {
+      ctx[EVENT_BUS] = new EggContextEventBus(ctx);
     }
-    return this[EVENT_BUS] as EggContextEventBus;
+    return ctx[EVENT_BUS] as EggContextEventBus;
   }
 }

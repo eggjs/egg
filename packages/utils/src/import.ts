@@ -366,6 +366,7 @@ export async function importModule(filepath: string, options?: ImportModuleOptio
   if (isESM) {
     // esm
     const fileUrl = pathToFileURL(moduleFilePath).toString();
+    debug('[importModule:start] await import fileUrl: %s, isESM: %s', fileUrl, isESM);
     obj = await import(fileUrl);
     debug('[importModule:success] await import %o', fileUrl);
     // {

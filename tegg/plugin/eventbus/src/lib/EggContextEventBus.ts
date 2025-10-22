@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 
 import type { Context } from 'egg';
-import { type Events, PrototypeUtil, CORK_ID, type ContextEventBus } from '@eggjs/tegg';
+import { type Events, CORK_ID, type ContextEventBus, type Arguments } from '@eggjs/eventbus-decorator';
+import { PrototypeUtil } from '@eggjs/core-decorator';
 import { SingletonEventBus } from '@eggjs/tegg-eventbus-runtime';
-import { type EggPrototype } from '@eggjs/tegg-metadata';
+import type { EggPrototype } from '@eggjs/tegg-metadata';
 import { ContextHandler, type EggContext } from '@eggjs/tegg-runtime';
-import type { Arguments } from '@eggjs/tegg';
 
 export class EggContextEventBus implements ContextEventBus {
   private readonly eventBus: SingletonEventBus;

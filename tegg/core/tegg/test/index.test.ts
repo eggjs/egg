@@ -2,7 +2,8 @@ import { expect, test } from 'vitest';
 
 import {
   Acl,
-  Context,
+  InjectContext,
+  HTTPContext,
   ContextProto,
   Inject,
   AccessLevel,
@@ -15,7 +16,8 @@ import {
 
 test('should exports work', async () => {
   expect(Acl).toBeDefined();
-  expect(Context).toBeDefined();
+  expect(InjectContext).toBeDefined();
+  expect(HTTPContext).toBeDefined();
   expect(ContextProto).toBeDefined();
   expect(Inject).toBeDefined();
   expect(AccessLevel).toBeDefined();

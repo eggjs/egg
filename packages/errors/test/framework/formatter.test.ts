@@ -15,7 +15,7 @@ describe('test/framework/formatter.test.ts', () => {
     it('should format FrameworkError', () => {
       const err = new CustomError('error', '00', 'errorContext');
       const message = FrameworkErrorFormatter.format(err);
-      expect(message).toContain('framework.CustomError: error [ https://eggjs.org/zh-cn/faq/customPlugin_00 ]');
+      expect(message).toContain('framework.CustomError: error [ https://eggjs.org/faq/customPlugin_00 ]');
       expect(message).toContain('code: customPlugin_00');
       expect(message).toContain('serialNumber: 00');
       expect(message).toContain('errorContext: "errorContext"');
@@ -59,7 +59,7 @@ describe('test/framework/formatter.test.ts', () => {
     it('should use default faqPrefix', () => {
       const err = new CustomError('error', '00');
       const message = FrameworkErrorFormatter.format(err);
-      expect(message).toContain('framework.CustomError: error [ https://eggjs.org/zh-cn/faq/customPlugin_00 ]');
+      expect(message).toContain('framework.CustomError: error [ https://eggjs.org/faq/customPlugin_00 ]');
     });
 
     it('should use faqPrefixEnv', () => {
@@ -86,7 +86,7 @@ describe('test/framework/formatter.test.ts', () => {
     it('should format FrameworkError', () => {
       let err = new CustomError('error', '00', 'errorContext');
       err = FrameworkErrorFormatter.formatError(err);
-      expect(err.message).toBe('error [ https://eggjs.org/zh-cn/faq/customPlugin_00 ]');
+      expect(err.message).toBe('error [ https://eggjs.org/faq/customPlugin_00 ]');
     });
 
     it('should format normal error', () => {
@@ -98,7 +98,7 @@ describe('test/framework/formatter.test.ts', () => {
     it('should use default faqPrefix', () => {
       let err = new CustomError('error', '00');
       err = FrameworkErrorFormatter.formatError(err);
-      expect(err.message).toBe('error [ https://eggjs.org/zh-cn/faq/customPlugin_00 ]');
+      expect(err.message).toBe('error [ https://eggjs.org/faq/customPlugin_00 ]');
     });
 
     it('should use faqPrefixEnv', () => {
@@ -113,7 +113,7 @@ describe('test/framework/formatter.test.ts', () => {
       let err = new CustomError('error', '00', 'errorContext');
       err = FrameworkErrorFormatter.formatError(err);
       const message = FrameworkErrorFormatter.format(err);
-      expect(message.split('https://eggjs.org/zh-cn/faq').length).toBe(2);
+      expect(message.split('https://eggjs.org/faq').length).toBe(2);
     });
 
     describe('extendable', () => {

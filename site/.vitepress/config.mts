@@ -1,4 +1,8 @@
+import path from 'node:path';
+import fs from 'node:fs';
+
 import { defineConfig, type DefaultTheme } from 'vitepress';
+
 import { version } from '../../package.json';
 
 // https://vitepress.dev/reference/site-config
@@ -49,6 +53,7 @@ export default defineConfig({
           '/core/': { base: '/core/', items: sidebarCore() },
           '/tutorials/': { base: '/tutorials/', items: sidebarTutorials() },
           '/community/': { base: '/community/', items: sidebarCommunity() },
+          '/faq/': { base: '/faq/', items: sidebarFaq() },
         },
       },
     },
@@ -77,6 +82,7 @@ export default defineConfig({
             base: '/zh-CN/community/',
             items: sidebarCommunityZhCN(),
           },
+          '/zh-CN/faq/': { base: '/zh-CN/faq/', items: sidebarFaq() },
         },
       },
     },
@@ -101,6 +107,10 @@ export default defineConfig({
       pattern: 'https://github.com/eggjs/egg/edit/next/site/docs/:path',
       text: 'Edit this page',
     },
+
+    outline: {
+      level: [2, 3],
+    },
   },
 
   lastUpdated: true,
@@ -114,6 +124,10 @@ export default defineConfig({
         },
       },
     },
+  },
+
+  markdown: {
+    lineNumbers: false,
   },
 });
 
@@ -130,8 +144,9 @@ function nav(): DefaultTheme.NavItem[] {
       activeMatch: '/community/',
       items: [
         { text: 'Community', link: '/community/' },
-        { text: 'Contributing', link: '/community/contributing' },
+        { text: 'Contributing', link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.md' },
         { text: 'Frequently Asked Questions', link: '/community/faq' },
+        { text: 'Common Errors', link: '/faq/' },
         { text: 'CNode Community', link: 'https://cnodejs.org/' },
         { text: 'Node.js 专栏', link: 'https://www.yuque.com/egg/nodejs' },
       ],
@@ -185,8 +200,9 @@ function navZhCN(): DefaultTheme.NavItem[] {
       activeMatch: '/zh-CN/community/',
       items: [
         { text: '社区', link: '/zh-CN/community/' },
-        { text: '参与贡献', link: '/zh-CN/community/contributing' },
+        { text: '参与贡献', link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.zh-CN.md' },
         { text: '常见问题', link: '/zh-CN/community/faq' },
+        { text: '常见错误', link: '/zh-CN/faq/' },
         { text: 'CNode 社区', link: 'https://cnodejs.org/' },
         { text: 'Node.js 专栏', link: 'https://www.yuque.com/egg/nodejs' },
       ],
@@ -233,17 +249,23 @@ function sidebarBasics(): DefaultTheme.SidebarItem[] {
       text: 'Basics',
       items: [
         { text: 'Directory Structure', link: 'structure' },
+        { text: 'Dependency Injection', link: 'di' },
+        { text: 'Controller', link: 'controller' },
+        { text: 'HTTP Controller', link: 'httpcontroller' },
+        { text: 'MCP Controller', link: 'mcpcontroller' },
+        { text: 'Schedule Controller', link: 'schedule' },
+        { text: 'Parameter Validation', link: 'ajv' },
+        { text: 'Aspect-Oriented Programming', link: 'aop' },
+        { text: 'Background Task', link: 'backgroundTask' },
+        { text: 'Event Bus', link: 'eventbus' },
         { text: 'Built-in Objects', link: 'objects' },
         { text: 'Runtime Environment', link: 'env' },
         { text: 'Configuration', link: 'config' },
+        { text: 'AOP Middleware (Recommended)', link: 'aop-middleware' },
+        { text: 'Koa Middleware', link: 'middleware' },
         { text: 'Plugin', link: 'plugin' },
-        { text: 'Middleware', link: 'middleware' },
-        { text: 'Router', link: 'router' },
-        { text: 'Controller', link: 'controller' },
-        { text: 'Service', link: 'service' },
-        { text: 'Schedule', link: 'schedule' },
-        { text: 'Extend', link: 'extend' },
-        { text: 'Lifecycle', link: 'app-start' },
+        { text: 'Extend EGG', link: 'extend' },
+        { text: 'Application Startup Lifecycle', link: 'app-start' },
         { text: 'Unit Testing', link: 'unittest' },
       ],
     },
@@ -347,7 +369,7 @@ function sidebarBasicsZhCN(): DefaultTheme.SidebarItem[] {
         { text: '运行环境', link: 'env' },
         { text: '配置', link: 'config' },
         { text: 'AOP 中间件(推荐)', link: 'aop-middleware' },
-        { text: '中间件', link: 'middleware' },
+        { text: 'Koa 中间件', link: 'middleware' },
         { text: '插件', link: 'plugin' },
         { text: '框架扩展', link: 'extend' },
         { text: '启动自定义', link: 'app-start' },
@@ -423,6 +445,20 @@ function sidebarCommunityZhCN(): DefaultTheme.SidebarItem[] {
         { text: '参与贡献', link: 'contributing' },
         { text: '常见问题', link: 'faq' },
       ],
+    },
+  ];
+}
+
+function sidebarFaq(): DefaultTheme.SidebarItem[] {
+  const faqFiles = fs.readdirSync(path.join(import.meta.dirname, '../docs/faq'));
+  const faqItems = faqFiles.map(file => ({
+    text: file.replace('.md', ''),
+    link: `${file}`,
+  }));
+  return [
+    {
+      text: 'FAQ',
+      items: faqItems,
     },
   ];
 }

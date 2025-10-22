@@ -145,8 +145,8 @@ export default class ArgsController {
     // /api/query?user=asd&user=fgh
     // user = 'asd'
     // users = ['asd', 'fgh']
-    @HTTPQuery() user: string, // 未设置 name 时，将自动读取变量名为 name
-    @HTTPQueries({ name: 'user' }) users: string[], // 也可手动指定 name
+    @HTTPQuery() user?: string, // 未设置 name 时，将自动读取变量名为 name
+    @HTTPQueries({ name: 'user' }) users?: string[], // 也可手动指定 name
   ) {
     // ...
   }
@@ -230,7 +230,7 @@ import {
 @HTTPController()
 export default class ArgsController {
   @HTTPMethod({ method: HTTPMethodEnum.POST, path: '/api/cookies' })
-  async getCookies(@Cookies() cookies: HTTPCookies) {
+  async getCookies(@HTTPCookies() cookies: Cookies) {
     return {
       success: true,
       cookies: cookies.get('test', { signed: false }),
@@ -239,27 +239,27 @@ export default class ArgsController {
 }
 ```
 
-### Request
+### HTTPRequest
 
-`Request` 装饰器用于获取完整的 HTTP 请求对象，可获取 url、headers 以及 body 等请求信息，具体 api 可参考类型定义。
+`HTTPRequest` 装饰器用于获取完整的 HTTP 请求对象，可获取 url、headers 以及 body 等请求信息，具体 api 可参考类型定义。
 
 :::warning
-⚠️ 注意：通过 @HTTPBody 装饰器注入请求体后，会对请求体进行消费。若同时注入 @Request，再次消费请求体时，将会导致错误（注入 @Request，不消费请求体，获取 url、headers 等信息不会有影响）。
+⚠️ 注意：通过 @HTTPBody 装饰器注入请求体后，会对请求体进行消费。若同时注入 @HTTPRequest，再次消费请求体时，将会导致错误（注入 @HTTPRequest，不消费请求体，获取 url、headers 等信息不会有影响）。
 :::
 
 ```typescript
 import {
+  HTTPBody,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPRequest,
-  Request,
 } from 'egg';
 
 @HTTPController()
 export default class ArgsController {
   @HTTPMethod({ method: HTTPMethodEnum.POST, path: '/api/request' })
-  async getRequest(@Request() request: HTTPRequest) {
+  async getRequest(@HTTPRequest() request: Request) {
     const headerData = request.headers.get('x-header-key');
     const url = request.url;
     // 获取请求体 arrayBuffer
@@ -268,7 +268,7 @@ export default class ArgsController {
   }
 
   @HTTPMethod({ method: HTTPMethodEnum.POST, path: '/api/request2' })
-  async getRequest2(@HTTPBody() body: object, @Request() request: HTTPRequest) {
+  async getRequest2(@HTTPBody() body: object, @HTTPRequest() request: Request) {
     // 同时注入 HTTPBody 和 Request，通过 request 读取 header、url 等信息可正常运行
     const headerData = request.headers.get('x-header-key');
     const url = request.url;
@@ -281,18 +281,18 @@ export default class ArgsController {
 }
 ```
 
-### Context
+### HTTPContext
 
-在标准应用中，可使用 `Context` 装饰器，用于获取 egg 的 Context 对象。
+在标准应用中，可使用 `HTTPContext` 装饰器，用于获取 egg 的 [Context][Context] 对象。
 
 :::warning
-⚠️ 注意：函数应用中，不支持使用 `Context` 装饰器。
+⚠️ 注意：函数应用中，不支持使用 `HTTPContext` 装饰器。
 :::
 
 ```typescript
 import {
+  HTTPContext,
   Context,
-  EggContext,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
@@ -301,7 +301,7 @@ import {
 @HTTPController()
 export default class ArgsController {
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/context' })
-  async getContext(@Context() context: EggContext) {
+  async getContext(@HTTPContext() context: Context) {
     // ...
   }
 }
@@ -355,12 +355,12 @@ export default class ResponseController {
 
 #### 标准应用
 
-在标准应用中，可以通过 context 提供的 api 来自定义设置 HTTP 响应码和响应头等信息。
+在标准应用中，可以通过 [Context][Context] 提供的 api 来自定义设置 HTTP 响应码和响应头等信息。
 
 ```typescript
 import {
   Context,
-  EggContext,
+  HTTPContext,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
@@ -369,7 +369,7 @@ import {
 @HTTPController()
 export default class ResponseController {
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/custom-response' })
-  async customResponse(@Context() ctx: EggContext) {
+  async customResponse(@HTTPContext() ctx: Context) {
     // 自定义响应码
     ctx.status = 200;
     // 添加自定义响应头
@@ -392,7 +392,7 @@ import { Readable } from 'node:stream';
 import { setTimeout } from 'node:timers/promises';
 import {
   Context,
-  EggContext,
+  HTTPContext,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
@@ -411,9 +411,11 @@ async function* generate(count = 5, duration = 500) {
 @HTTPController()
 export default class ResponseController {
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/stream' })
-  async streamResponse(@Context() ctx: EggContext) {
+  async streamResponse(@HTTPContext() ctx: Context) {
     ctx.type = 'html';
     return Readable.from(generate());
   }
 }
 ```
+
+[Context]: ./objects.md#context

@@ -1,11 +1,10 @@
 import {
-  Context,
+  HTTPContext,
   type EggContext,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   Middleware,
-  Request,
   HTTPRequest,
   Cookies,
   HTTPCookies,
@@ -22,9 +21,9 @@ export class AppController {
     path: '/testRequest',
   })
   async testRequest(
-    @Context() ctx: EggContext,
-    @Request() request: HTTPRequest,
-    @Cookies() cookies: HTTPCookies
+    @HTTPContext() ctx: EggContext,
+    @HTTPRequest() request: Request,
+    @HTTPCookies() cookies: Cookies
   ): Promise<{
     success: boolean;
     traceId: string;

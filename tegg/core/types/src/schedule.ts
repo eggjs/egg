@@ -1,3 +1,6 @@
+import type { EggEnvType } from 'egg';
+import type { CronOptions } from 'egg/schedule';
+
 export const ScheduleType = {
   WORKER: 'worker',
   ALL: 'all',
@@ -18,7 +21,7 @@ export interface ScheduleParams<T> {
 
 export interface CronParams {
   cron: string;
-  cronOptions?: any;
+  cronOptions?: CronOptions;
 }
 
 export interface IntervalParams {
@@ -34,9 +37,21 @@ export interface ScheduleOptions {
   // default is false
   disable?: boolean;
   // if env has value, only run in this envs
-  env?: Array<string>;
+  env?: EggEnvType[];
 }
 
+/**
+ * Schedule subscriber interface
+ *
+ * @example
+ * ```typescript
+ * export class FooSubscriber implements ScheduleSubscriber {
+ *   async subscribe(data?: any): Promise<any> {
+ *     return 'foo';
+ *   }
+ * }
+ * ```
+ */
 export interface ScheduleSubscriber {
   subscribe(data?: any): Promise<any>;
 }
