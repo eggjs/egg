@@ -9,7 +9,7 @@
     "@eggjs/tegg-config": "^3.7.0",
     "@eggjs/tegg-controller-plugin": "^3.7.0",
     "@eggjs/tegg-plugin": "^3.7.0",
-    "@eggjs/tsconfig": "^1.1.0",
+    "@eggjs/tsconfig": "^3.0.0",
     "egg": "4"
   },
   "devDependencies": {
