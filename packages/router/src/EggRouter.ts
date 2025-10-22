@@ -266,7 +266,9 @@ export class EggRouter extends Router {
       const prefix = (path as string).replace(/\/$/, '');
       const urlPath = opts.suffix ? `${prefix}/${opts.suffix}` : prefix;
       const method = Array.isArray(opts.method) ? opts.method : [opts.method];
-      this.register(urlPath, method, middlewares.concat(action), { name: routeName });
+      this.register(urlPath, method, middlewares.concat(action), {
+        name: routeName,
+      });
     }
     return this;
   }

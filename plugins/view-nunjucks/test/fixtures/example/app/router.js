@@ -43,7 +43,9 @@ module.exports = app => {
 
   app.get('/locals', async function () {
     this.locals = { b: 'ctx' };
-    this.body = await this.renderString('{{ a }}, {{ b }}, {{ c }}', { c: 'locals' });
+    this.body = await this.renderString('{{ a }}, {{ b }}, {{ c }}', {
+      c: 'locals',
+    });
   });
 
   app.get('/error_string', async function () {

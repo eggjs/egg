@@ -147,7 +147,10 @@ test.skipIf(process.platform === 'win32')(
     });
     expect(testStdout).toContain('2 passed');
     // run typecheck
-    execaCommandSync('pnpm typecheck', { cwd: projectDir, env: { NODE_OPTIONS: undefined } });
+    execaCommandSync('pnpm typecheck', {
+      cwd: projectDir,
+      env: { NODE_OPTIONS: undefined },
+    });
   }
 );
 
@@ -198,7 +201,10 @@ test.skipIf(process.platform === 'win32' || process.env.CI)(
     });
     expect(testStdout).toContain('2 passed');
     // run typecheck
-    execaCommandSync('pnpm typecheck', { cwd: projectDir, env: { NODE_OPTIONS: undefined } });
+    execaCommandSync('pnpm typecheck', {
+      cwd: projectDir,
+      env: { NODE_OPTIONS: undefined },
+    });
   }
 );
 

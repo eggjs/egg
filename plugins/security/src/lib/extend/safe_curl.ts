@@ -7,7 +7,9 @@ const SSRF_HTTPCLIENT = Symbol('SSRF_HTTPCLIENT');
 type HttpClient = EggApplicationCore['HttpClient'];
 type HttpClientParameters = Parameters<HttpClient['prototype']['request']>;
 export type HttpClientRequestURL = HttpClientParameters[0];
-export type HttpClientOptions = HttpClientParameters[1] & { checkAddress?: SSRFCheckAddressFunction };
+export type HttpClientOptions = HttpClientParameters[1] & {
+  checkAddress?: SSRFCheckAddressFunction;
+};
 export type HttpClientResponse<T = any> = Awaited<ReturnType<HttpClient['prototype']['request']>> & { data: T };
 
 /**

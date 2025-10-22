@@ -44,8 +44,12 @@ export class ConstructorQualifierObject {
     // @ts-expect-error: readonly property in constructor
     @Inject('cacheService') readonly customNameCache: CacheService,
     // @ts-expect-error: readonly property in constructor
-    @InitTypeQualifier(ObjectInitType.CONTEXT) @Inject() readonly customQualifierCache1: CacheService,
+    @InitTypeQualifier(ObjectInitType.CONTEXT)
+    @Inject()
+    readonly customQualifierCache1: CacheService,
     // @ts-expect-error: readonly property in constructor
-    @Inject() @InitTypeQualifier(ObjectInitType.CONTEXT) readonly customQualifierCache2: CacheService
+    @Inject()
+    @InitTypeQualifier(ObjectInitType.CONTEXT)
+    readonly customQualifierCache2: CacheService
   ) {}
 }

@@ -49,7 +49,7 @@ jobs:
         run: pnpm run typecheck
 
       - name: Run format check
-        run: pnpm run fmtcheck || echo "fmtcheck failed, ignore before it stable"
+        run: pnpm run fmtcheck
 
       - name: Run build
         run: pnpm run build

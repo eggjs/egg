@@ -122,7 +122,9 @@ describe.skip('test/start-without-demon-1.test.ts', () => {
     });
 
     it('should not enable sourcemap-support', async () => {
-      app = coffee.fork(eggBin, ['start', '--workers=1'], { cwd: fixturePath }) as Coffee;
+      app = coffee.fork(eggBin, ['start', '--workers=1'], {
+        cwd: fixturePath,
+      }) as Coffee;
       // app.debug();
       app.expect('code', 0);
 

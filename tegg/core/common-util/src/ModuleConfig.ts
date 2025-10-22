@@ -166,7 +166,9 @@ export class ModuleConfigUtil {
       try {
         // https://nodejs.org/api/packages.html#package-entry-points
         // ignore cases where the package entry is exports but package.json is not exported
-        packageJsonPath = importResolve(`${dependencyKey}/package.json`, { paths: [baseDir] });
+        packageJsonPath = importResolve(`${dependencyKey}/package.json`, {
+          paths: [baseDir],
+        });
       } catch {
         continue;
       }

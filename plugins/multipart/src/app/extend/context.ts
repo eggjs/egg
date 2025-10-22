@@ -347,7 +347,9 @@ function extractOptions(options: MultipartOptions = {}) {
 
   // limits
   if (options.limits) {
-    const limits: Record<string, number | undefined> = (opts.limits = { ...options.limits });
+    const limits: Record<string, number | undefined> = (opts.limits = {
+      ...options.limits,
+    });
     for (const key in limits) {
       if (key.endsWith('Size') && limits[key]) {
         limits[key] = humanizeBytes(limits[key]);

@@ -738,7 +738,12 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, removeUnpartitioned: true, overwrite: true, sameSite: 'none' }
+        {
+          partitioned: true,
+          removeUnpartitioned: true,
+          overwrite: true,
+          sameSite: 'none',
+        }
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -938,7 +943,12 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, partitioned: true, removeUnpartitioned: true, sameSite: 'None' }
+        {
+          autoChips: true,
+          partitioned: true,
+          removeUnpartitioned: true,
+          sameSite: 'None',
+        }
       );
       cookies.set('foo', 'hello', opts);
 
@@ -1122,7 +1132,12 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, partitioned: false, removeUnpartitioned: true, sameSite: 'None' }
+        {
+          autoChips: true,
+          partitioned: false,
+          removeUnpartitioned: true,
+          sameSite: 'None',
+        }
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -1156,7 +1171,12 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, partitioned: false, removeUnpartitioned: true, sameSite: 'None' }
+        {
+          autoChips: true,
+          partitioned: false,
+          removeUnpartitioned: true,
+          sameSite: 'None',
+        }
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -1192,7 +1212,12 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, partitioned: false, removeUnpartitioned: true, sameSite: 'None' }
+        {
+          autoChips: true,
+          partitioned: false,
+          removeUnpartitioned: true,
+          sameSite: 'None',
+        }
       );
       const opts: CookieSetOptions = {
         secure: true,

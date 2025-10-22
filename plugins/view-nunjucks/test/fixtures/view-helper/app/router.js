@@ -10,6 +10,8 @@ module.exports = app => {
   });
 
   app.get('filters', '/nunjucks_filters', async function () {
-    this.body = await this.renderString('{{ helper.upper(user) }}', { user: 'egg' });
+    this.body = await this.renderString('{{ helper.upper(user) }}', {
+      user: 'egg',
+    });
   });
 };

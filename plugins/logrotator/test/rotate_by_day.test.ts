@@ -13,7 +13,10 @@ import { getFixtures } from './utils.ts';
 describe('rotate_by_day', () => {
   let app: MockApplication;
   beforeAll(() => {
-    fs.rmSync(getFixtures('logrotator-app/logs'), { force: true, recursive: true });
+    fs.rmSync(getFixtures('logrotator-app/logs'), {
+      force: true,
+      recursive: true,
+    });
     app = mm.app({
       baseDir: getFixtures('logrotator-app'),
       cache: false,

@@ -108,8 +108,18 @@ describe('test/decorators.test.ts', () => {
         { refIndex: 0, refName: 'xCache', objName: 'fooCache' },
         { refIndex: 1, refName: 'cache', objName: 'cache' },
         { refIndex: 2, refName: 'otherCache', objName: 'cacheService' },
-        { refIndex: 3, refName: 'optional1', objName: 'optional1', optional: true },
-        { refIndex: 4, refName: 'optional2', objName: 'optional2', optional: true },
+        {
+          refIndex: 3,
+          refName: 'optional1',
+          objName: 'optional1',
+          optional: true,
+        },
+        {
+          refIndex: 4,
+          refName: 'optional2',
+          objName: 'optional2',
+          optional: true,
+        },
       ]);
     });
   });
@@ -131,10 +141,19 @@ describe('test/decorators.test.ts', () => {
       const properties = [
         { property: 'interfaceService', expected: undefined },
         { property: 'testContextService', expected: ObjectInitType.CONTEXT },
-        { property: 'testSingletonService', expected: ObjectInitType.SINGLETON },
+        {
+          property: 'testSingletonService',
+          expected: ObjectInitType.SINGLETON,
+        },
         { property: 'customNameService', expected: undefined },
-        { property: 'customQualifierService1', expected: ObjectInitType.CONTEXT },
-        { property: 'customQualifierService2', expected: ObjectInitType.CONTEXT },
+        {
+          property: 'customQualifierService1',
+          expected: ObjectInitType.CONTEXT,
+        },
+        {
+          property: 'customQualifierService2',
+          expected: ObjectInitType.CONTEXT,
+        },
       ];
 
       for (const { property, expected } of properties) {
@@ -161,7 +180,10 @@ describe('test/decorators.test.ts', () => {
       const constructorQualifiers2 = QualifierUtil.getProperQualifiers(ConstructorObject, 'cache');
       assert.deepStrictEqual(constructorQualifiers, [
         { attribute: Symbol.for('Qualifier.LoadUnitName'), value: 'foo' },
-        { attribute: Symbol.for('Qualifier.InitType'), value: ObjectInitType.SINGLETON },
+        {
+          attribute: Symbol.for('Qualifier.InitType'),
+          value: ObjectInitType.SINGLETON,
+        },
       ]);
       assert.deepStrictEqual(constructorQualifiers2, []);
     });

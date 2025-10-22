@@ -90,7 +90,9 @@ describe('checkAddress', () => {
 
 describe('checkAddress with useHttpClientNext = true', () => {
   beforeAll(async () => {
-    app = mm.app({ baseDir: getFixtures('apps/ssrf-check-address-useHttpClientNext') });
+    app = mm.app({
+      baseDir: getFixtures('apps/ssrf-check-address-useHttpClientNext'),
+    });
     await app.ready();
   });
 
@@ -128,7 +130,9 @@ describe('ipExceptionList', () => {
     const ctx = app.createAnonymousContext();
     const url = process.env.CI ? 'https://registry.npmjs.org' : 'https://registry.npmmirror.com';
 
-    const r1 = await app.safeCurl<Record<string, string>>(url, { dataType: 'json' });
+    const r1 = await app.safeCurl<Record<string, string>>(url, {
+      dataType: 'json',
+    });
     const r2 = await app.agent.safeCurl(url, { dataType: 'json' });
     const r3 = await ctx.safeCurl(url, { dataType: 'json' });
     expect(r1.status).toBe(200);

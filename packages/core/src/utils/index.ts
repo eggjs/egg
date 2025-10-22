@@ -14,8 +14,7 @@ export type Fun = (...args: unknown[]) => unknown;
 const Module =
   typeof module !== 'undefined' && module.constructor.length > 1
     ? module.constructor
-    : /* istanbul ignore next */
-      BuiltinModule;
+    : /* istanbul ignore next */ BuiltinModule;
 
 const extensions = (Module as any)._extensions;
 const extensionNames = Object.keys(extensions).concat(['.cjs', '.mjs']);

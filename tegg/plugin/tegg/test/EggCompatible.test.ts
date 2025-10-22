@@ -145,7 +145,10 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
     await app.mockModuleContextScope(async () => {
       const eggTypeService = await app.getEggObject(EggTypeService);
       const result = eggTypeService.testInject();
-      assert.deepStrictEqual(result, { app: { from: 'app' }, ctx: { from: 'ctx' } });
+      assert.deepStrictEqual(result, {
+        app: { from: 'app' },
+        ctx: { from: 'ctx' },
+      });
     });
   });
 

@@ -75,13 +75,17 @@ class MockApplicationWorker extends Base {
     assert(egg.Agent, `should export Agent class from framework ${this.options.framework}`);
 
     const Agent = egg.Agent;
-    const agent = (this._agent = new Agent({ ...this.options }) as AgentUnittest);
+    const agent = (this._agent = new Agent({
+      ...this.options,
+    }) as AgentUnittest);
     debug('agent instantiate');
     await agent.ready();
     debug('agent ready');
 
     const ApplicationClass = bindMessenger(egg.Application, agent);
-    const app = (this._app = new ApplicationClass({ ...this.options }) as unknown as ApplicationUnittest);
+    const app = (this._app = new ApplicationClass({
+      ...this.options,
+    }) as unknown as ApplicationUnittest);
 
     // https://github.com/eggjs/egg/blob/8bb7c7e7d59d6aeca4b2ed1eb580368dcb731a4d/lib/egg.js#L125
     // egg single mode mount this at start(), so egg-mock should impel it.

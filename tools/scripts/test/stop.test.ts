@@ -197,7 +197,9 @@ describe('test/stop.test.ts', () => {
         .expect('code', 0)
         .end();
 
-      killer = coffee.fork(eggBin, ['stop', '--title=example-stop'], { cwd: fixturePath }) as Coffee;
+      killer = coffee.fork(eggBin, ['stop', '--title=example-stop'], {
+        cwd: fixturePath,
+      }) as Coffee;
       killer.debug();
       // killer.expect('code', 0);
       await killer.end();
@@ -347,7 +349,9 @@ describe('test/stop.test.ts', () => {
     });
 
     it('should stop success', async () => {
-      killer = coffee.fork(eggBin, ['stop', '--timeout=1000'], { cwd: timeoutPath }) as Coffee;
+      killer = coffee.fork(eggBin, ['stop', '--timeout=1000'], {
+        cwd: timeoutPath,
+      }) as Coffee;
       killer.debug();
       killer.expect('code', 0);
 

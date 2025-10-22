@@ -185,7 +185,12 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
     it('should work', async () => {
       const msgs = await main(fixturePath, {
-        dependencies: [{ baseDir: path.join(__dirname, '..'), extraFilePattern: ['!**/test'] }],
+        dependencies: [
+          {
+            baseDir: path.join(__dirname, '..'),
+            extraFilePattern: ['!**/test'],
+          },
+        ],
       });
       assert.deepEqual(msgs, [
         'hello, foo(context:0)',

@@ -108,7 +108,10 @@ export class Cookies {
       }
       if (index > 0) {
         // not signed by the first key, update sigValue
-        this.set(sigName, this.keys.sign(raw), { signed: false, overwrite: true });
+        this.set(sigName, this.keys.sign(raw), {
+          signed: false,
+          overwrite: true,
+        });
       }
       return value;
     }

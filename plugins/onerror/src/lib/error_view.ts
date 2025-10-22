@@ -159,7 +159,12 @@ export class ErrorView {
    *
    * @param {Object} frame - current frame
    */
-  getContext(frame: Frame): { start?: number; pre?: string; line?: string; post?: string } {
+  getContext(frame: Frame): {
+    start?: number;
+    pre?: string;
+    line?: string;
+    post?: string;
+  } {
     if (!frame.context) {
       return {};
     }

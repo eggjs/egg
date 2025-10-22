@@ -34,6 +34,7 @@
     "clean": "pnpm -r run clean && rimraf packages/*/dist plugins/*/dist tools/*/dist examples/*/dist tegg/**/dist **/*/*.tsbuildinfo",
     "build": "pnpm -r run build",
     "lint": "oxlint --type-aware",
+    "fmt": "oxfmt",
     "typecheck": "pnpm clean && pnpm -r run typecheck",
     "fmtcheck": "oxfmt --check .",
     "pretest": "pnpm run clean && pnpm -r run pretest",

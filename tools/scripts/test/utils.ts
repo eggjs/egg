@@ -5,7 +5,12 @@ import { Coffee as _Coffee } from 'coffee';
 
 import { isWindows, findNodeProcess } from '../src/helper.ts';
 
-export type Coffee = _Coffee & { proc: ChildProcess; stderr: string; stdout: string; code?: number };
+export type Coffee = _Coffee & {
+  proc: ChildProcess;
+  stderr: string;
+  stdout: string;
+  code?: number;
+};
 
 export async function cleanup(baseDir: string) {
   const processList = await findNodeProcess(x => {

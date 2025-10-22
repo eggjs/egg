@@ -30,7 +30,9 @@ export class IndexMetaBuilder {
     if (indexInfo.options?.name) {
       indexName = indexInfo.options!.name;
     } else {
-      indexName = NameUtil.getIndexName(fields, { unique: indexInfo.options?.unique });
+      indexName = NameUtil.getIndexName(fields, {
+        unique: indexInfo.options?.unique,
+      });
     }
     return new IndexMeta(indexName, fields, indexInfo.options?.unique ?? false, indexInfo.options?.primary ?? false);
   }

@@ -26,7 +26,10 @@ describe('index.test.ts', () => {
 
     it('support custom pathToRegexpModule', async () => {
       const pathToRegexpV8 = await import('path-to-regexp-v8');
-      const fn = match({ match: '/api{/*path}', pathToRegexpModule: pathToRegexpV8 });
+      const fn = match({
+        match: '/api{/*path}',
+        pathToRegexpModule: pathToRegexpV8,
+      });
       expect(fn({ path: '/api/hello' })).toBe(true);
       expect(fn({ path: '/api/' })).toBe(true);
       expect(fn({ path: '/api' })).toBe(true);

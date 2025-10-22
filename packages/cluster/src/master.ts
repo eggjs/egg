@@ -65,7 +65,9 @@ export class Master extends ReadyEventEmitter {
 
     // app started or not
     this.isStarted = false;
-    this.logger = new ConsoleLogger({ level: process.env.EGG_MASTER_LOGGER_LEVEL ?? 'INFO' });
+    this.logger = new ConsoleLogger({
+      level: process.env.EGG_MASTER_LOGGER_LEVEL ?? 'INFO',
+    });
     this.#logMethod = 'info';
     if (this.options.env === 'local' || process.env.NODE_ENV === 'development') {
       this.#logMethod = 'debug';
@@ -107,7 +109,9 @@ export class Master extends ReadyEventEmitter {
     this.ready(() => {
       this.isStarted = true;
       const stickyMsg = this.options.sticky ? ' with STICKY MODE!' : '';
-      const startedURL = terminalLink(this.#appAddress, this.#appAddress, { fallback: false });
+      const startedURL = terminalLink(this.#appAddress, this.#appAddress, {
+        fallback: false,
+      });
       this.logger.info(
         '[master] %s started on %s (%sms)%s',
         frameworkPkg.name,

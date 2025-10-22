@@ -96,7 +96,10 @@ describe.skip('test/start-without-demon-4.test.ts', () => {
     beforeAll(async () => {
       await cleanup(fixturePath);
       await fs.rm(logDir, { force: true, recursive: true });
-      await fs.rm(path.join(fixturePath, 'start-fail'), { force: true, recursive: true });
+      await fs.rm(path.join(fixturePath, 'start-fail'), {
+        force: true,
+        recursive: true,
+      });
       await fs.mkdir(logDir, { recursive: true });
     });
 
@@ -105,7 +108,10 @@ describe.skip('test/start-without-demon-4.test.ts', () => {
       await cleanup(fixturePath);
       await fs.rm(path.join(fixturePath, 'stdout.log'), { force: true });
       await fs.rm(path.join(fixturePath, 'stderr.log'), { force: true });
-      await fs.rm(path.join(fixturePath, 'start-fail'), { force: true, recursive: true });
+      await fs.rm(path.join(fixturePath, 'start-fail'), {
+        force: true,
+        recursive: true,
+      });
     });
 
     it('should start', async () => {

@@ -256,9 +256,7 @@ export class BaseSqlMapGenerator {
     }
 
     sql += kv.join('');
-    sql += `WHERE ${primary.keys
-      .map(indexKey => `\`${indexKey.columnName}\` = {{primary.${indexKey.propertyName}}}`)
-      .join(' AND ')}`;
+    sql += `WHERE ${primary.keys.map(indexKey => `\`${indexKey.columnName}\` = {{primary.${indexKey.propertyName}}}`).join(' AND ')}`;
 
     return sql;
   }

@@ -179,9 +179,12 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
         /**
          * csrf token check requests config
          */
-        supportedRequests: z
-          .array(CSRFSupportRequestItem)
-          .default([{ path: /^\//, methods: ['POST', 'PATCH', 'DELETE', 'PUT', 'CONNECT'] }]),
+        supportedRequests: z.array(CSRFSupportRequestItem).default([
+          {
+            path: /^\//,
+            methods: ['POST', 'PATCH', 'DELETE', 'PUT', 'CONNECT'],
+          },
+        ]),
         /**
          * referer or origin header white list.
          * It only works when using `'referer'` type

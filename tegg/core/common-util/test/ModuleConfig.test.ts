@@ -20,7 +20,9 @@ describe('test/ModuleConfig.test.ts', () => {
         undefined,
         'dev'
       );
-      assert.deepStrictEqual(config, { mysql: { host: '127.0.0.1', port: 11306 } });
+      assert.deepStrictEqual(config, {
+        mysql: { host: '127.0.0.1', port: 11306 },
+      });
     });
 
     it('should load with configNames', async () => {
@@ -31,8 +33,12 @@ describe('test/ModuleConfig.test.ts', () => {
       const configSync = ModuleConfigUtil.loadModuleConfigSync(
         path.join(__dirname, './fixtures/modules/dev-module-config')
       );
-      assert.deepStrictEqual(config, { mysql: { host: '127.0.0.1', port: 11306 } });
-      assert.deepStrictEqual(configSync, { mysql: { host: '127.0.0.1', port: 11306 } });
+      assert.deepStrictEqual(config, {
+        mysql: { host: '127.0.0.1', port: 11306 },
+      });
+      assert.deepStrictEqual(configSync, {
+        mysql: { host: '127.0.0.1', port: 11306 },
+      });
     });
 
     // it('should throw error without initialization', async () => {
@@ -54,8 +60,14 @@ describe('test/ModuleConfig.test.ts', () => {
         assert.deepStrictEqual(ref, [
           { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' },
           { path: path.join(fixturesPath, 'app/module-b'), name: 'moduleB' },
-          { path: path.join(fixturesPath, 'app/module-b/test/fixtures/module-e'), name: 'moduleE' },
-          { path: path.join(fixturesPath, 'node_modules/module-c'), name: 'moduleC' },
+          {
+            path: path.join(fixturesPath, 'app/module-b/test/fixtures/module-e'),
+            name: 'moduleE',
+          },
+          {
+            path: path.join(fixturesPath, 'node_modules/module-c'),
+            name: 'moduleC',
+          },
         ]);
       });
 
@@ -96,7 +108,12 @@ describe('test/ModuleConfig.test.ts', () => {
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath, {
           cwd: fixturesPath,
         });
-        assert.deepStrictEqual(ref, [{ path: path.join(fixturesPath, 'node_modules/module-a'), name: 'moduleA' }]);
+        assert.deepStrictEqual(ref, [
+          {
+            path: path.join(fixturesPath, 'node_modules/module-a'),
+            name: 'moduleA',
+          },
+        ]);
       });
     });
 

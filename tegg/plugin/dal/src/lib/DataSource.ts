@@ -62,7 +62,8 @@ export class DataSourceDelegate<T> extends DataSource<T> {
 
   constructor(
     @Inject({ name: 'transactionalAOP' }) transactionalAOP: TransactionalAOP,
-    @MultiInstanceInfo([DataSourceQualifierAttribute, LoadUnitNameQualifierAttribute]) objInfo: ObjectInfo
+    @MultiInstanceInfo([DataSourceQualifierAttribute, LoadUnitNameQualifierAttribute])
+    objInfo: ObjectInfo
   ) {
     const dataSourceQualifierValue = objInfo.qualifiers.find(t => t.attribute === DataSourceQualifierAttribute)?.value;
     assert(dataSourceQualifierValue);

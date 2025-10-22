@@ -8,7 +8,11 @@ import { getFixtures, getScheduleLogContent, contains } from './utils.ts';
 describe('test/detect-error.test.ts', () => {
   let app: MockApplication;
   beforeAll(async () => {
-    app = mm.cluster({ baseDir: getFixtures('detect-error'), workers: 1, cache: false });
+    app = mm.cluster({
+      baseDir: getFixtures('detect-error'),
+      workers: 1,
+      cache: false,
+    });
     // app.debug();
     await app.ready();
   });

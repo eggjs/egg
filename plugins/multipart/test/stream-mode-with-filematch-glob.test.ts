@@ -52,7 +52,11 @@ describe('test/stream-mode-with-filematch-glob.test.ts', () => {
 
     expect(res.status).toBe(200);
     const data = JSON.parse(res.data);
-    expect(data.body).toEqual({ foo: 'fengmk2', love: 'egg', work: 'with Node.js' });
+    expect(data.body).toEqual({
+      foo: 'fengmk2',
+      love: 'egg',
+      work: 'with Node.js',
+    });
     expect(data.files.length).toBe(3);
     expect(data.files[0].field).toBe('file1');
     expect(data.files[0].filename).toBe('foooooooo.js');
@@ -93,7 +97,11 @@ describe('test/stream-mode-with-filematch-glob.test.ts', () => {
 
     expect(res.status).toBe(200);
     const data = JSON.parse(res.data);
-    expect(data.body).toEqual({ foo: 'fengmk2', love: 'egg', work: 'with Node.js' });
+    expect(data.body).toEqual({
+      foo: 'fengmk2',
+      love: 'egg',
+      work: 'with Node.js',
+    });
     expect(data.files.length).toBe(3);
     expect(data.files[0].field).toBe('file1');
     expect(data.files[0].filename).toBe('foooooooo.js');

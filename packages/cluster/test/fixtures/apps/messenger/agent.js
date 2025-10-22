@@ -29,7 +29,10 @@ module.exports = function (agent) {
   agent.messenger.on('app2agentbystring', msg => console.log('agent: ' + msg));
 
   agent.messenger.on('egg-ready', () => {
-    agent.messenger.sendToApp('worker_online', { type: 'agent', pid: process.pid });
+    agent.messenger.sendToApp('worker_online', {
+      type: 'agent',
+      pid: process.pid,
+    });
   });
 
   agent.messenger.on('worker_online', data => {

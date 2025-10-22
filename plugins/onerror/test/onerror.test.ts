@@ -321,7 +321,10 @@ describe('test/onerror.test.ts', () => {
   if (process.platform === 'linux') {
     // ignore Error: write ECONNRESET on windows and macos
     it('should log warn 4xx', async () => {
-      fs.rmSync(getFixtures('onerror-4xx/logs'), { force: true, recursive: true });
+      fs.rmSync(getFixtures('onerror-4xx/logs'), {
+        force: true,
+        recursive: true,
+      });
       const app = mm.app({
         baseDir: getFixtures('onerror-4xx'),
       });

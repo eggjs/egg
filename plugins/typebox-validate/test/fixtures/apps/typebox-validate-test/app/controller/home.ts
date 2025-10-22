@@ -12,7 +12,13 @@ const ValidateWithRedirect = ValidateFactory(ctx => {
 
 export const TYPEBOX_BODY: TObject<TProperties> = Type.Object({
   name: Type.String(),
-  description: Type.Optional(Type.String({ transform: ['trim', 'toLowerCase'], minLength: 1, maxLength: 4 })),
+  description: Type.Optional(
+    Type.String({
+      transform: ['trim', 'toLowerCase'],
+      minLength: 1,
+      maxLength: 4,
+    })
+  ),
   email: Type.String({ format: 'email' }),
   byte: Type.Optional(Type.Number({ format: 'byte' })),
   version: Type.Optional(Type.String({ format: 'semver' })),

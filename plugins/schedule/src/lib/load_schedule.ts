@@ -15,7 +15,10 @@ function getScheduleLoader(app: EggApplicationCore) {
       const target = this.options.target as Record<string, EggScheduleItem>;
       const items = await this.parse();
       for (const item of items) {
-        const schedule = item.exports as { schedule: EggScheduleConfig; task: EggScheduleTask };
+        const schedule = item.exports as {
+          schedule: EggScheduleConfig;
+          task: EggScheduleTask;
+        };
         const fullpath = item.fullpath;
         const scheduleConfig = schedule.schedule;
         assert(scheduleConfig, `schedule(${fullpath}): must have "schedule" and "task" properties`);

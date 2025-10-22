@@ -70,7 +70,9 @@ export class HTTPMethodRegister {
       );
       const realObj = eggObj.obj;
       const realMethod = realObj[methodMeta.name];
-      const args: Array<object | string | string[]> = Array.from({ length: methodArgsLength });
+      const args: Array<object | string | string[]> = Array.from({
+        length: methodArgsLength,
+      });
       if (hasContext) {
         args[contextIndex!] = ctx;
       }

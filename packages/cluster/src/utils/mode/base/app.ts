@@ -95,7 +95,12 @@ export abstract class BaseAppUtils extends EventEmitter {
 
   constructor(
     options: MasterOptions,
-    { log, logger, messenger, isProduction }: {
+    {
+      log,
+      logger,
+      messenger,
+      isProduction,
+    }: {
       log: LogFun;
       logger: Logger;
       messenger: Messenger;

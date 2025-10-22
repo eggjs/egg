@@ -161,7 +161,10 @@ export class Router {
           }
         }
       } else {
-        this.register(path || '(.*)', [], m, { end: false, ignoreCaptures: !hasPath });
+        this.register(path || '(.*)', [], m, {
+          end: false,
+          ignoreCaptures: !hasPath,
+        });
       }
     }
 
