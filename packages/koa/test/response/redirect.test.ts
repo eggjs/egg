@@ -51,7 +51,7 @@ describe('ctx.redirect(url)', () => {
       assert.equal(ctx.response.header.location, '/login');
     });
 
-    it('should redirect to Referer to a same origin url', () => {
+    it('should redirect to Referer with a same origin url', () => {
       const ctx = context({ url: '/', headers: { host: 'example.com', referer: 'https://example.com/login' } });
       ctx.redirect('back');
       assert.equal(ctx.response.header.location, 'https://example.com/login');
