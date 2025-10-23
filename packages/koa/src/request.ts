@@ -12,19 +12,19 @@ import fresh from 'fresh';
 
 import type { Application } from './application.ts';
 import type { Context } from './context.ts';
-import type { Response } from './response.ts';
+import type { KoaResponse } from './response.ts';
 
 export interface RequestSocket extends Socket {
   encrypted: boolean;
 }
 
-export class Request {
+export class KoaRequest {
   [key: symbol]: unknown;
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;
   ctx: Context;
-  response: Response;
+  response: KoaResponse;
   originalUrl: string;
 
   constructor(app: Application, ctx: Context, req: IncomingMessage, res: ServerResponse) {
