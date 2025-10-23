@@ -1,1 +1,1 @@
-export * from '@eggjs/tegg-transaction-decorator';
+export * from '@eggjs/transaction-decorator';

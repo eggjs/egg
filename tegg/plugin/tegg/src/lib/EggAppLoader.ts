@@ -1,5 +1,5 @@
 import type { Application } from 'egg';
-import { type Loader, TeggError } from '@eggjs/tegg-metadata';
+import { type Loader, TeggError } from '@eggjs/metadata';
 import {
   AccessLevel,
   type EggProtoImplClass,
@@ -12,8 +12,8 @@ import {
   QualifierUtil,
 } from '@eggjs/core-decorator';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
-import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
-import { EggObjectFactory } from '@eggjs/tegg-dynamic-inject-runtime';
+import { BackgroundTaskHelper } from '@eggjs/background-task';
+import { EggObjectFactory } from '@eggjs/dynamic-inject-runtime';
 
 import { ModuleConfigLoader } from './ModuleConfigLoader.ts';
 import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl.ts';

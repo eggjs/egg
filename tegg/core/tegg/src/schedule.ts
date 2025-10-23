@@ -1,1 +1,1 @@
-export * from '@eggjs/tegg-schedule-decorator';
+export * from '@eggjs/schedule-decorator';

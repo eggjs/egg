@@ -1,4 +1,4 @@
-import { LoadUnitFactory } from '@eggjs/tegg-metadata';
+import { LoadUnitFactory } from '@eggjs/metadata';
 import type {
   EggObject,
   EggObjectLifecycle,
@@ -9,7 +9,7 @@ import type {
   QualifierInfo,
 } from '@eggjs/tegg-types';
 import { EggObjectStatus, InjectType, ObjectInitType } from '@eggjs/tegg-types';
-import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { IdenticalUtil } from '@eggjs/lifecycle';
 
 import { EggObjectLifecycleUtil } from '../model/EggObject.ts';
 import { ContextHandler } from '../model/ContextHandler.ts';

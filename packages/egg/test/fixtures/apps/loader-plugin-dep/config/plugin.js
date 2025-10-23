@@ -46,5 +46,5 @@ module.exports = {
   teggSchedule: true,
   teggOrm: true,
   teggAjv: true,
-  aopModule: true,
+  teggAop: true,
 };

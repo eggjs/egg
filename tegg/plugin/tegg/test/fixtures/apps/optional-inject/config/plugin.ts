@@ -17,6 +17,6 @@ export default {
   teggSchedule: false,
   teggOrm: false,
   teggAjv: false,
-  aopModule: false,
+  teggAop: false,
   watcher: false,
 };

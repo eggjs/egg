@@ -7,7 +7,7 @@ module.exports = {
   },
   teggController: {
     enable: true,
-    package: '@eggjs/tegg-controller-plugin',
+    package: '@eggjs/controller-plugin',
   },
   teggConfig: {
     enable: true,

@@ -1,9 +1,8 @@
 {
-  "name": "@eggjs/tegg-eventbus-plugin",
+  "name": "@eggjs/eventbus-plugin",
   "version": "4.0.0-beta.29",
   "eggPlugin": {
-    "name": "eventbusModule",
-    "strict": false,
+    "name": "teggEventbus",
     "dependencies": [
       "tegg"
     ]
@@ -53,11 +52,11 @@
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/egg-module-common": "workspace:*",
+    "@eggjs/module-common": "workspace:*",
     "@eggjs/eventbus-decorator": "workspace:*",
-    "@eggjs/tegg-eventbus-runtime": "workspace:*",
-    "@eggjs/tegg-lifecycle": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/eventbus-runtime": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*"
   },
   "peerDependencies": {

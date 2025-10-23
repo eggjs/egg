@@ -7,7 +7,7 @@ import {
   LifecycleInit,
   LifecyclePreDestroy,
   LifecycleDestroy,
-} from '@eggjs/tegg-lifecycle';
+} from '@eggjs/lifecycle';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,

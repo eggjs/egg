@@ -5,7 +5,7 @@ import {
   type GlobalGraphBuildHook,
   GlobalModuleNodeBuilder,
   type GlobalModuleNode,
-} from '@eggjs/tegg-metadata';
+} from '@eggjs/metadata';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 

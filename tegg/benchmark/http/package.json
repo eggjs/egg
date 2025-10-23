@@ -7,7 +7,7 @@
   "dependencies": {
     "@eggjs/tegg": "^3.7.0",
     "@eggjs/tegg-config": "^3.7.0",
-    "@eggjs/tegg-controller-plugin": "^3.7.0",
+    "@eggjs/controller-plugin": "^3.7.0",
     "@eggjs/tegg-plugin": "^3.7.0",
     "@eggjs/tsconfig": "^3.0.0",
     "egg": "4"

@@ -13,7 +13,7 @@ import {
   GlobalGraph,
   type GlobalGraphBuildHook,
   LoadUnitFactory,
-} from '@eggjs/tegg-metadata';
+} from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { type EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
 

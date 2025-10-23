@@ -1,6 +1,6 @@
 import { Inject } from '@eggjs/tegg';
 import { type EggLogger } from 'egg';
-import { type IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg-schedule-decorator';
+import { type IntervalParams, Schedule, ScheduleType } from '@eggjs/schedule-decorator';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,

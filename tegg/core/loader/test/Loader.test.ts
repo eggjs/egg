@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
+
 import { describe, it } from 'vitest';
-import { EggLoadUnitType } from '@eggjs/tegg-metadata';
-import { LoaderFactory, LoaderUtil } from '../src/index.js';
+import { EggLoadUnitType } from '@eggjs/metadata';
+
+import { LoaderFactory, LoaderUtil } from '../src/index.ts';
 
 describe('core/loader/test/Loader.test.ts', () => {
   describe('module loader', () => {

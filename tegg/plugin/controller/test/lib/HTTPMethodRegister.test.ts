@@ -8,7 +8,7 @@ import {
   EggPrototypeLifecycleUtil,
   type LoadUnit,
   LoadUnitFactory,
-} from '@eggjs/tegg-metadata';
+} from '@eggjs/metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { CONTROLLER_META_DATA, HTTPControllerMeta } from '@eggjs/tegg';
 

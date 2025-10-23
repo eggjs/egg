@@ -1,5 +1,5 @@
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { ClassUtil } from '@eggjs/tegg-metadata';
+import { ClassUtil } from '@eggjs/metadata';
 
 import { ControllerInfoUtil } from '../ControllerInfoUtil.ts';
 

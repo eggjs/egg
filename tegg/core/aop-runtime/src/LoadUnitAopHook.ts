@@ -1,6 +1,6 @@
 import { AspectInfoUtil, AspectMetaBuilder, CrosscutAdviceFactory } from '@eggjs/aop-decorator';
 import { PrototypeUtil } from '@eggjs/core-decorator';
-import { TeggError } from '@eggjs/tegg-metadata';
+import { TeggError } from '@eggjs/metadata';
 import type {
   EggPrototype,
   EggPrototypeWithClazz,

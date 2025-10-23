@@ -6,7 +6,7 @@ import {
   type EggObjectLifeCycleContext,
 } from '@eggjs/tegg-types';
 import { MultiInstanceProto } from '@eggjs/core-decorator';
-import { LifecycleInit } from '@eggjs/tegg-lifecycle';
+import { LifecycleInit } from '@eggjs/lifecycle';
 
 export const FOO_ATTRIBUTE: symbol = Symbol.for('FOO_ATTRIBUTE');
 

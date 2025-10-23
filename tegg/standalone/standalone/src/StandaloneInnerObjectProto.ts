@@ -11,7 +11,7 @@ import {
   IdenticalUtil,
   type QualifierValue,
 } from '@eggjs/tegg';
-import { type EggPrototype, type InjectObjectProto, type EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
+import type { EggPrototype, InjectObjectProto, EggPrototypeLifecycleContext } from '@eggjs/metadata';
 
 export class StandaloneInnerObjectProto implements EggPrototype {
   [key: symbol]: PropertyDescriptor;

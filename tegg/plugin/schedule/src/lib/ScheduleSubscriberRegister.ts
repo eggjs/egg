@@ -2,7 +2,7 @@ import { debuglog } from 'node:util';
 
 import type { Agent } from 'egg';
 import { PrototypeUtil, type EggProtoImplClass } from '@eggjs/core-decorator';
-import { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
+import { ScheduleMetadata } from '@eggjs/schedule-decorator';
 
 import { EggScheduleMetadataConvertor } from './EggScheduleMetadataConvertor.ts';
 
@@ -20,7 +20,7 @@ export class ScheduleSubscriberRegister {
     const schedule = EggScheduleMetadataConvertor.convertToEggSchedule(metadata);
     const path = PrototypeUtil.getFilePath(clazz) as string;
     if (!metadata.disable) {
-      this.agent.logger.info('[@eggjs/tegg-schedule-plugin]: register schedule %s', path);
+      this.agent.logger.info('[@eggjs/schedule-plugin]: register schedule %s', path);
     }
 
     // TODO: why disable is not used?

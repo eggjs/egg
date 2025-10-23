@@ -1,6 +1,6 @@
-import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
+import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/metadata';
 import { ControllerMetaBuilderFactory, ControllerMetadataUtil } from '@eggjs/controller-decorator';
-import type { LifecycleHook } from '@eggjs/tegg-lifecycle';
+import type { LifecycleHook } from '@eggjs/lifecycle';
 
 export class EggControllerPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
   async postCreate(ctx: EggPrototypeLifecycleContext): Promise<void> {

@@ -35,7 +35,7 @@ async function main() {
   if (npmRunRoot) {
     const pkgFile = path.join(npmRunRoot, 'package.json');
     const pkgFileExists = await exists(pkgFile);
-    debug('pkgFile: %o exists: %o', pkgFile, pkgFileExists);
+    debug('pkgFile: %s exists: %s', pkgFile, !!pkgFileExists);
     if (pkgFileExists) {
       const pkg = await readJSON(pkgFile);
       // should set pkg.egg.declarations = true or pkg.egg.typescript = true

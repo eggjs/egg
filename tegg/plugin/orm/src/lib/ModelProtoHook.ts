@@ -1,6 +1,6 @@
-import type { LifecycleHook } from '@eggjs/tegg-lifecycle';
-import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
-import { IS_MODEL, ModelMetaBuilder, ModelMetadataUtil } from '@eggjs/tegg-orm-decorator';
+import type { LifecycleHook } from '@eggjs/lifecycle';
+import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/metadata';
+import { IS_MODEL, ModelMetaBuilder, ModelMetadataUtil } from '@eggjs/orm-decorator';
 
 import { ModelProtoManager } from './ModelProtoManager.ts';
 

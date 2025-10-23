@@ -1,18 +1,18 @@
-# @eggjs/tegg-dal-plugin
+# @eggjs/dal-plugin
 
 [![NPM version][npm-image]][npm-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
-[![Node.js Version](https://img.shields.io/node/v/@eggjs/tegg-dal-plugin.svg?style=flat)](https://nodejs.org/en/download/)
+[![Node.js Version](https://img.shields.io/node/v/@eggjs/dal-plugin.svg?style=flat)](https://nodejs.org/en/download/)
 
-[npm-image]: https://img.shields.io/npm/v/@eggjs/tegg-dal-plugin.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/@eggjs/tegg-dal-plugin
-[snyk-image]: https://snyk.io/test/npm/@eggjs/tegg-dal-plugin/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/@eggjs/tegg-dal-plugin
-[download-image]: https://img.shields.io/npm/dm/@eggjs/tegg-dal-plugin.svg?style=flat-square
-[download-url]: https://npmjs.org/package/@eggjs/tegg-dal-plugin
+[npm-image]: https://img.shields.io/npm/v/@eggjs/dal-plugin.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/dal-plugin
+[snyk-image]: https://snyk.io/test/npm/@eggjs/dal-plugin/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/dal-plugin
+[download-image]: https://img.shields.io/npm/dm/@eggjs/dal-plugin.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/dal-plugin
 
-@eggjs/tegg-dal-plugin 支持使用注解的方式来开发 egg 中的 dal。
+@eggjs/dal-plugin 支持使用注解的方式来开发 egg 中的 dal。
 
 ## egg 模式
 
@@ -24,7 +24,7 @@ npm i --save @eggjs/tegg
 # tegg 插件
 npm i --save @eggjs/tegg-plugin
 # tegg dal 插件
-npm i --save @eggjs/tegg-dal-plugin
+npm i --save @eggjs/dal-plugin
 ```
 
 ### Prepare
@@ -46,7 +46,7 @@ exports.tegg = {
 };
 
 exports.teggDal = {
-  package: '@eggjs/tegg-dal-plugin',
+  package: '@eggjs/dal-plugin',
   enable: true,
 };
 ```
@@ -59,7 +59,7 @@ exports.teggDal = {
 # tegg 注解
 npm i --save @eggjs/tegg
 # tegg dal 插件
-npm i --save @eggjs/tegg-dal-plugin
+npm i --save @eggjs/dal-plugin
 ```
 
 ### Prepare

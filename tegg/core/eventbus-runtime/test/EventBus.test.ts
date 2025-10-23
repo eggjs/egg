@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 
 import { describe, it, beforeEach, afterEach } from 'vitest';
 import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
-import { type EggPrototype, LoadUnitFactory } from '@eggjs/tegg-metadata';
+import { type EggPrototype, LoadUnitFactory } from '@eggjs/metadata';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import { EventInfoUtil, CORK_ID } from '@eggjs/eventbus-decorator';

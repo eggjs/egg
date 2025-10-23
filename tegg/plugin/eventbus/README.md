@@ -1,24 +1,24 @@
-# @eggjs/tegg-eventbus-plugin
+# @eggjs/eventbus-plugin
 
 [![NPM version][npm-image]][npm-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
-[![Node.js Version](https://img.shields.io/node/v/@eggjs/tegg-eventbus-plugin.svg?style=flat)](https://nodejs.org/en/download/)
+[![Node.js Version](https://img.shields.io/node/v/@eggjs/eventbus-plugin.svg?style=flat)](https://nodejs.org/en/download/)
 
-[npm-image]: https://img.shields.io/npm/v/@eggjs/tegg-eventbus-plugin.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/@eggjs/tegg-eventbus-plugin
-[snyk-image]: https://snyk.io/test/npm/@eggjs/tegg-eventbus-plugin/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/@eggjs/tegg-eventbus-plugin
-[download-image]: https://img.shields.io/npm/dm/@eggjs/tegg-eventbus-plugin.svg?style=flat-square
-[download-url]: https://npmjs.org/package/@eggjs/tegg-eventbus-plugin
+[npm-image]: https://img.shields.io/npm/v/@eggjs/eventbus-plugin.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/eventbus-plugin
+[snyk-image]: https://snyk.io/test/npm/@eggjs/eventbus-plugin/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/eventbus-plugin
+[download-image]: https://img.shields.io/npm/dm/@eggjs/eventbus-plugin.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/eventbus-plugin
 
 ## Usage
 
 ```js
 // plugin.js
-export.eventbusModule = {
+export.teggEventbus = {
   enable: true,
-  package: '@eggjs/tegg-eventbus-plugin',
+  package: '@eggjs/eventbus-plugin',
 };
 ```
 

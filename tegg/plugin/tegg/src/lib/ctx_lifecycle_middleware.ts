@@ -1,4 +1,4 @@
-import { ROOT_PROTO, TEGG_CONTEXT } from '@eggjs/egg-module-common';
+import { ROOT_PROTO, TEGG_CONTEXT } from '@eggjs/module-common';
 import type { Context, Next } from 'egg';
 import type { EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 

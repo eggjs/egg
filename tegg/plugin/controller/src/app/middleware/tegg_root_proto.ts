@@ -1,5 +1,5 @@
 import type { MiddlewareFunc } from 'egg';
-import { ROOT_PROTO } from '@eggjs/egg-module-common';
+import { ROOT_PROTO } from '@eggjs/module-common';
 
 export default (): MiddlewareFunc => {
   return async function teggRootProto(ctx, next) {

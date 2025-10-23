@@ -1,6 +1,6 @@
 import { Base } from 'sdk-base';
 import type { Application } from 'egg';
-import { EggLoadUnitType, type LoadUnit, LoadUnitFactory } from '@eggjs/tegg-metadata';
+import { EggLoadUnitType, type LoadUnit, LoadUnitFactory } from '@eggjs/metadata';
 import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 
 import { EggModuleLoader } from './EggModuleLoader.ts';

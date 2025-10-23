@@ -8,8 +8,8 @@ import {
   EggPrototypeCrossCutHook,
   LoadUnitAopHook,
   pointCutGraphHook,
-} from '@eggjs/tegg-aop-runtime';
-import { GlobalGraph } from '@eggjs/tegg-metadata';
+} from '@eggjs/aop-runtime';
+import { GlobalGraph } from '@eggjs/metadata';
 
 import { AopContextHook } from './lib/AopContextHook.ts';
 

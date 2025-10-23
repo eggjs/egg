@@ -1,8 +1,8 @@
 import type { Context } from 'egg';
 import type { EggContext as TEggContext } from '@eggjs/tegg-runtime';
-import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
+import { TEGG_CONTEXT } from '@eggjs/module-common';
 import { type EggProtoImplClass, PrototypeUtil, type QualifierInfo } from '@eggjs/core-decorator';
-import type { EggPrototype } from '@eggjs/tegg-metadata';
+import type { EggPrototype } from '@eggjs/metadata';
 
 import { ctxLifecycleMiddleware } from '../../lib/ctx_lifecycle_middleware.ts';
 

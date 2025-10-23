@@ -1,4 +1,4 @@
-import { Attribute, Model } from '@eggjs/tegg-orm-decorator';
+import { Attribute, Model } from '@eggjs/orm-decorator';
 import Realm from 'leoric';
 
 const Bone = Realm.Bone;

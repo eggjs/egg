@@ -1,6 +1,6 @@
 import { Base } from 'sdk-base';
 import Realm from 'leoric';
-import { ModelMetadata, ModelMetadataUtil } from '@eggjs/tegg-orm-decorator';
+import { ModelMetadata, ModelMetadataUtil } from '@eggjs/orm-decorator';
 
 import { ModelProtoManager } from './ModelProtoManager.ts';
 import { DataSourceManager, type OrmConfig } from './DataSourceManager.ts';

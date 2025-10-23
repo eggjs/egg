@@ -5,7 +5,7 @@ import {
   type Loader,
   type ModuleReference,
 } from '@eggjs/tegg-types';
-import { type ModuleDescriptor } from '@eggjs/tegg-metadata';
+import type { ModuleDescriptor } from '@eggjs/metadata';
 import { PrototypeUtil } from '@eggjs/core-decorator';
 
 export type LoaderCreator = (unitPath: string) => Loader;

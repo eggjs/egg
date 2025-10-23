@@ -10,7 +10,7 @@ import {
   LoadUnitFactory,
   type LoadUnitLifecycleContext,
   EggPrototypeCreatorFactory,
-} from '@eggjs/tegg-metadata';
+} from '@eggjs/metadata';
 import {
   type EggPrototypeName,
   type QualifierInfo,
@@ -19,8 +19,8 @@ import {
   LoadUnitNameQualifierAttribute,
   QualifierUtil,
 } from '@eggjs/core-decorator';
-import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { type Id } from '@eggjs/tegg-types';
+import { IdenticalUtil } from '@eggjs/lifecycle';
+import type { Id } from '@eggjs/tegg-types';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
 const debug = debuglog('egg/tegg/plugin/tegg/lib/AppLoadUnit');

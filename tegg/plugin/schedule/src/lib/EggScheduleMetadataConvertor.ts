@@ -1,5 +1,5 @@
 import type { EggAppConfig } from 'egg';
-import { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
+import { ScheduleMetadata } from '@eggjs/schedule-decorator';
 
 type EggScheduleConfig = EggAppConfig['schedule'];
 

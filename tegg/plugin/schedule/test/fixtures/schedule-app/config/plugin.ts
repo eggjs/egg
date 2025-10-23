@@ -8,7 +8,7 @@ export default {
     enable: true,
   },
   teggSchedule: {
-    package: '@eggjs/tegg-schedule-plugin',
+    package: '@eggjs/schedule-plugin',
     enable: true,
   },
 };

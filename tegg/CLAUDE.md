@@ -115,7 +115,7 @@ pnpm -r run typecheck                 # Type check all packages recursively
 pnpm --filter @eggjs/tegg-runtime run typecheck
 
 # Build specific packages
-pnpm --filter @eggjs/tegg-metadata run build
+pnpm --filter @eggjs/metadata run build
 pnpm --filter @eggjs/tegg-runtime run build
 
 # Clean specific package

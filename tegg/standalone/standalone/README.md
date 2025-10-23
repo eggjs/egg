@@ -1,23 +1,23 @@
-# `@eggjs/tegg-standalone`
+# `@eggjs/standalone`
 
 [![NPM version][npm-image]][npm-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
-[![Node.js Version](https://img.shields.io/node/v/@eggjs/tegg-standalone.svg?style=flat)](https://nodejs.org/en/download/)
+[![Node.js Version](https://img.shields.io/node/v/@eggjs/standalone.svg?style=flat)](https://nodejs.org/en/download/)
 
-[npm-image]: https://img.shields.io/npm/v/@eggjs/tegg-standalone.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/@eggjs/tegg-standalone
-[snyk-image]: https://snyk.io/test/npm/@eggjs/tegg-standalone/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/@eggjs/tegg-standalone
-[download-image]: https://img.shields.io/npm/dm/@eggjs/tegg-standalone.svg?style=flat-square
-[download-url]: https://npmjs.org/package/@eggjs/tegg-standalone
+[npm-image]: https://img.shields.io/npm/v/@eggjs/standalone.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/standalone
+[snyk-image]: https://snyk.io/test/npm/@eggjs/standalone/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/standalone
+[download-image]: https://img.shields.io/npm/dm/@eggjs/standalone.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/standalone
 
-通过 `@eggjs/tegg-standalone` 在一个独立环境去中运行 tegg 应用。
+通过 `@eggjs/standalone` 在一个独立环境去中运行 tegg 应用。
 
 ## install
 
 ```sh
-npm i --save @eggjs/tegg-standalone
+npm i --save @eggjs/standalone
 ```
 
 ## Usage

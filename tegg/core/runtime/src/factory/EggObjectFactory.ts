@@ -6,7 +6,7 @@ import type {
   EggPrototype,
   EggPrototypeClass,
 } from '@eggjs/tegg-types';
-import { LoadUnitFactory } from '@eggjs/tegg-metadata';
+import { LoadUnitFactory } from '@eggjs/metadata';
 
 import { EggObjectImpl } from '../impl/EggObjectImpl.ts';
 import { EggObjectLifecycleUtil } from '../model/EggObject.ts';

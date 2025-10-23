@@ -11,12 +11,12 @@ export default {
     package: '@eggjs/tegg-config',
     enable: true,
   },
-  aopModule: {
+  teggAop: {
     enable: true,
-    package: '@eggjs/tegg-aop-plugin',
+    package: '@eggjs/aop-plugin',
   },
   teggDal: {
-    package: '@eggjs/tegg-dal-plugin',
+    package: '@eggjs/dal-plugin',
     enable: true,
   },
 };

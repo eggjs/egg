@@ -1,7 +1,7 @@
 import type { Context } from 'egg';
-import type { EggPrototype } from '@eggjs/tegg-metadata';
-import type { ScheduleMetadata, ScheduleSubscriber } from '@eggjs/tegg-schedule-decorator';
-import { ROOT_PROTO } from '@eggjs/egg-module-common';
+import type { EggPrototype } from '@eggjs/metadata';
+import type { ScheduleMetadata, ScheduleSubscriber } from '@eggjs/schedule-decorator';
+import { ROOT_PROTO } from '@eggjs/module-common';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 
 export type EggScheduleFunction = (ctx: Context, data: any) => Promise<any>;

@@ -1,16 +1,16 @@
-# `@eggjs/tegg-lifecycle`
+# `@eggjs/lifecycle`
 
 [![NPM version][npm-image]][npm-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
-[![Node.js Version](https://img.shields.io/node/v/@eggjs/tegg-lifecycle.svg?style=flat)](https://nodejs.org/en/download/)
+[![Node.js Version](https://img.shields.io/node/v/@eggjs/lifecycle.svg?style=flat)](https://nodejs.org/en/download/)
 
-[npm-image]: https://img.shields.io/npm/v/@eggjs/tegg-lifecycle.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/@eggjs/tegg-lifecycle
-[snyk-image]: https://snyk.io/test/npm/@eggjs/tegg-lifecycle/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/@eggjs/tegg-lifecycle
-[download-image]: https://img.shields.io/npm/dm/@eggjs/tegg-lifecycle.svg?style=flat-square
-[download-url]: https://npmjs.org/package/@eggjs/tegg-lifecycle
+[npm-image]: https://img.shields.io/npm/v/@eggjs/lifecycle.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/lifecycle
+[snyk-image]: https://snyk.io/test/npm/@eggjs/lifecycle/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/lifecycle
+[download-image]: https://img.shields.io/npm/dm/@eggjs/lifecycle.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/lifecycle
 
 # Usage
 

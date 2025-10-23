@@ -1,5 +1,5 @@
 {
-  "name": "@eggjs/tegg-schedule-plugin",
+  "name": "@eggjs/schedule-plugin",
   "eggPlugin": {
     "name": "teggSchedule",
     "dependencies": [
@@ -8,7 +8,7 @@
     ]
   },
   "version": "4.0.0-beta.29",
-  "description": "schedule decorator for egg",
+  "description": "schedule decorator plugin for egg",
   "keywords": [
     "egg",
     "plugin",
@@ -54,12 +54,12 @@
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/egg-module-common": "workspace:*",
-    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/module-common": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
-    "@eggjs/tegg-schedule-decorator": "workspace:*"
+    "@eggjs/schedule-decorator": "workspace:*"
   },
   "peerDependencies": {
     "@eggjs/tegg-plugin": "workspace:*",

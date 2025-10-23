@@ -1,4 +1,4 @@
-// This file is created by egg-ts-helper@3.1.1
+// This file is created by egg-ts-helper@3.2.0
 // Do not modify this file!!!!!!!!!
 /* eslint-disable */
 

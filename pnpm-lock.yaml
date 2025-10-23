@@ -466,10 +466,10 @@ catalogs:
       specifier: ^0.8.0
       version: 0.8.0
     oxlint:
-      specifier: ^1.23.0
+      specifier: ^1.24.0
       version: 1.23.0
     oxlint-tsgolint:
-      specifier: ^0.2.0
+      specifier: ^0.2.1
       version: 0.2.0
     parseurl:
       specifier: ^1.3.3
@@ -639,10 +639,10 @@ importers:
         version: 0.8.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.24.0(oxlint-tsgolint@0.2.1)
       oxlint-tsgolint:
         specifier: 'catalog:'
-        version: 0.2.0
+        version: 0.2.1
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
@@ -676,7 +676,7 @@ importers:
         version: link:../../tools/egg-bin
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.23.0(oxlint-tsgolint@0.2.1)
 
   examples/helloworld-tegg:
     dependencies:
@@ -833,7 +833,7 @@ importers:
         version: 1.1.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.23.0(oxlint-tsgolint@0.2.1)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -931,18 +931,33 @@ importers:
 
   packages/egg:
     dependencies:
+      '@eggjs/ajv-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/ajv
+      '@eggjs/aop-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/aop
       '@eggjs/cluster':
         specifier: workspace:*
         version: link:../cluster
+      '@eggjs/controller-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/controller
       '@eggjs/cookies':
         specifier: workspace:*
         version: link:../cookies
       '@eggjs/core':
         specifier: workspace:*
         version: link:../core
+      '@eggjs/dal-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/dal
       '@eggjs/development':
         specifier: workspace:*
         version: link:../../plugins/development
+      '@eggjs/eventbus-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/eventbus
       '@eggjs/extend2':
         specifier: workspace:*
         version: link:../extend2
@@ -961,9 +976,15 @@ importers:
       '@eggjs/onerror':
         specifier: workspace:*
         version: link:../../plugins/onerror
+      '@eggjs/orm-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/orm
       '@eggjs/schedule':
         specifier: workspace:*
         version: link:../../plugins/schedule
+      '@eggjs/schedule-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/schedule
       '@eggjs/security':
         specifier: workspace:*
         version: link:../../plugins/security
@@ -976,33 +997,12 @@ importers:
       '@eggjs/tegg':
         specifier: workspace:*
         version: link:../../tegg/core/tegg
-      '@eggjs/tegg-ajv-plugin':
-        specifier: workspace:*
-        version: link:../../tegg/plugin/ajv
-      '@eggjs/tegg-aop-plugin':
-        specifier: workspace:*
-        version: link:../../tegg/plugin/aop
       '@eggjs/tegg-config':
         specifier: workspace:*
         version: link:../../tegg/plugin/config
-      '@eggjs/tegg-controller-plugin':
-        specifier: workspace:*
-        version: link:../../tegg/plugin/controller
-      '@eggjs/tegg-dal-plugin':
-        specifier: workspace:*
-        version: link:../../tegg/plugin/dal
-      '@eggjs/tegg-eventbus-plugin':
-        specifier: workspace:*
-        version: link:../../tegg/plugin/eventbus
-      '@eggjs/tegg-orm-plugin':
-        specifier: workspace:*
-        version: link:../../tegg/plugin/orm
       '@eggjs/tegg-plugin':
         specifier: workspace:*
         version: link:../../tegg/plugin/tegg
-      '@eggjs/tegg-schedule-plugin':
-        specifier: workspace:*
-        version: link:../../tegg/plugin/schedule
       '@eggjs/utils':
         specifier: workspace:*
         version: link:../utils
@@ -1120,7 +1120,7 @@ importers:
         version: 24.9.1
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.23.0(oxlint-tsgolint@0.2.1)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1138,7 +1138,7 @@ importers:
         version: link:../tsconfig
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.23.0(oxlint-tsgolint@0.2.1)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1336,7 +1336,7 @@ importers:
         version: 24.9.1
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.23.0(oxlint-tsgolint@0.2.1)
       path-to-regexp-v8:
         specifier: npm:path-to-regexp@^8.3.0
         version: path-to-regexp@8.3.0
@@ -1799,7 +1799,7 @@ importers:
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.23.0(oxlint-tsgolint@0.2.1)
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -1851,7 +1851,7 @@ importers:
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.23.0(oxlint-tsgolint@0.2.1)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2019,7 +2019,7 @@ importers:
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.23.0(oxlint-tsgolint@0.2.1)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2080,7 +2080,7 @@ importers:
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.23.0(oxlint-tsgolint@0.2.1)
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -2160,7 +2160,7 @@ importers:
         version: 2.0.1(nunjucks@3.2.4(chokidar@3.6.0))
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.23.0(oxlint-tsgolint@0.2.1)
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -2273,12 +2273,12 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../metadata
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../runtime
@@ -2390,12 +2390,12 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../metadata
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
@@ -2569,18 +2569,18 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
+      '@eggjs/dynamic-inject':
+        specifier: workspace:*
+        version: link:../dynamic-inject
+      '@eggjs/lifecycle':
+        specifier: workspace:*
+        version: link:../lifecycle
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../metadata
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
-      '@eggjs/tegg-dynamic-inject':
-        specifier: workspace:*
-        version: link:../dynamic-inject
-      '@eggjs/tegg-lifecycle':
-        specifier: workspace:*
-        version: link:../lifecycle
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../runtime
@@ -2659,15 +2659,15 @@ importers:
         specifier: 'catalog:'
         version: 1.0.0
     devDependencies:
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../metadata
       '@eggjs/module-test-util':
         specifier: workspace:*
         version: link:../test-util
       '@eggjs/tegg-loader':
         specifier: workspace:*
         version: link:../loader
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
       '@types/node':
         specifier: 'catalog:'
         version: 24.9.1
@@ -2714,7 +2714,7 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
-      '@eggjs/tegg-metadata':
+      '@eggjs/metadata':
         specifier: workspace:*
         version: link:../metadata
       '@eggjs/tegg-types':
@@ -2748,12 +2748,12 @@ importers:
       '@eggjs/errors':
         specifier: workspace:*
         version: link:../../../packages/errors
+      '@eggjs/lifecycle':
+        specifier: workspace:*
+        version: link:../lifecycle
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
-      '@eggjs/tegg-lifecycle':
-        specifier: workspace:*
-        version: link:../lifecycle
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
@@ -2816,15 +2816,15 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
+      '@eggjs/lifecycle':
+        specifier: workspace:*
+        version: link:../lifecycle
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../metadata
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
-      '@eggjs/tegg-lifecycle':
-        specifier: workspace:*
-        version: link:../lifecycle
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
@@ -2896,6 +2896,9 @@ importers:
       '@eggjs/aop-decorator':
         specifier: workspace:*
         version: link:../aop-decorator
+      '@eggjs/background-task':
+        specifier: workspace:*
+        version: link:../background-task
       '@eggjs/controller-decorator':
         specifier: workspace:*
         version: link:../controller-decorator
@@ -2905,45 +2908,42 @@ importers:
       '@eggjs/dal-decorator':
         specifier: workspace:*
         version: link:../dal-decorator
+      '@eggjs/dynamic-inject':
+        specifier: workspace:*
+        version: link:../dynamic-inject
       '@eggjs/eventbus-decorator':
         specifier: workspace:*
         version: link:../eventbus-decorator
+      '@eggjs/lifecycle':
+        specifier: workspace:*
+        version: link:../lifecycle
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../metadata
+      '@eggjs/orm-decorator':
+        specifier: workspace:*
+        version: link:../orm-decorator
+      '@eggjs/schedule-decorator':
+        specifier: workspace:*
+        version: link:../schedule-decorator
       '@eggjs/standalone-decorator':
         specifier: workspace:*
         version: link:../standalone-decorator
-      '@eggjs/tegg-background-task':
-        specifier: workspace:*
-        version: link:../background-task
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
-      '@eggjs/tegg-dynamic-inject':
-        specifier: workspace:*
-        version: link:../dynamic-inject
-      '@eggjs/tegg-lifecycle':
-        specifier: workspace:*
-        version: link:../lifecycle
       '@eggjs/tegg-loader':
         specifier: workspace:*
         version: link:../loader
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
-      '@eggjs/tegg-orm-decorator':
-        specifier: workspace:*
-        version: link:../orm-decorator
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../runtime
-      '@eggjs/tegg-schedule-decorator':
-        specifier: workspace:*
-        version: link:../schedule-decorator
-      '@eggjs/tegg-transaction-decorator':
-        specifier: workspace:*
-        version: link:../transaction-decorator
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
+      '@eggjs/transaction-decorator':
+        specifier: workspace:*
+        version: link:../transaction-decorator
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -2963,18 +2963,18 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
+      '@eggjs/lifecycle':
+        specifier: workspace:*
+        version: link:../lifecycle
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../metadata
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
-      '@eggjs/tegg-lifecycle':
-        specifier: workspace:*
-        version: link:../lifecycle
       '@eggjs/tegg-loader':
         specifier: workspace:*
         version: link:../loader
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../runtime
@@ -3049,13 +3049,16 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../../core/core-decorator
-      '@eggjs/tegg-lifecycle':
+      '@eggjs/lifecycle':
         specifier: workspace:*
         version: link:../../core/lifecycle
       ajv:
         specifier: 'catalog:'
         version: 8.17.1
     devDependencies:
+      '@eggjs/controller-plugin':
+        specifier: workspace:*
+        version: link:../controller
       '@eggjs/mock':
         specifier: workspace:*
         version: link:../../../plugins/mock
@@ -3065,9 +3068,6 @@ importers:
       '@eggjs/tegg-config':
         specifier: workspace:*
         version: link:../config
-      '@eggjs/tegg-controller-plugin':
-        specifier: workspace:*
-        version: link:../controller
       '@eggjs/tegg-plugin':
         specifier: workspace:*
         version: link:../tegg
@@ -3092,21 +3092,21 @@ importers:
       '@eggjs/aop-decorator':
         specifier: workspace:*
         version: link:../../core/aop-decorator
+      '@eggjs/aop-runtime':
+        specifier: workspace:*
+        version: link:../../core/aop-runtime
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../../core/core-decorator
-      '@eggjs/egg-module-common':
-        specifier: workspace:*
-        version: link:../common
-      '@eggjs/tegg-aop-runtime':
-        specifier: workspace:*
-        version: link:../../core/aop-runtime
-      '@eggjs/tegg-lifecycle':
+      '@eggjs/lifecycle':
         specifier: workspace:*
         version: link:../../core/lifecycle
-      '@eggjs/tegg-metadata':
+      '@eggjs/metadata':
         specifier: workspace:*
         version: link:../../core/metadata
+      '@eggjs/module-common':
+        specifier: workspace:*
+        version: link:../common
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
@@ -3190,7 +3190,13 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../../core/core-decorator
-      '@eggjs/egg-module-common':
+      '@eggjs/lifecycle':
+        specifier: workspace:*
+        version: link:../../core/lifecycle
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../../core/metadata
+      '@eggjs/module-common':
         specifier: workspace:*
         version: link:../common
       '@eggjs/router':
@@ -3199,15 +3205,9 @@ importers:
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../../core/common-util
-      '@eggjs/tegg-lifecycle':
-        specifier: workspace:*
-        version: link:../../core/lifecycle
       '@eggjs/tegg-loader':
         specifier: workspace:*
         version: link:../../core/loader
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../../core/metadata
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
@@ -3275,34 +3275,34 @@ importers:
       '@eggjs/dal-runtime':
         specifier: workspace:*
         version: link:../../core/dal-runtime
+      '@eggjs/lifecycle':
+        specifier: workspace:*
+        version: link:../../core/lifecycle
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../../core/metadata
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../../core/common-util
-      '@eggjs/tegg-lifecycle':
-        specifier: workspace:*
-        version: link:../../core/lifecycle
       '@eggjs/tegg-loader':
         specifier: workspace:*
         version: link:../../core/loader
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../../core/metadata
-      '@eggjs/tegg-transaction-decorator':
-        specifier: workspace:*
-        version: link:../../core/transaction-decorator
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../../core/types
+      '@eggjs/transaction-decorator':
+        specifier: workspace:*
+        version: link:../../core/transaction-decorator
     devDependencies:
+      '@eggjs/aop-plugin':
+        specifier: workspace:*
+        version: link:../aop
       '@eggjs/mock':
         specifier: workspace:*
         version: link:../../../plugins/mock
       '@eggjs/tegg':
         specifier: workspace:*
         version: link:../../core/tegg
-      '@eggjs/tegg-aop-plugin':
-        specifier: workspace:*
-        version: link:../aop
       '@eggjs/tegg-config':
         specifier: workspace:*
         version: link:../config
@@ -3336,21 +3336,21 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../../core/core-decorator
-      '@eggjs/egg-module-common':
-        specifier: workspace:*
-        version: link:../common
       '@eggjs/eventbus-decorator':
         specifier: workspace:*
         version: link:../../core/eventbus-decorator
-      '@eggjs/tegg-eventbus-runtime':
+      '@eggjs/eventbus-runtime':
         specifier: workspace:*
         version: link:../../core/eventbus-runtime
-      '@eggjs/tegg-lifecycle':
+      '@eggjs/lifecycle':
         specifier: workspace:*
         version: link:../../core/lifecycle
-      '@eggjs/tegg-metadata':
+      '@eggjs/metadata':
         specifier: workspace:*
         version: link:../../core/metadata
+      '@eggjs/module-common':
+        specifier: workspace:*
+        version: link:../common
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
@@ -3394,16 +3394,16 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../../core/core-decorator
-      '@eggjs/egg-module-common':
-        specifier: workspace:*
-        version: link:../common
-      '@eggjs/tegg-lifecycle':
+      '@eggjs/lifecycle':
         specifier: workspace:*
         version: link:../../core/lifecycle
-      '@eggjs/tegg-metadata':
+      '@eggjs/metadata':
         specifier: workspace:*
         version: link:../../core/metadata
-      '@eggjs/tegg-orm-decorator':
+      '@eggjs/module-common':
+        specifier: workspace:*
+        version: link:../common
+      '@eggjs/orm-decorator':
         specifier: workspace:*
         version: link:../../core/orm-decorator
       '@eggjs/tegg-runtime':
@@ -3458,24 +3458,24 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../../core/core-decorator
-      '@eggjs/egg-module-common':
-        specifier: workspace:*
-        version: link:../common
-      '@eggjs/tegg-lifecycle':
+      '@eggjs/lifecycle':
         specifier: workspace:*
         version: link:../../core/lifecycle
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../../core/metadata
+      '@eggjs/module-common':
+        specifier: workspace:*
+        version: link:../common
+      '@eggjs/schedule-decorator':
+        specifier: workspace:*
+        version: link:../../core/schedule-decorator
       '@eggjs/tegg-loader':
         specifier: workspace:*
         version: link:../../core/loader
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../../core/metadata
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
-      '@eggjs/tegg-schedule-decorator':
-        specifier: workspace:*
-        version: link:../../core/schedule-decorator
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
@@ -3513,30 +3513,30 @@ importers:
 
   tegg/plugin/tegg:
     dependencies:
+      '@eggjs/background-task':
+        specifier: workspace:*
+        version: link:../../core/background-task
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../../core/core-decorator
-      '@eggjs/egg-module-common':
+      '@eggjs/dynamic-inject-runtime':
+        specifier: workspace:*
+        version: link:../../core/dynamic-inject-runtime
+      '@eggjs/lifecycle':
+        specifier: workspace:*
+        version: link:../../core/lifecycle
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../../core/metadata
+      '@eggjs/module-common':
         specifier: workspace:*
         version: link:../common
-      '@eggjs/tegg-background-task':
-        specifier: workspace:*
-        version: link:../../core/background-task
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../../core/common-util
-      '@eggjs/tegg-dynamic-inject-runtime':
-        specifier: workspace:*
-        version: link:../../core/dynamic-inject-runtime
-      '@eggjs/tegg-lifecycle':
-        specifier: workspace:*
-        version: link:../../core/lifecycle
       '@eggjs/tegg-loader':
         specifier: workspace:*
         version: link:../../core/loader
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../../core/metadata
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
@@ -3583,31 +3583,34 @@ importers:
 
   tegg/standalone/standalone:
     dependencies:
+      '@eggjs/aop-runtime':
+        specifier: workspace:*
+        version: link:../../core/aop-runtime
+      '@eggjs/dal-plugin':
+        specifier: workspace:*
+        version: link:../../plugin/dal
+      '@eggjs/lifecycle':
+        specifier: workspace:*
+        version: link:../../core/lifecycle
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../../core/metadata
       '@eggjs/tegg':
         specifier: workspace:*
         version: link:../../core/tegg
-      '@eggjs/tegg-aop-runtime':
-        specifier: workspace:*
-        version: link:../../core/aop-runtime
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../../core/common-util
-      '@eggjs/tegg-dal-plugin':
-        specifier: workspace:*
-        version: link:../../plugin/dal
-      '@eggjs/tegg-lifecycle':
-        specifier: workspace:*
-        version: link:../../core/lifecycle
       '@eggjs/tegg-loader':
         specifier: workspace:*
         version: link:../../core/loader
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../../core/metadata
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
     devDependencies:
+      '@eggjs/ajv-plugin':
+        specifier: workspace:*
+        version: link:../../plugin/ajv
       '@eggjs/bin':
         specifier: workspace:*
         version: link:../../../tools/egg-bin
@@ -3617,9 +3620,6 @@ importers:
       '@eggjs/dal-decorator':
         specifier: workspace:*
         version: link:../../core/dal-decorator
-      '@eggjs/tegg-ajv-plugin':
-        specifier: workspace:*
-        version: link:../../plugin/ajv
       '@eggjs/utils':
         specifier: workspace:*
         version: link:../../../packages/utils
@@ -3799,7 +3799,7 @@ importers:
         version: 4.0.2
       oxlint:
         specifier: 'catalog:'
-        version: 1.23.0(oxlint-tsgolint@0.2.0)
+        version: 1.23.0(oxlint-tsgolint@0.2.1)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -4462,8 +4462,18 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
+  '@oxlint-tsgolint/darwin-arm64@0.2.1':
+    resolution: {integrity: sha512-1cjcZkgpkWTfkFx111weVsvlnDG3+a7Y3qei+VCbr55LwKTHSzGq9tVNakIHRJ6NZfX7bQKYU4yef3p6AKoteg==}
+    cpu: [arm64]
+    os: [darwin]
+
   '@oxlint-tsgolint/darwin-x64@0.2.0':
     resolution: {integrity: sha512-iCrcjkqqyy3zq+yXOmNsjt/DiSU4u9yJ00hEr4oGSrrk7V0ju6eqrmsh8VGS74YLY3MCskTjeTyVDRR7huc3WQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@oxlint-tsgolint/darwin-x64@0.2.1':
+    resolution: {integrity: sha512-Copd7aMOmL0aPUCBZnZBG1nHXOVnZnHT02okUnkNdwNAWUJw7thnhHln5yX4iLfCA4cky7iF3XXIVl+CRI/siQ==}
     cpu: [x64]
     os: [darwin]
 
@@ -4472,8 +4482,18 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  '@oxlint-tsgolint/linux-arm64@0.2.1':
+    resolution: {integrity: sha512-MW6M2r/+cHbj01yKwRuQKwstKfY72wT/JCXI65rFPtRgN8JpuKUghOpaZpNs1oYfNNo308UTh41Dpfwl2k5weA==}
+    cpu: [arm64]
+    os: [linux]
+
   '@oxlint-tsgolint/linux-x64@0.2.0':
     resolution: {integrity: sha512-DKGFSR71fnExWpJXvN32SqWuEcT1XXeI1CKpO63jgXTAUpVl9H/BXG3+gNptSoZqzqeFTj8jOgiaX6VkOABqGA==}
+    cpu: [x64]
+    os: [linux]
+
+  '@oxlint-tsgolint/linux-x64@0.2.1':
+    resolution: {integrity: sha512-OacFTtQ8gso1c1za6lWdczFWXXo6djc7CFF3uKLfKwd2aHDkyC50Izkmv7MHwfAFtFdqSLcJKhF2VPExDmjKHg==}
     cpu: [x64]
     os: [linux]
 
@@ -4482,8 +4502,18 @@ packages:
     cpu: [arm64]
     os: [win32]
 
+  '@oxlint-tsgolint/win32-arm64@0.2.1':
+    resolution: {integrity: sha512-Fq/vJqT4PgEWWIRP7wYSfK3DU7eEG9eOVOvIo72T6wCUrnAKDQsyUzh5bOVbTxWj/ujAc6CT7+GxdpOEueK0bw==}
+    cpu: [arm64]
+    os: [win32]
+
   '@oxlint-tsgolint/win32-x64@0.2.0':
     resolution: {integrity: sha512-asfPqgu7r1H8NmBNxfMpZER6WvrUTH8BDMPIcChBhrUjuSmt4UMyiyul3CEPZLPQcPlaWCeGnConTu3BabK4Fw==}
+    cpu: [x64]
+    os: [win32]
+
+  '@oxlint-tsgolint/win32-x64@0.2.1':
+    resolution: {integrity: sha512-Y6Fy4N7FCwxya+scCis+FokK5vWa9+Stb1Rw0x6VybhZpXFSGohBKmDTj6WUkoDyJ+Wl1FkArkAVQnoPP9uNRg==}
     cpu: [x64]
     os: [win32]
 
@@ -4492,13 +4522,29 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
+  '@oxlint/darwin-arm64@1.24.0':
+    resolution: {integrity: sha512-1Kd2+Ai1ttskhbJR+DNU4Y4YEDyP/cd50nWt2rAe2aE78dMOalaVGps3s8UnJkXpDL9ZqkgOHVDE5Doj2lxatw==}
+    cpu: [arm64]
+    os: [darwin]
+
   '@oxlint/darwin-x64@1.23.0':
     resolution: {integrity: sha512-PjByWr1TlwHQiOqEc8CPyXCT4wnujSK3n9l1m4un0Eh0uLJEDG5WM9tyDWOGuakC0Ika9/SMp0HDRg3ySchRRA==}
     cpu: [x64]
     os: [darwin]
 
+  '@oxlint/darwin-x64@1.24.0':
+    resolution: {integrity: sha512-/R9VbnuTp7bLIBh6ucDHjx0po0wLQODLqzy+L/Frn5z4ifMVdE63DB+LHO8QAj+WEQleQq3u/MMms7RFPulCLA==}
+    cpu: [x64]
+    os: [darwin]
+
   '@oxlint/linux-arm64-gnu@1.23.0':
     resolution: {integrity: sha512-sWlCwQ6xKeKC08qU3SfozqpRGCLJiO/onPYFJKEHbjzHkFp+OubOacFaT4ePcka28jCU1TvQ7Gi5BVQRncr0Xg==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@oxlint/linux-arm64-gnu@1.24.0':
+    resolution: {integrity: sha512-fA90bIQ1b44eNg0uULlTonqsADVIBnMz169mav6IhfZL9V6DpBCUWrV+8tEQCxbDvYC0WY1guBpPo2QWUnC/Dw==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
@@ -4509,8 +4555,20 @@ packages:
     os: [linux]
     libc: [musl]
 
+  '@oxlint/linux-arm64-musl@1.24.0':
+    resolution: {integrity: sha512-p7Bv9FTQ1lf4Z7OiIFwiy+cY2fxN6IJc0+2gJ4z2fpaQ0J2rQQcKdJ5RLQTxf+tAu7hyqjc6bf61EAGa9lb/GA==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
   '@oxlint/linux-x64-gnu@1.23.0':
     resolution: {integrity: sha512-F6H9wmLfjBoNqtsgyg3P9abLnkVjNbCAnISKdRtDl7HvkMs4s/eU8np9+tSnqPeKOTBhkS+h/VSWgPGZTqIWQA==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@oxlint/linux-x64-gnu@1.24.0':
+    resolution: {integrity: sha512-wIQOpTONiJ9pYPnLEq7UFuml8mpmSFTfUveNbT2rw9iXfj2nLMf7NIqGnUYQdvnnOi+maag9uei/WImXIm9LQQ==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
@@ -4521,13 +4579,29 @@ packages:
     os: [linux]
     libc: [musl]
 
+  '@oxlint/linux-x64-musl@1.24.0':
+    resolution: {integrity: sha512-HxcDX/SpTH7yC/Rn2MinjSHZmNpn79yJkBid792DWjP9bo0CnlNXOXMPXsbm+WqptvqQ9yUPCxf7KascUvxLyQ==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
   '@oxlint/win32-arm64@1.23.0':
     resolution: {integrity: sha512-FR+I+uGD3eFzTfBw87QRr+Y1jBYil3TqPM0wkSvuf3gOJTEXAfSkh9QHCgQqrseW3HDW7YJJ8ty1+sU31H/N4g==}
     cpu: [arm64]
     os: [win32]
 
+  '@oxlint/win32-arm64@1.24.0':
+    resolution: {integrity: sha512-P1KtZ/xL+TcNTTmOtEsVrpqAdmpu2UCRAILjoqQyrYvI/CW6SdvoJfMBTntKOZaB52Peq2BHTgsYovON8q4FfQ==}
+    cpu: [arm64]
+    os: [win32]
+
   '@oxlint/win32-x64@1.23.0':
     resolution: {integrity: sha512-/oX0b26YIC1OgS5B+G8Ux1Vs/PIjOP4CBRzsPpYr0T+RoboJ3ZuV32bztLRggJKQqIlozcqiRo9fl/UMOMp8kQ==}
+    cpu: [x64]
+    os: [win32]
+
+  '@oxlint/win32-x64@1.24.0':
+    resolution: {integrity: sha512-JMbMm7i1esFl12fRdOQwoeEeufWXxihOme8pZpI6jrwWK1kCIANMb5agI5Lkjf5vToQOP3DLXYc29aDm16fw6g==}
     cpu: [x64]
     os: [win32]
 
@@ -6453,8 +6527,8 @@ packages:
     resolution: {integrity: sha512-kVCxPF3vQM/N0B1PmoqVUqgHP+EeVjmZSQn+1oCRPxd2P21P2F19lIgbR3HBosbB1PUhOAoctJnfEn2GbN2eZA==}
     engines: {node: '>=18'}
 
-  get-tsconfig@4.12.0:
-    resolution: {integrity: sha512-LScr2aNr2FbjAjZh2C6X6BxRx1/x+aTDExct/xyq2XKbYOiG5c0aK7pMsSuyc0brz3ibr/lbQiHD9jzt4lccJw==}
+  get-tsconfig@4.13.0:
+    resolution: {integrity: sha512-1VKTZJCwBrvbd+Wn3AOgQP/2Av+TfTCOlE4AcRJE72W1ksZXbAx8PPBR9RzgTeSPzlPMHrbANMH3LbltH73wxQ==}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -7699,8 +7773,22 @@ packages:
     resolution: {integrity: sha512-37Hy+FT1sz8hHUo31JIgFDA8NcFndexrg5okutWRPXNejJwB9hKN+pyInaQQIv4XDsgNcQsSR2VJoq99eaGk9g==}
     hasBin: true
 
+  oxlint-tsgolint@0.2.1:
+    resolution: {integrity: sha512-Z5tZw9nilmLo+EukScIhGZSVRasjyCCUQrDlX5CoJNqbnv/mlo+mnTmiEN4cmJeKMwHSHSvgAaDn+0gfHAv24w==}
+    hasBin: true
+
   oxlint@1.23.0:
     resolution: {integrity: sha512-cLVdSE7Bza8npm+PffU0oufs15+M5uSMbQn0k2fJCayWU0xqQ3dyA3w9tEk8lgNOk1j1VJEdYctz64Vik8VG1w==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+    peerDependencies:
+      oxlint-tsgolint: '>=0.2.0'
+    peerDependenciesMeta:
+      oxlint-tsgolint:
+        optional: true
+
+  oxlint@1.24.0:
+    resolution: {integrity: sha512-swXlnHT7ywcCApkctIbgOSjDYHwMa12yMU0iXevfDuHlYkRUcbQrUv6nhM5v6B0+Be3zTBMNDGPAMQv0oznzRQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -9606,43 +9694,85 @@ snapshots:
   '@oxlint-tsgolint/darwin-arm64@0.2.0':
     optional: true
 
+  '@oxlint-tsgolint/darwin-arm64@0.2.1':
+    optional: true
+
   '@oxlint-tsgolint/darwin-x64@0.2.0':
+    optional: true
+
+  '@oxlint-tsgolint/darwin-x64@0.2.1':
     optional: true
 
   '@oxlint-tsgolint/linux-arm64@0.2.0':
     optional: true
 
+  '@oxlint-tsgolint/linux-arm64@0.2.1':
+    optional: true
+
   '@oxlint-tsgolint/linux-x64@0.2.0':
+    optional: true
+
+  '@oxlint-tsgolint/linux-x64@0.2.1':
     optional: true
 
   '@oxlint-tsgolint/win32-arm64@0.2.0':
     optional: true
 
+  '@oxlint-tsgolint/win32-arm64@0.2.1':
+    optional: true
+
   '@oxlint-tsgolint/win32-x64@0.2.0':
+    optional: true
+
+  '@oxlint-tsgolint/win32-x64@0.2.1':
     optional: true
 
   '@oxlint/darwin-arm64@1.23.0':
     optional: true
 
+  '@oxlint/darwin-arm64@1.24.0':
+    optional: true
+
   '@oxlint/darwin-x64@1.23.0':
+    optional: true
+
+  '@oxlint/darwin-x64@1.24.0':
     optional: true
 
   '@oxlint/linux-arm64-gnu@1.23.0':
     optional: true
 
+  '@oxlint/linux-arm64-gnu@1.24.0':
+    optional: true
+
   '@oxlint/linux-arm64-musl@1.23.0':
+    optional: true
+
+  '@oxlint/linux-arm64-musl@1.24.0':
     optional: true
 
   '@oxlint/linux-x64-gnu@1.23.0':
     optional: true
 
+  '@oxlint/linux-x64-gnu@1.24.0':
+    optional: true
+
   '@oxlint/linux-x64-musl@1.23.0':
+    optional: true
+
+  '@oxlint/linux-x64-musl@1.24.0':
     optional: true
 
   '@oxlint/win32-arm64@1.23.0':
     optional: true
 
+  '@oxlint/win32-arm64@1.24.0':
+    optional: true
+
   '@oxlint/win32-x64@1.23.0':
+    optional: true
+
+  '@oxlint/win32-x64@1.24.0':
     optional: true
 
   '@paralleldrive/cuid2@2.2.2':
@@ -11674,7 +11804,7 @@ snapshots:
       '@sec-ant/readable-stream': 0.4.1
       is-stream: 4.0.1
 
-  get-tsconfig@4.12.0:
+  get-tsconfig@4.13.0:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
@@ -13029,6 +13159,15 @@ snapshots:
       '@oxlint-tsgolint/win32-arm64': 0.2.0
       '@oxlint-tsgolint/win32-x64': 0.2.0
 
+  oxlint-tsgolint@0.2.1:
+    optionalDependencies:
+      '@oxlint-tsgolint/darwin-arm64': 0.2.1
+      '@oxlint-tsgolint/darwin-x64': 0.2.1
+      '@oxlint-tsgolint/linux-arm64': 0.2.1
+      '@oxlint-tsgolint/linux-x64': 0.2.1
+      '@oxlint-tsgolint/win32-arm64': 0.2.1
+      '@oxlint-tsgolint/win32-x64': 0.2.1
+
   oxlint@1.23.0(oxlint-tsgolint@0.2.0):
     optionalDependencies:
       '@oxlint/darwin-arm64': 1.23.0
@@ -13040,6 +13179,30 @@ snapshots:
       '@oxlint/win32-arm64': 1.23.0
       '@oxlint/win32-x64': 1.23.0
       oxlint-tsgolint: 0.2.0
+
+  oxlint@1.23.0(oxlint-tsgolint@0.2.1):
+    optionalDependencies:
+      '@oxlint/darwin-arm64': 1.23.0
+      '@oxlint/darwin-x64': 1.23.0
+      '@oxlint/linux-arm64-gnu': 1.23.0
+      '@oxlint/linux-arm64-musl': 1.23.0
+      '@oxlint/linux-x64-gnu': 1.23.0
+      '@oxlint/linux-x64-musl': 1.23.0
+      '@oxlint/win32-arm64': 1.23.0
+      '@oxlint/win32-x64': 1.23.0
+      oxlint-tsgolint: 0.2.1
+
+  oxlint@1.24.0(oxlint-tsgolint@0.2.1):
+    optionalDependencies:
+      '@oxlint/darwin-arm64': 1.24.0
+      '@oxlint/darwin-x64': 1.24.0
+      '@oxlint/linux-arm64-gnu': 1.24.0
+      '@oxlint/linux-arm64-musl': 1.24.0
+      '@oxlint/linux-x64-gnu': 1.24.0
+      '@oxlint/linux-x64-musl': 1.24.0
+      '@oxlint/win32-arm64': 1.24.0
+      '@oxlint/win32-x64': 1.24.0
+      oxlint-tsgolint: 0.2.1
 
   p-event@6.0.1:
     dependencies:
@@ -13418,7 +13581,7 @@ snapshots:
       birpc: 2.6.1
       debug: 4.4.3(supports-color@8.1.1)
       dts-resolver: 2.1.2(oxc-resolver@11.10.0)
-      get-tsconfig: 4.12.0
+      get-tsconfig: 4.13.0
       magic-string: 0.30.19
       rolldown: 1.0.0-beta.44
     optionalDependencies:
@@ -14014,7 +14177,7 @@ snapshots:
   tsx@4.20.6:
     dependencies:
       esbuild: 0.25.11
-      get-tsconfig: 4.12.0
+      get-tsconfig: 4.13.0
     optionalDependencies:
       fsevents: 2.3.3
 

@@ -3,7 +3,7 @@ import addFormats from '@eggjs/ajv-formats';
 import keyWords from '@eggjs/ajv-keywords';
 import { type Ajv as IAjv, AjvInvalidParamError } from '@eggjs/ajv-decorator';
 import { SingletonProto, AccessLevel } from '@eggjs/core-decorator';
-import { LifecycleInit } from '@eggjs/tegg-lifecycle';
+import { LifecycleInit } from '@eggjs/lifecycle';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

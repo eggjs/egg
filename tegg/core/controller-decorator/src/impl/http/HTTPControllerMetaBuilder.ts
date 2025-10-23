@@ -2,7 +2,7 @@ import assert from 'node:assert';
 
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
-import { ClassUtil } from '@eggjs/tegg-metadata';
+import { ClassUtil } from '@eggjs/metadata';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ControllerType } from '@eggjs/tegg-types';
 

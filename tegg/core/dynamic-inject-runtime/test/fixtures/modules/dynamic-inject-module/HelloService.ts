@@ -1,5 +1,5 @@
 import { ContextProto, Inject } from '@eggjs/core-decorator';
-import { type EggObjectFactory } from '@eggjs/tegg-dynamic-inject';
+import type { EggObjectFactory } from '@eggjs/dynamic-inject';
 
 import { AbstractContextHello } from './AbstractContextHello.js';
 import { AbstractSingletonHello } from './AbstractSingletonHello.js';

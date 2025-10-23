@@ -1,10 +1,10 @@
 import assert from 'node:assert';
 
-import type { LifecycleHook } from '@eggjs/tegg-lifecycle';
+import type { LifecycleHook } from '@eggjs/lifecycle';
 import type { ModuleConfigHolder, Logger } from '@eggjs/tegg-types';
-import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
+import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/metadata';
 import { PropagationType } from '@eggjs/tegg-types';
-import { TransactionMetaBuilder } from '@eggjs/tegg-transaction-decorator';
+import { TransactionMetaBuilder } from '@eggjs/transaction-decorator';
 import { Pointcut } from '@eggjs/aop-decorator';
 
 import { TransactionalAOP, type TransactionalParams } from './TransactionalAOP.ts';

@@ -1,5 +1,5 @@
 import type { Application, ILifecycleBoot } from 'egg';
-import type { LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
+import type { LoadUnitLifecycleContext } from '@eggjs/metadata';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/controller-decorator';
 import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
 

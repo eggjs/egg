@@ -1,5 +1,5 @@
 {
-  "name": "@eggjs/tegg-eventbus-runtime",
+  "name": "@eggjs/eventbus-runtime",
   "version": "4.0.0-beta.29",
   "description": "tegg eventbus runtime",
   "keywords": [
@@ -49,7 +49,7 @@
   "devDependencies": {
     "@eggjs/module-test-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
     "@types/node": "catalog:",
     "coffee": "catalog:",
     "egg": "workspace:*",

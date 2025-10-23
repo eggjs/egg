@@ -12,11 +12,11 @@ export default {
     enable: true,
   },
   teggController: {
-    package: '@eggjs/tegg-controller-plugin',
+    package: '@eggjs/controller-plugin',
     enable: true,
   },
   teggAjv: {
-    package: '@eggjs/tegg-ajv-plugin',
+    package: '@eggjs/ajv-plugin',
     enable: true,
   },
 };

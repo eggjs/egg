@@ -1,1 +1,1 @@
-export * from '@eggjs/tegg-orm-decorator';
+export * from '@eggjs/orm-decorator';

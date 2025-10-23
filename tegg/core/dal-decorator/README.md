@@ -14,4 +14,4 @@
 
 ## Usage
 
-Please read [@eggjs/tegg-dal-plugin](../../plugin/dal/README.md)
+Please read [@eggjs/dal-plugin](../../plugin/dal/README.md)

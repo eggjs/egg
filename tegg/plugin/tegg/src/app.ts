@@ -4,7 +4,7 @@ import './lib/AppLoadUnitInstance.ts';
 import './lib/EggCompatibleObject.ts';
 
 import type { Application, ILifecycleBoot } from 'egg';
-import { LoadUnitMultiInstanceProtoHook } from '@eggjs/tegg-metadata';
+import { LoadUnitMultiInstanceProtoHook } from '@eggjs/metadata';
 
 import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook.ts';
 import { CompatibleUtil } from './lib/CompatibleUtil.ts';

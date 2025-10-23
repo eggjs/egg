@@ -4,7 +4,7 @@ import type {
   EggPrototypeLifecycleContext,
   InjectObjectProto,
   InjectConstructorProto,
-} from '@eggjs/tegg-metadata';
+} from '@eggjs/metadata';
 import {
   AccessLevel,
   type EggPrototypeName,
@@ -16,7 +16,7 @@ import {
   type QualifierAttribute,
   type QualifierValue,
 } from '@eggjs/core-decorator';
-import { type Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { type Id, IdenticalUtil } from '@eggjs/lifecycle';
 import type { Bone } from 'leoric';
 
 export default class SingletonModelProto implements EggPrototype {

@@ -1,5 +1,5 @@
 {
-  "name": "@eggjs/tegg-metadata",
+  "name": "@eggjs/metadata",
   "version": "4.0.0-beta.29",
   "description": "tegg metadata",
   "keywords": [
@@ -40,7 +40,7 @@
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/errors": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
-    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {

@@ -896,13 +896,13 @@ module 在请求结束后会把请求相关的对象释放，所以在请求中�
 #### 安装
 
 ```shell
-npm i --save @eggjs/tegg-background-task
+npm i --save @eggjs/background-task
 ```
 
 #### 使用
 
 ```typescript
-import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
+import { BackgroundTaskHelper } from '@eggjs/background-task';
 
 @ContextProto()
 export default class BackgroundService {

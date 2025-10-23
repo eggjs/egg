@@ -10,7 +10,7 @@ import type {
   EggPrototypeName,
   Id,
 } from '@eggjs/tegg-types';
-import { TeggError } from '@eggjs/tegg-metadata';
+import { TeggError } from '@eggjs/metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
 import { EggContainerFactory } from '../factory/EggContainerFactory.ts';

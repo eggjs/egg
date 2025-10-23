@@ -1,4 +1,4 @@
-import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/tegg-metadata';
+import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import type { Application } from 'egg';
 

@@ -14,4 +14,4 @@
 
 ## Usage
 
-Please read [@eggjs/tegg-standalone](../../standalone/standalone/README.md)
+Please read [@eggjs/standalone](../../standalone/standalone/README.md)

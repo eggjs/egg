@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { ClassUtil } from '@eggjs/tegg-metadata';
+import { ClassUtil } from '@eggjs/metadata';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
 import { HTTPMethodMeta, ParamMeta, ParamMetaUtil } from '../../model/index.ts';

@@ -12,7 +12,7 @@ export default {
     enable: true,
   },
   teggOrm: {
-    package: '@eggjs/tegg-orm-plugin',
+    package: '@eggjs/orm-plugin',
     enable: true,
   },
 };

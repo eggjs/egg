@@ -1,4 +1,4 @@
-import { TeggError } from '@eggjs/tegg-metadata';
+import { TeggError } from '@eggjs/metadata';
 
 const ErrorCodes = {
   ROUTER_CONFLICT: 'ROUTER_CONFLICT',

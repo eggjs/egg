@@ -14,4 +14,4 @@
 
 ## Usage
 
-Please read [@eggjs/tegg-controller-plugin](../../plugin/controller/README.md)
+Please read [@eggjs/controller-plugin](../../plugin/controller/README.md)

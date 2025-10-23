@@ -1,27 +1,27 @@
-# `@eggjs/tegg-orm-decorator`
+# `@eggjs/orm-decorator`
 
 [![NPM version][npm-image]][npm-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
-[![Node.js Version](https://img.shields.io/node/v/@eggjs/tegg-orm-decorator.svg?style=flat)](https://nodejs.org/en/download/)
+[![Node.js Version](https://img.shields.io/node/v/@eggjs/orm-decorator.svg?style=flat)](https://nodejs.org/en/download/)
 
-[npm-image]: https://img.shields.io/npm/v/@eggjs/tegg-orm-decorator.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/@eggjs/tegg-orm-decorator
-[snyk-image]: https://snyk.io/test/npm/@eggjs/tegg-orm-decorator/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/@eggjs/tegg-orm-decorator
-[download-image]: https://img.shields.io/npm/dm/@eggjs/tegg-orm-decorator.svg?style=flat-square
-[download-url]: https://npmjs.org/package/@eggjs/tegg-orm-decorator
+[npm-image]: https://img.shields.io/npm/v/@eggjs/orm-decorator.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/orm-decorator
+[snyk-image]: https://snyk.io/test/npm/@eggjs/orm-decorator/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/orm-decorator
+[download-image]: https://img.shields.io/npm/dm/@eggjs/orm-decorator.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/orm-decorator
 
 ## Install
 
 ```shell
-npm i --save @eggjs/tegg-orm-decorator
+npm i --save @eggjs/orm-decorator
 ```
 
 ## Define Model
 
 ```ts
-import { Model, Attribute } from '@eggjs/tegg-orm-decorator';
+import { Model, Attribute } from '@eggjs/orm-decorator';
 import leoric from 'leoric';
 
 const { DataTypes, Bone } = leoric;

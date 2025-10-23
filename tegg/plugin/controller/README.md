@@ -1,16 +1,16 @@
-# @eggjs/tegg-controller-plugin
+# @eggjs/controller-plugin
 
 [![NPM version][npm-image]][npm-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
-[![Node.js Version](https://img.shields.io/node/v/@eggjs/tegg-controller-plugin.svg?style=flat)](https://nodejs.org/en/download/)
+[![Node.js Version](https://img.shields.io/node/v/@eggjs/controller-plugin.svg?style=flat)](https://nodejs.org/en/download/)
 
-[npm-image]: https://img.shields.io/npm/v/@eggjs/tegg-controller-plugin.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/@eggjs/tegg-controller-plugin
-[snyk-image]: https://snyk.io/test/npm/@eggjs/tegg-controller-plugin/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/@eggjs/tegg-controller-plugin
-[download-image]: https://img.shields.io/npm/dm/@eggjs/tegg-controller-plugin.svg?style=flat-square
-[download-url]: https://npmjs.org/package/@eggjs/tegg-controller-plugin
+[npm-image]: https://img.shields.io/npm/v/@eggjs/controller-plugin.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/controller-plugin
+[snyk-image]: https://snyk.io/test/npm/@eggjs/controller-plugin/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/controller-plugin
+[download-image]: https://img.shields.io/npm/dm/@eggjs/controller-plugin.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/controller-plugin
 
 使用注解的方式来开发 egg 中的 Controller
 
@@ -22,7 +22,7 @@ npm i --save @eggjs/tegg@beta
 # tegg 插件
 npm i --save @eggjs/tegg-plugin@beta
 # tegg controller 插件
-npm i --save @eggjs/tegg-controller-plugin@beta
+npm i --save @eggjs/controller-plugin@beta
 ```
 
 ## Prepare
@@ -44,7 +44,7 @@ exports.tegg = {
 };
 
 exports.teggController = {
-  package: '@eggjs/tegg-controller-plugin',
+  package: '@eggjs/controller-plugin',
   enable: true,
 };
 ```

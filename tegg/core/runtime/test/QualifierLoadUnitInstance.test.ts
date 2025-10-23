@@ -1,7 +1,9 @@
 import assert from 'node:assert';
 import { mock } from 'node:test';
+
 import { describe, beforeEach, afterEach, it } from 'vitest';
-import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
+import { EggPrototypeFactory } from '@eggjs/metadata';
+
 import TestUtil from './util.js';
 import { EggTestContext } from './fixtures/EggTestContext.js';
 import CacheService from './fixtures/modules/init-type-qualifier-module/CacheService.js';

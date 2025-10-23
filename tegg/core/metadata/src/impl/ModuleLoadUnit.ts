@@ -18,7 +18,7 @@ import type {
   QualifierInfo,
 } from '@eggjs/tegg-types';
 import { Graph, GraphNode, MapUtil } from '@eggjs/tegg-common-util';
-import { IdenticalUtil, LifecycleUtil } from '@eggjs/tegg-lifecycle';
+import { IdenticalUtil, LifecycleUtil } from '@eggjs/lifecycle';
 import { FrameworkErrorFormatter } from '@eggjs/errors';
 import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
 

@@ -12,7 +12,7 @@ export default {
     enable: true,
   },
   teggController: {
-    package: '@eggjs/tegg-controller-plugin',
+    package: '@eggjs/controller-plugin',
     enable: true,
   },
 };

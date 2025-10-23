@@ -1,5 +1,5 @@
 import { AbstractEggContext } from '@eggjs/tegg-runtime';
-import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { IdenticalUtil } from '@eggjs/lifecycle';
 
 export class StandaloneContext extends AbstractEggContext {
   id: string;

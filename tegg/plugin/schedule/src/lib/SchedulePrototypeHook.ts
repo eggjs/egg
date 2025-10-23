@@ -1,6 +1,6 @@
-import type { LifecycleHook } from '@eggjs/tegg-lifecycle';
-import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
-import { ScheduleInfoUtil, ScheduleMetadataUtil, ScheduleMetaBuilder } from '@eggjs/tegg-schedule-decorator';
+import type { LifecycleHook } from '@eggjs/lifecycle';
+import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/metadata';
+import { ScheduleInfoUtil, ScheduleMetadataUtil, ScheduleMetaBuilder } from '@eggjs/schedule-decorator';
 
 export class SchedulePrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
   async postCreate(ctx: EggPrototypeLifecycleContext): Promise<void> {
