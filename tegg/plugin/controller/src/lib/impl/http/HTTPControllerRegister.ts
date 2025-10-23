@@ -8,7 +8,7 @@ import {
   HTTPControllerMeta,
   HTTPMethodMeta,
 } from '@eggjs/controller-decorator';
-import type { EggPrototype } from '@eggjs/tegg-metadata';
+import type { EggPrototype } from '@eggjs/metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 
 import type { ControllerRegister } from '../../ControllerRegister.ts';

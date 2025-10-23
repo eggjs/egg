@@ -1,5 +1,5 @@
 import type { Application, ILifecycleBoot } from 'egg';
-import { MODEL_PROTO_IMPL_TYPE } from '@eggjs/tegg-orm-decorator';
+import { MODEL_PROTO_IMPL_TYPE } from '@eggjs/orm-decorator';
 
 import { DataSourceManager } from './lib/DataSourceManager.ts';
 import { LeoricRegister } from './lib/LeoricRegister.ts';

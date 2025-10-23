@@ -1,4 +1,4 @@
-import type { EggPrototype } from '@eggjs/tegg-metadata';
+import type { EggPrototype } from '@eggjs/metadata';
 import type { EggProtoImplClass } from '@eggjs/core-decorator';
 
 export interface ModelProtoPair {

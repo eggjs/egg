@@ -1,27 +1,27 @@
-# `@eggjs/tegg-background-task`
+# `@eggjs/background-task`
 
 [![NPM version][npm-image]][npm-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
-[![Node.js Version](https://img.shields.io/node/v/@eggjs/tegg-background-task.svg?style=flat)](https://nodejs.org/en/download/)
+[![Node.js Version](https://img.shields.io/node/v/@eggjs/background-task.svg?style=flat)](https://nodejs.org/en/download/)
 
-[npm-image]: https://img.shields.io/npm/v/@eggjs/tegg-background-task.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/@eggjs/tegg-background-task
-[snyk-image]: https://snyk.io/test/npm/@eggjs/tegg-background-task/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/@eggjs/tegg-background-task
-[download-image]: https://img.shields.io/npm/dm/@eggjs/tegg-background-task.svg?style=flat-square
-[download-url]: https://npmjs.org/package/@eggjs/tegg-background-task
+[npm-image]: https://img.shields.io/npm/v/@eggjs/background-task.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/background-task
+[snyk-image]: https://snyk.io/test/npm/@eggjs/background-task/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/background-task
+[download-image]: https://img.shields.io/npm/dm/@eggjs/background-task.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/background-task
 
 ## install
 
 ```sh
-npm i --save @eggjs/tegg-background-task
+npm i --save @eggjs/background-task
 ```
 
 ## Usage
 
 ```ts
-import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
+import { BackgroundTaskHelper } from '@eggjs/background-task';
 
 @ContextProto()
 export default class BackgroundService {

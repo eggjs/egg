@@ -4,8 +4,9 @@ import { mock } from 'node:test';
 
 import { describe, beforeEach, afterEach, beforeAll, afterAll, it } from 'vitest';
 import { LoaderUtil } from '@eggjs/module-test-util';
-import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
+import { EggPrototypeFactory } from '@eggjs/metadata';
 import { type LoadUnitInstance } from '@eggjs/tegg-types';
+
 import { EggTestContext } from './fixtures/EggTestContext.ts';
 import TestUtil from './util.js';
 import { EggContainerFactory } from '../src/index.js';

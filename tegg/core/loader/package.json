@@ -39,7 +39,7 @@
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
     "globby": "catalog:",
     "is-type-of": "catalog:"
   },

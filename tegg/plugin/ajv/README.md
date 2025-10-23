@@ -1,16 +1,16 @@
-# @eggjs/tegg-ajv-plugin
+# @eggjs/ajv-plugin
 
 [![NPM version][npm-image]][npm-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
-[![Node.js Version](https://img.shields.io/node/v/@eggjs/tegg-ajv-plugin.svg?style=flat)](https://nodejs.org/en/download/)
+[![Node.js Version](https://img.shields.io/node/v/@eggjs/ajv-plugin.svg?style=flat)](https://nodejs.org/en/download/)
 
-[npm-image]: https://img.shields.io/npm/v/@eggjs/tegg-ajv-plugin.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/@eggjs/tegg-ajv-plugin
-[snyk-image]: https://snyk.io/test/npm/@eggjs/tegg-ajv-plugin/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/@eggjs/tegg-ajv-plugin
-[download-image]: https://img.shields.io/npm/dm/@eggjs/tegg-ajv-plugin.svg?style=flat-square
-[download-url]: https://npmjs.org/package/@eggjs/tegg-ajv-plugin
+[npm-image]: https://img.shields.io/npm/v/@eggjs/ajv-plugin.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/ajv-plugin
+[snyk-image]: https://snyk.io/test/npm/@eggjs/ajv-plugin/badge.svg?style-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/ajv-plugin
+[download-image]: https://img.shields.io/npm/dm/@eggjs/ajv-plugin.svg?style-square
+[download-url]: https://npmjs.org/package/@eggjs/ajv-plugin
 
 参考 [@eggjs/typebox-validate](https://github.com/eggjs/egg/tree/next/plugins/typebox-validate) 的最佳实践，结合 ajv + typebox，只需要定义一次参数类型和规则，就能同时拥有参数校验和类型定义（完整的 ts 类型提示）。
 
@@ -24,7 +24,7 @@ npm i --save @eggjs/tegg
 # tegg 插件
 npm i --save @eggjs/tegg-plugin
 # tegg ajv 插件
-npm i --save @eggjs/tegg-ajv-plugin
+npm i --save @eggjs/ajv-plugin
 ```
 
 ### Prepare
@@ -46,7 +46,7 @@ exports.tegg = {
 };
 
 exports.teggAjv = {
-  package: '@eggjs/tegg-ajv-plugin',
+  package: '@eggjs/ajv-plugin',
   enable: true,
 };
 ```
@@ -59,7 +59,7 @@ exports.teggAjv = {
 # tegg 注解
 npm i --save @eggjs/tegg
 # tegg ajv 插件
-npm i --save @eggjs/tegg-ajv-plugin
+npm i --save @eggjs/ajv-plugin
 ```
 
 ### Prepare

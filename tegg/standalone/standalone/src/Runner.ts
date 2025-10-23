@@ -12,7 +12,7 @@ import {
   LoadUnitFactory,
   LoadUnitLifecycleUtil,
   LoadUnitMultiInstanceProtoHook,
-} from '@eggjs/tegg-metadata';
+} from '@eggjs/metadata';
 import {
   ContextHandler,
   EggContainerFactory,
@@ -38,7 +38,7 @@ import {
   EggPrototypeCrossCutHook,
   LoadUnitAopHook,
   pointCutGraphHook,
-} from '@eggjs/tegg-aop-runtime';
+} from '@eggjs/aop-runtime';
 import {
   DalTableEggPrototypeHook,
   DalModuleLoadUnitHook,
@@ -46,7 +46,7 @@ import {
   SqlMapManager,
   TableModelManager,
   TransactionPrototypeHook,
-} from '@eggjs/tegg-dal-plugin';
+} from '@eggjs/dal-plugin';
 
 import { EggModuleLoader } from './EggModuleLoader.ts';
 import { type InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit.ts';

@@ -1,12 +1,14 @@
 import assert from 'node:assert';
 import path from 'node:path';
 import { mock } from 'node:test';
+
 import { describe, beforeEach, afterEach, it } from 'vitest';
 import { EggObjectLifecycleUtil, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
-import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } from '@eggjs/tegg-metadata';
+import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } from '@eggjs/metadata';
 import type { LoadUnitInstance } from '@eggjs/tegg-types';
 import { CrosscutAdviceFactory } from '@eggjs/aop-decorator';
 import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
+
 import { Hello } from './fixtures/modules/hello_succeed/Hello.js';
 import { crosscutAdviceParams } from './fixtures/modules/hello_cross_cut/HelloCrossCut.js';
 import { pointcutAdviceParams } from './fixtures/modules/hello_point_cut/HelloPointCut.js';

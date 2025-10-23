@@ -1,16 +1,16 @@
-# `@eggjs/tegg-dynamic-inject`
+# `@eggjs/dynamic-inject`
 
 [![NPM version][npm-image]][npm-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
-[![Node.js Version](https://img.shields.io/node/v/@eggjs/tegg-dynamic-inject.svg?style=flat)](https://nodejs.org/en/download/)
+[![Node.js Version](https://img.shields.io/node/v/@eggjs/dynamic-inject.svg?style=flat)](https://nodejs.org/en/download/)
 
-[npm-image]: https://img.shields.io/npm/v/@eggjs/tegg-dynamic-inject.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/@eggjs/tegg-dynamic-inject
-[snyk-image]: https://snyk.io/test/npm/@eggjs/tegg-dynamic-inject/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/@eggjs/tegg-dynamic-inject
-[download-image]: https://img.shields.io/npm/dm/@eggjs/tegg-dynamic-inject.svg?style=flat-square
-[download-url]: https://npmjs.org/package/@eggjs/tegg-dynamic-inject
+[npm-image]: https://img.shields.io/npm/v/@eggjs/dynamic-inject.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/dynamic-inject
+[snyk-image]: https://snyk.io/test/npm/@eggjs/dynamic-inject/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/dynamic-inject
+[download-image]: https://img.shields.io/npm/dm/@eggjs/dynamic-inject.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/dynamic-inject
 
 ## Usage
 

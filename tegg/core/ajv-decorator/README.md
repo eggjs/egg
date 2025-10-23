@@ -14,4 +14,4 @@
 
 ## Usage
 
-Please read [@eggjs/tegg-ajv-plugin](../../plugin/ajv/README.md)
+Please read [@eggjs/ajv-plugin](../../plugin/ajv/README.md)

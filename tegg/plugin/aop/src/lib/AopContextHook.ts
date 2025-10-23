@@ -1,10 +1,10 @@
 import type { Application } from 'egg';
 import type { EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
-import { type LifecycleHook } from '@eggjs/tegg-lifecycle';
+import type { LifecycleHook } from '@eggjs/lifecycle';
 import { PrototypeUtil, ObjectInitType, type EggProtoImplClass } from '@eggjs/core-decorator';
 import { AspectInfoUtil } from '@eggjs/aop-decorator';
-import { type EggPrototype, TeggError } from '@eggjs/tegg-metadata';
-import { ROOT_PROTO } from '@eggjs/egg-module-common';
+import { type EggPrototype, TeggError } from '@eggjs/metadata';
+import { ROOT_PROTO } from '@eggjs/module-common';
 
 export interface EggPrototypeWithClazz extends EggPrototype {
   clazz?: EggProtoImplClass;

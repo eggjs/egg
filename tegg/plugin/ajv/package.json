@@ -1,5 +1,5 @@
 {
-  "name": "@eggjs/tegg-ajv-plugin",
+  "name": "@eggjs/ajv-plugin",
   "eggPlugin": {
     "name": "teggAjv",
     "strict": false,
@@ -53,7 +53,7 @@
     "@eggjs/ajv-formats": "^3.0.1",
     "@eggjs/ajv-keywords": "^5.1.0",
     "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
     "ajv": "catalog:"
   },
   "peerDependencies": {
@@ -63,7 +63,7 @@
     "@eggjs/mock": "workspace:*",
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
-    "@eggjs/tegg-controller-plugin": "workspace:*",
+    "@eggjs/controller-plugin": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@types/node": "catalog:",
     "egg": "workspace:*",

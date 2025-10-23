@@ -14,4 +14,4 @@
 
 # Usage
 
-Please read [@eggjs/tegg-aop-plugin](../../plugin/aop/README.md)
+Please read [@eggjs/aop-plugin](../../plugin/aop/README.md)

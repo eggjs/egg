@@ -1,5 +1,5 @@
 {
-  "name": "@eggjs/tegg-orm-plugin",
+  "name": "@eggjs/orm-plugin",
   "eggPlugin": {
     "name": "teggOrm",
     "dependencies": [
@@ -58,10 +58,10 @@
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/egg-module-common": "workspace:*",
-    "@eggjs/tegg-lifecycle": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
-    "@eggjs/tegg-orm-decorator": "workspace:*",
+    "@eggjs/module-common": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
+    "@eggjs/orm-decorator": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "leoric": "catalog:",
     "sdk-base": "catalog:"

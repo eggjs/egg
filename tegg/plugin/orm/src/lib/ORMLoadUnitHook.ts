@@ -1,11 +1,11 @@
-import type { LifecycleHook } from '@eggjs/tegg-lifecycle';
+import type { LifecycleHook } from '@eggjs/lifecycle';
 import {
   EggLoadUnitType,
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
   type LoadUnit,
   type LoadUnitLifecycleContext,
-} from '@eggjs/tegg-metadata';
+} from '@eggjs/metadata';
 
 import { Orm } from './SingletonORM.ts';
 

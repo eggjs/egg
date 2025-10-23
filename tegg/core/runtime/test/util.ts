@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import { EggLoadUnitType, type LoadUnitInstance } from '@eggjs/tegg-types';
-import { LoadUnitFactory } from '@eggjs/tegg-metadata';
+import { LoadUnitFactory } from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { LoaderUtil } from '@eggjs/module-test-util';
 

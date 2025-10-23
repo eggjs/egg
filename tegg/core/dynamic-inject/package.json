@@ -1,7 +1,7 @@
 {
-  "name": "@eggjs/tegg-dynamic-inject",
+  "name": "@eggjs/dynamic-inject",
   "version": "4.0.0-beta.29",
-  "description": "tegg dynamic inject",
+  "description": "tegg dynamic inject decorator",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",

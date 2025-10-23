@@ -1,5 +1,5 @@
 {
-  "name": "@eggjs/tegg-standalone",
+  "name": "@eggjs/standalone",
   "description": "tegg standalone",
   "version": "4.0.0-beta.29",
   "keywords": [
@@ -40,12 +40,12 @@
   "license": "MIT",
   "dependencies": {
     "@eggjs/tegg": "workspace:*",
-    "@eggjs/tegg-aop-runtime": "workspace:*",
+    "@eggjs/aop-runtime": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
-    "@eggjs/tegg-dal-plugin": "workspace:*",
-    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/dal-plugin": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*"
   },
   "publishConfig": {
@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@eggjs/bin": "workspace:*",
-    "@eggjs/tegg-ajv-plugin": "workspace:*",
+    "@eggjs/ajv-plugin": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/dal-decorator": "workspace:*",
     "@eggjs/utils": "workspace:*",

@@ -39,9 +39,9 @@
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "globby": "catalog:"

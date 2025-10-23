@@ -7,4 +7,4 @@ exports.teggDal = false;
 exports.teggSchedule = false;
 exports.teggOrm = false;
 exports.teggAjv = false;
-exports.aopModule = false;
+exports.teggAop = false;

@@ -42,7 +42,7 @@
     "@eggjs/cookies": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "is-type-of": "catalog:",
     "path-to-regexp": "catalog:path-to-regexp1"

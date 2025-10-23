@@ -5,7 +5,7 @@ import {
   type LoadUnit,
   LoadUnitFactory,
   ModuleDescriptorDumper,
-} from '@eggjs/tegg-metadata';
+} from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
 import type { Logger } from '@eggjs/tegg';

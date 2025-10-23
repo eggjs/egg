@@ -1,5 +1,5 @@
 {
-  "name": "@eggjs/egg-module-common",
+  "name": "@eggjs/module-common",
   "version": "4.0.0-beta.29",
   "description": "common module",
   "keywords": [

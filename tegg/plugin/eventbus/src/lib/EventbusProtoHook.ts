@@ -1,6 +1,6 @@
 import { EVENT_NAME } from '@eggjs/eventbus-decorator';
-import type { LifecycleHook } from '@eggjs/tegg-lifecycle';
-import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
+import type { LifecycleHook } from '@eggjs/lifecycle';
+import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/metadata';
 
 import { EventHandlerProtoManager } from './EventHandlerProtoManager.ts';
 

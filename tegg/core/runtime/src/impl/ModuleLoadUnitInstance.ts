@@ -1,5 +1,5 @@
 import { MapUtil } from '@eggjs/tegg-common-util';
-import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { IdenticalUtil } from '@eggjs/lifecycle';
 import { EggLoadUnitType, ObjectInitType } from '@eggjs/tegg-types';
 import type {
   EggObject,

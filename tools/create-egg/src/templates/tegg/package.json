@@ -24,13 +24,6 @@
   },
   "dependencies": {
     "@eggjs/scripts": "beta",
-    "@eggjs/tegg": "beta",
-    "@eggjs/tegg-aop-plugin": "beta",
-    "@eggjs/tegg-config": "beta",
-    "@eggjs/tegg-controller-plugin": "beta",
-    "@eggjs/tegg-eventbus-plugin": "beta",
-    "@eggjs/tegg-plugin": "beta",
-    "@eggjs/tegg-schedule-plugin": "beta",
     "@eggjs/tracer": "beta",
     "egg": "beta"
   },
@@ -44,8 +37,8 @@
     "oxlint": "1",
     "oxlint-tsgolint": "^0.2.0",
     "typescript": "5",
-    "vitest": "beta",
-    "@vitest/coverage-v8": "beta"
+    "vitest": "4",
+    "@vitest/coverage-v8": "4"
   },
   "engines": {
     "node": ">=22.18.0"

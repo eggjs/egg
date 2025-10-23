@@ -1,6 +1,6 @@
 import { type EggObject, EggObjectFactory } from '@eggjs/tegg-runtime';
 import { IdenticalUtil, type EggObjectName } from '@eggjs/tegg';
-import type { EggPrototype } from '@eggjs/tegg-metadata';
+import type { EggPrototype } from '@eggjs/metadata';
 
 import { StandaloneInnerObjectProto } from './StandaloneInnerObjectProto.ts';
 

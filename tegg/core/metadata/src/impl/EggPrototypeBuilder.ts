@@ -20,7 +20,7 @@ import {
   type InjectConstructorProto,
   ObjectInitType,
 } from '@eggjs/tegg-types';
-import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { IdenticalUtil } from '@eggjs/lifecycle';
 
 import { EggPrototypeFactory, EggPrototypeCreatorFactory } from '../factory/index.ts';
 import { EggPrototypeImpl } from './EggPrototypeImpl.ts';

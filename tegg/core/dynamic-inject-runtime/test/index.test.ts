@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import { describe, it, beforeEach, afterEach } from 'vitest';
-import { LoadUnitFactory } from '@eggjs/tegg-metadata';
+import { LoadUnitFactory } from '@eggjs/metadata';
 import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import { EggTestContext, CoreTestHelper } from '@eggjs/module-test-util';
 

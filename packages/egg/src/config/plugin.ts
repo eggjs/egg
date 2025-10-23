@@ -145,33 +145,33 @@ const plugins: Record<string, EggPluginItem> = {
   },
   teggAjv: {
     enable: enableTeggPlugins,
-    package: '@eggjs/tegg-ajv-plugin',
+    package: '@eggjs/ajv-plugin',
   },
-  aopModule: {
+  teggAop: {
     enable: enableTeggPlugins,
-    package: '@eggjs/tegg-aop-plugin',
+    package: '@eggjs/aop-plugin',
   },
   teggController: {
     enable: enableTeggPlugins,
-    package: '@eggjs/tegg-controller-plugin',
+    package: '@eggjs/controller-plugin',
   },
   teggDal: {
     enable: enableTeggPlugins,
-    package: '@eggjs/tegg-dal-plugin',
+    package: '@eggjs/dal-plugin',
   },
   // FIXME: AgentWorkerLoader.requireFile() load file: ~/tegg/plugin/eventbus/src/app/extend/context.ts, error: Invalid or unexpected token on worker_threads mode
   teggEventbus: {
     // FIXME: MultiPrototypeFound: multi proto found for name:eventContextFactory and qualifiers [{"value":"SINGLETON"}] [ https://eggjs.org/faq/TEGG_MULTI_PROTO_FOUND ]
     enable: enableTeggPlugins,
-    package: '@eggjs/tegg-eventbus-plugin',
+    package: '@eggjs/eventbus-plugin',
   },
   teggOrm: {
     enable: enableTeggPlugins,
-    package: '@eggjs/tegg-orm-plugin',
+    package: '@eggjs/orm-plugin',
   },
   teggSchedule: {
     enable: enableTeggPlugins,
-    package: '@eggjs/tegg-schedule-plugin',
+    package: '@eggjs/schedule-plugin',
   },
 };
 

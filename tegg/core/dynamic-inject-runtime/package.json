@@ -1,7 +1,7 @@
 {
-  "name": "@eggjs/tegg-dynamic-inject-runtime",
+  "name": "@eggjs/dynamic-inject-runtime",
   "version": "4.0.0-beta.29",
-  "description": "tegg dynamic inject",
+  "description": "tegg dynamic inject runtime",
   "eggModule": {
     "name": "teggDyniamicInjectRuntime"
   },
@@ -49,9 +49,9 @@
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
-    "@eggjs/tegg-dynamic-inject": "workspace:*",
-    "@eggjs/tegg-lifecycle": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/dynamic-inject": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"
   },

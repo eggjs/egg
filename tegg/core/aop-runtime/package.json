@@ -1,7 +1,7 @@
 {
-  "name": "@eggjs/tegg-aop-runtime",
+  "name": "@eggjs/aop-runtime",
   "version": "4.0.0-beta.29",
-  "description": "tegg aop",
+  "description": "tegg aop runtime",
   "eggModule": {
     "name": "teggAopRuntime"
   },
@@ -51,7 +51,7 @@
     "@eggjs/aop-decorator": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "koa-compose": "catalog:"

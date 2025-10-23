@@ -1,4 +1,4 @@
-import { type ImplDecorator, QualifierImplDecoratorUtil } from '@eggjs/tegg-dynamic-inject';
+import { type ImplDecorator, QualifierImplDecoratorUtil } from '@eggjs/dynamic-inject';
 
 import { SingletonHelloType } from '../FooType.ts';
 import { AbstractSingletonHello } from '../AbstractSingletonHello.ts';

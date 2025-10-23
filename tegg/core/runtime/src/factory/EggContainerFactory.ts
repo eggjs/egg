@@ -1,6 +1,6 @@
 import { debuglog } from 'node:util';
 
-import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
+import { EggPrototypeFactory } from '@eggjs/metadata';
 import type {
   ContainerGetMethod,
   EggContainer,

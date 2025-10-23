@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import { Base } from 'sdk-base';
 import type { Application } from 'egg';
-import type { EggLoadUnitType, LoadUnit } from '@eggjs/tegg-metadata';
+import type { EggLoadUnitType, LoadUnit } from '@eggjs/metadata';
 import type { LoadUnitInstance } from '@eggjs/tegg-runtime';
 
 import { CONTROLLER_LOAD_UNIT } from './ControllerLoadUnit.ts';

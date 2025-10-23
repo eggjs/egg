@@ -1,5 +1,5 @@
 {
-  "name": "@eggjs/tegg-controller-plugin",
+  "name": "@eggjs/controller-plugin",
   "eggPlugin": {
     "name": "teggController",
     "strict": false,
@@ -8,7 +8,7 @@
     ]
   },
   "version": "4.0.0-beta.29",
-  "description": "controller decorator for egg",
+  "description": "controller decorator plugin for egg",
   "keywords": [
     "egg",
     "plugin",
@@ -63,12 +63,12 @@
   "dependencies": {
     "@eggjs/controller-decorator": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/egg-module-common": "workspace:*",
+    "@eggjs/module-common": "workspace:*",
     "@eggjs/router": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
-    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "egg-errors": "catalog:",

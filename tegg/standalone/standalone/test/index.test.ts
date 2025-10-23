@@ -299,11 +299,11 @@ describe('standalone/standalone/test/index.test.ts', () => {
       await assert.rejects(
         async () => {
           await main<string>(path.join(__dirname, './fixtures/ajv-module'), {
-            dependencies: [path.dirname(importResolve('@eggjs/tegg-ajv-plugin/package.json'))],
+            dependencies: [path.dirname(importResolve('@eggjs/ajv-plugin/package.json'))],
           });
         },
         (err: any) => {
-          assert.equal(err.name, 'AjvInvalidParamError');
+          assert.equal(err.name, 'AjvInvalidParamError', err.stack);
           assert.equal(err.message, 'Validation Failed');
           assert.deepEqual(err.errorData, {});
           assert.equal(
@@ -328,7 +328,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
     it('should pass', async () => {
       const result = await main<string>(path.join(__dirname, './fixtures/ajv-module-pass'), {
-        dependencies: [path.dirname(importResolve('@eggjs/tegg-ajv-plugin/package.json'))],
+        dependencies: [path.dirname(importResolve('@eggjs/ajv-plugin/package.json'))],
       });
       assert.equal(result, '{"body":{"fullname":"mock fullname","skipDependencies":true,"registryName":"ok"}}');
     });

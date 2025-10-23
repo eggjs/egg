@@ -1,9 +1,9 @@
 import { debuglog } from 'node:util';
 
 import type { Application } from 'egg';
-import type { LoadUnitLifecycleContext, LoadUnit } from '@eggjs/tegg-metadata';
+import type { LoadUnitLifecycleContext, LoadUnit } from '@eggjs/metadata';
 import { PrototypeUtil, QualifierUtil, EggQualifierAttribute, EggType } from '@eggjs/core-decorator';
-import { type LifecycleHook } from '@eggjs/tegg-lifecycle';
+import type { LifecycleHook } from '@eggjs/lifecycle';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
 
 import {

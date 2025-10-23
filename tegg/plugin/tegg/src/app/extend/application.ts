@@ -4,7 +4,7 @@ import {
   EggPrototypeLifecycleUtil,
   LoadUnitFactory,
   LoadUnitLifecycleUtil,
-} from '@eggjs/tegg-metadata';
+} from '@eggjs/metadata';
 import {
   AbstractEggContext,
   EggContainerFactory,
@@ -17,11 +17,11 @@ import {
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import type { EggProtoImplClass, QualifierInfo } from '@eggjs/core-decorator';
 import type { RuntimeConfig } from '@eggjs/tegg-types';
-import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { IdenticalUtil } from '@eggjs/lifecycle';
 import type { Application } from 'egg';
 
 export default class TEggPluginApplication {
-  // @eggjs/tegg-metadata should not depend by other egg plugins.
+  // @eggjs/metadata should not depend by other egg plugins.
   // May make multi singleton instances.
   // So tegg-compatible should delegate the metadata factories
   // TODO delegate all the singleton

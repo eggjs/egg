@@ -13,7 +13,7 @@
 ```typescript
 // config/plugin.ts
 export default {
-  aopModule: true,
+  teggAop: true,
 };
 ```
 

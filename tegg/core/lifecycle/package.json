@@ -1,7 +1,7 @@
 {
-  "name": "@eggjs/tegg-lifecycle",
+  "name": "@eggjs/lifecycle",
   "version": "4.0.0-beta.29",
-  "description": "tegg lifecycle definition",
+  "description": "tegg lifecycle definition and decorators",
   "keywords": [
     "egg",
     "typescript",

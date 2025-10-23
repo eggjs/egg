@@ -1,5 +1,5 @@
 {
-  "name": "@eggjs/tegg-dal-plugin",
+  "name": "@eggjs/dal-plugin",
   "eggPlugin": {
     "name": "teggDal",
     "strict": false,
@@ -62,10 +62,10 @@
     "@eggjs/dal-decorator": "workspace:*",
     "@eggjs/dal-runtime": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
-    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
-    "@eggjs/tegg-transaction-decorator": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
+    "@eggjs/transaction-decorator": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"
   },
   "peerDependencies": {
@@ -75,7 +75,7 @@
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@eggjs/tegg": "workspace:*",
-    "@eggjs/tegg-aop-plugin": "workspace:*",
+    "@eggjs/aop-plugin": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@eggjs/tracer": "workspace:*",

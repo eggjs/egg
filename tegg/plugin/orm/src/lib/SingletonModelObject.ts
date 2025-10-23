@@ -1,9 +1,9 @@
 import { ContextHandler, type EggObject, EggObjectStatus } from '@eggjs/tegg-runtime';
-import type { EggPrototype } from '@eggjs/tegg-metadata';
+import type { EggPrototype } from '@eggjs/metadata';
 import type { EggPrototypeName, EggObjectName } from '@eggjs/core-decorator';
-import { type Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { type Id, IdenticalUtil } from '@eggjs/lifecycle';
 import type { Bone } from 'leoric';
-import { EGG_CONTEXT } from '@eggjs/egg-module-common';
+import { EGG_CONTEXT } from '@eggjs/module-common';
 
 import SingletonModelProto from './SingletonModelProto.ts';
 

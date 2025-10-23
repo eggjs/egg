@@ -1,24 +1,24 @@
-# @eggjs/tegg-aop-plugin
+# @eggjs/aop-plugin
 
 [![NPM version][npm-image]][npm-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
-[![Node.js Version](https://img.shields.io/node/v/@eggjs/tegg-aop-plugin.svg?style=flat)](https://nodejs.org/en/download/)
+[![Node.js Version](https://img.shields.io/node/v/@eggjs/aop-plugin.svg?style=flat)](https://nodejs.org/en/download/)
 
-[npm-image]: https://img.shields.io/npm/v/@eggjs/tegg-aop-plugin.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/@eggjs/tegg-aop-plugin
-[snyk-image]: https://snyk.io/test/npm/@eggjs/tegg-aop-plugin/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/@eggjs/tegg-aop-plugin
-[download-image]: https://img.shields.io/npm/dm/@eggjs/tegg-aop-plugin.svg?style=flat-square
-[download-url]: https://npmjs.org/package/@eggjs/tegg-aop-plugin
+[npm-image]: https://img.shields.io/npm/v/@eggjs/aop-plugin.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/aop-plugin
+[snyk-image]: https://snyk.io/test/npm/@eggjs/aop-plugin/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/aop-plugin
+[download-image]: https://img.shields.io/npm/dm/@eggjs/aop-plugin.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/aop-plugin
 
 ## Usage
 
 ```js
 // plugin.js
-export.aopModule = {
+export.teggAop = {
   enable: true,
-  package: '@eggjs/tegg-aop-plugin',
+  package: '@eggjs/aop-plugin',
 };
 ```
 

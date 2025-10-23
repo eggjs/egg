@@ -1,4 +1,4 @@
-import { LoadUnitFactory } from '@eggjs/tegg-metadata';
+import { LoadUnitFactory } from '@eggjs/metadata';
 import type { EggRuntimeContext, EggObject } from '@eggjs/tegg-types';
 
 import { ContextObjectGraph } from './ContextObjectGraph.ts';

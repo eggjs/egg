@@ -4,7 +4,7 @@
     "name": "dal"
   },
   "dependencies": {
-    "@eggjs/tegg-dal-plugin": "*"
+    "@eggjs/dal-plugin": "*"
   },
   "type": "module"
 }

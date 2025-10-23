@@ -16,7 +16,7 @@ exports[`test/lib/core/loader/load_plugin.test.ts > should keep plugin list sort
   "teggConfig",
   "tegg",
   "teggAjv",
-  "aopModule",
+  "teggAop",
   "teggController",
   "teggDal",
   "teggOrm",

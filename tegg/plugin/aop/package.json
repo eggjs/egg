@@ -1,8 +1,8 @@
 {
-  "name": "@eggjs/tegg-aop-plugin",
+  "name": "@eggjs/aop-plugin",
   "version": "4.0.0-beta.29",
   "eggPlugin": {
-    "name": "aopModule",
+    "name": "teggAop",
     "dependencies": [
       "tegg"
     ]
@@ -48,10 +48,10 @@
   "dependencies": {
     "@eggjs/aop-decorator": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/egg-module-common": "workspace:*",
-    "@eggjs/tegg-aop-runtime": "workspace:*",
-    "@eggjs/tegg-lifecycle": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/module-common": "workspace:*",
+    "@eggjs/aop-runtime": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*"
   },
   "peerDependencies": {
