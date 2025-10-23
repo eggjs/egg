@@ -151,7 +151,7 @@ jobs:
 
             // Get package versions from the tag
             const fs = require('fs');
-            const packagesDirs = ['./packages', './tools', './plugins'];
+            const packagesDirs = ['./packages', './tools', './plugins', './tegg/core', './tegg/plugin', './tegg/standalone'];
             for (const packagesDir of packagesDirs) {
               const packageFolders = fs.readdirSync(packagesDir);
               for (const folder of packageFolders) {
