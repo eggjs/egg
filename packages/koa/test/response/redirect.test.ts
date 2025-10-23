@@ -38,17 +38,23 @@ describe('ctx.redirect(url)', () => {
 
   describe('with "back"', () => {
     it('should redirect to Referrer', () => {
-      const ctx = context();
+      const ctx = context({ url: '/', headers: { host: 'example.com' } });
       ctx.req.headers.referrer = '/login';
       ctx.redirect('back');
       assert.equal(ctx.response.header.location, '/login');
     });
 
-    it('should redirect to Referer', () => {
-      const ctx = context();
+    it('should redirect to Referer with a relative path', () => {
+      const ctx = context({ url: '/', headers: { host: 'example.com' } });
       ctx.req.headers.referer = '/login';
       ctx.redirect('back');
       assert.equal(ctx.response.header.location, '/login');
+    });
+
+    it('should redirect to Referer with a same origin url', () => {
+      const ctx = context({ url: '/', headers: { host: 'example.com', referer: 'https://example.com/login' } });
+      ctx.redirect('back');
+      assert.equal(ctx.response.header.location, 'https://example.com/login');
     });
 
     it('should default to alt', () => {
@@ -77,6 +83,16 @@ describe('ctx.redirect(url)', () => {
       ctx.req.headers.referrer = 'https://other.com/login';
       ctx.redirect('back');
       assert.strictEqual(ctx.response.header.location, '/');
+    });
+
+    it('should fix Trailing Double-Slash security issue', () => {
+      const ctx = context({ url: '/', headers: { host: 'example.com' } });
+      ctx.req.headers.referrer = '//evil.com/login/';
+      ctx.redirect('back');
+      assert.equal(ctx.response.header.location, '/');
+
+      ctx.redirect('back', '/home');
+      assert.equal(ctx.response.header.location, '/home');
     });
   });
 
