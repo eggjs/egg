@@ -223,11 +223,6 @@ export class Response {
   protected _getBackReferrer(): string | undefined {
     const referrer = this.ctx.get<string>('Referrer');
     if (referrer) {
-      // referrer is a relative path
-      if (referrer.startsWith('/')) {
-        return referrer;
-      }
-
       // referrer is an absolute URL, check if it's the same origin
       const url = new URL(referrer, this.ctx.href);
       if (url.host === this.ctx.host) {
