@@ -3,6 +3,7 @@ import path from 'node:path';
 import assert from 'node:assert';
 import os from 'node:os';
 import { stat, mkdir, writeFile, realpath } from 'node:fs/promises';
+
 import { importModule } from './import.ts';
 
 const debug = debuglog('egg/utils/plugin');
@@ -118,7 +119,7 @@ export async function getLoader(options: LoaderOptions): Promise<IEggLoader> {
   return new EggLoader({
     baseDir: options.baseDir,
     logger,
-    app: Object.create(Application.prototype),
+    app: new Application({}),
     EggCoreClass: EggCore,
   });
 }
@@ -139,35 +140,32 @@ export async function findEggCore(
     debug('[findEggCore] import "egg" from paths:%o error: %o', paths, err);
   }
 
-  // egg-core 在 6.2.3 版本中更名为 @eggjs/core，为兼容老版本，支持同时查找两个包，优先使用新名字
-  const names = ['@eggjs/core', 'egg-core'];
-  for (const name of names) {
-    try {
-      const { EggCore, EggLoader } = await importModule(name, { paths });
-      if (EggLoader) {
-        return { EggCore, EggLoader };
-      }
-    } catch (err: any) {
-      debug('[findEggCore] import "%s" from paths:%o error: %o', name, paths, err);
+  const eggCodeName = '@eggjs/core';
+  try {
+    const { EggCore, EggLoader } = await importModule(eggCodeName, { paths });
+    if (EggLoader) {
+      return { EggCore, EggLoader };
     }
-
-    try {
-      const { EggCore, EggLoader } = await importModule(name);
-      if (EggLoader) {
-        return { EggCore, EggLoader };
-      }
-    } catch (err: any) {
-      debug('[findEggCore] import "%s" error: %o', name, err);
-    }
-
-    let eggCorePath = path.join(options.baseDir, `node_modules/${name}`);
-    if (!(await exists(eggCorePath))) {
-      eggCorePath = path.join(options.framework, `node_modules/${name}`);
-    }
-    if (await exists(eggCorePath)) {
-      return await importModule(eggCorePath);
-    }
+  } catch (err: any) {
+    debug('[findEggCore] import "%s" from paths:%o error: %o', eggCodeName, paths, err);
   }
 
-  assert(false, `Can't find ${names.join(' or ')} from ${options.baseDir} and ${options.framework}`);
+  try {
+    const { EggCore, EggLoader } = await importModule(eggCodeName);
+    if (EggLoader) {
+      return { EggCore, EggLoader };
+    }
+  } catch (err: any) {
+    debug('[findEggCore] import "%s" error: %o', eggCodeName, err);
+  }
+
+  let eggCorePath = path.join(options.baseDir, `node_modules/${eggCodeName}`);
+  if (!(await exists(eggCorePath))) {
+    eggCorePath = path.join(options.framework, `node_modules/${eggCodeName}`);
+  }
+  if (await exists(eggCorePath)) {
+    return await importModule(eggCorePath);
+  }
+
+  assert(false, `Can't find egg or ${eggCodeName} from ${options.baseDir} and ${options.framework}`);
 }
