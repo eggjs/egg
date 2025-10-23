@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/schedule-decorator",
-  "version": "4.0.0-beta.29",
+  "version": "4.0.0-beta.30",
   "description": "tegg schedule decorator",
   "type": "module",
   "exports": {

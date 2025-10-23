@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/logrotator",
-  "version": "5.0.0-beta.29",
+  "version": "5.0.0-beta.30",
   "description": "logrotator for egg",
   "eggPlugin": {
     "name": "logrotator",

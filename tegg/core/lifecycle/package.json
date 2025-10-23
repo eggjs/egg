@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/lifecycle",
-  "version": "4.0.0-beta.29",
+  "version": "4.0.0-beta.30",
   "description": "tegg lifecycle definition and decorators",
   "keywords": [
     "egg",

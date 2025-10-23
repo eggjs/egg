@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/background-task",
   "description": "background task util for tegg",
-  "version": "4.0.0-beta.29",
+  "version": "4.0.0-beta.30",
   "keywords": [
     "egg",
     "typescript",
