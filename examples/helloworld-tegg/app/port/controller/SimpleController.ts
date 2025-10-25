@@ -57,7 +57,9 @@ export default class SimpleController {
   }
 
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/foo' })
-  async getFoo() {
+  async getFoo(@HTTPContext() ctx: Context) {
+    this.logger.info('traceId: %s', ctx.traceId);
+    this.logger.info('tracer: %s', ctx.tracer.traceId);
     return {
       message: `hello, bar: ${await this.foo.bar()}`,
       data: await this.foo.fetch(),

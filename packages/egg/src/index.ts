@@ -12,6 +12,9 @@ export type {
 // export types
 export * from './lib/egg.ts';
 export * from './lib/types.ts';
+// alias EggAppConfig to Config
+export type { EggAppConfig as Config } from './lib/types.ts';
+
 export * from './lib/start.ts';
 
 // export singleton
@@ -149,8 +152,13 @@ export {
   LifecyclePreLoad,
   SingletonProto,
   MultiInstanceProto,
+  ContextProto,
   type ImplDecorator,
   QualifierImplDecoratorUtil,
   type EggObjectFactory,
   type IncomingHttpHeaders,
+  BackgroundTaskHelper,
+  type ContextEventBus,
+  type EventBus,
+  MetadataUtil,
 } from '@eggjs/tegg';
