@@ -34,9 +34,6 @@
   "module": "./dist/index.js",
   "eggPlugin": {
     "name": "development",
-    "env": [
-      "local"
-    ],
     "dependencies": [
       "watcher"
     ]

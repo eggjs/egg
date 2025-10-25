@@ -1,3 +1,7 @@
+import developmentPlugin from '../../../../src/index.ts';
+
 export default {
-  development: true,
+  ...developmentPlugin({
+    enable: true,
+  }),
 };

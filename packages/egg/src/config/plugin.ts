@@ -1,3 +1,5 @@
+import developmentPlugin from '@eggjs/development';
+
 import type { EggPluginItem } from '../index.ts';
 
 const enableTeggPlugins = process.env.DISABLE_TEGG_PLUGINS !== 'true';
@@ -68,16 +70,7 @@ const plugins: Record<string, EggPluginItem> = {
     package: '@eggjs/security',
   },
 
-  /**
-   * local development helper
-   * @member {Object} Plugin#development
-   * @property {Boolean} enable - `true` by default. on CI, it's `false` to avoid unexpected errors.
-   * @since 1.0.0
-   */
-  development: {
-    enable: process.env.CI ? false : true,
-    package: '@eggjs/development',
-  },
+  ...developmentPlugin(),
 
   /**
    * logger file rotator
