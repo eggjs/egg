@@ -13,7 +13,28 @@ export type {
 export * from './lib/egg.ts';
 export * from './lib/types.ts';
 // alias EggAppConfig to Config
-export type { EggAppConfig as Config } from './lib/types.ts';
+export type {
+  /**
+   * Egg Application Config, can be injected into Proto, e.g. SingletonProto/ContextProto/HttpController.
+   *
+   * Usage:
+   * ```ts
+   * import { Inject, Config } from 'egg';
+   *
+   * @SingletonProto()
+   * class FooService {
+   *   @Inject()
+   *   config: Config;
+   *
+   *   async bar() {
+   *     console.log(this.config.env);
+   *   }
+   * }
+   * ```
+   * @since 4.1.0
+   */
+  EggAppConfig as Config,
+} from './lib/types.ts';
 
 export * from './lib/start.ts';
 
