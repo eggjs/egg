@@ -127,7 +127,7 @@ jobs:
       # install and start MySQL (will automatically start mysqld)
       - name: Start MySQL (macOS or Linux)
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
-        uses: shogo82148/actions-setup-mysql@b9917bb49fa1c316abfb6931011d54da7f5470d9 # v1
+        uses: shogo82148/actions-setup-mysql@27e74fac04c136a9f4c2dc2ed457df57331b3e0c # v1
         with:
           mysql-version: '8'
           auto-start: 'true'
