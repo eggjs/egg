@@ -469,8 +469,8 @@ catalogs:
       specifier: ^1.24.0
       version: 1.24.0
     oxlint-tsgolint:
-      specifier: ^0.2.1
-      version: 0.2.1
+      specifier: ^0.3.0
+      version: 0.3.0
     parseurl:
       specifier: ^1.3.3
       version: 1.3.3
@@ -639,10 +639,10 @@ importers:
         version: 0.8.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       oxlint-tsgolint:
         specifier: 'catalog:'
-        version: 0.2.1
+        version: 0.3.0
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
@@ -676,7 +676,7 @@ importers:
         version: link:../../tools/egg-bin
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
 
   examples/helloworld-tegg:
     dependencies:
@@ -833,7 +833,7 @@ importers:
         version: 1.1.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1120,7 +1120,7 @@ importers:
         version: 24.9.1
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1138,7 +1138,7 @@ importers:
         version: link:../tsconfig
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1302,10 +1302,10 @@ importers:
         version: 24.9.1
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       oxlint-tsgolint:
         specifier: 'catalog:'
-        version: 0.2.1
+        version: 0.3.0
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -1336,7 +1336,7 @@ importers:
         version: 24.9.1
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       path-to-regexp-v8:
         specifier: npm:path-to-regexp@^8.3.0
         version: path-to-regexp@8.3.0
@@ -1799,7 +1799,7 @@ importers:
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -1851,7 +1851,7 @@ importers:
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2019,7 +2019,7 @@ importers:
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2080,7 +2080,7 @@ importers:
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -2160,7 +2160,7 @@ importers:
         version: 2.0.1(nunjucks@3.2.4(chokidar@3.6.0))
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -3799,7 +3799,7 @@ importers:
         version: 4.0.2
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.2.1)
+        version: 1.24.0(oxlint-tsgolint@0.3.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -4457,33 +4457,33 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@oxlint-tsgolint/darwin-arm64@0.2.1':
-    resolution: {integrity: sha512-1cjcZkgpkWTfkFx111weVsvlnDG3+a7Y3qei+VCbr55LwKTHSzGq9tVNakIHRJ6NZfX7bQKYU4yef3p6AKoteg==}
+  '@oxlint-tsgolint/darwin-arm64@0.3.0':
+    resolution: {integrity: sha512-AoK80jrY1DhqnGtpWCyyUuFBl6smiwHXeW25OimCzOHwVy7MFgMMaVU4LTcMFOD524UI4sIBl7aN3PLPa/X92A==}
     cpu: [arm64]
     os: [darwin]
 
-  '@oxlint-tsgolint/darwin-x64@0.2.1':
-    resolution: {integrity: sha512-Copd7aMOmL0aPUCBZnZBG1nHXOVnZnHT02okUnkNdwNAWUJw7thnhHln5yX4iLfCA4cky7iF3XXIVl+CRI/siQ==}
+  '@oxlint-tsgolint/darwin-x64@0.3.0':
+    resolution: {integrity: sha512-jTvH5xE80KVeExMv2TG1EQ/EpxtfsIx1tL65UY3cwMEScgb5lB5zWYJqTTDeA1873XK4/siHL60l03m21eCzTg==}
     cpu: [x64]
     os: [darwin]
 
-  '@oxlint-tsgolint/linux-arm64@0.2.1':
-    resolution: {integrity: sha512-MW6M2r/+cHbj01yKwRuQKwstKfY72wT/JCXI65rFPtRgN8JpuKUghOpaZpNs1oYfNNo308UTh41Dpfwl2k5weA==}
+  '@oxlint-tsgolint/linux-arm64@0.3.0':
+    resolution: {integrity: sha512-C/Op/gguoLQv20dCmUrnWCcLvlAnymhp+pACTDTe+vr+y1LlCJtFXeespJrUWOF5rXPjOxtPGajiJI82B6hZsA==}
     cpu: [arm64]
     os: [linux]
 
-  '@oxlint-tsgolint/linux-x64@0.2.1':
-    resolution: {integrity: sha512-OacFTtQ8gso1c1za6lWdczFWXXo6djc7CFF3uKLfKwd2aHDkyC50Izkmv7MHwfAFtFdqSLcJKhF2VPExDmjKHg==}
+  '@oxlint-tsgolint/linux-x64@0.3.0':
+    resolution: {integrity: sha512-WjWMBY1VduR57lKqId3F3TqN3DRWZRsGm7J3Bd0hoos0x3x+q3wRuvJoFiovVFcswUM+YLIePKZ1582bWxrQvA==}
     cpu: [x64]
     os: [linux]
 
-  '@oxlint-tsgolint/win32-arm64@0.2.1':
-    resolution: {integrity: sha512-Fq/vJqT4PgEWWIRP7wYSfK3DU7eEG9eOVOvIo72T6wCUrnAKDQsyUzh5bOVbTxWj/ujAc6CT7+GxdpOEueK0bw==}
+  '@oxlint-tsgolint/win32-arm64@0.3.0':
+    resolution: {integrity: sha512-6nXOceZrldiZOPPdPFErgrqCeWzI5Xza4C5IzRRnjI1WrqKokho0sJGp9WKqgSIGRuMQ2ITfLy+L5Qs3Ham2mg==}
     cpu: [arm64]
     os: [win32]
 
-  '@oxlint-tsgolint/win32-x64@0.2.1':
-    resolution: {integrity: sha512-Y6Fy4N7FCwxya+scCis+FokK5vWa9+Stb1Rw0x6VybhZpXFSGohBKmDTj6WUkoDyJ+Wl1FkArkAVQnoPP9uNRg==}
+  '@oxlint-tsgolint/win32-x64@0.3.0':
+    resolution: {integrity: sha512-sHxS4DUIi3P9CL9PXSfj+YtAR8MLTArpVRqb7Vo+ribybHqKWveswookhpI09pyVcQ2Px4ARMFywBkY2tXHRVg==}
     cpu: [x64]
     os: [win32]
 
@@ -7695,8 +7695,8 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
-  oxlint-tsgolint@0.2.1:
-    resolution: {integrity: sha512-Z5tZw9nilmLo+EukScIhGZSVRasjyCCUQrDlX5CoJNqbnv/mlo+mnTmiEN4cmJeKMwHSHSvgAaDn+0gfHAv24w==}
+  oxlint-tsgolint@0.3.0:
+    resolution: {integrity: sha512-q4ZI3TXwiBZsku1RzVlIyk09HY0lI33No87b/XIHLAGm6+3BeyW4D0kIcMok//O65Z5xINTJNlSNkazmkgx8pA==}
     hasBin: true
 
   oxlint@1.24.0:
@@ -9603,22 +9603,22 @@ snapshots:
   '@oxfmt/win32-x64@0.8.0':
     optional: true
 
-  '@oxlint-tsgolint/darwin-arm64@0.2.1':
+  '@oxlint-tsgolint/darwin-arm64@0.3.0':
     optional: true
 
-  '@oxlint-tsgolint/darwin-x64@0.2.1':
+  '@oxlint-tsgolint/darwin-x64@0.3.0':
     optional: true
 
-  '@oxlint-tsgolint/linux-arm64@0.2.1':
+  '@oxlint-tsgolint/linux-arm64@0.3.0':
     optional: true
 
-  '@oxlint-tsgolint/linux-x64@0.2.1':
+  '@oxlint-tsgolint/linux-x64@0.3.0':
     optional: true
 
-  '@oxlint-tsgolint/win32-arm64@0.2.1':
+  '@oxlint-tsgolint/win32-arm64@0.3.0':
     optional: true
 
-  '@oxlint-tsgolint/win32-x64@0.2.1':
+  '@oxlint-tsgolint/win32-x64@0.3.0':
     optional: true
 
   '@oxlint/darwin-arm64@1.24.0':
@@ -13020,16 +13020,16 @@ snapshots:
       '@oxfmt/win32-arm64': 0.8.0
       '@oxfmt/win32-x64': 0.8.0
 
-  oxlint-tsgolint@0.2.1:
+  oxlint-tsgolint@0.3.0:
     optionalDependencies:
-      '@oxlint-tsgolint/darwin-arm64': 0.2.1
-      '@oxlint-tsgolint/darwin-x64': 0.2.1
-      '@oxlint-tsgolint/linux-arm64': 0.2.1
-      '@oxlint-tsgolint/linux-x64': 0.2.1
-      '@oxlint-tsgolint/win32-arm64': 0.2.1
-      '@oxlint-tsgolint/win32-x64': 0.2.1
+      '@oxlint-tsgolint/darwin-arm64': 0.3.0
+      '@oxlint-tsgolint/darwin-x64': 0.3.0
+      '@oxlint-tsgolint/linux-arm64': 0.3.0
+      '@oxlint-tsgolint/linux-x64': 0.3.0
+      '@oxlint-tsgolint/win32-arm64': 0.3.0
+      '@oxlint-tsgolint/win32-x64': 0.3.0
 
-  oxlint@1.24.0(oxlint-tsgolint@0.2.1):
+  oxlint@1.24.0(oxlint-tsgolint@0.3.0):
     optionalDependencies:
       '@oxlint/darwin-arm64': 1.24.0
       '@oxlint/darwin-x64': 1.24.0
@@ -13039,7 +13039,7 @@ snapshots:
       '@oxlint/linux-x64-musl': 1.24.0
       '@oxlint/win32-arm64': 1.24.0
       '@oxlint/win32-x64': 1.24.0
-      oxlint-tsgolint: 0.2.1
+      oxlint-tsgolint: 0.3.0
 
   p-event@6.0.1:
     dependencies:
