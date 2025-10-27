@@ -27,36 +27,42 @@ npm i @eggjs/tracer
 Enable tracer plugin:
 
 ```js
-// config/plugin.js
-exports.tracer = {
-  enable: true,
-  package: '@eggjs/tracer',
+// config/plugin.ts
+import tracerPlugin from '@eggjs/tracer';
+
+export default {
+  ...tracerPlugin(),
 };
 ```
 
-### Build my own tracer
+### Build my own Tracer Class
 
-```js
-// my_tracer.js
-const { Tracer } = require('@eggjs/tracer');
+```ts
+// ./path/to/my_tracer.ts
+import { Tracer } from '@eggjs/tracer';
 
 const counter = 0;
 
-class MyTracer extends Tracer {
+export class MyTracer extends Tracer {
   get traceId() {
     return `${counter++}-${Date.now()}-${process.pid}`;
   }
 }
-module.exports = MyTracer;
 ```
 
 Change the config to use `MyTracer`:
 
-```js
-// config/config.default.js
-exports.tracer = {
-  Class: require('path/to/my_tracer.js'),
-};
+```ts
+// config/config.default.ts
+import { defineConfig } from 'egg';
+
+import { MyTracer } from './path/to/my_tracer.ts';
+
+export default defineConfig({
+  tracer: {
+    Class: MyTracer,
+  },
+});
 ```
 
 ## Questions & Suggestions

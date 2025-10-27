@@ -32,15 +32,6 @@
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "eggPlugin": {
-    "name": "development",
-    "env": [
-      "local"
-    ],
-    "dependencies": [
-      "watcher"
-    ]
-  },
   "keywords": [
     "egg",
     "plugin",

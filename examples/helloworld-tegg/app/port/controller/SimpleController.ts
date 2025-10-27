@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import {
   HTTPController,
   HTTPHeaders,
@@ -13,8 +14,9 @@ import {
   Logger,
   Inject,
 } from 'egg';
-import { Foo } from '../../biz/Foo.ts';
+import { Tracer } from '@eggjs/tracer';
 
+import { Foo } from '../../biz/Foo.ts';
 @HTTPController()
 export default class SimpleController {
   @Inject()
@@ -22,6 +24,9 @@ export default class SimpleController {
 
   @Inject()
   private foo: Foo;
+
+  @Inject()
+  private tracer: Tracer;
 
   // declare a `GET /api/hello/:name` interface
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/hello/:name' })
@@ -57,7 +62,12 @@ export default class SimpleController {
   }
 
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/foo' })
-  async getFoo() {
+  async getFoo(@HTTPContext() ctx: Context) {
+    this.logger.info('traceId: %s', ctx.traceId);
+    this.logger.info('tracer: %s', ctx.tracer.traceId);
+    this.logger.info('tracer: %s', this.tracer.traceId);
+    assert.equal(ctx.traceId, this.tracer.traceId);
+    assert.equal(ctx.tracer, this.tracer);
     return {
       message: `hello, bar: ${await this.foo.bar()}`,
       data: await this.foo.fetch(),

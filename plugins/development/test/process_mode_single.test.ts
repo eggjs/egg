@@ -6,6 +6,8 @@ import { beforeAll, afterAll, it, describe } from 'vitest';
 import { request } from '@eggjs/supertest';
 import { mm } from '@eggjs/mock';
 import { start, Application } from 'egg';
+
+import developmentPlugin from '../src/index.ts';
 import { getFilepath } from './utils.ts';
 
 describe('test/process_mode_single.test.ts', () => {
@@ -15,10 +17,7 @@ describe('test/process_mode_single.test.ts', () => {
       env: 'local',
       baseDir: getFilepath('development-process_mode_single'),
       plugins: {
-        development: {
-          enable: true,
-          path: getFilepath('../..'),
-        },
+        ...developmentPlugin(),
       },
     } as any);
   });

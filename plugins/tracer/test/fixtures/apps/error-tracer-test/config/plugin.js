@@ -1,4 +1,5 @@
-exports.tracer = {
-  enable: true,
-  package: '@eggjs/tracer',
+import tracerPlugin from '../../../../../src/index.ts';
+
+module.exports = {
+  ...tracerPlugin(),
 };

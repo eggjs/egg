@@ -1,6 +1,6 @@
 // import plugin types only, avoid circular dependency
 
-import '@eggjs/development/types';
+// import '@eggjs/development/types';
 import '@eggjs/i18n/types';
 import '@eggjs/jsonp/types';
 import '@eggjs/logrotator/types';

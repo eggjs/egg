@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { beforeEach, afterEach, it, describe } from 'vitest';
+import { beforeEach, afterEach, it, describe, expect } from 'vitest';
 
 import { escape, getFilepath, DELAY } from './utils.ts';
 
@@ -20,6 +20,27 @@ describe('test/development-ts.test.ts', () => {
   afterEach(() => app.close());
   // for debounce
   afterEach(() => scheduler.wait(500));
+
+  it('should enable in local environment', async () => {
+    // "development": {
+    //   "enable": true,
+    //   "env": [
+    //     "local"
+    //   ],
+    //   "name": "development",
+    //   "dependencies": [
+    //     "watcher"
+    //   ],
+    //   "optionalDependencies": [],
+    // }
+    const agentConfig = await fs.readFile(getFilepath('development-ts/run/agent_config.json'), 'utf8');
+    const pluginConfig = JSON.parse(agentConfig).plugins.development;
+    expect(pluginConfig.enable).toBe(true);
+    expect(pluginConfig.env).toEqual(['local']);
+    expect(pluginConfig.name).toBe('development');
+    expect(pluginConfig.dependencies).toEqual(['watcher']);
+    expect(pluginConfig.optionalDependencies).toEqual([]);
+  });
 
   it('should reload when change service', async () => {
     const filepath = getFilepath('development-ts/app/service/a.ts');
