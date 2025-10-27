@@ -146,7 +146,7 @@ catalog:
   koa-session: ^7.0.2
   koa-static: ^5.0.0
   leoric: ^2.12.2
-  lint-staged: ^16.2.5
+  lint-staged: ^16.2.6
   lodash: ^4.17.21
   lodash.snakecase: ^4.1.1
   marked: ^16.0.0
