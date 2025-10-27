@@ -12,6 +12,9 @@ export type {
 // export types
 export * from './lib/egg.ts';
 export * from './lib/types.ts';
+// export define functions
+export * from './lib/define.ts';
+
 // alias EggAppConfig to Config
 export type {
   /**

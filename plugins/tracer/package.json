@@ -18,9 +18,6 @@
     }
   },
   "description": "tracer for egg",
-  "eggPlugin": {
-    "name": "tracer"
-  },
   "keywords": [
     "egg",
     "egg-plugin",

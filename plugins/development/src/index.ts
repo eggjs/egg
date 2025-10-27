@@ -1,6 +1,4 @@
-import path from 'node:path';
-
-import type { IEggPluginItem as EggPluginConfig } from 'egg';
+import { definePluginFactory, type EggDefinePluginFactory } from 'egg';
 
 import './types.ts';
 
@@ -23,13 +21,10 @@ import './types.ts';
  * @param options.env - Environment list to enable the plugin, default is `['local']`.
  * @returns Plugin config
  */
-export default function developmentPlugin(options?: Pick<EggPluginConfig, 'enable' | 'env'>) {
-  return {
-    development: {
-      enable: process.env.CI ? false : true,
-      path: path.dirname(import.meta.dirname),
-      env: ['local'],
-      ...options,
-    } as EggPluginConfig,
-  };
-}
+export default definePluginFactory({
+  name: 'development',
+  enable: true,
+  path: import.meta.dirname,
+  env: ['local'],
+  dependencies: ['watcher'],
+}) as EggDefinePluginFactory;

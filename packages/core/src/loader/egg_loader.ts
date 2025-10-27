@@ -442,7 +442,9 @@ export class EggLoader {
       plugin.path = this.getPluginPath(plugin);
 
       // read plugin information from ${plugin.path}/package.json
-      await this.#mergePluginConfig(plugin);
+      if (!plugin.skipMerge) {
+        await this.#mergePluginConfig(plugin);
+      }
 
       // disable the plugin that not match the serverEnv
       if (env && plugin.env.length > 0 && !plugin.env.includes(env)) {
@@ -616,11 +618,11 @@ export class EggLoader {
   // }
   async #mergePluginConfig(plugin: EggPluginInfo): Promise<void> {
     let pkg: any;
-    let config: any;
+    let eggPluginConfig: any;
     const pluginPackage = path.join(plugin.path as string, 'package.json');
     if (await utils.existsPath(pluginPackage)) {
       pkg = await readJSON(pluginPackage);
-      config = pkg.eggPlugin;
+      eggPluginConfig = pkg.eggPlugin;
       if (pkg.version) {
         plugin.version = pkg.version;
       }
@@ -629,24 +631,24 @@ export class EggLoader {
     }
 
     const logger = this.options.logger;
-    if (!config) {
-      logger.warn(`[@eggjs/core/egg_loader] pkg.eggPlugin is missing in ${pluginPackage}`);
+    if (!eggPluginConfig) {
+      logger.warn('[@eggjs/core/egg_loader] pkg.eggPlugin is missing in %s, plugin: %j', pluginPackage, plugin);
       return;
     }
 
-    if (config.name && config.strict !== false && config.name !== plugin.name) {
+    if (eggPluginConfig.name && eggPluginConfig.strict !== false && eggPluginConfig.name !== plugin.name) {
       // pluginName is configured in config/plugin.js
       // pluginConfigName is pkg.eggPlugin.name
       logger.warn(
-        `[@eggjs/core/egg_loader] pluginName(${plugin.name}) is different from pluginConfigName(${config.name})`,
+        `[@eggjs/core/egg_loader] pluginName(${plugin.name}) is different from pluginConfigName(${eggPluginConfig.name})`,
       );
     }
 
     // dep compatible
-    depCompatible(config);
+    depCompatible(eggPluginConfig);
 
     for (const key of ['dependencies', 'optionalDependencies', 'env']) {
-      const values = config[key];
+      const values = eggPluginConfig[key];
       const existsValues = Reflect.get(plugin, key);
       if (Array.isArray(values) && !existsValues?.length) {
         Reflect.set(plugin, key, values);
@@ -1697,6 +1699,7 @@ export class EggLoader {
   }
 }
 
+// convert dep to dependencies for compatibility
 function depCompatible(plugin: EggPluginInfo & { dep?: string[] }) {
   if (plugin.dep && !(Array.isArray(plugin.dependencies) && plugin.dependencies.length > 0)) {
     plugin.dependencies = plugin.dep;

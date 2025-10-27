@@ -35,6 +35,8 @@ export interface EggPluginInfo {
   env: string[];
   /** the file plugin config in. */
   from: string;
+  /** whether skip merge plugin config from package.json */
+  skipMerge?: boolean;
 }
 
 export interface CustomLoaderConfigItem {
