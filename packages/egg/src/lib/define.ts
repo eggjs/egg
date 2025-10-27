@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+
 import type { PartialDeep } from 'type-fest';
 
 import type { EggAppConfig, EggAppInfo, EggEnvType } from './types.ts';
