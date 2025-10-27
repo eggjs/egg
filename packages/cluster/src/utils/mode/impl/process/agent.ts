@@ -56,7 +56,7 @@ export class AgentProcessUtils extends BaseAgentUtils {
       forkOptions.execArgv = process.execArgv.concat([`--inspect-port=${debugPort}`]);
     }
 
-    debug('forkOptions: %j', forkOptions);
+    debug('forkOptions: %j, args: %s', forkOptions, args);
     const agentProcess = (this.#agentProcess = fork(this.getAgentWorkerFile(), args, forkOptions));
     const agentWorker = (this.instance = new AgentProcessWorker(agentProcess));
     agentWorker.status = 'starting';

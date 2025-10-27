@@ -77,13 +77,6 @@ export class Master extends ReadyEventEmitter {
     const frameworkPath = this.options.framework;
     const frameworkPkg = readJSONSync(path.join(frameworkPath, 'package.json'));
 
-    // set app & agent worker impl
-    if (this.options.startMode === 'worker_threads') {
-      this.startByWorkerThreads();
-    } else {
-      this.startByProcess();
-    }
-
     this.log(`[master] =================== ${frameworkPkg.name} start 🥚🥚🥚🥚 =====================`);
     this.logger.info(`[master] node version ${process.version}`);
     /* istanbul ignore next */
@@ -193,16 +186,22 @@ export class Master extends ReadyEventEmitter {
       fs.writeFileSync(this.options.pidFile, process.pid.toString(), 'utf-8');
     }
 
-    this.detectPorts().then(() => {
-      this.forkAgentWorker();
-    });
-
     // exit when agent or worker exception
     this.workerManager.on('exception', (count: { agent: number; worker: number }) => {
       const err = new ClusterWorkerExceptionError(count.agent, count.worker);
       this.logger.error(err);
       process.exit(1);
     });
+
+    await this.detectPorts();
+    // set app & agent worker impl
+    if (this.options.startMode === 'worker_threads') {
+      this.startByWorkerThreads();
+    } else {
+      this.startByProcess();
+    }
+
+    this.forkAgentWorker();
   }
 
   startByProcess(): void {
@@ -240,6 +239,7 @@ export class Master extends ReadyEventEmitter {
     try {
       const clusterPort = await detectPort();
       this.options.clusterPort = clusterPort;
+      this.log('[master] detected cluster port: %s', clusterPort);
       // If sticky mode, detect worker port
       if (this.options.sticky) {
         const stickyWorkerPort = await detectPort();
