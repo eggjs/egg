@@ -130,7 +130,7 @@ catalog:
   humanize-ms: ^2.0.0
   husky: ^9.1.7
   inflection: ^3.0.0
-  ini: ^5.0.0
+  ini: ^6.0.0
   ioredis: ^5.4.2
   is-type-of: ^2.2.0
   jest-changed-files: ^30.0.0
