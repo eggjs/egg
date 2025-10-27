@@ -184,5 +184,6 @@ export {
   BackgroundTaskHelper,
   type ContextEventBus,
   type EventBus,
+  type Events,
   MetadataUtil,
 } from '@eggjs/tegg';

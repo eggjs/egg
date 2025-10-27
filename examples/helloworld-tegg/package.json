@@ -47,6 +47,7 @@
     "./app/port/schedule/CronDemo": "./app/port/schedule/CronDemo.ts",
     "./app/port/schedule/Demo": "./app/port/schedule/Demo.ts",
     "./config/config.default": "./config/config.default.ts",
+    "./config/plugin": "./config/plugin.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -61,6 +62,7 @@
       "./app/port/schedule/CronDemo": "./dist/app/port/schedule/CronDemo.js",
       "./app/port/schedule/Demo": "./dist/app/port/schedule/Demo.js",
       "./config/config.default": "./dist/config/config.default.js",
+      "./config/plugin": "./dist/config/plugin.js",
       "./package.json": "./package.json"
     }
   }
