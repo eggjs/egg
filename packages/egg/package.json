@@ -141,7 +141,7 @@
     "@eggjs/core": "workspace:*",
     "@eggjs/dal-plugin": "workspace:*",
     "@eggjs/development": "workspace:*",
-    "@eggjs/errors": "workspace:^",
+    "@eggjs/errors": "workspace:*",
     "@eggjs/eventbus-plugin": "workspace:*",
     "@eggjs/extend2": "workspace:*",
     "@eggjs/i18n": "workspace:*",
