@@ -6,7 +6,7 @@ import '@eggjs/jsonp/types';
 import '@eggjs/logrotator/types';
 import '@eggjs/multipart/types';
 import '@eggjs/onerror/types';
-// import '@eggjs/schedule/types';
+import '@eggjs/schedule/types';
 import '@eggjs/security/types';
 import '@eggjs/session/types';
 import '@eggjs/static/types';

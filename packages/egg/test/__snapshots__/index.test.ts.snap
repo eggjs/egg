@@ -91,6 +91,7 @@ exports[`should expose properties 1`] = `
   "Subscription": [Function],
   "defineConfig": [Function],
   "defineConfigFactory": [Function],
+  "definePluginFactory": [Function],
   "start": [Function],
   "startCluster": [Function],
   "startEgg": [Function],
