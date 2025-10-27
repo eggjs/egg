@@ -1,4 +1,4 @@
-import { definePluginFactory, type EggDefinePluginFactory } from 'egg';
+import { definePluginFactory, type EggPluginFactory } from 'egg';
 
 import './types.ts';
 
@@ -21,4 +21,4 @@ export default definePluginFactory({
   name: 'tracer',
   enable: true,
   path: import.meta.dirname,
-}) as EggDefinePluginFactory;
+}) as EggPluginFactory;

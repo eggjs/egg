@@ -68,9 +68,9 @@ export interface EggPluginMeta {
 export type EggPluginOptions = PartialDeep<Omit<EggPluginMeta, 'name'>>;
 
 /**
- * Define plugin factory return type, the return value is a record of plugin name and plugin meta.
+ * Egg plugin factory type, the return value is a record of plugin name and plugin meta.
  */
-export type EggDefinePluginFactory = (options?: EggPluginOptions) => Record<string, EggPluginMeta>;
+export type EggPluginFactory = (options?: EggPluginOptions) => Record<string, EggPluginMeta>;
 
 /**
  * Define plugin factory with type safety
@@ -88,13 +88,14 @@ export type EggDefinePluginFactory = (options?: EggPluginOptions) => Record<stri
  * });
  * ```
  */
-export function definePluginFactory(pluginMeta: EggPluginMeta): EggDefinePluginFactory {
+export function definePluginFactory(pluginMeta: EggPluginMeta): EggPluginFactory {
   assert(pluginMeta.name, 'plugin name is required');
   assert(pluginMeta.path, 'plugin path is required');
   return (options?: EggPluginOptions) => ({
     [pluginMeta.name]: {
       ...pluginMeta,
       ...options,
+      name: pluginMeta.name,
       // skip merge `eggPlugin` field from package.json
       skipMerge: true,
     },
