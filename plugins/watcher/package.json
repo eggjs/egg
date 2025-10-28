@@ -22,9 +22,6 @@
     }
   },
   "description": "file watcher plugin for egg",
-  "eggPlugin": {
-    "name": "watcher"
-  },
   "scripts": {
     "lint": "oxlint --type-aware",
     "typecheck": "tsc --noEmit",

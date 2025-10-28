@@ -15,12 +15,6 @@ egg 的日志切割插件，默认会按照时间切割所有的 app.loggers。
 
 ## 配置
 
-- `plugin.js`
-
-```js
-exports.logrotator = true;
-```
-
 - `config.default.js`
 
 ```js

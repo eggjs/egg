@@ -372,4 +372,4 @@ module.exports = (appInfo) => {
 
 > 日志同步写入内存，异步每隔一段时间（默认 1 秒）进行刷盘。
 
-更多细节，请参考 [egg-logger](https://github.com/eggjs/egg-logger) 和 [@eggjs/logrotator](https://github.com/eggjs/logrotator)。
+更多细节，请参考 [egg-logger](https://github.com/eggjs/egg-logger) 和 [@eggjs/logrotator](https://github.com/eggjs/egg/tree/next/plugins/logrotator)。

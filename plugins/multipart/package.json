@@ -1,13 +1,7 @@
 {
   "name": "@eggjs/multipart",
   "version": "5.0.0-beta.33",
-  "description": "multipart plugin for egg",
-  "eggPlugin": {
-    "name": "multipart",
-    "optionalDependencies": [
-      "schedule"
-    ]
-  },
+  "description": "Multipart plugin for egg",
   "keywords": [
     "egg",
     "egg-plugin",

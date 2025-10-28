@@ -44,13 +44,6 @@
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },
-  "eggPlugin": {
-    "name": "nunjucks",
-    "dep": [
-      "security",
-      "view"
-    ]
-  },
   "keywords": [
     "egg",
     "eggPlugin",

@@ -17,10 +17,6 @@ This is an egg plugin for local development, under development environment enabl
 
 `@eggjs/development` has been built-in for egg. It is enabled by default.
 
-## Requirements
-
-- egg >= 4.x
-
 ## Configuration
 
 see [config/config.default.ts](https://github.com/eggjs/egg/blob/master/plugins/development/src/config/config.default.ts) for more detail.

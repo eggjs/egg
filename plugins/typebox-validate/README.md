@@ -105,27 +105,20 @@ export default HomeController;
 
 1. 安装
 
-针对 `egg@4.x` 及以上版本，使用
-
 ```js
-npm i @eggjs/typebox-validate -S
+npm i @eggjs/typebox-validate
 ```
 
-针对 `egg@3.x` 版本，使用
-
-```js
-npm i egg-typebox-validate@3 -S
-```
+> 针对 `egg@3.x` 版本，请移步 https://github.com/eggjs-community/egg-typebox-validate
 
 1. 在项目中配置
 
 ```js
 // config/plugin.ts
-const plugin: EggPlugin = {
-  typeboxValidate: {
-    enable: true,
-    package: '@eggjs/typebox-validate',
-  },
+import typeboxValidatePlugin from '@eggjs/typebox-validate';
+
+export default {
+  ...typeboxValidatePlugin(),
 };
 ```
 

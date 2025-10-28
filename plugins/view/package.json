@@ -36,9 +36,6 @@
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "eggPlugin": {
-    "name": "view"
-  },
   "keywords": [
     "egg",
     "eggPlugin",

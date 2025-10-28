@@ -16,12 +16,6 @@
 
 Egg's default security plugin, generally no need to configure.
 
-## Install
-
-```bash
-npm i @eggjs/security
-```
-
 ## Usage & configuration
 
 - `config.default.js`

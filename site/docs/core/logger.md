@@ -369,4 +369,4 @@ Generally, requests are frequent events to Web services, so writing logs into di
 
 > Logs will be firstly transferred into memory, and then Egg will asynchronously write them into files by second.
 
-More about [egg-logger](https://github.com/eggjs/egg-logger) and [@eggjs/logrotator](https://github.com/eggjs/logrotator)。
+More about [egg-logger](https://github.com/eggjs/egg-logger) and [@eggjs/logrotator](https://github.com/eggjs/egg/tree/next/plugins/logrotator)。

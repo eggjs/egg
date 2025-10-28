@@ -3,9 +3,6 @@
   "version": "4.0.0-beta.33",
   "description": "Valkey / Redis plugin for egg",
   "type": "module",
-  "eggPlugin": {
-    "name": "redis"
-  },
   "exports": {
     ".": "./src/index.ts",
     "./agent": "./src/agent.ts",

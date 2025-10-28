@@ -1,5 +1,14 @@
 import './types.ts';
 
+import { definePluginFactory, type EggPluginFactory } from 'egg';
+
+export default definePluginFactory({
+  name: 'nunjucks',
+  enable: true,
+  path: import.meta.dirname,
+  dependencies: ['security', 'view'],
+}) as EggPluginFactory;
+
 export { NunjucksEnvironment } from './lib/environment.ts';
 export { NunjucksFileLoader } from './lib/file_loader.ts';
 export { createHelper } from './lib/helper.ts';
