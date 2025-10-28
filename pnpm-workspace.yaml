@@ -107,7 +107,6 @@ catalog:
   egg-errors: ^2.3.0
   egg-logger: ^3.5.0
   egg-plugin-puml: ^2.4.0
-  egg-ts-helper: ^3.0.0
   egg-view-nunjucks: ^2.3.0
   encodeurl: ^2.0.0
   esbuild: ^0.25.0

@@ -6,12 +6,11 @@ import { fork, type ForkOptions, ChildProcess } from 'node:child_process';
 
 import { Command, Flags, Interfaces } from '@oclif/core';
 import { importResolve } from '@eggjs/utils';
-import { runScript } from 'runscript';
 
 import { getSourceDirname, readPackageJSON, hasTsConfig } from './utils.ts';
 import { type PackageEgg } from './types.ts';
 
-const debug = debuglog('egg-bin/baseCommand');
+const debug = debuglog('egg/bin/baseCommand');
 
 // only hook once and only when ever start any child.
 const children = new Set<ChildProcess>();
@@ -114,7 +113,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     }),
     declarations: Flags.boolean({
       helpGroup: 'GLOBAL',
-      description: 'whether create typings, will add `--require egg-ts-helper/register`',
+      description: 'deprecated, no effect, will be removed in the future',
       aliases: ['dts'],
     }),
     // https://nodejs.org/dist/latest-v18.x/docs/api/cli.html#--inspect-brkhostport
@@ -247,21 +246,6 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       // wait for https://github.com/nodejs/node/issues/40940
       this.addNodeOptions('--no-warnings');
       this.addNodeOptions(`--loader ${esmLoader}`);
-    }
-
-    if (flags.declarations === undefined) {
-      if (typeof this.pkgEgg.declarations === 'boolean') {
-        // read `egg.declarations` from package.json if not pass argv
-        flags.declarations = this.pkgEgg.declarations;
-        debug('detect declarations from pkg.egg.declarations=%o', this.pkgEgg.declarations);
-      }
-    }
-    if (flags.declarations) {
-      const etsBin = importResolve('egg-ts-helper/dist/bin', {
-        paths: findPaths,
-      });
-      debug('run ets first: %o', etsBin);
-      await runScript(`node "${etsBin}"`);
     }
 
     if (this.pkgEgg.revert) {

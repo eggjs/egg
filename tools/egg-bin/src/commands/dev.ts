@@ -7,7 +7,7 @@ import { detect } from 'detect-port';
 import { getSourceFilename } from '../utils.ts';
 import { BaseCommand } from '../baseCommand.ts';
 
-const debug = debuglog('egg-bin/commands/dev');
+const debug = debuglog('egg/bin/commands/dev');
 
 export default class Dev<T extends typeof Dev> extends BaseCommand<T> {
   static override description = 'Start server at local dev mode';
