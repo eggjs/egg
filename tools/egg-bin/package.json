@@ -68,10 +68,10 @@
     "typecheck": "tsc --noEmit",
     "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
     "test": "node bin/run.js test",
-    "cov": "c8 --temp-directory node_modules/.c8_output -r text-summary -r json-summary -r json -r lcov -r cobertura node bin/run.js test",
+    "cov": "c8 node bin/run.js test",
     "preci": "npm run clean && npm run lint && npm run prepublishOnly",
     "ci": "npm run cov",
-    "clean": "rimraf dist *.tsbuildinfo",
+    "clean": "rimraf dist",
     "build": "tsdown",
     "prepublishOnly": "pnpm run build"
   },
