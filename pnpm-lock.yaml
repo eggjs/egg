@@ -3687,9 +3687,6 @@ importers:
       mocha:
         specifier: 'catalog:'
         version: 11.7.4
-      runscript:
-        specifier: 'catalog:'
-        version: 2.0.1
       ts-node:
         specifier: 'catalog:'
         version: 10.9.2(@swc/core@1.13.5)(@types/node@24.9.1)(typescript@5.9.3)
@@ -3745,6 +3742,9 @@ importers:
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
+      runscript:
+        specifier: 'catalog:'
+        version: 2.0.1
       tsdown:
         specifier: 'catalog:'
         version: 0.15.10(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
