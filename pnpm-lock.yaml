@@ -955,6 +955,9 @@ importers:
       '@eggjs/development':
         specifier: workspace:*
         version: link:../../plugins/development
+      '@eggjs/errors':
+        specifier: workspace:*
+        version: link:../errors
       '@eggjs/eventbus-plugin':
         specifier: workspace:*
         version: link:../../tegg/plugin/eventbus
