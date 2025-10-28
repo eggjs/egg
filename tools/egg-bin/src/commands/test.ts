@@ -12,7 +12,7 @@ import ciParallelVars from 'ci-parallel-vars';
 
 import { BaseCommand } from '../baseCommand.ts';
 
-const debug = debuglog('egg-bin/commands/test');
+const debug = debuglog('egg/bin/commands/test');
 
 export default class Test<T extends typeof Test> extends BaseCommand<T> {
   static override args = {

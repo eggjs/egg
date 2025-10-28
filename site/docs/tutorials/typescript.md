@@ -1,6 +1,4 @@
----
-title: TypeScript
----
+# TypeScript
 
 > [TypeScript](https://www.typescriptlang.org/) is a typed superset of JavaScript that compiles to plain JavaScript.
 
@@ -261,8 +259,6 @@ export default (appInfo: EggAppInfo) => {
 };
 ```
 
-**Notice: We need `egg-ts-helper` to merge the returned config type from `config.default.js` into egg's `EggAppConfig`.**
-
 When `EggAppConfig` is merged with the returned type of `config.default.ts`, we can also get the intellisenses of our customized configs in `config.default.ts` like this following:
 
 ```typescript
@@ -382,46 +378,6 @@ Developers only need to config in `package.json` simply:
 }
 ```
 
-### egg-ts-helper
-
-Due to the automatic loading mechanism, TS cannot analyze dependencies in static or relationship intellisense.
-
-Luckily, TS has many tricks to cope with it. We can use [Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) to write `d.ts` as a helper.
-
-E.g: `app/service/news.ts` will automatically load `ctx.service.news` and recognize it, if you write like this below:
-
-```typescript
-// typings/app/service/index.d.ts
-import News from '../../../app/service/News';
-
-declare module 'egg' {
-  interface IService {
-    news: News;
-  }
-}
-```
-
-It's a bit too bothering to write them manually, so we offer you a tool [egg-ts-helper](https://github.com/whxaxes/egg-ts-helper), with which we can analyze and generate `d.ts` files automatically.
-
-What we do is just to do some configs in `package.json`:
-
-```json
-{
-  "egg": {
-    "declarations": true
-  },
-  "scripts": {
-    "dev": "egg-bin dev",
-    "test-local": "egg-bin test",
-    "clean": "ets clean"
-  }
-}
-```
-
-The corresponding `d.ts` files are automatically generated in `typings/{app,config}/` during the developing period. **DO NOT modify manually in case of being overwritten**.
-
-The tool nowadays can support egg projects in ts and js with intellisenses.
-
 ### Unit Test and Cov
 
 Unit Test is a MUST in development:
@@ -521,8 +477,6 @@ And the corresponding `tsconfig.json`:
 }
 ```
 
-**Notice: When ts and js files are with the same name, egg will first load js ones. So during the development period, `egg-ts-helper` will be automatically called to clear up all the js files with the same names, of course you can use `npm run clean` to clear them manually.**
-
 ### Error Stacks
 
 Codes online are js after compilation, however what we expect is to see error stacks pointing at TS source codes. So:
@@ -545,36 +499,6 @@ For more detailed info:
 - When you write a plugin/framework, the corresponding `index.d.ts` should be included.
 - By [Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) we can inject the functions of plugin/framework into Egg.
 - All are mounted on `egg` module, DO NOT use the outer layer.
-
-### Plugin
-
-Styles can be referred from the automatically generated `egg-ts-helper`:
-
-```typescript
-// {plugin_root}/index.d.ts
-
-import 'egg';
-import News from '../../../app/service/News';
-
-declare module 'egg' {
-  // extended service
-  interface IService {
-    news: News;
-  }
-
-  // extended app
-  interface Application {}
-
-  // extended context
-  interface Context {}
-
-  // extended your own configs
-  interface EggAppConfig {}
-
-  // extend customize env
-  type EggEnvType = 'local' | 'unittest' | 'prod' | 'sit';
-}
-```
 
 ### The Outer Framework
 
@@ -653,7 +577,7 @@ Now it's solved! Of course your PRs for plugins without declaration files are we
 
 If the egg's plugin has the right declaration, we need to import it exclipitly and ts can load the related object.
 
-If you use `egg-ts-helper`, it will automatically generate the exclipit importing declarations according to what plugins you've enabled in the application. If you don't use that, you have to import the declaration of plugins manually.
+If you don't use that, you have to import the declaration of plugins manually.
 
 ```typescript
 // typings/index.d.ts

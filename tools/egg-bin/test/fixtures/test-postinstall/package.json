@@ -1,9 +1,0 @@
-{
-  "name": "test-postinstall",
-  "egg": {
-    "typescript": true
-  },
-  "dependencies": {
-    "egg": "*"
-  }
-}

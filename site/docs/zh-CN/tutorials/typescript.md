@@ -257,8 +257,6 @@ export default (appInfo: EggAppInfo) => {
 };
 ```
 
-**注意，上述写法将 `config.default.ts` 中返回的配置类型合并到 egg 的 `EggAppConfig` 类型中时需要 egg-ts-helper 的配合。**
-
 当 `EggAppConfig` 合并 `config.default.ts` 的类型后，在其他 `config.{env}.ts` 中这么写就也可以获得在 `config.default.ts` 定义的自定义配置的智能提示：
 
 ```typescript
@@ -377,44 +375,6 @@ export default class FooBoot implements IBoot {
 }
 ```
 
-### egg-ts-helper
-
-由于 Egg 的自动加载机制，导致 TS 无法静态分析依赖，关联提示。幸运的是，TS 黑魔法比较多，我们可以通过 TS 的 [Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) 编写 `d.ts` 来辅助。
-
-例如，`app/service/news.ts` 会自动挂载为 `ctx.service.news`，通过如下写法即可识别到：
-
-```typescript
-// typings/app/service/index.d.ts
-import News from '../../../app/service/News';
-
-declare module 'egg' {
-  interface IService {
-    news: News;
-  }
-}
-```
-
-手动编写这些文件，未免有点繁琐，因此我们提供了 [egg-ts-helper](https://github.com/whxaxes/egg-ts-helper) 工具来自动分析源代码生成对应的 `d.ts` 文件。
-
-只需配置下 `package.json`：
-
-```json
-{
-  "egg": {
-    "declarations": true
-  },
-  "scripts": {
-    "dev": "egg-bin dev",
-    "test-local": "egg-bin test",
-    "clean": "ets clean"
-  }
-}
-```
-
-开发期将自动生成对应的 `d.ts` 到 `typings/{app,config}/` 下，请勿自行修改，避免被覆盖。
-
-目前该工具已经能支持 ts 以及 js 的 egg 项目，均能获得相应的智能提示。
-
 ### 单元测试和覆盖率（Unit Test and Coverage）
 
 单元测试当然少不了：
@@ -516,7 +476,7 @@ describe('test/app/service/news.test.js', () => {
 }
 ```
 
-**注意：** 当有同名的 `ts` 和 `js` 文件时，egg 会优先加载 `js` 文件。因此在开发期，`egg-ts-helper` 会自动调用清除同名的 `js` 文件，也可通过 `npm run clean` 手动清除。
+**注意：** 当有同名的 `ts` 和 `js` 文件时，egg 会优先加载 `js` 文件。
 
 ### 错误堆栈（Error Stack）
 
@@ -543,8 +503,6 @@ describe('test/app/service/news.test.js', () => {
 - 都挂载到 `egg` 这个模块，不要用上层框架。
 
 ### 插件
-
-可以参考 `egg-ts-helper` 自动生成的格式：
 
 ```typescript
 // {plugin_root}/index.d.ts
@@ -648,8 +606,6 @@ declare module 'egg' {
 **2. `egg` 插件定义了 `d.ts` ，但未被引入。**
 
 即使 `egg` 插件正确地定义了 `d.ts`，也需要在应用或框架层明确地引入它，`ts` 才能加载对应类型。
-
-如果使用了 `egg-ts-helper`，它会自动根据应用中启用的插件生成显式 `import` 插件声明。如果未使用，就需要开发者在 `d.ts` 中自行显式 `import` 对应插件。
 
 ```typescript
 // typings/index.d.ts
