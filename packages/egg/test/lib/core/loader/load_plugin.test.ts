@@ -61,6 +61,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     }
     assert.equal(appLoader.plugins.onerror.package, undefined);
     assert.equal(appLoader.plugins.onerror.version, undefined);
+    assert.equal(appLoader.plugins.onerror.skipMerge, true);
     // assert.equal(appLoader.plugins.onerror.package, '@eggjs/onerror');
     // assert.match(appLoader.plugins.onerror.version!, /\d+\.\d+\.\d+/);
     assert(Array.isArray(appLoader.orderPlugins));
