@@ -40,7 +40,7 @@ import redisPlugin from '@eggjs/redis';
 
 export default {
   ...redisPlugin(),
-});
+};
 ```
 
 Configure redis information in `${app_root}/config/config.default.ts`:
