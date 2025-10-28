@@ -17,8 +17,6 @@
 
 ```bash
 npm install @eggjs/view-nunjucks
-pnpm add @eggjs/view-nunjucks
-yarn add @eggjs/view-nunjucks
 ```
 
 ## Usage
@@ -26,11 +24,10 @@ yarn add @eggjs/view-nunjucks
 Enable plugin in `config/plugin.ts`
 
 ```ts
+import nunjucksPlugin from '@eggjs/view-nunjucks';
+
 export default {
-  nunjucks: {
-    enable: true,
-    package: '@eggjs/view-nunjucks',
-  },
+  ...nunjucksPlugin(),
 };
 ```
 

@@ -16,15 +16,9 @@
 
 Session plugin for egg, based on [koa-session](https://github.com/koajs/session).
 
-## Install
-
-```bash
-npm i @eggjs/session
-```
-
 ## Usage
 
-egg-session is a built-in plugin in egg and enabled by default.
+`session` is a built-in plugin in egg and enabled by default.
 
 ```js
 // {app_root}/config/plugin.js

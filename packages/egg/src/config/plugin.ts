@@ -1,4 +1,15 @@
 import developmentPlugin from '@eggjs/development';
+import i18nPlugin from '@eggjs/i18n';
+import jsonpPlugin from '@eggjs/jsonp';
+import logrotatorPlugin from '@eggjs/logrotator';
+import multipartPlugin from '@eggjs/multipart';
+import onerrorPlugin from '@eggjs/onerror';
+import schedulePlugin from '@eggjs/schedule';
+import securityPlugin from '@eggjs/security';
+import sessionPlugin from '@eggjs/session';
+import staticPlugin from '@eggjs/static';
+import viewPlugin from '@eggjs/view';
+import watcherPlugin from '@eggjs/watcher';
 
 import type { EggPluginItem } from '../index.ts';
 
@@ -10,10 +21,7 @@ const plugins: Record<string, EggPluginItem> = {
    * @member {Object} Plugin#onerror
    * @property {Boolean} enable - `true` by default
    */
-  onerror: {
-    enable: true,
-    package: '@eggjs/onerror',
-  },
+  ...onerrorPlugin(),
 
   /**
    * session
@@ -21,10 +29,7 @@ const plugins: Record<string, EggPluginItem> = {
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  session: {
-    enable: true,
-    package: '@eggjs/session',
-  },
+  ...sessionPlugin(),
 
   /**
    * i18n
@@ -32,10 +37,7 @@ const plugins: Record<string, EggPluginItem> = {
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  i18n: {
-    enable: true,
-    package: '@eggjs/i18n',
-  },
+  ...i18nPlugin(),
 
   /**
    * file and dir watcher
@@ -43,10 +45,7 @@ const plugins: Record<string, EggPluginItem> = {
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  watcher: {
-    enable: true,
-    package: '@eggjs/watcher',
-  },
+  ...watcherPlugin(),
 
   /**
    * multipart
@@ -54,10 +53,7 @@ const plugins: Record<string, EggPluginItem> = {
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  multipart: {
-    enable: true,
-    package: '@eggjs/multipart',
-  },
+  ...multipartPlugin(),
 
   /**
    * security middlewares and extends
@@ -65,10 +61,7 @@ const plugins: Record<string, EggPluginItem> = {
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  security: {
-    enable: true,
-    package: '@eggjs/security',
-  },
+  ...securityPlugin(),
 
   ...developmentPlugin(),
 
@@ -78,10 +71,7 @@ const plugins: Record<string, EggPluginItem> = {
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  logrotator: {
-    enable: true,
-    package: '@eggjs/logrotator',
-  },
+  ...logrotatorPlugin(),
 
   /**
    * schedule tasks
@@ -89,10 +79,7 @@ const plugins: Record<string, EggPluginItem> = {
    * @property {Boolean} enable - `true` by default
    * @since 2.7.0
    */
-  schedule: {
-    enable: true,
-    package: '@eggjs/schedule',
-  },
+  ...schedulePlugin(),
 
   /**
    * `app/public` dir static serve
@@ -100,10 +87,7 @@ const plugins: Record<string, EggPluginItem> = {
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  static: {
-    enable: true,
-    package: '@eggjs/static',
-  },
+  ...staticPlugin(),
 
   /**
    * jsonp support for egg
@@ -111,10 +95,7 @@ const plugins: Record<string, EggPluginItem> = {
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  jsonp: {
-    enable: true,
-    package: '@eggjs/jsonp',
-  },
+  ...jsonpPlugin(),
 
   /**
    * view plugin
@@ -122,10 +103,7 @@ const plugins: Record<string, EggPluginItem> = {
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  view: {
-    enable: true,
-    package: '@eggjs/view',
-  },
+  ...viewPlugin(),
 
   // tegg plugins
   teggConfig: {

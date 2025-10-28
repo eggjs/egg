@@ -1,6 +1,6 @@
-import { definePluginFactory, type EggPluginFactory } from 'egg';
-
 import './types.ts';
+
+import { definePluginFactory, type EggPluginFactory } from 'egg';
 
 /**
  * Local development plugin, only enabled in `local` environment.

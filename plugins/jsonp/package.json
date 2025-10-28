@@ -29,12 +29,6 @@
     "dist"
   ],
   "description": "jsonp support for egg",
-  "eggPlugin": {
-    "name": "jsonp",
-    "optionalDependencies": [
-      "security"
-    ]
-  },
   "keywords": [
     "egg",
     "egg-plugin",

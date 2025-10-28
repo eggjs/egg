@@ -36,11 +36,10 @@ If you want to know specific usage, you should refer to the document of [ioredis
 Change `${app_root}/config/plugin.ts` to enable redis plugin:
 
 ```ts
+import redisPlugin from '@eggjs/redis';
+
 export default {
-  redis: {
-    enable: true,
-    package: '@eggjs/redis',
-  },
+  ...redisPlugin(),
 };
 ```
 

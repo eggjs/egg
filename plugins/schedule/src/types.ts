@@ -8,7 +8,7 @@ declare module 'egg' {
   interface EggAppConfig {
     /**
      * Schedule Config
-     * @see https://www.eggjs.org/zh-CN/basics/schedule
+     * @see https://eggjs.org/basics/schedule
      */
     schedule: EggScheduleConfig;
   }

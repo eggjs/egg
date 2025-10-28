@@ -2,12 +2,6 @@
   "name": "@eggjs/logrotator",
   "version": "5.0.0-beta.33",
   "description": "logrotator for egg",
-  "eggPlugin": {
-    "name": "logrotator",
-    "dependencies": [
-      "schedule"
-    ]
-  },
   "keywords": [
     "egg",
     "eggPlugin",

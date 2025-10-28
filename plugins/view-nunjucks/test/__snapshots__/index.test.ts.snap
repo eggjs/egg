@@ -7,5 +7,6 @@ exports[`should exports keep stable 1`] = `
   "NunjucksView": [Function],
   "createEngine": [Function],
   "createHelper": [Function],
+  "default": [Function],
 }
 `;

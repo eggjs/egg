@@ -23,17 +23,7 @@
 
 ## 配置
 
-默认处于关闭状态，你需要在 `config/plugin.ts` 开启它：
-
-```ts
-// config/plugin.ts
-export default {
-  i18n: {
-    enable: true,
-    package: '@eggjs/i18n',
-  },
-};
-```
+egg 内置插件 `i18n` 默认开启。
 
 你可以修改 `config/config.default.ts` 来设定 i18n 的配置项：
 
@@ -42,7 +32,7 @@ export default {
 export default {
   i18n: {
     // 默认语言，默认 "en_US"
-    defaultLocale: 'zh-CN',
+    defaultLocale: 'zh_CN',
     // URL 参数，默认 "locale"
     queryField: 'locale',
     // Cookie 记录的 key, 默认："locale"
@@ -114,6 +104,20 @@ export default ctx => {
     user: ctx.user,
   };
 };
+```
+
+### HttpController 下的使用示例
+
+```ts
+import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPContext, Context } from 'egg';
+
+@HTTPController()
+export default class I18nController {
+  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/i18n' })
+  async getI18n(@HTTPContext() ctx: Context) {
+    return { message: ctx.__('Welcome back, %s!', ctx.user.name) };
+  }
+}
 ```
 
 ### View 文件下的使用示例

@@ -15,12 +15,6 @@
     }
   },
   "description": "error handler for egg",
-  "eggPlugin": {
-    "name": "onerror",
-    "optionalDependencies": [
-      "jsonp"
-    ]
-  },
   "homepage": "https://github.com/eggjs/egg/tree/next/plugins/onerror",
   "repository": {
     "type": "git",

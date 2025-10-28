@@ -59,8 +59,11 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     if (process.platform !== 'win32') {
       assert.match(appLoader.plugins.onerror.path!, /\/onerror\//);
     }
-    assert.equal(appLoader.plugins.onerror.package, '@eggjs/onerror');
-    assert.match(appLoader.plugins.onerror.version!, /\d+\.\d+\.\d+/);
+    assert.equal(appLoader.plugins.onerror.package, undefined);
+    assert.equal(appLoader.plugins.onerror.version, undefined);
+    assert.equal(appLoader.plugins.onerror.skipMerge, true);
+    // assert.equal(appLoader.plugins.onerror.package, '@eggjs/onerror');
+    // assert.match(appLoader.plugins.onerror.version!, /\d+\.\d+\.\d+/);
     assert(Array.isArray(appLoader.orderPlugins));
   });
 

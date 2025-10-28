@@ -13,36 +13,25 @@
 
 LogRotator for egg. Rotate all file of `app.loggers` by default
 
-## Install
-
-```bash
-npm i @eggjs/logrotator
-```
+egg built-in plugin `logrotator` is enabled by default.
 
 ## Usage
 
-- `plugin.js`
+- `config/config.default.ts`
 
-```js
-exports.logrotator = {
-  enable: true,
-  package: '@eggjs/logrotator',
-};
-```
-
-- `config.default.js`
-
-```js
+```ts
 // if any files need rotate by file size, config here
-exports.logrotator = {
-  filesRotateByHour: [], // list of files that will be rotated by hour
-  hourDelimiter: '-', // rotate the file by hour use specified delimiter
-  filesRotateBySize: [], // list of files that will be rotated by size
-  maxFileSize: 50 * 1024 * 1024, // Max file size to judge if any file need rotate
-  maxFiles: 10, // pieces rotate by size
-  rotateDuration: 60000, // time interval to judge if any file need rotate
-  maxDays: 31, // keep max days log files, default is `31`. Set `0` to keep all logs
-  gzip: false, // use gzip compress logger on rotate file, default is `false`. Set `true` to enable
+export default {
+  logrotator: {
+    filesRotateByHour: [], // list of files that will be rotated by hour
+    hourDelimiter: '-', // rotate the file by hour use specified delimiter
+    filesRotateBySize: [], // list of files that will be rotated by size
+    maxFileSize: 50 * 1024 * 1024, // Max file size to judge if any file need rotate
+    maxFiles: 10, // pieces rotate by size
+    rotateDuration: 60000, // time interval to judge if any file need rotate
+    maxDays: 31, // keep max days log files, default is `31`. Set `0` to keep all logs
+    gzip: false, // use gzip compress logger on rotate file, default is `false`. Set `true` to enable
+  },
 };
 ```
 
@@ -72,9 +61,9 @@ If `file` is relative path, then will normalize to `path.join(this.app.config.lo
 
 You can use `app.LogRotator` to customize.
 
-```js
-// app/schedule/custom.js
-module.exports = app => {
+```ts
+// app/schedule/custom.ts
+export default (app: Application) => {
   const rotator = getRotator(app);
   return {
     // https://github.com/eggjs/egg-schedule
@@ -88,7 +77,7 @@ module.exports = app => {
   };
 };
 
-function getRotator(app) {
+function getRotator(app: Application) {
   class CustomRotator extends app.LogRotator {
     // return map that contains a pair of srcPath and targetPath
     // LogRotator will rename ksrcPath to targetPath

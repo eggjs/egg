@@ -1,6 +1,6 @@
-// import plugin types only, avoid circular dependency
+// enable built-in plugin types, let type check pass, e.g.: `agent.watcher`
 
-// import '@eggjs/development/types';
+import '@eggjs/development/types';
 import '@eggjs/i18n/types';
 import '@eggjs/jsonp/types';
 import '@eggjs/logrotator/types';

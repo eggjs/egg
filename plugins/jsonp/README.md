@@ -15,17 +15,9 @@
 
 An egg plugin for jsonp support.
 
-## Requirements
-
-- egg >= 4.x
-
-## Install
-
-```bash
-npm i @eggjs/jsonp
-```
-
 ## Usage
+
+egg built-in plugin `jsonp` is enabled by default.
 
 ```ts
 // {app_root}/config/plugin.ts
@@ -33,7 +25,6 @@ npm i @eggjs/jsonp
 export default {
   jsonp: {
     enable: true,
-    package: '@eggjs/jsonp',
   },
 };
 ```
@@ -109,6 +100,8 @@ see [config/config.default.ts](https://github.com/eggjs/egg/blob/master/plugins/
 
 ## Example
 
+### Standard Application Usage
+
 In `app/router.ts`
 
 ```ts
@@ -121,6 +114,10 @@ app.get('/another', jsonp, 'jsonp.another');
 // Customize by create another jsonp middleware with specific configurations.
 app.get('/customize', app.jsonp({ callback: 'fn' }), 'jsonp.customize');
 ```
+
+### tegg HttpController Usage
+
+TODO: TBD
 
 ## Questions & Suggestions
 
