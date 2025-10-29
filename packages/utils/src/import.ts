@@ -49,7 +49,11 @@ export function getExtensions(): NodeJS.RequireExtensions {
 
 let _supportTypeScript: boolean | undefined;
 export function isSupportTypeScript(): boolean {
-  // Note: egg-scripts may set EGG_TS_ENABLE. To ensure this check works correctly, it should be unset or false initially.
+  // disable ts by process.env.EGG_TS_ENABLE = 'false', @eggjs/scripts start will use it to disable ts
+  if (process.env.EGG_TS_ENABLE === 'false') {
+    return false;
+  }
+
   if (_supportTypeScript === undefined) {
     const extensions = getExtensions();
     // enable ts by process.env.EGG_TS_ENABLE or process.env.VITEST
@@ -57,7 +61,8 @@ export function isSupportTypeScript(): boolean {
       extensions['.ts'] !== undefined ||
       process.env.VITEST === 'true' ||
       process.env.EGG_TS_ENABLE === 'true' ||
-      parseInt(process.versions.node.split('.', 1)[0], 10) >= 22;
+      // Node.js doesn't support enum by default
+      nodeMajorVersion >= 22;
     debug(
       '[isSupportTypeScript] %o, extensions: %j, process.env.VITEST: %j, process.env.EGG_TS_ENABLE: %j, node version: %s',
       _supportTypeScript,

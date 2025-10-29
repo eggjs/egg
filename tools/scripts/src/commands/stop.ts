@@ -10,12 +10,10 @@ const debug = debuglog('egg/scripts/commands/stop');
 
 const osRelated = {
   titleTemplate: isWindows ? '\\"title\\":\\"%s\\"' : '"title":"%s"',
-  // node_modules/@eggjs/cluster/dist/commonjs/app_worker.js
-  // node_modules/@eggjs/cluster/dist/esm/app_worker.js
-  appWorkerPath: /@eggjs[/\\]cluster[/\\]dist[/\\](commonjs|esm)[/\\]app_worker\.js/i,
-  // node_modules/@eggjs/cluster/dist/commonjs/agent_worker.js
-  // node_modules/@eggjs/cluster/dist/esm/agent_worker.js
-  agentWorkerPath: /@eggjs[/\\]cluster[/\\]dist[/\\](commonjs|esm)[/\\]agent_worker\.js/i,
+  // node_modules/@eggjs/cluster/dist/app_worker.js
+  appWorkerPath: /@eggjs[/\\]cluster[/\\]dist[/\\]app_worker\.js/i,
+  // node_modules/@eggjs/cluster/dist/agent_worker.js
+  agentWorkerPath: /@eggjs[/\\]cluster[/\\]dist[/\\]agent_worker\.js/i,
 };
 
 export default class Stop<T extends typeof Stop> extends BaseCommand<T> {

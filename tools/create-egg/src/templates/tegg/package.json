@@ -3,12 +3,10 @@
   "description": "Hello Egg.js",
   "private": true,
   "type": "module",
-  "egg": {
-    "typescript": true
-  },
   "scripts": {
     "start": "eggctl start --daemon --title=egg-server-{{name}}",
     "stop": "eggctl stop --title=egg-server-{{name}}",
+    "predev": "npm run clean",
     "dev": "egg-bin dev",
     "test:local": "cross-env NODE_OPTIONS=\"--import @oxc-node/core/register\" vitest run",
     "pretest": "npm run clean && npm run lint -- --fix",
@@ -18,9 +16,9 @@
     "postci": "npm run prepublishOnly && npm start && sleep 10 && npm stop && npm run clean",
     "lint": "oxlint --type-aware",
     "typecheck": "tsc --noEmit",
-    "tsc": "tsc",
+    "build": "tsc",
     "clean": "tsc -b --clean",
-    "prepublishOnly": "npm run clean && npm run tsc"
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "dependencies": {
     "@eggjs/scripts": "beta",

@@ -156,10 +156,9 @@ test.skipIf(process.platform === 'win32')(
 
 // use "@oxc-node/core/register" to support decorator metadata
 // TODO: unstable on windows and CI
-// FIXME: wait for the next version release
-test
-  .skipIf(process.platform === 'win32' || process.env.CI)
-  .skip('successfully scaffolds a project based on tegg starter template', () => {
+test.skipIf(process.platform === 'win32' || process.env.CI)(
+  'successfully scaffolds a project based on tegg starter template',
+  () => {
     const projectName = 'create-egg-test-tegg';
     const { stdout } = run([projectName, '--template', 'tegg', '--overwrite'], {
       cwd: tempDir,
@@ -178,25 +177,18 @@ test
     // const mockDir = path.join(monoRepoDir, 'plugins/mock');
     // const binDir = path.join(monoRepoDir, 'tools/egg-bin');
     // const tracerDir = path.join(monoRepoDir, 'plugins/tracer');
-    // execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir} ${teggDir}`, {
-    //   cwd: projectDir,
-    //   stdout: 'inherit',
-    //   stderr: 'inherit',
-    //   env: { NODE_OPTIONS: undefined }, // enable tegg plugins for test
-    // });
     execaCommandSync(`pnpm install`, {
       cwd: projectDir,
       stdout: 'inherit',
       stderr: 'inherit',
       env: { NODE_OPTIONS: undefined },
     });
-    // execaCommandSync(`pnpm ls @oxc-node/core`, {
+    // execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir} ${teggDir}`, {
     //   cwd: projectDir,
     //   stdout: 'inherit',
     //   stderr: 'inherit',
-    //   env: { NODE_OPTIONS: undefined },
+    //   env: { NODE_OPTIONS: undefined }, // enable tegg plugins for test
     // });
-    // execaCommandSync(`pnpm update --latest`, { cwd: projectDir, stdout: 'inherit', stderr: 'inherit' });
     const { stdout: testStdout } = execaCommandSync('pnpm test:local', {
       cwd: projectDir,
       env: { NODE_OPTIONS: undefined, DISABLE_TEGG_PLUGINS: 'false' }, // enable tegg plugins for test
@@ -207,7 +199,8 @@ test
       cwd: projectDir,
       env: { NODE_OPTIONS: undefined },
     });
-  });
+  },
+);
 
 test('works with the -t alias', () => {
   const { stdout } = run([projectName, '-t', 'tegg', '--overwrite'], {
