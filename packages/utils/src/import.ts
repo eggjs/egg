@@ -61,7 +61,7 @@ export function isSupportTypeScript(): boolean {
       extensions['.ts'] !== undefined ||
       process.env.VITEST === 'true' ||
       process.env.EGG_TS_ENABLE === 'true' ||
-      // Node.js don't support enum by default
+      // Node.js doesn't support enum by default
       nodeMajorVersion >= 22;
     debug(
       '[isSupportTypeScript] %o, extensions: %j, process.env.VITEST: %j, process.env.EGG_TS_ENABLE: %j, node version: %s',
