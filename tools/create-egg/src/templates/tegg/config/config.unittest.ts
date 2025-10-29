@@ -1,5 +1,5 @@
-import type { PartialEggConfig } from 'egg';
+import { defineConfig } from 'egg';
 
-export default {
+export default defineConfig({
   // add your config here
-} as PartialEggConfig;
+});
