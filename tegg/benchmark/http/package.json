@@ -1,18 +1,22 @@
 {
   "name": "tegg_benchmark",
-  "egg": {},
+  "type": "module",
   "scripts": {
-    "dev": "egg-bin dev"
+    "start": "eggctl start --workers 4",
+    "stop": "eggctl stop",
+    "dev": "egg-bin dev",
+    "build": "tsc",
+    "prebench": "npm run build",
+    "bench": "sh run.sh"
   },
   "dependencies": {
-    "@eggjs/tegg": "^3.7.0",
-    "@eggjs/tegg-config": "^3.7.0",
-    "@eggjs/controller-plugin": "^3.7.0",
-    "@eggjs/tegg-plugin": "^3.7.0",
-    "@eggjs/tsconfig": "^3.0.0",
-    "egg": "4"
+    "@eggjs/tsconfig": "beta",
+    "@types/node": "24",
+    "egg": "beta"
   },
   "devDependencies": {
-    "@eggjs/bin": "7"
+    "@eggjs/bin": "beta",
+    "@eggjs/scripts": "beta",
+    "typescript": "5"
   }
 }

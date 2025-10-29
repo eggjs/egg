@@ -1,12 +1,13 @@
-import { HTTPController, HTTPMethod, HTTPMethodEnum } from '@eggjs/tegg';
+import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
+import pkg from 'egg/package.json' with { type: 'json' };
 
 @HTTPController()
 export default class FooTeggController {
   @HTTPMethod({
     method: HTTPMethodEnum.GET,
-    path: '/hello',
+    path: '/hello-tegg',
   })
   async hello(): Promise<string> {
-    return 'hello, tegg';
+    return `hello, tegg@${pkg.version}`;
   }
 }
