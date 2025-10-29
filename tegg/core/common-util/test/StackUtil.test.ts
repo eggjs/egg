@@ -135,7 +135,7 @@ describe('test/StackUtil.test.ts', () => {
       expect(line2).toBe(line1 + 1);
     });
 
-    it.only('should work when called from arrow functions', () => {
+    it('should work when called from arrow functions', () => {
       const arrowFunction = () => {
         return StackUtil.getCalleeFromStack(true);
       };
