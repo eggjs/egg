@@ -49,6 +49,7 @@ export function getExtensions(): NodeJS.RequireExtensions {
 
 let _supportTypeScript: boolean | undefined;
 export function isSupportTypeScript(): boolean {
+  // should set EGG_TS_ENABLE to false when egg-scripts start
   if (_supportTypeScript === undefined) {
     const extensions = getExtensions();
     // enable ts by process.env.EGG_TS_ENABLE or process.env.VITEST

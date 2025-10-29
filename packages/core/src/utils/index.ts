@@ -36,9 +36,8 @@ function getCalleeFromStack(withLine?: boolean, stackIndex?: number): string {
   let fileName = '';
   if (callSite) {
     // egg-mock will create a proxy
-    // https://github.com/eggjs/egg-mock/blob/master/lib/app.js#L174
+    // https://github.com/eggjs/egg-mock/blob/5.x/lib/app.js#L174
     fileName = callSite.getFileName();
-    /* istanbul ignore if */
     if (fileName && fileName.endsWith('egg-mock/lib/app.js')) {
       // TODO: add test
       callSite = obj.stack[stackIndex + 1];
