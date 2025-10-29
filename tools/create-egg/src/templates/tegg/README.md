@@ -1,6 +1,6 @@
 # tegg app
 
-[Hacker News](https://news.ycombinator.com/) showcase using [tegg](https://github.com/eggjs/tegg)
+[Hacker News](https://news.ycombinator.com/) showcase using [tegg HTTPController](https://eggjs.org/basics/controller)
 
 ## QuickStart
 
@@ -12,12 +12,10 @@ npm run dev
 open http://localhost:7001/
 ```
 
-Don't tsc compile at development mode, if you had run `tsc` then you need to `npm run clean` before `npm run dev`.
-
 ### Deploy
 
 ```bash
-npm run tsc
+npm run build
 npm start
 ```
 

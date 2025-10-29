@@ -1,10 +1,10 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import coffee from 'coffee';
 
-import { importResolve, importModule, ImportResolveError, isESM } from '../src/index.ts';
+import { importResolve, importModule, ImportResolveError, isESM, isSupportTypeScript } from '../src/index.ts';
 import { getFilepath } from './helper.ts';
 
 describe('test/import.test.ts', () => {
@@ -434,6 +434,14 @@ describe('test/import.test.ts', () => {
         ).default,
         null,
       );
+    });
+  });
+
+  describe('isSupportTypeScript()', () => {
+    it('should be false when EGG_TS_ENABLE is false', () => {
+      vi.stubEnv('EGG_TS_ENABLE', 'false');
+      expect(isSupportTypeScript()).toBe(false);
+      vi.unstubAllEnvs();
     });
   });
 });

@@ -145,6 +145,8 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     // normalize env
     this.env.HOME = HOME;
     this.env.NODE_ENV = 'production';
+    // disable ts file loader
+    this.env.EGG_TS_ENABLE = 'false';
 
     // it makes env big but more robust
     this.env.PATH = this.env.Path = [

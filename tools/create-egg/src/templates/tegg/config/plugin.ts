@@ -1,10 +1,6 @@
-import type { EggPlugin } from 'egg';
+import tracerPlugin from '@eggjs/tracer';
 
-const plugin: EggPlugin = {
-  tracer: {
-    enable: true,
-    package: '@eggjs/tracer',
-  },
+export default {
+  // enable tracer plugin
+  ...tracerPlugin(),
 };
-
-export default plugin;
