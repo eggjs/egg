@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/supertest",
   "description": "SuperAgent driven library for testing HTTP servers",
-  "version": "9.0.0-beta.33",
+  "version": "9.0.0-beta.34",
   "publishConfig": {
     "access": "public",
     "exports": {
