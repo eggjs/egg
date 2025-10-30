@@ -33,7 +33,7 @@
     "@types/node": "24",
     "cross-env": "10",
     "oxlint": "1",
-    "oxlint-tsgolint": "^0.3.0",
+    "oxlint-tsgolint": "^0.4.0",
     "typescript": "5",
     "vitest": "4",
     "@vitest/coverage-v8": "4"
