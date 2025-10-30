@@ -39,8 +39,6 @@ export class StackUtil {
         stack: [],
       };
       Error.captureStackTrace(obj);
-      Error.prepareStackTrace = rawPrepareStackTrace;
-      Error.stackTraceLimit = rawStackTraceLimit;
       for (let callSite of obj.stack) {
         stacks.push({
           scriptName: callSite.getFileName() ?? '',
@@ -50,6 +48,10 @@ export class StackUtil {
           functionName: callSite.getFunctionName() ?? '',
         });
       }
+      // restore the original Error.stackTraceLimit and Error.prepareStackTrace
+      // must restore after the stack is captured
+      Error.prepareStackTrace = rawPrepareStackTrace;
+      Error.stackTraceLimit = rawStackTraceLimit;
     }
 
     if (debug.enabled) {
