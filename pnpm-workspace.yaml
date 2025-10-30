@@ -50,7 +50,7 @@ catalog:
   '@types/mime-types': ^3.0.0
   '@types/mocha': ^10.0.10
   '@types/mustache': ^4.2.5
-  '@types/node': ^24.9.1
+  '@types/node': ^24.9.2
   '@types/nunjucks': ^3.2.6
   '@types/on-finished': ^2.3.4
   '@types/parseurl': ^1.3.3
@@ -171,7 +171,7 @@ catalog:
   onelogger: ^1.0.1
   oxc-minify: ^0.96.0
   oxfmt: ^0.9.0
-  oxlint: ^1.24.0
+  oxlint: ^1.25.0
   oxlint-tsgolint: ^0.4.0
   parseurl: ^1.3.3
   path-to-regexp: ^6.3.0
@@ -236,6 +236,9 @@ minimumReleaseAgeExclude:
   - vite
   - rolldown-vite
   - oxfmt
+  - oxlint-tsgolint
+  - oxlint
+  - oxc-minify
 
 overrides:
   vite: npm:rolldown-vite@^7.1.13
