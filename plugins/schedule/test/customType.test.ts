@@ -5,7 +5,8 @@ import { describe, it, afterAll, beforeAll, expect } from 'vitest';
 
 import { getFixtures, getLogContent, contains } from './utils.ts';
 
-describe('test/customType.test.ts', () => {
+// FIXME: flaky test on Window, Hook timed out in 20000ms
+describe.skipIf(process.platform === 'win32')('test/customType.test.ts', () => {
   let app: MockApplication;
   beforeAll(async () => {
     app = mm.cluster({ baseDir: getFixtures('customType'), workers: 2 });
