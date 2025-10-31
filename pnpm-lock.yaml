@@ -119,7 +119,7 @@ catalogs:
       version: 4.2.6
     '@types/node':
       specifier: ^24.9.2
-      version: 24.9.1
+      version: 24.9.2
     '@types/nunjucks':
       specifier: ^3.2.6
       version: 3.2.6
@@ -464,7 +464,7 @@ catalogs:
       version: 0.9.0
     oxlint:
       specifier: ^1.25.0
-      version: 1.24.0
+      version: 1.25.0
     oxlint-tsgolint:
       specifier: ^0.4.0
       version: 0.4.0
@@ -672,7 +672,7 @@ importers:
         version: link:../../tools/egg-bin
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
 
   examples/helloworld-tegg:
     dependencies:
@@ -829,7 +829,7 @@ importers:
         version: 1.1.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1116,10 +1116,10 @@ importers:
         version: link:../tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1128,7 +1128,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   packages/extend2:
     devDependencies:
@@ -1137,7 +1137,7 @@ importers:
         version: link:../tsconfig
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1298,10 +1298,10 @@ importers:
         version: 3.0.1
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
       oxlint-tsgolint:
         specifier: 'catalog:'
         version: 0.4.0
@@ -1316,7 +1316,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
       ylru:
         specifier: ^2.0.0
         version: 2.0.0
@@ -1332,10 +1332,10 @@ importers:
         version: link:../tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
       path-to-regexp-v8:
         specifier: npm:path-to-regexp@^8.3.0
         version: path-to-regexp@8.3.0
@@ -1350,7 +1350,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   packages/router:
     dependencies:
@@ -1537,7 +1537,7 @@ importers:
         version: 4.0.9
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -1552,7 +1552,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/jsonp:
     dependencies:
@@ -1568,7 +1568,7 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -1580,7 +1580,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/logrotator:
     dependencies:
@@ -1602,7 +1602,7 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -1620,7 +1620,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/mock:
     dependencies:
@@ -1712,7 +1712,7 @@ importers:
         version: 3.1.5
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -1736,7 +1736,7 @@ importers:
         version: 4.8.2
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/onerror:
     dependencies:
@@ -1789,7 +1789,7 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       detect-port:
         specifier: ^2.1.0
         version: 2.1.0
@@ -1798,7 +1798,7 @@ importers:
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -1810,7 +1810,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/schedule:
     dependencies:
@@ -1850,7 +1850,7 @@ importers:
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1920,7 +1920,7 @@ importers:
         version: 10.0.10
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       '@types/type-is':
         specifier: 'catalog:'
         version: 1.6.7
@@ -1947,7 +1947,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/session:
     dependencies:
@@ -1972,7 +1972,7 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -1984,7 +1984,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/static:
     dependencies:
@@ -2018,7 +2018,7 @@ importers:
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2073,13 +2073,13 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -2094,7 +2094,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/view:
     dependencies:
@@ -2159,7 +2159,7 @@ importers:
         version: 2.0.1(nunjucks@3.2.4(chokidar@3.6.0))
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -2228,7 +2228,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2253,7 +2253,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2299,7 +2299,7 @@ importers:
         version: 3.2.8
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2327,7 +2327,7 @@ importers:
         version: link:../common-util
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -2367,7 +2367,7 @@ importers:
         version: 4.0.9
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2407,7 +2407,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -2432,7 +2432,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2469,7 +2469,7 @@ importers:
         version: 4.1.9
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       '@types/pluralize':
         specifier: 'catalog:'
         version: 0.0.33
@@ -2521,7 +2521,7 @@ importers:
         version: 4.17.20
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       '@types/nunjucks':
         specifier: 'catalog:'
         version: 3.2.6
@@ -2549,7 +2549,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
@@ -2595,7 +2595,7 @@ importers:
         version: link:../loader
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2620,7 +2620,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
@@ -2669,7 +2669,7 @@ importers:
         version: link:../loader
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
@@ -2697,7 +2697,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2728,7 +2728,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2759,7 +2759,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       globby:
         specifier: 'catalog:'
         version: 11.1.0
@@ -2796,7 +2796,7 @@ importers:
         version: 4.17.20
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       '@types/pluralize':
         specifier: 'catalog:'
         version: 0.0.33
@@ -2836,7 +2836,7 @@ importers:
         version: link:../loader
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2861,7 +2861,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2876,7 +2876,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2946,7 +2946,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2983,7 +2983,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -3005,7 +3005,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -3020,7 +3020,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3072,7 +3072,7 @@ importers:
         version: link:../tegg
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3124,7 +3124,7 @@ importers:
         version: link:../tegg
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3142,7 +3142,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -3167,7 +3167,7 @@ importers:
         version: link:../../../plugins/mock
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3246,7 +3246,7 @@ importers:
         version: link:../../../plugins/tracer
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3313,7 +3313,7 @@ importers:
         version: link:../../../plugins/tracer
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3374,7 +3374,7 @@ importers:
         version: link:../../../plugins/tracer
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3435,7 +3435,7 @@ importers:
         version: link:../../../plugins/tracer
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3496,7 +3496,7 @@ importers:
         version: link:../tegg
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3563,7 +3563,7 @@ importers:
         version: link:../../../plugins/tracer
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3624,7 +3624,7 @@ importers:
         version: link:../../../packages/utils
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       mm:
         specifier: 'catalog:'
         version: 4.0.2
@@ -3691,7 +3691,7 @@ importers:
         version: 11.7.4
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@swc/core@1.14.0)(@types/node@24.9.1)(typescript@5.9.3)
+        version: 10.9.2(@swc/core@1.14.0)(@types/node@24.9.2)(typescript@5.9.3)
       tsconfig-paths:
         specifier: 'catalog:'
         version: 4.2.0
@@ -3719,7 +3719,7 @@ importers:
         version: 10.0.10
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       assert-file:
         specifier: 'catalog:'
         version: 1.0.0
@@ -3780,7 +3780,7 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.1
+        version: 24.9.2
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
@@ -3795,7 +3795,7 @@ importers:
         version: 4.0.2
       oxlint:
         specifier: 'catalog:'
-        version: 1.24.0(oxlint-tsgolint@0.4.0)
+        version: 1.25.0(oxlint-tsgolint@0.4.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -3807,7 +3807,7 @@ importers:
         version: 4.8.2
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
 packages:
 
@@ -4385,50 +4385,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@oxlint/darwin-arm64@1.24.0':
-    resolution: {integrity: sha512-1Kd2+Ai1ttskhbJR+DNU4Y4YEDyP/cd50nWt2rAe2aE78dMOalaVGps3s8UnJkXpDL9ZqkgOHVDE5Doj2lxatw==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@oxlint/darwin-x64@1.24.0':
-    resolution: {integrity: sha512-/R9VbnuTp7bLIBh6ucDHjx0po0wLQODLqzy+L/Frn5z4ifMVdE63DB+LHO8QAj+WEQleQq3u/MMms7RFPulCLA==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@oxlint/linux-arm64-gnu@1.24.0':
-    resolution: {integrity: sha512-fA90bIQ1b44eNg0uULlTonqsADVIBnMz169mav6IhfZL9V6DpBCUWrV+8tEQCxbDvYC0WY1guBpPo2QWUnC/Dw==}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
-
-  '@oxlint/linux-arm64-musl@1.24.0':
-    resolution: {integrity: sha512-p7Bv9FTQ1lf4Z7OiIFwiy+cY2fxN6IJc0+2gJ4z2fpaQ0J2rQQcKdJ5RLQTxf+tAu7hyqjc6bf61EAGa9lb/GA==}
-    cpu: [arm64]
-    os: [linux]
-    libc: [musl]
-
-  '@oxlint/linux-x64-gnu@1.24.0':
-    resolution: {integrity: sha512-wIQOpTONiJ9pYPnLEq7UFuml8mpmSFTfUveNbT2rw9iXfj2nLMf7NIqGnUYQdvnnOi+maag9uei/WImXIm9LQQ==}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
-  '@oxlint/linux-x64-musl@1.24.0':
-    resolution: {integrity: sha512-HxcDX/SpTH7yC/Rn2MinjSHZmNpn79yJkBid792DWjP9bo0CnlNXOXMPXsbm+WqptvqQ9yUPCxf7KascUvxLyQ==}
-    cpu: [x64]
-    os: [linux]
-    libc: [musl]
-
-  '@oxlint/win32-arm64@1.24.0':
-    resolution: {integrity: sha512-P1KtZ/xL+TcNTTmOtEsVrpqAdmpu2UCRAILjoqQyrYvI/CW6SdvoJfMBTntKOZaB52Peq2BHTgsYovON8q4FfQ==}
-    cpu: [arm64]
-    os: [win32]
-
-  '@oxlint/win32-x64@1.24.0':
-    resolution: {integrity: sha512-JMbMm7i1esFl12fRdOQwoeEeufWXxihOme8pZpI6jrwWK1kCIANMb5agI5Lkjf5vToQOP3DLXYc29aDm16fw6g==}
-    cpu: [x64]
-    os: [win32]
-
   '@paralleldrive/cuid2@2.2.2':
     resolution: {integrity: sha512-ZOBkgDwEdoYVlSeRbYYXs0S9MejQofiVYoTbKzy/6GQa39/q5tQU2IX46+shYnUkpEl3wc+J6wRlar7r2EK2xA==}
 
@@ -4956,9 +4912,6 @@ packages:
 
   '@types/node@10.17.60':
     resolution: {integrity: sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==}
-
-  '@types/node@24.9.1':
-    resolution: {integrity: sha512-QoiaXANRkSXK6p0Duvt56W208du4P9Uye9hWLWgGMDTEoKPhuenzNcC4vGUmrNkiOKTlIrBoyNQYNpSwfEZXSg==}
 
   '@types/node@24.9.2':
     resolution: {integrity: sha512-uWN8YqxXxqFMX2RqGOrumsKeti4LlmIMIyV0lgut4jx7KQBcBiW6vkDtIBvHnHIquwNfJhk8v2OtmO8zXWHfPA==}
@@ -7579,16 +7532,6 @@ packages:
     resolution: {integrity: sha512-RpvLxPvSt0Xzr3frTiw5rP6HUW0djZ2uNdzHc8Pv556sbTnFWXmLdK8FRqqy7vVXZTkoVSdY3PsvOsVAqGjc+Q==}
     hasBin: true
 
-  oxlint@1.24.0:
-    resolution: {integrity: sha512-swXlnHT7ywcCApkctIbgOSjDYHwMa12yMU0iXevfDuHlYkRUcbQrUv6nhM5v6B0+Be3zTBMNDGPAMQv0oznzRQ==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    hasBin: true
-    peerDependencies:
-      oxlint-tsgolint: '>=0.2.0'
-    peerDependenciesMeta:
-      oxlint-tsgolint:
-        optional: true
-
   oxlint@1.25.0:
     resolution: {integrity: sha512-O6iJ9xeuy9eQCi8/EghvsNO6lzSaUPs0FR1uLy51Exp3RkVpjvJKyPPhd9qv65KLnfG/BNd2HE/rH0NbEfVVzA==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -9146,7 +9089,7 @@ snapshots:
 
   '@jest/pattern@30.0.1':
     dependencies:
-      '@types/node': 24.9.1
+      '@types/node': 24.9.2
       jest-regex-util: 30.0.1
 
   '@jest/schemas@30.0.5':
@@ -9159,7 +9102,7 @@ snapshots:
       '@jest/schemas': 30.0.5
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 24.9.1
+      '@types/node': 24.9.2
       '@types/yargs': 17.0.33
       chalk: 4.1.2
 
@@ -9463,30 +9406,6 @@ snapshots:
     optional: true
 
   '@oxlint-tsgolint/win32-x64@0.4.0':
-    optional: true
-
-  '@oxlint/darwin-arm64@1.24.0':
-    optional: true
-
-  '@oxlint/darwin-x64@1.24.0':
-    optional: true
-
-  '@oxlint/linux-arm64-gnu@1.24.0':
-    optional: true
-
-  '@oxlint/linux-arm64-musl@1.24.0':
-    optional: true
-
-  '@oxlint/linux-x64-gnu@1.24.0':
-    optional: true
-
-  '@oxlint/linux-x64-musl@1.24.0':
-    optional: true
-
-  '@oxlint/win32-arm64@1.24.0':
-    optional: true
-
-  '@oxlint/win32-x64@1.24.0':
     optional: true
 
   '@paralleldrive/cuid2@2.2.2':
@@ -9942,10 +9861,6 @@ snapshots:
   '@types/mustache@4.2.6': {}
 
   '@types/node@10.17.60': {}
-
-  '@types/node@24.9.1':
-    dependencies:
-      undici-types: 7.16.0
 
   '@types/node@24.9.2':
     dependencies:
@@ -11971,7 +11886,7 @@ snapshots:
   jest-util@30.2.0:
     dependencies:
       '@jest/types': 30.2.0
-      '@types/node': 24.9.1
+      '@types/node': 24.9.2
       chalk: 4.1.2
       ci-info: 4.3.1
       graceful-fs: 4.2.11
@@ -12834,18 +12749,6 @@ snapshots:
       '@oxlint-tsgolint/win32-arm64': 0.4.0
       '@oxlint-tsgolint/win32-x64': 0.4.0
 
-  oxlint@1.24.0(oxlint-tsgolint@0.4.0):
-    optionalDependencies:
-      '@oxlint/darwin-arm64': 1.24.0
-      '@oxlint/darwin-x64': 1.24.0
-      '@oxlint/linux-arm64-gnu': 1.24.0
-      '@oxlint/linux-arm64-musl': 1.24.0
-      '@oxlint/linux-x64-gnu': 1.24.0
-      '@oxlint/linux-x64-musl': 1.24.0
-      '@oxlint/win32-arm64': 1.24.0
-      '@oxlint/win32-x64': 1.24.0
-      oxlint-tsgolint: 0.4.0
-
   oxlint@1.25.0(oxlint-tsgolint@0.4.0):
     optionalDependencies:
       oxlint-tsgolint: 0.4.0
@@ -13236,26 +13139,6 @@ snapshots:
     transitivePeerDependencies:
       - oxc-resolver
       - supports-color
-
-  rolldown-vite@7.1.20(@types/node@24.9.1)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1):
-    dependencies:
-      '@oxc-project/runtime': 0.95.0
-      fdir: 6.5.0(picomatch@4.0.3)
-      lightningcss: 1.30.2
-      picomatch: 4.0.3
-      postcss: 8.5.6
-      rolldown: 1.0.0-beta.45
-      tinyglobby: 0.2.15
-    optionalDependencies:
-      '@types/node': 24.9.1
-      esbuild: 0.25.11
-      fsevents: 2.3.3
-      jiti: 2.6.1
-      less: 4.4.2
-      sass: 1.93.2
-      terser: 5.44.0
-      tsx: 4.20.6
-      yaml: 2.8.1
 
   rolldown-vite@7.1.20(@types/node@24.9.2)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1):
     dependencies:
@@ -13785,14 +13668,14 @@ snapshots:
 
   trim-lines@3.0.1: {}
 
-  ts-node@10.9.2(@swc/core@1.14.0)(@types/node@24.9.1)(typescript@5.9.3):
+  ts-node@10.9.2(@swc/core@1.14.0)(@types/node@24.9.2)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 24.9.1
+      '@types/node': 24.9.2
       acorn: 8.15.0
       acorn-walk: 8.3.4
       arg: 4.1.3
@@ -14091,46 +13974,6 @@ snapshots:
       - tsx
       - typescript
       - universal-cookie
-      - yaml
-
-  vitest@4.0.5(@types/debug@4.1.12)(@types/node@24.9.1)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1):
-    dependencies:
-      '@vitest/expect': 4.0.5
-      '@vitest/mocker': 4.0.5(rolldown-vite@7.1.20(@types/node@24.9.2)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
-      '@vitest/pretty-format': 4.0.5
-      '@vitest/runner': 4.0.5
-      '@vitest/snapshot': 4.0.5
-      '@vitest/spy': 4.0.5
-      '@vitest/utils': 4.0.5
-      debug: 4.4.3(supports-color@8.1.1)
-      es-module-lexer: 1.7.0
-      expect-type: 1.2.2
-      magic-string: 0.30.21
-      pathe: 2.0.3
-      picomatch: 4.0.3
-      std-env: 3.10.0
-      tinybench: 2.9.0
-      tinyexec: 0.3.2
-      tinyglobby: 0.2.15
-      tinyrainbow: 3.0.3
-      vite: rolldown-vite@7.1.20(@types/node@24.9.1)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
-      why-is-node-running: 2.3.0
-    optionalDependencies:
-      '@types/debug': 4.1.12
-      '@types/node': 24.9.1
-      '@vitest/ui': 4.0.5(vitest@4.0.5)
-    transitivePeerDependencies:
-      - esbuild
-      - jiti
-      - less
-      - msw
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
       - yaml
 
   vitest@4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1):
