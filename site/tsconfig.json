@@ -7,7 +7,6 @@
     "jsx": "react",
     "esModuleInterop": true,
     "sourceMap": true,
-    "baseUrl": "./",
     "strict": true,
     "paths": {
       "@/*": ["src/*"],

@@ -6,8 +6,7 @@
     "moduleResolution": "NodeNext",
     "declaration": false,
     "paths": {
-      "@/module/*": ["app/module/*"]
-    },
-    "baseUrl": "."
+      "@/module/*": ["./app/module/*"]
+    }
   }
 }

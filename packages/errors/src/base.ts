@@ -20,11 +20,7 @@ export class BaseError<T extends ErrorOptions> extends Error {
   public static from<
     S extends new (...args: any) => InstanceType<typeof BaseError>,
     P extends ConstructorParameters<S>,
-  >(
-    this: S,
-    err: Error,
-    ...args: P | undefined[]
-  ): InstanceType<S> {
+  >(this: S, err: Error, ...args: P | undefined[]): InstanceType<S> {
     // oxlint-disable-next-line no-this-alias
     const ErrorClass = this;
     const newErr = new ErrorClass(...(args as any[]));

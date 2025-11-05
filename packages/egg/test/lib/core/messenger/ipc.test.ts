@@ -21,8 +21,8 @@ describe.skip('test/lib/core/messenger/ipc.test.ts', () => {
   describe('on(action, data)', () => {
     it('should listen an action event', async () => {
       const dataEvent = once(messenger, 'messenger-test-on-event');
-      process.emit('message', {}, null);
-      process.emit('message', null, null);
+      process.emit('message', {}, undefined);
+      process.emit('message', null, undefined);
       process.emit(
         'message',
         {
@@ -31,7 +31,7 @@ describe.skip('test/lib/core/messenger/ipc.test.ts', () => {
             success: true,
           },
         },
-        null,
+        undefined,
       );
 
       const data = await dataEvent;
@@ -58,7 +58,7 @@ describe.skip('test/lib/core/messenger/ipc.test.ts', () => {
             success: true,
           },
         },
-        null,
+        undefined,
       );
     });
   });

@@ -1,7 +1,6 @@
 {
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
-    "baseUrl": "${configDir}",
     "target": "ES2022",
     "composite": true,
     "incremental": true,
