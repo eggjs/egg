@@ -171,8 +171,8 @@ catalog:
   onelogger: ^1.0.1
   oxc-minify: ^0.82.1
   oxfmt: ^0.9.0
-  oxlint: 1.24.0
-  oxlint-tsgolint: ^0.3.0
+  oxlint: ^1.25.0
+  oxlint-tsgolint: ^0.5.0
   parseurl: ^1.3.3
   path-to-regexp: ^6.3.0
   performance-ms: ^1.1.0
@@ -230,6 +230,7 @@ minimumReleaseAgeExclude:
   - '@oxc-project/*'
   - '@oxfmt/*'
   - '@oxlint/*'
+  - '@oxlint-tsgolint/*'
   - egg
   - rolldown
   - tsdown

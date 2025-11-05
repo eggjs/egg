@@ -7,8 +7,7 @@
     "declaration": false,
     "noImplicitAny": false,
     "skipLibCheck": true,
-    "strict": false,
-    "baseUrl": "."
+    "strict": false
   },
   "ts-node": {
     "esm": true,

@@ -10,8 +10,7 @@
     "strict": false,
     "paths": {
       "@/module/*": ["./app/module/*"]
-    },
-    "baseUrl": "."
+    }
   },
   "ts-node": {
     "esm": true,
