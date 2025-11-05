@@ -101,7 +101,7 @@ catalog:
   cross-spawn: ^7.0.6
   csrf: ^3.1.0
   dayjs: ^1.11.13
-  debounce: ^2.2.0
+  debounce: ^3.0.0
   destroy: ^1.0.4
   detect-port: ^2.1.0
   egg-errors: ^2.3.0
