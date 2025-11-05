@@ -119,7 +119,7 @@ catalogs:
       version: 4.2.6
     '@types/node':
       specifier: ^24.10.0
-      version: 24.9.2
+      version: 24.10.0
     '@types/nunjucks':
       specifier: ^3.2.6
       version: 3.2.6
@@ -290,7 +290,7 @@ catalogs:
       version: 2.0.0
     esbuild:
       specifier: ^0.25.0
-      version: 0.25.11
+      version: 0.25.12
     esbuild-register:
       specifier: ^3.6.0
       version: 3.6.0
@@ -494,7 +494,7 @@ catalogs:
       version: 0.2.2
     rimraf:
       specifier: ^6.1.0
-      version: 6.0.1
+      version: 6.1.0
     runscript:
       specifier: ^2.0.1
       version: 2.0.1
@@ -1116,7 +1116,7 @@ importers:
         version: link:../tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       oxlint:
         specifier: 'catalog:'
         version: 1.24.0(oxlint-tsgolint@0.4.0)
@@ -1128,7 +1128,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   packages/extend2:
     devDependencies:
@@ -1298,7 +1298,7 @@ importers:
         version: 3.0.1
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       oxlint:
         specifier: 'catalog:'
         version: 1.24.0(oxlint-tsgolint@0.3.0)
@@ -1307,7 +1307,7 @@ importers:
         version: 0.3.0
       rimraf:
         specifier: 'catalog:'
-        version: 6.0.1
+        version: 6.1.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1316,7 +1316,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
       ylru:
         specifier: ^2.0.0
         version: 2.0.0
@@ -1332,7 +1332,7 @@ importers:
         version: link:../tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       oxlint:
         specifier: 'catalog:'
         version: 1.24.0(oxlint-tsgolint@0.4.0)
@@ -1341,7 +1341,7 @@ importers:
         version: path-to-regexp@8.3.0
       rimraf:
         specifier: 'catalog:'
-        version: 6.0.1
+        version: 6.1.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1350,7 +1350,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   packages/router:
     dependencies:
@@ -1537,7 +1537,7 @@ importers:
         version: 4.0.9
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -1552,7 +1552,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/jsonp:
     dependencies:
@@ -1568,7 +1568,7 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -1580,7 +1580,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/logrotator:
     dependencies:
@@ -1602,7 +1602,7 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -1620,7 +1620,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/mock:
     dependencies:
@@ -1712,7 +1712,7 @@ importers:
         version: 3.1.5
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -1736,7 +1736,7 @@ importers:
         version: 4.8.2
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/onerror:
     dependencies:
@@ -1789,7 +1789,7 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       detect-port:
         specifier: ^2.1.0
         version: 2.1.0
@@ -1801,7 +1801,7 @@ importers:
         version: 1.24.0(oxlint-tsgolint@0.4.0)
       rimraf:
         specifier: 'catalog:'
-        version: 6.0.1
+        version: 6.1.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1810,7 +1810,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/schedule:
     dependencies:
@@ -1920,7 +1920,7 @@ importers:
         version: 10.0.10
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       '@types/type-is':
         specifier: 'catalog:'
         version: 1.6.7
@@ -1947,7 +1947,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/session:
     dependencies:
@@ -1972,7 +1972,7 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -1984,7 +1984,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/static:
     dependencies:
@@ -2073,7 +2073,7 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -2082,7 +2082,7 @@ importers:
         version: 1.24.0(oxlint-tsgolint@0.4.0)
       rimraf:
         specifier: 'catalog:'
-        version: 6.0.1
+        version: 6.1.0
       semver:
         specifier: 'catalog:'
         version: 7.7.3
@@ -2094,7 +2094,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
   plugins/view:
     dependencies:
@@ -2162,7 +2162,7 @@ importers:
         version: 1.24.0(oxlint-tsgolint@0.4.0)
       rimraf:
         specifier: 'catalog:'
-        version: 6.0.1
+        version: 6.1.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2228,7 +2228,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2253,7 +2253,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2299,7 +2299,7 @@ importers:
         version: 3.2.8
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2327,7 +2327,7 @@ importers:
         version: link:../common-util
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -2367,7 +2367,7 @@ importers:
         version: 4.0.9
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2407,7 +2407,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -2432,7 +2432,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2469,7 +2469,7 @@ importers:
         version: 4.1.9
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       '@types/pluralize':
         specifier: 'catalog:'
         version: 0.0.33
@@ -2521,7 +2521,7 @@ importers:
         version: 4.17.20
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       '@types/nunjucks':
         specifier: 'catalog:'
         version: 3.2.6
@@ -2549,7 +2549,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
@@ -2595,7 +2595,7 @@ importers:
         version: link:../loader
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2620,7 +2620,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
@@ -2669,7 +2669,7 @@ importers:
         version: link:../loader
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
@@ -2697,7 +2697,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2728,7 +2728,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2759,7 +2759,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       globby:
         specifier: 'catalog:'
         version: 11.1.0
@@ -2796,7 +2796,7 @@ importers:
         version: 4.17.20
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       '@types/pluralize':
         specifier: 'catalog:'
         version: 0.0.33
@@ -2836,7 +2836,7 @@ importers:
         version: link:../loader
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2861,7 +2861,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2876,7 +2876,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2946,7 +2946,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2983,7 +2983,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -3005,7 +3005,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -3020,7 +3020,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3072,7 +3072,7 @@ importers:
         version: link:../tegg
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3124,7 +3124,7 @@ importers:
         version: link:../tegg
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3142,7 +3142,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.12(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -3167,7 +3167,7 @@ importers:
         version: link:../../../plugins/mock
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3246,7 +3246,7 @@ importers:
         version: link:../../../plugins/tracer
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3313,7 +3313,7 @@ importers:
         version: link:../../../plugins/tracer
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3374,7 +3374,7 @@ importers:
         version: link:../../../plugins/tracer
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3435,7 +3435,7 @@ importers:
         version: link:../../../plugins/tracer
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3496,7 +3496,7 @@ importers:
         version: link:../tegg
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3563,7 +3563,7 @@ importers:
         version: link:../../../plugins/tracer
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
@@ -3624,7 +3624,7 @@ importers:
         version: link:../../../packages/utils
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       mm:
         specifier: 'catalog:'
         version: 4.0.2
@@ -3691,7 +3691,7 @@ importers:
         version: 11.7.4
       ts-node:
         specifier: 'catalog:'
-        version: 10.9.2(@swc/core@1.14.0)(@types/node@24.9.2)(typescript@5.9.3)
+        version: 10.9.2(@swc/core@1.14.0)(@types/node@24.10.0)(typescript@5.9.3)
       tsconfig-paths:
         specifier: 'catalog:'
         version: 4.2.0
@@ -3719,7 +3719,7 @@ importers:
         version: 10.0.10
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       assert-file:
         specifier: 'catalog:'
         version: 1.0.0
@@ -3734,16 +3734,16 @@ importers:
         version: link:../../packages/egg
       esbuild:
         specifier: 'catalog:'
-        version: 0.25.11
+        version: 0.25.12
       esbuild-register:
         specifier: 'catalog:'
-        version: 3.6.0(esbuild@0.25.11)
+        version: 3.6.0(esbuild@0.25.12)
       npminstall:
         specifier: 'catalog:'
         version: 7.12.0
       rimraf:
         specifier: 'catalog:'
-        version: 6.0.1
+        version: 6.1.0
       runscript:
         specifier: 'catalog:'
         version: 2.0.1
@@ -3780,7 +3780,7 @@ importers:
         version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
-        version: 24.9.2
+        version: 24.10.0
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
@@ -3807,7 +3807,7 @@ importers:
         version: 4.8.2
       vitest:
         specifier: 'catalog:'
-        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+        version: 4.0.5(@types/debug@4.1.12)(@types/node@24.10.0)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
 packages:
 
@@ -3883,34 +3883,16 @@ packages:
   '@emnapi/wasi-threads@1.1.0':
     resolution: {integrity: sha512-WI0DdZ8xFSbgMjR1sFsKABJ/C5OnRrjT06JXbZKexJGrDuPTzZdDYfFlsgcCXCyf+suG5QU2e/y1Wo2V/OapLQ==}
 
-  '@esbuild/aix-ppc64@0.25.11':
-    resolution: {integrity: sha512-Xt1dOL13m8u0WE8iplx9Ibbm+hFAO0GsU2P34UNoDGvZYkY8ifSiy6Zuc1lYxfG7svWE2fzqCUmFp5HCn51gJg==}
-    engines: {node: '>=18'}
-    cpu: [ppc64]
-    os: [aix]
-
   '@esbuild/aix-ppc64@0.25.12':
     resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
     engines: {node: '>=18'}
     cpu: [ppc64]
     os: [aix]
 
-  '@esbuild/android-arm64@0.25.11':
-    resolution: {integrity: sha512-9slpyFBc4FPPz48+f6jyiXOx/Y4v34TUeDDXJpZqAWQn/08lKGeD8aDp9TMn9jDz2CiEuHwfhRmGBvpnd/PWIQ==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [android]
-
   '@esbuild/android-arm64@0.25.12':
     resolution: {integrity: sha512-6AAmLG7zwD1Z159jCKPvAxZd4y/VTO0VkprYy+3N2FtJ8+BQWFXU+OxARIwA46c5tdD9SsKGZ/1ocqBS/gAKHg==}
     engines: {node: '>=18'}
     cpu: [arm64]
-    os: [android]
-
-  '@esbuild/android-arm@0.25.11':
-    resolution: {integrity: sha512-uoa7dU+Dt3HYsethkJ1k6Z9YdcHjTrSb5NUy66ZfZaSV8hEYGD5ZHbEMXnqLFlbBflLsl89Zke7CAdDJ4JI+Gg==}
-    engines: {node: '>=18'}
-    cpu: [arm]
     os: [android]
 
   '@esbuild/android-arm@0.25.12':
@@ -3919,34 +3901,16 @@ packages:
     cpu: [arm]
     os: [android]
 
-  '@esbuild/android-x64@0.25.11':
-    resolution: {integrity: sha512-Sgiab4xBjPU1QoPEIqS3Xx+R2lezu0LKIEcYe6pftr56PqPygbB7+szVnzoShbx64MUupqoE0KyRlN7gezbl8g==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [android]
-
   '@esbuild/android-x64@0.25.12':
     resolution: {integrity: sha512-5jbb+2hhDHx5phYR2By8GTWEzn6I9UqR11Kwf22iKbNpYrsmRB18aX/9ivc5cabcUiAT/wM+YIZ6SG9QO6a8kg==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [android]
 
-  '@esbuild/darwin-arm64@0.25.11':
-    resolution: {integrity: sha512-VekY0PBCukppoQrycFxUqkCojnTQhdec0vevUL/EDOCnXd9LKWqD/bHwMPzigIJXPhC59Vd1WFIL57SKs2mg4w==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [darwin]
-
   '@esbuild/darwin-arm64@0.25.12':
     resolution: {integrity: sha512-N3zl+lxHCifgIlcMUP5016ESkeQjLj/959RxxNYIthIg+CQHInujFuXeWbWMgnTo4cp5XVHqFPmpyu9J65C1Yg==}
     engines: {node: '>=18'}
     cpu: [arm64]
-    os: [darwin]
-
-  '@esbuild/darwin-x64@0.25.11':
-    resolution: {integrity: sha512-+hfp3yfBalNEpTGp9loYgbknjR695HkqtY3d3/JjSRUyPg/xd6q+mQqIb5qdywnDxRZykIHs3axEqU6l1+oWEQ==}
-    engines: {node: '>=18'}
-    cpu: [x64]
     os: [darwin]
 
   '@esbuild/darwin-x64@0.25.12':
@@ -3955,22 +3919,10 @@ packages:
     cpu: [x64]
     os: [darwin]
 
-  '@esbuild/freebsd-arm64@0.25.11':
-    resolution: {integrity: sha512-CmKjrnayyTJF2eVuO//uSjl/K3KsMIeYeyN7FyDBjsR3lnSJHaXlVoAK8DZa7lXWChbuOk7NjAc7ygAwrnPBhA==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [freebsd]
-
   '@esbuild/freebsd-arm64@0.25.12':
     resolution: {integrity: sha512-gA0Bx759+7Jve03K1S0vkOu5Lg/85dou3EseOGUes8flVOGxbhDDh/iZaoek11Y8mtyKPGF3vP8XhnkDEAmzeg==}
     engines: {node: '>=18'}
     cpu: [arm64]
-    os: [freebsd]
-
-  '@esbuild/freebsd-x64@0.25.11':
-    resolution: {integrity: sha512-Dyq+5oscTJvMaYPvW3x3FLpi2+gSZTCE/1ffdwuM6G1ARang/mb3jvjxs0mw6n3Lsw84ocfo9CrNMqc5lTfGOw==}
-    engines: {node: '>=18'}
-    cpu: [x64]
     os: [freebsd]
 
   '@esbuild/freebsd-x64@0.25.12':
@@ -3979,22 +3931,10 @@ packages:
     cpu: [x64]
     os: [freebsd]
 
-  '@esbuild/linux-arm64@0.25.11':
-    resolution: {integrity: sha512-Qr8AzcplUhGvdyUF08A1kHU3Vr2O88xxP0Tm8GcdVOUm25XYcMPp2YqSVHbLuXzYQMf9Bh/iKx7YPqECs6ffLA==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [linux]
-
   '@esbuild/linux-arm64@0.25.12':
     resolution: {integrity: sha512-8bwX7a8FghIgrupcxb4aUmYDLp8pX06rGh5HqDT7bB+8Rdells6mHvrFHHW2JAOPZUbnjUpKTLg6ECyzvas2AQ==}
     engines: {node: '>=18'}
     cpu: [arm64]
-    os: [linux]
-
-  '@esbuild/linux-arm@0.25.11':
-    resolution: {integrity: sha512-TBMv6B4kCfrGJ8cUPo7vd6NECZH/8hPpBHHlYI3qzoYFvWu2AdTvZNuU/7hsbKWqu/COU7NIK12dHAAqBLLXgw==}
-    engines: {node: '>=18'}
-    cpu: [arm]
     os: [linux]
 
   '@esbuild/linux-arm@0.25.12':
@@ -4003,22 +3943,10 @@ packages:
     cpu: [arm]
     os: [linux]
 
-  '@esbuild/linux-ia32@0.25.11':
-    resolution: {integrity: sha512-TmnJg8BMGPehs5JKrCLqyWTVAvielc615jbkOirATQvWWB1NMXY77oLMzsUjRLa0+ngecEmDGqt5jiDC6bfvOw==}
-    engines: {node: '>=18'}
-    cpu: [ia32]
-    os: [linux]
-
   '@esbuild/linux-ia32@0.25.12':
     resolution: {integrity: sha512-0y9KrdVnbMM2/vG8KfU0byhUN+EFCny9+8g202gYqSSVMonbsCfLjUO+rCci7pM0WBEtz+oK/PIwHkzxkyharA==}
     engines: {node: '>=18'}
     cpu: [ia32]
-    os: [linux]
-
-  '@esbuild/linux-loong64@0.25.11':
-    resolution: {integrity: sha512-DIGXL2+gvDaXlaq8xruNXUJdT5tF+SBbJQKbWy/0J7OhU8gOHOzKmGIlfTTl6nHaCOoipxQbuJi7O++ldrxgMw==}
-    engines: {node: '>=18'}
-    cpu: [loong64]
     os: [linux]
 
   '@esbuild/linux-loong64@0.25.12':
@@ -4027,22 +3955,10 @@ packages:
     cpu: [loong64]
     os: [linux]
 
-  '@esbuild/linux-mips64el@0.25.11':
-    resolution: {integrity: sha512-Osx1nALUJu4pU43o9OyjSCXokFkFbyzjXb6VhGIJZQ5JZi8ylCQ9/LFagolPsHtgw6himDSyb5ETSfmp4rpiKQ==}
-    engines: {node: '>=18'}
-    cpu: [mips64el]
-    os: [linux]
-
   '@esbuild/linux-mips64el@0.25.12':
     resolution: {integrity: sha512-iyRrM1Pzy9GFMDLsXn1iHUm18nhKnNMWscjmp4+hpafcZjrr2WbT//d20xaGljXDBYHqRcl8HnxbX6uaA/eGVw==}
     engines: {node: '>=18'}
     cpu: [mips64el]
-    os: [linux]
-
-  '@esbuild/linux-ppc64@0.25.11':
-    resolution: {integrity: sha512-nbLFgsQQEsBa8XSgSTSlrnBSrpoWh7ioFDUmwo158gIm5NNP+17IYmNWzaIzWmgCxq56vfr34xGkOcZ7jX6CPw==}
-    engines: {node: '>=18'}
-    cpu: [ppc64]
     os: [linux]
 
   '@esbuild/linux-ppc64@0.25.12':
@@ -4051,22 +3967,10 @@ packages:
     cpu: [ppc64]
     os: [linux]
 
-  '@esbuild/linux-riscv64@0.25.11':
-    resolution: {integrity: sha512-HfyAmqZi9uBAbgKYP1yGuI7tSREXwIb438q0nqvlpxAOs3XnZ8RsisRfmVsgV486NdjD7Mw2UrFSw51lzUk1ww==}
-    engines: {node: '>=18'}
-    cpu: [riscv64]
-    os: [linux]
-
   '@esbuild/linux-riscv64@0.25.12':
     resolution: {integrity: sha512-Zr7KR4hgKUpWAwb1f3o5ygT04MzqVrGEGXGLnj15YQDJErYu/BGg+wmFlIDOdJp0PmB0lLvxFIOXZgFRrdjR0w==}
     engines: {node: '>=18'}
     cpu: [riscv64]
-    os: [linux]
-
-  '@esbuild/linux-s390x@0.25.11':
-    resolution: {integrity: sha512-HjLqVgSSYnVXRisyfmzsH6mXqyvj0SA7pG5g+9W7ESgwA70AXYNpfKBqh1KbTxmQVaYxpzA/SvlB9oclGPbApw==}
-    engines: {node: '>=18'}
-    cpu: [s390x]
     os: [linux]
 
   '@esbuild/linux-s390x@0.25.12':
@@ -4075,34 +3979,16 @@ packages:
     cpu: [s390x]
     os: [linux]
 
-  '@esbuild/linux-x64@0.25.11':
-    resolution: {integrity: sha512-HSFAT4+WYjIhrHxKBwGmOOSpphjYkcswF449j6EjsjbinTZbp8PJtjsVK1XFJStdzXdy/jaddAep2FGY+wyFAQ==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [linux]
-
   '@esbuild/linux-x64@0.25.12':
     resolution: {integrity: sha512-uqZMTLr/zR/ed4jIGnwSLkaHmPjOjJvnm6TVVitAa08SLS9Z0VM8wIRx7gWbJB5/J54YuIMInDquWyYvQLZkgw==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [linux]
 
-  '@esbuild/netbsd-arm64@0.25.11':
-    resolution: {integrity: sha512-hr9Oxj1Fa4r04dNpWr3P8QKVVsjQhqrMSUzZzf+LZcYjZNqhA3IAfPQdEh1FLVUJSiu6sgAwp3OmwBfbFgG2Xg==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [netbsd]
-
   '@esbuild/netbsd-arm64@0.25.12':
     resolution: {integrity: sha512-xXwcTq4GhRM7J9A8Gv5boanHhRa/Q9KLVmcyXHCTaM4wKfIpWkdXiMog/KsnxzJ0A1+nD+zoecuzqPmCRyBGjg==}
     engines: {node: '>=18'}
     cpu: [arm64]
-    os: [netbsd]
-
-  '@esbuild/netbsd-x64@0.25.11':
-    resolution: {integrity: sha512-u7tKA+qbzBydyj0vgpu+5h5AeudxOAGncb8N6C9Kh1N4n7wU1Xw1JDApsRjpShRpXRQlJLb9wY28ELpwdPcZ7A==}
-    engines: {node: '>=18'}
-    cpu: [x64]
     os: [netbsd]
 
   '@esbuild/netbsd-x64@0.25.12':
@@ -4111,22 +3997,10 @@ packages:
     cpu: [x64]
     os: [netbsd]
 
-  '@esbuild/openbsd-arm64@0.25.11':
-    resolution: {integrity: sha512-Qq6YHhayieor3DxFOoYM1q0q1uMFYb7cSpLD2qzDSvK1NAvqFi8Xgivv0cFC6J+hWVw2teCYltyy9/m/14ryHg==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [openbsd]
-
   '@esbuild/openbsd-arm64@0.25.12':
     resolution: {integrity: sha512-fF96T6KsBo/pkQI950FARU9apGNTSlZGsv1jZBAlcLL1MLjLNIWPBkj5NlSz8aAzYKg+eNqknrUJ24QBybeR5A==}
     engines: {node: '>=18'}
     cpu: [arm64]
-    os: [openbsd]
-
-  '@esbuild/openbsd-x64@0.25.11':
-    resolution: {integrity: sha512-CN+7c++kkbrckTOz5hrehxWN7uIhFFlmS/hqziSFVWpAzpWrQoAG4chH+nN3Be+Kzv/uuo7zhX716x3Sn2Jduw==}
-    engines: {node: '>=18'}
-    cpu: [x64]
     os: [openbsd]
 
   '@esbuild/openbsd-x64@0.25.12':
@@ -4135,23 +4009,11 @@ packages:
     cpu: [x64]
     os: [openbsd]
 
-  '@esbuild/openharmony-arm64@0.25.11':
-    resolution: {integrity: sha512-rOREuNIQgaiR+9QuNkbkxubbp8MSO9rONmwP5nKncnWJ9v5jQ4JxFnLu4zDSRPf3x4u+2VN4pM4RdyIzDty/wQ==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [openharmony]
-
   '@esbuild/openharmony-arm64@0.25.12':
     resolution: {integrity: sha512-rm0YWsqUSRrjncSXGA7Zv78Nbnw4XL6/dzr20cyrQf7ZmRcsovpcRBdhD43Nuk3y7XIoW2OxMVvwuRvk9XdASg==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [openharmony]
-
-  '@esbuild/sunos-x64@0.25.11':
-    resolution: {integrity: sha512-nq2xdYaWxyg9DcIyXkZhcYulC6pQ2FuCgem3LI92IwMgIZ69KHeY8T4Y88pcwoLIjbed8n36CyKoYRDygNSGhA==}
-    engines: {node: '>=18'}
-    cpu: [x64]
-    os: [sunos]
 
   '@esbuild/sunos-x64@0.25.12':
     resolution: {integrity: sha512-3wGSCDyuTHQUzt0nV7bocDy72r2lI33QL3gkDNGkod22EsYl04sMf0qLb8luNKTOmgF/eDEDP5BFNwoBKH441w==}
@@ -4159,34 +4021,16 @@ packages:
     cpu: [x64]
     os: [sunos]
 
-  '@esbuild/win32-arm64@0.25.11':
-    resolution: {integrity: sha512-3XxECOWJq1qMZ3MN8srCJ/QfoLpL+VaxD/WfNRm1O3B4+AZ/BnLVgFbUV3eiRYDMXetciH16dwPbbHqwe1uU0Q==}
-    engines: {node: '>=18'}
-    cpu: [arm64]
-    os: [win32]
-
   '@esbuild/win32-arm64@0.25.12':
     resolution: {integrity: sha512-rMmLrur64A7+DKlnSuwqUdRKyd3UE7oPJZmnljqEptesKM8wx9J8gx5u0+9Pq0fQQW8vqeKebwNXdfOyP+8Bsg==}
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [win32]
 
-  '@esbuild/win32-ia32@0.25.11':
-    resolution: {integrity: sha512-3ukss6gb9XZ8TlRyJlgLn17ecsK4NSQTmdIXRASVsiS2sQ6zPPZklNJT5GR5tE/MUarymmy8kCEf5xPCNCqVOA==}
-    engines: {node: '>=18'}
-    cpu: [ia32]
-    os: [win32]
-
   '@esbuild/win32-ia32@0.25.12':
     resolution: {integrity: sha512-HkqnmmBoCbCwxUKKNPBixiWDGCpQGVsrQfJoVGYLPT41XWF8lHuE5N6WhVia2n4o5QK5M4tYr21827fNhi4byQ==}
     engines: {node: '>=18'}
     cpu: [ia32]
-    os: [win32]
-
-  '@esbuild/win32-x64@0.25.11':
-    resolution: {integrity: sha512-D7Hpz6A2L4hzsRpPaCYkQnGOotdUpDzSGRIv9I+1ITdHROSFUWW95ZPZWQmGka1Fg7W3zFJowyn9WGwMJ0+KPA==}
-    engines: {node: '>=18'}
-    cpu: [x64]
     os: [win32]
 
   '@esbuild/win32-x64@0.25.12':
@@ -5334,9 +5178,6 @@ packages:
   '@types/node@24.10.0':
     resolution: {integrity: sha512-qzQZRBqkFsYyaSWXuEHc2WR9c0a0CXwiE5FWUvn7ZM+vdy1uZLfCunD38UzhuB7YN/J11ndbDBcTmOdxJo9Q7A==}
 
-  '@types/node@24.9.2':
-    resolution: {integrity: sha512-uWN8YqxXxqFMX2RqGOrumsKeti4LlmIMIyV0lgut4jx7KQBcBiW6vkDtIBvHnHIquwNfJhk8v2OtmO8zXWHfPA==}
-
   '@types/nunjucks@3.2.6':
     resolution: {integrity: sha512-pHiGtf83na1nCzliuAdq8GowYiXvH5l931xZ0YEHaLMNFgynpEqx+IPStlu7UaDkehfvl01e4x/9Tpwhy7Ue3w==}
 
@@ -5611,10 +5452,6 @@ packages:
   ansi-escapes@4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
     engines: {node: '>=8'}
-
-  ansi-escapes@7.1.1:
-    resolution: {integrity: sha512-Zhl0ErHcSRUaVfGUeUdDuLgpkEo8KIFjB4Y9uAc46ScOpdDiU1Dbyplh7qWJeJ/ZHpbyMSM26+X3BySgnIz40Q==}
-    engines: {node: '>=18'}
 
   ansi-escapes@7.2.0:
     resolution: {integrity: sha512-g6LhBsl+GBPRWGWsBtutpzBYuIIdBkLEvad5C/va/74Db018+5TZiyA26cZJAr3Rft5lprVqOIPxf5Vid6tqAw==}
@@ -6469,11 +6306,6 @@ packages:
     resolution: {integrity: sha512-H2/S7Pm8a9CL1uhp9OvjwrBh5Pvx0H8qVOxNu8Wed9Y7qv56MPtq+GGM8RJpq6glYJn9Wspr8uw7l55uyinNeg==}
     peerDependencies:
       esbuild: '>=0.12 <1'
-
-  esbuild@0.25.11:
-    resolution: {integrity: sha512-KohQwyzrKTQmhXDW1PjCv3Tyspn9n5GcY2RTDqeORIdIJY8yKIF7sTSopFmn/wpMPW4rdPXI0UE5LJLuq3bx0Q==}
-    engines: {node: '>=18'}
-    hasBin: true
 
   esbuild@0.25.12:
     resolution: {integrity: sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg==}
@@ -8371,11 +8203,6 @@ packages:
     deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
-  rimraf@6.0.1:
-    resolution: {integrity: sha512-9dkvaxAsk/xNXSJzMgFqqMCuFgt2+KsOFek3TMLfo8NCPfWpBmqwyNn5Y+NX56QUYfCtsyhF3ayiboEoUmJk/A==}
-    engines: {node: 20 || >=22}
-    hasBin: true
-
   rimraf@6.1.0:
     resolution: {integrity: sha512-DxdlA1bdNzkZK7JiNWH+BAx1x4tEJWoTofIopFo6qWUU94jYrFZ0ubY05TqH3nWPJ1nKa1JWVFDINZ3fnrle/A==}
     engines: {node: 20 || >=22}
@@ -9417,157 +9244,79 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@esbuild/aix-ppc64@0.25.11':
-    optional: true
-
   '@esbuild/aix-ppc64@0.25.12':
-    optional: true
-
-  '@esbuild/android-arm64@0.25.11':
     optional: true
 
   '@esbuild/android-arm64@0.25.12':
     optional: true
 
-  '@esbuild/android-arm@0.25.11':
-    optional: true
-
   '@esbuild/android-arm@0.25.12':
-    optional: true
-
-  '@esbuild/android-x64@0.25.11':
     optional: true
 
   '@esbuild/android-x64@0.25.12':
     optional: true
 
-  '@esbuild/darwin-arm64@0.25.11':
-    optional: true
-
   '@esbuild/darwin-arm64@0.25.12':
-    optional: true
-
-  '@esbuild/darwin-x64@0.25.11':
     optional: true
 
   '@esbuild/darwin-x64@0.25.12':
     optional: true
 
-  '@esbuild/freebsd-arm64@0.25.11':
-    optional: true
-
   '@esbuild/freebsd-arm64@0.25.12':
-    optional: true
-
-  '@esbuild/freebsd-x64@0.25.11':
     optional: true
 
   '@esbuild/freebsd-x64@0.25.12':
     optional: true
 
-  '@esbuild/linux-arm64@0.25.11':
-    optional: true
-
   '@esbuild/linux-arm64@0.25.12':
-    optional: true
-
-  '@esbuild/linux-arm@0.25.11':
     optional: true
 
   '@esbuild/linux-arm@0.25.12':
     optional: true
 
-  '@esbuild/linux-ia32@0.25.11':
-    optional: true
-
   '@esbuild/linux-ia32@0.25.12':
-    optional: true
-
-  '@esbuild/linux-loong64@0.25.11':
     optional: true
 
   '@esbuild/linux-loong64@0.25.12':
     optional: true
 
-  '@esbuild/linux-mips64el@0.25.11':
-    optional: true
-
   '@esbuild/linux-mips64el@0.25.12':
-    optional: true
-
-  '@esbuild/linux-ppc64@0.25.11':
     optional: true
 
   '@esbuild/linux-ppc64@0.25.12':
     optional: true
 
-  '@esbuild/linux-riscv64@0.25.11':
-    optional: true
-
   '@esbuild/linux-riscv64@0.25.12':
-    optional: true
-
-  '@esbuild/linux-s390x@0.25.11':
     optional: true
 
   '@esbuild/linux-s390x@0.25.12':
     optional: true
 
-  '@esbuild/linux-x64@0.25.11':
-    optional: true
-
   '@esbuild/linux-x64@0.25.12':
-    optional: true
-
-  '@esbuild/netbsd-arm64@0.25.11':
     optional: true
 
   '@esbuild/netbsd-arm64@0.25.12':
     optional: true
 
-  '@esbuild/netbsd-x64@0.25.11':
-    optional: true
-
   '@esbuild/netbsd-x64@0.25.12':
-    optional: true
-
-  '@esbuild/openbsd-arm64@0.25.11':
     optional: true
 
   '@esbuild/openbsd-arm64@0.25.12':
     optional: true
 
-  '@esbuild/openbsd-x64@0.25.11':
-    optional: true
-
   '@esbuild/openbsd-x64@0.25.12':
-    optional: true
-
-  '@esbuild/openharmony-arm64@0.25.11':
     optional: true
 
   '@esbuild/openharmony-arm64@0.25.12':
     optional: true
 
-  '@esbuild/sunos-x64@0.25.11':
-    optional: true
-
   '@esbuild/sunos-x64@0.25.12':
-    optional: true
-
-  '@esbuild/win32-arm64@0.25.11':
     optional: true
 
   '@esbuild/win32-arm64@0.25.12':
     optional: true
 
-  '@esbuild/win32-ia32@0.25.11':
-    optional: true
-
   '@esbuild/win32-ia32@0.25.12':
-    optional: true
-
-  '@esbuild/win32-x64@0.25.11':
     optional: true
 
   '@esbuild/win32-x64@0.25.12':
@@ -9612,7 +9361,7 @@ snapshots:
 
   '@jest/pattern@30.0.1':
     dependencies:
-      '@types/node': 24.9.2
+      '@types/node': 24.10.0
       jest-regex-util: 30.0.1
 
   '@jest/schemas@30.0.5':
@@ -9625,7 +9374,7 @@ snapshots:
       '@jest/schemas': 30.0.5
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 24.9.2
+      '@types/node': 24.10.0
       '@types/yargs': 17.0.33
       chalk: 4.1.2
 
@@ -10526,10 +10275,6 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
-  '@types/node@24.9.2':
-    dependencies:
-      undici-types: 7.16.0
-
   '@types/nunjucks@3.2.6': {}
 
   '@types/on-finished@2.3.5':
@@ -10826,10 +10571,6 @@ snapshots:
   ansi-escapes@4.3.2:
     dependencies:
       type-fest: 0.21.3
-
-  ansi-escapes@7.1.1:
-    dependencies:
-      environment: 1.1.0
 
   ansi-escapes@7.2.0:
     dependencies:
@@ -11743,41 +11484,12 @@ snapshots:
       has-tostringtag: 1.0.2
       hasown: 2.0.2
 
-  esbuild-register@3.6.0(esbuild@0.25.11):
+  esbuild-register@3.6.0(esbuild@0.25.12):
     dependencies:
       debug: 4.4.3(supports-color@8.1.1)
-      esbuild: 0.25.11
+      esbuild: 0.25.12
     transitivePeerDependencies:
       - supports-color
-
-  esbuild@0.25.11:
-    optionalDependencies:
-      '@esbuild/aix-ppc64': 0.25.11
-      '@esbuild/android-arm': 0.25.11
-      '@esbuild/android-arm64': 0.25.11
-      '@esbuild/android-x64': 0.25.11
-      '@esbuild/darwin-arm64': 0.25.11
-      '@esbuild/darwin-x64': 0.25.11
-      '@esbuild/freebsd-arm64': 0.25.11
-      '@esbuild/freebsd-x64': 0.25.11
-      '@esbuild/linux-arm': 0.25.11
-      '@esbuild/linux-arm64': 0.25.11
-      '@esbuild/linux-ia32': 0.25.11
-      '@esbuild/linux-loong64': 0.25.11
-      '@esbuild/linux-mips64el': 0.25.11
-      '@esbuild/linux-ppc64': 0.25.11
-      '@esbuild/linux-riscv64': 0.25.11
-      '@esbuild/linux-s390x': 0.25.11
-      '@esbuild/linux-x64': 0.25.11
-      '@esbuild/netbsd-arm64': 0.25.11
-      '@esbuild/netbsd-x64': 0.25.11
-      '@esbuild/openbsd-arm64': 0.25.11
-      '@esbuild/openbsd-x64': 0.25.11
-      '@esbuild/openharmony-arm64': 0.25.11
-      '@esbuild/sunos-x64': 0.25.11
-      '@esbuild/win32-arm64': 0.25.11
-      '@esbuild/win32-ia32': 0.25.11
-      '@esbuild/win32-x64': 0.25.11
 
   esbuild@0.25.12:
     optionalDependencies:
@@ -12583,7 +12295,7 @@ snapshots:
   jest-util@30.2.0:
     dependencies:
       '@jest/types': 30.2.0
-      '@types/node': 24.9.2
+      '@types/node': 24.10.0
       chalk: 4.1.2
       ci-info: 4.3.1
       graceful-fs: 4.2.11
@@ -13858,11 +13570,6 @@ snapshots:
     dependencies:
       glob: 7.2.3
 
-  rimraf@6.0.1:
-    dependencies:
-      glob: 11.0.3
-      package-json-from-dist: 1.0.1
-
   rimraf@6.1.0:
     dependencies:
       glob: 11.0.3
@@ -13899,26 +13606,6 @@ snapshots:
       tinyglobby: 0.2.15
     optionalDependencies:
       '@types/node': 24.10.0
-      esbuild: 0.25.12
-      fsevents: 2.3.3
-      jiti: 2.6.1
-      less: 4.4.2
-      sass: 1.93.2
-      terser: 5.44.0
-      tsx: 4.20.6
-      yaml: 2.8.1
-
-  rolldown-vite@7.2.0(@types/node@24.9.2)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1):
-    dependencies:
-      '@oxc-project/runtime': 0.96.0
-      fdir: 6.5.0(picomatch@4.0.3)
-      lightningcss: 1.30.2
-      picomatch: 4.0.3
-      postcss: 8.5.6
-      rolldown: 1.0.0-beta.47
-      tinyglobby: 0.2.15
-    optionalDependencies:
-      '@types/node': 24.9.2
       esbuild: 0.25.12
       fsevents: 2.3.3
       jiti: 2.6.1
@@ -14397,7 +14084,7 @@ snapshots:
 
   terminal-link@5.0.0:
     dependencies:
-      ansi-escapes: 7.1.1
+      ansi-escapes: 7.2.0
       supports-hyperlinks: 4.3.0
 
   terser@5.44.0:
@@ -14456,14 +14143,14 @@ snapshots:
 
   trim-lines@3.0.1: {}
 
-  ts-node@10.9.2(@swc/core@1.14.0)(@types/node@24.9.2)(typescript@5.9.3):
+  ts-node@10.9.2(@swc/core@1.14.0)(@types/node@24.10.0)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 24.9.2
+      '@types/node': 24.10.0
       acorn: 8.15.0
       acorn-walk: 8.3.4
       arg: 4.1.3
@@ -14789,46 +14476,6 @@ snapshots:
     optionalDependencies:
       '@types/debug': 4.1.12
       '@types/node': 24.10.0
-      '@vitest/ui': 4.0.5(vitest@4.0.5)
-    transitivePeerDependencies:
-      - esbuild
-      - jiti
-      - less
-      - msw
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - yaml
-
-  vitest@4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(@vitest/ui@4.0.5)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1):
-    dependencies:
-      '@vitest/expect': 4.0.5
-      '@vitest/mocker': 4.0.5(rolldown-vite@7.2.0(@types/node@24.10.0)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
-      '@vitest/pretty-format': 4.0.5
-      '@vitest/runner': 4.0.5
-      '@vitest/snapshot': 4.0.5
-      '@vitest/spy': 4.0.5
-      '@vitest/utils': 4.0.5
-      debug: 4.4.3(supports-color@8.1.1)
-      es-module-lexer: 1.7.0
-      expect-type: 1.2.2
-      magic-string: 0.30.21
-      pathe: 2.0.3
-      picomatch: 4.0.3
-      std-env: 3.10.0
-      tinybench: 2.9.0
-      tinyexec: 0.3.2
-      tinyglobby: 0.2.15
-      tinyrainbow: 3.0.3
-      vite: rolldown-vite@7.2.0(@types/node@24.9.2)(esbuild@0.25.12)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
-      why-is-node-running: 2.3.0
-    optionalDependencies:
-      '@types/debug': 4.1.12
-      '@types/node': 24.9.2
       '@vitest/ui': 4.0.5(vitest@4.0.5)
     transitivePeerDependencies:
       - esbuild

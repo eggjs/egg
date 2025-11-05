@@ -12,7 +12,8 @@ afterEach(mm.restore);
 describe('Messenger', () => {
   afterEach(() => app.close());
 
-  it('parent -> app/agent', async () => {
+  // FIXME: flaky test on windows, The latest test that might've caused the error is "parent -> app/agent"
+  it.skipIf(process.platform === 'win32')('parent -> app/agent', async () => {
     app = cluster('apps/messenger');
     // app.debug();
 
