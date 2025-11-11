@@ -403,8 +403,8 @@ catalogs:
       specifier: ^4.1.1
       version: 4.1.1
     marked:
-      specifier: ^16.0.0
-      version: 16.4.1
+      specifier: ^17.0.0
+      version: 17.0.0
     matcher:
       specifier: ^4.0.0
       version: 4.0.0
@@ -2153,7 +2153,7 @@ importers:
         version: link:../../packages/egg
       marked:
         specifier: 'catalog:'
-        version: 16.4.1
+        version: 17.0.0
       nunjucks-markdown:
         specifier: 'catalog:'
         version: 2.0.1(nunjucks@3.2.4(chokidar@3.6.0))
@@ -7373,8 +7373,8 @@ packages:
   mark.js@8.11.1:
     resolution: {integrity: sha512-1I+1qpDt4idfgLQG+BNWmrqku+7/2bi5nLf4YwF8y8zXvmfiTBY3PV3ZibfrjBueCByROpuBjLLFCajqkgYoLQ==}
 
-  marked@16.4.1:
-    resolution: {integrity: sha512-ntROs7RaN3EvWfy3EZi14H4YxmT6A5YvywfhO+0pm+cH/dnSQRmdAmoFIc3B9aiwTehyk7pESH4ofyBY+V5hZg==}
+  marked@17.0.0:
+    resolution: {integrity: sha512-KkDYEWEEiYJw/KC+DVm1zzlpMQSMIu6YRltkcCvwheCp8HWPXCk9JwOmHJKBlGfzcpzcIt6x3sMnTsRm/51oDg==}
     engines: {node: '>= 20'}
     hasBin: true
 
@@ -12695,7 +12695,7 @@ snapshots:
 
   mark.js@8.11.1: {}
 
-  marked@16.4.1: {}
+  marked@17.0.0: {}
 
   matcher@4.0.0:
     dependencies:
