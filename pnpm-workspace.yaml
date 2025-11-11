@@ -169,7 +169,7 @@ catalog:
   nunjucks-markdown: ^2.0.1
   on-finished: ^2.4.1
   onelogger: ^1.0.1
-  oxc-minify: ^0.96.0
+  oxc-minify: ^0.97.0
   oxfmt: ^0.13.0
   oxlint: ^1.25.0
   oxlint-tsgolint: ^0.5.0
