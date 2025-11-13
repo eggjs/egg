@@ -4,8 +4,8 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.mjs",
-      "./cli": "./dist/cli.mjs",
+      ".": "./dist/index.js",
+      "./cli": "./dist/cli.js",
       "./package.json": "./package.json"
     }
   },
@@ -38,9 +38,9 @@
   ],
   "author": "TZ <atian25@qq.com>",
   "license": "MIT",
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./cli": "./src/cli.ts",

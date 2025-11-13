@@ -7,7 +7,7 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.mjs",
+      ".": "./dist/index.js",
       "./package.json": "./package.json"
     }
   },
@@ -16,12 +16,12 @@
     ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
-  "types": "./dist/index.d.mts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "description": "Koa web app framework for https://eggjs.org",
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",

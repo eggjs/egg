@@ -4,13 +4,13 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.mjs",
-      "./agent": "./dist/agent.mjs",
-      "./app": "./dist/app.mjs",
-      "./config/config.default": "./dist/config/config.default.mjs",
-      "./lib/error_view": "./dist/lib/error_view.mjs",
-      "./lib/utils": "./dist/lib/utils.mjs",
-      "./types": "./dist/types.mjs",
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/error_view": "./dist/lib/error_view.js",
+      "./lib/utils": "./dist/lib/utils.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
@@ -69,7 +69,7 @@
   "files": [
     "dist"
   ],
-  "types": "./dist/index.d.mts",
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs"
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js"
 }

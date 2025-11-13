@@ -15,12 +15,12 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.mjs",
-      "./agent": "./dist/agent.mjs",
-      "./app": "./dist/app.mjs",
-      "./config/config.default": "./dist/config/config.default.mjs",
-      "./lib/redis": "./dist/lib/redis.mjs",
-      "./types": "./dist/types.mjs",
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/redis": "./dist/lib/redis.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
@@ -74,7 +74,7 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts"
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

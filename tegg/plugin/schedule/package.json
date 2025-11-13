@@ -81,20 +81,20 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.mjs",
-      "./agent": "./dist/agent.mjs",
-      "./app": "./dist/app.mjs",
-      "./lib/EggScheduleAdapter": "./dist/lib/EggScheduleAdapter.mjs",
-      "./lib/EggScheduleMetadataConvertor": "./dist/lib/EggScheduleMetadataConvertor.mjs",
-      "./lib/SchedulePrototypeHook": "./dist/lib/SchedulePrototypeHook.mjs",
-      "./lib/ScheduleSubscriberRegister": "./dist/lib/ScheduleSubscriberRegister.mjs",
-      "./lib/ScheduleWorkerLoadUnitHook": "./dist/lib/ScheduleWorkerLoadUnitHook.mjs",
-      "./lib/ScheduleWorkerRegister": "./dist/lib/ScheduleWorkerRegister.mjs",
-      "./types": "./dist/types.mjs",
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./lib/EggScheduleAdapter": "./dist/lib/EggScheduleAdapter.js",
+      "./lib/EggScheduleMetadataConvertor": "./dist/lib/EggScheduleMetadataConvertor.js",
+      "./lib/SchedulePrototypeHook": "./dist/lib/SchedulePrototypeHook.js",
+      "./lib/ScheduleSubscriberRegister": "./dist/lib/ScheduleSubscriberRegister.js",
+      "./lib/ScheduleWorkerLoadUnitHook": "./dist/lib/ScheduleWorkerLoadUnitHook.js",
+      "./lib/ScheduleWorkerRegister": "./dist/lib/ScheduleWorkerRegister.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts"
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

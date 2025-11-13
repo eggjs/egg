@@ -47,23 +47,23 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.mjs",
-      "./agent": "./dist/agent.mjs",
-      "./app": "./dist/app.mjs",
-      "./app/extend/agent": "./dist/app/extend/agent.mjs",
-      "./app/extend/application": "./dist/app/extend/application.mjs",
-      "./app/schedule/clean_log": "./dist/app/schedule/clean_log.mjs",
-      "./app/schedule/rotate_by_file": "./dist/app/schedule/rotate_by_file.mjs",
-      "./app/schedule/rotate_by_hour": "./dist/app/schedule/rotate_by_hour.mjs",
-      "./app/schedule/rotate_by_size": "./dist/app/schedule/rotate_by_size.mjs",
-      "./boot": "./dist/boot.mjs",
-      "./config/config.default": "./dist/config/config.default.mjs",
-      "./lib/day_rotator": "./dist/lib/day_rotator.mjs",
-      "./lib/hour_rotator": "./dist/lib/hour_rotator.mjs",
-      "./lib/rotator": "./dist/lib/rotator.mjs",
-      "./lib/size_rotator": "./dist/lib/size_rotator.mjs",
-      "./lib/utils": "./dist/lib/utils.mjs",
-      "./types": "./dist/types.mjs",
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./app/extend/agent": "./dist/app/extend/agent.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./app/schedule/clean_log": "./dist/app/schedule/clean_log.js",
+      "./app/schedule/rotate_by_file": "./dist/app/schedule/rotate_by_file.js",
+      "./app/schedule/rotate_by_hour": "./dist/app/schedule/rotate_by_hour.js",
+      "./app/schedule/rotate_by_size": "./dist/app/schedule/rotate_by_size.js",
+      "./boot": "./dist/boot.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/day_rotator": "./dist/lib/day_rotator.js",
+      "./lib/hour_rotator": "./dist/lib/hour_rotator.js",
+      "./lib/rotator": "./dist/lib/rotator.js",
+      "./lib/size_rotator": "./dist/lib/size_rotator.js",
+      "./lib/utils": "./dist/lib/utils.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
@@ -96,7 +96,7 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts"
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

@@ -4,9 +4,9 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.mjs",
-      "./agent_worker": "./dist/agent_worker.mjs",
-      "./app_worker": "./dist/app_worker.mjs",
+      ".": "./dist/index.js",
+      "./agent_worker": "./dist/agent_worker.js",
+      "./app_worker": "./dist/app_worker.js",
       "./package.json": "./package.json"
     }
   },
@@ -17,9 +17,9 @@
     "./app_worker": "./src/app_worker.ts",
     "./package.json": "./package.json"
   },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "description": "cluster manager for egg",
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",

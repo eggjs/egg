@@ -46,11 +46,11 @@
   },
   "publishConfig": {
     "exports": {
-      "./app": "./dist/app.mjs",
-      "./app/controller/home": "./dist/app/controller/home.mjs",
-      "./app/middleware/hello": "./dist/app/middleware/hello.mjs",
-      "./app/router": "./dist/app/router.mjs",
-      "./config/config.default": "./dist/config/config.default.mjs",
+      "./app": "./dist/app.js",
+      "./app/controller/home": "./dist/app/controller/home.js",
+      "./app/middleware/hello": "./dist/app/middleware/hello.js",
+      "./app/router": "./dist/app/router.js",
+      "./config/config.default": "./dist/config/config.default.js",
       "./package.json": "./package.json"
     }
   }

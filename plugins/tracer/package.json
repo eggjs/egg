@@ -4,16 +4,16 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.mjs",
-      "./agent": "./dist/agent.mjs",
-      "./app": "./dist/app.mjs",
-      "./app/extend/agent": "./dist/app/extend/agent.mjs",
-      "./app/extend/application": "./dist/app/extend/application.mjs",
-      "./app/extend/context": "./dist/app/extend/context.mjs",
-      "./boot": "./dist/boot.mjs",
-      "./config/config.default": "./dist/config/config.default.mjs",
-      "./lib/tracer": "./dist/lib/tracer.mjs",
-      "./types": "./dist/types.mjs",
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./app/extend/agent": "./dist/app/extend/agent.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./app/extend/context": "./dist/app/extend/context.js",
+      "./boot": "./dist/boot.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/tracer": "./dist/lib/tracer.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
@@ -76,7 +76,7 @@
   "files": [
     "dist"
   ],
-  "types": "./dist/index.d.mts",
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs"
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js"
 }

@@ -5,13 +5,13 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.mjs",
-      "./agent": "./dist/agent.mjs",
-      "./app": "./dist/app.mjs",
-      "./app/middleware/egg_loader_trace": "./dist/app/middleware/egg_loader_trace.mjs",
-      "./config/config.default": "./dist/config/config.default.mjs",
-      "./types": "./dist/types.mjs",
-      "./utils": "./dist/utils.mjs",
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./app/middleware/egg_loader_trace": "./dist/app/middleware/egg_loader_trace.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./types": "./dist/types.js",
+      "./utils": "./dist/utils.js",
       "./package.json": "./package.json"
     }
   },
@@ -29,9 +29,9 @@
   "files": [
     "dist"
   ],
-  "types": "./dist/index.d.mts",
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "keywords": [
     "egg",
     "plugin",
