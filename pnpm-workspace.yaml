@@ -9,6 +9,7 @@ packages:
   - tegg/standalone/*
 
 catalog:
+  '@changesets/cli': ^2.29.7
   '@clack/prompts': ^0.11.0
   '@eggjs/compressible': ^3.0.0
   '@eggjs/ip': ^2.1.0
@@ -231,8 +232,10 @@ minimumReleaseAgeExclude:
   - '@oxfmt/*'
   - '@oxlint/*'
   - '@oxlint-tsgolint/*'
+  - '@changesets/*'
   - egg
   - rolldown
+  - rolldown-plugin-dts
   - tsdown
   - vitest
   - vite
@@ -241,6 +244,8 @@ minimumReleaseAgeExclude:
   - oxlint-tsgolint
   - oxlint
   - oxc-minify
+  - obug
+  - unrun
 
 overrides:
   vite: npm:rolldown-vite@^7.1.13
