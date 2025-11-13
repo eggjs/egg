@@ -34,6 +34,51 @@ pnpm run dev
 open http://localhost:7001
 ```
 
+## Monorepo 结构
+
+本项目使用 pnpm monorepo 结构，包含以下包：
+
+- `packages/egg` - Eggjs 主框架
+- `examples/helloworld-commonjs` - CommonJS 示例应用
+- `examples/helloworld-typescript` - TypeScript 示例应用
+- `site` - 文档网站
+
+该 monorepo 使用 **pnpm catalog mode** 进行集中式依赖管理，确保所有包之间的版本一致性。
+
+### 开发命令
+
+```bash
+# 安装所有包的依赖
+pnpm install
+
+# 构建所有包
+pnpm run build
+
+# 测试所有包
+pnpm run test
+
+# 运行特定包的命令
+pnpm --filter=egg run test
+pnpm --filter=@examples/helloworld-typescript run dev
+pnpm --filter=site run dev
+```
+
+### 版本管理
+
+本 monorepo 使用 [changesets](https://github.com/changesets/changesets) 进行版本管理和发布。这带来了以下好处：
+
+- **选择性发布**：只对变更的包进行版本升级和发布
+- **自动生成变更日志**：从 changeset 摘要自动生成
+- **更好的追踪**：清晰记录变更内容和原因
+
+为你的更改添加 changeset：
+
+```bash
+pnpm changeset
+```
+
+详细信息请查看我们的 [Changeset 使用指南](docs/changeset-guide.zh-CN.md)。
+
 ## 文档
 
 - [官方文档](https://eggjs.org/zh-CN/)
