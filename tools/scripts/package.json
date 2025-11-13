@@ -15,12 +15,12 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./baseCommand": "./dist/baseCommand.js",
-      "./commands/start": "./dist/commands/start.js",
-      "./commands/stop": "./dist/commands/stop.js",
-      "./helper": "./dist/helper.js",
-      "./types": "./dist/types.js",
+      ".": "./dist/index.mjs",
+      "./baseCommand": "./dist/baseCommand.mjs",
+      "./commands/start": "./dist/commands/start.mjs",
+      "./commands/stop": "./dist/commands/stop.mjs",
+      "./helper": "./dist/helper.mjs",
+      "./types": "./dist/types.mjs",
       "./package.json": "./package.json"
     }
   },
@@ -87,7 +87,7 @@
     "urllib": "catalog:",
     "vitest": "catalog:"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts"
 }

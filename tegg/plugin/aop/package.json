@@ -7,7 +7,7 @@
       "tegg"
     ]
   },
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "description": "tegg aop plugin",
   "keywords": [
     "egg",
@@ -72,13 +72,13 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./app": "./dist/app.js",
-      "./lib/AopContextHook": "./dist/lib/AopContextHook.js",
-      "./types": "./dist/types.js",
+      ".": "./dist/index.mjs",
+      "./app": "./dist/app.mjs",
+      "./lib/AopContextHook": "./dist/lib/AopContextHook.mjs",
+      "./types": "./dist/types.mjs",
       "./package.json": "./package.json"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js"
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs"
 }

@@ -89,21 +89,21 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./app": "./dist/app.js",
-      "./lib/DalModuleLoadUnitHook": "./dist/lib/DalModuleLoadUnitHook.js",
-      "./lib/DalTableEggPrototypeHook": "./dist/lib/DalTableEggPrototypeHook.js",
-      "./lib/DataSource": "./dist/lib/DataSource.js",
-      "./lib/MysqlDataSourceManager": "./dist/lib/MysqlDataSourceManager.js",
-      "./lib/SqlMapManager": "./dist/lib/SqlMapManager.js",
-      "./lib/TableModelManager": "./dist/lib/TableModelManager.js",
-      "./lib/TransactionalAOP": "./dist/lib/TransactionalAOP.js",
-      "./lib/TransactionPrototypeHook": "./dist/lib/TransactionPrototypeHook.js",
-      "./types": "./dist/types.js",
+      ".": "./dist/index.mjs",
+      "./app": "./dist/app.mjs",
+      "./lib/DalModuleLoadUnitHook": "./dist/lib/DalModuleLoadUnitHook.mjs",
+      "./lib/DalTableEggPrototypeHook": "./dist/lib/DalTableEggPrototypeHook.mjs",
+      "./lib/DataSource": "./dist/lib/DataSource.mjs",
+      "./lib/MysqlDataSourceManager": "./dist/lib/MysqlDataSourceManager.mjs",
+      "./lib/SqlMapManager": "./dist/lib/SqlMapManager.mjs",
+      "./lib/TableModelManager": "./dist/lib/TableModelManager.mjs",
+      "./lib/TransactionalAOP": "./dist/lib/TransactionalAOP.mjs",
+      "./lib/TransactionPrototypeHook": "./dist/lib/TransactionPrototypeHook.mjs",
+      "./types": "./dist/types.mjs",
       "./package.json": "./package.json"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts"
 }

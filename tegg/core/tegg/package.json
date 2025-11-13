@@ -4,15 +4,15 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./ajv": "./dist/ajv.js",
-      "./aop": "./dist/aop.js",
-      "./dal": "./dist/dal.js",
-      "./helper": "./dist/helper.js",
-      "./orm": "./dist/orm.js",
-      "./schedule": "./dist/schedule.js",
-      "./standalone": "./dist/standalone.js",
-      "./transaction": "./dist/transaction.js",
+      ".": "./dist/index.mjs",
+      "./ajv": "./dist/ajv.mjs",
+      "./aop": "./dist/aop.mjs",
+      "./dal": "./dist/dal.mjs",
+      "./helper": "./dist/helper.mjs",
+      "./orm": "./dist/orm.mjs",
+      "./schedule": "./dist/schedule.mjs",
+      "./standalone": "./dist/standalone.mjs",
+      "./transaction": "./dist/transaction.mjs",
       "./package.json": "./package.json"
     }
   },
@@ -85,7 +85,7 @@
     "tsdown": "catalog:",
     "unplugin-unused": "catalog:"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts"
 }

@@ -52,17 +52,17 @@
   },
   "publishConfig": {
     "exports": {
-      "./app": "./dist/app.js",
-      "./app/biz/Foo": "./dist/app/biz/Foo.js",
-      "./app/biz/HelloService": "./dist/app/biz/HelloService.js",
-      "./app/biz/WorldService": "./dist/app/biz/WorldService.js",
-      "./app/port/controller/ArgsController": "./dist/app/port/controller/ArgsController.js",
-      "./app/port/controller/HomeController": "./dist/app/port/controller/HomeController.js",
-      "./app/port/controller/SimpleController": "./dist/app/port/controller/SimpleController.js",
-      "./app/port/schedule/CronDemo": "./dist/app/port/schedule/CronDemo.js",
-      "./app/port/schedule/Demo": "./dist/app/port/schedule/Demo.js",
-      "./config/config.default": "./dist/config/config.default.js",
-      "./config/plugin": "./dist/config/plugin.js",
+      "./app": "./dist/app.mjs",
+      "./app/biz/Foo": "./dist/app/biz/Foo.mjs",
+      "./app/biz/HelloService": "./dist/app/biz/HelloService.mjs",
+      "./app/biz/WorldService": "./dist/app/biz/WorldService.mjs",
+      "./app/port/controller/ArgsController": "./dist/app/port/controller/ArgsController.mjs",
+      "./app/port/controller/HomeController": "./dist/app/port/controller/HomeController.mjs",
+      "./app/port/controller/SimpleController": "./dist/app/port/controller/SimpleController.mjs",
+      "./app/port/schedule/CronDemo": "./dist/app/port/schedule/CronDemo.mjs",
+      "./app/port/schedule/Demo": "./dist/app/port/schedule/Demo.mjs",
+      "./config/config.default": "./dist/config/config.default.mjs",
+      "./config/plugin": "./dist/config/plugin.mjs",
       "./package.json": "./package.json"
     }
   }

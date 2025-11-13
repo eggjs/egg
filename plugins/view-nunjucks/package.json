@@ -20,17 +20,17 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./app": "./dist/app.js",
-      "./app/extend/application": "./dist/app/extend/application.js",
-      "./config/config.default": "./dist/config/config.default.js",
-      "./config/config.local": "./dist/config/config.local.js",
-      "./lib/engine": "./dist/lib/engine.js",
-      "./lib/environment": "./dist/lib/environment.js",
-      "./lib/file_loader": "./dist/lib/file_loader.js",
-      "./lib/helper": "./dist/lib/helper.js",
-      "./lib/view": "./dist/lib/view.js",
-      "./types": "./dist/types.js",
+      ".": "./dist/index.mjs",
+      "./app": "./dist/app.mjs",
+      "./app/extend/application": "./dist/app/extend/application.mjs",
+      "./config/config.default": "./dist/config/config.default.mjs",
+      "./config/config.local": "./dist/config/config.local.mjs",
+      "./lib/engine": "./dist/lib/engine.mjs",
+      "./lib/environment": "./dist/lib/environment.mjs",
+      "./lib/file_loader": "./dist/lib/file_loader.mjs",
+      "./lib/helper": "./dist/lib/helper.mjs",
+      "./lib/view": "./dist/lib/view.mjs",
+      "./types": "./dist/types.mjs",
       "./package.json": "./package.json"
     }
   },
@@ -88,7 +88,7 @@
   "homepage": "https://github.com/eggjs/egg/tree/next/plugins/view-nunjucks#readme",
   "author": "TZ <atian25@qq.com>",
   "license": "MIT",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts"
 }

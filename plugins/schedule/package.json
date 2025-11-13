@@ -4,22 +4,22 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./agent": "./dist/agent.js",
-      "./app": "./dist/app.js",
-      "./app/extend/agent": "./dist/app/extend/agent.js",
-      "./app/extend/application": "./dist/app/extend/application.js",
-      "./app/extend/application.unittest": "./dist/app/extend/application.unittest.js",
-      "./config/config.default": "./dist/config/config.default.js",
-      "./lib/load_schedule": "./dist/lib/load_schedule.js",
-      "./lib/schedule": "./dist/lib/schedule.js",
-      "./lib/schedule_worker": "./dist/lib/schedule_worker.js",
-      "./lib/strategy/all": "./dist/lib/strategy/all.js",
-      "./lib/strategy/base": "./dist/lib/strategy/base.js",
-      "./lib/strategy/timer": "./dist/lib/strategy/timer.js",
-      "./lib/strategy/worker": "./dist/lib/strategy/worker.js",
-      "./lib/types": "./dist/lib/types.js",
-      "./types": "./dist/types.js",
+      ".": "./dist/index.mjs",
+      "./agent": "./dist/agent.mjs",
+      "./app": "./dist/app.mjs",
+      "./app/extend/agent": "./dist/app/extend/agent.mjs",
+      "./app/extend/application": "./dist/app/extend/application.mjs",
+      "./app/extend/application.unittest": "./dist/app/extend/application.unittest.mjs",
+      "./config/config.default": "./dist/config/config.default.mjs",
+      "./lib/load_schedule": "./dist/lib/load_schedule.mjs",
+      "./lib/schedule": "./dist/lib/schedule.mjs",
+      "./lib/schedule_worker": "./dist/lib/schedule_worker.mjs",
+      "./lib/strategy/all": "./dist/lib/strategy/all.mjs",
+      "./lib/strategy/base": "./dist/lib/strategy/base.mjs",
+      "./lib/strategy/timer": "./dist/lib/strategy/timer.mjs",
+      "./lib/strategy/worker": "./dist/lib/strategy/worker.mjs",
+      "./lib/types": "./dist/lib/types.mjs",
+      "./types": "./dist/types.mjs",
       "./package.json": "./package.json"
     }
   },
@@ -99,7 +99,7 @@
   "files": [
     "dist"
   ],
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js"
+  "types": "./dist/index.d.mts",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs"
 }

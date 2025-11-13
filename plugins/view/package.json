@@ -5,15 +5,15 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./app/extend/application": "./dist/app/extend/application.js",
-      "./app/extend/context": "./dist/app/extend/context.js",
-      "./config/config.default": "./dist/config/config.default.js",
-      "./config/config.local": "./dist/config/config.local.js",
-      "./lib": "./dist/lib/index.js",
-      "./lib/context_view": "./dist/lib/context_view.js",
-      "./lib/view_manager": "./dist/lib/view_manager.js",
-      "./types": "./dist/types.js",
+      ".": "./dist/index.mjs",
+      "./app/extend/application": "./dist/app/extend/application.mjs",
+      "./app/extend/context": "./dist/app/extend/context.mjs",
+      "./config/config.default": "./dist/config/config.default.mjs",
+      "./config/config.local": "./dist/config/config.local.mjs",
+      "./lib": "./dist/lib/index.mjs",
+      "./lib/context_view": "./dist/lib/context_view.mjs",
+      "./lib/view_manager": "./dist/lib/view_manager.mjs",
+      "./types": "./dist/types.mjs",
       "./package.json": "./package.json"
     }
   },
@@ -33,9 +33,9 @@
   "files": [
     "dist"
   ],
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "types": "./dist/index.d.mts",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
   "keywords": [
     "egg",
     "eggPlugin",

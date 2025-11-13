@@ -87,23 +87,23 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./app": "./dist/app.js",
-      "./config/config.default": "./dist/config/config.default.js",
-      "./lib/DataSourceManager": "./dist/lib/DataSourceManager.js",
-      "./lib/LeoricRegister": "./dist/lib/LeoricRegister.js",
-      "./lib/ModelProtoHook": "./dist/lib/ModelProtoHook.js",
-      "./lib/ModelProtoManager": "./dist/lib/ModelProtoManager.js",
-      "./lib/ORMLoadUnitHook": "./dist/lib/ORMLoadUnitHook.js",
-      "./lib/SingletonModelObject": "./dist/lib/SingletonModelObject.js",
-      "./lib/SingletonModelProto": "./dist/lib/SingletonModelProto.js",
-      "./lib/SingletonORM": "./dist/lib/SingletonORM.js",
-      "./lib/types": "./dist/lib/types.js",
-      "./types": "./dist/types.js",
+      ".": "./dist/index.mjs",
+      "./app": "./dist/app.mjs",
+      "./config/config.default": "./dist/config/config.default.mjs",
+      "./lib/DataSourceManager": "./dist/lib/DataSourceManager.mjs",
+      "./lib/LeoricRegister": "./dist/lib/LeoricRegister.mjs",
+      "./lib/ModelProtoHook": "./dist/lib/ModelProtoHook.mjs",
+      "./lib/ModelProtoManager": "./dist/lib/ModelProtoManager.mjs",
+      "./lib/ORMLoadUnitHook": "./dist/lib/ORMLoadUnitHook.mjs",
+      "./lib/SingletonModelObject": "./dist/lib/SingletonModelObject.mjs",
+      "./lib/SingletonModelProto": "./dist/lib/SingletonModelProto.mjs",
+      "./lib/SingletonORM": "./dist/lib/SingletonORM.mjs",
+      "./lib/types": "./dist/lib/types.mjs",
+      "./types": "./dist/types.mjs",
       "./package.json": "./package.json"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts"
 }

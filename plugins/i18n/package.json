@@ -37,14 +37,14 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./app": "./dist/app.js",
-      "./app/extend/application": "./dist/app/extend/application.js",
-      "./app/extend/context": "./dist/app/extend/context.js",
-      "./config/config.default": "./dist/config/config.default.js",
-      "./locales": "./dist/locales.js",
-      "./types": "./dist/types.js",
-      "./utils": "./dist/utils.js",
+      ".": "./dist/index.mjs",
+      "./app": "./dist/app.mjs",
+      "./app/extend/application": "./dist/app/extend/application.mjs",
+      "./app/extend/context": "./dist/app/extend/context.mjs",
+      "./config/config.default": "./dist/config/config.default.mjs",
+      "./locales": "./dist/locales.mjs",
+      "./types": "./dist/types.mjs",
+      "./utils": "./dist/utils.mjs",
       "./package.json": "./package.json"
     }
   },
@@ -81,7 +81,7 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts"
 }

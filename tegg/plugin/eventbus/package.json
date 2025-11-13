@@ -79,20 +79,20 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./app": "./dist/app.js",
-      "./app/extend/application.unittest": "./dist/app/extend/application.unittest.js",
-      "./app/extend/context": "./dist/app/extend/context.js",
-      "./lib/EggContextEventBus": "./dist/lib/EggContextEventBus.js",
-      "./lib/EggEventContext": "./dist/lib/EggEventContext.js",
-      "./lib/EventbusLoadUnitHook": "./dist/lib/EventbusLoadUnitHook.js",
-      "./lib/EventbusProtoHook": "./dist/lib/EventbusProtoHook.js",
-      "./lib/EventHandlerProtoManager": "./dist/lib/EventHandlerProtoManager.js",
-      "./types": "./dist/types.js",
+      ".": "./dist/index.mjs",
+      "./app": "./dist/app.mjs",
+      "./app/extend/application.unittest": "./dist/app/extend/application.unittest.mjs",
+      "./app/extend/context": "./dist/app/extend/context.mjs",
+      "./lib/EggContextEventBus": "./dist/lib/EggContextEventBus.mjs",
+      "./lib/EggEventContext": "./dist/lib/EggEventContext.mjs",
+      "./lib/EventbusLoadUnitHook": "./dist/lib/EventbusLoadUnitHook.mjs",
+      "./lib/EventbusProtoHook": "./dist/lib/EventbusProtoHook.mjs",
+      "./lib/EventHandlerProtoManager": "./dist/lib/EventHandlerProtoManager.mjs",
+      "./types": "./dist/types.mjs",
       "./package.json": "./package.json"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts"
 }

@@ -62,16 +62,16 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./agent": "./dist/agent.js",
-      "./app": "./dist/app.js",
-      "./config/config.default": "./dist/config/config.default.js",
-      "./lib/ModuleScanner": "./dist/lib/ModuleScanner.js",
-      "./types": "./dist/types.js",
+      ".": "./dist/index.mjs",
+      "./agent": "./dist/agent.mjs",
+      "./app": "./dist/app.mjs",
+      "./config/config.default": "./dist/config/config.default.mjs",
+      "./lib/ModuleScanner": "./dist/lib/ModuleScanner.mjs",
+      "./types": "./dist/types.mjs",
       "./package.json": "./package.json"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts"
 }
