@@ -9,15 +9,13 @@ import { isGeneratorFunction } from 'is-type-of';
 import onFinished from 'on-finished';
 import statuses from 'statuses';
 import compose from 'koa-compose';
-
 import { HttpError } from 'http-errors';
-import { Context } from './context.ts';
-import { Request } from './request.ts';
-import { Response } from './response.ts';
-import type { CustomError, AnyProto } from './types.ts';
 
-// Re-export for external use
-export { Context, Request, Response };
+import { KoaContext } from './context.ts';
+import { KoaRequest } from './request.ts';
+import { KoaResponse } from './response.ts';
+import type { CustomError, AnyProto } from './types.ts';
+import { isStream } from './utils.ts';
 
 const debug = debuglog('egg/koa/application');
 
@@ -25,7 +23,7 @@ const debug = debuglog('egg/koa/application');
 export type ProtoImplClass<T = object> = new (...args: any[]) => T;
 export type Next = () => Promise<void>;
 type _MiddlewareFunc<T> = (ctx: T, next: Next) => Promise<void> | void;
-export type MiddlewareFunc<T extends Context = Context> = _MiddlewareFunc<T> & {
+export type MiddlewareFunc<T extends KoaContext = KoaContext> = _MiddlewareFunc<T> & {
   _name?: string;
 };
 
@@ -47,14 +45,14 @@ export class Application extends Emitter {
   proxyIpHeader: string;
   maxIpsCount: number;
   protected _keys?: string[];
-  middleware: MiddlewareFunc<Context>[];
-  ctxStorage: AsyncLocalStorage<Context>;
+  middleware: MiddlewareFunc<KoaContext>[];
+  ctxStorage: AsyncLocalStorage<KoaContext>;
   silent: boolean;
-  ContextClass: ProtoImplClass<Context>;
+  ContextClass: ProtoImplClass<KoaContext>;
   context: AnyProto;
-  RequestClass: ProtoImplClass<Request>;
+  RequestClass: ProtoImplClass<KoaRequest>;
   request: AnyProto;
-  ResponseClass: ProtoImplClass<Response>;
+  ResponseClass: ProtoImplClass<KoaResponse>;
   response: AnyProto;
 
   /**
@@ -90,11 +88,11 @@ export class Application extends Emitter {
     this.middleware = [];
     this.ctxStorage = getAsyncLocalStorage();
     this.silent = false;
-    this.ContextClass = class ApplicationContext extends Context {} as ProtoImplClass<Context>;
+    this.ContextClass = class ApplicationContext extends KoaContext {} as ProtoImplClass<KoaContext>;
     this.context = this.ContextClass.prototype;
-    this.RequestClass = class ApplicationRequest extends Request {} as ProtoImplClass<Request>;
+    this.RequestClass = class ApplicationRequest extends KoaRequest {} as ProtoImplClass<KoaRequest>;
     this.request = this.RequestClass.prototype;
-    this.ResponseClass = class ApplicationResponse extends Response {} as ProtoImplClass<Response>;
+    this.ResponseClass = class ApplicationResponse extends KoaResponse {} as ProtoImplClass<KoaResponse>;
     this.response = this.ResponseClass.prototype;
     // Set up custom inspect
     this[util.inspect.custom] = this.inspect.bind(this);
@@ -156,7 +154,7 @@ export class Application extends Emitter {
   /**
    * Use the given middleware `fn`.
    */
-  use<T extends Context = Context>(fn: MiddlewareFunc<T>): this {
+  use<T extends KoaContext = KoaContext>(fn: MiddlewareFunc<T>): this {
     if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
     const name = fn._name || fn.name || '-';
     if (isGeneratorFunction(fn)) {
@@ -167,7 +165,7 @@ export class Application extends Emitter {
       );
     }
     debug('use %o #%d', name, this.middleware.length);
-    this.middleware.push(fn as MiddlewareFunc<Context>);
+    this.middleware.push(fn as MiddlewareFunc<KoaContext>);
     return this;
   }
 
@@ -195,7 +193,7 @@ export class Application extends Emitter {
   /**
    * return current context from async local storage
    */
-  get currentContext(): Context | undefined {
+  get currentContext(): KoaContext | undefined {
     return this.ctxStorage.getStore();
   }
 
@@ -203,7 +201,7 @@ export class Application extends Emitter {
    * Handle request in callback.
    * @private
    */
-  protected async handleRequest(ctx: Context, fnMiddleware: (ctx: Context) => Promise<void>): Promise<void> {
+  protected async handleRequest(ctx: KoaContext, fnMiddleware: (ctx: KoaContext) => Promise<void>): Promise<void> {
     this.emit('request', ctx);
     const res = ctx.res;
     res.statusCode = 404;
@@ -227,7 +225,7 @@ export class Application extends Emitter {
    * Initialize a new context.
    * @private
    */
-  createContext(req: IncomingMessage, res: ServerResponse): Context {
+  createContext(req: IncomingMessage, res: ServerResponse): KoaContext {
     const context = new this.ContextClass(this, req, res);
     return context;
   }
@@ -247,14 +245,13 @@ export class Application extends Emitter {
     if (this.silent) return;
 
     const msg = err.stack || err.toString();
-    // oxlint-disable-next-line no-console
     console.error(`\n${msg.replaceAll(/^/gm, '  ')}\n`);
   }
 
   /**
    * Response helper.
    */
-  protected _respond(ctx: Context): void {
+  protected _respond(ctx: KoaContext): void {
     // allow bypassing koa
     if (ctx.respond === false) return;
 
@@ -311,8 +308,23 @@ export class Application extends Emitter {
       res.end(body);
       return;
     }
-    if (body instanceof Stream) {
-      body.pipe(res);
+
+    // try stream
+    let stream: Stream.Readable | null = null;
+    if (body instanceof Blob) {
+      stream = Stream.Readable.from(body.stream());
+    } else if (body instanceof ReadableStream) {
+      stream = Stream.Readable.from(body);
+    } else if (body instanceof Response) {
+      stream = Stream.Readable.from(body?.body ?? '');
+    } else if (isStream(body)) {
+      stream = body;
+    }
+
+    if (stream) {
+      Stream.pipeline(stream, res, (err) => {
+        if (err && ctx.app.listenerCount('error')) ctx.onerror(err);
+      });
       return;
     }
 

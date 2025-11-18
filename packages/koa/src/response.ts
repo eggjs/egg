@@ -15,18 +15,19 @@ import vary from 'vary';
 import encodeUrl from 'encodeurl';
 
 import type { Application } from './application.ts';
-import type { Context } from './context.ts';
-import type { Request } from './request.ts';
+import type { KoaContext } from './context.ts';
+import type { KoaRequest } from './request.ts';
+import { isStream } from './utils.ts';
 
-export class Response {
+export class KoaResponse {
   [key: symbol]: unknown;
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;
-  ctx: Context;
-  request: Request;
+  ctx: KoaContext;
+  request: KoaRequest;
 
-  constructor(app: Application, ctx: Context, req: IncomingMessage, res: ServerResponse) {
+  constructor(app: Application, ctx: KoaContext, req: IncomingMessage, res: ServerResponse) {
     this.app = app;
     this.req = req;
     this.res = res;
@@ -126,6 +127,13 @@ export class Response {
       this.remove('Content-Type');
       this.remove('Content-Length');
       this.remove('Transfer-Encoding');
+
+      const shouldDestroyOriginal = original && isStream(original);
+      if (shouldDestroyOriginal) {
+        // Ignore errors during cleanup to prevent unhandled exceptions when destroying the stream
+        original.once('error', () => {});
+        destroy(original);
+      }
       return;
     }
 
@@ -150,11 +158,9 @@ export class Response {
     }
 
     // stream
-    if (val instanceof Stream) {
+    if (isStream(val)) {
       onFinish(this.res, destroy.bind(null, val));
-      // oxlint-disable-next-line eqeqeq
       if (original != val) {
-        val.once('error', (err) => this.ctx.onerror(err));
         // overwriting
         if (original !== null && original !== undefined) {
           this.remove('Content-Length');
@@ -164,6 +170,32 @@ export class Response {
       if (setType) {
         this.type = 'bin';
       }
+      return;
+    }
+
+    // ReadableStream
+    if (val instanceof ReadableStream) {
+      if (setType) this.type = 'bin';
+      return;
+    }
+
+    // blob
+    if (val instanceof Blob) {
+      if (setType) this.type = 'bin';
+      this.length = val.size;
+      return;
+    }
+
+    // Response
+    if (val instanceof Response) {
+      this.status = val.status;
+      if (setType) this.type = 'bin';
+      const headers = val.headers;
+      console.log('headers', headers);
+      for (const key of headers.keys()) {
+        this.set(key, headers.get(key)!);
+      }
+
       return;
     }
 
@@ -193,7 +225,7 @@ export class Response {
     }
 
     const body = this.body;
-    if (!body || body instanceof Stream) {
+    if (!body || isStream(body)) {
       return undefined;
     }
     if (typeof body === 'string') {

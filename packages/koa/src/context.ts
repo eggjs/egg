@@ -8,17 +8,17 @@ import Cookies from 'cookies';
 import type { Accepts } from 'accepts';
 
 import type { Application } from './application.ts';
-import type { Request, RequestSocket } from './request.ts';
-import type { Response } from './response.ts';
+import type { KoaRequest, RequestSocket } from './request.ts';
+import type { KoaResponse } from './response.ts';
 import type { CustomError, AnyProto } from './types.ts';
 
-export class Context {
+export class KoaContext {
   [key: symbol | string]: unknown;
   app: Application;
   req: IncomingMessage;
   res: ServerResponse;
-  request: Request & AnyProto;
-  response: Response & AnyProto;
+  request: KoaRequest & AnyProto;
+  response: KoaResponse & AnyProto;
   originalUrl: string;
   respond?: boolean;
   // oxlint-disable-next-line typescript/no-explicit-any
@@ -403,35 +403,35 @@ export class Context {
    * Response delegation.
    */
 
-  attachment(...args: Parameters<Response['attachment']>): void {
+  attachment(...args: Parameters<KoaResponse['attachment']>): void {
     return this.response.attachment(...args);
   }
 
-  redirect(...args: Parameters<Response['redirect']>): void {
+  redirect(...args: Parameters<KoaResponse['redirect']>): void {
     return this.response.redirect(...args);
   }
 
-  remove(...args: Parameters<Response['remove']>): void {
+  remove(...args: Parameters<KoaResponse['remove']>): void {
     return this.response.remove(...args);
   }
 
-  vary(...args: Parameters<Response['vary']>): void {
+  vary(...args: Parameters<KoaResponse['vary']>): void {
     return this.response.vary(...args);
   }
 
-  has(...args: Parameters<Response['has']>): boolean {
+  has(...args: Parameters<KoaResponse['has']>): boolean {
     return this.response.has(...args);
   }
 
-  set(...args: Parameters<Response['set']>): void {
+  set(...args: Parameters<KoaResponse['set']>): void {
     return this.response.set(...args);
   }
 
-  append(...args: Parameters<Response['append']>): void {
+  append(...args: Parameters<KoaResponse['append']>): void {
     return this.response.append(...args);
   }
 
-  flushHeaders(...args: Parameters<Response['flushHeaders']>): void {
+  flushHeaders(...args: Parameters<KoaResponse['flushHeaders']>): void {
     return this.response.flushHeaders(...args);
   }
 
