@@ -9,6 +9,7 @@
   "type": "module",
   "packageManager": "pnpm@10.21.0",
   "devDependencies": {
+    "@changesets/cli": "catalog:",
     "@eggjs/bin": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
@@ -54,6 +55,9 @@
     "example:dev:tegg": "pnpm --filter=helloworld-tegg run dev",
     "example:test:all": "pnpm --filter=helloworld-* run test",
     "prepare": "husky",
+    "changeset": "changeset",
+    "changeset:version": "changeset version && pnpm install --lockfile-only",
+    "changeset:publish": "pnpm run build && changeset publish",
     "version:patch": "node scripts/version.js patch",
     "version:minor": "node scripts/version.js minor",
     "version:major": "node scripts/version.js major",

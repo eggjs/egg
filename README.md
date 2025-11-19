@@ -65,6 +65,22 @@ pnpm --filter=@examples/helloworld-typescript run dev
 pnpm --filter=site run dev
 ```
 
+### Version Management
+
+This monorepo uses [changesets](https://github.com/changesets/changesets) for version management and publishing. This allows for:
+
+- **Selective releases**: Only changed packages are versioned and published
+- **Automatic changelogs**: Generated from changeset summaries
+- **Better tracking**: Clear documentation of what changed and why
+
+To add a changeset for your changes:
+
+```bash
+pnpm changeset
+```
+
+For detailed information, see our [Changeset Guide](docs/changeset-guide.md).
+
 ## Documentations
 
 - [Documentations](https://eggjs.org/)
