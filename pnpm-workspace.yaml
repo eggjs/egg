@@ -89,7 +89,7 @@ catalog:
   co-busboy: ^2.0.1
   coffee: '5'
   common-tags: ^1.8.2
-  content-disposition: ~0.5.4
+  content-disposition: ~1.0.0
   content-type: ^1.0.5
   cookie: ^1.0.2
   cookie-parser: ^1.4.6
