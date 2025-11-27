@@ -2,23 +2,24 @@ import assert from 'node:assert';
 import path from 'node:path';
 import { mock } from 'node:test';
 
-import { describe, beforeEach, afterEach, it } from 'vitest';
-import { EggObjectLifecycleUtil, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
-import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } from '@eggjs/metadata';
-import type { LoadUnitInstance } from '@eggjs/tegg-types';
 import { CrosscutAdviceFactory } from '@eggjs/aop-decorator';
+import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } from '@eggjs/metadata';
 import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
+import { EggObjectLifecycleUtil, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+import type { LoadUnitInstance } from '@eggjs/tegg-types';
+import { describe, beforeEach, afterEach, it } from 'vitest';
 
-import { Hello } from './fixtures/modules/hello_succeed/Hello.js';
+import { crossCutGraphHook } from '../src/CrossCutGraphHook.js';
+import { EggObjectAopHook } from '../src/EggObjectAopHook.js';
+import { EggPrototypeCrossCutHook } from '../src/EggPrototypeCrossCutHook.js';
+import { LoadUnitAopHook } from '../src/LoadUnitAopHook.js';
+import { pointCutGraphHook } from '../src/PointCutGraphHook.js';
+import { HelloConstructorInject } from './fixtures/modules/constructor_inject_aop/Hello.js';
+import { CallTrace } from './fixtures/modules/hello_cross_cut/CallTrace.js';
 import { crosscutAdviceParams } from './fixtures/modules/hello_cross_cut/HelloCrossCut.js';
 import { pointcutAdviceParams } from './fixtures/modules/hello_point_cut/HelloPointCut.js';
-import { EggObjectAopHook } from '../src/EggObjectAopHook.js';
-import { LoadUnitAopHook } from '../src/LoadUnitAopHook.js';
-import { EggPrototypeCrossCutHook } from '../src/EggPrototypeCrossCutHook.js';
-import { crossCutGraphHook } from '../src/CrossCutGraphHook.js';
-import { pointCutGraphHook } from '../src/PointCutGraphHook.js';
-import { CallTrace } from './fixtures/modules/hello_cross_cut/CallTrace.js';
-import { HelloConstructorInject } from './fixtures/modules/constructor_inject_aop/Hello.js';
+// must import before other imports
+import { Hello } from './fixtures/modules/hello_succeed/Hello.js';
 
 describe('test/aop-runtime.test.ts', () => {
   afterEach(() => {
