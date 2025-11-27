@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
-import { AccessLevel, Inject } from '@eggjs/core-decorator';
 import { Advice, Crosscut } from '@eggjs/aop-decorator';
+import { AccessLevel, Inject } from '@eggjs/core-decorator';
 import { type AdviceContext, type IAdvice, PointcutType } from '@eggjs/tegg-types';
 
 import { Hello } from '../hello_succeed/Hello.ts';

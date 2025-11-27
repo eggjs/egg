@@ -1,5 +1,5 @@
-import { AccessLevel, ObjectInitType } from '@eggjs/core-decorator';
 import { Advice } from '@eggjs/aop-decorator';
+import { AccessLevel, ObjectInitType } from '@eggjs/core-decorator';
 import { type AdviceContext, type IAdvice } from '@eggjs/tegg-types';
 
 import { Hello } from '../hello_succeed/Hello.ts';

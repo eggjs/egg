@@ -1,5 +1,6 @@
-import { ContextProto, Inject, SingletonProto } from '@eggjs/core-decorator';
 import { Pointcut } from '@eggjs/aop-decorator';
+import { ContextProto, Inject, SingletonProto } from '@eggjs/core-decorator';
+
 import { PointcutAdvice, pointcutAdviceParams } from '../hello_point_cut/HelloPointCut.js';
 
 @SingletonProto()

@@ -4,10 +4,10 @@
   "singleQuote": true,
   "ignorePatterns": [
     "tegg/core/loader/test/fixtures/modules/loader-failed/AppRepo.ts",
+    "tegg/core/aop-runtime/test/aop-runtime.test.ts",
     "packages/core/test/fixtures/load_dirs/syntax_error/*",
     "packages/core/test/fixtures/syntaxerror/*",
-    "packages/core/test/fixtures/load_context_syntax_error/**/*",
-    "tegg/core/aop-runtime/test/fixtures/**/*"
+    "packages/core/test/fixtures/load_context_syntax_error/**/*"
   ],
   "experimentalSortImports": {
     "groups": [
