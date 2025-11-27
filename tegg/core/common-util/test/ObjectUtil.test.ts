@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+
 import { describe, it } from 'vitest';
+
 import { ObjectUtils } from '../src/index.js';
 
 export function InitTypeQualifier() {

@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+
 import type { GraphNodeObj } from '@eggjs/tegg-types';
+import { describe, it } from 'vitest';
+
 import { GraphNode, Graph } from '../src/index.js';
 
 describe('test/LoadUnit/Graph.test.ts', () => {

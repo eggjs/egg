@@ -1,8 +1,8 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
 import assert from 'node:assert';
-import os from 'node:os';
 import { stat, mkdir, writeFile, realpath } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { debuglog } from 'node:util';
 
 import { importModule } from './import.ts';
 

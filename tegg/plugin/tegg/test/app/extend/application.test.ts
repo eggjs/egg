@@ -1,12 +1,11 @@
 import assert from 'node:assert/strict';
 
-import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 
+import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService.ts';
 import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService.ts';
 import ConfigService from '../../fixtures/apps/egg-app/modules/multi-module-service/ConfigService.ts';
-import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService.ts';
-
 import { getAppBaseDir } from '../../utils.ts';
 
 describe('test/app/extend/application.test.ts', () => {

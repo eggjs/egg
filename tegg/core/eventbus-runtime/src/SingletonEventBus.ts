@@ -4,13 +4,13 @@ import { Inject, SingletonProto } from '@eggjs/core-decorator';
 import { type EventBus, type Events, type EventWaiter, type EventName, CORK_ID } from '@eggjs/eventbus-decorator';
 import type { Arguments } from '@eggjs/eventbus-decorator';
 import { ContextHandler } from '@eggjs/tegg-runtime';
-import type { EggLogger } from 'egg';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggRuntimeContext } from '@eggjs/tegg-types';
 // @ts-expect-error await-event is not typed
 import awaitEvent from 'await-event';
 // @ts-expect-error await-first is not typed
 import awaitFirst from 'await-first';
+import type { EggLogger } from 'egg';
 
 import { EventContextFactory } from './EventContextFactory.ts';
 import { EventHandlerFactory } from './EventHandlerFactory.ts';

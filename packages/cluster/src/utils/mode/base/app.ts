@@ -1,13 +1,13 @@
-import path from 'node:path';
-import { existsSync } from 'node:fs';
-import { EventEmitter } from 'node:events';
 import type { Worker as ClusterProcessWorker } from 'node:cluster';
+import { EventEmitter } from 'node:events';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import type { Worker as ThreadWorker } from 'node:worker_threads';
 
 import type { Logger } from 'egg-logger';
 
-import type { MessageBody, Messenger } from '../../messenger.ts';
 import type { MasterOptions } from '../../../master.ts';
+import type { MessageBody, Messenger } from '../../messenger.ts';
 
 export abstract class BaseAppWorker<T = ThreadWorker | ClusterProcessWorker> {
   instance: T;

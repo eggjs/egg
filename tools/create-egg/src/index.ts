@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+import * as prompts from '@clack/prompts';
 import spawn from 'cross-spawn';
 import mri from 'mri';
-import * as prompts from '@clack/prompts';
 import colors from 'picocolors';
 
 const { blue, blueBright, green, greenBright, yellow } = colors;

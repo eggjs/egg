@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { request } from '@eggjs/supertest';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { createApp, type Application } from '../helper.js';
 

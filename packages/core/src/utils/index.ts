@@ -1,8 +1,8 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
 import fs from 'node:fs';
 import { stat } from 'node:fs/promises';
 import BuiltinModule from 'node:module';
+import path from 'node:path';
+import { debuglog } from 'node:util';
 
 import { importResolve, importModule } from '@eggjs/utils';
 

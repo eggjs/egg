@@ -4,12 +4,12 @@ import { createServer as createHttpsServer } from 'node:https';
 import type { Socket } from 'node:net';
 import { debuglog } from 'node:util';
 
-import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
 import { importModule } from '@eggjs/utils';
+import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
 
 import { BaseAppWorker } from './utils/mode/base/app.ts';
-import { AppThreadWorker } from './utils/mode/impl/worker_threads/app.ts';
 import { AppProcessWorker } from './utils/mode/impl/process/app.ts';
+import { AppThreadWorker } from './utils/mode/impl/worker_threads/app.ts';
 
 const debug = debuglog('egg/cluster/app_worker');
 

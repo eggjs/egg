@@ -1,9 +1,10 @@
 import { strict as assert } from 'node:assert';
 
-import { describe, it, beforeAll, afterAll } from 'vitest';
 import { request } from '@eggjs/supertest';
 import formstream from 'formstream';
 import urllib from 'urllib';
+import { describe, it, beforeAll, afterAll } from 'vitest';
+
 import { createApp, type MockApplication, getFilepath } from '../../utils.ts';
 
 describe('test/lib/plugins/multipart.test.ts', () => {

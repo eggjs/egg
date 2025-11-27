@@ -1,13 +1,13 @@
-import type { Application, ILifecycleBoot } from 'egg';
 import { MODEL_PROTO_IMPL_TYPE } from '@eggjs/orm-decorator';
+import type { Application, ILifecycleBoot } from 'egg';
 
 import { DataSourceManager } from './lib/DataSourceManager.ts';
 import { LeoricRegister } from './lib/LeoricRegister.ts';
-import { ModelProtoManager } from './lib/ModelProtoManager.ts';
 import { ModelProtoHook } from './lib/ModelProtoHook.ts';
-import SingletonModelProto from './lib/SingletonModelProto.ts';
-import { SingletonModelObject } from './lib/SingletonModelObject.ts';
+import { ModelProtoManager } from './lib/ModelProtoManager.ts';
 import { ORMLoadUnitHook } from './lib/ORMLoadUnitHook.ts';
+import { SingletonModelObject } from './lib/SingletonModelObject.ts';
+import SingletonModelProto from './lib/SingletonModelProto.ts';
 
 export default class OrmAppBootHook implements ILifecycleBoot {
   private readonly app: Application;

@@ -1,11 +1,11 @@
-import util from 'node:util';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { ParsedUrlQuery } from 'node:querystring';
+import util from 'node:util';
 
+import type { Accepts } from 'accepts';
+import Cookies from 'cookies';
 import createError from 'http-errors';
 import statuses from 'statuses';
-import Cookies from 'cookies';
-import type { Accepts } from 'accepts';
 
 import type { Application } from './application.ts';
 import type { Request, RequestSocket } from './request.ts';

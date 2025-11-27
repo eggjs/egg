@@ -1,16 +1,16 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
-import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
-import Realm from 'leoric';
 import { mm, type MockApplication } from '@eggjs/mock';
 import type { Context } from 'egg';
+import Realm from 'leoric';
+import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
 
 import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService.ts';
-import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService.ts';
-import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg.ts';
-import { App } from './fixtures/apps/orm-app/modules/orm-module/model/App.ts';
 import { CtxService } from './fixtures/apps/orm-app/modules/orm-module/CtxService.ts';
+import { App } from './fixtures/apps/orm-app/modules/orm-module/model/App.ts';
+import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg.ts';
+import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService.ts';
 
 function getFixtures(name: string) {
   return path.join(import.meta.dirname, 'fixtures', name);

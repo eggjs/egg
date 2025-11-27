@@ -1,9 +1,9 @@
 import { debuglog } from 'node:util';
 
+import { isGeneratorFunction } from 'is-type-of';
 import pathToRegExp, { type Key } from 'path-to-regexp';
 import URI from 'urijs';
 import { decodeURIComponent as safeDecodeURIComponent } from 'utility';
-import { isGeneratorFunction } from 'is-type-of';
 
 import type { MiddlewareFunc, MiddlewareFuncWithParamProperty, ParamMiddlewareFunc } from './types.ts';
 

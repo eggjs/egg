@@ -1,8 +1,10 @@
 import assert from 'node:assert';
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
+
 import _cpy from 'cpy';
 import { runScript } from 'runscript';
+
 import coffee from './coffee.js';
 import { getRootDirname, getFixtures } from './helper.js';
 

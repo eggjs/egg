@@ -1,6 +1,8 @@
-import { describe, it, beforeAll, afterAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
+
+import { describe, it, beforeAll, afterAll } from 'vitest';
+
 import { createApp, startLocalServer, type MockApplication } from '../../utils.js';
 
 describe('test/lib/core/httpclient_tracer_demo.test.ts', () => {

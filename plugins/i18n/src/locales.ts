@@ -1,14 +1,14 @@
-import { debuglog } from 'node:util';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { debuglog } from 'node:util';
 
+import { importModule } from '@eggjs/utils';
 import ini from 'ini';
 import yaml from 'js-yaml';
 import { exists, readJSON } from 'utility';
-import { importModule } from '@eggjs/utils';
 
-import type { I18nConfig } from './config/config.default.ts';
 import type I18nApplication from './app/extend/application.ts';
+import type { I18nConfig } from './config/config.default.ts';
 import { formatLocale, isObject } from './utils.ts';
 
 const debug = debuglog('egg/i18n/locales');

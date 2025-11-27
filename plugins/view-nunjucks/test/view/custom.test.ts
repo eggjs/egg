@@ -1,7 +1,7 @@
 import path from 'node:path';
 
-import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 import { mock, type MockApplication } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 
 function getFixtures(name: string): string {
   return path.join(import.meta.dirname, '../fixtures', name);

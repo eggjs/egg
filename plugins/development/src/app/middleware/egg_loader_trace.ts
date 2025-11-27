@@ -1,8 +1,8 @@
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
-import { readJSON } from 'utility';
 import type { Application, MiddlewareFunc } from 'egg';
+import { readJSON } from 'utility';
 
 import { isTimingFile } from '../../utils.ts';
 

@@ -1,8 +1,8 @@
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, beforeAll, afterAll, expect, afterEach } from 'vitest';
 
-import { getFixtures } from './utils.ts';
 import * as utils from '../src/lib/utils.ts';
+import { getFixtures } from './utils.ts';
 
 describe('utils.isSafeDomain', () => {
   let app: MockApplication;

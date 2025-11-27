@@ -1,13 +1,13 @@
 import { strict as assert } from 'node:assert';
 import { AsyncLocalStorage } from 'node:async_hooks';
 
-import { test, beforeAll } from 'vitest';
 import { request } from '@eggjs/supertest';
 import { getAsyncLocalStorage, kGALS } from 'gals';
+import { test, beforeAll } from 'vitest';
 
-import { getFilepath } from './helper.ts';
 // @ts-ignore
 import { Application } from './fixtures/egg-esm/index.ts';
+import { getFilepath } from './helper.ts';
 
 let app: Application;
 beforeAll(async () => {

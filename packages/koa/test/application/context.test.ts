@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
 
 import { request } from '@eggjs/supertest';
+import { describe, it } from 'vitest';
 
 import { Application, Context } from '../../src/index.ts';
 

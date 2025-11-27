@@ -1,16 +1,15 @@
 import type { Socket } from 'node:net';
 
-import type { RequestOptions as HttpClientRequestOptions } from 'urllib';
-import type { EggLoggerOptions, EggLoggersOptions } from 'egg-logger';
 import type { FileLoaderOptions, EggAppConfig as EggCoreAppConfig, EggAppInfo } from '@eggjs/core';
+import type { EggLoggerOptions, EggLoggersOptions } from 'egg-logger';
 import type { PartialDeep } from 'type-fest';
+import type { RequestOptions as HttpClientRequestOptions } from 'urllib';
 
-import type { Context } from './egg.ts';
-import type { Application } from './application.ts';
 import type { MetaMiddlewareOptions } from '../app/middleware/meta.ts';
 import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.ts';
 import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.ts';
-
+import type { Application } from './application.ts';
+import type { Context } from './egg.ts';
 // import plugins types
 import './types.plugin.ts';
 

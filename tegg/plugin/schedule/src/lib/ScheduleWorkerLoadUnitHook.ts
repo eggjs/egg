@@ -1,6 +1,6 @@
 import type { LifecycleHook } from '@eggjs/lifecycle';
-import { IS_SCHEDULE, SCHEDULE_METADATA, type ScheduleMetadata } from '@eggjs/schedule-decorator';
 import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
+import { IS_SCHEDULE, SCHEDULE_METADATA, type ScheduleMetadata } from '@eggjs/schedule-decorator';
 
 import type { ScheduleWorkerRegister } from './ScheduleWorkerRegister.ts';
 

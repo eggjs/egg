@@ -1,10 +1,11 @@
-import { describe, it, afterEach } from 'vitest';
-import fs from 'node:fs';
 import { strict as assert } from 'node:assert';
-import { mm, type MockApplication } from '@eggjs/mock';
+import fs from 'node:fs';
 
-import { getFilePath } from './utils.ts';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach } from 'vitest';
+
 import type { ChangeInfo } from '../src/index.ts';
+import { getFilePath } from './utils.ts';
 
 describe('test/watcher.test.ts', () => {
   let app: MockApplication;

@@ -1,5 +1,5 @@
-import path from 'node:path';
 import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { debuglog } from 'node:util';
 
 import { ModuleConfigUtil, type ModuleReference, type ReadModuleReferenceOptions } from '@eggjs/tegg-common-util';

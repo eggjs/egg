@@ -1,6 +1,6 @@
+import assert from 'node:assert';
 import { EOL } from 'node:os';
 import { debuglog } from 'node:util';
-import assert from 'node:assert';
 
 const debug = debuglog('egg/core/utils/timing');
 

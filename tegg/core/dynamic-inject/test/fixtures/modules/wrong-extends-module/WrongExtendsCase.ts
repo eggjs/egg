@@ -1,4 +1,5 @@
 import { ContextProto } from '@eggjs/core-decorator';
+
 import { ContextHello } from '../base/ContextHello.js';
 import { ContextHelloType } from '../base/FooType.js';
 

@@ -1,14 +1,14 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
-import os from 'node:os';
 import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { debuglog } from 'node:util';
 
-import { Args, Flags } from '@oclif/core';
-import globby from 'globby';
 import { importResolve, detectType, EggType } from '@eggjs/utils';
-import { getChangedFilesForRoots } from 'jest-changed-files';
+import { Args, Flags } from '@oclif/core';
 // @ts-expect-error no types
 import ciParallelVars from 'ci-parallel-vars';
+import globby from 'globby';
+import { getChangedFilesForRoots } from 'jest-changed-files';
 
 import { BaseCommand } from '../baseCommand.ts';
 

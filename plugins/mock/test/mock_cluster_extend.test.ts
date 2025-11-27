@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import mm, { type MockApplication } from '../src/index.ts';

@@ -1,5 +1,5 @@
-import ExtendHelper from './helper';
 import ExtendContext from './context';
+import ExtendHelper from './helper';
 
 declare module 'egg' {
   type ExtendHelperType = typeof ExtendHelper;

@@ -1,6 +1,7 @@
+import { strict as assert } from 'assert';
+
 import { describe, it } from 'vitest';
 
-import { strict as assert } from 'assert';
 import { FailedDependencyError, E424 } from '../../src/index.ts';
 
 describe('test/http/424.test.ts', () => {

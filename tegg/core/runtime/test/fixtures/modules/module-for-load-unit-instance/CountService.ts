@@ -1,4 +1,5 @@
 import { ContextProto, Inject } from '@eggjs/core-decorator';
+
 import AppCache from './AppCache.js';
 import TempObj from './TempObj.js';
 

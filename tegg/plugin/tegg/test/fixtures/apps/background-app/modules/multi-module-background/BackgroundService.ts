@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
-import { AccessLevel, SingletonProto, Inject, ContextProto } from '@eggjs/tegg';
 import { BackgroundTaskHelper } from '@eggjs/background-task';
+import { AccessLevel, SingletonProto, Inject, ContextProto } from '@eggjs/tegg';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 
 import { CountService } from './CountService.ts';

@@ -2,6 +2,7 @@ import dns from 'node:dns';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, afterAll, beforeAll, expect, afterEach } from 'vitest';
+
 import { getFixtures } from './utils.ts';
 
 let app: MockApplication;

@@ -1,7 +1,7 @@
-import type { Application } from 'egg';
-import type { EggPrototype } from '@eggjs/metadata';
-import { EventContextFactory, EventHandlerFactory } from '@eggjs/eventbus-runtime';
 import { EVENT_NAME, type EventName } from '@eggjs/eventbus-decorator';
+import { EventContextFactory, EventHandlerFactory } from '@eggjs/eventbus-runtime';
+import type { EggPrototype } from '@eggjs/metadata';
+import type { Application } from 'egg';
 
 import { eggEventContextFactory } from './EggEventContext.ts';
 

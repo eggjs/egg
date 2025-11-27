@@ -1,9 +1,9 @@
 import { debuglog } from 'node:util';
 
-import type { Application } from 'egg';
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { EggPrototype } from '@eggjs/metadata';
 import { ScheduleMetadata } from '@eggjs/schedule-decorator';
+import type { Application } from 'egg';
 
 import { eggScheduleAdapterFactory } from './EggScheduleAdapter.ts';
 import { EggScheduleMetadataConvertor } from './EggScheduleMetadataConvertor.ts';

@@ -1,7 +1,7 @@
-import path from 'node:path';
-import { existsSync } from 'node:fs';
-import { EventEmitter } from 'node:events';
 import type { ChildProcess } from 'node:child_process';
+import { EventEmitter } from 'node:events';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import type { Worker } from 'node:worker_threads';
 
 import type { Logger } from 'egg-logger';

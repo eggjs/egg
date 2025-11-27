@@ -1,5 +1,6 @@
-import { AccessLevel } from '@eggjs/tegg-types';
 import { ContextProto, Inject } from '@eggjs/core-decorator';
+import { AccessLevel } from '@eggjs/tegg-types';
+
 import CountService from './CountService.js';
 import TempObj from './TempObj.js';
 

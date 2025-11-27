@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
 import { ControllerMetadataUtil } from '@eggjs/tegg';
+import { describe, it, expect } from 'vitest';
 
 import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';
 import { getFixtures } from '../utils.ts';

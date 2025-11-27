@@ -4,8 +4,8 @@ import { RDSClient } from '@eggjs/rds';
 // TODO: should export RDSConnection from @eggjs/rds
 import type { RDSConnection } from '@eggjs/rds/lib/connection.js';
 
-import { type DataSourceOptions } from './MySqlDataSource.ts';
 import { DaoLoader } from './DaoLoader.ts';
+import { type DataSourceOptions } from './MySqlDataSource.ts';
 
 export class DatabaseForker {
   private readonly env: string;

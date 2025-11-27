@@ -1,4 +1,5 @@
 import { Subscription } from 'egg';
+
 import AppService from '../../modules/multi-module-service/AppService.js';
 
 export default class Foo extends Subscription {

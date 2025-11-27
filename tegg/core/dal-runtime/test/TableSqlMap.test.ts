@@ -1,11 +1,11 @@
 import assert from 'node:assert';
 
-import { describe, it } from 'vitest';
 import { TableModel } from '@eggjs/dal-decorator';
+import { describe, it } from 'vitest';
 
-import { Foo } from './fixtures/modules/dal/Foo.js';
 import { SqlMapLoader } from '../src/SqlMapLoader.ts';
 import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO.js';
+import { Foo } from './fixtures/modules/dal/Foo.js';
 
 describe('test/TableSqlMap.test.ts', () => {
   it('custom sql should work', () => {

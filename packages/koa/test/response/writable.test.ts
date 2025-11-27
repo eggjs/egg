@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
 import type { Server } from 'node:http';
 import net, { type AddressInfo } from 'node:net';
-import assert from 'node:assert/strict';
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import { describe, it } from 'vitest';

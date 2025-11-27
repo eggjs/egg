@@ -1,5 +1,6 @@
-import { describe, it, afterEach, expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach, expect } from 'vitest';
+
 import { getFixtures } from './utils.ts';
 
 describe('test/wrong-mode.test.ts', () => {

@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
-import { describe, it, beforeEach } from 'vitest';
+
 import { MetadataUtil } from '@eggjs/core-decorator';
 import { CONTROLLER_META_DATA } from '@eggjs/tegg-types';
-import { FooController, ParentController, ChildController } from '../fixtures/HTTPFooController.js';
+import { describe, it, beforeEach } from 'vitest';
+
 import { ControllerMetadataUtil } from '../../src/index.js';
+import { FooController, ParentController, ChildController } from '../fixtures/HTTPFooController.js';
 
 describe('test/util/ControllerMetadataUtil.test.ts', () => {
   describe('get metadata', () => {

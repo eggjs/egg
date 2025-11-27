@@ -1,9 +1,9 @@
-import path from 'node:path';
 import assert from 'node:assert/strict';
-import { describe, it, afterEach, beforeAll } from 'vitest';
+import path from 'node:path';
 
 import { request } from '@eggjs/supertest';
 import { mm } from 'mm';
+import { describe, it, afterEach, beforeAll } from 'vitest';
 
 import { createApp, getFilepath, type Application } from '../../helper.js';
 

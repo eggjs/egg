@@ -1,5 +1,5 @@
-import path from 'node:path';
 import assert from 'node:assert';
+import path from 'node:path';
 
 import type { Context, Application } from 'egg';
 

@@ -1,6 +1,6 @@
+import { importResolve } from '@eggjs/utils';
 import coffee from 'coffee';
 import { describe, it, afterAll } from 'vitest';
-import { importResolve } from '@eggjs/utils';
 
 import mm from '../src/index.ts';
 import { getFixtures } from './helper.ts';

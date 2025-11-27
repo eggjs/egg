@@ -1,13 +1,13 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { PrototypeUtil } from '@eggjs/core-decorator';
+import { ColumnModel, TableModel } from '@eggjs/dal-decorator';
+import { Templates } from '@eggjs/tegg-types';
+import type { CodeGeneratorOptions } from '@eggjs/tegg-types';
 import js_beautify from 'js-beautify';
 import _ from 'lodash';
 import nunjucks, { type Environment } from 'nunjucks';
-import { Templates } from '@eggjs/tegg-types';
-import type { CodeGeneratorOptions } from '@eggjs/tegg-types';
-import { ColumnModel, TableModel } from '@eggjs/dal-decorator';
-import { PrototypeUtil } from '@eggjs/core-decorator';
 
 import { SqlGenerator } from './SqlGenerator.ts';
 import { TemplateUtil } from './TemplateUtil.ts';

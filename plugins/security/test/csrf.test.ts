@@ -1,6 +1,6 @@
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, expect, afterAll, beforeAll, afterEach } from 'vitest';
 import { TestAgent } from '@eggjs/supertest';
+import { describe, it, expect, afterAll, beforeAll, afterEach } from 'vitest';
 
 import { getFixtures } from './utils.ts';
 

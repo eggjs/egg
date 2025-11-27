@@ -3,9 +3,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/dal-decorator';
+import { type DataSource, DataSourceInjectName, DataSourceQualifier, type ColumnTsType } from '@eggjs/dal-decorator';
 import { Inject } from '@eggjs/tegg';
 import { Dao } from '@eggjs/tegg/dal';
-import { type DataSource, DataSourceInjectName, DataSourceQualifier, type ColumnTsType } from '@eggjs/dal-decorator';
 
 import { Foo } from '../../../Foo.ts';
 import FooExtension from '../../extension/FooExtension.ts';

@@ -1,5 +1,5 @@
-import { Request, type RequestOptions } from './request.ts';
 import { TestAgent, proxyAgent } from './agent.ts';
+import { Request, type RequestOptions } from './request.ts';
 import type { App, AgentOptions } from './types.ts';
 
 /**

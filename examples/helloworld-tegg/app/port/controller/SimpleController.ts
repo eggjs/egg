@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+
+import { Tracer } from '@eggjs/tracer';
 import {
   HTTPController,
   HTTPHeaders,
@@ -14,7 +16,6 @@ import {
   Logger,
   Inject,
 } from 'egg';
-import { Tracer } from '@eggjs/tracer';
 
 import { Foo } from '../../biz/Foo.ts';
 @HTTPController()

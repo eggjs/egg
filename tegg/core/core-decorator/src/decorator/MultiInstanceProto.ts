@@ -1,3 +1,4 @@
+import { StackUtil } from '@eggjs/tegg-common-util';
 import { ObjectInitType, AccessLevel, DEFAULT_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
 import type {
   EggMultiInstanceCallbackPrototypeInfo,
@@ -7,7 +8,6 @@ import type {
   MultiInstancePrototypeStaticParams,
   MultiInstancePrototypeCallbackParams,
 } from '@eggjs/tegg-types';
-import { StackUtil } from '@eggjs/tegg-common-util';
 
 import { PrototypeUtil } from '../util/index.ts';
 

@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 
-import pathToRegexp, { type Key as PathToRegexpKey } from 'path-to-regexp';
 import { HTTPParamType } from '@eggjs/tegg-types';
 import type { HTTPMethodEnum, MethodMeta, MiddlewareFunc } from '@eggjs/tegg-types';
+import pathToRegexp, { type Key as PathToRegexpKey } from 'path-to-regexp';
 
 export abstract class ParamMeta {
   type: HTTPParamType;

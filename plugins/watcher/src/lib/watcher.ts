@@ -1,10 +1,10 @@
-import { debuglog } from 'node:util';
 import type { WatchEventType, Stats } from 'node:fs';
+import { debuglog } from 'node:util';
 
-import { Base } from 'sdk-base';
-import camelcase from 'camelcase';
 import { importModule } from '@eggjs/utils';
+import camelcase from 'camelcase';
 import type { EggAppConfig } from 'egg';
+import { Base } from 'sdk-base';
 
 import { BaseEventSource } from './event-sources/base.ts';
 import { isEqualOrParentPath } from './utils.ts';

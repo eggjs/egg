@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+
 import { test, expect } from 'vitest';
 
 // oxlint-disable-next-line no-namespace

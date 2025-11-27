@@ -1,4 +1,5 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+
 import App from '../multi-module-common/model/App.js';
 import PersistenceService from './PersistenceService.js';
 

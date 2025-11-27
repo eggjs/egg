@@ -1,8 +1,8 @@
 import type { Application, ILifecycleBoot } from 'egg';
 
-import { EventHandlerProtoManager } from './lib/EventHandlerProtoManager.ts';
 import { EventbusLoadUnitHook } from './lib/EventbusLoadUnitHook.ts';
 import { EventbusProtoHook } from './lib/EventbusProtoHook.ts';
+import { EventHandlerProtoManager } from './lib/EventHandlerProtoManager.ts';
 
 export default class EventbusAppHook implements ILifecycleBoot {
   private readonly app: Application;

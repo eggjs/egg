@@ -1,6 +1,7 @@
 import { Controller } from 'egg';
-import { type Static, type TObject, type TProperties, Type } from '../../../../../../src/typebox.ts';
+
 import { ValidateFactory, Validate } from '../../../../../../src/decorator.ts';
+import { type Static, type TObject, type TProperties, Type } from '../../../../../../src/typebox.ts';
 
 const TYPEBOX_ID = Type.Object({
   id: Type.String(),

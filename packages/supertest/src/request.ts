@@ -2,8 +2,8 @@ import http from 'node:http';
 import http2 from 'node:http2';
 import type { Server } from 'node:net';
 
-import type { H1RequestListener, H2RequestListener, App } from './types.ts';
 import { Test } from './test.ts';
+import type { H1RequestListener, H2RequestListener, App } from './types.ts';
 
 export interface RequestOptions {
   http2?: boolean;

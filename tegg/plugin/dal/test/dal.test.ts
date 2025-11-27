@@ -1,5 +1,5 @@
-import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
 
 // @ts-ignore exclude file
 import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.ts';

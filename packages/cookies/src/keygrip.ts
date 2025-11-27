@@ -1,6 +1,6 @@
-import { debuglog } from 'node:util';
-import crypto, { type Cipheriv } from 'node:crypto';
 import assert from 'node:assert';
+import crypto, { type Cipheriv } from 'node:crypto';
+import { debuglog } from 'node:util';
 
 const debug = debuglog('egg/cookies:keygrip');
 

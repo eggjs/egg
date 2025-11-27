@@ -1,5 +1,5 @@
-import type { Context } from 'egg';
 import { HTTPContext, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam } from '@eggjs/tegg';
+import type { Context } from 'egg';
 
 @HTTPController()
 export class AppController {

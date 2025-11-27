@@ -1,6 +1,7 @@
 import { ContextProto } from '@eggjs/core-decorator';
-import { ContextHello } from '../base/ContextHello.js';
+
 import { AbstractContextHello } from '../base/AbstractContextHello.js';
+import { ContextHello } from '../base/ContextHello.js';
 
 @ContextProto()
 @ContextHello('WRONG_ENUM')

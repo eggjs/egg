@@ -1,8 +1,8 @@
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
-import { type EggProtoImplClass, type ProtoDescriptor } from '@eggjs/tegg-types';
 import { PrototypeUtil } from '@eggjs/core-decorator';
+import { type EggProtoImplClass, type ProtoDescriptor } from '@eggjs/tegg-types';
 
 const DUMP_PATH = process.env.MODULE_DUMP_PATH;
 

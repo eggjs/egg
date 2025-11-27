@@ -1,3 +1,5 @@
+import { PrototypeUtil } from '@eggjs/core-decorator';
+import type { ModuleDescriptor } from '@eggjs/metadata';
 import {
   EggLoadUnitType,
   type EggLoadUnitTypeLike,
@@ -5,8 +7,6 @@ import {
   type Loader,
   type ModuleReference,
 } from '@eggjs/tegg-types';
-import type { ModuleDescriptor } from '@eggjs/metadata';
-import { PrototypeUtil } from '@eggjs/core-decorator';
 
 export type LoaderCreator = (unitPath: string) => Loader;
 

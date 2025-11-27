@@ -1,8 +1,8 @@
-import type { Application, Context } from 'egg';
-import { type EggPrototype, EggPrototypeFactory } from '@eggjs/metadata';
 import { InitTypeQualifierAttribute, ObjectInitType } from '@eggjs/core-decorator';
-import { EggContainerFactory, type LoadUnitInstance } from '@eggjs/tegg-runtime';
+import { type EggPrototype, EggPrototypeFactory } from '@eggjs/metadata';
 import { ProxyUtil } from '@eggjs/tegg-common-util';
+import { EggContainerFactory, type LoadUnitInstance } from '@eggjs/tegg-runtime';
+import type { Application, Context } from 'egg';
 
 export class CompatibleUtil {
   static singletonProtoCache: Map<PropertyKey, EggPrototype> = new Map();

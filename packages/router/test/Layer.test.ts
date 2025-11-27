@@ -2,8 +2,8 @@ import { Application } from '@eggjs/koa';
 import request from '@eggjs/supertest';
 import { describe, it, expect } from 'vitest';
 
-import { Router } from '../src/Router.ts';
 import { Layer } from '../src/Layer.ts';
+import { Router } from '../src/Router.ts';
 
 describe('test/Layer.test.ts', () => {
   it('composes multiple callbacks/middleware', async () => {

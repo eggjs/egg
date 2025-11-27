@@ -1,16 +1,18 @@
-import path from 'node:path';
 import assert from 'node:assert/strict';
+import path from 'node:path';
+
 import { describe, it } from 'vitest';
+
 import { GlobalGraph } from '../src/index.js';
+import { buildModuleNode } from './fixtures/LoaderUtil.js';
 import { RootProto } from './fixtures/modules/app-graph-modules/root/Root.js';
-import { UsedProto } from './fixtures/modules/app-graph-modules/used/Used.js';
 import { UnusedProto } from './fixtures/modules/app-graph-modules/unused/Unused.js';
+import { UsedProto } from './fixtures/modules/app-graph-modules/used/Used.js';
 import { App } from './fixtures/modules/app-multi-inject-multi/app/modules/app/App.js';
 import { App2 } from './fixtures/modules/app-multi-inject-multi/app/modules/app2/App.js';
 import { BizManager } from './fixtures/modules/app-multi-inject-multi/app/modules/bar/BizManager.js';
 import { Secret } from './fixtures/modules/app-multi-inject-multi/app/modules/foo/Secret.js';
 import { TestLoader } from './fixtures/TestLoader.js';
-import { buildModuleNode } from './fixtures/LoaderUtil.js';
 
 describe('test/LoadUnit/GlobalGraph.test.ts', () => {
   it('optional module dep should work', () => {

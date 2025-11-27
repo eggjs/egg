@@ -1,7 +1,9 @@
-import path from 'node:path';
 import assert from 'node:assert/strict';
-import { describe, it, beforeEach, afterEach } from 'vitest';
+import path from 'node:path';
+
 import { InitTypeQualifierAttribute, ObjectInitType } from '@eggjs/core-decorator';
+import { describe, it, beforeEach, afterEach } from 'vitest';
+
 import {
   EggLoadUnitType,
   GlobalGraph,
@@ -9,13 +11,13 @@ import {
   LoadUnitLifecycleUtil,
   LoadUnitMultiInstanceProtoHook,
 } from '../src/index.js';
-import { TestLoader } from './fixtures/TestLoader.js';
-import { FOO_ATTRIBUTE } from './fixtures/modules/multi-instance-module/MultiInstance.js';
 // import { App } from './fixtures/modules/app-multi-inject-multi/app/modules/app/App';
 // import { App2 } from './fixtures/modules/app-multi-inject-multi/app/modules/app2/App';
 // import { BizManager } from './fixtures/modules/app-multi-inject-multi/app/modules/bar/BizManager';
 // import { Secret } from './fixtures/modules/app-multi-inject-multi/app/modules/foo/Secret';
 import { buildGlobalGraph } from './fixtures/LoaderUtil.js';
+import { FOO_ATTRIBUTE } from './fixtures/modules/multi-instance-module/MultiInstance.js';
+import { TestLoader } from './fixtures/TestLoader.js';
 
 describe('test/LoadUnit/LoadUnit.test.ts', () => {
   beforeEach(() => {

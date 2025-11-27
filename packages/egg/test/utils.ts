@@ -1,13 +1,13 @@
-import { readFileSync } from 'node:fs';
 import { once } from 'node:events';
+import { readFileSync } from 'node:fs';
 import { rm } from 'node:fs/promises';
-import path from 'node:path';
 import http from 'node:http';
 import { type AddressInfo } from 'node:net';
+import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
-import { mm, type MockOptions, type MockClusterOptions, type MockApplication } from '@eggjs/mock';
 import { Application as Koa } from '@eggjs/koa';
+import { mm, type MockOptions, type MockClusterOptions, type MockApplication } from '@eggjs/mock';
 import { request } from '@eggjs/supertest';
 
 import { startEgg, type StartEggOptions, type SingleModeAgent } from '../src/index.ts';

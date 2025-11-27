@@ -1,20 +1,19 @@
-import os from 'node:os';
-import v8 from 'node:v8';
-import util from 'node:util';
-import path from 'node:path';
 import fs from 'node:fs';
 import net from 'node:net';
+import os from 'node:os';
+import path from 'node:path';
+import util from 'node:util';
 import { debuglog } from 'node:util';
+import v8 from 'node:v8';
 
-import { ReadyEventEmitter } from 'get-ready';
-import { detectPort } from 'detect-port';
 import { reload } from 'cluster-reload';
+import { detectPort } from 'detect-port';
 import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
-import { readJSONSync } from 'utility';
+import { ReadyEventEmitter } from 'get-ready';
 import terminalLink from 'terminal-link';
+import { readJSONSync } from 'utility';
 
-import { parseOptions, type ClusterOptions, type ParsedClusterOptions } from './utils/options.ts';
-import { WorkerManager } from './utils/worker_manager.ts';
+import { ClusterWorkerExceptionError } from './error/ClusterWorkerExceptionError.ts';
 import { Messenger } from './utils/messenger.ts';
 import { AgentProcessWorker, AgentProcessUtils as ProcessAgentWorker } from './utils/mode/impl/process/agent.ts';
 import { AppProcessWorker, AppProcessUtils as ProcessAppWorker } from './utils/mode/impl/process/app.ts';
@@ -23,7 +22,8 @@ import {
   AgentThreadUtils as WorkerThreadsAgentWorker,
 } from './utils/mode/impl/worker_threads/agent.ts';
 import { AppThreadWorker, AppThreadUtils as WorkerThreadsAppWorker } from './utils/mode/impl/worker_threads/app.ts';
-import { ClusterWorkerExceptionError } from './error/ClusterWorkerExceptionError.ts';
+import { parseOptions, type ClusterOptions, type ParsedClusterOptions } from './utils/options.ts';
+import { WorkerManager } from './utils/worker_manager.ts';
 
 const debug = debuglog('egg/cluster/master');
 

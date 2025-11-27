@@ -1,9 +1,9 @@
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
-import { exists } from 'utility';
-import { ms } from 'humanize-ms';
 import type { ILifecycleBoot } from 'egg';
+import { ms } from 'humanize-ms';
+import { exists } from 'utility';
 
 import type I18nApplication from './app/extend/application.ts';
 import { loadLocaleResources } from './locales.ts';

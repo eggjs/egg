@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import { scheduler } from 'node:timers/promises';
+
 import { Boot } from '../../../../src/index.js';
 
 export default class CustomBoot extends Boot {

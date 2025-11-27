@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+
 import { PrototypeUtil } from '@eggjs/core-decorator';
+import { describe, it } from 'vitest';
+
 import { FooController } from './fixtures/HTTPFooController.js';
 
 describe('test/decorators.test.ts', () => {

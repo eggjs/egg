@@ -1,7 +1,6 @@
 import { definePluginFactory, type EggPluginFactory } from 'egg';
 
 import './types.ts';
-
 import { Tracer } from './lib/tracer.ts';
 
 export { Tracer };

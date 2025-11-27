@@ -1,6 +1,6 @@
 import assert from 'node:assert';
-import { scheduler } from 'node:timers/promises';
 import { once } from 'node:events';
+import { scheduler } from 'node:timers/promises';
 
 import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 

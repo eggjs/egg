@@ -1,8 +1,8 @@
 import path from 'node:path';
 
-import globby from 'globby';
 import type { EggProtoImplClass } from '@eggjs/core-decorator';
 import type { Loader } from '@eggjs/metadata';
+import globby from 'globby';
 
 import { LoaderUtil } from './LoaderUtil.ts';
 

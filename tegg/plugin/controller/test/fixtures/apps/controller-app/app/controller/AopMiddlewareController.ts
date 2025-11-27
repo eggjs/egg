@@ -1,9 +1,10 @@
 import { HTTPController, HTTPMethod, HTTPMethodEnum, Middleware, Inject } from '@eggjs/tegg';
-import AppService from '../../modules/multi-module-service/AppService.js';
+
+import { BarMethodAdvice } from '../../modules/multi-module-common/advice/BarMethodAdvice.js';
 import { CountAdvice } from '../../modules/multi-module-common/advice/CountAdvice.js';
 import { FooControllerAdvice } from '../../modules/multi-module-common/advice/FooControllerAdvice.js';
 import { FooMethodAdvice } from '../../modules/multi-module-common/advice/FooMethodAdvice.js';
-import { BarMethodAdvice } from '../../modules/multi-module-common/advice/BarMethodAdvice.js';
+import AppService from '../../modules/multi-module-service/AppService.js';
 
 @HTTPController({
   path: '/aop/middleware',

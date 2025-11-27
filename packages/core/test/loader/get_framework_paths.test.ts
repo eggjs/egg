@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
+
+import { importModule } from '@eggjs/utils';
+import { mm } from 'mm';
 import { describe, it, afterEach } from 'vitest';
 
-import { mm } from 'mm';
-import { importModule } from '@eggjs/utils';
-
-import { createApp, getFilepath, type Application } from '../helper.ts';
 import { EggLoader, EggCore } from '../../src/index.ts';
+import { createApp, getFilepath, type Application } from '../helper.ts';
 
 describe('test/loader/get_framework_paths.test.ts', () => {
   let app: Application;

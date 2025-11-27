@@ -1,5 +1,6 @@
-import type { EggAppConfig, EggAppInfo } from 'egg';
 import path from 'node:path';
+
+import type { EggAppConfig, EggAppInfo } from 'egg';
 
 export default function (appInfo: EggAppInfo): EggAppConfig {
   const config = {

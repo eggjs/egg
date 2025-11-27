@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+
 import obj from './sub';
 
 describe('typescript.test.ts', () => {

@@ -1,6 +1,6 @@
-import type { Context } from 'egg';
 import type { EggPrototype } from '@eggjs/metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
+import type { Context } from 'egg';
 
 export type GetRootProtoCallback = (ctx: Context) => EggPrototype | undefined;
 

@@ -1,8 +1,8 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
-import { describe, it, beforeAll, afterAll } from 'vitest';
 import { ViewEngineBase } from '@eggjs/view';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { type MockApplication, createApp, getFilepath } from '../../utils.ts';
 

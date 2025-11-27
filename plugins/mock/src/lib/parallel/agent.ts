@@ -1,16 +1,16 @@
-import { debuglog } from 'node:util';
 import path from 'node:path';
+import { debuglog } from 'node:util';
 
-import { Base } from 'sdk-base';
-import { detectPort } from 'detect-port';
 import { importModule } from '@eggjs/utils';
+import { detectPort } from 'detect-port';
 import type { Agent as EggAgent } from 'egg';
+import { Base } from 'sdk-base';
 
 import { context } from '../context.ts';
 import { formatOptions } from '../format_options.ts';
+import { setCustomLoader } from '../mock_custom_loader.ts';
 import type { MockOptions, MockApplicationOptions } from '../types.ts';
 import { sleep, rimraf } from '../utils.ts';
-import { setCustomLoader } from '../mock_custom_loader.ts';
 
 const debug = debuglog('egg/mock/lib/parallel/agent');
 

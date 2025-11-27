@@ -1,28 +1,28 @@
+import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
-import assert from 'node:assert';
 import { debuglog, inspect } from 'node:util';
 
-import { homedir } from 'node-homedir';
-import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } from 'is-type-of';
-import type { Logger } from 'egg-logger';
-import { getParamNames, readJSONSync, readJSON, exists } from 'utility';
 import { extend } from '@eggjs/extend2';
 import { Request, Response, Application, Context as KoaContext } from '@eggjs/koa';
-import { register as tsconfigPathsRegister } from 'tsconfig-paths';
-import { isESM, isSupportTypeScript } from '@eggjs/utils';
 import { pathMatching, type PathMatchingOptions } from '@eggjs/path-matching';
+import { isESM, isSupportTypeScript } from '@eggjs/utils';
+import type { Logger } from 'egg-logger';
+import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } from 'is-type-of';
+import { homedir } from 'node-homedir';
 import { now, diff } from 'performance-ms';
+import { register as tsconfigPathsRegister } from 'tsconfig-paths';
+import { getParamNames, readJSONSync, readJSON, exists } from 'utility';
 
-import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
-import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
+import type { BaseContextClass } from '../base_context_class.ts';
+import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
+import type { Lifecycle } from '../lifecycle.ts';
+import type { EggAppConfig, EggAppInfo, EggPluginInfo } from '../types.ts';
 import utils, { type Fun } from '../utils/index.ts';
 import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
-import type { Lifecycle } from '../lifecycle.ts';
-import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
-import type { BaseContextClass } from '../base_context_class.ts';
-import type { EggAppConfig, EggAppInfo, EggPluginInfo } from '../types.ts';
+import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
+import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
 

@@ -2,9 +2,6 @@ import assert from 'node:assert';
 import fs, { promises as fsPromise } from 'node:fs';
 import path from 'node:path';
 
-import { extend } from 'extend2';
-import globby from 'globby';
-import { load as yamlLoad } from 'js-yaml';
 import type {
   InlineModuleReferenceConfig,
   ModuleConfig,
@@ -14,6 +11,9 @@ import type {
   ReadModuleReferenceOptions,
 } from '@eggjs/tegg-types';
 import { importResolve } from '@eggjs/utils';
+import { extend } from 'extend2';
+import globby from 'globby';
+import { load as yamlLoad } from 'js-yaml';
 
 import { FSUtil } from './FSUtil.ts';
 

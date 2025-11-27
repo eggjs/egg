@@ -1,13 +1,13 @@
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 
-import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
 import { mm, mock, type MockApplication } from '@eggjs/mock';
 import dayjs from 'dayjs';
 import formstream from 'formstream';
 import urllib from 'urllib';
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
 
 import { getFixtures } from './utils.ts';
 

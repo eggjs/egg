@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
-import { describe, it, beforeEach } from 'vitest';
 
 import { request } from '@eggjs/supertest';
 import statuses from 'statuses';
+import { describe, it, beforeEach } from 'vitest';
 
-import { response } from '../test-helpers/context.ts';
 import Koa from '../../src/index.ts';
+import { response } from '../test-helpers/context.ts';
 
 describe('res.status=', () => {
   describe('when a status code', () => {

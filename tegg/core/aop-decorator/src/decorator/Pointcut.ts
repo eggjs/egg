@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 
 import type { EggProtoImplClass, IAdvice, PointcutOptions } from '@eggjs/tegg-types';
+
 import { PointcutAdviceInfoUtil, AdviceInfoUtil } from '../util/index.ts';
 
 const defaultPointcutOptions = {

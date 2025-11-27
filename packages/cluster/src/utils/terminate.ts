@@ -1,7 +1,7 @@
-import { debuglog } from 'node:util';
-import { setTimeout as sleep } from 'node:timers/promises';
-import { once } from 'node:events';
 import { ChildProcess } from 'node:child_process';
+import { once } from 'node:events';
+import { setTimeout as sleep } from 'node:timers/promises';
+import { debuglog } from 'node:util';
 
 import { pstree } from '@fengmk2/ps-tree';
 

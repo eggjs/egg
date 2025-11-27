@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+
 import { describe, it } from 'vitest';
+
 import { AttributeMetaBuilder, IndexMetaBuilder, IndexMeta } from '../../src/index.js';
 import { DefaultIndexModel } from '../fixtures/DefaultIndexModel.js';
 import { IndexModel } from '../fixtures/IndexModel.js';

@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+import { once } from 'node:events';
 import fs from 'node:fs';
 import { scheduler } from 'node:timers/promises';
 
 import { request } from '@eggjs/supertest';
 import statuses from 'statuses';
+import { describe, it } from 'vitest';
 
 import Koa from '../../src/index.ts';
-import { once } from 'node:events';
 
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 

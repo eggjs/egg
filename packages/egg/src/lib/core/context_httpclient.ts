@@ -1,5 +1,5 @@
-import type { Context } from '../egg.ts';
 import type { Application } from '../application.ts';
+import type { Context } from '../egg.ts';
 import type { HttpClientRequestURL, HttpClientRequestOptions, HttpClientResponse } from './httpclient.ts';
 
 export class ContextHttpClient {

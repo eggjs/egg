@@ -1,5 +1,5 @@
-import { test, expect } from 'vitest';
 import { app } from '@eggjs/mock/bootstrap';
+import { test, expect } from 'vitest';
 
 import { HelloService } from '../../../../../app/module/foo/index.ts';
 

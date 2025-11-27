@@ -1,5 +1,5 @@
-import { debuglog, format } from 'node:util';
 import { scheduler } from 'node:timers/promises';
+import { debuglog, format } from 'node:util';
 
 import { Args, Flags } from '@oclif/core';
 

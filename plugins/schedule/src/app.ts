@@ -2,8 +2,8 @@ import { debuglog } from 'node:util';
 
 import type { ILifecycleBoot, EggLogger } from 'egg';
 
-import type { EggScheduleJobInfo } from './lib/types.ts';
 import type Application from './app/extend/application.ts';
+import type { EggScheduleJobInfo } from './lib/types.ts';
 
 const debug = debuglog('egg/schedule/app');
 

@@ -1,3 +1,4 @@
+import { ms } from 'humanize-ms';
 import {
   HttpClient as RawHttpClient,
   type RequestURL as HttpClientRequestURL,
@@ -5,7 +6,6 @@ import {
   type ClientOptions as HttpClientOptions,
   type HttpClientResponse,
 } from 'urllib';
-import { ms } from 'humanize-ms';
 
 import type { EggApplicationCore } from '../egg.ts';
 

@@ -2,11 +2,13 @@
  * RESTful resource routing middleware for eggjs.
  */
 
-import { debuglog } from 'node:util';
 import assert from 'node:assert';
-import compose from 'koa-compose';
+import { debuglog } from 'node:util';
+
 import HttpError from 'http-errors';
+import compose from 'koa-compose';
 import methods from 'methods';
+
 import { Layer, type LayerURLOptions } from './Layer.ts';
 import {
   type MiddlewareFunc,

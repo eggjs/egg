@@ -2,17 +2,16 @@
 import './lib/AppLoadUnit.ts';
 import './lib/AppLoadUnitInstance.ts';
 import './lib/EggCompatibleObject.ts';
-
-import type { Application, ILifecycleBoot } from 'egg';
 import { LoadUnitMultiInstanceProtoHook } from '@eggjs/metadata';
+import type { Application, ILifecycleBoot } from 'egg';
 
-import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook.ts';
 import { CompatibleUtil } from './lib/CompatibleUtil.ts';
-import { ModuleHandler } from './lib/ModuleHandler.ts';
-import { EggContextHandler } from './lib/EggContextHandler.ts';
-import { hijackRunInBackground } from './lib/run_in_background.ts';
-import { EggQualifierProtoHook } from './lib/EggQualifierProtoHook.ts';
 import { ConfigSourceLoadUnitHook } from './lib/ConfigSourceLoadUnitHook.ts';
+import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook.ts';
+import { EggContextHandler } from './lib/EggContextHandler.ts';
+import { EggQualifierProtoHook } from './lib/EggQualifierProtoHook.ts';
+import { ModuleHandler } from './lib/ModuleHandler.ts';
+import { hijackRunInBackground } from './lib/run_in_background.ts';
 
 export default class TeggAppBoot implements ILifecycleBoot {
   private readonly app: Application;

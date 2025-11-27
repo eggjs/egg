@@ -1,5 +1,7 @@
 import * as os from 'os';
+
 import { describe, it, afterEach, expect, vi } from 'vitest';
+
 import { FrameworkErrorFormatter, FrameworkBaseError } from '../../src/index.ts';
 
 const hostname = os.hostname();

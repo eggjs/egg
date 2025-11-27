@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
 import Stream from 'node:stream';
+
+import { describe, it } from 'vitest';
 
 import context from '../test-helpers/context.ts';
 

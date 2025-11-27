@@ -1,5 +1,5 @@
-import { type GraphNodeObj, type ProtoDescriptor } from '@eggjs/tegg-types';
 import { type EdgeMeta } from '@eggjs/tegg-common-util';
+import { type GraphNodeObj, type ProtoDescriptor } from '@eggjs/tegg-types';
 
 import { ProtoDescriptorHelper } from '../ProtoDescriptorHelper.ts';
 import { type ProtoSelectorContext } from './ProtoSelector.ts';

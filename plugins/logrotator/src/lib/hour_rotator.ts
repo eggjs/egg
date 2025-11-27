@@ -1,7 +1,7 @@
-import moment from 'moment';
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
+import moment from 'moment';
 import { exists } from 'utility';
 
 import { LogRotator, type RotateFile } from './rotator.ts';

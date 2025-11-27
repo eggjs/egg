@@ -1,7 +1,7 @@
 import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
+import { StackUtil } from '@eggjs/tegg-common-util';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, ScheduleOptions, ScheduleParams, ScheduleSubscriber } from '@eggjs/tegg-types';
-import { StackUtil } from '@eggjs/tegg-common-util';
 
 import { ScheduleInfoUtil } from '../util/index.ts';
 

@@ -3,6 +3,7 @@ import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { beforeAll, afterAll, it, describe } from 'vitest';
+
 import { escape, getFilepath, DELAY } from './utils.ts';
 
 // FIXME: Error: Test timed out in 20000ms

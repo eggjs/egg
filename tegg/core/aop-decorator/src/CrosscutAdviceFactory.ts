@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+
 import type { EggProtoImplClass, IAdvice, AdviceInfo } from '@eggjs/tegg-types';
 
 import { CrosscutInfoUtil } from './util/index.ts';

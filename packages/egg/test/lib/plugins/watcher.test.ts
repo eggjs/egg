@@ -1,9 +1,9 @@
 import { strict as assert } from 'node:assert';
-import { scheduler } from 'node:timers/promises';
 import fs from 'node:fs';
+import { scheduler } from 'node:timers/promises';
 
-import { describe, it, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
+import { describe, it, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 
 import { cluster, type MockApplication, getFilepath } from '../../utils.ts';
 

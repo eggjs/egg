@@ -1,7 +1,7 @@
+import { IdenticalUtil } from '@eggjs/lifecycle';
 import { type EggPrototype, EggPrototypeFactory, type LoadUnit } from '@eggjs/metadata';
 import { type EggPrototypeName, ObjectInitType, type QualifierInfo } from '@eggjs/tegg';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import { IdenticalUtil } from '@eggjs/lifecycle';
 
 import { StandaloneInnerObjectProto } from './StandaloneInnerObjectProto.ts';
 

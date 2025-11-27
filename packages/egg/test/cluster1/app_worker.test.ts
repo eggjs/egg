@@ -1,10 +1,10 @@
-import net from 'node:net';
 import { strict as assert } from 'node:assert';
+import net from 'node:net';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 import { request } from '@eggjs/supertest';
 import { ip } from 'address';
+import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 
 import { cluster, type MockApplication } from '../utils.ts';
 

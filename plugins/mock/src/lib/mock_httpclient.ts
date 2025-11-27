@@ -1,5 +1,5 @@
-import { mm } from 'mm';
 import { extend } from '@eggjs/extend2';
+import { mm } from 'mm';
 import type { Dispatcher, Headers, BodyInit } from 'urllib';
 
 import { getMockAgent } from './mock_agent.ts';

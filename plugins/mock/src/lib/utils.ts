@@ -1,8 +1,8 @@
-import { rm } from 'node:fs/promises';
 import { rmSync } from 'node:fs';
+import { rm } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { scheduler } from 'node:timers/promises';
+import { fileURLToPath } from 'node:url';
 
 export function getSourceDirname(): string {
   if (typeof __dirname !== 'undefined') {

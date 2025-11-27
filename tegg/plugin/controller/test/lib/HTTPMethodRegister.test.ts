@@ -1,7 +1,5 @@
 import path from 'node:path';
 
-import { describe, it, beforeAll, afterAll, expect } from 'vitest';
-import { EggRouter } from '@eggjs/router';
 import {
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
@@ -9,11 +7,13 @@ import {
   type LoadUnit,
   LoadUnitFactory,
 } from '@eggjs/metadata';
-import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import { EggRouter } from '@eggjs/router';
 import { CONTROLLER_META_DATA, HTTPControllerMeta } from '@eggjs/tegg';
+import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import { describe, it, beforeAll, afterAll, expect } from 'vitest';
 
-import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';
 import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from '../../src/lib/ControllerLoadUnit.ts';
+import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';
 import { EggControllerPrototypeHook } from '../../src/lib/EggControllerPrototypeHook.ts';
 import { HTTPMethodRegister } from '../../src/lib/impl/http/HTTPMethodRegister.ts';
 import { getFixtures } from '../utils.ts';

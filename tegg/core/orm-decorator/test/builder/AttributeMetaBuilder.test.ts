@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
+
 import { describe, it } from 'vitest';
+
 import { AttributeMetaBuilder, AttributeMeta } from '../../src/index.js';
-import { DefaultAttributeModel } from '../fixtures/DefaultAttributeModel.js';
 import { AttributeModel } from '../fixtures/AttributeModel.js';
+import { DefaultAttributeModel } from '../fixtures/DefaultAttributeModel.js';
 
 describe('test/builder/AttributeMetaBuilder.test.ts', () => {
   describe('default value', () => {

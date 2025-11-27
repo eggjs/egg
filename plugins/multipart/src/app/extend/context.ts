@@ -1,8 +1,8 @@
 import assert from 'node:assert';
-import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import fs from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { Readable, PassThrough } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
@@ -11,9 +11,9 @@ import parse from 'co-busboy';
 import dayjs from 'dayjs';
 import { Context } from 'egg';
 
-import { humanizeBytes } from '../../lib/utils.ts';
 import { LimitError } from '../../lib/LimitError.ts';
 import { MultipartFileTooLargeError } from '../../lib/MultipartFileTooLargeError.ts';
+import { humanizeBytes } from '../../lib/utils.ts';
 
 const HAS_CONSUMED = Symbol('Context#multipartHasConsumed');
 

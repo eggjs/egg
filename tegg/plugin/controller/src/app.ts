@@ -1,17 +1,17 @@
-import type { Application, ILifecycleBoot } from 'egg';
-import type { LoadUnitLifecycleContext } from '@eggjs/metadata';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/controller-decorator';
+import type { LoadUnitLifecycleContext } from '@eggjs/metadata';
 import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
+import type { Application, ILifecycleBoot } from 'egg';
 
-import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.ts';
 import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook.ts';
-import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.ts';
-import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';
+import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.ts';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.ts';
 import { ControllerMetadataManager } from './lib/ControllerMetadataManager.ts';
-import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook.ts';
-import { RootProtoManager } from './lib/RootProtoManager.ts';
+import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';
 import { EggControllerLoader } from './lib/EggControllerLoader.ts';
+import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook.ts';
+import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.ts';
+import { RootProtoManager } from './lib/RootProtoManager.ts';
 
 // Load Controller process
 // 1. await add load unit is ready, controller may depend other load unit

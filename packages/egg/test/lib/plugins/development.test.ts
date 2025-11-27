@@ -1,8 +1,8 @@
-import path from 'node:path';
 import fs from 'node:fs';
+import path from 'node:path';
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { type MockApplication, createApp, cluster, getFilepath } from '../../utils.ts';
 
