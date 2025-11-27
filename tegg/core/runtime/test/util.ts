@@ -1,9 +1,9 @@
 import path from 'node:path';
 
-import { EggLoadUnitType, type LoadUnitInstance } from '@eggjs/tegg-types';
 import { LoadUnitFactory } from '@eggjs/metadata';
-import { LoaderFactory } from '@eggjs/tegg-loader';
 import { LoaderUtil } from '@eggjs/module-test-util';
+import { LoaderFactory } from '@eggjs/tegg-loader';
+import { EggLoadUnitType, type LoadUnitInstance } from '@eggjs/tegg-types';
 
 import { LoadUnitInstanceFactory } from '../src/index.ts';
 

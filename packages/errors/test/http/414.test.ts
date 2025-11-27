@@ -1,6 +1,7 @@
+import { strict as assert } from 'assert';
+
 import { describe, it } from 'vitest';
 
-import { strict as assert } from 'assert';
 import { URITooLongError, E414 } from '../../src/index.ts';
 
 describe('test/http/414.test.ts', () => {

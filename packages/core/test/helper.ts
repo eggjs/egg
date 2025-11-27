@@ -2,6 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import type { EggCore } from '../src/index.ts';
+
 import {
   Application,
   type EggCoreInitOptions,

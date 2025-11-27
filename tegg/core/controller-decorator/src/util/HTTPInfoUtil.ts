@@ -1,4 +1,6 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
+import { MapUtil } from '@eggjs/tegg-common-util';
+import type { EggProtoImplClass, HTTPMethodEnum, HTTPParamType } from '@eggjs/tegg-types';
 import {
   CONTROLLER_HTTP_PATH,
   CONTROLLER_METHOD_METHOD_MAP,
@@ -7,8 +9,6 @@ import {
   CONTROLLER_METHOD_PATH_MAP,
   CONTROLLER_METHOD_PRIORITY,
 } from '@eggjs/tegg-types';
-import type { EggProtoImplClass, HTTPMethodEnum, HTTPParamType } from '@eggjs/tegg-types';
-import { MapUtil } from '@eggjs/tegg-common-util';
 
 type HTTPMethodPathMap = Map<string, string>;
 type HTTPMethodMethodMap = Map<string, HTTPMethodEnum>;

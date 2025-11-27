@@ -1,7 +1,7 @@
-import { MapUtil } from '@eggjs/tegg-common-util';
-import { AccessLevel } from '@eggjs/tegg-types';
-import type { EggPrototypeName, EggPrototype, LoadUnit, QualifierInfo } from '@eggjs/tegg-types';
 import { FrameworkErrorFormatter } from '@eggjs/errors';
+import { MapUtil } from '@eggjs/tegg-common-util';
+import type { EggPrototypeName, EggPrototype, LoadUnit, QualifierInfo } from '@eggjs/tegg-types';
+import { AccessLevel } from '@eggjs/tegg-types';
 
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors.ts';
 

@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+
 import { describe, it } from 'vitest';
+
 import { MapUtil } from '../src/index.js';
 
 describe('test/MapUtil.test.ts', () => {

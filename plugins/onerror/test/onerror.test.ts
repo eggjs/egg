@@ -1,11 +1,11 @@
+import { strict as assert } from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { strict as assert } from 'node:assert';
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { type Context } from 'egg';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

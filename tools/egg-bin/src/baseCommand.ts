@@ -1,14 +1,14 @@
-import { debuglog } from 'node:util';
-import { pathToFileURL } from 'node:url';
-import path from 'node:path';
-import os from 'node:os';
 import { fork, type ForkOptions, ChildProcess } from 'node:child_process';
+import os from 'node:os';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { debuglog } from 'node:util';
 
-import { Command, Flags, Interfaces } from '@oclif/core';
 import { importResolve } from '@eggjs/utils';
+import { Command, Flags, Interfaces } from '@oclif/core';
 
-import { getSourceDirname, readPackageJSON, hasTsConfig } from './utils.ts';
 import { type PackageEgg } from './types.ts';
+import { getSourceDirname, readPackageJSON, hasTsConfig } from './utils.ts';
 
 const debug = debuglog('egg/bin/baseCommand');
 

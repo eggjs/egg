@@ -1,11 +1,11 @@
 import { strict as assert } from 'node:assert';
 
-import { describe, it, beforeAll } from 'vitest';
 import { request } from '@eggjs/supertest';
+import { describe, it, beforeAll } from 'vitest';
 
-import { getFilepath } from './helper.js';
 // @ts-ignore
 import { Application } from './fixtures/egg-esm/index.js';
+import { getFilepath } from './helper.js';
 
 describe('test/support-typescript.test.ts', () => {
   let app: Application;

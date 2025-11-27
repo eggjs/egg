@@ -1,8 +1,9 @@
-import { describe, it, beforeAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
+
+import { describe, it, beforeAll } from 'vitest';
 
 import { type MockApplication, createApp } from '../../../utils.ts';
 

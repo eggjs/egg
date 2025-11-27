@@ -1,8 +1,9 @@
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
+
 import { ViewEngineBase } from '../src/index.ts';
 
 function getFixtures(name: string) {

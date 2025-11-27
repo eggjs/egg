@@ -1,5 +1,5 @@
-import util from 'node:util';
 import os from 'node:os';
+import util from 'node:util';
 
 import { FrameworkBaseError } from './framework_base_error.ts';
 

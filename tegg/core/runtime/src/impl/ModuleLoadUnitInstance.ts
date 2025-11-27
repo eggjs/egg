@@ -1,6 +1,5 @@
-import { MapUtil } from '@eggjs/tegg-common-util';
 import { IdenticalUtil } from '@eggjs/lifecycle';
-import { EggLoadUnitType, ObjectInitType } from '@eggjs/tegg-types';
+import { MapUtil } from '@eggjs/tegg-common-util';
 import type {
   EggObject,
   EggObjectName,
@@ -11,6 +10,7 @@ import type {
   LoadUnitInstance,
   LoadUnitInstanceLifecycleContext,
 } from '@eggjs/tegg-types';
+import { EggLoadUnitType, ObjectInitType } from '@eggjs/tegg-types';
 
 import { EggObjectFactory } from '../factory/EggObjectFactory.ts';
 import { LoadUnitInstanceFactory } from '../factory/LoadUnitInstanceFactory.ts';

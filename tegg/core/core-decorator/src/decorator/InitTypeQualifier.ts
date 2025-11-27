@@ -1,5 +1,5 @@
-import { InitTypeQualifierAttribute } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, ObjectInitTypeLike } from '@eggjs/tegg-types';
+import { InitTypeQualifierAttribute } from '@eggjs/tegg-types';
 
 import { QualifierUtil } from '../util/index.ts';
 

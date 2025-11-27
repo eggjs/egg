@@ -1,6 +1,8 @@
 import { debuglog } from 'node:util';
 
+import { PrototypeUtil } from '@eggjs/core-decorator';
 import { EggPrototypeFactory } from '@eggjs/metadata';
+import { NameUtil } from '@eggjs/tegg-common-util';
 import type {
   ContainerGetMethod,
   EggContainer,
@@ -12,11 +14,9 @@ import type {
   ObjectInitTypeLike,
   QualifierInfo,
 } from '@eggjs/tegg-types';
-import { PrototypeUtil } from '@eggjs/core-decorator';
-import { NameUtil } from '@eggjs/tegg-common-util';
 
-import { ContextHandler } from '../model/ContextHandler.ts';
 import type { ContextInitiator as ContextInitiatorType } from '../impl/ContextInitiator.ts';
+import { ContextHandler } from '../model/ContextHandler.ts';
 
 const debug = debuglog('tegg/core/runtime/EggContainerFactory');
 

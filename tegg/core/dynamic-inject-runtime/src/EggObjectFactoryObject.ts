@@ -1,5 +1,5 @@
-import { EggContainerFactory, EggObjectFactory as TEggObjectFactory } from '@eggjs/tegg-runtime';
 import { IdenticalUtil } from '@eggjs/lifecycle';
+import { EggContainerFactory, EggObjectFactory as TEggObjectFactory } from '@eggjs/tegg-runtime';
 import type { EggRuntimeContext, EggObject, EggObjectName, EggPrototype } from '@eggjs/tegg-types';
 
 import { EggObjectFactory } from './EggObjectFactory.ts';

@@ -1,8 +1,8 @@
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
-import { test, expect } from 'vitest';
 import coffee from 'coffee';
+import { test, expect } from 'vitest';
 
 test('should tsc build work', async () => {
   const tsc = path.join(import.meta.dirname, '..', 'node_modules', 'typescript', 'bin', 'tsc');

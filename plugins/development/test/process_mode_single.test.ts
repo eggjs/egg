@@ -1,11 +1,11 @@
-import fs from 'node:fs/promises';
 import { strict as assert } from 'node:assert';
+import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
-import { beforeAll, afterAll, it, describe } from 'vitest';
-import { request } from '@eggjs/supertest';
 import { mm } from '@eggjs/mock';
+import { request } from '@eggjs/supertest';
 import { start, Application } from 'egg';
+import { beforeAll, afterAll, it, describe } from 'vitest';
 
 import developmentPlugin from '../src/index.ts';
 import { getFilepath } from './utils.ts';

@@ -1,6 +1,6 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
-import { QUALIFIER_IMPL_MAP } from '@eggjs/tegg-types';
 import type { EggAbstractClazz, EggProtoImplClass, QualifierValue } from '@eggjs/tegg-types';
+import { QUALIFIER_IMPL_MAP } from '@eggjs/tegg-types';
 
 export class QualifierImplUtil {
   static addQualifierImpl(

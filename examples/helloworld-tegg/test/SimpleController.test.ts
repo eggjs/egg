@@ -1,6 +1,5 @@
-import { expect, test } from 'vitest';
-
 import { app } from '@eggjs/mock/bootstrap';
+import { expect, test } from 'vitest';
 
 test('should GET /api/headers with headers', async () => {
   await app.httpRequest().get('/api/headers').set('X-Custom', 'custom').expect(200).expect({

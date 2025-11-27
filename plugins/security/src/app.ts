@@ -1,7 +1,7 @@
 import type { ILifecycleBoot, Application } from 'egg';
 
-import { preprocessConfig } from './lib/utils.ts';
 import { SecurityConfig } from './config/config.default.ts';
+import { preprocessConfig } from './lib/utils.ts';
 
 export default class AppBoot implements ILifecycleBoot {
   private readonly app;

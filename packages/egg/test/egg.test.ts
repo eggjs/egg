@@ -1,12 +1,12 @@
 import { strict as assert } from 'node:assert';
-import path from 'node:path';
 import fs from 'node:fs';
+import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 import assertFile from 'assert-file';
 import { readJSONSync } from 'utility';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 
 import { createApp, cluster, getFilepath, type MockApplication } from './utils.ts';
 

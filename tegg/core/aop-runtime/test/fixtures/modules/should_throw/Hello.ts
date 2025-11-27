@@ -1,5 +1,5 @@
-import { ContextProto } from '@eggjs/core-decorator';
 import { Advice, Pointcut } from '@eggjs/aop-decorator';
+import { ContextProto } from '@eggjs/core-decorator';
 import type { AdviceContext, IAdvice } from '@eggjs/tegg-types';
 
 @Advice()

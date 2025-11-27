@@ -1,11 +1,11 @@
 import assert from 'node:assert';
 
-import { describe, it } from 'vitest';
 import { TableModel } from '@eggjs/dal-decorator';
+import { describe, it } from 'vitest';
 
 import { SqlGenerator } from '../src/index.ts';
-import { Foo } from './fixtures/modules/dal/Foo.js';
 import { AutoUpdateTime } from './fixtures/modules/dal/AutoUpdateTime.js';
+import { Foo } from './fixtures/modules/dal/Foo.js';
 import { FooIndexName } from './fixtures/modules/dal/FooIndexName.js';
 
 describe('test/SqlGenerator.test.ts', () => {

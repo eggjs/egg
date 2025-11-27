@@ -1,10 +1,10 @@
 import type { Application, ILifecycleBoot } from 'egg';
 
+import { DalModuleLoadUnitHook } from './lib/DalModuleLoadUnitHook.ts';
 import { DalTableEggPrototypeHook } from './lib/DalTableEggPrototypeHook.ts';
 import { MysqlDataSourceManager } from './lib/MysqlDataSourceManager.ts';
 import { SqlMapManager } from './lib/SqlMapManager.ts';
 import { TableModelManager } from './lib/TableModelManager.ts';
-import { DalModuleLoadUnitHook } from './lib/DalModuleLoadUnitHook.ts';
 import { TransactionPrototypeHook } from './lib/TransactionPrototypeHook.ts';
 
 export default class DalAppBootHook implements ILifecycleBoot {

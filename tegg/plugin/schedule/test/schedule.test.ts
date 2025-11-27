@@ -1,11 +1,10 @@
-import path from 'node:path';
-import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
-
-import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 
 const FooSubscriberFilePath = path.join(
   import.meta.dirname,

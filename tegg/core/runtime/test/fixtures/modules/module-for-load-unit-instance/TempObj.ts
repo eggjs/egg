@@ -1,5 +1,5 @@
-import { ObjectInitType } from '@eggjs/tegg-types';
 import { Prototype } from '@eggjs/core-decorator';
+import { ObjectInitType } from '@eggjs/tegg-types';
 
 @Prototype({
   initType: ObjectInitType.ALWAYS_NEW,

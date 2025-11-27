@@ -1,6 +1,7 @@
+import { strict as assert } from 'assert';
+
 import { describe, it } from 'vitest';
 
-import { strict as assert } from 'assert';
 import { ExpectationFailedError, E417 } from '../../src/index.ts';
 
 describe('test/http/417.test.ts', () => {

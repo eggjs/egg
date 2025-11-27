@@ -1,9 +1,9 @@
 import assert from 'node:assert';
 
-import { encodeURIComponent as safeEncodeURIComponent } from 'utility';
 import { singularize, pluralize } from 'inflection';
-import methods from 'methods';
 import { isGeneratorFunction } from 'is-type-of';
+import methods from 'methods';
+import { encodeURIComponent as safeEncodeURIComponent } from 'utility';
 
 import { Layer } from './Layer.ts';
 import { type RegisterOptions, Router, type RouterMethod, type RouterOptions } from './Router.ts';

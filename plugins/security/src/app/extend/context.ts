@@ -1,12 +1,12 @@
 import { debuglog } from 'node:util';
 
-import { nanoid } from 'nanoid/non-secure';
 import Tokens from 'csrf';
 import { Context } from 'egg';
+import { nanoid } from 'nanoid/non-secure';
 
-import * as utils from '../../lib/utils.ts';
-import type { HttpClientRequestURL, HttpClientOptions, HttpClientResponse } from '../../lib/extend/safe_curl.ts';
 import type { SecurityConfig } from '../../config/config.default.ts';
+import type { HttpClientRequestURL, HttpClientOptions, HttpClientResponse } from '../../lib/extend/safe_curl.ts';
+import * as utils from '../../lib/utils.ts';
 import type SecurityResponse from './response.ts';
 
 const debug = debuglog('egg/security/app/extend/context');

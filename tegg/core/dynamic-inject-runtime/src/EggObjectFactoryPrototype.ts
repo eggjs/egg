@@ -1,7 +1,7 @@
-import { EggPrototypeCreatorFactory } from '@eggjs/metadata';
 import { MetadataUtil, QualifierUtil } from '@eggjs/core-decorator';
-import { NameUtil } from '@eggjs/tegg-common-util';
 import { IdenticalUtil } from '@eggjs/lifecycle';
+import { EggPrototypeCreatorFactory } from '@eggjs/metadata';
+import { NameUtil } from '@eggjs/tegg-common-util';
 import type {
   AccessLevel,
   EggObjectFactory,

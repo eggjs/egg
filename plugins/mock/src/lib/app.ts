@@ -1,20 +1,20 @@
-import { debuglog } from 'node:util';
 import { strict as assert } from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
+import { debuglog } from 'node:util';
 
-import { Base } from 'sdk-base';
-import { detectPort } from 'detect-port';
 import { importModule } from '@eggjs/utils';
+import { detectPort } from 'detect-port';
+import { Base } from 'sdk-base';
 
-import { sleep, rimraf, getProperty } from './utils.ts';
-import { formatOptions } from './format_options.ts';
+import AgentUnittest from '../app/extend/agent.ts';
+import ApplicationUnittest from '../app/extend/application.ts';
 import { context } from './context.ts';
+import { formatOptions } from './format_options.ts';
 import { setCustomLoader } from './mock_custom_loader.ts';
 import { createServer } from './mock_http_server.ts';
 import type { MockOptions, MockApplicationOptions } from './types.ts';
-import ApplicationUnittest from '../app/extend/application.ts';
-import AgentUnittest from '../app/extend/agent.ts';
+import { sleep, rimraf, getProperty } from './utils.ts';
 
 const debug = debuglog('egg/mock/lib/app');
 

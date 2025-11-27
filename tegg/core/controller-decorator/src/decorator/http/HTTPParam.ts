@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 
-import { HTTPParamType } from '@eggjs/tegg-types';
-import type { EggProtoImplClass, HTTPParamParams, HTTPQueriesParams, HTTPQueryParams } from '@eggjs/tegg-types';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
+import type { EggProtoImplClass, HTTPParamParams, HTTPQueriesParams, HTTPQueryParams } from '@eggjs/tegg-types';
+import { HTTPParamType } from '@eggjs/tegg-types';
 
 import { HTTPInfoUtil } from '../../util/index.ts';
 import { InjectContext } from '../Context.ts';

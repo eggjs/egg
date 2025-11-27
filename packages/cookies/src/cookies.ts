@@ -1,11 +1,11 @@
 import assert from 'node:assert';
 
-import { base64decode, base64encode } from 'utility';
 import { isSameSiteNoneCompatible } from 'should-send-same-site-none';
+import { base64decode, base64encode } from 'utility';
 
-import { Keygrip } from './keygrip.ts';
 import { Cookie, type CookieSetOptions } from './cookie.ts';
 import { CookieError } from './error.ts';
+import { Keygrip } from './keygrip.ts';
 
 const keyCache = new Map<string[], Keygrip>();
 

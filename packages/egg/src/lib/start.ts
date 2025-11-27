@@ -1,7 +1,7 @@
 import path from 'node:path';
 
-import { readJSON } from 'utility';
 import { importModule } from '@eggjs/utils';
+import { readJSON } from 'utility';
 
 import { Agent } from './agent.ts';
 import { Application } from './application.ts';

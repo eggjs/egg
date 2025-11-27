@@ -1,8 +1,8 @@
-import { debuglog } from 'node:util';
-import { createRequire } from 'node:module';
-import { pathToFileURL, fileURLToPath } from 'node:url';
-import path from 'node:path';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import { pathToFileURL, fileURLToPath } from 'node:url';
+import { debuglog } from 'node:util';
 
 import { ImportResolveError } from './error/index.ts';
 

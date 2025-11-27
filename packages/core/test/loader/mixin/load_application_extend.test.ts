@@ -1,5 +1,7 @@
 import { strict as assert } from 'node:assert';
+
 import { describe, it, beforeAll, afterAll } from 'vitest';
+
 import { createApp } from '../../helper.js';
 
 describe('test/loader/mixin/load_application_extend.test.ts', () => {

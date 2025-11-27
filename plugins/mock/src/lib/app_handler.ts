@@ -1,11 +1,11 @@
 import { debuglog } from 'node:util';
 
-import { createApp as createParallelApp } from './parallel/app.ts';
+import ApplicationUnittest from '../app/extend/application.ts';
 import { setupAgent } from './agent_handler.ts';
 import { createApp } from './app.ts';
+import { createApp as createParallelApp } from './parallel/app.ts';
 import { restore } from './restore.ts';
 import { getEggOptions } from './utils.ts';
-import ApplicationUnittest from '../app/extend/application.ts';
 
 const debug = debuglog('egg/mock/lib/app_handler');
 

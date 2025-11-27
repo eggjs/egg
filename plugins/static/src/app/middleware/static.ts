@@ -1,10 +1,10 @@
 import assert from 'node:assert';
 import { mkdirSync, existsSync } from 'node:fs';
 
-import range from 'koa-range';
-import compose from 'koa-compose';
-import type { Application, Context, Next, MiddlewareFunc } from 'egg';
 import { staticCache } from '@eggjs/koa-static-cache';
+import type { Application, Context, Next, MiddlewareFunc } from 'egg';
+import compose from 'koa-compose';
+import range from 'koa-range';
 import { LRU } from 'ylru';
 
 import type { StaticConfig, StaticDirOptions } from '../../config/config.default.ts';

@@ -1,7 +1,7 @@
 import { type ImplDecorator, QualifierImplDecoratorUtil } from '@eggjs/tegg';
 
-import { ContextHelloType } from '../FooType.ts';
 import { AbstractContextHello } from '../AbstractContextHello.ts';
+import { ContextHelloType } from '../FooType.ts';
 
 export const CONTEXT_HELLO_ATTRIBUTE = 'CONTEXT_HELLO_ATTRIBUTE';
 

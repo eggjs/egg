@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 
+import { AdviceInfoUtil } from '@eggjs/aop-decorator';
 import type { IAdvice, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
 import { isClass } from 'is-type-of';
-import { AdviceInfoUtil } from '@eggjs/aop-decorator';
 
 import { ControllerInfoUtil, MethodInfoUtil } from '../util/index.ts';
 

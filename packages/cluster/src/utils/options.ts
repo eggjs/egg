@@ -1,9 +1,9 @@
-import os from 'node:os';
-import fs from 'node:fs';
-import path from 'node:path';
 import assert from 'node:assert';
-import { debuglog } from 'node:util';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { type SecureContextOptions } from 'node:tls';
+import { debuglog } from 'node:util';
 
 import { getFrameworkPath, importModule } from '@eggjs/utils';
 

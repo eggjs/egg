@@ -1,6 +1,6 @@
 import type { AdviceContext, AspectAdvice, IAdvice } from '@eggjs/tegg-types';
-import compose from 'koa-compose';
 import type { Middleware } from 'koa-compose';
+import compose from 'koa-compose';
 
 class InternalAdviceContext<T = Record<string, IAdvice>> {
   private readonly state: Map<PropertyKey, any>;

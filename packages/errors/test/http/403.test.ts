@@ -1,6 +1,7 @@
+import { strict as assert } from 'assert';
+
 import { describe, it } from 'vitest';
 
-import { strict as assert } from 'assert';
 import { ForbiddenError, E403 } from '../../src/index.ts';
 
 describe('test/http/403.test.ts', () => {

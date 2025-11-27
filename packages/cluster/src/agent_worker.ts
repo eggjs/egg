@@ -1,11 +1,11 @@
 import { debuglog } from 'node:util';
 
-import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
 import { importModule } from '@eggjs/utils';
+import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
 
 import { BaseAgentWorker } from './utils/mode/base/agent.ts';
-import { AgentThreadWorker } from './utils/mode/impl/worker_threads/agent.ts';
 import { AgentProcessWorker } from './utils/mode/impl/process/agent.ts';
+import { AgentThreadWorker } from './utils/mode/impl/worker_threads/agent.ts';
 
 const debug = debuglog('egg/cluster/agent_worker');
 

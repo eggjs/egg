@@ -1,4 +1,3 @@
-import { AccessLevel, type EggObjectLifecycle } from '@eggjs/tegg-types';
 import { ContextProto, SingletonProto } from '@eggjs/core-decorator';
 import {
   LifecyclePostConstruct,
@@ -8,6 +7,7 @@ import {
   LifecyclePreDestroy,
   LifecycleDestroy,
 } from '@eggjs/lifecycle';
+import { AccessLevel, type EggObjectLifecycle } from '@eggjs/tegg-types';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,

@@ -5,10 +5,10 @@ import { describe, it, afterEach, afterAll, beforeAll } from 'vitest';
 
 import { BarService } from './fixtures/apps/optional-inject/app/modules/module-a/BarService.ts';
 import { FooService } from './fixtures/apps/optional-inject/app/modules/module-a/FooService.ts';
-import { BarService1 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService1.ts';
-import { BarService2 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService2.ts';
 import { BarConstructorService1 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarConstructorService1.ts';
 import { BarConstructorService2 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarConstructorService2.ts';
+import { BarService1 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService1.ts';
+import { BarService2 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService2.ts';
 import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/Inject.test.ts', () => {

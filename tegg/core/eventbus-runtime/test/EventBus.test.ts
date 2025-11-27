@@ -1,17 +1,16 @@
+import assert from 'node:assert/strict';
 import path from 'node:path';
 import { mock } from 'node:test';
-import assert from 'node:assert/strict';
 
-import { describe, it, beforeEach, afterEach } from 'vitest';
-import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
-import { type EggPrototype, LoadUnitFactory } from '@eggjs/metadata';
-import { TimerUtil } from '@eggjs/tegg-common-util';
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import { EventInfoUtil, CORK_ID } from '@eggjs/eventbus-decorator';
+import { type EggPrototype, LoadUnitFactory } from '@eggjs/metadata';
 import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
+import { TimerUtil } from '@eggjs/tegg-common-util';
+import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '../src/index.ts';
-
 import { HelloHandler, HelloProducer } from './fixtures/modules/event/HelloEvent.ts';
 import { Timeout0Handler, Timeout100Handler, TimeoutProducer } from './fixtures/modules/event/MultiEvent.ts';
 import { MultiWithContextHandler, MultiWithContextProducer } from './fixtures/modules/event/MultiEventWithContext.ts';

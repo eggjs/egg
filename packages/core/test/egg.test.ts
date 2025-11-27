@@ -1,16 +1,16 @@
-import util from 'node:util';
-import path from 'node:path';
 import { strict as assert } from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
+import util from 'node:util';
 
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
-import { mm } from 'mm';
 import { request } from '@eggjs/supertest';
 import coffee from 'coffee';
+import { mm } from 'mm';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 
-import { createApp, getFilepath, type Application } from './helper.js';
 import { EggCore } from '../src/index.js';
+import { createApp, getFilepath, type Application } from './helper.js';
 
 describe('test/egg.test.ts', () => {
   afterEach(mm.restore);

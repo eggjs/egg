@@ -1,8 +1,8 @@
 import type { EggLogger } from 'egg';
 
-import type { EggScheduleJobInfo } from '../types.ts';
-import type { EggScheduleConfig } from '../../config/config.default.ts';
 import type Agent from '../../app/extend/agent.ts';
+import type { EggScheduleConfig } from '../../config/config.default.ts';
+import type { EggScheduleJobInfo } from '../types.ts';
 
 export class BaseStrategy {
   protected agent: Agent;

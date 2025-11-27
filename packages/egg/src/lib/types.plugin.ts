@@ -12,7 +12,6 @@ import '@eggjs/session/types';
 import '@eggjs/static/types';
 import '@eggjs/view/types';
 import '@eggjs/watcher/types';
-
 // enable tegg plugin types
 import '@eggjs/ajv-plugin/types';
 import '@eggjs/aop-plugin/types';

@@ -1,6 +1,6 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
-import { POINTCUT_ADVICE_INFO_LIAR } from '@eggjs/tegg-types';
 import type { AdviceInfo, EggProtoImplClass } from '@eggjs/tegg-types';
+import { POINTCUT_ADVICE_INFO_LIAR } from '@eggjs/tegg-types';
 
 interface PointcutAdviceInfo {
   method: PropertyKey;

@@ -1,8 +1,10 @@
-import { describe, it, beforeEach, afterEach } from 'vitest';
-import fs from 'node:fs';
 import { strict as assert } from 'node:assert';
+import fs from 'node:fs';
 import { scheduler } from 'node:timers/promises';
+
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, beforeEach, afterEach } from 'vitest';
+
 import { getFilePath } from './utils.js';
 
 const file_path1 = getFilePath('apps/watcher-development-app/tmp.txt');

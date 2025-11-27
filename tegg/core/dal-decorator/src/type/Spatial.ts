@@ -1,5 +1,5 @@
-import { ColumnType } from '@eggjs/tegg-types';
 import type { Geometry, GeometryCollection } from '@eggjs/tegg-types';
+import { ColumnType } from '@eggjs/tegg-types';
 
 export class SpatialHelper {
   static isPoint(t: Geometry): boolean {

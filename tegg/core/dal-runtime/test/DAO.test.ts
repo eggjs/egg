@@ -1,13 +1,13 @@
 import assert from 'node:assert';
 import path from 'node:path';
 
-import { describe, it, beforeAll, afterAll } from 'vitest';
 import { TableModel } from '@eggjs/dal-decorator';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { MysqlDataSource, SqlMapLoader, DataSource, DatabaseForker } from '../src/index.ts';
-import { Foo } from './fixtures/modules/dal/Foo.ts';
-import FooDAO from './fixtures/modules/dal/dal/dao/FooDAO.ts';
 import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO.ts';
+import FooDAO from './fixtures/modules/dal/dal/dao/FooDAO.ts';
+import { Foo } from './fixtures/modules/dal/Foo.ts';
 
 describe('test/DAO.test.ts', () => {
   let dataSource: DataSource<Foo>;

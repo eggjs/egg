@@ -1,5 +1,7 @@
 import { strict as assert } from 'node:assert';
+
 import { Context } from 'egg';
+
 // import { app, mm } from '../../../../src/bootstrap.js';
 import { app, mm } from '../../../../dist/commonjs/bootstrap.js';
 import { LogService } from '../app/modules/foo/LogService.js';

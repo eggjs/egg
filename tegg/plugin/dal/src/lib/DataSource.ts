@@ -10,15 +10,15 @@ import {
   type ObjectInfo,
   ObjectInitType,
 } from '@eggjs/core-decorator';
-import { EggLoadUnitType } from '@eggjs/tegg-types';
-import { LoaderFactory } from '@eggjs/tegg-loader';
-import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { DataSourceInjectName, DataSourceQualifierAttribute, TableInfoUtil, TableModel } from '@eggjs/dal-decorator';
 import { DataSource } from '@eggjs/dal-runtime';
+import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import { LoaderFactory } from '@eggjs/tegg-loader';
+import { EggLoadUnitType } from '@eggjs/tegg-types';
 
-import { TableModelManager } from './TableModelManager.ts';
 import { MysqlDataSourceManager } from './MysqlDataSourceManager.ts';
 import { SqlMapManager } from './SqlMapManager.ts';
+import { TableModelManager } from './TableModelManager.ts';
 import { TransactionalAOP } from './TransactionalAOP.ts';
 
 @MultiInstanceProto({

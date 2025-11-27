@@ -1,4 +1,5 @@
 import util from 'node:util';
+
 import { isSymbol, isRegExp, isPrimitive, isClass, isFunction, isGeneratorFunction, isAsyncFunction } from 'is-type-of';
 
 export function convertObject(obj: any, ignore: string | RegExp | (string | RegExp)[] = []): any {

@@ -1,6 +1,7 @@
 import { Controller } from 'egg';
-import TraceService from '../../modules/multi-module-service/TraceService.js';
+
 import AppService from '../../modules/multi-module-service/AppService.js';
+import TraceService from '../../modules/multi-module-service/TraceService.js';
 
 export default class App extends Controller {
   async find(): Promise<void> {

@@ -2,14 +2,14 @@ import assert from 'node:assert';
 import { EventEmitter } from 'node:events';
 import { debuglog, format } from 'node:util';
 
-import { isClass } from 'is-type-of';
-import { Ready as ReadyObject, type ReadyFunctionArg } from 'get-ready';
-import { Ready } from 'ready-callback';
 import { EggConsoleLogger } from 'egg-logger';
+import { Ready as ReadyObject, type ReadyFunctionArg } from 'get-ready';
+import { isClass } from 'is-type-of';
+import { Ready } from 'ready-callback';
 
-import utils from './utils/index.ts';
-import type { Fun } from './utils/index.ts';
 import type { EggCore } from './egg.ts';
+import type { Fun } from './utils/index.ts';
+import utils from './utils/index.ts';
 import type { Timing } from './utils/timing.ts';
 
 const debug = debuglog('egg/core/lifecycle');

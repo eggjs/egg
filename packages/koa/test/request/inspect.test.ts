@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
-
 import util from 'node:util';
+
+import { describe, it } from 'vitest';
 
 import context from '../test-helpers/context.ts';
 

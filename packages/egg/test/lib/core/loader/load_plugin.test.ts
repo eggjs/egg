@@ -1,12 +1,12 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
-import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { EggConsoleLogger } from 'egg-logger';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 
-import { type MockApplication, createApp, getFilepath } from '../../../utils.ts';
 import { AppWorkerLoader, AgentWorkerLoader } from '../../../../src/index.ts';
+import { type MockApplication, createApp, getFilepath } from '../../../utils.ts';
 
 // const EGG_BASE = getFilepath('../..');
 

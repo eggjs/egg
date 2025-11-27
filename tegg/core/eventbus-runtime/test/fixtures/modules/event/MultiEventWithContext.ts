@@ -1,5 +1,5 @@
-import { Event, type EventBus, EventContext, type IEventContext } from '@eggjs/eventbus-decorator';
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/core-decorator';
+import { Event, type EventBus, EventContext, type IEventContext } from '@eggjs/eventbus-decorator';
 
 declare module '@eggjs/eventbus-decorator' {
   interface Events {

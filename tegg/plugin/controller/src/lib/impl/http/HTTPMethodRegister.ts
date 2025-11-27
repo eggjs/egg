@@ -1,6 +1,5 @@
 import assert from 'node:assert';
 
-import type { Router, MiddlewareFunc } from 'egg';
 import {
   type EggContext,
   HTTPControllerMeta,
@@ -11,16 +10,17 @@ import {
   QueryParamMeta,
   Cookies,
 } from '@eggjs/controller-decorator';
-import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import type { EggPrototype } from '@eggjs/metadata';
-import pathToRegexp from 'path-to-regexp';
 import { EggRouter } from '@eggjs/router';
+import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import type { Router, MiddlewareFunc } from 'egg';
 import { FrameworkErrorFormater } from 'egg-errors';
+import pathToRegexp from 'path-to-regexp';
 
+import { RouterConflictError } from '../../errors.ts';
 import { RootProtoManager } from '../../RootProtoManager.ts';
 import { aclMiddlewareFactory } from './Acl.ts';
 import { initRequest } from './Req.ts';
-import { RouterConflictError } from '../../errors.ts';
 
 const noop = () => {
   // ...

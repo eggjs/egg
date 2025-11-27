@@ -1,5 +1,4 @@
 import '@eggjs/tegg-plugin/types';
-
 import type { EventBus, EventWaiter } from '@eggjs/eventbus-decorator';
 
 import type { EggContextEventBus } from './lib/EggContextEventBus.ts';

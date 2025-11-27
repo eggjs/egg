@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
-import { describe, it } from 'vitest';
 import { EggLoadUnitType } from '@eggjs/metadata';
+import { describe, it } from 'vitest';
 
 import { LoaderFactory, LoaderUtil } from '../src/index.ts';
 

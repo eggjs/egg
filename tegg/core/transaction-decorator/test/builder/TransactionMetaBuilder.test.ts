@@ -1,5 +1,5 @@
-import { it, assert } from 'vitest';
 import { PropagationType } from '@eggjs/tegg-types';
+import { it, assert } from 'vitest';
 
 import { TransactionMetadataUtil, TransactionMetaBuilder, Transactional } from '../../src/index.ts';
 import { Foo, Bar, FooBar, BarFoo } from '../fixtures/transaction.ts';

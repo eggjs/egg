@@ -1,7 +1,7 @@
 import { Prototype, PrototypeUtil } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
-import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, TableParams } from '@eggjs/tegg-types';
+import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 
 import { TableInfoUtil } from '../util/index.ts';
 

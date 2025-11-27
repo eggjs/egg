@@ -1,6 +1,6 @@
+import Helper from './app/extend/helper.ts';
 import { BaseContextClass } from './lib/core/base_context_class.ts';
 import { startEgg, type SingleModeApplication, type SingleModeAgent } from './lib/start.ts';
-import Helper from './app/extend/helper.ts';
 
 // export extends
 export { Helper };

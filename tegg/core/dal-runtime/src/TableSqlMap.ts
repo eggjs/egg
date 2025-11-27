@@ -1,6 +1,6 @@
-import { Template } from 'nunjucks';
-import { SqlType } from '@eggjs/tegg-types';
 import type { SqlMap } from '@eggjs/tegg-types';
+import { SqlType } from '@eggjs/tegg-types';
+import { Template } from 'nunjucks';
 
 import { NunjucksUtils } from './NunjucksUtil.ts';
 import { TemplateUtil } from './TemplateUtil.ts';

@@ -13,6 +13,7 @@ import {
   MultiInstanceType,
   type QualifierAttribute,
 } from '@eggjs/tegg-types';
+
 import { MetadataUtil } from './MetadataUtil.ts';
 
 export class PrototypeUtil {

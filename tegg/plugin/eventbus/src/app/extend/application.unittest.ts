@@ -1,8 +1,8 @@
-import type { Application } from 'egg';
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { EventBus, EventWaiter } from '@eggjs/eventbus-decorator';
 import { SingletonEventBus } from '@eggjs/eventbus-runtime';
 import type { EggPrototype } from '@eggjs/metadata';
+import type { Application } from 'egg';
 
 export default class EventBusApplicationUnittest {
   async getEventbus(this: Application): Promise<EventBus> {

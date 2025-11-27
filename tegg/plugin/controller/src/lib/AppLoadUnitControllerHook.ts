@@ -1,9 +1,9 @@
-import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
 import { CONTROLLER_META_DATA, type ControllerMetadata } from '@eggjs/controller-decorator';
 import type { LifecycleHook } from '@eggjs/lifecycle';
+import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
 
-import { ControllerRegisterFactory } from './ControllerRegisterFactory.ts';
 import { ControllerMetadataManager } from './ControllerMetadataManager.ts';
+import { ControllerRegisterFactory } from './ControllerRegisterFactory.ts';
 import { RootProtoManager } from './RootProtoManager.ts';
 
 export class AppLoadUnitControllerHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {

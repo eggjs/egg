@@ -1,5 +1,6 @@
-import path from 'node:path';
 import { existsSync, readdirSync } from 'node:fs';
+import path from 'node:path';
+
 import { readJSONSync } from './utils.ts';
 
 /**

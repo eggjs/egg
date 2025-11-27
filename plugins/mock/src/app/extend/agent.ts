@@ -1,14 +1,14 @@
-import { mock, restore } from 'mm';
 import { Agent } from 'egg';
+import { mock, restore } from 'mm';
 import type { MockAgent } from 'urllib';
 
+import { getMockAgent, restoreMockAgent } from '../../lib/mock_agent.ts';
 import {
   createMockHttpClient,
   type MockResultFunction,
   type MockResultOptions,
   type MockHttpClientMethod,
 } from '../../lib/mock_httpclient.ts';
-import { getMockAgent, restoreMockAgent } from '../../lib/mock_agent.ts';
 
 export default abstract class AgentUnittest extends Agent {
   [key: string]: any;

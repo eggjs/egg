@@ -1,5 +1,5 @@
-import { debuglog } from 'node:util';
 import path from 'node:path';
+import { debuglog } from 'node:util';
 
 import { Command, Interfaces } from '@oclif/core';
 import { readJSON } from 'utility';

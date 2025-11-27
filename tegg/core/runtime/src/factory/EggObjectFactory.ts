@@ -1,3 +1,4 @@
+import { LoadUnitFactory } from '@eggjs/metadata';
 import type {
   CreateObjectMethod,
   EggObject,
@@ -6,7 +7,6 @@ import type {
   EggPrototype,
   EggPrototypeClass,
 } from '@eggjs/tegg-types';
-import { LoadUnitFactory } from '@eggjs/metadata';
 
 import { EggObjectImpl } from '../impl/EggObjectImpl.ts';
 import { EggObjectLifecycleUtil } from '../model/EggObject.ts';

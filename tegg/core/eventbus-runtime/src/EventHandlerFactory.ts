@@ -1,3 +1,4 @@
+import { SingletonProto } from '@eggjs/core-decorator';
 import {
   type EventHandler,
   type EventName,
@@ -5,11 +6,10 @@ import {
   type Arguments,
   EVENT_CONTEXT_INJECT,
 } from '@eggjs/eventbus-decorator';
-import { EggContainerFactory } from '@eggjs/tegg-runtime';
-import { AccessLevel } from '@eggjs/tegg-types';
-import type { EggPrototype } from '@eggjs/tegg-types';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import { SingletonProto } from '@eggjs/core-decorator';
+import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import type { EggPrototype } from '@eggjs/tegg-types';
+import { AccessLevel } from '@eggjs/tegg-types';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

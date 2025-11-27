@@ -2,11 +2,11 @@ import assert from 'node:assert';
 import { createWriteStream, createReadStream } from 'node:fs';
 import fs from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
-import { createGzip } from 'node:zlib';
 import { debuglog } from 'node:util';
+import { createGzip } from 'node:zlib';
 
-import { exists } from 'utility';
 import type { Application } from 'egg';
+import { exists } from 'utility';
 
 const debug = debuglog('egg/logrotator/lib/rotator');
 

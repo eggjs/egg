@@ -1,9 +1,9 @@
 import path from 'node:path';
 
-import globby from 'globby';
-import { LoaderUtil } from '@eggjs/tegg-loader';
 import type { EggProtoImplClass } from '@eggjs/core-decorator';
+import { LoaderUtil } from '@eggjs/tegg-loader';
 import type { Loader } from '@eggjs/tegg-types';
+import globby from 'globby';
 
 export class EggControllerLoader implements Loader {
   private readonly controllerDir: string;

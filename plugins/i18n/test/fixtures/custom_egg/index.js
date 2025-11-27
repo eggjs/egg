@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import { startCluster as _startCluster, Application as _Application, Agent as _Agent } from 'egg';
 
 const __filename = fileURLToPath(import.meta.url);

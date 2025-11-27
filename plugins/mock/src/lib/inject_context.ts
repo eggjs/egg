@@ -1,5 +1,5 @@
-import { debuglog } from 'node:util';
 import assert from 'node:assert';
+import { debuglog } from 'node:util';
 
 import { getApp } from './app_handler.ts';
 

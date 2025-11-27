@@ -1,5 +1,7 @@
 import assert from 'node:assert';
+
 import { describe, it } from 'vitest';
+
 import { MetadataUtil } from '../../src/index.js';
 
 class Parent {}

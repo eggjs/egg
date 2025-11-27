@@ -1,7 +1,7 @@
+import { mm, type MockApplication } from '@eggjs/mock';
 // import assert from 'node:assert/strict';
 
 import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
-import { mm, type MockApplication } from '@eggjs/mock';
 
 // import { UsedProto } from './fixtures/apps/plugin-module/node_modules/foo-plugin/Used.ts';
 

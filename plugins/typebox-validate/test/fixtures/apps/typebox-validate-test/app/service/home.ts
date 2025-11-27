@@ -1,7 +1,7 @@
 import { Service } from 'egg';
 
-import { type Static, Type } from '../../../../../../src/typebox.ts';
 import { Validate } from '../../../../../../src/decorator.ts';
+import { type Static, Type } from '../../../../../../src/typebox.ts';
 import { TYPEBOX_BODY } from '../controller/home.ts';
 
 type HomeTypeBoxType = Static<typeof TYPEBOX_BODY>;

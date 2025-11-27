@@ -1,11 +1,11 @@
-import type { LifecycleHook } from '@eggjs/lifecycle';
-import type { Logger } from '@eggjs/tegg-types';
-import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/metadata';
 import { DaoInfoUtil, TableModel } from '@eggjs/dal-decorator';
 import { SqlMapLoader } from '@eggjs/dal-runtime';
+import type { LifecycleHook } from '@eggjs/lifecycle';
+import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/metadata';
+import type { Logger } from '@eggjs/tegg-types';
 
-import { TableModelManager } from './TableModelManager.ts';
 import { SqlMapManager } from './SqlMapManager.ts';
+import { TableModelManager } from './TableModelManager.ts';
 
 export class DalTableEggPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
   private readonly logger: Logger;

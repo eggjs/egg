@@ -7,5 +7,17 @@
     "packages/core/test/fixtures/load_dirs/syntax_error/*",
     "packages/core/test/fixtures/syntaxerror/*",
     "packages/core/test/fixtures/load_context_syntax_error/**/*"
-  ]
+  ],
+  "experimentalSortImports": {
+    "groups": [
+      ["type-import"],
+      ["type-builtin", "value-builtin"],
+      ["type-external", "value-external", "type-internal", "value-internal"],
+      ["type-parent", "type-sibling", "type-index", "value-parent", "value-sibling", "value-index"],
+      ["ts-equals-import"],
+      ["unknown"]
+    ],
+    "newlinesBetween": true,
+    "order": "asc"
+  }
 }

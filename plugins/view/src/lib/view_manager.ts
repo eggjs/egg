@@ -1,10 +1,10 @@
 import assert from 'node:assert';
-import path from 'node:path';
 import { existsSync } from 'node:fs';
+import path from 'node:path';
 
-import { exists } from 'utility';
 import type { Context, Application } from 'egg';
 import { isGeneratorFunction } from 'is-type-of';
+import { exists } from 'utility';
 
 import type { ViewConfig } from '../config/config.default.ts';
 

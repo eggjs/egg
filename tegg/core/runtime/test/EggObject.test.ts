@@ -1,17 +1,17 @@
 import assert from 'node:assert';
 import { mock } from 'node:test';
 
-import { describe, beforeEach, afterEach, it } from 'vitest';
 import { EggPrototypeFactory } from '@eggjs/metadata';
+import { describe, beforeEach, afterEach, it } from 'vitest';
 
-import { EggTestContext } from './fixtures/EggTestContext.js';
-import TestUtil from './util.js';
 import { EggContainerFactory } from '../src/index.js';
-import { Foo, Bar } from './fixtures/modules/lifecycle-hook/object.js';
-import { Bar as ExtendsBar } from './fixtures/modules/extends-module/Base.js';
 import { ContextHandler } from '../src/model/ContextHandler.js';
-import { SingletonBar } from './fixtures/modules/inject-context-to-singleton/object.js';
+import { EggTestContext } from './fixtures/EggTestContext.js';
+import { Bar as ExtendsBar } from './fixtures/modules/extends-module/Base.js';
 import { SingletonConstructorBar } from './fixtures/modules/inject-constructor-context-to-singleton/object.js';
+import { SingletonBar } from './fixtures/modules/inject-context-to-singleton/object.js';
+import { Foo, Bar } from './fixtures/modules/lifecycle-hook/object.js';
+import TestUtil from './util.js';
 
 describe('test/EggObject.test.ts', () => {
   let ctx: EggTestContext;

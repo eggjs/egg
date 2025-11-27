@@ -1,5 +1,6 @@
-import path from 'node:path';
 import net, { Server } from 'node:net';
+import path from 'node:path';
+
 import { detect } from 'detect-port';
 
 import coffee from '../../coffee.ts';

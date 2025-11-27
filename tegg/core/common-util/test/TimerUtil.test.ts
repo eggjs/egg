@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+
 import { describe, it } from 'vitest';
+
 import { TimerUtil } from '../src/index.js';
 
 describe('test/TimerUtil.test.ts', () => {

@@ -1,5 +1,5 @@
-import { PointcutType } from '@eggjs/tegg-types';
 import type { CustomPointcutCallback, EggProtoImplClass, PointcutInfo } from '@eggjs/tegg-types';
+import { PointcutType } from '@eggjs/tegg-types';
 
 export class ClassPointInfo implements PointcutInfo {
   readonly type: PointcutType = PointcutType.CLASS;

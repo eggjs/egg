@@ -1,6 +1,6 @@
 import { MapUtil, ObjectUtils } from '@eggjs/tegg-common-util';
-import { PROPERTY_QUALIFIER_META_DATA, QUALIFIER_META_DATA } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, QualifierAttribute, QualifierInfo, QualifierValue } from '@eggjs/tegg-types';
+import { PROPERTY_QUALIFIER_META_DATA, QUALIFIER_META_DATA } from '@eggjs/tegg-types';
 
 import { MetadataUtil } from './MetadataUtil.ts';
 

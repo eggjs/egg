@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
+
 import { describe, it } from 'vitest';
-import { MiddlewareController, MiddlewaresController } from './fixtures/MiddlewareController.js';
+
+import { ControllerInfoUtil, MethodInfoUtil } from '../src/index.js';
 import {
   AopMiddlewareController,
   BarAdvice,
@@ -8,7 +10,7 @@ import {
   FooAdvice,
   FooMethodAdvice,
 } from './fixtures/AopMiddlewareController.js';
-import { ControllerInfoUtil, MethodInfoUtil } from '../src/index.js';
+import { MiddlewareController, MiddlewaresController } from './fixtures/MiddlewareController.js';
 
 describe('test/Middleware.test.ts', () => {
   it('should work', () => {

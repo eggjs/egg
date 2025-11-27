@@ -1,6 +1,6 @@
 import { NameUtil, StackUtil } from '@eggjs/tegg-common-util';
-import { AccessLevel, DEFAULT_PROTO_IMPL_TYPE, ObjectInitType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, EggPrototypeInfo, PrototypeParams } from '@eggjs/tegg-types';
+import { AccessLevel, DEFAULT_PROTO_IMPL_TYPE, ObjectInitType } from '@eggjs/tegg-types';
 
 import { PrototypeUtil } from '../util/index.ts';
 

@@ -1,7 +1,6 @@
 import path from 'node:path';
 
 import { ColumnModel, SpatialHelper } from '@eggjs/dal-decorator';
-import { ColumnType } from '@eggjs/tegg-types';
 import type {
   Geometry,
   GeometryCollection,
@@ -12,6 +11,7 @@ import type {
   Point,
   Polygon,
 } from '@eggjs/tegg-types';
+import { ColumnType } from '@eggjs/tegg-types';
 
 export class TemplateUtil {
   static isSpatialType(columnModel: ColumnModel): boolean {

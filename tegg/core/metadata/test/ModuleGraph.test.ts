@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
+
 import { describe, it } from 'vitest';
-import { TestLoader } from './fixtures/TestLoader.js';
+
 import { ModuleGraph } from '../src/index.js';
+import { TestLoader } from './fixtures/TestLoader.js';
 
 describe('test/ModuleGraph.test.ts', () => {
   it('should sort extends class success', async () => {

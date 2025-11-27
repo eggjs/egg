@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
-import { ControllerType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, HTTPMethodParams } from '@eggjs/tegg-types';
+import { ControllerType } from '@eggjs/tegg-types';
 
 import { HTTPInfoUtil, MethodInfoUtil } from '../../util/index.ts';
 

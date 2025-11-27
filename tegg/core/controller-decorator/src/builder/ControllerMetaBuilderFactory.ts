@@ -1,3 +1,4 @@
+import { Pointcut } from '@eggjs/aop-decorator';
 import type {
   ControllerMetaBuilder,
   ControllerMetaBuilderCreator,
@@ -5,7 +6,6 @@ import type {
   ControllerTypeLike,
   EggProtoImplClass,
 } from '@eggjs/tegg-types';
-import { Pointcut } from '@eggjs/aop-decorator';
 
 import { ControllerInfoUtil, MethodInfoUtil } from '../util/index.ts';
 

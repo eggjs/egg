@@ -1,5 +1,5 @@
-import { HTTPMethodEnum } from '@eggjs/tegg-types';
 import type { EggContext, Next, IncomingHttpHeaders } from '@eggjs/tegg-types';
+import { HTTPMethodEnum } from '@eggjs/tegg-types';
 
 import {
   HTTPController,

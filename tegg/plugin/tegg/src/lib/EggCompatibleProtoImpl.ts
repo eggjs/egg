@@ -10,8 +10,8 @@ import {
   type QualifierValue,
 } from '@eggjs/core-decorator';
 import { IdenticalUtil } from '@eggjs/lifecycle';
-import type { Id } from '@eggjs/tegg-types';
 import type { EggPrototype, InjectObjectProto, EggPrototypeLifecycleContext } from '@eggjs/metadata';
+import type { Id } from '@eggjs/tegg-types';
 
 export const COMPATIBLE_PROTO_IMPLE_TYPE = 'EGG_COMPATIBLE';
 

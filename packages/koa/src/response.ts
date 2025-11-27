@@ -1,18 +1,18 @@
 import assert from 'node:assert';
-import { extname } from 'node:path';
-import util from 'node:util';
-import Stream from 'node:stream';
 import type { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from 'node:http';
+import { extname } from 'node:path';
+import Stream from 'node:stream';
+import util from 'node:util';
 
-import contentDisposition, { type Options as ContentDispositionOptions } from 'content-disposition';
 import { getType } from 'cache-content-type';
-import onFinish from 'on-finished';
-import escape from 'escape-html';
-import { is as typeis } from 'type-is';
-import statuses from 'statuses';
+import contentDisposition, { type Options as ContentDispositionOptions } from 'content-disposition';
 import destroy from 'destroy';
-import vary from 'vary';
 import encodeUrl from 'encodeurl';
+import escape from 'escape-html';
+import onFinish from 'on-finished';
+import statuses from 'statuses';
+import { is as typeis } from 'type-is';
+import vary from 'vary';
 
 import type { Application } from './application.ts';
 import type { Context } from './context.ts';

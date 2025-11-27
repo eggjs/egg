@@ -3,9 +3,9 @@ import workerThreads from 'node:worker_threads';
 
 import { sendmessage } from 'sendmessage';
 
-import type { IMessenger } from './IMessenger.ts';
 import type { EggApplicationCore } from '../../egg.ts';
 import { BaseMessenger } from './base.ts';
+import type { IMessenger } from './IMessenger.ts';
 
 const debug = debuglog('egg/lib/core/messenger/ipc');
 

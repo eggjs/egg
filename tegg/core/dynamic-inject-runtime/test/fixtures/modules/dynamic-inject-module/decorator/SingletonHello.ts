@@ -1,7 +1,7 @@
 import { type ImplDecorator, QualifierImplDecoratorUtil } from '@eggjs/dynamic-inject';
 
-import { SingletonHelloType } from '../FooType.ts';
 import { AbstractSingletonHello } from '../AbstractSingletonHello.ts';
+import { SingletonHelloType } from '../FooType.ts';
 
 export const SINGLETON_HELLO_ATTRIBUTE = 'SINGLETON_HELLO_ATTRIBUTE';
 

@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
 
 import { request } from '@eggjs/supertest';
+import { describe, it } from 'vitest';
 
-import { response } from '../test-helpers/context.ts';
 import Koa from '../../src/index.ts';
+import { response } from '../test-helpers/context.ts';
 
 describe('res.header', () => {
   it('should return the response header object', () => {

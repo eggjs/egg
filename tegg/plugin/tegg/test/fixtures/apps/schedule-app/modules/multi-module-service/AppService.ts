@@ -1,4 +1,5 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+
 import AppRepo from '../multi-module-repo/AppRepo.js';
 
 @SingletonProto({

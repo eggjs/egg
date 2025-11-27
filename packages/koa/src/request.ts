@@ -1,14 +1,14 @@
-import net, { type Socket } from 'node:net';
-import { format as stringify } from 'node:url';
-import qs, { type ParsedUrlQuery } from 'node:querystring';
-import util from 'node:util';
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import net, { type Socket } from 'node:net';
+import qs, { type ParsedUrlQuery } from 'node:querystring';
+import { format as stringify } from 'node:url';
+import util from 'node:util';
 
 import accepts, { type Accepts } from 'accepts';
 import contentType from 'content-type';
+import fresh from 'fresh';
 import parse from 'parseurl';
 import typeis from 'type-is';
-import fresh from 'fresh';
 
 import type { Application } from './application.ts';
 import type { Context } from './context.ts';

@@ -1,5 +1,6 @@
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
 import { createApp, type MockApplication } from '../../utils.ts';
 
 describe('test/lib/plugins/onerror.test.ts', () => {

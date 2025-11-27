@@ -1,8 +1,8 @@
 import { Agent } from 'egg';
 
+import { Scheduler } from '../../lib/schedule.ts';
 import { BaseStrategy } from '../../lib/strategy/base.ts';
 import { TimerStrategy } from '../../lib/strategy/timer.ts';
-import { Scheduler } from '../../lib/schedule.ts';
 
 const SCHEDULE = Symbol('agent schedule');
 

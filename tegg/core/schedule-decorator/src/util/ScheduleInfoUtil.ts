@@ -1,6 +1,6 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
-import { IS_SCHEDULE, SCHEDULE_PARAMS, SCHEDULE_OPTIONS } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, ScheduleOptions, ScheduleParams } from '@eggjs/tegg-types';
+import { IS_SCHEDULE, SCHEDULE_PARAMS, SCHEDULE_OPTIONS } from '@eggjs/tegg-types';
 
 export class ScheduleInfoUtil {
   static isSchedule(clazz: EggProtoImplClass): boolean {

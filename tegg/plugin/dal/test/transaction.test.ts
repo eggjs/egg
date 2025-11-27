@@ -1,9 +1,9 @@
-import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
 
+import { MysqlDataSourceManager } from '../src/lib/MysqlDataSourceManager.ts';
 import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.ts';
 import { FooService } from './fixtures/apps/dal-app/modules/dal/FooService.ts';
-import { MysqlDataSourceManager } from '../src/lib/MysqlDataSourceManager.ts';
 import { getFixtures } from './utils.ts';
 
 describe('plugin/dal/test/transaction.test.ts', () => {

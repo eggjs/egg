@@ -1,6 +1,6 @@
 import { FrameworkBaseError } from '@eggjs/errors';
-import { ErrorCodes } from '@eggjs/tegg-types';
 import type { EggPrototypeName, QualifierInfo } from '@eggjs/tegg-types';
+import { ErrorCodes } from '@eggjs/tegg-types';
 
 export class TeggError extends FrameworkBaseError {
   get module() {

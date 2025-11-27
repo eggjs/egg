@@ -1,6 +1,6 @@
 import { ColumnModel, IndexModel, TableModel } from '@eggjs/dal-decorator';
-import { ColumnType, IndexType } from '@eggjs/tegg-types';
 import type { BaseSpatialParams, ColumnTypeParams } from '@eggjs/tegg-types';
+import { ColumnType, IndexType } from '@eggjs/tegg-types';
 
 // TODO diff 实现
 export class SqlGenerator {

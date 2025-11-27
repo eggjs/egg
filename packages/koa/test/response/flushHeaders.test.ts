@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
-import type { AddressInfo } from 'node:net';
-import http from 'node:http';
-import { describe, it } from 'vitest';
 import { once } from 'node:events';
+import http from 'node:http';
+import type { AddressInfo } from 'node:net';
 import { PassThrough } from 'node:stream';
 
 import { request } from '@eggjs/supertest';
+import { describe, it } from 'vitest';
 
 import Koa, { type Context } from '../../src/index.ts';
 

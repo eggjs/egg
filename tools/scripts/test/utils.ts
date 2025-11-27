@@ -1,5 +1,5 @@
-import { scheduler } from 'node:timers/promises';
 import { ChildProcess } from 'node:child_process';
+import { scheduler } from 'node:timers/promises';
 
 import { Coffee as _Coffee } from 'coffee';
 

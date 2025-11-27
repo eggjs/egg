@@ -1,5 +1,5 @@
-import type { Context } from 'egg';
 import { type Next } from '@eggjs/tegg';
+import type { Context } from 'egg';
 
 let index = 0;
 

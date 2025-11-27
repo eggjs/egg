@@ -1,5 +1,6 @@
-import type { LifecycleHook } from '@eggjs/lifecycle';
 import { QualifierUtil, EggQualifierAttribute, EggType } from '@eggjs/core-decorator';
+import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '@eggjs/eventbus-runtime';
+import type { LifecycleHook } from '@eggjs/lifecycle';
 import {
   EggLoadUnitType,
   EggPrototypeCreatorFactory,
@@ -7,7 +8,6 @@ import {
   type LoadUnit,
   type LoadUnitLifecycleContext,
 } from '@eggjs/metadata';
-import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '@eggjs/eventbus-runtime';
 
 const REGISTER_CLAZZ = [EventHandlerFactory, EventContextFactory, SingletonEventBus];
 

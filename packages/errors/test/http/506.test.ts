@@ -1,6 +1,7 @@
+import { strict as assert } from 'assert';
+
 import { describe, it } from 'vitest';
 
-import { strict as assert } from 'assert';
 import { VariantAlsoNegotiatesError, E506 } from '../../src/index.ts';
 
 describe('test/http/506.test.ts', () => {

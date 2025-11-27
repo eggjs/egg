@@ -1,7 +1,7 @@
 import type { MiddlewareFunc } from 'egg';
 
-import { checkIfIgnore } from '../utils.ts';
 import type { SecurityConfig } from '../../config/config.default.ts';
+import { checkIfIgnore } from '../utils.ts';
 
 // https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Referrer-Policy
 const ALLOWED_POLICIES_ENUM = [

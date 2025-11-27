@@ -1,6 +1,6 @@
 import type { EggPrototypeName } from '../../core-decorator/index.ts';
-import type { ControllerTypeLike, MiddlewareFunc } from './types.ts';
 import type { MethodMeta } from './MethodMeta.ts';
+import type { ControllerTypeLike, MiddlewareFunc } from './types.ts';
 
 export interface ControllerMetadata {
   readonly protoName: EggPrototypeName;

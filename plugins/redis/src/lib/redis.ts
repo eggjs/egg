@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 import { once } from 'node:events';
 
-import { Redis } from 'ioredis';
 import type { ILifecycleBoot, EggApplicationCore } from 'egg';
+import { Redis } from 'ioredis';
 
 import type { RedisClusterOptions, RedisClientOptions } from '../config/config.default.ts';
 

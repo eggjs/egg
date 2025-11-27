@@ -1,6 +1,6 @@
-import { DAL_IS_TABLE, DAL_TABLE_PARAMS } from '@eggjs/tegg-types';
-import type { EggProtoImplClass, TableParams } from '@eggjs/tegg-types';
 import { MetadataUtil } from '@eggjs/core-decorator';
+import type { EggProtoImplClass, TableParams } from '@eggjs/tegg-types';
+import { DAL_IS_TABLE, DAL_TABLE_PARAMS } from '@eggjs/tegg-types';
 
 export const TABLE_CLAZZ_LIST: Array<EggProtoImplClass> = [];
 

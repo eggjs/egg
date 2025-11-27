@@ -1,5 +1,5 @@
-import fs from 'node:fs/promises';
 import { strict as assert } from 'node:assert';
+import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';

@@ -1,5 +1,5 @@
-import type { SessionConfig } from './config/config.default.ts';
 import type { SessionStoreOrAppSessionStoreClass, SessionStore } from './app/extend/application.ts';
+import type { SessionConfig } from './config/config.default.ts';
 
 declare module 'egg' {
   // add EggAppConfig overrides types

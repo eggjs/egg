@@ -1,5 +1,5 @@
-import { describe, it, beforeAll, afterAll } from 'vitest';
 import { request } from '@eggjs/supertest';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { createApp, getFilepath, type Application } from '../helper.js';
 

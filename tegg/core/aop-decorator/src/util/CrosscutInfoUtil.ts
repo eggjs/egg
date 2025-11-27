@@ -1,6 +1,6 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
-import { IS_CROSSCUT_ADVICE, CROSSCUT_INFO_LIST } from '@eggjs/tegg-types';
 import type { CrosscutInfo, EggProtoImplClass, IAdvice } from '@eggjs/tegg-types';
+import { IS_CROSSCUT_ADVICE, CROSSCUT_INFO_LIST } from '@eggjs/tegg-types';
 
 export class CrosscutInfoUtil {
   static setIsCrosscutAdvice(isCrosscutAdvice: boolean, clazz: EggProtoImplClass<IAdvice>): void {

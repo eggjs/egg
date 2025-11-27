@@ -1,5 +1,5 @@
-import { Application, Context } from 'egg';
 import { default as mock, MockOption, MockApplication } from '@eggjs/mock';
+import { Application, Context } from 'egg';
 
 describe('test/index.test.ts', () => {
   let app: BaseMockApplication<Application, Context>;

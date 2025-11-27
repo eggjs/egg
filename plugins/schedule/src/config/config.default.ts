@@ -1,5 +1,5 @@
-import type { PartialEggConfig } from 'egg';
 import type { ParserOptions as CronOptions } from 'cron-parser';
+import type { PartialEggConfig } from 'egg';
 
 export type { CronOptions };
 

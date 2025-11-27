@@ -2,8 +2,8 @@ import { strict as assert } from 'node:assert';
 
 import { describe, it } from 'vitest';
 
-import { Lifecycle } from '../src/lifecycle.ts';
 import { EggCore } from '../src/egg.ts';
+import { Lifecycle } from '../src/lifecycle.ts';
 
 describe('test/lifecycle.test.ts', () => {
   it('should forbid adding hook after initialization', () => {

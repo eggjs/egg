@@ -1,3 +1,5 @@
+import { MetadataUtil } from '@eggjs/core-decorator';
+import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
 import {
   CONTROLLER_ACL,
   CONTROLLER_AOP_MIDDLEWARES,
@@ -7,8 +9,6 @@ import {
   CONTROLLER_TYPE,
   type IAdvice,
 } from '@eggjs/tegg-types';
-import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
-import { MetadataUtil } from '@eggjs/core-decorator';
 
 export class ControllerInfoUtil {
   static addControllerMiddleware(middleware: MiddlewareFunc, clazz: EggProtoImplClass): void {

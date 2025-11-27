@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+
 import { describe, it } from 'vitest';
+
 import { ModelMetaBuilder, ModelMetadata, AttributeMeta, IndexMeta } from '../../src/index.js';
 import { Foo } from '../fixtures/Foo.js';
 

@@ -1,16 +1,16 @@
-import path from 'node:path';
-import fs from 'node:fs/promises';
 import cp from 'node:child_process';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vitest';
 import coffee from 'coffee';
-import { request } from 'urllib';
-import { mm, restore } from 'mm';
 import { detectPort } from 'detect-port';
+import { mm, restore } from 'mm';
+import { request } from 'urllib';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vitest';
 
-import { cleanup, type Coffee } from './utils.ts';
 import { isWindows } from '../src/helper.ts';
+import { cleanup, type Coffee } from './utils.ts';
 
 const __dirname = import.meta.dirname;
 

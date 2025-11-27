@@ -2,10 +2,10 @@ import { debuglog } from 'node:util';
 
 import type { ILifecycleBoot } from 'egg';
 
-import { WorkerStrategy } from './lib/strategy/worker.ts';
-import { AllStrategy } from './lib/strategy/all.ts';
-import type { EggScheduleJobInfo } from './lib/types.ts';
 import type Agent from './app/extend/agent.ts';
+import { AllStrategy } from './lib/strategy/all.ts';
+import { WorkerStrategy } from './lib/strategy/worker.ts';
+import type { EggScheduleJobInfo } from './lib/types.ts';
 
 const debug = debuglog('egg/schedule/agent');
 

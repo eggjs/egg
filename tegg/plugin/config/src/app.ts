@@ -1,8 +1,8 @@
 import { debuglog } from 'node:util';
 
-import type { Application, ILifecycleBoot } from 'egg';
-import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
+import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import type { Application, ILifecycleBoot } from 'egg';
 
 import { ModuleScanner } from './lib/ModuleScanner.ts';
 

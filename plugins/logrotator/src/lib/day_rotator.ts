@@ -1,8 +1,8 @@
-import path from 'node:path';
-import moment from 'moment';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { debuglog } from 'node:util';
 
+import moment from 'moment';
 import { exists } from 'utility';
 
 import { LogRotator, type RotateFile, type RotatorOptions } from './rotator.ts';

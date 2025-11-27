@@ -1,13 +1,13 @@
 import assert from 'node:assert';
 import { mock } from 'node:test';
 
-import { describe, beforeEach, afterEach, it } from 'vitest';
 import { EggPrototypeFactory } from '@eggjs/metadata';
+import { describe, beforeEach, afterEach, it } from 'vitest';
 
-import TestUtil from './util.js';
+import { EggContainerFactory, ContextHandler } from '../src/index.js';
 import { EggTestContext } from './fixtures/EggTestContext.js';
 import CacheService from './fixtures/modules/init-type-qualifier-module/CacheService.js';
-import { EggContainerFactory, ContextHandler } from '../src/index.js';
+import TestUtil from './util.js';
 
 describe('test/LoadUnit/QualifierLoadUnitInstance.test.ts', () => {
   let ctx: EggTestContext;

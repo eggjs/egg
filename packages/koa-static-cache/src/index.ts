@@ -1,13 +1,13 @@
 import crypto from 'node:crypto';
-import { debuglog, promisify } from 'node:util';
-import fs from 'node:fs/promises';
 import { createReadStream, statSync, readFileSync } from 'node:fs';
-import zlib from 'node:zlib';
+import fs from 'node:fs/promises';
 import path from 'node:path';
+import { debuglog, promisify } from 'node:util';
+import zlib from 'node:zlib';
 
-import mime from 'mime-types';
 import { compressible } from '@eggjs/compressible';
 import readDir from 'fs-readdir-recursive';
+import mime from 'mime-types';
 import { exists, decodeURIComponent as safeDecodeURIComponent } from 'utility';
 
 const debug = debuglog('egg/koa-static-cache');

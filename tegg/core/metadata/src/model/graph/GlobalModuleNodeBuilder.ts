@@ -1,5 +1,5 @@
-import { type EggProtoImplClass, type ProtoDescriptor } from '@eggjs/tegg-types';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import { type EggProtoImplClass, type ProtoDescriptor } from '@eggjs/tegg-types';
 
 import { ProtoDescriptorHelper } from '../ProtoDescriptorHelper.ts';
 import { GlobalModuleNode, type GlobalModuleNodeOptions } from './GlobalModuleNode.ts';

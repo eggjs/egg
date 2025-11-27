@@ -1,6 +1,6 @@
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readFile } from 'node:fs/promises';
 
 import type { Context, MiddlewareFunc } from '../../lib/egg.ts';
 

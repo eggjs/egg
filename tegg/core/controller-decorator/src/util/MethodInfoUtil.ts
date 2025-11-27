@@ -1,5 +1,6 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
 import { MapUtil } from '@eggjs/tegg-common-util';
+import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
 import {
   type IAdvice,
   METHOD_ACL,
@@ -10,7 +11,6 @@ import {
   METHOD_CONTROLLER_TYPE_MAP,
   METHOD_MIDDLEWARES,
 } from '@eggjs/tegg-types';
-import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
 
 type METHOD_MAP = Map<string, ControllerTypeLike | string[]>;
 type MethodAopRegisterMap = Map<string, boolean>;

@@ -1,6 +1,6 @@
 import { SingletonProto } from '@eggjs/core-decorator';
-import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggRuntimeContext } from '@eggjs/tegg-types';
+import { AccessLevel } from '@eggjs/tegg-types';
 
 export type ContextCreator = (parentContext?: EggRuntimeContext) => EggRuntimeContext;
 

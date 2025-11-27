@@ -1,8 +1,8 @@
-import { inspect } from 'node:util';
-import { STATUS_CODES } from 'node:http';
-import { Server as HttpsServer } from 'node:tls';
-import type { Server, AddressInfo } from 'node:net';
 import { deepStrictEqual } from 'node:assert';
+import { STATUS_CODES } from 'node:http';
+import type { Server, AddressInfo } from 'node:net';
+import { Server as HttpsServer } from 'node:tls';
+import { inspect } from 'node:util';
 
 import { Request, type Response } from 'superagent';
 

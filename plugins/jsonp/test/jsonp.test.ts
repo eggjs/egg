@@ -1,9 +1,8 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 describe('test/jsonp.test.ts', () => {
   let app: MockApplication;

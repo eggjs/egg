@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 
-import { describe, it, afterEach } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach } from 'vitest';
 
 import { cluster } from '../utils.ts';
 

@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
-import type { ServerResponse, IncomingMessage } from 'node:http';
 import { once } from 'node:events';
+import type { ServerResponse, IncomingMessage } from 'node:http';
 
 import { request } from '@eggjs/supertest';
 import createHttpError, { HttpError } from 'http-errors';
+import { describe, it } from 'vitest';
 
 import Koa from '../../src/index.ts';
 
@@ -140,11 +140,14 @@ describe('app', () => {
 
   it('should print object works', () => {
     const app = new Koa();
-    const ctx = app.createContext({} as unknown as IncomingMessage, {
-      getHeaders() {
-        return {};
-      },
-    } as unknown as ServerResponse);
+    const ctx = app.createContext(
+      {} as unknown as IncomingMessage,
+      {
+        getHeaders() {
+          return {};
+        },
+      } as unknown as ServerResponse,
+    );
     console.log(ctx.request);
     console.log(ctx.response);
     console.log(ctx.context);

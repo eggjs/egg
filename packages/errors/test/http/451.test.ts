@@ -1,6 +1,7 @@
+import { strict as assert } from 'assert';
+
 import { describe, it } from 'vitest';
 
-import { strict as assert } from 'assert';
 import { UnavailableForLegalReasonsError, E451 } from '../../src/index.ts';
 
 describe('test/http/451.test.ts', () => {

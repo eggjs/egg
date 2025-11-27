@@ -1,5 +1,4 @@
-import type { Application } from 'egg';
-import { type Loader, TeggError } from '@eggjs/metadata';
+import { BackgroundTaskHelper } from '@eggjs/background-task';
 import {
   AccessLevel,
   type EggProtoImplClass,
@@ -11,12 +10,13 @@ import {
   PrototypeUtil,
   QualifierUtil,
 } from '@eggjs/core-decorator';
-import { ObjectUtils } from '@eggjs/tegg-common-util';
-import { BackgroundTaskHelper } from '@eggjs/background-task';
 import { EggObjectFactory } from '@eggjs/dynamic-inject-runtime';
+import { type Loader, TeggError } from '@eggjs/metadata';
+import { ObjectUtils } from '@eggjs/tegg-common-util';
+import type { Application } from 'egg';
 
-import { ModuleConfigLoader } from './ModuleConfigLoader.ts';
 import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl.ts';
+import { ModuleConfigLoader } from './ModuleConfigLoader.ts';
 
 export const APP_CLAZZ_BLACK_LIST: readonly string[] = ['eggObjectFactory', 'moduleConfigs'];
 

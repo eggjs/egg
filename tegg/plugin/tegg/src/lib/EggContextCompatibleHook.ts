@@ -1,9 +1,9 @@
-import { ObjectInitType, PrototypeUtil } from '@eggjs/core-decorator';
 import { BackgroundTaskHelper } from '@eggjs/background-task';
+import { ObjectInitType, PrototypeUtil } from '@eggjs/core-decorator';
 import type { LifecycleHook } from '@eggjs/lifecycle';
-import { EggContainerFactory, type EggContext, type EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 import type { EggPrototype } from '@eggjs/metadata';
 import { ROOT_PROTO } from '@eggjs/module-common';
+import { EggContainerFactory, type EggContext, type EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 
 import { ModuleHandler } from './ModuleHandler.ts';
 

@@ -1,5 +1,5 @@
-import z from 'zod';
 import { SessionOptions } from 'koa-session';
+import z from 'zod';
 
 export const SessionConfig = SessionOptions.extend({
   logValue: z.boolean().default(true),

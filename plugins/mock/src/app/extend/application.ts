@@ -1,13 +1,13 @@
-import { debuglog } from 'node:util';
-import http, { IncomingMessage } from 'node:http';
-import fs from 'node:fs';
 import assert from 'node:assert';
+import fs from 'node:fs';
+import http, { IncomingMessage } from 'node:http';
+import { debuglog } from 'node:util';
 
-import mergeDescriptors from 'merge-descriptors';
-import { isAsyncFunction, isObject } from 'is-type-of';
-import { mock, restore } from 'mm';
-import { Transport, Logger, type LoggerLevel, type LoggerMeta } from 'egg-logger';
 import { type Context, Application } from 'egg';
+import { Transport, Logger, type LoggerLevel, type LoggerMeta } from 'egg-logger';
+import { isAsyncFunction, isObject } from 'is-type-of';
+import mergeDescriptors from 'merge-descriptors';
+import { mock, restore } from 'mm';
 import type { MockAgent } from 'urllib';
 
 import { getMockAgent, restoreMockAgent } from '../../lib/mock_agent.ts';

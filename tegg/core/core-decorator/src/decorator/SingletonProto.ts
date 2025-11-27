@@ -1,5 +1,5 @@
-import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 import type { SingletonProtoParams } from '@eggjs/tegg-types';
+import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 
 import { Prototype, type PrototypeDecorator } from './Prototype.ts';
 

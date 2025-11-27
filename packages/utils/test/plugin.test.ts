@@ -1,11 +1,13 @@
-import path from 'node:path';
 import { strict as assert } from 'node:assert';
+import { existsSync } from 'node:fs';
 import { rm } from 'node:fs/promises';
 import fsPromise from 'node:fs/promises';
-import { existsSync } from 'node:fs';
-import { describe, it, beforeEach, afterEach } from 'vitest';
+import path from 'node:path';
+
 import coffee from 'coffee';
 import { runscript } from 'runscript';
+import { describe, it, beforeEach, afterEach } from 'vitest';
+
 import utils from '../src/index.js';
 import { getFilepath } from './helper.js';
 

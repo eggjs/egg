@@ -1,10 +1,10 @@
 import { expect, test } from 'vitest';
 
-import { FooHandler } from './fixtures/right-event-handle.ts';
-import { MultiHandler } from './fixtures/multiple-events-handle.ts';
-import { EventContextHandler } from './fixtures/event-handle-with-context.ts';
-import { EmptyHandler } from './fixtures/empty-handle.ts';
 import { EventInfoUtil } from '../src/index.ts';
+import { EmptyHandler } from './fixtures/empty-handle.ts';
+import { EventContextHandler } from './fixtures/event-handle-with-context.ts';
+import { MultiHandler } from './fixtures/multiple-events-handle.ts';
+import { FooHandler } from './fixtures/right-event-handle.ts';
 
 test('getEventName should work', () => {
   expect(EventInfoUtil.getEventName(FooHandler)).toBe('foo');

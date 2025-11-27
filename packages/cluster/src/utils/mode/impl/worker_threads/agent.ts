@@ -2,9 +2,9 @@ import workerThreads, { type Worker } from 'node:worker_threads';
 
 import { type Options as gracefulExitOptions } from 'graceful-process';
 
-import { BaseAgentUtils, BaseAgentWorker } from '../../base/agent.ts';
-import type { MessageBody } from '../../../messenger.ts';
 import { ClusterAgentWorkerError } from '../../../../error/ClusterAgentWorkerError.ts';
+import type { MessageBody } from '../../../messenger.ts';
+import { BaseAgentUtils, BaseAgentWorker } from '../../base/agent.ts';
 
 export class AgentThreadWorker extends BaseAgentWorker<Worker> {
   get workerId(): number {

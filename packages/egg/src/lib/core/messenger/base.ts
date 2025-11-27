@@ -1,7 +1,7 @@
 import { EventEmitter, captureRejectionSymbol } from 'node:events';
 
-import { MessageUnhandledRejectionError } from '../../error/index.ts';
 import { EggApplicationCore } from '../../egg.ts';
+import { MessageUnhandledRejectionError } from '../../error/index.ts';
 
 export class BaseMessenger extends EventEmitter {
   protected readonly egg: EggApplicationCore;

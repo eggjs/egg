@@ -1,11 +1,11 @@
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
-import { Flags } from '@oclif/core';
 import { importResolve } from '@eggjs/utils';
+import { Flags } from '@oclif/core';
 
-import Test from './test.ts';
 import { type ForkNodeOptions } from '../baseCommand.ts';
+import Test from './test.ts';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

@@ -1,5 +1,5 @@
-import type { EggPrototype, EggPrototypeLifecycleContext, LifecycleHook } from '@eggjs/tegg-types';
 import { CrosscutAdviceFactory, CrosscutInfoUtil } from '@eggjs/aop-decorator';
+import type { EggPrototype, EggPrototypeLifecycleContext, LifecycleHook } from '@eggjs/tegg-types';
 
 export class EggPrototypeCrossCutHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;

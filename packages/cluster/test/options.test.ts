@@ -1,10 +1,10 @@
-import path from 'node:path';
 import { strict as assert } from 'node:assert';
 import os from 'node:os';
+import path from 'node:path';
 
-import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { importResolve } from '@eggjs/utils';
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 
 import { parseOptions } from '../src/utils/options.ts';
 import { getFilepath, cluster } from './utils.ts';

@@ -1,8 +1,8 @@
-import { debuglog } from 'node:util';
 import path from 'node:path';
+import { debuglog } from 'node:util';
 
-import { mm, isMocked } from 'mm';
 import { getFrameworkPath } from '@eggjs/utils';
+import { mm, isMocked } from 'mm';
 import { readJSONSync } from 'utility';
 
 import type { MockOptions, MockApplicationOptions } from './types.ts';

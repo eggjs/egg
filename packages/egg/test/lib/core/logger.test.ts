@@ -1,11 +1,11 @@
 import { strict as assert } from 'node:assert';
-import path from 'node:path';
 import fs from 'node:fs';
+import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { levels } from 'egg-logger';
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 
 import { type MockApplication, createApp, cluster, getFilepath } from '../../utils.ts';
 

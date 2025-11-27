@@ -1,14 +1,14 @@
 import { strict as assert } from 'node:assert';
-import { scheduler } from 'node:timers/promises';
-import fs from 'node:fs';
 import crypto from 'node:crypto';
+import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
+import { scheduler } from 'node:timers/promises';
 
-import { request } from '@eggjs/supertest';
-import { LRU } from 'ylru';
 import { Application as Koa } from '@eggjs/koa';
+import { request } from '@eggjs/supertest';
 import { describe, it } from 'vitest';
+import { LRU } from 'ylru';
 
 import { staticCache } from '../src/index.ts';
 

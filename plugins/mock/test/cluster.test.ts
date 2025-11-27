@@ -1,10 +1,10 @@
 import { strict as assert } from 'node:assert';
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { detectPort } from 'detect-port';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
-import { getFixtures } from './helper.ts';
 import mm, { type MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe.skipIf(process.platform === 'win32').sequential('test/cluster.test.ts', () => {
   afterEach(mm.restore);
