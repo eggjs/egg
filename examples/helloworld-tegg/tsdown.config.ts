@@ -7,4 +7,5 @@ export default defineConfig({
   exports: {
     devExports: true,
   },
+  fixedExtension: false,
 });

@@ -4,7 +4,7 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.mjs",
+      ".": "./dist/index.js",
       "./package.json": "./package.json"
     }
   },
@@ -93,9 +93,9 @@
       "-h"
     ]
   },
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./package.json": "./package.json"
