@@ -42,6 +42,9 @@ const config: UserWorkspaceConfig = defineConfig({
     //     ],
     //   },
     // },
+    experimental: {
+      fsModuleCache: true,
+    },
   },
 });
 
