@@ -134,7 +134,7 @@ catalog:
   is-type-of: ^2.2.0
   jest-changed-files: ^30.0.0
   js-beautify: ^1.15.3
-  js-yaml: ^4.1.0
+  js-yaml: ^4.1.1
   jsonp-body: ^2.0.0
   keygrip: ^1.0.2
   koa-bodyparser: ^4.4.1
