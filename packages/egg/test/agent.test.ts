@@ -3,8 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 
 import { createApp, getFilepath, type MockApplication, cluster } from './utils.ts';
 

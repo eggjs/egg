@@ -1,4 +1,5 @@
 import { debuglog } from 'node:util';
+
 import { MockAgent, setGlobalDispatcher, getGlobalDispatcher, Dispatcher, HttpClient } from 'urllib';
 
 const debug = debuglog('egg/mock/lib/mock_agent');

@@ -2,9 +2,9 @@ import { strict as assert } from 'node:assert';
 import { readFile } from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
-import coffee from 'coffee';
 import { mm, type MockClusterApplication } from '@eggjs/mock';
+import coffee from 'coffee';
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 
 import { cluster, getFilepath } from './utils.ts';
 

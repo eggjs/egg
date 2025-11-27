@@ -1,10 +1,10 @@
-import path from 'node:path';
 import { strict as assert } from 'node:assert';
+import path from 'node:path';
 
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
-import { getFixtures } from './helper.ts';
 import mm, { type MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 const fixtures = getFixtures('');
 

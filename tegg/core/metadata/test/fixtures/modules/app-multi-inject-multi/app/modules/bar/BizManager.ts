@@ -7,8 +7,8 @@ import {
   type MultiInstancePrototypeGetObjectsContext,
   MultiInstanceInfo,
 } from '@eggjs/core-decorator';
-import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { type EggProtoImplClass, LoadUnitNameQualifierAttribute, QualifierUtil } from '@eggjs/core-decorator';
+import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 
 import { Secret, SecretQualifierAttribute } from '../foo/Secret.ts';
 

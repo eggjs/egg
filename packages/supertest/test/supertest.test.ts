@@ -1,13 +1,13 @@
 import { strict as assert } from 'node:assert';
-import https from 'node:https';
-import fs from 'node:fs';
-import path from 'node:path';
-import type { AddressInfo } from 'node:net';
 import { once } from 'node:events';
+import fs from 'node:fs';
+import https from 'node:https';
+import type { AddressInfo } from 'node:net';
+import path from 'node:path';
 
-import express, { type Express } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import express, { type Express } from 'express';
 import { describe, it, beforeEach, beforeAll, expect } from 'vitest';
 
 import request, { Test } from '../src/index.ts';

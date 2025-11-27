@@ -1,4 +1,5 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+
 import type AppService from '../multi-module-service/AppService.ts';
 
 @SingletonProto({

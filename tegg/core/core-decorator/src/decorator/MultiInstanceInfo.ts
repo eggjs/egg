@@ -1,4 +1,5 @@
 import type { QualifierAttribute } from '@eggjs/tegg-types';
+
 import { PrototypeUtil } from '../util/index.ts';
 
 export function MultiInstanceInfo(attributes: QualifierAttribute[]) {

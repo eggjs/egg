@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 
 import { Application as Koa } from '@eggjs/koa';
-import methods from 'methods';
 import request from '@eggjs/supertest';
+import methods from 'methods';
 import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
 
 import Router from '../src/index.ts';

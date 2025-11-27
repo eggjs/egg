@@ -1,7 +1,7 @@
 import path from 'node:path';
 
-import nunjucks from 'nunjucks';
 import type { Application } from 'egg';
+import nunjucks from 'nunjucks';
 
 import { NunjucksFileLoader } from './file_loader.ts';
 import { createHelper } from './helper.ts';

@@ -1,5 +1,6 @@
 import { debuglog } from 'node:util';
 
+import { ObjectUtils } from '@eggjs/tegg-common-util';
 import {
   type EggProtoImplClass,
   type InjectObjectInfo,
@@ -8,7 +9,6 @@ import {
   InjectType,
   InitTypeQualifierAttribute,
 } from '@eggjs/tegg-types';
-import { ObjectUtils } from '@eggjs/tegg-common-util';
 
 import { PrototypeUtil, QualifierUtil } from '../util/index.ts';
 

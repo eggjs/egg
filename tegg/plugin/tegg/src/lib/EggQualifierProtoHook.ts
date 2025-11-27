@@ -1,10 +1,10 @@
 import { debuglog } from 'node:util';
 
-import type { Application } from 'egg';
-import type { LoadUnitLifecycleContext, LoadUnit } from '@eggjs/metadata';
 import { PrototypeUtil, QualifierUtil, EggQualifierAttribute, EggType } from '@eggjs/core-decorator';
 import type { LifecycleHook } from '@eggjs/lifecycle';
+import type { LoadUnitLifecycleContext, LoadUnit } from '@eggjs/metadata';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
+import type { Application } from 'egg';
 
 import {
   APP_CLAZZ_BLACK_LIST,

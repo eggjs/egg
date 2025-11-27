@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
-import { describe, it, beforeEach, afterEach } from 'vitest';
 import { LoadUnitFactory } from '@eggjs/metadata';
-import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import { EggTestContext, CoreTestHelper } from '@eggjs/module-test-util';
+import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { HelloService } from './fixtures/modules/dynamic-inject-module/HelloService.js';
 

@@ -2,8 +2,8 @@ import assert from 'node:assert';
 
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
-import { EventInfoUtil } from './EventInfoUtil.ts';
 import type { Events } from './Event.ts';
+import { EventInfoUtil } from './EventInfoUtil.ts';
 
 export interface IEventContext {
   eventName: keyof Events;

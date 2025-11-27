@@ -1,7 +1,7 @@
-import type { LifecycleHook } from '@eggjs/lifecycle';
-import type { Logger, ModuleConfigHolder } from '@eggjs/tegg-types';
 import { DatabaseForker, type DataSourceOptions } from '@eggjs/dal-runtime';
+import type { LifecycleHook } from '@eggjs/lifecycle';
 import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
+import type { Logger, ModuleConfigHolder } from '@eggjs/tegg-types';
 
 import { MysqlDataSourceManager } from './MysqlDataSourceManager.ts';
 

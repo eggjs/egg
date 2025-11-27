@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+
 import { ControllerType } from '@eggjs/tegg-types';
-import { AclController } from './fixtures/AclController.js';
+import { describe, it } from 'vitest';
+
 import { ControllerMetaBuilderFactory, HTTPControllerMeta } from '../src/index.js';
+import { AclController } from './fixtures/AclController.js';
 
 describe('test/Acl.test.ts', () => {
   it('should work', () => {

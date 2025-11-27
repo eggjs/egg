@@ -1,8 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/rds/lib/types.js';
+
 import { Inject, ModuleQualifier } from '@eggjs/core-decorator';
 import { Dao, DataSource, DataSourceInjectName, DataSourceQualifier } from '@eggjs/dal-decorator';
+import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/rds/lib/types.js';
+
 import { Foo } from '../../../../generate_codes/Foo.js';
 import FooExtension from '../../extension/FooExtension.js';
 import Structure from '../../structure/Foo.json' with { type: 'json' };

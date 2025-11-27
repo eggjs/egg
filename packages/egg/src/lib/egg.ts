@@ -1,29 +1,29 @@
-import { performance } from 'node:perf_hooks';
-import path from 'node:path';
+import assert from 'node:assert';
+import type { AsyncLocalStorage } from 'node:async_hooks';
 import fs from 'node:fs';
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import inspector from 'node:inspector';
-import type { AsyncLocalStorage } from 'node:async_hooks';
-import assert from 'node:assert';
+import path from 'node:path';
+import { performance } from 'node:perf_hooks';
 
+import { Cookies as ContextCookies } from '@eggjs/cookies';
 import { EggCore, Router } from '@eggjs/core';
 import type { EggCoreOptions, Next, MiddlewareFunc as EggCoreMiddlewareFunc, ILifecycleBoot } from '@eggjs/core';
 import { utils as eggUtils } from '@eggjs/core';
-// @ts-expect-error no types for 'cluster-client'
-import createClusterClient, { close as closeClusterClient } from 'cluster-client';
 import { extend } from '@eggjs/extend2';
-import { EggContextLogger as ContextLogger, EggLoggers, EggLogger } from 'egg-logger';
-import { Cookies as ContextCookies } from '@eggjs/cookies';
 // @ts-expect-error no types for circular-json-for-egg
 import CircularJSON from 'circular-json-for-egg';
+// @ts-expect-error no types for 'cluster-client'
+import createClusterClient, { close as closeClusterClient } from 'cluster-client';
+import { EggContextLogger as ContextLogger, EggLoggers, EggLogger } from 'egg-logger';
 
-import type { Agent } from './agent.ts';
-import type { Application } from './application.ts';
 import Context from '../app/extend/context.ts';
 import Request from '../app/extend/request.ts';
 import Response from '../app/extend/response.ts';
-import type { EggAppConfig } from './types.ts';
-import { create as createMessenger, type IMessenger } from './core/messenger/index.ts';
+import type { Agent } from './agent.ts';
+import type { Application } from './application.ts';
+import { BaseContextClass } from './core/base_context_class.ts';
+import { BaseHookClass } from './core/base_hook_class.ts';
 import { ContextHttpClient } from './core/context_httpclient.ts';
 import {
   HttpClient,
@@ -33,10 +33,10 @@ import {
   type HttpClientOptions,
 } from './core/httpclient.ts';
 import { createLoggers } from './core/logger.ts';
+import { create as createMessenger, type IMessenger } from './core/messenger/index.ts';
 import { convertObject } from './core/utils.ts';
-import { BaseContextClass } from './core/base_context_class.ts';
-import { BaseHookClass } from './core/base_hook_class.ts';
 import type { EggApplicationLoader } from './loader/index.ts';
+import type { EggAppConfig } from './types.ts';
 
 export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir'> {
   mode?: 'cluster' | 'single';

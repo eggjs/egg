@@ -1,11 +1,11 @@
-import path from 'node:path';
 import fs from 'node:fs';
 import fsPromises, { mkdir, rm } from 'node:fs/promises';
+import path from 'node:path';
 
-import { glob } from 'glob';
 import { mm, type MockApplication } from '@eggjs/mock';
-import moment from 'moment';
 import { FileTransport } from 'egg-logger';
+import { glob } from 'glob';
+import moment from 'moment';
 import { describe, it, beforeEach, afterEach, expect } from 'vitest';
 
 import { getFixtures } from './utils.ts';

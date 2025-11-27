@@ -2,21 +2,21 @@ import assert from 'node:assert';
 import path from 'node:path';
 import { mock } from 'node:test';
 
-import { describe, beforeEach, afterEach, beforeAll, afterAll, it } from 'vitest';
-import { LoaderUtil } from '@eggjs/module-test-util';
 import { EggPrototypeFactory } from '@eggjs/metadata';
+import { LoaderUtil } from '@eggjs/module-test-util';
 import { type LoadUnitInstance } from '@eggjs/tegg-types';
+import { describe, beforeEach, afterEach, beforeAll, afterAll, it } from 'vitest';
 
-import { EggTestContext } from './fixtures/EggTestContext.ts';
-import TestUtil from './util.js';
 import { EggContainerFactory } from '../src/index.js';
-import CountController from './fixtures/modules/module-for-load-unit-instance/CountController.js';
-import AppService from './fixtures/modules/multi-module/multi-module-service/AppService.js';
-import { Bar, Foo } from './fixtures/modules/extends-module/Base.js';
 import { ContextHandler } from '../src/model/ContextHandler.js';
 import { EggContextStorage } from './fixtures/EggContextStorage.js';
+import { EggTestContext } from './fixtures/EggTestContext.ts';
+import { Bar, Foo } from './fixtures/modules/extends-module/Base.js';
+import CountController from './fixtures/modules/module-for-load-unit-instance/CountController.js';
 import { FOO_ATTRIBUTE, FooLogger } from './fixtures/modules/multi-instance-module/MultiInstance.js';
 import { FooLoggerConstructor } from './fixtures/modules/multi-instance-module/MultiInstanceConstructor.js';
+import AppService from './fixtures/modules/multi-module/multi-module-service/AppService.js';
+import TestUtil from './util.js';
 
 describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
   describe('ModuleLoadUnitInstance', () => {

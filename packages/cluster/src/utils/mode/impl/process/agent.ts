@@ -1,13 +1,13 @@
-import { debuglog } from 'node:util';
 import { fork, type ChildProcess, type ForkOptions } from 'node:child_process';
+import { debuglog } from 'node:util';
 
-import { sendmessage } from 'sendmessage';
 import { graceful as gracefulExit, type Options as gracefulExitOptions } from 'graceful-process';
+import { sendmessage } from 'sendmessage';
 
-import { BaseAgentWorker, BaseAgentUtils } from '../../base/agent.ts';
-import { terminate } from '../../../terminate.ts';
-import type { MessageBody } from '../../../messenger.ts';
 import { ClusterAgentWorkerError } from '../../../../error/ClusterAgentWorkerError.ts';
+import type { MessageBody } from '../../../messenger.ts';
+import { terminate } from '../../../terminate.ts';
+import { BaseAgentWorker, BaseAgentUtils } from '../../base/agent.ts';
 
 const debug = debuglog('egg/cluster/agent');
 

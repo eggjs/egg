@@ -1,5 +1,6 @@
-import { AccessLevel } from '@eggjs/tegg-types';
 import { ContextProto, Inject } from '@eggjs/core-decorator';
+import { AccessLevel } from '@eggjs/tegg-types';
+
 import App from '../multi-module-common/model/App.js';
 import PersistenceService from './PersistenceService.js';
 

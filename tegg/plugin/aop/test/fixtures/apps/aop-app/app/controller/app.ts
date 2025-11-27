@@ -1,4 +1,5 @@
 import { Controller } from 'egg';
+
 import { Hello } from '../../modules/aop-module/Hello.js';
 
 export default class App extends Controller {

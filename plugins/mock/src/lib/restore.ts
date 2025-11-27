@@ -2,8 +2,8 @@ import { debuglog } from 'node:util';
 
 import { restore as mmRestore } from 'mm';
 
-import { restoreMockAgent } from './mock_agent.ts';
 import { restore as clusterRestore } from './cluster.ts';
+import { restoreMockAgent } from './mock_agent.ts';
 
 const debug = debuglog('egg/mock/lib/restore');
 

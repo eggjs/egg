@@ -1,7 +1,6 @@
-import { EggLoadUnitType, type EggPrototype, type LoadUnit } from '@eggjs/metadata';
 import { type EggObjectName, type EggPrototypeName, ObjectInitType } from '@eggjs/core-decorator';
 import { IdenticalUtil } from '@eggjs/lifecycle';
-import type { Id } from '@eggjs/tegg-types';
+import { EggLoadUnitType, type EggPrototype, type LoadUnit } from '@eggjs/metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
 import {
   type EggObject,
@@ -11,6 +10,7 @@ import {
   type LoadUnitInstanceLifecycleContext,
   LoadUnitInstanceLifecycleUtil,
 } from '@eggjs/tegg-runtime';
+import type { Id } from '@eggjs/tegg-types';
 
 export class AppLoadUnitInstance implements LoadUnitInstance {
   readonly loadUnit: LoadUnit;

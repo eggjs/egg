@@ -1,8 +1,7 @@
 import path from 'node:path';
 
-import { defineConfigFactory, type PartialEggConfig } from 'egg';
-
 import type { Options as StaticCacheOptions } from '@eggjs/koa-static-cache';
+import { defineConfigFactory, type PartialEggConfig } from 'egg';
 
 export interface StaticDirOptions extends Omit<StaticCacheOptions, 'dir'> {
   /**

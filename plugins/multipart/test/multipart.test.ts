@@ -1,10 +1,10 @@
 import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
-import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { mm, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
 
 import { getFixtures } from './utils.ts';
 

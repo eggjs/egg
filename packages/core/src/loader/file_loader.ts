@@ -1,11 +1,11 @@
 import assert from 'node:assert';
 import fs from 'node:fs';
-import { debuglog } from 'node:util';
 import path from 'node:path';
+import { debuglog } from 'node:util';
 
+import { isSupportTypeScript } from '@eggjs/utils';
 import globby from 'globby';
 import { isClass, isGeneratorFunction, isAsyncFunction, isPrimitive } from 'is-type-of';
-import { isSupportTypeScript } from '@eggjs/utils';
 
 import utils, { type Fun } from '../utils/index.ts';
 

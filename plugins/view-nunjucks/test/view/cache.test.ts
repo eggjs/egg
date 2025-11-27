@@ -1,8 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mock, mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
 import { getFixtures } from '../utils.ts';
 
 describe('test/view/cache.test.ts', () => {

@@ -1,5 +1,7 @@
 import { debuglog } from 'node:util';
 
+import { TeggError } from '@eggjs/metadata';
+import { MapUtil } from '@eggjs/tegg-common-util';
 import { ObjectInitType } from '@eggjs/tegg-types';
 import type {
   EggRuntimeContext,
@@ -10,8 +12,6 @@ import type {
   EggPrototypeName,
   Id,
 } from '@eggjs/tegg-types';
-import { TeggError } from '@eggjs/metadata';
-import { MapUtil } from '@eggjs/tegg-common-util';
 
 import { EggContainerFactory } from '../factory/EggContainerFactory.ts';
 import { EggObjectFactory } from '../factory/EggObjectFactory.ts';

@@ -1,5 +1,5 @@
-import { ObjectInitType } from '@eggjs/tegg-types';
 import { ContextProto, InitTypeQualifier, Inject } from '@eggjs/core-decorator';
+import { ObjectInitType } from '@eggjs/tegg-types';
 
 import type { ICache, CacheValue } from './Cache.ts';
 

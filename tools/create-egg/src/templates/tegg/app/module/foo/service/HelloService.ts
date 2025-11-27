@@ -1,5 +1,5 @@
-import type { EggLogger } from 'egg';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
+import type { EggLogger } from 'egg';
 
 @SingletonProto({
   // 如果需要在上层使用，需要把 accessLevel 显示声明为 public

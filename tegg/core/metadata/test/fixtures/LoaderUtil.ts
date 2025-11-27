@@ -1,7 +1,7 @@
 import { type EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
-import is from 'is-type-of';
-import { type Loader } from '@eggjs/tegg-types';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import { type Loader } from '@eggjs/tegg-types';
+import is from 'is-type-of';
 
 import { GlobalModuleNodeBuilder, GlobalGraph, GlobalModuleNode } from '../../src/index.ts';
 

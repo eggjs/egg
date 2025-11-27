@@ -1,7 +1,6 @@
 import '../types.ts';
-
-import type { Context } from 'egg';
 import { ViewEngineBase } from '@eggjs/view';
+import type { Context } from 'egg';
 
 import type { createHelper } from './helper.ts';
 

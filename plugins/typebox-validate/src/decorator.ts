@@ -1,7 +1,7 @@
+import type { ErrorObject } from 'ajv/dist/2019.js';
 import type { Context } from 'egg';
 
 import type { TSchema } from './typebox.ts';
-import type { ErrorObject } from 'ajv/dist/2019.js';
 
 type CustomErrorMessage = (ctx: Context, errors: ErrorObject[]) => string;
 type GetData = (ctx: Context, args: unknown[]) => unknown;

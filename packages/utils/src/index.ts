@@ -1,8 +1,9 @@
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
+
+import { getFrameworkOrEggPath } from './deprecated.ts';
 import { getFrameworkPath } from './framework.ts';
 import { getPlugins, getConfig, getLoadUnits } from './plugin.ts';
-import { getFrameworkOrEggPath } from './deprecated.ts';
 
 // support import { getFrameworkPath } from '@eggjs/utils'
 export { getFrameworkPath } from './framework.ts';

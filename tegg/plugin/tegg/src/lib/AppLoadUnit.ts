@@ -1,6 +1,15 @@
 import { debuglog } from 'node:util';
 
 import {
+  type EggPrototypeName,
+  type QualifierInfo,
+  PrototypeUtil,
+  InitTypeQualifierAttribute,
+  LoadUnitNameQualifierAttribute,
+  QualifierUtil,
+} from '@eggjs/core-decorator';
+import { IdenticalUtil } from '@eggjs/lifecycle';
+import {
   EggLoadUnitType,
   type EggLoadUnitTypeLike,
   type EggPrototype,
@@ -11,17 +20,8 @@ import {
   type LoadUnitLifecycleContext,
   EggPrototypeCreatorFactory,
 } from '@eggjs/metadata';
-import {
-  type EggPrototypeName,
-  type QualifierInfo,
-  PrototypeUtil,
-  InitTypeQualifierAttribute,
-  LoadUnitNameQualifierAttribute,
-  QualifierUtil,
-} from '@eggjs/core-decorator';
-import { IdenticalUtil } from '@eggjs/lifecycle';
-import type { Id } from '@eggjs/tegg-types';
 import { MapUtil } from '@eggjs/tegg-common-util';
+import type { Id } from '@eggjs/tegg-types';
 
 const debug = debuglog('egg/tegg/plugin/tegg/lib/AppLoadUnit');
 

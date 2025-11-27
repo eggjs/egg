@@ -1,13 +1,13 @@
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vitest';
 import coffee from 'coffee';
-import { request } from 'urllib';
-import { mm, restore } from 'mm';
-import { exists } from 'utility';
 import { detectPort } from 'detect-port';
+import { mm, restore } from 'mm';
+import { request } from 'urllib';
+import { exists } from 'utility';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vitest';
 
 import { cleanup, replaceWeakRefMessage, type Coffee } from './utils.ts';
 

@@ -1,5 +1,5 @@
-import { HTTPMethodEnum, type IAdvice, ObjectInitType } from '@eggjs/tegg-types';
 import { Advice } from '@eggjs/aop-decorator';
+import { HTTPMethodEnum, type IAdvice, ObjectInitType } from '@eggjs/tegg-types';
 
 import { Middleware, HTTPController, HTTPMethod } from '../../src/index.ts';
 

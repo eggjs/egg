@@ -1,11 +1,11 @@
 import assert from 'node:assert';
 
-import { AccessLevel, Inject } from '@eggjs/core-decorator';
 import { Advice } from '@eggjs/aop-decorator';
+import { AccessLevel, Inject } from '@eggjs/core-decorator';
 import { type AdviceContext, type IAdvice } from '@eggjs/tegg-types';
 
-import { Hello } from '../hello_succeed/Hello.ts';
 import { CallTrace } from '../hello_cross_cut/CallTrace.ts';
+import { Hello } from '../hello_succeed/Hello.ts';
 
 export const pointcutAdviceParams = {
   point: Math.random().toString() as string,

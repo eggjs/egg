@@ -1,5 +1,7 @@
 import { strict as assert } from 'node:assert';
+
 import { describe, it } from 'vitest';
+
 import extend from '../src/index.js';
 
 const str = 'me a test';

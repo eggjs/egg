@@ -1,14 +1,14 @@
 import assert from 'node:assert';
 
+import { Pointcut } from '@eggjs/aop-decorator';
 import type { LifecycleHook } from '@eggjs/lifecycle';
-import type { ModuleConfigHolder, Logger } from '@eggjs/tegg-types';
 import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/metadata';
+import type { ModuleConfigHolder, Logger } from '@eggjs/tegg-types';
 import { PropagationType } from '@eggjs/tegg-types';
 import { TransactionMetaBuilder } from '@eggjs/transaction-decorator';
-import { Pointcut } from '@eggjs/aop-decorator';
 
-import { TransactionalAOP, type TransactionalParams } from './TransactionalAOP.ts';
 import { MysqlDataSourceManager } from './MysqlDataSourceManager.ts';
+import { TransactionalAOP, type TransactionalParams } from './TransactionalAOP.ts';
 
 export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
   private readonly moduleConfigs: Record<string, ModuleConfigHolder>;

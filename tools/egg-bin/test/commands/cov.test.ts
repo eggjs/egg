@@ -1,9 +1,9 @@
 import assert from 'node:assert';
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
-import assertFile from 'assert-file';
 import { mock } from '@eggjs/mock';
+import assertFile from 'assert-file';
 
 import coffee from '../coffee.ts';
 import { getFixtures, getRootDirname } from '../helper.ts';

@@ -1,38 +1,4 @@
 import {
-  ModuleConfigUtil,
-  type ModuleReference,
-  type ReadModuleReferenceOptions,
-  type RuntimeConfig,
-} from '@eggjs/tegg-common-util';
-import {
-  type EggPrototype,
-  EggPrototypeLifecycleUtil,
-  GlobalGraph,
-  type LoadUnit,
-  LoadUnitFactory,
-  LoadUnitLifecycleUtil,
-  LoadUnitMultiInstanceProtoHook,
-} from '@eggjs/metadata';
-import {
-  ContextHandler,
-  EggContainerFactory,
-  type EggContext,
-  EggObjectLifecycleUtil,
-  type LoadUnitInstance,
-  LoadUnitInstanceFactory,
-  ModuleLoadUnitInstance,
-} from '@eggjs/tegg-runtime';
-import {
-  type EggProtoImplClass,
-  PrototypeUtil,
-  type ModuleConfigHolder,
-  ModuleConfigs,
-  ConfigSourceQualifierAttribute,
-  type Logger,
-} from '@eggjs/tegg';
-import { StandaloneUtil, type MainRunner } from '@eggjs/tegg/standalone';
-import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
-import {
   crossCutGraphHook,
   EggObjectAopHook,
   EggPrototypeCrossCutHook,
@@ -47,12 +13,46 @@ import {
   TableModelManager,
   TransactionPrototypeHook,
 } from '@eggjs/dal-plugin';
+import {
+  type EggPrototype,
+  EggPrototypeLifecycleUtil,
+  GlobalGraph,
+  type LoadUnit,
+  LoadUnitFactory,
+  LoadUnitLifecycleUtil,
+  LoadUnitMultiInstanceProtoHook,
+} from '@eggjs/metadata';
+import {
+  type EggProtoImplClass,
+  PrototypeUtil,
+  type ModuleConfigHolder,
+  ModuleConfigs,
+  ConfigSourceQualifierAttribute,
+  type Logger,
+} from '@eggjs/tegg';
+import {
+  ModuleConfigUtil,
+  type ModuleReference,
+  type ReadModuleReferenceOptions,
+  type RuntimeConfig,
+} from '@eggjs/tegg-common-util';
+import {
+  ContextHandler,
+  EggContainerFactory,
+  type EggContext,
+  EggObjectLifecycleUtil,
+  type LoadUnitInstance,
+  LoadUnitInstanceFactory,
+  ModuleLoadUnitInstance,
+} from '@eggjs/tegg-runtime';
+import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
+import { StandaloneUtil, type MainRunner } from '@eggjs/tegg/standalone';
 
+import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook.ts';
 import { EggModuleLoader } from './EggModuleLoader.ts';
-import { type InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit.ts';
 import { StandaloneContext } from './StandaloneContext.ts';
 import { StandaloneContextHandler } from './StandaloneContextHandler.ts';
-import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook.ts';
+import { type InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit.ts';
 
 export interface ModuleDependency extends ReadModuleReferenceOptions {
   baseDir: string;

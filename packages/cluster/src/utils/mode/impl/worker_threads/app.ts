@@ -3,8 +3,8 @@ import { Worker as ThreadWorker, threadId, parentPort, type WorkerOptions } from
 
 import type { Options as gracefulExitOptions } from 'graceful-process';
 
-import { BaseAppWorker, BaseAppUtils } from '../../base/app.ts';
 import type { MessageBody } from '../../../messenger.ts';
+import { BaseAppWorker, BaseAppUtils } from '../../base/app.ts';
 
 export class AppThreadWorker extends BaseAppWorker<ThreadWorker> {
   #state = 'none';

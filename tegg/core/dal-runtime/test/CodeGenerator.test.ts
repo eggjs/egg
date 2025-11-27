@@ -1,13 +1,13 @@
 import assert from 'node:assert';
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
-import { describe, it } from 'vitest';
 import { TableModel } from '@eggjs/dal-decorator';
+import { describe, it } from 'vitest';
 
+import { CodeGenerator } from '../src/CodeGenerator.js';
 import { Foo } from './fixtures/modules/generate_codes/Foo.js';
 import { MultiPrimaryKey } from './fixtures/modules/generate_codes/MultiPrimaryKey.js';
-import { CodeGenerator } from '../src/CodeGenerator.js';
 
 describe('test/CodeGenerator.test.ts', () => {
   it('BaseDao should work', async () => {

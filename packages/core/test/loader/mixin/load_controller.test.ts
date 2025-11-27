@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { request } from '@eggjs/supertest';
 import { isFunction, isAsyncFunction } from 'is-type-of';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { createApp, getFilepath, type Application } from '../../helper.js';
 

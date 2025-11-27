@@ -1,9 +1,9 @@
 // import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
-import { describe, it } from 'vitest';
-import coffee from 'coffee';
 import { importResolve } from '@eggjs/utils';
+import coffee from 'coffee';
+import { describe, it } from 'vitest';
 
 import { getFixtures } from './helper.ts';
 

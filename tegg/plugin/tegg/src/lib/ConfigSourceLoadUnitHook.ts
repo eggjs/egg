@@ -1,4 +1,3 @@
-import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
 import {
   PrototypeUtil,
   QualifierUtil,
@@ -6,6 +5,7 @@ import {
   ConfigSourceQualifierAttribute,
 } from '@eggjs/core-decorator';
 import type { LifecycleHook } from '@eggjs/lifecycle';
+import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
 
 /**
  * Copy from standalone/src/ConfigSourceLoadUnitHook

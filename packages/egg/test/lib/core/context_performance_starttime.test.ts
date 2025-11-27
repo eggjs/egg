@@ -1,5 +1,7 @@
-import { describe, it, beforeAll } from 'vitest';
 import { strict as assert } from 'node:assert';
+
+import { describe, it, beforeAll } from 'vitest';
+
 import { createApp, type MockApplication } from '../../utils.js';
 
 describe('test/lib/core/context_performance_starttime.test.ts', () => {

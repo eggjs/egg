@@ -1,6 +1,6 @@
+import { MetadataUtil } from '@eggjs/core-decorator';
 import { CONTROLLER_META_DATA } from '@eggjs/tegg-types';
 import type { ControllerMetadata, EggProtoImplClass } from '@eggjs/tegg-types';
-import { MetadataUtil } from '@eggjs/core-decorator';
 
 import { ControllerMetaBuilderFactory } from '../builder/index.ts';
 

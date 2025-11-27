@@ -1,13 +1,13 @@
-import path from 'node:path';
 import assert from 'node:assert';
+import path from 'node:path';
 import { stringify } from 'node:querystring';
 
-import { isClass, isFunction, isGeneratorFunction } from 'is-type-of';
 import { importResolve } from '@eggjs/utils';
 import type { EggApplicationCore, Context } from 'egg';
+import { isClass, isFunction, isGeneratorFunction } from 'is-type-of';
 
-import type { EggScheduleTask, EggScheduleItem } from './types.ts';
 import type { EggScheduleConfig } from '../config/config.default.ts';
+import type { EggScheduleTask, EggScheduleItem } from './types.ts';
 
 function getScheduleLoader(app: EggApplicationCore) {
   return class ScheduleLoader extends app.loader.FileLoader {

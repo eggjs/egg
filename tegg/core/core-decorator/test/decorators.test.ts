@@ -13,13 +13,7 @@ import type { EggPrototypeInfo, EggMultiInstancePrototypeInfo, InjectObjectInfo 
 import { describe, it, expect } from 'vitest';
 
 import { PrototypeUtil, QualifierUtil } from '../src/index.ts';
-
 import CacheService from './fixtures/decators/CacheService.ts';
-import ContextCache from './fixtures/decators/ContextCache.ts';
-import SingletonCache from './fixtures/decators/SingletonCache.ts';
-import QualifierCacheService from './fixtures/decators/QualifierCacheService.ts';
-import { FOO_ATTRIBUTE, FooLogger } from './fixtures/decators/FooLogger.ts';
-import { ConstructorObject, ConstructorQualifierObject } from './fixtures/decators/ConstructorObject.ts';
 import {
   ChildDynamicMultiInstanceProto,
   ChildSingletonProto,
@@ -28,6 +22,11 @@ import {
   ParentSingletonProto,
   ParentStaticMultiInstanceProto,
 } from './fixtures/decators/ChildService.ts';
+import { ConstructorObject, ConstructorQualifierObject } from './fixtures/decators/ConstructorObject.ts';
+import ContextCache from './fixtures/decators/ContextCache.ts';
+import { FOO_ATTRIBUTE, FooLogger } from './fixtures/decators/FooLogger.ts';
+import QualifierCacheService from './fixtures/decators/QualifierCacheService.ts';
+import SingletonCache from './fixtures/decators/SingletonCache.ts';
 
 describe('test/decorators.test.ts', () => {
   describe('ContextProto', () => {

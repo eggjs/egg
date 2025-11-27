@@ -1,10 +1,11 @@
 import fs from 'node:fs/promises';
-
-import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
 import { fileURLToPath } from 'node:url';
+
+import { mm, type MockApplication } from '@eggjs/mock';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { mm, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
+
 import { getFixtures } from './utils.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,7 +25,11 @@ describe('test/stream-mode-with-filematch.test.ts', () => {
     host = 'http://127.0.0.1:' + server.address().port;
   });
   afterAll(async () => {
-    await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
+    try {
+      await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
+    } catch (err) {
+      console.error(err);
+    }
   });
   afterAll(() => app.close());
   afterAll(() => server.close());

@@ -1,7 +1,7 @@
 import path from 'node:path';
 
-import { describe, it } from 'vitest';
 import coffee from 'coffee';
+import { describe, it } from 'vitest';
 
 describe('test/egg-scripts.test.ts', () => {
   const eggBin = path.join(import.meta.dirname, '../bin/run.js');

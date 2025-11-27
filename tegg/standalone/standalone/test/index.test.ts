@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
 
-import { describe, it, afterEach, beforeEach } from 'vitest';
-import { mm } from 'mm';
 import { type ModuleConfig, ModuleConfigs, ModuleDescriptorDumper } from '@eggjs/tegg/helper';
 import { importResolve } from '@eggjs/utils';
+import { mm } from 'mm';
+import { describe, it, afterEach, beforeEach } from 'vitest';
 
 import { main, StandaloneContext, Runner, preLoad } from '../src/index.ts';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello.ts';

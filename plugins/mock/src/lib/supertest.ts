@@ -1,7 +1,7 @@
 import path from 'node:path';
 
-import { readJSONSync } from 'utility';
 import { Request, Test } from '@eggjs/supertest';
+import { readJSONSync } from 'utility';
 
 import { createServer } from './mock_http_server.ts';
 import { getSourceDirname } from './utils.ts';

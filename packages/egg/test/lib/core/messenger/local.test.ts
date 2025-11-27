@@ -1,7 +1,8 @@
 import { strict as assert } from 'node:assert';
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
 import { singleProcessApp, type SingleModeApplication } from '../../../utils.ts';
 
 describe('test/lib/core/messenger/local.test.ts', () => {

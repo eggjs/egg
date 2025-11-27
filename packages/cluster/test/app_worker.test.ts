@@ -2,11 +2,11 @@ import { strict as assert } from 'node:assert';
 import { rm } from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { request } from '@eggjs/supertest';
-import urllib from 'urllib';
 import { ip } from 'address';
+import urllib from 'urllib';
+import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
 
 import { cluster, getFilepath } from './utils.ts';
 

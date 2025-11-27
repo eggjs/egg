@@ -1,4 +1,5 @@
 import { SingletonProto, AccessLevel } from '@eggjs/core-decorator';
+
 import { BaseFooDAO } from './base/BaseFooDAO.js';
 
 /**

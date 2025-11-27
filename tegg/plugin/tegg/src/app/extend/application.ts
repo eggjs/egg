@@ -1,3 +1,5 @@
+import type { EggProtoImplClass, QualifierInfo } from '@eggjs/core-decorator';
+import { IdenticalUtil } from '@eggjs/lifecycle';
 import {
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
@@ -5,6 +7,7 @@ import {
   LoadUnitFactory,
   LoadUnitLifecycleUtil,
 } from '@eggjs/metadata';
+import { LoaderFactory } from '@eggjs/tegg-loader';
 import {
   AbstractEggContext,
   EggContainerFactory,
@@ -14,10 +17,7 @@ import {
   EggObjectLifecycleUtil,
   LoadUnitInstanceLifecycleUtil,
 } from '@eggjs/tegg-runtime';
-import { LoaderFactory } from '@eggjs/tegg-loader';
-import type { EggProtoImplClass, QualifierInfo } from '@eggjs/core-decorator';
 import type { RuntimeConfig } from '@eggjs/tegg-types';
-import { IdenticalUtil } from '@eggjs/lifecycle';
 import type { Application } from 'egg';
 
 export default class TEggPluginApplication {

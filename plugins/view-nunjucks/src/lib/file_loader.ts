@@ -1,5 +1,5 @@
-import { FileSystemLoader } from 'nunjucks';
 import type { Application } from 'egg';
+import { FileSystemLoader } from 'nunjucks';
 
 /**
  * Extended nunjucks FileSystemLoader, will auto inject csrf && nonce

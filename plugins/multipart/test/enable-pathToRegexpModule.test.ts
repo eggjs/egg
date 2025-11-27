@@ -1,11 +1,11 @@
 import assert from 'node:assert';
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
-import { beforeAll, afterAll, beforeEach, afterEach, describe, it } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { mm, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it } from 'vitest';
 
 describe.skip('test/enable-pathToRegexpModule.test.ts', () => {
   let app: MockApplication;

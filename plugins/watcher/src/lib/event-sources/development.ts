@@ -1,9 +1,9 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
 import fs, { type FSWatcher, type WatchEventType } from 'node:fs';
+import path from 'node:path';
+import { debuglog } from 'node:util';
 
-import { BaseEventSource } from './base.ts';
 import type { ChangeInfo } from '../watcher.ts';
+import { BaseEventSource } from './base.ts';
 
 const debug = debuglog('egg-watcher/lib/event-sources/development');
 

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
-import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 
 import MainService from './fixtures/apps/access-level-check/modules/module-main/MainService.ts';
 import { getAppBaseDir } from './utils.ts';

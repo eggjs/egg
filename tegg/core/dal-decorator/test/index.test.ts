@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 
-import { expect, describe, it } from 'vitest';
 import { ColumnType, IndexType } from '@eggjs/tegg-types';
+import { expect, describe, it } from 'vitest';
 
-import { Foo } from './fixtures/modules/dal/Foo.ts';
 import { ColumnInfoUtil, IndexInfoUtil, TableInfoUtil, TableModel } from '../src/index.ts';
 import * as types from '../src/index.ts';
+import { Foo } from './fixtures/modules/dal/Foo.ts';
 
 describe('test/dal/index.test.ts', () => {
   it('should export stable', async () => {

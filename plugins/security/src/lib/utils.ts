@@ -1,9 +1,9 @@
 import { normalize } from 'node:path';
 
-import matcher from 'matcher';
 import IP from '@eggjs/ip';
-import type { Context } from 'egg';
 import type { PathMatchingFun } from '@eggjs/path-matching';
+import type { Context } from 'egg';
+import matcher from 'matcher';
 
 import type { SecurityConfig, LookupAddress } from '../config/config.default.ts';
 

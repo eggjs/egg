@@ -1,5 +1,5 @@
-import { Context } from 'egg';
 import type { Schema } from 'ajv/dist/2019.js';
+import { Context } from 'egg';
 
 export default class AjvContext extends Context {
   tValidate(schema: Schema, data: unknown): boolean {

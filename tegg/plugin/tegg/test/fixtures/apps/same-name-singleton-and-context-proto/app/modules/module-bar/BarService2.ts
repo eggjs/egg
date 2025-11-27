@@ -1,4 +1,5 @@
 import { Inject, SingletonProto } from '@eggjs/tegg';
+
 import { FooService } from './FooService.js';
 
 @SingletonProto()

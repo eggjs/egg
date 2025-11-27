@@ -1,8 +1,8 @@
-import { jsonp as jsonpBody } from 'jsonp-body';
 import { Context } from 'egg';
+import { jsonp as jsonpBody } from 'jsonp-body';
 
-import { JSONP_CONFIG } from '../../lib/private_key.ts';
 import type { JSONPConfig } from '../../config/config.default.ts';
+import { JSONP_CONFIG } from '../../lib/private_key.ts';
 
 interface JSONPConfigData {
   jsonpFunction?: string;

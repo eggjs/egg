@@ -1,6 +1,6 @@
+import { MetadataUtil } from '@eggjs/core-decorator';
 import { DAL_COLUMN_INFO_MAP, DAL_COLUMN_TYPE_MAP } from '@eggjs/tegg-types';
 import type { ColumnParams, ColumnTypeParams, EggProtoImplClass } from '@eggjs/tegg-types';
-import { MetadataUtil } from '@eggjs/core-decorator';
 
 export type ColumnInfoMap = Map<string, ColumnParams>;
 export type ColumnTypeMap = Map<string, ColumnTypeParams>;

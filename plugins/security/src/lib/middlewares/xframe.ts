@@ -1,7 +1,7 @@
 import type { MiddlewareFunc } from 'egg';
 
-import { checkIfIgnore } from '../utils.ts';
 import type { SecurityConfig } from '../../config/config.default.ts';
+import { checkIfIgnore } from '../utils.ts';
 
 export default (options: SecurityConfig['xframe']): MiddlewareFunc => {
   return async function xframe(ctx, next) {

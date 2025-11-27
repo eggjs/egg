@@ -1,5 +1,5 @@
-import { Advice, type AdviceContext, type IAdvice } from '@eggjs/tegg/aop';
 import { AccessLevel } from '@eggjs/tegg-types';
+import { Advice, type AdviceContext, type IAdvice } from '@eggjs/tegg/aop';
 
 @Advice({
   accessLevel: AccessLevel.PUBLIC,

@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+
 import { app } from '@eggjs/mock/bootstrap';
 
 import { Foo } from '../app/module/foo.ts';

@@ -1,15 +1,15 @@
-import path from 'node:path';
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import coffee from 'coffee';
-import { request } from 'urllib';
-import { mm, restore } from 'mm';
 import { detectPort } from 'detect-port';
+import { mm, restore } from 'mm';
+import { request } from 'urllib';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 
-import { cleanup } from './utils.ts';
 import { isWindows } from '../src/helper.ts';
+import { cleanup } from './utils.ts';
 
 const __dirname = import.meta.dirname;
 

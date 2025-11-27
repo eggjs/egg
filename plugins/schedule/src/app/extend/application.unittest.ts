@@ -1,5 +1,5 @@
-import { debuglog } from 'node:util';
 import path from 'node:path';
+import { debuglog } from 'node:util';
 
 import { importResolve } from '@eggjs/utils';
 

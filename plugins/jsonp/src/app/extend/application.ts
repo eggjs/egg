@@ -1,12 +1,12 @@
-import { debuglog } from 'node:util';
-import { parse as urlParse, type UrlWithStringQuery } from 'node:url';
 import type { ParsedUrlQuery } from 'node:querystring';
+import { parse as urlParse, type UrlWithStringQuery } from 'node:url';
+import { debuglog } from 'node:util';
 
 import { Application, type MiddlewareFunc } from 'egg';
 
-import { JSONP_CONFIG } from '../../lib/private_key.ts';
 import type { JSONPConfig } from '../../config/config.default.ts';
 import { JSONPForbiddenReferrerError } from '../../error/JSONPForbiddenReferrerError.ts';
+import { JSONP_CONFIG } from '../../lib/private_key.ts';
 import type JSONPContext from './context.ts';
 
 const debug = debuglog('egg/jsonp/app/extend/application');

@@ -1,3 +1,4 @@
+import { QualifierUtil } from '@eggjs/core-decorator';
 import type {
   EggAbstractClazz,
   EggProtoImplClass,
@@ -5,7 +6,6 @@ import type {
   ImplTypeEnum,
   QualifierAttribute,
 } from '@eggjs/tegg-types';
-import { QualifierUtil } from '@eggjs/core-decorator';
 
 import { QualifierImplUtil } from './QualifierImplUtil.ts';
 

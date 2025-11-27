@@ -1,6 +1,5 @@
 import assert from 'node:assert';
 
-import type { Application, ILifecycleBoot } from 'egg';
 import { CrosscutAdviceFactory } from '@eggjs/aop-decorator';
 import {
   crossCutGraphHook,
@@ -10,6 +9,7 @@ import {
   pointCutGraphHook,
 } from '@eggjs/aop-runtime';
 import { GlobalGraph } from '@eggjs/metadata';
+import type { Application, ILifecycleBoot } from 'egg';
 
 import { AopContextHook } from './lib/AopContextHook.ts';
 

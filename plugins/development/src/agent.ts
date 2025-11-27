@@ -1,10 +1,10 @@
-import path from 'node:path';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
 import debounce from 'debounce';
+import type { ILifecycleBoot, Agent } from 'egg';
 import multimatch from 'multimatch';
 import { exists } from 'utility';
-import type { ILifecycleBoot, Agent } from 'egg';
 
 import { isTimingFile } from './utils.ts';
 

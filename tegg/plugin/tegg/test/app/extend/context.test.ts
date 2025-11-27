@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 
-import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
+import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 
-import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService.ts';
-import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService.ts';
 import { LONG_STACK_DELIMITER } from '../../../src/lib/run_in_background.ts';
+import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService.ts';
+import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService.ts';
 import { getAppBaseDir } from '../../utils.ts';
 
 describe('test/app/extend/context.test.ts', () => {

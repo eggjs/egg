@@ -1,7 +1,7 @@
-import { type EggObject, EggObjectFactory } from '@eggjs/tegg-runtime';
 import { type EggObjectName, EggType, EggQualifierAttribute } from '@eggjs/core-decorator';
 import { IdenticalUtil } from '@eggjs/lifecycle';
 import type { EggPrototype } from '@eggjs/metadata';
+import { type EggObject, EggObjectFactory } from '@eggjs/tegg-runtime';
 
 import { EggCompatibleProtoImpl } from './EggCompatibleProtoImpl.ts';
 

@@ -1,4 +1,5 @@
 import { describe, it, beforeAll, afterAll } from 'vitest';
+
 import { createApp, type MockApplication } from '../../utils.ts';
 
 describe('test/app/extend/helper.test.ts', () => {

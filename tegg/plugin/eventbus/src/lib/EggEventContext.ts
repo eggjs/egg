@@ -1,8 +1,8 @@
-import type { Context, Application } from 'egg';
-import { AbstractEggContext, type EggContext as TEggContext } from '@eggjs/tegg-runtime';
+import type { ContextCreator } from '@eggjs/eventbus-runtime';
 import { IdenticalUtil } from '@eggjs/lifecycle';
 import { EGG_CONTEXT, TEGG_CONTEXT } from '@eggjs/module-common';
-import type { ContextCreator } from '@eggjs/eventbus-runtime';
+import { AbstractEggContext, type EggContext as TEggContext } from '@eggjs/tegg-runtime';
+import type { Context, Application } from 'egg';
 
 type CreateContextFactory = (app: Application) => ContextCreator;
 

@@ -1,6 +1,6 @@
-import path from 'node:path';
 import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
+import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';

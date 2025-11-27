@@ -1,8 +1,8 @@
-import type { Application, Context } from 'egg';
-import { PrototypeUtil } from '@eggjs/core-decorator';
 import { BackgroundTaskHelper } from '@eggjs/background-task';
+import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { EggPrototype } from '@eggjs/metadata';
 import { TEGG_CONTEXT } from '@eggjs/module-common';
+import type { Application, Context } from 'egg';
 
 import { getCalleeFromStack } from './Utils.ts';
 

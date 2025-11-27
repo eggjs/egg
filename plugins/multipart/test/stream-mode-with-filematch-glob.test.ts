@@ -1,10 +1,10 @@
 import fs from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
-import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 import formstream from 'formstream';
 import urllib from 'urllib';
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
 
 import { getFixtures } from './utils.ts';
 

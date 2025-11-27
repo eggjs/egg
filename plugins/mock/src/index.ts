@@ -1,12 +1,12 @@
 import mm from 'mm';
 import { mock as _mock } from 'mm';
 
-import { createCluster, type MockClusterApplication } from './lib/cluster.ts';
+import type ApplicationUnittest from './app/extend/application.ts';
 import { createApp } from './lib/app.ts';
+import { setGetAppCallback } from './lib/app_handler.ts';
+import { createCluster, type MockClusterApplication } from './lib/cluster.ts';
 // import { getMockAgent } from './lib/mock_agent.js';
 import { restore } from './lib/restore.ts';
-import { setGetAppCallback } from './lib/app_handler.ts';
-import type ApplicationUnittest from './app/extend/application.ts';
 
 export * from './lib/types.ts';
 

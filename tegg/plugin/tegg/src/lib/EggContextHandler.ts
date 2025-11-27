@@ -1,6 +1,6 @@
-import type { Application } from 'egg';
-import { ContextHandler, type EggContext } from '@eggjs/tegg-runtime';
 import { EGG_CONTEXT } from '@eggjs/module-common';
+import { ContextHandler, type EggContext } from '@eggjs/tegg-runtime';
+import type { Application } from 'egg';
 
 export class EggContextHandler {
   private readonly app: Application;

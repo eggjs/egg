@@ -1,11 +1,11 @@
-import { Base } from 'sdk-base';
-import type { Application } from 'egg';
 import { EggLoadUnitType, type LoadUnit, LoadUnitFactory } from '@eggjs/metadata';
 import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+import type { Application } from 'egg';
+import { Base } from 'sdk-base';
 
-import { EggModuleLoader } from './EggModuleLoader.ts';
 import { CompatibleUtil } from './CompatibleUtil.ts';
 import { COMPATIBLE_PROTO_IMPLE_TYPE, EggCompatibleProtoImpl } from './EggCompatibleProtoImpl.ts';
+import { EggModuleLoader } from './EggModuleLoader.ts';
 
 export class ModuleHandler extends Base {
   loadUnits: LoadUnit[] = [];

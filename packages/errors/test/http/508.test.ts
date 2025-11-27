@@ -1,6 +1,7 @@
+import { strict as assert } from 'assert';
+
 import { describe, it } from 'vitest';
 
-import { strict as assert } from 'assert';
 import { LoopDetectedError, E508 } from '../../src/index.ts';
 
 describe('test/http/508.test.ts', () => {

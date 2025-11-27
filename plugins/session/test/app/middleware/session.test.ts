@@ -1,8 +1,8 @@
-import { scheduler } from 'node:timers/promises';
 import path from 'node:path';
+import { scheduler } from 'node:timers/promises';
 
-import { request, TestAgent } from '@eggjs/supertest';
 import { mm, type MockApplication } from '@eggjs/mock';
+import { request, TestAgent } from '@eggjs/supertest';
 import { describe, it, beforeEach, afterEach, beforeAll, afterAll, expect } from 'vitest';
 
 function getFixtures(name: string) {

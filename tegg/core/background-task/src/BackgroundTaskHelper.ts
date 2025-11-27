@@ -1,10 +1,10 @@
 import assert from 'node:assert';
 
-import type { EggLogger, EggAppConfig } from 'egg';
 import { ContextProto, Inject } from '@eggjs/core-decorator';
+import { ContextHandler, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggObjectLifecycle } from '@eggjs/tegg-types';
-import { ContextHandler, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
+import type { EggLogger, EggAppConfig } from 'egg';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,

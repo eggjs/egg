@@ -2,8 +2,8 @@ import { strict as assert } from 'node:assert';
 import fs from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
 
-import { importResolve } from '@eggjs/utils';
 import { mm, type MockApplication } from '@eggjs/mock';
+import { importResolve } from '@eggjs/utils';
 import { describe, it, afterEach, expect } from 'vitest';
 
 import { contains, getFixtures, getLogContent } from './utils.ts';

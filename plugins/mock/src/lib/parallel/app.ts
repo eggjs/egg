@@ -1,15 +1,15 @@
 import { debuglog } from 'node:util';
 
-import { Base } from 'sdk-base';
 import { importModule } from '@eggjs/utils';
 import { Application as EggApplication } from 'egg';
+import { Base } from 'sdk-base';
 
 import { context } from '../context.ts';
 import { formatOptions } from '../format_options.ts';
-import type { MockOptions, MockApplicationOptions } from '../types.ts';
-import { sleep } from '../utils.ts';
 import { setCustomLoader } from '../mock_custom_loader.ts';
 import { createServer } from '../mock_http_server.ts';
+import type { MockOptions, MockApplicationOptions } from '../types.ts';
+import { sleep } from '../utils.ts';
 import { proxyApp } from './util.ts';
 
 const debug = debuglog('egg/mock/lib/parallel/app');

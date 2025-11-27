@@ -1,5 +1,7 @@
 import { strict as assert } from 'node:assert';
+
 import { describe, it } from 'vitest';
+
 import utils from '../src/index.js';
 import { getFilepath } from './helper.js';
 

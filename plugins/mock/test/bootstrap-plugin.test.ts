@@ -1,6 +1,6 @@
 import coffee from 'coffee';
-import { describe, it, afterAll } from 'vitest';
 import { mock, restore } from 'mm';
+import { describe, it, afterAll } from 'vitest';
 
 import { getFixtures } from './helper.ts';
 

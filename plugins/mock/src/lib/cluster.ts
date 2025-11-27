@@ -1,18 +1,18 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
-import os from 'node:os';
 import childProcess from 'node:child_process';
 import { once } from 'node:events';
 import { existsSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { debuglog } from 'node:util';
 
 import { Coffee } from 'coffee';
 import { Ready } from 'get-ready';
 
-import { request as supertestRequest } from './supertest.ts';
-import { sleep, rimrafSync } from './utils.ts';
-import { formatOptions } from './format_options.ts';
-import type { MockClusterOptions, MockClusterApplicationOptions } from './types.ts';
 import type ApplicationUnittest from '../app/extend/application.ts';
+import { formatOptions } from './format_options.ts';
+import { request as supertestRequest } from './supertest.ts';
+import type { MockClusterOptions, MockClusterApplicationOptions } from './types.ts';
+import { sleep, rimrafSync } from './utils.ts';
 
 const debug = debuglog('egg/mock/lib/cluster');
 

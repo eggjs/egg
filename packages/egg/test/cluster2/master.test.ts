@@ -1,6 +1,8 @@
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { scheduler } from 'node:timers/promises';
+
 import { mm } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
 import { type MockApplication, cluster } from '../utils.js';
 
 // node v24 will hang when test this file

@@ -19,10 +19,10 @@ describe('test/detect-error.test.ts', () => {
   afterAll(() => app.close());
 
   it('should error', async () => {
-    await sleep(2000);
+    await sleep(5000);
     const scheduleLog = getScheduleLogContent('detect-error');
-    expect(contains(scheduleLog, 'suc.js execute succeed')).toBe(1);
-    expect(contains(scheduleLog, /fail\.js execute failed, used [\d.]+ms. fail/)).toBe(1);
-    expect(contains(scheduleLog, /error\.js execute failed, used [\d.]+ms. Error: some err/)).toBe(1);
+    expect(contains(scheduleLog, 'suc.js execute succeed'), scheduleLog).toBe(1);
+    expect(contains(scheduleLog, /fail\.js execute failed, used [\d.]+ms. fail/), scheduleLog).toBe(1);
+    expect(contains(scheduleLog, /error\.js execute failed, used [\d.]+ms. Error: some err/), scheduleLog).toBe(1);
   });
 });

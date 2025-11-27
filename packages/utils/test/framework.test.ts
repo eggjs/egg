@@ -1,8 +1,10 @@
-import path from 'node:path';
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs';
-import { describe, it, afterEach } from 'vitest';
+import path from 'node:path';
+
 import { restore, mm } from 'mm';
+import { describe, it, afterEach } from 'vitest';
+
 import { getFrameworkPath } from '../src/index.js';
 import { getFilepath, testDir } from './helper.js';
 

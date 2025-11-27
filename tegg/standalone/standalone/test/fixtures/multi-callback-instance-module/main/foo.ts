@@ -1,8 +1,8 @@
 import { Inject, SingletonProto } from '@eggjs/tegg';
 import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
 
-import { DynamicLogger, LogPath } from '../logger/DynamicLogger.ts';
 import { Biz } from '../biz/biz.ts';
+import { DynamicLogger, LogPath } from '../logger/DynamicLogger.ts';
 
 @SingletonProto()
 @Runner()

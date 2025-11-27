@@ -1,7 +1,7 @@
-import type { Application, ILifecycleBoot } from 'egg';
 import addFormats from 'ajv-formats';
-import { Ajv2019 as Ajv } from 'ajv/dist/2019.js';
 import keyWords from 'ajv-keywords';
+import { Ajv2019 as Ajv } from 'ajv/dist/2019.js';
+import type { Application, ILifecycleBoot } from 'egg';
 
 const getAjvInstance = () => {
   const ajv = new Ajv();

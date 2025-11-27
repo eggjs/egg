@@ -1,10 +1,10 @@
 import '@eggjs/tegg-plugin/types';
-
 import type { AttributeOptions } from '@eggjs/orm-decorator';
-import type { DataType } from './lib/types.ts';
+
 import type { AppOrmConfig } from './config/config.default.ts';
-import type { Orm } from './lib/SingletonORM.ts';
 import type { LeoricRegister } from './lib/LeoricRegister.ts';
+import type { Orm } from './lib/SingletonORM.ts';
+import type { DataType } from './lib/types.ts';
 
 declare module '@eggjs/orm-decorator' {
   // @ts-expect-error: DataType is not defined in tegg-orm-decorator

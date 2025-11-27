@@ -1,6 +1,7 @@
 import path from 'node:path';
-import { it } from 'vitest';
+
 import coffee from 'coffee';
+import { it } from 'vitest';
 
 it('should check enum value', async () => {
   const tsc = require.resolve('typescript/bin/tsc');

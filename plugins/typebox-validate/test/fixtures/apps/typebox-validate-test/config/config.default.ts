@@ -1,7 +1,7 @@
+import type { Ajv2019 as Ajv } from 'ajv/dist/2019.js';
 import type { PartialEggConfig } from 'egg';
 // @ts-expect-error - semver no types
 import { valid } from 'semver';
-import type { Ajv2019 as Ajv } from 'ajv/dist/2019.js';
 
 export default (): PartialEggConfig => {
   const config = {} as PartialEggConfig;

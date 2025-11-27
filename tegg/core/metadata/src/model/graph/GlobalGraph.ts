@@ -1,5 +1,7 @@
 import { debuglog } from 'node:util';
 
+import { QualifierUtil } from '@eggjs/core-decorator';
+import { FrameworkErrorFormatter } from '@eggjs/errors';
 import { Graph, GraphNode, type ModuleReference } from '@eggjs/tegg-common-util';
 import {
   InitTypeQualifierAttribute,
@@ -9,14 +11,12 @@ import {
   type ProtoDescriptor,
   type QualifierInfo,
 } from '@eggjs/tegg-types';
-import { FrameworkErrorFormatter } from '@eggjs/errors';
-import { QualifierUtil } from '@eggjs/core-decorator';
 
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors.ts';
-import { ModuleDependencyMeta, GlobalModuleNode } from './GlobalModuleNode.ts';
-import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.ts';
-import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder.ts';
 import type { ModuleDescriptor } from '../ModuleDescriptor.ts';
+import { ModuleDependencyMeta, GlobalModuleNode } from './GlobalModuleNode.ts';
+import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder.ts';
+import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.ts';
 
 const debug = debuglog('tegg/core/metadata/model/graph/GlobalGraph');
 

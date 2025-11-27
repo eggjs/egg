@@ -1,5 +1,4 @@
 import './types.ts';
-
 import { definePluginFactory, type EggPluginFactory } from 'egg';
 
 /**

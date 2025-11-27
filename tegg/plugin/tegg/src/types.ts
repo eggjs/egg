@@ -1,5 +1,6 @@
 import '@eggjs/tegg-config/types';
-
+import type { QualifierInfo } from '@eggjs/core-decorator';
+import type { IdenticalUtil } from '@eggjs/lifecycle';
 import type {
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
@@ -7,6 +8,7 @@ import type {
   LoadUnitFactory,
   LoadUnitLifecycleUtil,
 } from '@eggjs/metadata';
+import type { LoaderFactory } from '@eggjs/tegg-loader';
 import type {
   AbstractEggContext,
   EggContainerFactory,
@@ -17,12 +19,9 @@ import type {
   LoadUnitInstanceLifecycleUtil,
   EggContext as TEggContext,
 } from '@eggjs/tegg-runtime';
-import type { LoaderFactory } from '@eggjs/tegg-loader';
-import type { QualifierInfo } from '@eggjs/core-decorator';
-import type { IdenticalUtil } from '@eggjs/lifecycle';
 
-import type { ModuleHandler } from './lib/ModuleHandler.ts';
 import type { EggContextHandler } from './lib/EggContextHandler.ts';
+import type { ModuleHandler } from './lib/ModuleHandler.ts';
 
 declare module 'egg' {
   export interface EggModule {}

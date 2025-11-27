@@ -1,11 +1,11 @@
 import { debuglog } from 'node:util';
 
-import { Flags } from '@oclif/core';
 import { getFrameworkPath } from '@eggjs/utils';
+import { Flags } from '@oclif/core';
 import { detect } from 'detect-port';
 
-import { getSourceFilename } from '../utils.ts';
 import { BaseCommand } from '../baseCommand.ts';
+import { getSourceFilename } from '../utils.ts';
 
 const debug = debuglog('egg/bin/commands/dev');
 

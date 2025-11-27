@@ -2,10 +2,10 @@ import { debuglog } from 'node:util';
 
 import type { EggLogger } from 'egg';
 
-import { loadSchedule } from './load_schedule.ts';
-import type { EggScheduleItem, EggScheduleJobInfo } from './types.ts';
-import type { BaseStrategy } from './strategy/base.ts';
 import type Agent from '../app/extend/agent.ts';
+import { loadSchedule } from './load_schedule.ts';
+import type { BaseStrategy } from './strategy/base.ts';
+import type { EggScheduleItem, EggScheduleJobInfo } from './types.ts';
 
 const debug = debuglog('egg/schedule/lib/schedule');
 

@@ -1,5 +1,6 @@
-import { describe, it, beforeAll, afterAll } from 'vitest';
 import { strict as assert } from 'node:assert';
+
+import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { type MockApplication, createApp } from './utils.ts';
 

@@ -6,9 +6,9 @@ import { ms } from 'humanize-ms';
 import safeTimers from 'safe-timers';
 import { logDate } from 'utility';
 
+import type Agent from '../../app/extend/agent.ts';
 import type { EggScheduleConfig } from '../../config/config.default.ts';
 import { BaseStrategy } from './base.ts';
-import type Agent from '../../app/extend/agent.ts';
 
 export abstract class TimerStrategy extends BaseStrategy {
   protected cronInstance?: CronExpression;

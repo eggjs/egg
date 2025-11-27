@@ -1,4 +1,5 @@
 import { Controller } from 'egg';
+
 import BackgroundService from '../../modules/multi-module-background/BackgroundService.ts';
 
 export default class App extends Controller {

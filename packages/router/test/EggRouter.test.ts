@@ -1,6 +1,6 @@
-import is from 'is-type-of';
 import { Application } from '@eggjs/koa';
 import request from '@eggjs/supertest';
+import is from 'is-type-of';
 import { describe, it, expect } from 'vitest';
 
 import { EggRouter } from '../src/index.ts';

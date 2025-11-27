@@ -1,12 +1,12 @@
-import { debuglog, promisify } from 'node:util';
-import path from 'node:path';
-import { scheduler } from 'node:timers/promises';
 import { spawn, type SpawnOptions, type ChildProcess, execFile as _execFile } from 'node:child_process';
 import { mkdir, rename, stat, open } from 'node:fs/promises';
+import path from 'node:path';
+import { scheduler } from 'node:timers/promises';
+import { debuglog, promisify } from 'node:util';
 
-import { homedir } from 'node-homedir';
-import { Args, Flags } from '@oclif/core';
 import { getFrameworkPath, importResolve } from '@eggjs/utils';
+import { Args, Flags } from '@oclif/core';
+import { homedir } from 'node-homedir';
 import { readJSON, exists, getDateStringParts } from 'utility';
 
 import { BaseCommand } from '../baseCommand.ts';

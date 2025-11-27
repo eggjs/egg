@@ -1,5 +1,6 @@
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, afterAll, beforeAll } from 'vitest';
+
 import { getFixtures } from './utils.ts';
 
 describe('test/safe_redirect.test.ts', () => {

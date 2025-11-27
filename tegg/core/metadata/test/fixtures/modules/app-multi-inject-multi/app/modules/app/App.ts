@@ -1,4 +1,5 @@
 import { Inject, SingletonProto } from '@eggjs/core-decorator';
+
 import { BizManager, BizManagerQualifier } from '../bar/BizManager.js';
 
 @SingletonProto()

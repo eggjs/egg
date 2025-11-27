@@ -1,7 +1,9 @@
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
+
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
 import { createApp, type MockApplication, restore, cluster } from '../../utils.js';
 
 describe('test/app/middleware/meta.test.ts', () => {

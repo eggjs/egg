@@ -1,6 +1,6 @@
-import { ContextHelloType } from './FooType.js';
 import { ImplDecorator, QualifierImplDecoratorUtil } from '../../../../src/index.js';
 import { AbstractContextHello } from './AbstractContextHello.js';
+import { ContextHelloType } from './FooType.js';
 
 export const CONTEXT_HELLO_ATTRIBUTE = 'CONTEXT_HELLO_ATTRIBUTE';
 

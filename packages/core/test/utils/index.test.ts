@@ -1,8 +1,8 @@
-import path from 'node:path';
 import assert from 'node:assert/strict';
-import { describe, it, afterEach } from 'vitest';
+import path from 'node:path';
 
 import { mm } from 'mm';
+import { describe, it, afterEach } from 'vitest';
 
 import utils from '../../src/utils/index.js';
 import { getFilepath } from '../helper.js';

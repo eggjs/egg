@@ -1,5 +1,5 @@
-import { Event, type EventBus } from '@eggjs/eventbus-decorator';
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/core-decorator';
+import { Event, type EventBus } from '@eggjs/eventbus-decorator';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import type { EggLogger } from 'egg';
 

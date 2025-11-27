@@ -1,7 +1,8 @@
 import { SingletonProto } from '@eggjs/core-decorator';
-import { SingletonHelloType } from '../FooType.js';
-import { SingletonHello } from '../decorator/SingletonHello.js';
+
 import { AbstractContextHello } from '../AbstractContextHello.js';
+import { SingletonHello } from '../decorator/SingletonHello.js';
+import { SingletonHelloType } from '../FooType.js';
 
 @SingletonProto()
 @SingletonHello(SingletonHelloType.BAR)

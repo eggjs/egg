@@ -1,10 +1,3 @@
-import type {
-  EggPrototype,
-  LoadUnit,
-  EggPrototypeLifecycleContext,
-  InjectObjectProto,
-  InjectConstructorProto,
-} from '@eggjs/metadata';
 import {
   AccessLevel,
   type EggPrototypeName,
@@ -17,6 +10,13 @@ import {
   type QualifierValue,
 } from '@eggjs/core-decorator';
 import { type Id, IdenticalUtil } from '@eggjs/lifecycle';
+import type {
+  EggPrototype,
+  LoadUnit,
+  EggPrototypeLifecycleContext,
+  InjectObjectProto,
+  InjectConstructorProto,
+} from '@eggjs/metadata';
 import type { Bone } from 'leoric';
 
 export default class SingletonModelProto implements EggPrototype {

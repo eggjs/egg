@@ -1,4 +1,5 @@
 import { Controller } from 'egg';
+
 import MainService from '../../modules/module-main/MainService.js';
 
 export default class App extends Controller {

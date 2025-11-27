@@ -1,8 +1,8 @@
 import { strict as assert } from 'node:assert';
+import { once } from 'node:events';
 import fs from 'node:fs';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
-import { once } from 'node:events';
 
 import { mm } from '@eggjs/mock';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';

@@ -1,3 +1,5 @@
+import type { EggPrototypeName, QualifierInfo } from '@eggjs/core-decorator';
+import { IdenticalUtil } from '@eggjs/lifecycle';
 import {
   type EggPrototype,
   EggPrototypeFactory,
@@ -5,10 +7,8 @@ import {
   type LoadUnit,
   type EggPrototypeCreatorFactory,
 } from '@eggjs/metadata';
-import type { EggPrototypeName, QualifierInfo } from '@eggjs/core-decorator';
-import { IdenticalUtil } from '@eggjs/lifecycle';
-import type { Id } from '@eggjs/tegg-types';
 import { MapUtil } from '@eggjs/tegg-common-util';
+import type { Id } from '@eggjs/tegg-types';
 
 export const CONTROLLER_LOAD_UNIT = 'app#controller';
 

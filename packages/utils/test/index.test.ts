@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+
 import { describe, it, expect } from 'vitest';
 
 import { detectType, EggType } from '../src/index.ts';

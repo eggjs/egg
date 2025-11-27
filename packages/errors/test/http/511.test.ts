@@ -1,6 +1,7 @@
+import { strict as assert } from 'assert';
+
 import { describe, it } from 'vitest';
 
-import { strict as assert } from 'assert';
 import { NetworkAuthenticationRequiredError, E511 } from '../../src/index.ts';
 
 describe('test/http/511.test.ts', () => {

@@ -1,4 +1,5 @@
 import { Inject, ModuleQualifier, SingletonProto } from '@eggjs/core-decorator';
+
 import { Secret, SecretQualifier } from '../foo/Secret.js';
 
 @SingletonProto()

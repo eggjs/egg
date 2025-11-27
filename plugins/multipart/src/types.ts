@@ -1,5 +1,5 @@
-import type { MultipartConfig } from './config/config.default.ts';
 import type { EggFile, MultipartFileStream, MultipartOptions } from './app/extend/context.ts';
+import type { MultipartConfig } from './config/config.default.ts';
 
 declare module 'egg' {
   // add EggAppConfig overrides types

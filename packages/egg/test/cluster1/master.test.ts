@@ -1,8 +1,8 @@
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 import coffee, { Coffee } from 'coffee';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { type MockApplication, cluster, getFilepath } from '../utils.ts';
 

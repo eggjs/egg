@@ -1,11 +1,10 @@
 import assert from 'node:assert/strict';
+import { once } from 'node:events';
 import type { ServerResponse } from 'node:http';
 import { runInNewContext } from 'node:vm';
-import { once } from 'node:events';
-
-import { describe, it } from 'vitest';
 
 import { request } from '@eggjs/supertest';
+import { describe, it } from 'vitest';
 
 import Koa, { type Context } from '../../src/index.ts';
 import context from '../test-helpers/context.ts';

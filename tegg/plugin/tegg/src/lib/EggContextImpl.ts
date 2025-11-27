@@ -1,7 +1,7 @@
-import type { Context } from 'egg';
-import { AbstractEggContext } from '@eggjs/tegg-runtime';
 import { IdenticalUtil } from '@eggjs/lifecycle';
 import { EGG_CONTEXT, TEGG_CONTEXT } from '@eggjs/module-common';
+import { AbstractEggContext } from '@eggjs/tegg-runtime';
+import type { Context } from 'egg';
 
 // TEggContext 的实现
 export class EggContextImpl extends AbstractEggContext {

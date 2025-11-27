@@ -1,4 +1,5 @@
 import { describe, it, beforeAll } from 'vitest';
+
 import { createApp, type MockApplication } from '../../utils.js';
 
 describe('test/lib/plugins/static.test.ts', () => {

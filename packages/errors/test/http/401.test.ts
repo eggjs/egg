@@ -1,6 +1,7 @@
+import { strict as assert } from 'assert';
+
 import { describe, it } from 'vitest';
 
-import { strict as assert } from 'assert';
 import { UnauthorizedError, E401 } from '../../src/index.ts';
 
 describe('test/http/401.test.ts', () => {

@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 
-import { App2 } from './fixtures/apps/app-multi-inject-multi/app/modules/app2/App.ts';
 import { App } from './fixtures/apps/app-multi-inject-multi/app/modules/app/App.ts';
+import { App2 } from './fixtures/apps/app-multi-inject-multi/app/modules/app2/App.ts';
 import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/MultiInstanceInjectMultiInstance.test.ts', () => {
