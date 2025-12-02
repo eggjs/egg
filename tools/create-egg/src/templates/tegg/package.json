@@ -29,7 +29,7 @@
     "@eggjs/bin": "beta",
     "@eggjs/mock": "beta",
     "@eggjs/tsconfig": "beta",
-    "@oxc-node/core": "^0.0.34",
+    "@oxc-node/core": "^0.0.35",
     "@types/node": "24",
     "cross-env": "10",
     "oxlint": "1",
