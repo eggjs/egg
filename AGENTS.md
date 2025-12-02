@@ -10,7 +10,7 @@ Run `pnpm install` to hydrate the workspace (Node.js ≥ 20.19.0 is required). B
 
 ## Coding Style & Naming Conventions
 
-The repository is ESM-first and TypeScript-heavy; prefer `.ts` sources and exports over CommonJS. Prettier and `oxlint --type-aware` enforce formatting—two-space indentation, trailing commas, and semicolons are the defaults. Name files in lowercase with hyphens (e.g. `loader-context.ts`), classes in PascalCase, and functions/variables in camelCase. Re-export types thoughtfully to keep the public API stable.
+The repository is ESM-first and TypeScript-heavy; prefer `.ts` sources and exports over CommonJS. Prettier and `oxlint --type-aware --type-check` enforce formatting—two-space indentation, trailing commas, and semicolons are the defaults. Name files in lowercase with hyphens (e.g. `loader-context.ts`), classes in PascalCase, and functions/variables in camelCase. Re-export types thoughtfully to keep the public API stable.
 
 ## Testing Guidelines
 

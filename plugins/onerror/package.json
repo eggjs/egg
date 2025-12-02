@@ -49,7 +49,7 @@
     "vitest": "catalog:"
   },
   "scripts": {
-    "lint": "oxlint --type-aware",
+    "lint": "oxlint --type-aware --type-check",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json && cp src/lib/onerror_page.mustache.html dist/lib/onerror_page.mustache.html",

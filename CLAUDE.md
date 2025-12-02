@@ -202,7 +202,7 @@ The framework follows a specific loading order:
 - `pnpm -r run build` - Build all packages
 - `pnpm -r run clean` - Clean dist directories in all packages
 - `pnpm -r run typecheck` - Run TypeScript type checking with `tsc --noEmit`
-- `pnpm lint` - Run oxlint with type-aware checking in all packages
+- `pnpm lint` - Run oxlint with type-aware and type-check checking in all packages
 - `pnpm lint:fix` - Auto-fix linting issues with oxlint
 
 ### Examples
@@ -430,7 +430,7 @@ Plugins should configure their package.json following this pattern:
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint --type-aware",
+    "lint": "oxlint --type-aware --type-check",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   }
@@ -469,11 +469,11 @@ Tool packages (like egg-bin) should be placed in the `tools/` directory:
 
 - **All packages must include TypeScript type checking** - Use `tsc --noEmit` in `typecheck` script
 - **All packages use oxlint for linting** - No ESLint configurations should be present
-- Use `oxlint --type-aware` for enhanced TypeScript checking
+- Use `oxlint --type-aware --type-check` for enhanced TypeScript checking
 - oxlint automatically respects `.gitignore` patterns for file exclusion
 - Package-specific scripts:
   - `"typecheck": "tsc --noEmit"` - Pure TypeScript type checking
-  - `"lint": "oxlint --type-aware"` - Linting with type awareness
+  - `"lint": "oxlint --type-aware --type-check"` - Linting with type awareness and type check
 - Remove any `.eslintrc` or `.eslintrc.js` files when migrating packages
 
 #### Vitest Configuration
@@ -592,7 +592,7 @@ This approach ensures:
   - Significantly faster than ESLint with comparable rules
   - Uses `--type-aware` flag for enhanced TypeScript analysis
 - **Prettier** - Code formatting (primarily for documentation)
-- Run `pnpm lint` to check code quality with oxlint
+- Run `pnpm lint` to check code quality with oxlint type-aware and type-check
 - Run `pnpm lint:fix` to auto-fix linting issues
 - Each package uses oxlint which automatically respects `.gitignore` patterns
 
@@ -854,11 +854,11 @@ NODE_OPTIONS='--inspect-brk' pnpm --filter=egg run test
 2. Delete `.eslintrc`, `.eslintrc.js`, or `.eslintrc.json` files
 3. Update scripts in package.json:
    - Add `"typecheck": "tsc --noEmit"` for TypeScript type checking
-   - Change `"lint": "eslint ..."` to `"lint": "oxlint --type-aware"`
+   - Change `"lint": "eslint ..."` to `"lint": "oxlint --type-aware --type-check"`
    - Add `"lint:fix": "npm run lint -- --fix"`
 4. Ensure both type checking and linting are run:
    - Use `tsc --noEmit` for pure TypeScript type checking
-   - Use `oxlint --type-aware` for additional linting rules
+   - Use `oxlint --type-aware --type-check` for additional linting rules
 5. Run `pnpm install` to update dependencies
 
 ### Migrating from Egg v2 to v3

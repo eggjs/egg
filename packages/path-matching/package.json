@@ -43,7 +43,7 @@
   "scripts": {
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint --type-aware",
+    "lint": "oxlint --type-aware --type-check",
     "test": "vitest run",
     "prepublishOnly": "npm run build"
   },

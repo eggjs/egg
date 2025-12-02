@@ -57,7 +57,7 @@
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint --type-aware",
+    "lint": "oxlint --type-aware --type-check",
     "lint:fix": "npm run lint -- --fix",
     "test": "npm run lint:fix && vitest run",
     "ci": "vitest run --coverage",

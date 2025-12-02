@@ -16,7 +16,7 @@
     "preci": "npm run clean && npm run lint",
     "ci": "vitest run --coverage",
     "postci": "npm run prepublishOnly && npm start && sleep 10 && npm stop && npm run clean",
-    "lint": "oxlint --type-aware",
+    "lint": "oxlint --type-aware --type-check",
     "typecheck": "tsc --noEmit",
     "tsc": "tsc",
     "clean": "tsc -b --clean",

@@ -25,7 +25,7 @@
   "description": "Utils for all egg projects",
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "lint": "oxlint --type-aware",
+    "lint": "oxlint --type-aware --type-check",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"

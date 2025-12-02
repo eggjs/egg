@@ -14,7 +14,7 @@
     "preci": "npm run clean && npm run lint",
     "ci": "egg-bin cov",
     "postci": "npm run prepublishOnly && npm start && sleep 10 && npm stop && npm run clean",
-    "lint": "oxlint --type-aware",
+    "lint": "oxlint --type-aware --type-check",
     "tsc": "tsc",
     "clean": "tsc -b --clean",
     "prepublishOnly": "npm run clean && npm run tsc"

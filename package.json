@@ -34,7 +34,7 @@
     "clean": "pnpm -r --parallel run clean && rimraf packages/*/dist plugins/*/dist tools/*/dist examples/*/dist tegg/**/dist **/*/*.tsbuildinfo",
     "build": "pnpm clean && pnpm -r run build",
     "build:parallel": "pnpm clean && pnpm -r --parallel run build",
-    "lint": "oxlint --type-aware",
+    "lint": "oxlint --type-aware --type-check",
     "fmt": "oxfmt",
     "typecheck": "pnpm clean && pnpm -r run typecheck",
     "typecheck:parallel": "pnpm clean && pnpm -r --parallel run typecheck",
@@ -71,7 +71,7 @@
     ],
     "*.{ts,mts,cts,js,mjs,cjs,jsx,tsx}": [
       "oxfmt",
-      "oxlint --type-aware --fix"
+      "oxlint --type-aware --type-check --fix"
     ]
   },
   "repository": {

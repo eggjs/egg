@@ -64,7 +64,7 @@
     "typescript": "catalog:"
   },
   "scripts": {
-    "lint": "oxlint --type-aware",
+    "lint": "oxlint --type-aware --type-check",
     "typecheck": "tsc --noEmit",
     "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
     "test": "node bin/run.js test",
