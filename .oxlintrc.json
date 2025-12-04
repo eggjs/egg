@@ -3,7 +3,7 @@
   "env": {
     "node": true
   },
-  "ignorePatterns": ["**/test/fixtures/**"],
+  "ignorePatterns": ["**/test/fixtures/**", "tools/create-egg/src/templates"],
   "rules": {
     "no-unused-vars": "error",
     "preserve-caught-error": "error"
