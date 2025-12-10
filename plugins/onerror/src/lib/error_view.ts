@@ -248,15 +248,14 @@ export class ErrorView {
     if (code) {
       message = `${message} (code: ${code})`;
     }
+    const hasValidFileName = (frame: Frame) => typeof frame.getFileName === 'function' && frame.getFileName();
+
     return {
       code,
       message,
       name: this.error.name,
       status: this.error.status,
-      frames:
-        stack instanceof Array
-          ? stack.filter((frame) => typeof frame.getFileName === 'function' && frame.getFileName()).map(frameFormatter)
-          : [],
+      frames: stack instanceof Array ? stack.filter(hasValidFileName).map(frameFormatter) : [],
     };
   }
 
