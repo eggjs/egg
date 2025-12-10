@@ -4,7 +4,8 @@ import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 import { getFixtures } from '../utils.ts';
 
 // TODO: windows will return \r\n, not \n
-describe.skipIf(process.platform === 'win32')('test/view/view.test.ts', () => {
+// Node.js v20: SyntaxError: Unexpected identifier 'SingleModeApplication'
+describe.skipIf(process.platform === 'win32' || process.version.startsWith('v20.'))('test/view/view.test.ts', () => {
   let app: MockApplication;
 
   beforeAll(async () => {

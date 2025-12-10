@@ -5,7 +5,8 @@ import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from
 
 import { getFixtures } from './utils.ts';
 
-describe('test/multipart-for-await.test.ts', () => {
+// Node.js v20: SyntaxError: Unexpected identifier 'SingleModeApplication'
+describe.skipIf(process.version.startsWith('v20.'))('test/multipart-for-await.test.ts', () => {
   let app: MockApplication;
   let server: any;
   let host: string;

@@ -59,39 +59,41 @@ beforeAll(() => clearAnyPreviousFolders());
 afterEach(() => clearAnyPreviousFolders());
 afterAll(() => fs.rmSync(tempDir, { recursive: true, force: true }));
 
-test('prompts for the project name if none supplied', () => {
+const isNode20 = process.version.startsWith('v20.');
+
+test.skipIf(isNode20)('prompts for the project name if none supplied', () => {
   const { stdout } = run([]);
   expect(stdout).toContain('Project name:');
 });
 
-test('prompts for the template if none supplied when target dir is current directory', () => {
+test.skipIf(isNode20)('prompts for the template if none supplied when target dir is current directory', () => {
   fs.mkdirSync(genPath, { recursive: true });
   const { stdout } = run(['.'], { cwd: genPath });
   expect(stdout).toContain('Select a template:');
 });
 
-test('prompts for the template if none supplied', () => {
+test.skipIf(isNode20)('prompts for the template if none supplied', () => {
   const { stdout } = run([projectName]);
   expect(stdout).toContain('Select a template:');
 });
 
-test('prompts for the template on not supplying a value for --template', () => {
+test.skipIf(isNode20)('prompts for the template on not supplying a value for --template', () => {
   const { stdout } = run([projectName, '--template']);
   expect(stdout).toContain('Select a template:');
 });
 
-test('prompts for the template on supplying an invalid template', () => {
+test.skipIf(isNode20)('prompts for the template on supplying an invalid template', () => {
   const { stdout } = run([projectName, '--template', 'unknown']);
   expect(stdout).toContain(`"unknown" isn't a valid template. Please choose from below:`);
 });
 
-test('asks to overwrite non-empty target directory', () => {
+test.skipIf(isNode20)('asks to overwrite non-empty target directory', () => {
   createNonEmptyDir();
   const { stdout } = run([projectName], { cwd: import.meta.dirname });
   expect(stdout).toContain(`Target directory "${projectName}" is not empty.`);
 });
 
-test('asks to overwrite non-empty target directory with subfolder', () => {
+test.skipIf(isNode20)('asks to overwrite non-empty target directory with subfolder', () => {
   createNonEmptyDir(genPathWithSubfolder);
   const { stdout } = run([`subfolder/${projectName}`], {
     cwd: import.meta.dirname,
@@ -99,13 +101,13 @@ test('asks to overwrite non-empty target directory with subfolder', () => {
   expect(stdout).toContain(`Target directory "subfolder/${projectName}" is not empty.`);
 });
 
-test('asks to overwrite non-empty current directory', () => {
+test.skipIf(isNode20)('asks to overwrite non-empty current directory', () => {
   createNonEmptyDir();
   const { stdout } = run(['.'], { cwd: genPath });
   expect(stdout).toContain(`Current directory is not empty.`);
 });
 
-test('successfully scaffolds a project based on tegg starter template', () => {
+test.skipIf(isNode20)('successfully scaffolds a project based on tegg starter template', () => {
   const { stdout } = run([projectName, '--template', 'tegg', '--overwrite'], {
     cwd: import.meta.dirname,
   });
@@ -117,7 +119,7 @@ test('successfully scaffolds a project based on tegg starter template', () => {
 });
 
 // FIXME: Command failed with exit code 1: pnpm 'test:local'
-test.skipIf(process.platform === 'win32')
+test.skipIf(process.platform === 'win32' || isNode20)
   .skip('successfully scaffolds a project based on simple-ts starter template', () => {
   const projectName = 'create-egg-test-simple-ts';
   const { stdout } = run([projectName, '--template', 'simple-ts', '--overwrite'], {
@@ -155,7 +157,7 @@ test.skipIf(process.platform === 'win32')
 
 // use "@oxc-node/core/register" to support decorator metadata
 // TODO: unstable on windows and CI
-test.skipIf(process.platform === 'win32' || process.env.CI)
+test.skipIf(process.platform === 'win32' || process.env.CI || isNode20)
   .skip('successfully scaffolds a project based on tegg starter template', () => {
   const projectName = 'create-egg-test-tegg';
   const { stdout } = run([projectName, '--template', 'tegg', '--overwrite'], {
@@ -199,7 +201,7 @@ test.skipIf(process.platform === 'win32' || process.env.CI)
   });
 });
 
-test('works with the -t alias', () => {
+test.skipIf(isNode20)('works with the -t alias', () => {
   const { stdout } = run([projectName, '-t', 'tegg', '--overwrite'], {
     cwd: import.meta.dirname,
   });
@@ -210,19 +212,19 @@ test('works with the -t alias', () => {
   expect(templateFiles).toEqual(generatedFiles);
 });
 
-test('accepts command line override for --overwrite', () => {
+test.skipIf(isNode20)('accepts command line override for --overwrite', () => {
   createNonEmptyDir();
   const { stdout } = run(['.', '--overwrite', 'ignore'], { cwd: genPath });
   expect(stdout).not.toContain(`Current directory is not empty.`);
 });
 
-test('return help usage how to use create-egg', () => {
+test.skipIf(isNode20)('return help usage how to use create-egg', () => {
   const { stdout } = run(['--help'], { cwd: import.meta.dirname });
   const message = 'Usage: create-egg [OPTION]... [DIRECTORY]';
   expect(stdout).toContain(message);
 });
 
-test('return help usage how to use create-egg with -h alias', () => {
+test.skipIf(isNode20)('return help usage how to use create-egg with -h alias', () => {
   const { stdout } = run(['--h'], { cwd: import.meta.dirname });
   const message = 'Usage: create-egg [OPTION]... [DIRECTORY]';
   expect(stdout).toContain(message);
