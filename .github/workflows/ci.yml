@@ -164,7 +164,7 @@ jobs:
       - name: Code Coverage
         # skip on windows, it will hangup on codecov
         if: ${{ matrix.os != 'windows-latest' }}
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
 
@@ -212,7 +212,7 @@ jobs:
       - name: Code Coverage
         # skip on windows, it will hangup on codecov https://github.com/codecov/codecov-action/issues/1787
         if: ${{ matrix.os != 'windows-latest' }}
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
 
@@ -251,7 +251,7 @@ jobs:
 
       - name: Code Coverage
         if: ${{ matrix.os != 'windows-latest' }}
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
 
