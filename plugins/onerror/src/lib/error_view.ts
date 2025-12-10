@@ -83,7 +83,7 @@ export class ErrorView {
     if (frame.isNative()) {
       return true;
     }
-    const filename = frame.getFileName() || '';
+    const filename = typeof frame.getFileName === 'function' ? frame.getFileName() || '' : '';
     return !path.isAbsolute(filename) && filename[0] !== '.';
   }
 
@@ -96,7 +96,7 @@ export class ErrorView {
     if (this.isNode(frame)) {
       return false;
     }
-    const filename = frame.getFileName() || '';
+    const filename = typeof frame.getFileName === 'function' ? frame.getFileName() || '' : '';
     return !filename.includes('node_modules' + path.sep);
   }
 
@@ -125,8 +125,8 @@ export class ErrorView {
    * @param {Object} frame - current frame
    */
   getFrameSource(frame: StackFrame): FrameSource {
-    const filename = frame.getFileName();
-    const lineNumber = frame.getLineNumber();
+    const filename = typeof frame.getFileName === 'function' ? frame.getFileName() : '';
+    const lineNumber = typeof frame.getLineNumber === 'function' ? frame.getLineNumber() : 0;
     let contents = this.getAssets(filename);
     if (!contents) {
       contents = fs.existsSync(filename) ? fs.readFileSync(filename, 'utf8') : '';
@@ -210,7 +210,7 @@ export class ErrorView {
     context: { start?: number; pre?: string; line?: string; post?: string };
     classes: string;
   } {
-    const filename = frame.getFileName();
+    const filename = typeof frame.getFileName === 'function' ? frame.getFileName() : '';
     const relativeFileName = filename.includes(process.cwd())
       ? filename.replace(process.cwd(), '').replace(startingSlashRegex, '')
       : filename;
@@ -219,9 +219,9 @@ export class ErrorView {
     return {
       extname,
       file: relativeFileName,
-      method: frame.getFunctionName(),
-      line: frame.getLineNumber(),
-      column: frame.getColumnNumber(),
+      method: typeof frame.getFunctionName === 'function' ? frame.getFunctionName() : null,
+      line: typeof frame.getLineNumber === 'function' ? frame.getLineNumber() : null,
+      column: typeof frame.getColumnNumber === 'function' ? frame.getColumnNumber() : null,
       context: this.getContext(frame),
       classes: '',
     };
@@ -253,7 +253,10 @@ export class ErrorView {
       message,
       name: this.error.name,
       status: this.error.status,
-      frames: stack instanceof Array ? stack.filter((frame) => frame.getFileName()).map(frameFormatter) : [],
+      frames:
+        stack instanceof Array
+          ? stack.filter((frame) => typeof frame.getFileName === 'function' && frame.getFileName()).map(frameFormatter)
+          : [],
     };
   }
 

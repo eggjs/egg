@@ -19,12 +19,12 @@ export function getCalleeFromStack(withLine: boolean, stackIndex?: number): stri
   if (callSite) {
     // egg-mock will create a proxy
     // https://github.com/eggjs/egg-mock/blob/master/lib/app.js#L174
-    fileName = callSite.getFileName();
+    fileName = typeof callSite.getFileName === 'function' ? callSite.getFileName() : '';
     /* istanbul ignore if */
     if (fileName && fileName.endsWith('egg-mock/lib/app.js')) {
       // TODO: add test
       callSite = obj.stack[stackIndex + 1];
-      fileName = callSite.getFileName();
+      fileName = typeof callSite.getFileName === 'function' ? callSite.getFileName() : '';
     }
   }
 
@@ -34,5 +34,7 @@ export function getCalleeFromStack(withLine: boolean, stackIndex?: number): stri
   /* istanbul ignore if */
   if (!callSite || !fileName) return '<anonymous>';
   if (!withLine) return fileName;
-  return `${fileName}:${callSite.getLineNumber()}:${callSite.getColumnNumber()}`;
+  const lineNumber = typeof callSite.getLineNumber === 'function' ? callSite.getLineNumber() : 0;
+  const columnNumber = typeof callSite.getColumnNumber === 'function' ? callSite.getColumnNumber() : 0;
+  return `${fileName}:${lineNumber}:${columnNumber}`;
 }

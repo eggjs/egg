@@ -41,11 +41,11 @@ export class StackUtil {
       Error.captureStackTrace(obj);
       for (let callSite of obj.stack) {
         stacks.push({
-          scriptName: callSite.getFileName() ?? '',
-          scriptId: callSite.getScriptHash() ?? '',
-          lineNumber: callSite.getLineNumber() ?? 1,
-          columnNumber: callSite.getColumnNumber() ?? 1,
-          functionName: callSite.getFunctionName() ?? '',
+          scriptName: typeof callSite.getFileName === 'function' ? (callSite.getFileName() ?? '') : '',
+          scriptId: typeof callSite.getScriptHash === 'function' ? (callSite.getScriptHash() ?? '') : '',
+          lineNumber: typeof callSite.getLineNumber === 'function' ? (callSite.getLineNumber() ?? 1) : 1,
+          columnNumber: typeof callSite.getColumnNumber === 'function' ? (callSite.getColumnNumber() ?? 1) : 1,
+          functionName: typeof callSite.getFunctionName === 'function' ? (callSite.getFunctionName() ?? '') : '',
         });
       }
       // restore the original Error.stackTraceLimit and Error.prepareStackTrace
