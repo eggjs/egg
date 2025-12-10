@@ -211,7 +211,8 @@ describe('test/options.test.ts', () => {
       }
     });
 
-    it('should get from pkg.egg.framework', async () => {
+    // Node.js v20: SyntaxError: Unexpected identifier 'SingleModeApplication'
+    it.skipIf(process.version.startsWith('v20.'))('should get from pkg.egg.framework', async () => {
       const baseDir = path.join(__dirname, 'fixtures/apps/framework-pkg-egg');
       const options = await parseOptions({
         baseDir,
