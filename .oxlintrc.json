@@ -5,6 +5,7 @@
   },
   "ignorePatterns": [
     "**/test/fixtures/**",
+    "tegg/benchmark/http",
     "tools/create-egg/src/templates/egg3-tegg",
     "tools/create-egg/src/templates/egg3-simple-ts/test"
   ],
