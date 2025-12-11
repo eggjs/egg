@@ -84,7 +84,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "packages/mock"
+    "directory": "plugins/mock"
   },
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
