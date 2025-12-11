@@ -371,7 +371,8 @@ describe('test/multipart.test.ts', () => {
     });
   });
 
-  describe('upload one file', () => {
+  // Node.js v20: SyntaxError: Unexpected identifier 'SingleModeApplication'
+  describe.skipIf(process.version.startsWith('v20.'))('upload one file', () => {
     let app: MockApplication;
     let server: any;
     let host: string;

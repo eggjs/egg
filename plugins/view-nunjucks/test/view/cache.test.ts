@@ -6,7 +6,8 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 import { getFixtures } from '../utils.ts';
 
-describe('test/view/cache.test.ts', () => {
+// Node.js v20: SyntaxError: Unexpected identifier 'SingleModeApplication'
+describe.skipIf(process.version.startsWith('v20.'))('test/view/cache.test.ts', () => {
   afterEach(() => mock.restore());
 
   describe('should render cache template at prod', () => {

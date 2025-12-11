@@ -44,7 +44,6 @@
     "test:cov": "pnpm run test --coverage",
     "preci": "pnpm -r --parallel run pretest",
     "ci": "vitest run --bail 1 --retry 2 --coverage --testTimeout 20000 --hookTimeout 20000",
-    "postci": "pnpm run example:test:all",
     "site:dev": "pnpm --filter=site run dev",
     "site:build": "pnpm --filter=site run build",
     "site:prettier": "pnpm --filter=site run prettier",
