@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/extend2",
   "author": "popomore <sakura9515@gmail.com>",
-  "version": "5.0.0-beta.34",
+  "version": "5.0.0-beta.35",
   "engines": {
     "node": ">=22.18.0"
   },

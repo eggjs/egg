@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-runtime",
-  "version": "4.0.0-beta.34",
+  "version": "4.0.0-beta.35",
   "description": "tegg runtime",
   "type": "module",
   "exports": {
