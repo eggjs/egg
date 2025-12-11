@@ -45,7 +45,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/eggjs/egg.git",
+    "url": "git+https://github.com/eggjs/egg.git",
     "directory": "plugins/typebox-validate"
   },
   "author": "xiekw2010",

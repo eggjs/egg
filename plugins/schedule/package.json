@@ -29,7 +29,7 @@
   "description": "schedule plugin for egg, support corn job.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eggjs/egg.git",
+    "url": "git+https://github.com/eggjs/egg.git",
     "directory": "plugins/schedule"
   },
   "homepage": "https://github.com/eggjs/egg/tree/next/plugins/schedule",

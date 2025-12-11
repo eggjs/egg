@@ -33,7 +33,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/eggjs/egg.git",
+    "url": "git+https://github.com/eggjs/egg.git",
     "directory": "packages/supertest"
   },
   "homepage": "https://github.com/eggjs/egg/tree/next/packages/supertest",

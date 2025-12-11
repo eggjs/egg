@@ -179,6 +179,7 @@ catalog:
   picocolors: ^1.1.1
   pluralize: ^8.0.0
   prettier: ^3.7.4
+  publint: ^0.3.16
   ready-callback: ^4.0.0
   reflect-metadata: ^0.2.2
   rimraf: ^6.1.2

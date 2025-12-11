@@ -11,7 +11,7 @@
   "description": "egg developer tool",
   "repository": {
     "type": "git",
-    "url": "git://github.com/eggjs/egg.git",
+    "url": "git+https://github.com/eggjs/egg.git",
     "directory": "tools/egg-bin"
   },
   "bugs": {
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/eggjs/egg/tree/next/tools/egg-bin",
   "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
+  "license": "MIT",
   "engines": {
     "node": ">=22.18.0"
   },

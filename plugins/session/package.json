@@ -4,7 +4,7 @@
   "description": "session plugin for egg",
   "repository": {
     "type": "git",
-    "url": "git://github.com/eggjs/egg.git",
+    "url": "git+https://github.com/eggjs/egg.git",
     "directory": "plugins/session"
   },
   "homepage": "https://github.com/eggjs/egg/tree/next/plugins/session#readme",
@@ -12,6 +12,7 @@
     "url": "https://github.com/eggjs/egg/issues"
   },
   "author": "dead_horse",
+  "license": "MIT",
   "keywords": [
     "egg",
     "egg-plugin",

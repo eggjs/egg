@@ -7,7 +7,7 @@
   "description": "Router middleware for egg/koa. Provides RESTful resource routing.",
   "repository": {
     "type": "git",
-    "url": "git://github.com/eggjs/egg.git",
+    "url": "git+https://github.com/eggjs/egg.git",
     "directory": "packages/router"
   },
   "bugs": {

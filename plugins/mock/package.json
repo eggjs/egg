@@ -83,8 +83,8 @@
   "description": "mock server plugin for egg",
   "repository": {
     "type": "git",
-    "url": "git://github.com/eggjs/egg.git",
-    "directory": "packages/mock"
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/mock"
   },
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
@@ -95,6 +95,7 @@
     "mock"
   ],
   "author": "popomore <sakura9515@gmail.com>",
+  "license": "MIT",
   "engines": {
     "node": ">=22.18.0"
   },
