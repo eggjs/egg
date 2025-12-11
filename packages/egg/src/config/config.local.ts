@@ -1,9 +1,11 @@
 import { defineConfig, type PartialEggConfig } from '../lib/define.ts';
 
-export default defineConfig({
+const config: PartialEggConfig = defineConfig({
   logger: {
     coreLogger: {
       consoleLevel: 'WARN',
     },
   },
-}) as PartialEggConfig;
+});
+
+export default config;

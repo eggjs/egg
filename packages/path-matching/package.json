@@ -42,7 +42,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
     "lint": "oxlint --type-aware",
     "test": "vitest run",
     "prepublishOnly": "npm run build"

@@ -47,7 +47,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
     "clean": "rimraf dist *.tsbuildinfo",
     "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run build"

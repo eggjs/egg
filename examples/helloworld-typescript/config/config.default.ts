@@ -1,5 +1,7 @@
 import { type PartialEggConfig } from 'egg';
 
-export default {
+const config: PartialEggConfig = {
   keys: '123456',
-} as PartialEggConfig;
+};
+
+export default config;

@@ -30,7 +30,7 @@
     "prepublishOnly": "pnpm run build",
     "start": "egg-scripts start --daemon",
     "stop": "egg-scripts stop",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
     "build": "tsdown"
   },
   "engines": {

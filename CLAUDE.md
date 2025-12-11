@@ -429,7 +429,7 @@ Plugins should configure their package.json following this pattern:
   "files": ["dist"],
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
     "lint": "oxlint --type-aware",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
@@ -472,7 +472,7 @@ Tool packages (like egg-bin) should be placed in the `tools/` directory:
 - Use `oxlint --type-aware` for enhanced TypeScript checking
 - oxlint automatically respects `.gitignore` patterns for file exclusion
 - Package-specific scripts:
-  - `"typecheck": "tsc --noEmit"` - Pure TypeScript type checking
+  - `"typecheck": "tsgo --noEmit && tsc --noEmit"` - Pure TypeScript type checking
   - `"lint": "oxlint --type-aware"` - Linting with type awareness
 - Remove any `.eslintrc` or `.eslintrc.js` files when migrating packages
 
@@ -853,7 +853,7 @@ NODE_OPTIONS='--inspect-brk' pnpm --filter=egg run test
    - Add `"oxlint": "catalog:"` to devDependencies
 2. Delete `.eslintrc`, `.eslintrc.js`, or `.eslintrc.json` files
 3. Update scripts in package.json:
-   - Add `"typecheck": "tsc --noEmit"` for TypeScript type checking
+   - Add `"typecheck": "tsgo --noEmit && tsc --noEmit"` for TypeScript type checking
    - Change `"lint": "eslint ..."` to `"lint": "oxlint --type-aware"`
    - Add `"lint:fix": "npm run lint -- --fix"`
 4. Ensure both type checking and linting are run:

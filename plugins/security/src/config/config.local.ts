@@ -1,9 +1,11 @@
 import type { PartialEggConfig } from 'egg';
 
-export default {
+const config: PartialEggConfig = {
   security: {
     hsts: {
       enable: false,
     },
   },
-} as PartialEggConfig;
+};
+
+export default config;

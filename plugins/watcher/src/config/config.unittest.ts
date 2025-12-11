@@ -1,7 +1,9 @@
 import type { PartialEggConfig } from 'egg';
 
-export default {
+const config: PartialEggConfig = {
   watcher: {
     type: 'development',
   },
-} as PartialEggConfig;
+};
+
+export default config;

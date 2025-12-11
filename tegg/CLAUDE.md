@@ -292,7 +292,7 @@ const impl = await eggObjectFactory.getEggObject(
 1. Add to `tegg/core/` directory within the main monorepo
 2. Include `tsconfig.json` extending `@eggjs/tsconfig`
 3. Add standard scripts to `package.json`:
-   - `"typecheck": "tsc --noEmit"`
+   - `"typecheck": "tsgo --noEmit && tsc --noEmit"`
    - `"clean": "rimraf dist *.tsbuildinfo"`
    - `"build": "tsdown && npm run clean && tsc -p tsconfig.build.json"`
 4. Export public API through `src/index.ts`

@@ -35,7 +35,7 @@
   "scripts": {
     "clean": "rimraf dist *.tsbuildinfo",
     "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
   "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/eventbus",

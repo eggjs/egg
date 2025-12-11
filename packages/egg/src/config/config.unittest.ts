@@ -1,9 +1,11 @@
 import { defineConfig, type PartialEggConfig } from '../lib/define.ts';
 
-export default defineConfig({
+const config: PartialEggConfig = defineConfig({
   logger: {
     consoleLevel: 'WARN',
     // disable buffer for unittest
     buffer: false,
   },
-}) as PartialEggConfig;
+});
+
+export default config;

@@ -1,8 +1,10 @@
 import { type PartialEggConfig } from 'egg';
 
-export default {
+const config: PartialEggConfig = {
   static: {
     maxAge: 31536000,
     buffer: true,
   },
-} as PartialEggConfig;
+};
+
+export default config;

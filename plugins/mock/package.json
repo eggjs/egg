@@ -128,7 +128,7 @@
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "lint": "oxlint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   }

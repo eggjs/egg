@@ -139,7 +139,7 @@
   },
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",
     "test": "npm run lint:fix && vitest",

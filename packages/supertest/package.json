@@ -57,7 +57,7 @@
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
     "lint": "oxlint --type-aware",
     "prepublishOnly": "pnpm run build"
   }
