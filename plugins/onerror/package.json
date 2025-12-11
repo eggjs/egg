@@ -18,7 +18,7 @@
   "homepage": "https://github.com/eggjs/egg/tree/next/plugins/onerror",
   "repository": {
     "type": "git",
-    "url": "git://github.com/eggjs/egg.git",
+    "url": "git+https://github.com/eggjs/egg.git",
     "directory": "plugins/onerror"
   },
   "keywords": [
@@ -27,6 +27,7 @@
     "onerror"
   ],
   "author": "dead_horse",
+  "license": "MIT",
   "engines": {
     "node": ">=22.18.0"
   },

@@ -13,7 +13,7 @@
   "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/transaction-decorator",
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/egg.git",
+    "url": "git+https://github.com/eggjs/egg.git",
     "directory": "tegg/core/transaction-decorator"
   },
   "dependencies": {

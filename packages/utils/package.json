@@ -37,7 +37,7 @@
   "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
   "repository": {
     "type": "git",
-    "url": "git://github.com/eggjs/egg.git",
+    "url": "git+https://github.com/eggjs/egg.git",
     "directory": "packages/utils"
   },
   "homepage": "https://github.com/eggjs/egg/tree/next/packages/utils",

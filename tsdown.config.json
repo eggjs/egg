@@ -7,5 +7,9 @@
   "exports": {
     "devExports": true
   },
-  "fixedExtension": false
+  "fixedExtension": false,
+  "publint": {
+    "level": "suggestion",
+    "strict": true
+  }
 }
