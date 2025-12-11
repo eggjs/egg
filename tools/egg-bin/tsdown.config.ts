@@ -1,9 +1,9 @@
-import { defineConfig } from 'tsdown';
+import { defineConfig, type UserConfig } from 'tsdown';
 
 import baseConfig from '../../tsdown.config.json' with { type: 'json' };
 
 const config = defineConfig({
-  ...baseConfig,
+  ...(baseConfig as UserConfig),
   // MEMO: @oclif/core only work on unbundle mode
   unbundle: true,
   unused: {
