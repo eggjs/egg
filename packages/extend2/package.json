@@ -15,7 +15,7 @@
   "description": "Port of jQuery.extend for Node.js",
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
     "lint": "oxlint",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"

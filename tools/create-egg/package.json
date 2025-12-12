@@ -11,8 +11,17 @@
   },
   "description": "Scaffolding Your First Egg.js Project",
   "type": "module",
+  "dependencies": {
+    "@clack/prompts": "catalog:",
+    "cross-spawn": "catalog:",
+    "mri": "catalog:",
+    "picocolors": "catalog:"
+  },
   "devDependencies": {
+    "@eggjs/tracer": "workspace:*",
+    "@eggjs/mock": "workspace:*",
     "@types/cross-spawn": "catalog:",
+    "egg": "workspace:*",
     "execa": "catalog:",
     "tsdown": "catalog:"
   },
@@ -48,11 +57,5 @@
   },
   "bin": {
     "create-egg": "./dist/cli.js"
-  },
-  "dependencies": {
-    "@clack/prompts": "catalog:",
-    "cross-spawn": "catalog:",
-    "mri": "catalog:",
-    "picocolors": "catalog:"
   }
 }

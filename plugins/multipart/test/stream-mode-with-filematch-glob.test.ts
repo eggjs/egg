@@ -25,7 +25,11 @@ describe('test/stream-mode-with-filematch-glob.test.ts', () => {
     host = 'http://127.0.0.1:' + server.address().port;
   });
   afterAll(async () => {
-    await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
+    try {
+      await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
+    } catch (err) {
+      console.error(err);
+    }
   });
   afterAll(() => app.close());
   afterAll(() => server.close());

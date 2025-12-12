@@ -58,7 +58,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
     "lint": "oxlint --type-aware",
     "pretest": "pnpm run build",
     "test": "vitest run --bail 1 --no-file-parallelism",

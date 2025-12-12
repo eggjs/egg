@@ -17,7 +17,7 @@ export interface EggScheduleConfig {
   directory?: string[];
 }
 
-export default {
+const config: PartialEggConfig = {
   customLogger: {
     scheduleLogger: {
       consoleLevel: 'NONE',
@@ -27,4 +27,6 @@ export default {
   schedule: {
     directory: [],
   },
-} as PartialEggConfig;
+};
+
+export default config;

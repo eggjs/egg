@@ -1,12 +1,11 @@
-import { Inject, HTTPController, HTTPMethod, HTTPMethodEnum } from '@eggjs/tegg';
-import type { EggLogger } from 'egg';
+import { Inject, HTTPController, HTTPMethod, HTTPMethodEnum, type Logger } from 'egg';
 
 @HTTPController({
   path: '/',
 })
 export class HomeController {
   @Inject()
-  private logger: EggLogger;
+  private logger: Logger;
 
   @HTTPMethod({
     method: HTTPMethodEnum.GET,

@@ -19,11 +19,13 @@ export interface JSONPConfig {
   whiteList?: string | RegExp | (string | RegExp)[];
 }
 
-export default {
+const config: PartialEggConfig = {
   jsonp: {
     limit: 50,
     callback: ['_callback', 'callback'],
     csrf: false,
     whiteList: undefined,
   },
-} as PartialEggConfig;
+};
+
+export default config;
