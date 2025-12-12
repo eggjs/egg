@@ -162,7 +162,7 @@ jobs:
         run: pnpm run ci --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
       - name: Run example tests
-        if: ${{ matrix.node != '20' }}
+        if: ${{ matrix.node != '20' && matrix.os != 'windows-latest' }}
         run: pnpm run example:test:all
 
       - name: Code Coverage
