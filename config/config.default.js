@@ -289,8 +289,14 @@ module.exports = appInfo => {
   /**
    * The option for httpclient
    * @member Config#httpclient
-   * @property {Boolean} enableDNSCache - Enable DNS lookup from local cache or not, default is false.
-   * @property {Boolean} dnsCacheLookupInterval - minimum interval of DNS query on the same hostname (default 10s).
+   * @property {Boolean} enableDNSCache - Enable DNS lookup cache using dns.lookup (old behavior), default is false.
+   * @property {Number} dnsCacheLookupInterval - DNS cache lookup interval in ms for old dns.lookup mode, default is 10000 ms.
+   *
+   * @property {Boolean} useDNSResolver - Enable DNS resolve cache using dns.resolve (new feature), default is false.
+   * @property {Array<String>} dnsServers - Custom DNS nameservers for DNS resolver cache, e.g. ['8.8.8.8', '1.1.1.1']. If not set, use system default.
+   *
+   * @property {Number} dnsCacheMaxLength - DNS cache max size, default is 1000.
+   * @property {Boolean} dnsAddressRotation - Enable address rotation for both lookup and resolve modes, default is true.
    *
    * @property {Number} request.timeout - httpclient request default timeout, default is 5000 ms.
    *
@@ -307,12 +313,21 @@ module.exports = appInfo => {
    * @property {Boolean} allowH2 - use urllib@4 HttpClient and enable H2, default is false. Only works on Node.js >= 18
    */
   config.httpclient = {
+    // Enable DNS cache mode using dns.lookup
     enableDNSCache: false,
-    dnsCacheLookupInterval: 10000,
+    dnsCacheLookupInterval: 10000, // will not work if useDNSResolver is true
+
+    // DNS resolver mode using dns.resolve (new feature)
+    useDNSResolver: false, // will not work if enableDNSCache IS NOT true
+    dnsServers: undefined, // Use system default if not set
+
+    // Common dns options
     dnsCacheMaxLength: 1000,
+    dnsAddressRotation: true,
 
     request: {
       timeout: 5000,
+      reset: false, // only works when useHttpClientNext is true
     },
     httpAgent: {
       keepAlive: true,

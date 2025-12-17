@@ -3,10 +3,6 @@
 exports.httpclient = {
   enableDNSCache: true,
   dnsCacheLookupInterval: 3000,
-  httpAgent: {
-    keepAlive: false,
-    timeout: 1000,
-  },
 };
 
 exports.keys = 'test key';

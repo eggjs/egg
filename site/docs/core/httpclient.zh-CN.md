@@ -276,17 +276,25 @@ class NpmController extends Controller {
 // config/config.default.js
 exports.httpclient = {
   // 是否开启本地 DNS 缓存，默认关闭，开启后有两个特性
-  // 1. 所有 DNS 查询都会默认优先使用缓存的，即使 DNS 查询错误也不影响应用
+  // 1. 所有 DNS 查询都会默认优先使用 dns.lookup 缓存的，即使 DNS 查询错误也不影响应用
   // 2. 对同一个域名，在 dnsCacheLookupInterval 的间隔内（默认 10s）只会查询一次
   enableDNSCache: false,
-  // 对同一个域名进行 DNS 查询的最小间隔时间
-  dnsCacheLookupInterval: 10000,
-  // DNS 同时缓存的最大域名数量，默认 1000
-  dnsCacheMaxLength: 1000,
+  // 旧的 dns.lookup 模式下的 DNS 缓存查询间隔，单位毫秒，默认 10000ms
+  dnsCacheLookupInterval: 10000, // 当 useDNSResolver 为 true 时不生效
+
+  // 新特性：开启 DNS 解析器模式，使用 dns.resolve
+  useDNSResolver: false, // 当 enableDNSCache 不为 true 时不生效
+  dnsServers: undefined, // 自定义 DNS 服务器，如 ['8.8.8.8', '1.1.1.1']，不设置则使用系统默认
+
+  // DNS 通用配置
+  dnsCacheMaxLength: 1000, // DNS 缓存最大数量，默认 1000
+  dnsAddressRotation: true, // 是否启用地址轮询（lookup 和 resolve 模式都支持），默认 true
 
   request: {
     // 默认 request 超时时间
-    timeout: 3000
+    timeout: 5000,
+    // 是否开启 http keepalive，默认为 false（仅 useHttpClientNext == true 时生效）
+    reset: false
   },
 
   httpAgent: {

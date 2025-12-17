@@ -278,14 +278,22 @@ exports.httpclient = {
   // 1. All DNS lookup will prefer to use the cache by default, even DNS query error does not affects the application
   // 2. For the same hostname, query only once during the interval of dnsCacheLookupInterval (default 10s)
   enableDNSCache: false,
-  // minimum interval of DNS query on the same hostname
-  dnsCacheLookupInterval: 10000,
-  // maximum number of hostname DNS cache simultaneously, default 1000
-  dnsCacheMaxLength: 1000,
+  // DNS cache lookup interval in ms for old dns.lookup mode, default is 10000 ms
+  dnsCacheLookupInterval: 10000, // will not work if useDNSResolver is true
+
+  // DNS resolver mode using dns.resolve
+  useDNSResolver: false, // will not work if enableDNSCache IS NOT true
+  dnsServers: undefined, // Custom DNS nameservers, e.g. ['8.8.8.8', '1.1.1.1']. If not set, use system default
+
+  // Common DNS options
+  dnsCacheMaxLength: 1000, // DNS cache max size, default is 1000
+  dnsAddressRotation: true, // Enable address rotation for both lookup and resolve modes, default is true
 
   request: {
-    // default timeout of request
-    timeout: 3000,
+    // default request timeout in milliseconds
+    timeout: 5000,
+    // disable keepalive,  only works when useHttpClientNext is true
+    reset: false
   },
 
   httpAgent: {
@@ -293,8 +301,6 @@ exports.httpclient = {
     keepAlive: true,
     // idle KeepAlive socket can survive for 4 seconds
     freeSocketTimeout: 4000,
-    // when sockets have no activity for more than 30s, it will be processed as timeout
-    timeout: 30000,
     // maximum number of sockets allow to be created
     maxSockets: Number.MAX_SAFE_INTEGER,
     // maximum number of idle sockets
@@ -306,13 +312,16 @@ exports.httpclient = {
     keepAlive: true,
     // idle KeepAlive socket can survive for 4 seconds
     freeSocketTimeout: 4000,
-    // when sockets have no activity for more than 30s, it will be processed as timeout
-    timeout: 30000,
     // maximum number of sockets allow to be created
     maxSockets: Number.MAX_SAFE_INTEGER,
     // maximum number of idle sockets
     maxFreeSockets: 256,
   },
+
+  // use urllib@3 HttpClient, default is false
+  useHttpClientNext: false,
+  // use urllib@4 HttpClient and enable H2, default is false. Only works on Node.js >= 18
+  // allowH2: false,
 };
 ```
 

@@ -89,6 +89,19 @@ declare module 'egg' {
     new(ctx: Context): EggContextHttpClient;
   }
 
+  export interface EggContextFetch {
+    ctx: Context;
+    app: Application;
+    fetch(url: string | URL, init?: RequestInit): Promise<Response>;
+    /**
+     * safeFetch request helper with SSRF protection
+     */
+    safeFetch(url: string | URL, init?: RequestInit): Promise<Response>;
+  }
+  interface EggContextFetchConstructor {
+    new (ctx: Context): EggContextFetch;
+  }
+
   /**
    * BaseContextClass is a base class that can be extended,
    * it's instantiated in context level,

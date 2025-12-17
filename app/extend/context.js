@@ -11,6 +11,7 @@ const LOCALS_LIST = Symbol('Context#localsList');
 const COOKIES = Symbol('Context#cookies');
 const CONTEXT_LOGGERS = Symbol('Context#logger');
 const CONTEXT_HTTPCLIENT = Symbol('Context#httpclient');
+const CONTEXT_FETCH = Symbol('Context#fetch');
 const CONTEXT_ROUTER = Symbol('Context#router');
 
 const proto = module.exports = {
@@ -47,6 +48,51 @@ const proto = module.exports = {
    */
   curl(url, options) {
     return this.httpclient.curl(url, options);
+  },
+
+  /**
+   * Get a wrapper fetch instance with context
+   *
+   * @return {ContextFetch} the wrapper fetch instance
+   */
+  get fetchClient() {
+    if (!this.app.fetch) return null;
+    if (!this[CONTEXT_FETCH]) {
+      this[CONTEXT_FETCH] = new this.app.ContextFetch(this);
+    }
+    return this[CONTEXT_FETCH];
+  },
+
+  /**
+   * Shortcut for fetchClient.fetch
+   *
+   * @function Context#fetch
+   * @param {String|URL} url - request url address.
+   * @param {Object} [init] - fetch init options.
+   * @return {Promise<Response>} see {@link ContextFetch#fetch}
+   */
+  fetch(url, init) {
+    const client = this.fetchClient;
+    if (!client) {
+      throw new Error('fetch is not available, please upgrade to Node.js >= 20 and install urllib4');
+    }
+    return client.fetch(url, init);
+  },
+
+  /**
+   * Shortcut for fetchClient.safeFetch with SSRF protection
+   *
+   * @function Context#safeFetch
+   * @param {String|URL} url - request url address.
+   * @param {Object} [init] - fetch init options.
+   * @return {Promise<Response>} see {@link ContextFetch#safeFetch}
+   */
+  safeFetch(url, init) {
+    const client = this.fetchClient;
+    if (!client) {
+      throw new Error('safeFetch is not available, please upgrade to Node.js >= 20 and install urllib4');
+    }
+    return client.safeFetch(url, init);
   },
 
   /**
