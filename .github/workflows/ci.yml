@@ -204,7 +204,7 @@ jobs:
 
       - name: Code Coverage
         # skip on windows, it will hangup on codecov https://github.com/codecov/codecov-action/issues/1787
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ !contains(matrix.os, 'windows') }}
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
@@ -243,7 +243,7 @@ jobs:
         run: pnpm run --filter=./tools/scripts ci
 
       - name: Code Coverage
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ !contains(matrix.os, 'windows') }}
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true

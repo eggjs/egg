@@ -334,7 +334,13 @@ export function createCluster(initOptions?: MockClusterOptions): MockClusterAppl
     clusters.delete(options.baseDir);
   }
 
-  if (options.clean !== false) {
+  let cleanFirst = options.clean !== false;
+  if (cleanFirst && os.platform() === 'win32' && process.env.CI) {
+    // ignore clean on windows in CI
+    // avoid: ENOTEMPTY: directory not empty, rmdir
+    cleanFirst = false;
+  }
+  if (cleanFirst) {
     const logDir = path.join(options.baseDir, 'logs');
     try {
       rimrafSync(logDir);
