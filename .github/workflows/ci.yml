@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   typecheck:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-32vcpu-ubuntu-2404
 
     concurrency:
       group: typecheck-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
+        os: ['ubuntu-latest', 'macos-latest', 'blacksmith-32vcpu-ubuntu-2404']
         node: ['20', '22', '24']
         # 1-based index
         shardIndex: [1, 2, 3]
@@ -177,7 +177,7 @@ jobs:
       fail-fast: false
       matrix:
         # os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
-        os: ['ubuntu-latest', 'windows-latest']
+        os: ['ubuntu-latest', 'blacksmith-4vcpu-ubuntu-2404']
         node: ['22']
         # 0-based index
         shardIndex: [0, 1, 2]
@@ -224,7 +224,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest']
+        os: ['blacksmith-4vcpu-ubuntu-2404']
         node: ['22', '24']
 
     name: Test scripts (${{ matrix.os }}, ${{ matrix.node }})

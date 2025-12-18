@@ -42,7 +42,7 @@ on:
 jobs:
   release:
     name: Manual Release
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
 
     concurrency:
       group: release-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
