@@ -155,8 +155,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Run tests and coverage
+        if: ${{ !contains(matrix.os, 'windows') }}
+        run: pnpm run ci:coverage
+
       - name: Run tests
-        run: pnpm run ci
+        if: ${{ contains(matrix.os, 'windows') }}
+        run: pnpm run ci:test
 
       - name: Run example tests
         if: ${{ matrix.node != '20' && !contains(matrix.os, 'windows') }}
@@ -165,6 +170,7 @@ jobs:
       - name: Code Coverage
         # skip on windows, it will hangup on codecov
         if: ${{ !contains(matrix.os, 'windows') }}
+        continue-on-error: true
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
@@ -205,6 +211,7 @@ jobs:
       - name: Code Coverage
         # skip on windows, it will hangup on codecov https://github.com/codecov/codecov-action/issues/1787
         if: ${{ !contains(matrix.os, 'windows') }}
+        continue-on-error: true
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
@@ -244,6 +251,7 @@ jobs:
 
       - name: Code Coverage
         if: ${{ !contains(matrix.os, 'windows') }}
+        continue-on-error: true
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
