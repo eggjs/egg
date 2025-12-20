@@ -21,5 +21,8 @@
     ],
     "newlinesBetween": true,
     "order": "asc"
+  },
+  "yaml": {
+    "singleQuote": true
   }
 }
