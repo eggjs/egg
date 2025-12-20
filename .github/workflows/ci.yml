@@ -210,8 +210,8 @@ jobs:
         run: |
           # retry 3 times, flaky error on windows: "Unexpected end of JSON input while parsing empty string in D:\a\egg\egg\tegg\core\aop-runtime\package.json"
           pnpm build || (git checkout . && pnpm build) || (git checkout . && pnpm build)
-          pnpm -r --filter="\!./tools/egg-bin" exec rimraf dist
-          pnpm run --filter=./tools/egg-bin ci
+          pnpm -r --filter "!@eggjs/bin" exec rimraf dist
+          pnpm run --filter @eggjs/bin ci
         env:
           # https://github.com/jamiebuilds/ci-parallel-vars
           CI_NODE_INDEX: ${{ matrix.shardIndex }}
