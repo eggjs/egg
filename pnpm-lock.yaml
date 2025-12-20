@@ -676,9 +676,6 @@ importers:
       '@eggjs/bin':
         specifier: workspace:*
         version: link:../../tools/egg-bin
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
 
   examples/helloworld-tegg:
     dependencies:
