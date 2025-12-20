@@ -10,10 +10,11 @@
   },
   "type": "module",
   "scripts": {
-    "clean-dist": "rimraf packages/*/dist plugins/*/dist tools/*/dist tegg/plugin/*/dist",
+    "clean-dist": "pnpm -r --parallel exec rimraf dist",
     "clean": "pnpm -r --parallel run clean && pnpm clean-dist",
     "build": "tsdown",
-    "lint": "pnpm clean-dist && oxlint --type-aware --type-check --quiet",
+    "prelint": "pnpm clean-dist",
+    "lint": "oxlint --type-aware --type-check --quiet",
     "fmt": "oxfmt",
     "typecheck": "pnpm clean && pnpm -r run typecheck",
     "fmtcheck": "oxfmt --check .",
