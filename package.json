@@ -10,9 +10,12 @@
   },
   "type": "module",
   "scripts": {
-    "clean": "pnpm -r --parallel run clean && rimraf packages/*/dist plugins/*/dist tools/*/dist examples/*/dist tegg/**/dist **/*/*.tsbuildinfo",
+    "clean-dist": "rimraf packages/*/dist plugins/*/dist tools/*/dist tegg/**/*/dist **/*/*.tsbuildinfo",
+    "clean": "pnpm -r --parallel run clean && pnpm clean-dist",
     "tsdown": "tsdown",
     "build": "pnpm clean && pnpm tsdown",
+    "build:parallel": "pnpm clean && pnpm -r --parallel run tsdown",
+    "prelint": "pnpm clean-dist",
     "lint": "oxlint --type-aware --type-check --quiet",
     "fmt": "oxfmt",
     "typecheck": "pnpm clean && pnpm -r run typecheck",
