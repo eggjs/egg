@@ -28,18 +28,23 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./decorator": "./src/decorator/index.ts",
+    "./IdenticalObject": "./src/IdenticalObject.ts",
+    "./LifycycleUtil": "./src/LifycycleUtil.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./decorator": "./dist/decorator/index.js",
+      "./IdenticalObject": "./dist/IdenticalObject.js",
+      "./LifycycleUtil": "./dist/LifycycleUtil.js",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
     "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "prepublishOnly": "npm run build"
   },

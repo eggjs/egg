@@ -23,17 +23,30 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./deprecated": "./src/deprecated.ts",
+    "./error": "./src/error/index.ts",
+    "./error/ImportResolveError": "./src/error/ImportResolveError.ts",
+    "./framework": "./src/framework.ts",
+    "./import": "./src/import.ts",
+    "./plugin": "./src/plugin.ts",
+    "./utils": "./src/utils.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./deprecated": "./dist/deprecated.js",
+      "./error": "./dist/error/index.js",
+      "./error/ImportResolveError": "./dist/error/ImportResolveError.js",
+      "./framework": "./dist/framework.js",
+      "./import": "./dist/import.js",
+      "./plugin": "./dist/plugin.js",
+      "./utils": "./dist/utils.js",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "lint": "oxlint --type-aware",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "test": "vitest run",

@@ -30,18 +30,39 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./ConfigSourceLoadUnitHook": "./src/ConfigSourceLoadUnitHook.ts",
+    "./EggModuleLoader": "./src/EggModuleLoader.ts",
+    "./main": "./src/main.ts",
+    "./ModuleConfig": "./src/ModuleConfig.ts",
+    "./Runner": "./src/Runner.ts",
+    "./StandaloneContext": "./src/StandaloneContext.ts",
+    "./StandaloneContextHandler": "./src/StandaloneContextHandler.ts",
+    "./StandaloneContextImpl": "./src/StandaloneContextImpl.ts",
+    "./StandaloneInnerObject": "./src/StandaloneInnerObject.ts",
+    "./StandaloneInnerObjectProto": "./src/StandaloneInnerObjectProto.ts",
+    "./StandaloneLoadUnit": "./src/StandaloneLoadUnit.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./ConfigSourceLoadUnitHook": "./dist/ConfigSourceLoadUnitHook.js",
+      "./EggModuleLoader": "./dist/EggModuleLoader.js",
+      "./main": "./dist/main.js",
+      "./ModuleConfig": "./dist/ModuleConfig.js",
+      "./Runner": "./dist/Runner.js",
+      "./StandaloneContext": "./dist/StandaloneContext.js",
+      "./StandaloneContextHandler": "./dist/StandaloneContextHandler.js",
+      "./StandaloneContextImpl": "./dist/StandaloneContextImpl.js",
+      "./StandaloneInnerObject": "./dist/StandaloneInnerObject.js",
+      "./StandaloneInnerObjectProto": "./dist/StandaloneInnerObjectProto.js",
+      "./StandaloneLoadUnit": "./dist/StandaloneLoadUnit.js",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
     "clean": "tsc -b --clean && rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "prepublishOnly": "npm run build"
   },

@@ -1,11 +1,7 @@
 import { defineConfig, type UserConfig } from 'tsdown';
 
-import baseConfig from '../../tsdown.config.json' with { type: 'json' };
-
-const config = defineConfig({
-  ...(baseConfig as UserConfig),
-  // MEMO: @oclif/core only work on unbundle mode
-  unbundle: true,
+const config: UserConfig = defineConfig({
+  // MEMO: @oclif/core only works in unbundle mode (already default)
   unused: {
     level: 'error',
     ignore: ['utility'],

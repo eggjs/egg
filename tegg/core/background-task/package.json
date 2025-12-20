@@ -29,18 +29,19 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./BackgroundTaskHelper": "./src/BackgroundTaskHelper.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./BackgroundTaskHelper": "./dist/BackgroundTaskHelper.js",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
     "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "prepublishOnly": "npm run build"
   },

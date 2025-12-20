@@ -11,8 +11,8 @@
   "type": "module",
   "scripts": {
     "clean": "pnpm -r --parallel run clean && rimraf packages/*/dist plugins/*/dist tools/*/dist examples/*/dist tegg/**/dist **/*/*.tsbuildinfo",
-    "build": "pnpm clean && pnpm -r run build",
-    "build:parallel": "pnpm clean && pnpm -r --parallel run build",
+    "tsdown": "tsdown",
+    "build": "pnpm clean && pnpm tsdown",
     "lint": "oxlint --type-aware --type-check --quiet",
     "fmt": "oxfmt",
     "typecheck": "pnpm clean && pnpm -r run typecheck",
@@ -60,6 +60,7 @@
     "publint": "catalog:",
     "rimraf": "catalog:",
     "semver": "catalog:",
+    "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "urllib": "catalog:",

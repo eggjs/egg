@@ -139,7 +139,6 @@
   "scripts": {
     "lint": "oxlint",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json && cp src/config/favicon.png dist/config/favicon.png",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },

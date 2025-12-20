@@ -28,17 +28,26 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./error/AssertError": "./src/error/AssertError.ts",
+    "./request": "./src/request.ts",
+    "./test": "./src/test.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./error/AssertError": "./dist/error/AssertError.js",
+      "./request": "./dist/request.js",
+      "./test": "./dist/test.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "test": "vitest run",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "lint": "oxlint --type-aware",

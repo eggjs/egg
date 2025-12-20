@@ -64,7 +64,6 @@
   },
   "scripts": {
     "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit --project tsconfig.build.json",
     "prepublishOnly": "npm run build",
     "pretest": "node ./test/fixtures/prepare.js"

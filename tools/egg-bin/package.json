@@ -27,12 +27,24 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./baseCommand": "./src/baseCommand.ts",
+    "./commands/cov": "./src/commands/cov.ts",
+    "./commands/dev": "./src/commands/dev.ts",
+    "./commands/test": "./src/commands/test.ts",
+    "./types": "./src/types.ts",
+    "./utils": "./src/utils.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./baseCommand": "./dist/baseCommand.js",
+      "./commands/cov": "./dist/commands/cov.js",
+      "./commands/dev": "./dist/commands/dev.js",
+      "./commands/test": "./dist/commands/test.js",
+      "./types": "./dist/types.js",
+      "./utils": "./dist/utils.js",
       "./package.json": "./package.json"
     }
   },
@@ -45,7 +57,6 @@
     "preci": "npm run clean && npm run lint && npm run prepublishOnly",
     "ci": "npm run cov",
     "clean": "rimraf dist",
-    "build": "tsdown",
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {

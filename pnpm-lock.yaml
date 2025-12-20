@@ -654,6 +654,9 @@ importers:
       semver:
         specifier: 'catalog:'
         version: 7.7.3
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       tsx:
         specifier: 'catalog:'
         version: 4.20.6

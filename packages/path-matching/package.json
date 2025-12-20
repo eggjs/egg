@@ -41,7 +41,6 @@
     }
   },
   "scripts": {
-    "build": "tsdown",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "lint": "oxlint --type-aware",
     "test": "vitest run",

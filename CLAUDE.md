@@ -305,34 +305,37 @@ All Egg framework plugins should be placed in the `plugins/` directory:
   - `src/` - TypeScript source code
   - `test/` - Test suite (use Vitest for new plugins)
   - `package.json` with `eggPlugin` configuration
-  - `tsdown.config.ts` - Build configuration (see standard template below)
+  - `tsdown.config.ts` - Only needed if custom build options required (see below)
 
-#### Standard Plugin tsdown Configuration
+#### tsdown Workspace Configuration
 
-**IMPORTANT: All future plugins MUST use this tsdown configuration template** (based on `plugins/development/tsdown.config.ts`):
+**This monorepo uses tsdown workspace mode** for build configuration. The root `/tsdown.config.ts` defines shared defaults for all packages:
+
+- `entry: 'src/**/*.ts'` - Processes all TypeScript files in src directory
+- `unbundle: true` - Creates unbundled output (preserves file structure)
+- `dts: true` - Generates TypeScript declaration files
+- `exports.devExports: true` - Enables development-friendly exports
+- `unused.level: 'error'` - Error on unused dependencies
+- `publint` - Package linting enabled
+
+**Most plugins do NOT need a `tsdown.config.ts` file** - they inherit all settings from the root workspace config.
+
+**Only create a `tsdown.config.ts` if you need custom options** (e.g., copy assets, custom entry points, ignore unused deps):
 
 ```typescript
+// plugins/[plugin-name]/tsdown.config.ts - ONLY if custom options needed
 import { defineConfig } from 'tsdown';
 
 export default defineConfig({
-  entry: 'src/**/*.ts',
-  unbundle: true,
-  unused: {
-    level: 'error',
-  },
-  dts: true,
-  exports: {
-    devExports: true,
-  },
+  // Only specify options that differ from workspace defaults
+  copy: [
+    {
+      from: 'src/assets/template.html',
+      to: 'dist/assets/template.html',
+    },
+  ],
 });
 ```
-
-This configuration ensures:
-
-- **`entry: 'src/**/\*.ts'`\*\* - Processes all TypeScript files in src directory
-- **`unbundle: true`** - Creates unbundled output (preserves file structure)
-- **`dts: true`** - Generates TypeScript declaration files
-- **`exports.devExports: true`** - Enables development-friendly exports
 
 #### Standard Plugin TypeScript Types
 

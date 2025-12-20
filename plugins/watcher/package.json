@@ -63,7 +63,6 @@
     "lint": "oxlint --type-aware",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "test": "vitest run",
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {

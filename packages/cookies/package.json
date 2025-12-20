@@ -19,17 +19,24 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./cookie": "./src/cookie.ts",
+    "./cookies": "./src/cookies.ts",
+    "./error": "./src/error.ts",
+    "./keygrip": "./src/keygrip.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./cookie": "./dist/cookie.js",
+      "./cookies": "./dist/cookies.js",
+      "./error": "./dist/error.js",
+      "./keygrip": "./dist/keygrip.js",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",

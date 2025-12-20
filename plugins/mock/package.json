@@ -94,7 +94,6 @@
     }
   },
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "lint": "oxlint",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "test": "vitest run",

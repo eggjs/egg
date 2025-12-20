@@ -29,18 +29,27 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./decorator": "./src/decorator/index.ts",
+    "./decorator/Runner": "./src/decorator/Runner.ts",
+    "./typing": "./src/typing.ts",
+    "./util": "./src/util/index.ts",
+    "./util/StandaloneUtil": "./src/util/StandaloneUtil.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./decorator": "./dist/decorator/index.js",
+      "./decorator/Runner": "./dist/decorator/Runner.js",
+      "./typing": "./dist/typing.js",
+      "./util": "./dist/util/index.js",
+      "./util/StandaloneUtil": "./dist/util/StandaloneUtil.js",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
     "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "prepublishOnly": "npm run build"
   },

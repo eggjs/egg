@@ -28,12 +28,20 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./EggRouter": "./src/EggRouter.ts",
+    "./Layer": "./src/Layer.ts",
+    "./Router": "./src/Router.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./EggRouter": "./dist/EggRouter.js",
+      "./Layer": "./dist/Layer.js",
+      "./Router": "./dist/Router.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
@@ -41,7 +49,6 @@
     "lint": "oxlint --type-aware",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "test": "vitest run",
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run build",
     "prebench": "npm run build",
     "bench": "cd bench && make"

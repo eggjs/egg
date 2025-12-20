@@ -26,17 +26,38 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./base_context_class": "./src/base_context_class.ts",
+    "./egg": "./src/egg.ts",
+    "./lifecycle": "./src/lifecycle.ts",
+    "./loader/context_loader": "./src/loader/context_loader.ts",
+    "./loader/egg_loader": "./src/loader/egg_loader.ts",
+    "./loader/file_loader": "./src/loader/file_loader.ts",
+    "./singleton": "./src/singleton.ts",
+    "./types": "./src/types.ts",
+    "./utils": "./src/utils/index.ts",
+    "./utils/sequencify": "./src/utils/sequencify.ts",
+    "./utils/timing": "./src/utils/timing.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./base_context_class": "./dist/base_context_class.js",
+      "./egg": "./dist/egg.js",
+      "./lifecycle": "./dist/lifecycle.js",
+      "./loader/context_loader": "./dist/loader/context_loader.js",
+      "./loader/egg_loader": "./dist/loader/egg_loader.js",
+      "./loader/file_loader": "./dist/loader/file_loader.js",
+      "./singleton": "./dist/singleton.js",
+      "./types": "./dist/types.js",
+      "./utils": "./dist/utils/index.js",
+      "./utils/sequencify": "./dist/utils/sequencify.js",
+      "./utils/timing": "./dist/utils/timing.js",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "lint": "oxlint",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "test": "vitest run",

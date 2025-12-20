@@ -28,18 +28,23 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./EggObjectFactory": "./src/EggObjectFactory.ts",
+    "./EggObjectFactoryObject": "./src/EggObjectFactoryObject.ts",
+    "./EggObjectFactoryPrototype": "./src/EggObjectFactoryPrototype.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./EggObjectFactory": "./dist/EggObjectFactory.js",
+      "./EggObjectFactoryObject": "./dist/EggObjectFactoryObject.js",
+      "./EggObjectFactoryPrototype": "./dist/EggObjectFactoryPrototype.js",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
     "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
