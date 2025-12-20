@@ -32,7 +32,7 @@
     "@eggjs/tsconfig": "beta",
     "@types/node": "24",
     "oxlint": "1",
-    "oxlint-tsgolint": "^0.8.0",
+    "oxlint-tsgolint": "^0.10.0",
     "typescript": "5",
     "vitest": "beta"
   },
