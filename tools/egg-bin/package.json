@@ -52,7 +52,6 @@
     "typecheck": "tsgo --noEmit",
     "test": "node bin/run.js test",
     "cov": "c8 node bin/run.js test",
-    "preci": "npm run build",
     "ci": "npm run cov"
   },
   "dependencies": {
