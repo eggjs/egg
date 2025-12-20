@@ -26,4 +26,5 @@ export default defineConfig({
 
   // Default entry pattern - glob to include all source files
   entry: 'src/**/*.ts',
+  skipNodeModulesBundle: true,
 });
