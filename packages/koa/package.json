@@ -27,22 +27,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./application": "./src/application.ts",
-    "./context": "./src/context.ts",
-    "./request": "./src/request.ts",
-    "./response": "./src/response.ts",
-    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./application": "./dist/application.js",
-      "./context": "./dist/context.js",
-      "./request": "./dist/request.js",
-      "./response": "./dist/response.js",
-      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },

@@ -28,20 +28,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./impl": "./src/impl/index.ts",
-    "./impl/ModuleLoader": "./src/impl/ModuleLoader.ts",
-    "./LoaderFactory": "./src/LoaderFactory.ts",
-    "./LoaderUtil": "./src/LoaderUtil.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./impl": "./dist/impl/index.js",
-      "./impl/ModuleLoader": "./dist/impl/ModuleLoader.js",
-      "./LoaderFactory": "./dist/LoaderFactory.js",
-      "./LoaderUtil": "./dist/LoaderUtil.js",
       "./package.json": "./package.json"
     }
   },

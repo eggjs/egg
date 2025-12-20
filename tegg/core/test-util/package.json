@@ -29,19 +29,11 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./CoreTestHelper": "./src/CoreTestHelper.ts",
-    "./EggTestContext": "./src/EggTestContext.ts",
-    "./LoaderUtil": "./src/LoaderUtil.ts",
-    "./TestLoader": "./src/TestLoader.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
-      "./CoreTestHelper": "./dist/CoreTestHelper.js",
-      "./EggTestContext": "./dist/EggTestContext.js",
-      "./LoaderUtil": "./dist/LoaderUtil.js",
-      "./TestLoader": "./dist/TestLoader.js",
       "./package.json": "./package.json"
     }
   },

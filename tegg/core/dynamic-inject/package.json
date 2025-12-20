@@ -28,16 +28,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./QualifierImplDecoratorUtil": "./src/QualifierImplDecoratorUtil.ts",
-    "./QualifierImplUtil": "./src/QualifierImplUtil.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./QualifierImplDecoratorUtil": "./dist/QualifierImplDecoratorUtil.js",
-      "./QualifierImplUtil": "./dist/QualifierImplUtil.js",
       "./package.json": "./package.json"
     }
   },

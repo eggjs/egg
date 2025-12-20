@@ -28,30 +28,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./builder": "./src/builder/index.ts",
-    "./builder/ScheduleMetaBuilder": "./src/builder/ScheduleMetaBuilder.ts",
-    "./decorator": "./src/decorator/index.ts",
-    "./decorator/Schedule": "./src/decorator/Schedule.ts",
-    "./model": "./src/model/index.ts",
-    "./model/ScheduleMetadata": "./src/model/ScheduleMetadata.ts",
-    "./util": "./src/util/index.ts",
-    "./util/ScheduleInfoUtil": "./src/util/ScheduleInfoUtil.ts",
-    "./util/ScheduleMetadataUtil": "./src/util/ScheduleMetadataUtil.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./builder": "./dist/builder/index.js",
-      "./builder/ScheduleMetaBuilder": "./dist/builder/ScheduleMetaBuilder.js",
-      "./decorator": "./dist/decorator/index.js",
-      "./decorator/Schedule": "./dist/decorator/Schedule.js",
-      "./model": "./dist/model/index.js",
-      "./model/ScheduleMetadata": "./dist/model/ScheduleMetadata.js",
-      "./util": "./dist/util/index.js",
-      "./util/ScheduleInfoUtil": "./dist/util/ScheduleInfoUtil.js",
-      "./util/ScheduleMetadataUtil": "./dist/util/ScheduleMetadataUtil.js",
       "./package.json": "./package.json"
     }
   },

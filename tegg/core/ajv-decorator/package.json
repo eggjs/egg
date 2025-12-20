@@ -28,24 +28,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./enum": "./src/enum/index.ts",
-    "./enum/TransformEnum": "./src/enum/TransformEnum.ts",
-    "./error": "./src/error/index.ts",
-    "./error/AjvInvalidParamError": "./src/error/AjvInvalidParamError.ts",
-    "./type": "./src/type/index.ts",
-    "./type/Ajv": "./src/type/Ajv.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./enum": "./dist/enum/index.js",
-      "./enum/TransformEnum": "./dist/enum/TransformEnum.js",
-      "./error": "./dist/error/index.js",
-      "./error/AjvInvalidParamError": "./dist/error/AjvInvalidParamError.js",
-      "./type": "./dist/type/index.js",
-      "./type/Ajv": "./dist/type/Ajv.js",
       "./package.json": "./package.json"
     }
   },

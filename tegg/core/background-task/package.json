@@ -29,14 +29,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./BackgroundTaskHelper": "./src/BackgroundTaskHelper.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./BackgroundTaskHelper": "./dist/BackgroundTaskHelper.js",
       "./package.json": "./package.json"
     }
   },

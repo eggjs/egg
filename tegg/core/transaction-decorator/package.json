@@ -29,24 +29,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./builder": "./src/builder/index.ts",
-    "./builder/TransactionMetaBuilder": "./src/builder/TransactionMetaBuilder.ts",
-    "./decorator": "./src/decorator/index.ts",
-    "./decorator/Transactional": "./src/decorator/Transactional.ts",
-    "./util": "./src/util/index.ts",
-    "./util/TransactionMetadataUtil": "./src/util/TransactionMetadataUtil.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./builder": "./dist/builder/index.js",
-      "./builder/TransactionMetaBuilder": "./dist/builder/TransactionMetaBuilder.js",
-      "./decorator": "./dist/decorator/index.js",
-      "./decorator/Transactional": "./dist/decorator/Transactional.js",
-      "./util": "./dist/util/index.js",
-      "./util/TransactionMetadataUtil": "./dist/util/TransactionMetadataUtil.js",
       "./package.json": "./package.json"
     }
   },

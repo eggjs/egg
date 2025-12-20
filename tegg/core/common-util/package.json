@@ -28,32 +28,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./FSUtil": "./src/FSUtil.ts",
-    "./Graph": "./src/Graph.ts",
-    "./MapUtil": "./src/MapUtil.ts",
-    "./ModuleConfig": "./src/ModuleConfig.ts",
-    "./ModuleConfigs": "./src/ModuleConfigs.ts",
-    "./NameUtil": "./src/NameUtil.ts",
-    "./ObjectUtils": "./src/ObjectUtils.ts",
-    "./ProxyUtil": "./src/ProxyUtil.ts",
-    "./StackUtil": "./src/StackUtil.ts",
-    "./TimerUtil": "./src/TimerUtil.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./FSUtil": "./dist/FSUtil.js",
-      "./Graph": "./dist/Graph.js",
-      "./MapUtil": "./dist/MapUtil.js",
-      "./ModuleConfig": "./dist/ModuleConfig.js",
-      "./ModuleConfigs": "./dist/ModuleConfigs.js",
-      "./NameUtil": "./dist/NameUtil.js",
-      "./ObjectUtils": "./dist/ObjectUtils.js",
-      "./ProxyUtil": "./dist/ProxyUtil.js",
-      "./StackUtil": "./dist/StackUtil.js",
-      "./TimerUtil": "./dist/TimerUtil.js",
       "./package.json": "./package.json"
     }
   },

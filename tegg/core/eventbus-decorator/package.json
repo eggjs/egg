@@ -29,22 +29,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./Event": "./src/Event.ts",
-    "./EventBus": "./src/EventBus.ts",
-    "./EventContext": "./src/EventContext.ts",
-    "./EventInfoUtil": "./src/EventInfoUtil.ts",
-    "./typed-emitter": "./src/typed-emitter.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./Event": "./dist/Event.js",
-      "./EventBus": "./dist/EventBus.js",
-      "./EventContext": "./dist/EventContext.js",
-      "./EventInfoUtil": "./dist/EventInfoUtil.js",
-      "./typed-emitter": "./dist/typed-emitter.js",
       "./package.json": "./package.json"
     }
   },

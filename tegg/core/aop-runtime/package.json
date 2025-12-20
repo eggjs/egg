@@ -29,24 +29,12 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./AspectExecutor": "./src/AspectExecutor.ts",
-    "./CrossCutGraphHook": "./src/CrossCutGraphHook.ts",
-    "./EggObjectAopHook": "./src/EggObjectAopHook.ts",
-    "./EggPrototypeCrossCutHook": "./src/EggPrototypeCrossCutHook.ts",
-    "./LoadUnitAopHook": "./src/LoadUnitAopHook.ts",
-    "./PointCutGraphHook": "./src/PointCutGraphHook.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./AspectExecutor": "./dist/AspectExecutor.js",
-      "./CrossCutGraphHook": "./dist/CrossCutGraphHook.js",
-      "./EggObjectAopHook": "./dist/EggObjectAopHook.js",
-      "./EggPrototypeCrossCutHook": "./dist/EggPrototypeCrossCutHook.js",
-      "./LoadUnitAopHook": "./dist/LoadUnitAopHook.js",
-      "./PointCutGraphHook": "./dist/PointCutGraphHook.js",
       "./package.json": "./package.json"
     }
   },
