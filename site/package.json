@@ -6,15 +6,13 @@
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
-    "preview": "vitepress preview",
-    "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --write \"**/*.{js,jsx,tsx,ts,less,md,json}\""
+    "preview": "vitepress preview"
   },
   "dependencies": {
     "vitepress": "catalog:"
   },
   "devDependencies": {
-    "oxc-minify": "catalog:",
-    "prettier": "catalog:"
+    "oxc-minify": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

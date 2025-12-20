@@ -1,6 +1,33 @@
 {
   "name": "@eggjs/core",
   "version": "7.0.0-beta.35",
+  "description": "A core plugin framework based on @eggjs/koa",
+  "keywords": [
+    "egg",
+    "loader"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/core",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "fengmk2 <fengmk2@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "packages/core"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -8,21 +35,6 @@
       "./package.json": "./package.json"
     }
   },
-  "files": [
-    "dist"
-  ],
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "engines": {
-    "node": ">=22.18.0"
-  },
-  "description": "A core plugin framework based on @eggjs/koa",
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "lint": "oxlint",
@@ -30,28 +42,13 @@
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "packages/core"
-  },
-  "keywords": [
-    "egg",
-    "loader"
-  ],
-  "author": "fengmk2 <fengmk2@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/packages/core",
   "dependencies": {
+    "@eggjs/extend2": "workspace:*",
     "@eggjs/koa": "workspace:*",
+    "@eggjs/path-matching": "workspace:*",
     "@eggjs/router": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "egg-logger": "catalog:",
-    "@eggjs/path-matching": "workspace:*",
-    "@eggjs/extend2": "workspace:*",
     "get-ready": "catalog:",
     "globby": "catalog:",
     "is-type-of": "catalog:",
@@ -68,13 +65,15 @@
     "@types/js-yaml": "catalog:",
     "await-event": "catalog:",
     "coffee": "catalog:",
-    "husky": "catalog:",
-    "prettier": "catalog:",
     "gals": "catalog:",
+    "husky": "catalog:",
     "js-yaml": "catalog:",
     "mm": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "urllib": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   }
 }

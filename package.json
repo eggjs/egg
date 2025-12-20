@@ -25,7 +25,6 @@
     "ci": "vitest run --bail 1 --retry 2 --coverage --testTimeout 20000 --hookTimeout 20000",
     "site:dev": "pnpm --filter=site run dev",
     "site:build": "pnpm --filter=site run build",
-    "site:prettier": "pnpm --filter=site run prettier",
     "puml": "puml . --dest ./site",
     "example:dev:commonjs": "pnpm --filter=helloworld-commonjs run dev",
     "example:dev:typescript": "pnpm --filter=helloworld-typescript run dev",
@@ -58,7 +57,6 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
-    "prettier": "catalog:",
     "publint": "catalog:",
     "rimraf": "catalog:",
     "semver": "catalog:",
@@ -68,10 +66,7 @@
     "vitest": "catalog:"
   },
   "lint-staged": {
-    "!(*.{ts,mts,cts,js,mjs,cjs,jsx,tsx})": [
-      "prettier --ignore-unknown --write"
-    ],
-    "*.{ts,mts,cts,js,mjs,cjs,jsx,tsx}": [
+    "*": [
       "oxfmt",
       "oxlint --type-aware --fix"
     ]
