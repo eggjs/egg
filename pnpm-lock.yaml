@@ -561,9 +561,6 @@ catalogs:
     typescript:
       specifier: ^5.9.3
       version: 5.9.3
-    unplugin-unused:
-      specifier: ^0.5.4
-      version: 0.5.4
     urijs:
       specifier: ^1.19.11
       version: 1.19.11
@@ -836,12 +833,6 @@ importers:
       keygrip:
         specifier: 'catalog:'
         version: 1.1.0
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -921,9 +912,6 @@ importers:
       mm:
         specifier: 'catalog:'
         version: 4.0.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1108,9 +1096,6 @@ importers:
       spy:
         specifier: 'catalog:'
         version: 1.0.0
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1123,36 +1108,18 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   packages/extend2:
     devDependencies:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   packages/koa:
     dependencies:
@@ -1262,9 +1229,6 @@ importers:
       mm:
         specifier: 'catalog:'
         version: 4.0.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1284,9 +1248,6 @@ importers:
         specifier: 'catalog:'
         version: 2.5.0
     devDependencies:
-      '@eggjs/bin':
-        specifier: workspace:*
-        version: link:../../tools/egg-bin
       '@eggjs/koa':
         specifier: workspace:*
         version: link:../koa
@@ -1305,24 +1266,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
-      oxlint-tsgolint:
-        specifier: 'catalog:'
-        version: 0.10.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
       ylru:
         specifier: ^2.0.0
         version: 2.0.0
@@ -1339,24 +1285,12 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
       path-to-regexp-v8:
         specifier: npm:path-to-regexp@^8.3.0
         version: path-to-regexp@8.3.0
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   packages/router:
     dependencies:
@@ -1406,15 +1340,9 @@ importers:
       '@types/urijs':
         specifier: 'catalog:'
         version: 1.19.25
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   packages/supertest:
     dependencies:
@@ -1443,9 +1371,6 @@ importers:
       express:
         specifier: 'catalog:'
         version: 4.21.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1458,9 +1383,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   packages/utils:
     devDependencies:
@@ -1473,9 +1395,6 @@ importers:
       runscript:
         specifier: 'catalog:'
         version: 2.0.1
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1498,15 +1417,9 @@ importers:
       '@eggjs/supertest':
         specifier: workspace:*
         version: link:../../packages/supertest
-      '@eggjs/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1532,9 +1445,6 @@ importers:
       '@eggjs/mock':
         specifier: workspace:*
         version: link:../mock
-      '@eggjs/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       '@types/ini':
         specifier: 'catalog:'
         version: 4.1.1
@@ -1550,15 +1460,9 @@ importers:
       egg-view-nunjucks:
         specifier: 'catalog:'
         version: 2.3.0(chokidar@3.6.0)
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/jsonp:
     dependencies:
@@ -1569,24 +1473,15 @@ importers:
       '@eggjs/mock':
         specifier: workspace:*
         version: link:../mock
-      '@eggjs/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/logrotator:
     dependencies:
@@ -1603,9 +1498,6 @@ importers:
       '@eggjs/schedule':
         specifier: workspace:*
         version: link:../schedule
-      '@eggjs/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
@@ -1618,15 +1510,9 @@ importers:
       glob:
         specifier: 'catalog:'
         version: 11.0.3
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/mock:
     dependencies:
@@ -1682,9 +1568,6 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1710,9 +1593,6 @@ importers:
       '@eggjs/schedule':
         specifier: workspace:*
         version: link:../schedule
-      '@eggjs/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       '@types/bytes':
         specifier: 'catalog:'
         version: 3.1.5
@@ -1731,18 +1611,12 @@ importers:
       stream-wormhole:
         specifier: 'catalog:'
         version: 2.0.1
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
       urllib:
         specifier: 'catalog:'
         version: 4.8.2
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/onerror:
     dependencies:
@@ -1771,15 +1645,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/redis:
     dependencies:
@@ -1802,21 +1670,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/schedule:
     dependencies:
@@ -1854,18 +1710,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/security:
     dependencies:
@@ -1945,15 +1792,9 @@ importers:
       spy:
         specifier: 'catalog:'
         version: 1.0.0
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/session:
     dependencies:
@@ -1973,24 +1814,15 @@ importers:
       '@eggjs/supertest':
         specifier: workspace:*
         version: link:../../packages/supertest
-      '@eggjs/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/static:
     dependencies:
@@ -2010,9 +1842,6 @@ importers:
       '@eggjs/mock':
         specifier: workspace:*
         version: link:../mock
-      '@eggjs/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       '@types/koa-compose':
         specifier: 'catalog:'
         version: 3.2.8
@@ -2022,18 +1851,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/tracer:
     devDependencies:
@@ -2046,15 +1866,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/typebox-validate:
     dependencies:
@@ -2074,33 +1888,18 @@ importers:
       '@eggjs/mock':
         specifier: workspace:*
         version: link:../mock
-      '@eggjs/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
       semver:
         specifier: 'catalog:'
         version: 7.7.3
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/view:
     dependencies:
@@ -2120,15 +1919,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/view-nunjucks:
     dependencies:
@@ -2163,21 +1956,9 @@ importers:
       nunjucks-markdown:
         specifier: 'catalog:'
         version: 2.0.1(nunjucks@3.2.4(chokidar@3.6.0))
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.1.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   plugins/watcher:
     dependencies:
@@ -2194,21 +1975,12 @@ importers:
       '@eggjs/mock':
         specifier: workspace:*
         version: link:../mock
-      '@eggjs/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      vitest:
-        specifier: 'catalog:'
-        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   site:
     dependencies:
@@ -2232,15 +2004,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/aop-decorator:
     dependencies:
@@ -2257,15 +2023,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/aop-runtime:
     dependencies:
@@ -2303,15 +2063,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/background-task:
     dependencies:
@@ -2334,15 +2088,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/common-util:
     dependencies:
@@ -2371,15 +2119,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/controller-decorator:
     dependencies:
@@ -2414,15 +2156,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/core-decorator:
     dependencies:
@@ -2436,15 +2172,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/dal-decorator:
     dependencies:
@@ -2476,9 +2206,6 @@ importers:
       '@types/pluralize':
         specifier: 'catalog:'
         version: 0.0.33
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2531,15 +2258,9 @@ importers:
       '@types/sqlstring':
         specifier: 'catalog:'
         version: 2.3.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/dynamic-inject:
     dependencies:
@@ -2556,15 +2277,9 @@ importers:
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/dynamic-inject-runtime:
     dependencies:
@@ -2599,15 +2314,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/eventbus-decorator:
     dependencies:
@@ -2627,15 +2336,9 @@ importers:
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/eventbus-runtime:
     dependencies:
@@ -2679,15 +2382,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/lifecycle:
     dependencies:
@@ -2701,15 +2398,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/loader:
     dependencies:
@@ -2732,15 +2423,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/metadata:
     dependencies:
@@ -2769,15 +2454,9 @@ importers:
       is-type-of:
         specifier: 'catalog:'
         version: 2.2.0
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/orm-decorator:
     dependencies:
@@ -2803,15 +2482,9 @@ importers:
       '@types/pluralize':
         specifier: 'catalog:'
         version: 0.0.33
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/runtime:
     dependencies:
@@ -2840,15 +2513,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/schedule-decorator:
     dependencies:
@@ -2865,30 +2532,18 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/standalone-decorator:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/tegg:
     dependencies:
@@ -2950,15 +2605,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/test-util:
     dependencies:
@@ -2987,15 +2636,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/transaction-decorator:
     dependencies:
@@ -3009,15 +2652,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/core/types:
     devDependencies:
@@ -3027,15 +2664,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/plugin/ajv:
     dependencies:
@@ -3079,15 +2710,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/plugin/aop:
     dependencies:
@@ -3131,30 +2756,18 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/plugin/common:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/plugin/config:
     dependencies:
@@ -3174,15 +2787,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/plugin/controller:
     dependencies:
@@ -3253,15 +2860,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/plugin/dal:
     dependencies:
@@ -3323,15 +2924,9 @@ importers:
       globby:
         specifier: 'catalog:'
         version: 11.1.0
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/plugin/eventbus:
     dependencies:
@@ -3381,15 +2976,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/plugin/orm:
     dependencies:
@@ -3445,15 +3034,9 @@ importers:
       mysql2:
         specifier: 'catalog:'
         version: 3.15.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/plugin/schedule:
     dependencies:
@@ -3503,15 +3086,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/plugin/tegg:
     dependencies:
@@ -3573,15 +3150,9 @@ importers:
       egg-logger:
         specifier: 'catalog:'
         version: 3.6.1
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tegg/standalone/standalone:
     dependencies:
@@ -3631,15 +3202,9 @@ importers:
       mm:
         specifier: 'catalog:'
         version: 4.0.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-unused:
-        specifier: 'catalog:'
-        version: 0.5.4
 
   tools/create-egg:
     dependencies:
@@ -3671,9 +3236,6 @@ importers:
       execa:
         specifier: 'catalog:'
         version: 9.6.0
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
 
   tools/egg-bin:
     dependencies:
@@ -3787,9 +3349,6 @@ importers:
         specifier: 'catalog:'
         version: 2.5.0
     devDependencies:
-      '@eggjs/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
@@ -3805,9 +3364,6 @@ importers:
       mm:
         specifier: 'catalog:'
         version: 4.0.2
-      oxlint:
-        specifier: 'catalog:'
-        version: 1.32.0(oxlint-tsgolint@0.10.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.17.2(@typescript/native-preview@7.0.0-dev.20251210.1)(oxc-resolver@11.10.0)(publint@0.3.16)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -9572,6 +9128,7 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
+    optional: true
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
@@ -11248,7 +10805,8 @@ snapshots:
 
   concat-map@0.0.1: {}
 
-  confbox@0.2.2: {}
+  confbox@0.2.2:
+    optional: true
 
   config-chain@1.1.13:
     dependencies:
@@ -11785,7 +11343,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  exsolve@1.0.7: {}
+  exsolve@1.0.7:
+    optional: true
 
   extend-shallow@2.0.1:
     dependencies:
@@ -13540,6 +13099,7 @@ snapshots:
       confbox: 0.2.2
       exsolve: 1.0.7
       pathe: 2.0.3
+    optional: true
 
   platform@1.3.6: {}
 
@@ -14464,6 +14024,7 @@ snapshots:
       js-tokens: 9.0.1
       pkg-types: 2.3.0
       unplugin: 2.3.10
+    optional: true
 
   unplugin@2.3.10:
     dependencies:
@@ -14471,6 +14032,7 @@ snapshots:
       acorn: 8.15.0
       picomatch: 4.0.3
       webpack-virtual-modules: 0.6.2
+    optional: true
 
   unrun@0.2.19:
     dependencies:
@@ -14663,7 +14225,8 @@ snapshots:
 
   web-streams-polyfill@4.0.0-beta.3: {}
 
-  webpack-virtual-modules@0.6.2: {}
+  webpack-virtual-modules@0.6.2:
+    optional: true
 
   whatwg-encoding@3.1.1:
     dependencies:

@@ -1,6 +1,6 @@
-import { defineConfig, type UserConfig } from 'tsdown';
+import { defineConfig } from 'tsdown';
 
-const config: UserConfig = defineConfig({
+export default defineConfig({
   copy: [
     {
       from: 'src/lib/onerror_page.mustache.html',
@@ -8,5 +8,3 @@ const config: UserConfig = defineConfig({
     },
   ],
 });
-
-export default config;

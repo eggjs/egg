@@ -49,15 +49,13 @@
     }
   },
   "scripts": {
-    "lint": "oxlint --type-aware",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
+    "typecheck": "tsgo --noEmit",
+    "build": "tsdown",
+    "pretest": "npm run build",
     "test": "node bin/run.js test",
     "cov": "c8 node bin/run.js test",
-    "preci": "npm run clean && npm run lint && npm run prepublishOnly",
-    "ci": "npm run cov",
-    "clean": "rimraf dist",
-    "prepublishOnly": "pnpm run build"
+    "preci": "npm run build",
+    "ci": "npm run cov"
   },
   "dependencies": {
     "@eggjs/utils": "workspace:*",

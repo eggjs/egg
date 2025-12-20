@@ -1,6 +1,6 @@
-import { defineConfig, type UserConfig } from 'tsdown';
+import { defineConfig } from 'tsdown';
 
-const config: UserConfig = defineConfig({
+export default defineConfig({
   copy: [
     {
       from: 'src/config/favicon.png',
@@ -8,5 +8,3 @@ const config: UserConfig = defineConfig({
     },
   ],
 });
-
-export default config;

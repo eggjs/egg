@@ -106,11 +106,7 @@
     }
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest",
-    "prepublishOnly": "npm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/ip": "catalog:",
@@ -140,9 +136,7 @@
     "egg": "workspace:*",
     "egg-view-nunjucks": "catalog:",
     "spy": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"

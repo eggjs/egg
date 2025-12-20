@@ -94,10 +94,7 @@
     }
   },
   "scripts": {
-    "lint": "oxlint",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/extend2": "workspace:*",
@@ -119,7 +116,6 @@
     "@eggjs/tracer": "workspace:*",
     "@types/methods": "catalog:",
     "egg": "workspace:*",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

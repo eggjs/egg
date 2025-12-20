@@ -53,10 +53,7 @@
     }
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@sinclair/typebox": "catalog:",
@@ -66,15 +63,10 @@
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
-    "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "egg": "workspace:*",
-    "oxlint": "catalog:",
-    "rimraf": "catalog:",
     "semver": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"

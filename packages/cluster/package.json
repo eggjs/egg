@@ -42,9 +42,8 @@
   },
   "scripts": {
     "lint": "oxlint",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@eggjs/utils": "workspace:*",

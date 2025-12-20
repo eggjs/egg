@@ -59,10 +59,7 @@
     }
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "nunjucks": "catalog:"
@@ -77,11 +74,7 @@
     "egg": "workspace:*",
     "marked": "catalog:",
     "nunjucks-markdown": "catalog:",
-    "oxlint": "catalog:",
-    "rimraf": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "@eggjs/view": "workspace:*",

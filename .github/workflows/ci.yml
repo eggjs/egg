@@ -207,7 +207,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm run --filter=./tools/egg-bin ci
+        run: |
+          pnpm build
+          pnpm run --filter=./tools/egg-bin ci
         env:
           # https://github.com/jamiebuilds/ci-parallel-vars
           CI_NODE_INDEX: ${{ matrix.shardIndex }}
@@ -251,7 +253,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm run --filter=./tools/scripts ci
+        run: |
+          pnpm build
+          pnpm run --filter=./tools/scripts ci
 
       - name: Code Coverage
         if: ${{ matrix.os != 'windows-latest' }}

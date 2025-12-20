@@ -49,11 +49,7 @@
     }
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest",
-    "prepublishOnly": "npm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "koa-session": "catalog:",
@@ -63,12 +59,9 @@
     "@eggjs/mock": "workspace:*",
     "@eggjs/redis": "workspace:*",
     "@eggjs/supertest": "workspace:*",
-    "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "egg": "workspace:*",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"

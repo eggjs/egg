@@ -137,10 +137,7 @@
     "tag": "beta"
   },
   "scripts": {
-    "lint": "oxlint",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/ajv-plugin": "workspace:*",
@@ -203,7 +200,6 @@
     "runscript": "catalog:",
     "sdk-base": "catalog:",
     "spy": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {
