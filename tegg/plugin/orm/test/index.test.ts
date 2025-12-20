@@ -16,7 +16,7 @@ function getFixtures(name: string) {
   return path.join(import.meta.dirname, 'fixtures', name);
 }
 
-describe('plugin/orm/test/orm.test.ts', () => {
+describe('tegg/plugin/orm/test/index.test.ts', () => {
   let app: MockApplication;
   let appService: AppService;
 

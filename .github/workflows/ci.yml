@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['blacksmith-32vcpu-windows-2025', 'macos-latest', 'blacksmith-32vcpu-ubuntu-2404']
+        os: ['blacksmith-32vcpu-windows-2025', 'blacksmith-32vcpu-ubuntu-2404']
         node: ['20', '22', '24']
 
     name: Test (${{ matrix.os }}, ${{ matrix.node }})
@@ -157,11 +157,15 @@ jobs:
 
       - name: Run tests and coverage
         if: ${{ !contains(matrix.os, 'windows') }}
-        run: pnpm run ci:coverage
+        run: |
+          pnpm run preci
+          pnpm run ci:coverage
 
       - name: Run tests
         if: ${{ contains(matrix.os, 'windows') }}
-        run: pnpm run ci:test
+        run: |
+          pnpm run preci
+          pnpm run ci:test
 
       - name: Run example tests
         if: ${{ matrix.node != '20' && !contains(matrix.os, 'windows') }}
