@@ -9,7 +9,7 @@
     "verbatimModuleSyntax": true,
     "types": ["node"]
   },
-  "exclude": ["**/*/tsdown.config.ts", "**/*/vitest.config.ts"],
+  "exclude": ["**/tsdown.config.ts", "**/vitest.config.ts"],
   "references": [
     {
       "path": "./packages/egg"

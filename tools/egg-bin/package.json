@@ -50,8 +50,6 @@
   },
   "scripts": {
     "typecheck": "tsgo --noEmit",
-    "build": "tsdown",
-    "pretest": "npm run build",
     "test": "node bin/run.js test",
     "cov": "c8 node bin/run.js test",
     "preci": "npm run build",
@@ -87,7 +85,6 @@
     "npminstall": "catalog:",
     "rimraf": "catalog:",
     "runscript": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
