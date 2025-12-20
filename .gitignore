@@ -103,3 +103,4 @@ tegg/plugin/tegg/test/fixtures/apps/**/*.js
 !tegg/plugin/config/test/fixtures/**/node_modules
 
 *.tsbuildinfo
+*.tgz

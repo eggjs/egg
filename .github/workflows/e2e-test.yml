@@ -1,0 +1,73 @@
+name: E2E Test
+
+permissions: {}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - next
+    paths-ignore:
+      - '**/*.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: ${{ github.ref_name != 'next' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  e2e-test:
+    name: ${{ matrix.project.name }} E2E test
+    permissions:
+      contents: read
+      packages: read
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - name: cnpmcore
+            node-version: 24
+            command: |
+              npm run typecheck
+              npm run build
+              npm run prepublishOnly
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: ./.github/actions/clone
+        with:
+          ecosystem-ci-project: ${{ matrix.project.name }}
+
+      - uses: oxc-project/setup-rust@d286d43bc1f606abbd98096666ff8be68c8d5f57 # v1.0.0
+        with:
+          save-cache: ${{ github.ref_name == 'next' }}
+          cache-key: e2e-test
+
+      - name: Set up Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
+        with:
+          node-version: ${{ matrix.project.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Pack packages into tgz
+        run: |
+          pnpm -r pack
+
+      - name: Install egg from tgz in ${{ matrix.project.name }}
+        working-directory: ecosystem-ci/${{ matrix.project.name }}
+        run: |
+          node ../patch-project.ts ${{ matrix.project.name }}
+          npm install
+
+      - name: Run e2e test commands in ${{ matrix.project.name }}
+        working-directory: ecosystem-ci/${{ matrix.project.name }}
+        run: ${{ matrix.project.command }}
