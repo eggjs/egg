@@ -3,35 +3,12 @@
   "version": "4.1.0-beta.35",
   "private": true,
   "description": "Eggjs framework monorepo",
-  "engines": {
-    "node": ">=22.18.0"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git"
   },
   "type": "module",
-  "packageManager": "pnpm@10.26.1",
-  "devDependencies": {
-    "@eggjs/bin": "workspace:*",
-    "@eggjs/tsconfig": "workspace:*",
-    "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
-    "@vitest/ui": "catalog:",
-    "c8": "catalog:",
-    "husky": "catalog:",
-    "js-yaml": "catalog:",
-    "lint-staged": "catalog:",
-    "mocha": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
-    "oxlint-tsgolint": "catalog:",
-    "prettier": "catalog:",
-    "publint": "catalog:",
-    "rimraf": "catalog:",
-    "semver": "catalog:",
-    "tsx": "catalog:",
-    "typescript": "catalog:",
-    "urllib": "catalog:",
-    "vitest": "catalog:"
-  },
   "scripts": {
     "clean": "pnpm -r --parallel run clean && rimraf packages/*/dist plugins/*/dist tools/*/dist examples/*/dist tegg/**/dist **/*/*.tsbuildinfo",
     "build": "pnpm clean && pnpm -r run build",
@@ -66,6 +43,30 @@
     "version:beta": "node scripts/version.js prerelease --prerelease-tag=beta",
     "version:rc": "node scripts/version.js prerelease --prerelease-tag=rc"
   },
+  "devDependencies": {
+    "@eggjs/bin": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "@vitest/ui": "catalog:",
+    "c8": "catalog:",
+    "husky": "catalog:",
+    "js-yaml": "catalog:",
+    "lint-staged": "catalog:",
+    "mocha": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "prettier": "catalog:",
+    "publint": "catalog:",
+    "rimraf": "catalog:",
+    "semver": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "urllib": "catalog:",
+    "vitest": "catalog:"
+  },
   "lint-staged": {
     "!(*.{ts,mts,cts,js,mjs,cjs,jsx,tsx})": [
       "prettier --ignore-unknown --write"
@@ -75,9 +76,8 @@
       "oxlint --type-aware --fix"
     ]
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git"
+  "engines": {
+    "node": ">=22.18.0"
   },
-  "license": "MIT"
+  "packageManager": "pnpm@10.26.1"
 }

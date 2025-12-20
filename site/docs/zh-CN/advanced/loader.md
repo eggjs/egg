@@ -120,20 +120,20 @@ loadUnit
 
 | 文件                      | 应用 | 框架 | 插件 |
 | ------------------------- | ---- | ---- | ---- |
-| package.json              | ✔   | ✔   | ✔   |
-| config/plugin.{env}.js    | ✔   | ✔   |      |
-| config/config.{env}.js    | ✔   | ✔   | ✔   |
-| app/extend/application.js | ✔   | ✔   | ✔   |
-| app/extend/request.js     | ✔   | ✔   | ✔   |
-| app/extend/response.js    | ✔   | ✔   | ✔   |
-| app/extend/context.js     | ✔   | ✔   | ✔   |
-| app/extend/helper.js      | ✔   | ✔   | ✔   |
-| agent.js                  | ✔   | ✔   | ✔   |
-| app.js                    | ✔   | ✔   | ✔   |
-| app/service               | ✔   | ✔   | ✔   |
-| app/middleware            | ✔   | ✔   | ✔   |
-| app/controller            | ✔   |      |      |
-| app/router.js             | ✔   |      |      |
+| package.json              | ✔    | ✔    | ✔    |
+| config/plugin.{env}.js    | ✔    | ✔    |      |
+| config/config.{env}.js    | ✔    | ✔    | ✔    |
+| app/extend/application.js | ✔    | ✔    | ✔    |
+| app/extend/request.js     | ✔    | ✔    | ✔    |
+| app/extend/response.js    | ✔    | ✔    | ✔    |
+| app/extend/context.js     | ✔    | ✔    | ✔    |
+| app/extend/helper.js      | ✔    | ✔    | ✔    |
+| agent.js                  | ✔    | ✔    | ✔    |
+| app.js                    | ✔    | ✔    | ✔    |
+| app/service               | ✔    | ✔    | ✔    |
+| app/middleware            | ✔    | ✔    | ✔    |
+| app/controller            | ✔    |      |      |
+| app/router.js             | ✔    |      |      |
 
 文件按表格内的顺序从上到下加载。
 

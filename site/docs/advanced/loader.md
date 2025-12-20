@@ -123,16 +123,16 @@ However, there are still some differences:
 
 | File                   | Application | Framework | Plugin |
 | ---------------------- | ----------- | --------- | ------ |
-| app/router.js          | ✔︎         |           |
-| app/controller         | ✔︎         |           |
-| app/middleware         | ✔︎         | ✔︎       | ✔︎    |
-| app/service            | ✔︎         | ✔︎       | ✔︎    |
-| app/extend             | ✔︎         | ✔︎       | ✔︎    |
-| app.js                 | ✔︎         | ✔︎       | ✔︎    |
-| agent.js               | ✔︎         | ✔︎       | ✔︎    |
-| config/config.{env}.js | ✔︎         | ✔︎       | ✔︎    |
-| config/plugin.js       | ✔︎         | ✔︎       |
-| package.json           | ✔︎         | ✔︎       | ✔︎    |
+| app/router.js          | ✔︎           |           |
+| app/controller         | ✔︎           |           |
+| app/middleware         | ✔︎           | ✔︎         | ✔︎      |
+| app/service            | ✔︎           | ✔︎         | ✔︎      |
+| app/extend             | ✔︎           | ✔︎         | ✔︎      |
+| app.js                 | ✔︎           | ✔︎         | ✔︎      |
+| agent.js               | ✔︎           | ✔︎         | ✔︎      |
+| config/config.{env}.js | ✔︎           | ✔︎         | ✔︎      |
+| config/plugin.js       | ✔︎           | ✔︎         |
+| package.json           | ✔︎           | ✔︎         | ✔︎      |
 
 During the loading process, Egg will traverse all loadUnits to load the files above(application, framework and plugin are different), the loading process has priority.
 
