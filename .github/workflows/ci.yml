@@ -163,7 +163,9 @@ jobs:
 
       - name: Run example tests
         if: ${{ matrix.node != '20' && matrix.os != 'windows-latest' }}
-        run: pnpm run example:test:all
+        run: |
+          pnpm build
+          pnpm run example:test:all
 
       - name: Code Coverage
         # skip on windows, it will hangup on codecov
