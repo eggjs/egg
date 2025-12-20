@@ -1,6 +1,41 @@
 {
   "name": "@eggjs/jsonp",
   "version": "4.0.0-beta.35",
+  "description": "jsonp support for egg",
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "jsonp",
+    "security"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/jsonp",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "dead-horse",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/jsonp"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./error/JSONPForbiddenReferrerError": "./src/error/JSONPForbiddenReferrerError.ts",
+    "./lib/private_key": "./src/lib/private_key.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -14,46 +49,16 @@
       "./package.json": "./package.json"
     }
   },
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./app/extend/application": "./src/app/extend/application.ts",
-    "./app/extend/context": "./src/app/extend/context.ts",
-    "./config/config.default": "./src/config/config.default.ts",
-    "./error/JSONPForbiddenReferrerError": "./src/error/JSONPForbiddenReferrerError.ts",
-    "./lib/private_key": "./src/lib/private_key.ts",
-    "./types": "./src/types.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
-  "description": "jsonp support for egg",
-  "keywords": [
-    "egg",
-    "egg-plugin",
-    "jsonp",
-    "security"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "plugins/jsonp"
-  },
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/jsonp",
-  "author": "dead-horse",
-  "license": "MIT",
-  "engines": {
-    "node": ">=22.18.0"
+  "scripts": {
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest run",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "jsonp-body": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -64,15 +69,10 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest run",
-    "prepublishOnly": "npm run build"
+  "peerDependencies": {
+    "egg": "workspace:*"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

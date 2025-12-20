@@ -1,6 +1,36 @@
 {
   "name": "@eggjs/cluster",
   "version": "4.0.0-beta.35",
+  "description": "cluster manager for egg",
+  "keywords": [
+    "cluster",
+    "egg",
+    "process"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/cluster",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "dead-horse <dead_horse@qq.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "packages/cluster"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent_worker": "./src/agent_worker.ts",
+    "./app_worker": "./src/app_worker.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -10,17 +40,6 @@
       "./package.json": "./package.json"
     }
   },
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./agent_worker": "./src/agent_worker.ts",
-    "./app_worker": "./src/app_worker.ts",
-    "./package.json": "./package.json"
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "description": "cluster manager for egg",
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "lint": "oxlint",
@@ -28,25 +47,6 @@
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },
-  "files": [
-    "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "packages/cluster"
-  },
-  "keywords": [
-    "egg",
-    "cluster",
-    "process"
-  ],
-  "author": "dead-horse <dead_horse@qq.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/packages/cluster",
   "dependencies": {
     "@eggjs/utils": "workspace:*",
     "@fengmk2/ps-tree": "catalog:",
@@ -61,8 +61,8 @@
     "utility": "catalog:"
   },
   "devDependencies": {
-    "@eggjs/mock": "workspace:*",
     "@eggjs/errors": "workspace:*",
+    "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "address": "catalog:",

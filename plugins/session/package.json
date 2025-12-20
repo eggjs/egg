@@ -2,28 +2,31 @@
   "name": "@eggjs/session",
   "version": "5.0.0-beta.35",
   "description": "session plugin for egg",
+  "keywords": [
+    "cookie",
+    "egg",
+    "egg-plugin",
+    "eggPlugin",
+    "session"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/session#readme",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "dead_horse",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "plugins/session"
   },
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/session#readme",
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "author": "dead_horse",
-  "license": "MIT",
-  "keywords": [
-    "egg",
-    "egg-plugin",
-    "eggPlugin",
-    "session",
-    "cookie"
+  "files": [
+    "dist"
   ],
-  "engines": {
-    "node": ">= 22.18.0"
-  },
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./app": "./src/app.ts",
@@ -45,12 +48,17 @@
       "./package.json": "./package.json"
     }
   },
+  "scripts": {
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest",
+    "prepublishOnly": "npm run build"
+  },
   "dependencies": {
     "koa-session": "catalog:",
     "zod": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -63,18 +71,10 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest",
-    "prepublishOnly": "npm run build"
+  "peerDependencies": {
+    "egg": "workspace:*"
   },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "engines": {
+    "node": ">= 22.18.0"
+  }
 }

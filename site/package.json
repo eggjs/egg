@@ -3,18 +3,16 @@
   "private": true,
   "description": "Egg.js documentation site",
   "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
   "dependencies": {
     "vitepress": "catalog:"
   },
   "devDependencies": {
-    "oxc-minify": "catalog:",
-    "prettier": "catalog:"
-  },
-  "scripts": {
-    "dev": "vitepress dev",
-    "build": "vitepress build",
-    "preview": "vitepress preview",
-    "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --write \"**/*.{js,jsx,tsx,ts,less,md,json}\""
+    "oxc-minify": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

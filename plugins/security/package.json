@@ -1,7 +1,69 @@
 {
   "name": "@eggjs/security",
   "version": "5.0.0-beta.35",
+  "description": "security plugin in egg framework",
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "eggPlugin",
+    "security"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/security#readme",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "jtyjty99999",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/security"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/agent": "./src/app/extend/agent.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./app/extend/helper": "./src/app/extend/helper.ts",
+    "./app/extend/response": "./src/app/extend/response.ts",
+    "./app/middleware/securities": "./src/app/middleware/securities.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./config/config.local": "./src/config/config.local.ts",
+    "./lib/extend/safe_curl": "./src/lib/extend/safe_curl.ts",
+    "./lib/helper": "./src/lib/helper/index.ts",
+    "./lib/helper/cliFilter": "./src/lib/helper/cliFilter.ts",
+    "./lib/helper/escape": "./src/lib/helper/escape.ts",
+    "./lib/helper/escapeShellArg": "./src/lib/helper/escapeShellArg.ts",
+    "./lib/helper/escapeShellCmd": "./src/lib/helper/escapeShellCmd.ts",
+    "./lib/helper/shtml": "./src/lib/helper/shtml.ts",
+    "./lib/helper/sjs": "./src/lib/helper/sjs.ts",
+    "./lib/helper/sjson": "./src/lib/helper/sjson.ts",
+    "./lib/helper/spath": "./src/lib/helper/spath.ts",
+    "./lib/helper/surl": "./src/lib/helper/surl.ts",
+    "./lib/middlewares": "./src/lib/middlewares/index.ts",
+    "./lib/middlewares/csp": "./src/lib/middlewares/csp.ts",
+    "./lib/middlewares/csrf": "./src/lib/middlewares/csrf.ts",
+    "./lib/middlewares/dta": "./src/lib/middlewares/dta.ts",
+    "./lib/middlewares/hsts": "./src/lib/middlewares/hsts.ts",
+    "./lib/middlewares/methodnoallow": "./src/lib/middlewares/methodnoallow.ts",
+    "./lib/middlewares/noopen": "./src/lib/middlewares/noopen.ts",
+    "./lib/middlewares/nosniff": "./src/lib/middlewares/nosniff.ts",
+    "./lib/middlewares/referrerPolicy": "./src/lib/middlewares/referrerPolicy.ts",
+    "./lib/middlewares/xframe": "./src/lib/middlewares/xframe.ts",
+    "./lib/middlewares/xssProtection": "./src/lib/middlewares/xssProtection.ts",
+    "./lib/utils": "./src/lib/utils.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -43,64 +105,13 @@
       "./package.json": "./package.json"
     }
   },
-  "description": "security plugin in egg framework",
-  "keywords": [
-    "egg",
-    "eggPlugin",
-    "egg-plugin",
-    "security"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "plugins/security"
-  },
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/security#readme",
-  "author": "jtyjty99999",
-  "license": "MIT",
-  "engines": {
-    "node": ">= 22.18.0"
-  },
-  "exports": {
-    ".": "./src/index.ts",
-    "./agent": "./src/agent.ts",
-    "./app": "./src/app.ts",
-    "./app/extend/agent": "./src/app/extend/agent.ts",
-    "./app/extend/application": "./src/app/extend/application.ts",
-    "./app/extend/context": "./src/app/extend/context.ts",
-    "./app/extend/helper": "./src/app/extend/helper.ts",
-    "./app/extend/response": "./src/app/extend/response.ts",
-    "./app/middleware/securities": "./src/app/middleware/securities.ts",
-    "./config/config.default": "./src/config/config.default.ts",
-    "./config/config.local": "./src/config/config.local.ts",
-    "./lib/extend/safe_curl": "./src/lib/extend/safe_curl.ts",
-    "./lib/helper": "./src/lib/helper/index.ts",
-    "./lib/helper/cliFilter": "./src/lib/helper/cliFilter.ts",
-    "./lib/helper/escape": "./src/lib/helper/escape.ts",
-    "./lib/helper/escapeShellArg": "./src/lib/helper/escapeShellArg.ts",
-    "./lib/helper/escapeShellCmd": "./src/lib/helper/escapeShellCmd.ts",
-    "./lib/helper/shtml": "./src/lib/helper/shtml.ts",
-    "./lib/helper/sjs": "./src/lib/helper/sjs.ts",
-    "./lib/helper/sjson": "./src/lib/helper/sjson.ts",
-    "./lib/helper/spath": "./src/lib/helper/spath.ts",
-    "./lib/helper/surl": "./src/lib/helper/surl.ts",
-    "./lib/middlewares": "./src/lib/middlewares/index.ts",
-    "./lib/middlewares/csp": "./src/lib/middlewares/csp.ts",
-    "./lib/middlewares/csrf": "./src/lib/middlewares/csrf.ts",
-    "./lib/middlewares/dta": "./src/lib/middlewares/dta.ts",
-    "./lib/middlewares/hsts": "./src/lib/middlewares/hsts.ts",
-    "./lib/middlewares/methodnoallow": "./src/lib/middlewares/methodnoallow.ts",
-    "./lib/middlewares/noopen": "./src/lib/middlewares/noopen.ts",
-    "./lib/middlewares/nosniff": "./src/lib/middlewares/nosniff.ts",
-    "./lib/middlewares/referrerPolicy": "./src/lib/middlewares/referrerPolicy.ts",
-    "./lib/middlewares/xframe": "./src/lib/middlewares/xframe.ts",
-    "./lib/middlewares/xssProtection": "./src/lib/middlewares/xssProtection.ts",
-    "./lib/utils": "./src/lib/utils.ts",
-    "./types": "./src/types.ts",
-    "./package.json": "./package.json"
+  "scripts": {
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@eggjs/ip": "catalog:",
@@ -114,9 +125,6 @@
     "type-is": "catalog:",
     "xss": "catalog:",
     "zod": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -137,18 +145,10 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest",
-    "prepublishOnly": "npm run build"
+  "peerDependencies": {
+    "egg": "workspace:*"
   },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "engines": {
+    "node": ">= 22.18.0"
+  }
 }

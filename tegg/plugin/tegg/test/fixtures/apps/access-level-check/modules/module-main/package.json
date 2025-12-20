@@ -1,7 +1,7 @@
 {
   "name": "module-main",
+  "type": "module",
   "eggModule": {
     "name": "moduleMain"
-  },
-  "type": "module"
+  }
 }

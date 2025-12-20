@@ -1,7 +1,7 @@
 {
   "name": "hello-cross-cut",
+  "type": "module",
   "eggModule": {
     "name": "helloCrossCut"
-  },
-  "type": "module"
+  }
 }

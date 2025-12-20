@@ -1,7 +1,7 @@
 {
   "name": "multi-callback-instance-module-logger",
+  "type": "module",
   "eggModule": {
     "name": "multiCallbackInstanceModuleLogger"
-  },
-  "type": "module"
+  }
 }

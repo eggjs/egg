@@ -1,6 +1,37 @@
 {
   "name": "@eggjs/onerror",
   "version": "4.0.0-beta.35",
+  "description": "error handler for egg",
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "onerror"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/onerror",
+  "license": "MIT",
+  "author": "dead_horse",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/onerror"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./lib/error_view": "./src/lib/error_view.ts",
+    "./lib/utils": "./src/lib/utils.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -14,31 +45,18 @@
       "./package.json": "./package.json"
     }
   },
-  "description": "error handler for egg",
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/onerror",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "plugins/onerror"
-  },
-  "keywords": [
-    "egg",
-    "egg-plugin",
-    "onerror"
-  ],
-  "author": "dead_horse",
-  "license": "MIT",
-  "engines": {
-    "node": ">=22.18.0"
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json && cp src/lib/onerror_page.mustache.html dist/lib/onerror_page.mustache.html",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "cookie": "catalog:",
     "koa-onerror": "catalog:",
     "mustache": "catalog:",
     "stack-trace": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -49,28 +67,10 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "scripts": {
-    "lint": "oxlint --type-aware",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "test": "vitest run",
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json && cp src/lib/onerror_page.mustache.html dist/lib/onerror_page.mustache.html",
-    "prepublishOnly": "pnpm run build"
+  "peerDependencies": {
+    "egg": "workspace:*"
   },
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./agent": "./src/agent.ts",
-    "./app": "./src/app.ts",
-    "./config/config.default": "./src/config/config.default.ts",
-    "./lib/error_view": "./src/lib/error_view.ts",
-    "./lib/utils": "./src/lib/utils.ts",
-    "./types": "./src/types.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

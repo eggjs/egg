@@ -1,52 +1,25 @@
 {
   "name": "create-egg",
   "version": "4.1.0-beta.35",
-  "publishConfig": {
-    "access": "public",
-    "exports": {
-      ".": "./dist/index.js",
-      "./cli": "./dist/cli.js",
-      "./package.json": "./package.json"
-    }
-  },
   "description": "Scaffolding Your First Egg.js Project",
-  "type": "module",
-  "dependencies": {
-    "@clack/prompts": "catalog:",
-    "cross-spawn": "catalog:",
-    "mri": "catalog:",
-    "picocolors": "catalog:"
+  "homepage": "https://github.com/eggjs/egg/tree/next/tools/create-egg",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
   },
-  "devDependencies": {
-    "@eggjs/tracer": "workspace:*",
-    "@eggjs/mock": "workspace:*",
-    "@types/cross-spawn": "catalog:",
-    "egg": "workspace:*",
-    "execa": "catalog:",
-    "tsdown": "catalog:"
-  },
-  "engines": {
-    "node": ">=20.19.0"
-  },
-  "scripts": {
-    "test": "vitest run",
-    "build": "tsdown",
-    "prepublishOnly": "pnpm run build"
-  },
+  "license": "MIT",
+  "author": "TZ <atian25@qq.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "tools/create-egg"
   },
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
+  "bin": {
+    "create-egg": "./dist/cli.js"
   },
-  "homepage": "https://github.com/eggjs/egg/tree/next/tools/create-egg",
   "files": [
     "dist"
   ],
-  "author": "TZ <atian25@qq.com>",
-  "license": "MIT",
+  "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -55,7 +28,34 @@
     "./cli": "./src/cli.ts",
     "./package.json": "./package.json"
   },
-  "bin": {
-    "create-egg": "./dist/cli.js"
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./cli": "./dist/cli.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsdown",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "@clack/prompts": "catalog:",
+    "cross-spawn": "catalog:",
+    "mri": "catalog:",
+    "picocolors": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tracer": "workspace:*",
+    "@types/cross-spawn": "catalog:",
+    "egg": "workspace:*",
+    "execa": "catalog:",
+    "tsdown": "catalog:"
+  },
+  "engines": {
+    "node": ">=20.19.0"
   }
 }

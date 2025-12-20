@@ -2,7 +2,30 @@
   "name": "@eggjs/scripts",
   "version": "5.0.0-beta.35",
   "description": "deploy tool for egg project",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tools/scripts",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "TZ <atian25@qq.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tools/scripts"
+  },
+  "bin": {
+    "egg-scripts": "./bin/run.js",
+    "eggctl": "./bin/run.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "scripts"
+  ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./baseCommand": "./src/baseCommand.ts",
@@ -23,38 +46,6 @@
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
-  },
-  "bin": {
-    "egg-scripts": "./bin/run.js",
-    "eggctl": "./bin/run.js"
-  },
-  "files": [
-    "bin",
-    "dist",
-    "scripts"
-  ],
-  "oclif": {
-    "bin": "eggctl",
-    "commands": "./dist/commands",
-    "dirname": "eggctl",
-    "topicSeparator": " ",
-    "additionalHelpFlags": [
-      "-h"
-    ]
-  },
-  "license": "MIT",
-  "homepage": "https://github.com/eggjs/egg/tree/next/tools/scripts",
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "tools/scripts"
-  },
-  "author": "TZ <atian25@qq.com>",
-  "engines": {
-    "node": ">= 22.18.0"
   },
   "scripts": {
     "build": "tsdown",
@@ -87,7 +78,16 @@
     "urllib": "catalog:",
     "vitest": "catalog:"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "oclif": {
+    "additionalHelpFlags": [
+      "-h"
+    ],
+    "bin": "eggctl",
+    "commands": "./dist/commands",
+    "dirname": "eggctl",
+    "topicSeparator": " "
+  },
+  "engines": {
+    "node": ">= 22.18.0"
+  }
 }

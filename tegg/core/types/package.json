@@ -4,11 +4,28 @@
   "description": "tegg types",
   "keywords": [
     "egg",
-    "typescript",
     "tegg",
-    "types"
+    "types",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/types",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "gxkl <gxkl203@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/core/types"
+  },
+  "files": [
+    "dist"
   ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./aop": "./src/aop/index.ts",
@@ -99,29 +116,6 @@
     "./schedule": "./src/schedule.ts",
     "./transaction": "./src/transaction.ts",
     "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "prepublishOnly": "npm run build"
-  },
-  "author": "gxkl <gxkl203@gmail.com>",
-  "license": "MIT",
-  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/types",
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "tegg/core/types"
-  },
-  "engines": {
-    "node": ">=22.18.0"
   },
   "publishConfig": {
     "access": "public",
@@ -217,8 +211,11 @@
       "./package.json": "./package.json"
     }
   },
-  "peerDependencies": {
-    "egg": "workspace:*"
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@types/node": "catalog:",
@@ -227,7 +224,10 @@
     "typescript": "catalog:",
     "unplugin-unused": "catalog:"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

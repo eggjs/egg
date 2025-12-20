@@ -1,10 +1,23 @@
 {
   "name": "{{name}}",
   "version": "1.0.0",
-  "description": "hello Egg.js",
   "private": true,
-  "egg": {
-    "declarations": true
+  "description": "hello Egg.js",
+  "license": "MIT",
+  "author": "{{author}}",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "start": "egg-scripts start --daemon --title=egg-server-{{name}}",
+    "stop": "egg-scripts stop --title=egg-server-{{name}}",
+    "dev": "egg-bin dev",
+    "test": "npm run lint -- --fix && npm run test:local",
+    "test:local": "egg-bin test",
+    "cov": "egg-bin cov",
+    "lint": "eslint .",
+    "ci": "npm run lint && npm run cov"
   },
   "dependencies": {
     "egg": "^3.17.5",
@@ -19,20 +32,7 @@
   "engines": {
     "node": ">=22.18.0"
   },
-  "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-{{name}}",
-    "stop": "egg-scripts stop --title=egg-server-{{name}}",
-    "dev": "egg-bin dev",
-    "test": "npm run lint -- --fix && npm run test:local",
-    "test:local": "egg-bin test",
-    "cov": "egg-bin cov",
-    "lint": "eslint .",
-    "ci": "npm run lint && npm run cov"
-  },
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "author": "{{author}}",
-  "license": "MIT"
+  "egg": {
+    "declarations": true
+  }
 }

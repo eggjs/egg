@@ -1,7 +1,7 @@
 {
   "name": "constructorSimple",
+  "type": "module",
   "eggModule": {
     "name": "constructorSimple"
-  },
-  "type": "module"
+  }
 }

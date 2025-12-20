@@ -1,10 +1,10 @@
 {
   "name": "dal",
-  "eggModule": {
-    "name": "dal"
-  },
+  "type": "module",
   "dependencies": {
     "@eggjs/dal-plugin": "*"
   },
-  "type": "module"
+  "eggModule": {
+    "name": "dal"
+  }
 }

@@ -1,9 +1,9 @@
 {
   "name": "example-declarations",
-  "egg": {
-    "declarations": true
-  },
   "dependencies": {
     "egg": "*"
+  },
+  "egg": {
+    "declarations": true
   }
 }

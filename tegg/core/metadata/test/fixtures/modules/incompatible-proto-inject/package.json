@@ -1,7 +1,7 @@
 {
   "name": "incompatible-proto-inject",
+  "type": "module",
   "eggModule": {
     "name": "extendsModule"
-  },
-  "type": "module"
+  }
 }

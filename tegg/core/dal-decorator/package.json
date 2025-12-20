@@ -3,39 +3,46 @@
   "version": "4.0.0-beta.35",
   "description": "tegg dal decorator",
   "keywords": [
-    "egg",
-    "typescript",
+    "dal",
     "decorator",
+    "egg",
     "tegg",
-    "dal"
+    "typescript"
   ],
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "prepublishOnly": "npm run build"
-  },
-  "author": "killagu <killa123@126.com>",
-  "license": "MIT",
   "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/dal-decorator",
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
+  "license": "MIT",
+  "author": "killagu <killa123@126.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "tegg/core/dal-decorator"
   },
-  "engines": {
-    "node": ">=22.18.0"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
@@ -52,14 +59,7 @@
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
-  "publishConfig": {
-    "access": "public",
-    "exports": {
-      ".": "./dist/index.js",
-      "./package.json": "./package.json"
-    }
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

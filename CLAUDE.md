@@ -215,7 +215,6 @@ The framework follows a specific loading order:
 - `pnpm run site:dev` - Start VitePress documentation development server
 - `pnpm run site:build` - Build VitePress documentation site
 - `pnpm run site:preview` - Preview built documentation site
-- `pnpm run site:prettier` - Format documentation files
 - `pnpm run puml` - Generate PlantUML diagrams
 
 ## Key Configuration Files
@@ -591,7 +590,7 @@ This approach ensures:
   - Provides additional linting rules beyond TypeScript checking
   - Significantly faster than ESLint with comparable rules
   - Uses `--type-aware` flag for enhanced TypeScript analysis
-- **Prettier** - Code formatting (primarily for documentation)
+- **oxfmt** - Code formatting (primarily for documentation)
 - Run `pnpm lint` to check code quality with oxlint
 - Run `pnpm lint:fix` to auto-fix linting issues
 - Each package uses oxlint which automatically respects `.gitignore` patterns

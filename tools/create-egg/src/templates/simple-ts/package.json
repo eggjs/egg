@@ -1,11 +1,18 @@
 {
   "name": "{{name}}",
-  "description": "Hello Egg.js",
-  "type": "module",
   "private": true,
-  "egg": {
-    "typescript": true
+  "description": "Hello Egg.js",
+  "homepage": "https://github.com/YOUR_USERNAME/YOUR_REPO#readme",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/YOUR_REPO/issues"
   },
+  "license": "MIT",
+  "author": "Author Name <author.name@mail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_USERNAME/YOUR_REPO.git"
+  },
+  "type": "module",
   "scripts": {
     "start": "eggctl start --daemon --title=egg-server-{{name}}",
     "stop": "eggctl stop --title=egg-server-{{name}}",
@@ -39,14 +46,7 @@
   "engines": {
     "node": ">=22.18.0"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/YOUR_REPO#readme",
-  "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/YOUR_REPO/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/YOUR_USERNAME/YOUR_REPO.git"
-  },
-  "author": "Author Name <author.name@mail.com>",
-  "license": "MIT"
+  "egg": {
+    "typescript": true
+  }
 }

@@ -1,7 +1,7 @@
 {
   "name": "http-module",
+  "type": "module",
   "eggModule": {
     "name": "http-module"
-  },
-  "type": "module"
+  }
 }

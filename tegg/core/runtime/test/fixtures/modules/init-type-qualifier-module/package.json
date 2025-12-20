@@ -1,7 +1,7 @@
 {
   "name": "demo-app-repo",
+  "type": "module",
   "eggModule": {
     "name": "init-type-qualifier-module"
-  },
-  "type": "module"
+  }
 }

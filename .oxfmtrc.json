@@ -7,7 +7,8 @@
     "tegg/core/aop-runtime/test/aop-runtime.test.ts",
     "packages/core/test/fixtures/load_dirs/syntax_error/*",
     "packages/core/test/fixtures/syntaxerror/*",
-    "packages/core/test/fixtures/load_context_syntax_error/**/*"
+    "packages/core/test/fixtures/load_context_syntax_error/**/*",
+    "CHANGELOG.md"
   ],
   "experimentalSortImports": {
     "groups": [
@@ -20,5 +21,8 @@
     ],
     "newlinesBetween": true,
     "order": "asc"
+  },
+  "yaml": {
+    "singleQuote": true
   }
 }

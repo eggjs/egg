@@ -2,7 +2,31 @@
   "name": "@eggjs/view-nunjucks",
   "version": "3.0.0-beta.35",
   "description": "nunjucks view plugin for egg",
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "egg-view",
+    "eggPlugin",
+    "nunjucks",
+    "template",
+    "view"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/view-nunjucks#readme",
+  "bugs": "https://github.com/eggjs/egg/issues",
+  "license": "MIT",
+  "author": "TZ <atian25@qq.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/view-nunjucks"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./app": "./src/app.ts",
@@ -34,9 +58,6 @@
       "./package.json": "./package.json"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
@@ -44,21 +65,8 @@
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },
-  "keywords": [
-    "egg",
-    "eggPlugin",
-    "egg-plugin",
-    "egg-view",
-    "nunjucks",
-    "view",
-    "template"
-  ],
   "dependencies": {
     "nunjucks": "catalog:"
-  },
-  "peerDependencies": {
-    "@eggjs/view": "workspace:*",
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -76,19 +84,11 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
+  "peerDependencies": {
+    "@eggjs/view": "workspace:*",
+    "egg": "workspace:*"
+  },
   "engines": {
     "node": ">=22.18.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "plugins/view-nunjucks"
-  },
-  "bugs": "https://github.com/eggjs/egg/issues",
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/view-nunjucks#readme",
-  "author": "TZ <atian25@qq.com>",
-  "license": "MIT",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  }
 }

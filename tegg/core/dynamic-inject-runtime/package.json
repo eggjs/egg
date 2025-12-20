@@ -2,42 +2,33 @@
   "name": "@eggjs/dynamic-inject-runtime",
   "version": "4.0.0-beta.35",
   "description": "tegg dynamic inject runtime",
-  "eggModule": {
-    "name": "teggDyniamicInjectRuntime"
-  },
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
   "keywords": [
     "egg",
-    "typescript",
     "runtime",
-    "tegg"
+    "tegg",
+    "typescript"
   ],
-  "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "prepublishOnly": "npm run build"
-  },
-  "author": "killagu <killa123@126.com>",
-  "license": "MIT",
   "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/dynamic-inject-runtime",
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
+  "license": "MIT",
+  "author": "killagu <killa123@126.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "tegg/core/dynamic-inject-runtime"
   },
-  "engines": {
-    "node": ">=22.18.0"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
@@ -46,12 +37,18 @@
       "./package.json": "./package.json"
     }
   },
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/dynamic-inject": "workspace:*",
     "@eggjs/lifecycle": "workspace:*",
     "@eggjs/metadata": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"
   },
@@ -59,11 +56,14 @@
     "@eggjs/module-test-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@types/node": "catalog:",
-    "typescript": "catalog:",
     "tsdown": "catalog:",
+    "typescript": "catalog:",
     "unplugin-unused": "catalog:"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "teggDyniamicInjectRuntime"
+  }
 }

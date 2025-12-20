@@ -1,6 +1,44 @@
 {
   "name": "@eggjs/watcher",
   "version": "5.0.0-beta.35",
+  "description": "file watcher plugin for egg",
+  "keywords": [
+    "egg",
+    "egg-watcher",
+    "watch",
+    "watcher"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/watcher",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/watcher"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./config/config.local": "./src/config/config.local.ts",
+    "./config/config.unittest": "./src/config/config.unittest.ts",
+    "./lib/boot": "./src/lib/boot.ts",
+    "./lib/event-sources": "./src/lib/event-sources/index.ts",
+    "./lib/event-sources/base": "./src/lib/event-sources/base.ts",
+    "./lib/event-sources/default": "./src/lib/event-sources/default.ts",
+    "./lib/event-sources/development": "./src/lib/event-sources/development.ts",
+    "./lib/utils": "./src/lib/utils.ts",
+    "./lib/watcher": "./src/lib/watcher.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -21,7 +59,6 @@
       "./package.json": "./package.json"
     }
   },
-  "description": "file watcher plugin for egg",
   "scripts": {
     "lint": "oxlint --type-aware",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
@@ -29,29 +66,10 @@
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "prepublishOnly": "pnpm run build"
   },
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/watcher",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "plugins/watcher"
-  },
-  "license": "MIT",
-  "keywords": [
-    "egg-watcher",
-    "egg",
-    "watcher",
-    "watch"
-  ],
-  "engines": {
-    "node": ">=22.18.0"
-  },
   "dependencies": {
     "@eggjs/utils": "workspace:*",
     "camelcase": "catalog:",
     "sdk-base": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -62,28 +80,10 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./agent": "./src/agent.ts",
-    "./app": "./src/app.ts",
-    "./config/config.default": "./src/config/config.default.ts",
-    "./config/config.local": "./src/config/config.local.ts",
-    "./config/config.unittest": "./src/config/config.unittest.ts",
-    "./lib/boot": "./src/lib/boot.ts",
-    "./lib/event-sources": "./src/lib/event-sources/index.ts",
-    "./lib/event-sources/base": "./src/lib/event-sources/base.ts",
-    "./lib/event-sources/default": "./src/lib/event-sources/default.ts",
-    "./lib/event-sources/development": "./src/lib/event-sources/development.ts",
-    "./lib/utils": "./src/lib/utils.ts",
-    "./lib/watcher": "./src/lib/watcher.ts",
-    "./types": "./src/types.ts",
-    "./package.json": "./package.json"
+  "peerDependencies": {
+    "egg": "workspace:*"
   },
-  "files": [
-    "dist"
-  ],
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

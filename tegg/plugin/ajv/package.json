@@ -1,41 +1,15 @@
 {
   "name": "@eggjs/ajv-plugin",
-  "eggPlugin": {
-    "name": "teggAjv",
-    "strict": false,
-    "dependencies": [
-      "tegg"
-    ]
-  },
-  "eggModule": {
-    "name": "teggAjv"
-  },
   "version": "4.0.0-beta.35",
   "description": "ajv plugin for egg and tegg",
   "keywords": [
+    "ajv",
     "egg",
-    "plugin",
-    "typescript",
     "module",
+    "plugin",
     "tegg",
-    "ajv"
+    "typescript"
   ],
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./lib/Ajv": "./src/lib/Ajv.ts",
-    "./types": "./src/types.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "prepublishOnly": "npm run build"
-  },
   "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/ajv",
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
@@ -45,31 +19,18 @@
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "tegg/plugin/ajv"
   },
-  "engines": {
-    "node": ">=22.18.0"
-  },
-  "dependencies": {
-    "@eggjs/ajv-decorator": "workspace:*",
-    "@eggjs/ajv-formats": "^3.0.1",
-    "@eggjs/ajv-keywords": "^5.1.0",
-    "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/lifecycle": "workspace:*",
-    "ajv": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
-  },
-  "devDependencies": {
-    "@eggjs/mock": "workspace:*",
-    "@eggjs/tegg": "workspace:*",
-    "@eggjs/tegg-config": "workspace:*",
-    "@eggjs/controller-plugin": "workspace:*",
-    "@eggjs/tegg-plugin": "workspace:*",
-    "@types/node": "catalog:",
-    "egg": "workspace:*",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "unplugin-unused": "catalog:"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./lib/Ajv": "./src/lib/Ajv.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
@@ -80,7 +41,46 @@
       "./package.json": "./package.json"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@eggjs/ajv-decorator": "workspace:*",
+    "@eggjs/ajv-formats": "^3.0.1",
+    "@eggjs/ajv-keywords": "^5.1.0",
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
+    "ajv": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/controller-plugin": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "teggAjv"
+  },
+  "eggPlugin": {
+    "name": "teggAjv",
+    "strict": false,
+    "dependencies": [
+      "tegg"
+    ]
+  }
 }

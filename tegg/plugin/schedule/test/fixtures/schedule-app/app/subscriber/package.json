@@ -1,7 +1,7 @@
 {
   "name": "subscriber",
+  "type": "module",
   "eggModule": {
     "name": "subscriber"
-  },
-  "type": "module"
+  }
 }

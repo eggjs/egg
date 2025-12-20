@@ -1,49 +1,53 @@
 {
   "name": "@eggjs/background-task",
-  "description": "background task util for tegg",
   "version": "4.0.0-beta.35",
+  "description": "background task util for tegg",
   "keywords": [
-    "egg",
-    "typescript",
-    "background",
     "async",
-    "tegg"
+    "background",
+    "egg",
+    "tegg",
+    "typescript"
   ],
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/background-task",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "killagu <killa123@126.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/core/background-task"
   },
   "files": [
     "dist"
   ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
   "scripts": {
     "clean": "rimraf dist *.tsbuildinfo",
     "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/background-task",
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "tegg/core/background-task"
-  },
-  "engines": {
-    "node": ">=22.18.0"
-  },
-  "author": "killagu <killa123@126.com>",
-  "license": "MIT",
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/tegg-common-util": "workspace:*",
@@ -53,14 +57,10 @@
     "typescript": "catalog:",
     "unplugin-unused": "catalog:"
   },
-  "publishConfig": {
-    "access": "public",
-    "exports": {
-      ".": "./dist/index.js",
-      "./package.json": "./package.json"
-    }
+  "peerDependencies": {
+    "egg": "workspace:*"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

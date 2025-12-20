@@ -1,45 +1,25 @@
 {
   "name": "@eggjs/mock",
   "version": "7.0.0-beta.35",
-  "publishConfig": {
-    "access": "public",
-    "exports": {
-      ".": "./dist/index.js",
-      "./app": "./dist/app.js",
-      "./app/extend/agent": "./dist/app/extend/agent.js",
-      "./app/extend/application": "./dist/app/extend/application.js",
-      "./app/middleware/cluster_app_mock": "./dist/app/middleware/cluster_app_mock.js",
-      "./bootstrap": "./dist/bootstrap.js",
-      "./inject_mocha": "./dist/inject_mocha.js",
-      "./lib/agent_handler": "./dist/lib/agent_handler.js",
-      "./lib/app": "./dist/lib/app.js",
-      "./lib/app_handler": "./dist/lib/app_handler.js",
-      "./lib/cluster": "./dist/lib/cluster.js",
-      "./lib/context": "./dist/lib/context.js",
-      "./lib/format_options": "./dist/lib/format_options.js",
-      "./lib/inject_context": "./dist/lib/inject_context.js",
-      "./lib/mock_agent": "./dist/lib/mock_agent.js",
-      "./lib/mock_custom_loader": "./dist/lib/mock_custom_loader.js",
-      "./lib/mock_http_server": "./dist/lib/mock_http_server.js",
-      "./lib/mock_httpclient": "./dist/lib/mock_httpclient.js",
-      "./lib/parallel/agent": "./dist/lib/parallel/agent.js",
-      "./lib/parallel/app": "./dist/lib/parallel/app.js",
-      "./lib/parallel/util": "./dist/lib/parallel/util.js",
-      "./lib/prerequire": "./dist/lib/prerequire.js",
-      "./lib/request_call_function": "./dist/lib/request_call_function.js",
-      "./lib/restore": "./dist/lib/restore.js",
-      "./lib/start-cluster": "./dist/lib/start-cluster.js",
-      "./lib/supertest": "./dist/lib/supertest.js",
-      "./lib/tmp/empty": "./dist/lib/tmp/empty.js",
-      "./lib/types": "./dist/lib/types.js",
-      "./lib/utils": "./dist/lib/utils.js",
-      "./register": "./dist/register.js",
-      "./package.json": "./package.json"
-    }
+  "description": "mock server plugin for egg",
+  "keywords": [
+    "egg",
+    "mock"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/mock",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
   },
-  "eggPlugin": {
-    "name": "egg-mock"
+  "license": "MIT",
+  "author": "popomore <sakura9515@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/mock"
   },
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -77,27 +57,48 @@
     "./register": "./src/register.ts",
     "./package.json": "./package.json"
   },
-  "files": [
-    "dist"
-  ],
-  "description": "mock server plugin for egg",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "plugins/mock"
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/extend/agent": "./dist/app/extend/agent.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./app/middleware/cluster_app_mock": "./dist/app/middleware/cluster_app_mock.js",
+      "./bootstrap": "./dist/bootstrap.js",
+      "./inject_mocha": "./dist/inject_mocha.js",
+      "./lib/agent_handler": "./dist/lib/agent_handler.js",
+      "./lib/app": "./dist/lib/app.js",
+      "./lib/app_handler": "./dist/lib/app_handler.js",
+      "./lib/cluster": "./dist/lib/cluster.js",
+      "./lib/context": "./dist/lib/context.js",
+      "./lib/format_options": "./dist/lib/format_options.js",
+      "./lib/inject_context": "./dist/lib/inject_context.js",
+      "./lib/mock_agent": "./dist/lib/mock_agent.js",
+      "./lib/mock_custom_loader": "./dist/lib/mock_custom_loader.js",
+      "./lib/mock_http_server": "./dist/lib/mock_http_server.js",
+      "./lib/mock_httpclient": "./dist/lib/mock_httpclient.js",
+      "./lib/parallel/agent": "./dist/lib/parallel/agent.js",
+      "./lib/parallel/app": "./dist/lib/parallel/app.js",
+      "./lib/parallel/util": "./dist/lib/parallel/util.js",
+      "./lib/prerequire": "./dist/lib/prerequire.js",
+      "./lib/request_call_function": "./dist/lib/request_call_function.js",
+      "./lib/restore": "./dist/lib/restore.js",
+      "./lib/start-cluster": "./dist/lib/start-cluster.js",
+      "./lib/supertest": "./dist/lib/supertest.js",
+      "./lib/tmp/empty": "./dist/lib/tmp/empty.js",
+      "./lib/types": "./dist/lib/types.js",
+      "./lib/utils": "./dist/lib/utils.js",
+      "./register": "./dist/register.js",
+      "./package.json": "./package.json"
+    }
   },
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/packages/mock",
-  "keywords": [
-    "egg",
-    "mock"
-  ],
-  "author": "popomore <sakura9515@gmail.com>",
-  "license": "MIT",
-  "engines": {
-    "node": ">=22.18.0"
+  "scripts": {
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "lint": "oxlint",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "@eggjs/extend2": "workspace:*",
@@ -114,9 +115,6 @@
     "urllib": "catalog:",
     "utility": "catalog:"
   },
-  "peerDependencies": {
-    "egg": "workspace:*"
-  },
   "devDependencies": {
     "@eggjs/errors": "workspace:*",
     "@eggjs/tracer": "workspace:*",
@@ -125,11 +123,13 @@
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
-  "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "lint": "oxlint",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggPlugin": {
+    "name": "egg-mock"
   }
 }

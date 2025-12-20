@@ -1,8 +1,25 @@
 {
   "name": "@eggjs/cookies",
   "version": "4.0.0-beta.35",
-  "engines": {
-    "node": ">=22.18.0"
+  "description": "cookies module for egg",
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/cookies",
+  "license": "MIT",
+  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "packages/cookies"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
@@ -11,29 +28,6 @@
       "./package.json": "./package.json"
     }
   },
-  "description": "cookies module for egg",
-  "dependencies": {
-    "should-send-same-site-none": "catalog:",
-    "utility": "catalog:"
-  },
-  "devDependencies": {
-    "beautify-benchmark": "catalog:",
-    "benchmark": "catalog:",
-    "cookies": "catalog:",
-    "keygrip": "catalog:",
-    "@eggjs/tsconfig": "workspace:*",
-    "oxlint": "catalog:",
-    "typescript": "catalog:",
-    "tsdown": "catalog:"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "packages/cookies"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/packages/cookies",
-  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
-  "license": "MIT",
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
@@ -43,15 +37,21 @@
     "ci": "vitest run --coverage",
     "prepublishOnly": "pnpm run build"
   },
-  "type": "module",
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
+  "dependencies": {
+    "should-send-same-site-none": "catalog:",
+    "utility": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/tsconfig": "workspace:*",
+    "beautify-benchmark": "catalog:",
+    "benchmark": "catalog:",
+    "cookies": "catalog:",
+    "keygrip": "catalog:",
+    "oxlint": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   }
 }

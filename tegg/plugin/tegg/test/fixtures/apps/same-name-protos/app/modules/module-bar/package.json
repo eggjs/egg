@@ -1,7 +1,7 @@
 {
   "name": "module-bar",
+  "type": "module",
   "eggModule": {
     "name": "bar"
-  },
-  "type": "module"
+  }
 }

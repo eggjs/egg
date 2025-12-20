@@ -1,26 +1,51 @@
 {
   "name": "@eggjs/router",
   "version": "4.0.0-beta.35",
-  "engines": {
-    "node": ">=22.18.0"
-  },
   "description": "Router middleware for egg/koa. Provides RESTful resource routing.",
+  "keywords": [
+    "koa",
+    "middleware",
+    "route",
+    "router"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/router",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "eggjs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "packages/router"
   },
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/packages/router",
-  "author": "eggjs",
-  "keywords": [
-    "koa",
-    "middleware",
-    "router",
-    "route"
+  "files": [
+    "dist"
   ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build",
+    "prebench": "npm run build",
+    "bench": "cd bench && make"
+  },
   "dependencies": {
     "http-errors": "catalog:",
     "inflection": "catalog:",
@@ -43,32 +68,7 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "scripts": {
-    "lint": "oxlint --type-aware",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "test": "vitest run",
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "prepublishOnly": "npm run build",
-    "prebench": "npm run build",
-    "bench": "cd bench && make"
-  },
-  "license": "MIT",
-  "files": [
-    "dist"
-  ],
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
-  "publishConfig": {
-    "access": "public",
-    "exports": {
-      ".": "./dist/index.js",
-      "./package.json": "./package.json"
-    }
-  },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "module": "./dist/index.js"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

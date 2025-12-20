@@ -1,6 +1,34 @@
 {
   "name": "@eggjs/bin",
   "version": "8.0.0-beta.35",
+  "description": "egg developer tool",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tools/egg-bin",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tools/egg-bin"
+  },
+  "bin": {
+    "egg-bin": "./bin/run.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "scripts"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -8,20 +36,17 @@
       "./package.json": "./package.json"
     }
   },
-  "description": "egg developer tool",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "tools/egg-bin"
-  },
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/tools/egg-bin",
-  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
-  "license": "MIT",
-  "engines": {
-    "node": ">=22.18.0"
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
+    "test": "node bin/run.js test",
+    "cov": "c8 node bin/run.js test",
+    "preci": "npm run clean && npm run lint && npm run prepublishOnly",
+    "ci": "npm run cov",
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "@eggjs/utils": "workspace:*",
@@ -35,14 +60,6 @@
     "ts-node": "catalog:",
     "tsconfig-paths": "catalog:",
     "utility": "catalog:"
-  },
-  "peerDependencies": {
-    "@eggjs/mock": "workspace:*"
-  },
-  "peerDependenciesMeta": {
-    "@eggjs/mock": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -64,41 +81,24 @@
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
-  "scripts": {
-    "lint": "oxlint --type-aware",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
-    "test": "node bin/run.js test",
-    "cov": "c8 node bin/run.js test",
-    "preci": "npm run clean && npm run lint && npm run prepublishOnly",
-    "ci": "npm run cov",
-    "clean": "rimraf dist",
-    "build": "tsdown",
-    "prepublishOnly": "pnpm run build"
+  "peerDependencies": {
+    "@eggjs/mock": "workspace:*"
   },
-  "type": "module",
-  "files": [
-    "bin",
-    "dist",
-    "scripts"
-  ],
-  "bin": {
-    "egg-bin": "./bin/run.js"
+  "peerDependenciesMeta": {
+    "@eggjs/mock": {
+      "optional": true
+    }
   },
   "oclif": {
+    "additionalHelpFlags": [
+      "-h"
+    ],
     "bin": "egg-bin",
     "commands": "./dist/commands",
     "dirname": "egg-bin",
-    "topicSeparator": " ",
-    "additionalHelpFlags": [
-      "-h"
-    ]
+    "topicSeparator": " "
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
+  "engines": {
+    "node": ">=22.18.0"
   }
 }

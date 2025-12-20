@@ -2,6 +2,41 @@
   "name": "@eggjs/view",
   "version": "4.0.0-beta.35",
   "description": "Base view plugin for egg",
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "egg-view",
+    "eggPlugin",
+    "view"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/view",
+  "bugs": "https://github.com/eggjs/egg/issues",
+  "license": "MIT",
+  "author": "popomore <sakura9515@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/view"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./config/config.local": "./src/config/config.local.ts",
+    "./lib": "./src/lib/index.ts",
+    "./lib/context_view": "./src/lib/context_view.ts",
+    "./lib/view_manager": "./src/lib/view_manager.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -17,50 +52,16 @@
       "./package.json": "./package.json"
     }
   },
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./app/extend/application": "./src/app/extend/application.ts",
-    "./app/extend/context": "./src/app/extend/context.ts",
-    "./config/config.default": "./src/config/config.default.ts",
-    "./config/config.local": "./src/config/config.local.ts",
-    "./lib": "./src/lib/index.ts",
-    "./lib/context_view": "./src/lib/context_view.ts",
-    "./lib/view_manager": "./src/lib/view_manager.ts",
-    "./types": "./src/types.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "keywords": [
-    "egg",
-    "eggPlugin",
-    "egg-plugin",
-    "egg-view",
-    "view"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "plugins/view"
-  },
-  "bugs": "https://github.com/eggjs/egg/issues",
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/view",
-  "author": "popomore <sakura9515@gmail.com>",
-  "license": "MIT",
-  "engines": {
-    "node": ">=22.18.0"
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "is-type-of": "catalog:",
     "utility": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -70,11 +71,10 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "scripts": {
-    "lint": "oxlint --type-aware",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "test": "vitest run",
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "prepublishOnly": "npm run build"
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   }
 }

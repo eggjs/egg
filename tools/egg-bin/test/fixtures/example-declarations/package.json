@@ -1,8 +1,8 @@
 {
   "name": "example-declarations",
   "version": "1.0.0",
-  "description": "",
   "private": true,
+  "description": "",
   "egg": {
     "declarations": true,
     "framework": "aliyun-egg"

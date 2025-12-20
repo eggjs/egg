@@ -8,21 +8,24 @@
     "eggPlugin",
     "multipart"
   ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/multipart#readme",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "gxcsoccer <gxcsoccer@126.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "plugins/multipart"
   },
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/multipart#readme",
-  "author": "gxcsoccer <gxcsoccer@126.com>",
-  "license": "MIT",
-  "engines": {
-    "node": ">= 22.18.0"
-  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./app": "./src/app.ts",
@@ -52,14 +55,19 @@
       "./package.json": "./package.json"
     }
   },
+  "scripts": {
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest",
+    "prepublishOnly": "npm run build"
+  },
   "dependencies": {
     "@eggjs/path-matching": "workspace:*",
     "bytes": "catalog:",
     "co-busboy": "catalog:",
     "dayjs": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -76,18 +84,10 @@
     "urllib": "catalog:",
     "vitest": "catalog:"
   },
-  "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest",
-    "prepublishOnly": "npm run build"
+  "peerDependencies": {
+    "egg": "workspace:*"
   },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "engines": {
+    "node": ">= 22.18.0"
+  }
 }

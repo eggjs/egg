@@ -1,9 +1,9 @@
 {
   "name": "example-app",
-  "egg": {
-    "typescript": true
-  },
   "dependencies": {
     "egg": "*"
+  },
+  "egg": {
+    "typescript": true
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "app-biz",
+  "type": "module",
   "eggModule": {
     "name": "appBiz"
-  },
-  "type": "module"
+  }
 }

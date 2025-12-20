@@ -1,40 +1,40 @@
 {
   "name": "@eggjs/tsconfig",
-  "description": "Base tsconfig for egg ts project",
   "version": "3.1.0-beta.35",
+  "description": "Base tsconfig for egg ts project",
   "keywords": [
     "egg",
-    "typescript",
-    "tsconfig"
+    "tsconfig",
+    "typescript"
   ],
-  "files": [
-    "tsconfig.json"
-  ],
-  "scripts": {
-    "lint": "oxlint",
-    "test": "vitest run"
-  },
-  "author": "killagu <killa123@126.com>",
-  "license": "MIT",
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/tsconfig",
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
-  "homepage": "https://github.com/eggjs/egg/tree/next/packages/tsconfig",
+  "license": "MIT",
+  "author": "killagu <killa123@126.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "packages/tsconfig"
   },
-  "engines": {
-    "node": ">=22.18.0"
-  },
+  "files": [
+    "tsconfig.json"
+  ],
+  "type": "module",
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "lint": "oxlint",
+    "test": "vitest run"
   },
   "devDependencies": {
     "coffee": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "type": "module"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

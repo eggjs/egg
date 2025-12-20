@@ -6,12 +6,12 @@
   },
   "type": "module",
   "oclif": {
+    "additionalHelpFlags": [
+      "-h"
+    ],
     "bin": "my-egg-bin",
     "commands": "./cmd",
     "dirname": "my-egg-bin",
-    "topicSeparator": " ",
-    "additionalHelpFlags": [
-      "-h"
-    ]
+    "topicSeparator": " "
   }
 }

@@ -1,6 +1,7 @@
 {
   "name": "example-esm",
   "version": "1.0.0",
+  "type": "module",
   "egg": {
     "framework": "custom-framework"
   },
@@ -9,6 +10,5 @@
       "./inject1.js",
       "inject"
     ]
-  },
-  "type": "module"
+  }
 }

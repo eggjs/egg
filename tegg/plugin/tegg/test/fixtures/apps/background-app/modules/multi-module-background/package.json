@@ -1,7 +1,7 @@
 {
   "name": "backgroundModule",
+  "type": "module",
   "eggModule": {
     "name": "backgroundModule"
-  },
-  "type": "module"
+  }
 }

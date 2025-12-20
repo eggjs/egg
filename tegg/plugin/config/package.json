@@ -1,37 +1,15 @@
 {
   "name": "@eggjs/tegg-config",
-  "eggPlugin": {
-    "name": "teggConfig"
-  },
   "version": "4.0.0-beta.35",
   "description": "module config plugin for egg",
   "keywords": [
-    "egg",
-    "plugin",
-    "typescript",
-    "module",
     "config",
-    "tegg"
+    "egg",
+    "module",
+    "plugin",
+    "tegg",
+    "typescript"
   ],
-  "files": [
-    "dist"
-  ],
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./agent": "./src/agent.ts",
-    "./app": "./src/app.ts",
-    "./config/config.default": "./src/config/config.default.ts",
-    "./lib/ModuleScanner": "./src/lib/ModuleScanner.ts",
-    "./types": "./src/types.ts",
-    "./package.json": "./package.json"
-  },
-  "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "prepublishOnly": "npm run build"
-  },
   "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/config",
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
@@ -41,23 +19,21 @@
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "tegg/plugin/config"
   },
-  "engines": {
-    "node": ">=22.18.0"
-  },
-  "dependencies": {
-    "@eggjs/tegg-common-util": "workspace:*",
-    "@eggjs/utils": "workspace:*"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
-  },
-  "devDependencies": {
-    "@eggjs/mock": "workspace:*",
-    "@types/node": "catalog:",
-    "egg": "workspace:*",
-    "typescript": "catalog:",
-    "tsdown": "catalog:",
-    "unplugin-unused": "catalog:"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./lib/ModuleScanner": "./src/lib/ModuleScanner.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
@@ -71,7 +47,31 @@
       "./package.json": "./package.json"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggPlugin": {
+    "name": "teggConfig"
+  }
 }
