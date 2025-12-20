@@ -67,7 +67,7 @@
   },
   "lint-staged": {
     "*": [
-      "oxfmt",
+      "oxfmt --no-error-on-unmatched-pattern",
       "oxlint --type-aware --fix"
     ]
   },
