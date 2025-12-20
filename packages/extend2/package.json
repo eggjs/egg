@@ -34,17 +34,11 @@
     }
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "devDependencies": {
     "@eggjs/tsconfig": "workspace:*",
-    "oxlint": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

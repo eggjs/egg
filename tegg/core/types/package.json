@@ -212,16 +212,12 @@
     }
   },
   "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "egg": "workspace:*",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "unplugin-unused": "catalog:"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"

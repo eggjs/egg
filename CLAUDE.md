@@ -222,7 +222,6 @@ The framework follows a specific loading order:
 - **`pnpm-workspace.yaml`** - pnpm workspace configuration with catalog dependencies
 - **`package.json`** - Root monorepo configuration with pnpm scripts
 - **`tsconfig.json`** - Root TypeScript configuration for all packages (extends @eggjs/tsconfig)
-- **`tsconfig.build.json`** - Root build configuration (extends tsconfig.json)
 - **`packages/egg/package.json`** - Main egg package with hybrid CommonJS/ESM exports
 - **`packages/egg/tsconfig.json`** - Extends workspace root tsconfig.json
 - **`packages/egg/tsdown.config.ts`** - tsdown build configuration for unbundled ESM output
@@ -288,7 +287,6 @@ The framework extends Koa's context with Egg-specific features:
 2. Add package.json with workspace dependencies using `workspace:*`
 3. Create minimal TypeScript config files:
    - `tsconfig.json` → `{"extends": "../../tsconfig.json"}`
-   - `tsconfig.build.json` → `{"extends": "../../tsconfig.build.json"}`
 4. Add package reference to root tsconfig.json `references` array
 5. Update root pnpm-workspace.yaml if needed (plugins/\* is already included)
 6. Use `pnpm --filter=<package>` for package-specific commands
@@ -430,11 +428,8 @@ Plugins should configure their package.json following this pattern:
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit",
+    "test": "vitest run"
   }
 }
 ```
@@ -474,7 +469,7 @@ Tool packages (like egg-bin) should be placed in the `tools/` directory:
 - Use `oxlint --type-aware` for enhanced TypeScript checking
 - oxlint automatically respects `.gitignore` patterns for file exclusion
 - Package-specific scripts:
-  - `"typecheck": "tsgo --noEmit && tsc --noEmit"` - Pure TypeScript type checking
+  - `"typecheck": "tsgo --noEmit"` - Pure TypeScript type checking
   - `"lint": "oxlint --type-aware"` - Linting with type awareness
 - Remove any `.eslintrc` or `.eslintrc.js` files when migrating packages
 
@@ -512,10 +507,6 @@ Tool packages (like egg-bin) should be placed in the `tools/` directory:
   - Uses `${configDir}` variable for dynamic path resolution
   - Includes project `references` array listing all sub-packages
   - Sets `composite: true` and `incremental: true` for project references
-- `tsconfig.build.json` - Build-specific configuration
-  - Extends from root `tsconfig.json`
-  - Defines `rootDir` as `${configDir}/src` and `outDir` as `${configDir}/dist`
-  - Excludes test files, dist directories, and config files
 
 **Sub-Project Configuration Pattern:**
 
@@ -525,13 +516,6 @@ All packages, plugins, and tools MUST follow this minimal pattern:
 // packages/*/tsconfig.json, plugins/*/tsconfig.json, tools/*/tsconfig.json
 {
   "extends": "../../tsconfig.json"
-}
-```
-
-```json
-// packages/*/tsconfig.build.json, plugins/*/tsconfig.build.json
-{
-  "extends": "../../tsconfig.build.json"
 }
 ```
 
@@ -855,7 +839,7 @@ NODE_OPTIONS='--inspect-brk' pnpm --filter=egg run test
    - Add `"oxlint": "catalog:"` to devDependencies
 2. Delete `.eslintrc`, `.eslintrc.js`, or `.eslintrc.json` files
 3. Update scripts in package.json:
-   - Add `"typecheck": "tsgo --noEmit && tsc --noEmit"` for TypeScript type checking
+   - Add `"typecheck": "tsgo --noEmit"` for TypeScript type checking
    - Change `"lint": "eslint ..."` to `"lint": "oxlint --type-aware"`
    - Add `"lint:fix": "npm run lint -- --fix"`
 4. Ensure both type checking and linting are run:

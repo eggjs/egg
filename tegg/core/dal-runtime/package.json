@@ -40,9 +40,7 @@
     }
   },
   "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
@@ -62,9 +60,7 @@
     "@types/node": "catalog:",
     "@types/nunjucks": "catalog:",
     "@types/sqlstring": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "unplugin-unused": "catalog:"
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

@@ -1,6 +1,6 @@
-import { defineConfig, type UserConfig } from 'tsdown';
+import { defineConfig } from 'tsdown';
 
-const config: UserConfig = defineConfig({
+export default defineConfig({
   // MEMO: @oclif/core only works in unbundle mode (already default)
   unused: {
     level: 'error',
@@ -13,5 +13,3 @@ const config: UserConfig = defineConfig({
     },
   ],
 });
-
-export default config;

@@ -39,9 +39,7 @@
     }
   },
   "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
@@ -51,9 +49,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "coffee": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "unplugin-unused": "catalog:"
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

@@ -38,10 +38,7 @@
     }
   },
   "scripts": {
-    "test": "vitest run",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@types/superagent": "catalog:",
@@ -54,7 +51,6 @@
     "body-parser": "catalog:",
     "cookie-parser": "catalog:",
     "express": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {

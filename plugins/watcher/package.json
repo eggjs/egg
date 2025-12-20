@@ -60,10 +60,7 @@
     }
   },
   "scripts": {
-    "lint": "oxlint --type-aware",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/utils": "workspace:*",
@@ -72,12 +69,9 @@
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
-    "@eggjs/tsconfig": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "egg": "workspace:*",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"

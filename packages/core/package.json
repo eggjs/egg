@@ -36,10 +36,7 @@
     }
   },
   "scripts": {
-    "lint": "oxlint",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/extend2": "workspace:*",
@@ -68,7 +65,6 @@
     "husky": "catalog:",
     "js-yaml": "catalog:",
     "mm": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
     "urllib": "catalog:"
   },
