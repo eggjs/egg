@@ -208,7 +208,8 @@ jobs:
 
       - name: Run tests
         run: |
-          pnpm build
+          # retry 3 times, flaky error on windows: "Unexpected end of JSON input while parsing empty string in D:\a\egg\egg\tegg\core\aop-runtime\package.json"
+          pnpm build || pnpm build || pnpm build           
           pnpm run --filter=./tools/egg-bin ci
         env:
           # https://github.com/jamiebuilds/ci-parallel-vars
