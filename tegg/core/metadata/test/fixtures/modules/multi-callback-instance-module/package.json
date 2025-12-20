@@ -1,7 +1,7 @@
 {
   "name": "multi-callback-instance-module",
+  "type": "module",
   "eggModule": {
     "name": "multiCallbackInstanceModule"
-  },
-  "type": "module"
+  }
 }

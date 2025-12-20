@@ -1,7 +1,7 @@
 {
   "name": "optional-inject",
+  "type": "module",
   "eggModule": {
     "name": "optionalInject"
-  },
-  "type": "module"
+  }
 }

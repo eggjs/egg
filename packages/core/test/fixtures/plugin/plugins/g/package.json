@@ -1,9 +1,9 @@
 {
+  "version": "1.0.0",
   "eggPlugin": {
     "name": "g",
     "dep": [
       "f"
     ]
-  },
-  "version": "1.0.0"
+  }
 }

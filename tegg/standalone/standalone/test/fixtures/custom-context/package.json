@@ -1,7 +1,7 @@
 {
   "name": "innerobject",
+  "type": "module",
   "eggModule": {
     "name": "innerobject"
-  },
-  "type": "module"
+  }
 }

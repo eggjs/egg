@@ -1,5 +1,17 @@
 {
   "name": "helloworld-ts",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "dev": "egg-bin dev",
+    "pretest": "npm run lint -- --fix",
+    "test": "egg-bin test",
+    "preci": "npm run lint",
+    "ci": "egg-bin cov",
+    "postci": "npm run prepublishOnly && npm run clean",
+    "clean": "tsc -b --clean",
+    "prepublishOnly": "npm run clean && tsc"
+  },
   "dependencies": {
     "egg": "beta"
   },
@@ -12,17 +24,5 @@
     "eslint": "8",
     "eslint-config-egg": "14",
     "typescript": "5"
-  },
-  "scripts": {
-    "lint": "eslint . --ext .ts",
-    "dev": "egg-bin dev",
-    "pretest": "npm run lint -- --fix",
-    "test": "egg-bin test",
-    "preci": "npm run lint",
-    "ci": "egg-bin cov",
-    "postci": "npm run prepublishOnly && npm run clean",
-    "clean": "tsc -b --clean",
-    "prepublishOnly": "npm run clean && tsc"
-  },
-  "private": true
+  }
 }

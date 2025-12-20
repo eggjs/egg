@@ -1,11 +1,13 @@
 {
   "name": "{{name}}",
   "version": "1.0.0",
-  "description": "hello Egg.js",
   "private": true,
-  "egg": {
-    "typescript": true,
-    "declarations": true
+  "description": "hello Egg.js",
+  "license": "MIT",
+  "author": "Author Name <author.name@mail.com>",
+  "repository": {
+    "type": "git",
+    "url": ""
   },
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-{{name}}",
@@ -24,9 +26,9 @@
     "egg-scripts": "3"
   },
   "devDependencies": {
+    "@eggjs/tsconfig": "3",
     "@types/mocha": "10",
     "@types/node": "24",
-    "@eggjs/tsconfig": "3",
     "egg-bin": "6",
     "egg-mock": "5",
     "eslint": "8",
@@ -36,10 +38,8 @@
   "engines": {
     "node": ">=22.18.0"
   },
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "author": "Author Name <author.name@mail.com>",
-  "license": "MIT"
+  "egg": {
+    "typescript": true,
+    "declarations": true
+  }
 }

@@ -1,6 +1,40 @@
 {
   "name": "@eggjs/static",
   "version": "4.0.0-beta.35",
+  "description": "static server plugin for egg",
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "eggPlugin",
+    "static"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/static",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "dead_horse",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/static"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/middleware/static": "./src/app/middleware/static.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./config/config.prod": "./src/config/config.prod.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -13,35 +47,20 @@
       "./package.json": "./package.json"
     }
   },
-  "description": "static server plugin for egg",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "plugins/static"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/static",
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "keywords": [
-    "egg",
-    "egg-plugin",
-    "eggPlugin",
-    "static"
-  ],
-  "author": "dead_horse",
-  "license": "MIT",
-  "engines": {
-    "node": ">=22.18.0"
+  "scripts": {
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest run",
+    "ci": "vitest run --coverage",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@eggjs/koa-static-cache": "workspace:*",
     "koa-compose": "catalog:",
     "koa-range": "catalog:",
     "ylru": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -54,29 +73,10 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest run",
-    "ci": "vitest run --coverage",
-    "prepublishOnly": "npm run build"
+  "peerDependencies": {
+    "egg": "workspace:*"
   },
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./app": "./src/app.ts",
-    "./app/middleware/static": "./src/app/middleware/static.ts",
-    "./config/config.default": "./src/config/config.default.ts",
-    "./config/config.prod": "./src/config/config.prod.ts",
-    "./types": "./src/types.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

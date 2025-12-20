@@ -2,43 +2,34 @@
   "name": "@eggjs/aop-runtime",
   "version": "4.0.0-beta.35",
   "description": "tegg aop runtime",
-  "eggModule": {
-    "name": "teggAopRuntime"
-  },
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
   "keywords": [
+    "aop",
     "egg",
-    "typescript",
     "runtime",
     "tegg",
-    "aop"
+    "typescript"
   ],
-  "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "prepublishOnly": "npm run build"
-  },
-  "author": "killagu <killa123@126.com>",
-  "license": "MIT",
   "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/aop-runtime",
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
+  "license": "MIT",
+  "author": "killagu <killa123@126.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "tegg/core/aop-runtime"
   },
-  "engines": {
-    "node": ">=22.18.0"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
@@ -47,11 +38,17 @@
       "./package.json": "./package.json"
     }
   },
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
   "dependencies": {
     "@eggjs/aop-decorator": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/metadata": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "koa-compose": "catalog:"
@@ -61,11 +58,14 @@
     "@eggjs/tegg-loader": "workspace:*",
     "@types/koa-compose": "catalog:",
     "@types/node": "catalog:",
-    "typescript": "catalog:",
     "tsdown": "catalog:",
+    "typescript": "catalog:",
     "unplugin-unused": "catalog:"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "teggAopRuntime"
+  }
 }

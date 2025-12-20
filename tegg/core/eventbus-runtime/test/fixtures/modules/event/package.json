@@ -1,7 +1,7 @@
 {
   "name": "mock-event",
+  "type": "module",
   "eggModule": {
     "name": "mockEvent"
-  },
-  "type": "module"
+  }
 }

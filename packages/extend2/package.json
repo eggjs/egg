@@ -1,9 +1,30 @@
 {
   "name": "@eggjs/extend2",
-  "author": "popomore <sakura9515@gmail.com>",
   "version": "5.0.0-beta.35",
-  "engines": {
-    "node": ">=22.18.0"
+  "description": "Port of jQuery.extend for Node.js",
+  "keywords": [
+    "clone",
+    "extend",
+    "merge"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/extend2",
+  "license": "MIT",
+  "author": "popomore <sakura9515@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "packages/extend2"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
@@ -12,7 +33,6 @@
       "./package.json": "./package.json"
     }
   },
-  "description": "Port of jQuery.extend for Node.js",
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
@@ -20,17 +40,6 @@
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },
-  "keywords": [
-    "extend",
-    "clone",
-    "merge"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "packages/extend2"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/packages/extend2",
   "devDependencies": {
     "@eggjs/tsconfig": "workspace:*",
     "oxlint": "catalog:",
@@ -38,16 +47,7 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "license": "MIT",
-  "files": [
-    "dist"
-  ],
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "module": "./dist/index.js"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

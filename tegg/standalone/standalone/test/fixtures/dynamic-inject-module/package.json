@@ -1,7 +1,7 @@
 {
   "name": "dynamic-inject-module",
+  "type": "module",
   "eggModule": {
     "name": "dynamicInjectModule"
-  },
-  "type": "module"
+  }
 }

@@ -1,8 +1,33 @@
 {
   "name": "@eggjs/koa",
   "version": "3.1.0-beta.35",
-  "engines": {
-    "node": ">=22.18.0"
+  "description": "Koa web app framework for https://eggjs.org",
+  "keywords": [
+    "app",
+    "application",
+    "framework",
+    "http",
+    "middleware",
+    "rack",
+    "web"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/koa",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "packages/koa"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
@@ -11,18 +36,6 @@
       "./package.json": "./package.json"
     }
   },
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "description": "Koa web app framework for https://eggjs.org",
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
@@ -30,22 +43,6 @@
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "packages/koa"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/packages/koa",
-  "keywords": [
-    "web",
-    "app",
-    "http",
-    "application",
-    "framework",
-    "middleware",
-    "rack"
-  ],
-  "license": "MIT",
   "dependencies": {
     "@types/content-disposition": "catalog:",
     "accepts": "catalog:",
@@ -68,6 +65,7 @@
     "vary": "catalog:"
   },
   "devDependencies": {
+    "@eggjs/supertest": "workspace:*",
     "@types/accepts": "catalog:",
     "@types/content-type": "catalog:",
     "@types/cookies": "catalog:",
@@ -80,11 +78,13 @@
     "@types/on-finished": "catalog:",
     "@types/parseurl": "catalog:",
     "@types/statuses": "catalog:",
-    "@eggjs/supertest": "workspace:*",
     "@types/type-is": "catalog:",
     "@types/vary": "catalog:",
     "mm": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   }
 }

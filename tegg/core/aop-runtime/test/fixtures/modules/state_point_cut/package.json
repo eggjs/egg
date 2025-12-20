@@ -1,7 +1,7 @@
 {
   "name": "state-point-cut",
+  "type": "module",
   "eggModule": {
     "name": "statePointCut"
-  },
-  "type": "module"
+  }
 }

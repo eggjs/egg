@@ -1,6 +1,47 @@
 {
   "name": "@eggjs/tracer",
   "version": "4.0.0-beta.35",
+  "description": "tracer for egg",
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "eggPlugin",
+    "parentSpanId",
+    "spanId",
+    "traceId",
+    "tracer"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/tracer",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/tracer"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/agent": "./src/app/extend/agent.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./boot": "./src/boot.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./lib/tracer": "./src/lib/tracer.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -17,32 +58,12 @@
       "./package.json": "./package.json"
     }
   },
-  "description": "tracer for egg",
-  "keywords": [
-    "egg",
-    "egg-plugin",
-    "eggPlugin",
-    "tracer",
-    "traceId",
-    "spanId",
-    "parentSpanId"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "plugins/tracer"
-  },
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/tracer",
-  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
-  "license": "MIT",
-  "engines": {
-    "node": ">=22.18.0"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -52,31 +73,10 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "scripts": {
-    "lint": "oxlint --type-aware",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "test": "vitest run",
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "prepublishOnly": "npm run build"
+  "peerDependencies": {
+    "egg": "workspace:*"
   },
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./agent": "./src/agent.ts",
-    "./app": "./src/app.ts",
-    "./app/extend/agent": "./src/app/extend/agent.ts",
-    "./app/extend/application": "./src/app/extend/application.ts",
-    "./app/extend/context": "./src/app/extend/context.ts",
-    "./boot": "./src/boot.ts",
-    "./config/config.default": "./src/config/config.default.ts",
-    "./lib/tracer": "./src/lib/tracer.ts",
-    "./types": "./src/types.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

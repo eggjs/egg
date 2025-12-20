@@ -1,8 +1,8 @@
 {
   "name": "demo-app-repo",
+  "type": "module",
+  "main": "index.js",
   "eggModule": {
     "name": "app-repo"
-  },
-  "main": "index.js",
-  "type": "module"
+  }
 }

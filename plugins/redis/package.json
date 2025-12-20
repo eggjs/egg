@@ -2,7 +2,32 @@
   "name": "@eggjs/redis",
   "version": "4.0.0-beta.35",
   "description": "Valkey / Redis plugin for egg",
+  "keywords": [
+    "Valkey",
+    "database",
+    "egg",
+    "egg-plugin",
+    "eggPlugin",
+    "redis"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/redis",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "jtyjty99999",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/redis"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./agent": "./src/agent.ts",
@@ -24,31 +49,6 @@
       "./package.json": "./package.json"
     }
   },
-  "files": [
-    "dist"
-  ],
-  "keywords": [
-    "egg",
-    "eggPlugin",
-    "egg-plugin",
-    "redis",
-    "Valkey",
-    "database"
-  ],
-  "license": "MIT",
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/redis",
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "plugins/redis"
-  },
-  "author": "jtyjty99999",
-  "engines": {
-    "node": ">= 22.18.0"
-  },
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
@@ -58,9 +58,6 @@
   },
   "dependencies": {
     "ioredis": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -74,7 +71,10 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">= 22.18.0"
+  }
 }

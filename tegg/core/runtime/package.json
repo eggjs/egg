@@ -2,54 +2,33 @@
   "name": "@eggjs/tegg-runtime",
   "version": "4.0.0-beta.35",
   "description": "tegg runtime",
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
   "keywords": [
     "egg",
-    "typescript",
     "runtime",
-    "tegg"
+    "tegg",
+    "typescript"
   ],
-  "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "prepublishOnly": "npm run build"
-  },
-  "author": "killagu <killa123@126.com>",
-  "license": "MIT",
   "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/runtime",
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
+  "license": "MIT",
+  "author": "killagu <killa123@126.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "tegg/core/runtime"
   },
-  "engines": {
-    "node": ">=22.18.0"
-  },
-  "dependencies": {
-    "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/tegg-common-util": "workspace:*",
-    "@eggjs/lifecycle": "workspace:*",
-    "@eggjs/metadata": "workspace:*",
-    "@eggjs/tegg-types": "workspace:*"
-  },
-  "devDependencies": {
-    "@eggjs/module-test-util": "workspace:*",
-    "@eggjs/tegg-loader": "workspace:*",
-    "@types/node": "catalog:",
-    "typescript": "catalog:",
-    "tsdown": "catalog:",
-    "unplugin-unused": "catalog:"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
@@ -58,7 +37,28 @@
       "./package.json": "./package.json"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/module-test-util": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
+    "@types/node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

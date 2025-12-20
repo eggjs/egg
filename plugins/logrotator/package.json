@@ -4,26 +4,29 @@
   "description": "logrotator for egg",
   "keywords": [
     "egg",
-    "eggPlugin",
     "egg-plugin",
+    "eggPlugin",
     "logger",
     "logrotator"
   ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/logrotator#readme",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "tianyi.jiangty",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "plugins/logrotator"
   },
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/logrotator#readme",
-  "author": "tianyi.jiangty",
-  "license": "MIT",
-  "engines": {
-    "node": ">= 22.18.0"
-  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./agent": "./src/agent.ts",
@@ -67,12 +70,16 @@
       "./package.json": "./package.json"
     }
   },
+  "scripts": {
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
   "dependencies": {
     "moment": "catalog:",
     "utility": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -86,17 +93,10 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "test": "vitest run",
-    "prepublishOnly": "npm run build"
+  "peerDependencies": {
+    "egg": "workspace:*"
   },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "engines": {
+    "node": ">= 22.18.0"
+  }
 }

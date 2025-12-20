@@ -1,7 +1,7 @@
 {
   "name": "multi-module-service",
+  "type": "module",
   "eggModule": {
     "name": "multiModuleService"
-  },
-  "type": "module"
+  }
 }

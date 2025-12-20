@@ -1,15 +1,9 @@
 {
   "name": "yadan",
-  "egg": {
-    "framework": true
-  },
-  "tshy": {
-    "exports": {
-      ".": "./src/index.ts",
-      "./package.json": "./package.json"
-    }
-  },
   "type": "module",
+  "main": "./dist2/commonjs/index.js",
+  "module": "./dist2/esm/index.js",
+  "types": "./dist2/commonjs/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -23,7 +17,13 @@
     },
     "./package.json": "./package.json"
   },
-  "main": "./dist2/commonjs/index.js",
-  "types": "./dist2/commonjs/index.d.ts",
-  "module": "./dist2/esm/index.js"
+  "tshy": {
+    "exports": {
+      ".": "./src/index.ts",
+      "./package.json": "./package.json"
+    }
+  },
+  "egg": {
+    "framework": true
+  }
 }

@@ -1,7 +1,7 @@
 {
   "name": "invalid-inject",
+  "type": "module",
   "eggModule": {
     "name": "invalidInject"
-  },
-  "type": "module"
+  }
 }

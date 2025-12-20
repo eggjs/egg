@@ -1,6 +1,43 @@
 {
   "name": "@eggjs/tegg",
   "version": "4.0.0-beta.35",
+  "description": "tegg decorator packages",
+  "keywords": [
+    "egg",
+    "metadata",
+    "tegg",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "killagu <killa123@126.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/core/tegg"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./ajv": "./src/ajv.ts",
+    "./aop": "./src/aop.ts",
+    "./dal": "./src/dal.ts",
+    "./helper": "./src/helper.ts",
+    "./orm": "./src/orm.ts",
+    "./schedule": "./src/schedule.ts",
+    "./standalone": "./src/standalone.ts",
+    "./transaction": "./src/transaction.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -16,76 +53,39 @@
       "./package.json": "./package.json"
     }
   },
-  "description": "tegg decorator packages",
-  "keywords": [
-    "egg",
-    "typescript",
-    "metadata",
-    "tegg"
-  ],
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./ajv": "./src/ajv.ts",
-    "./aop": "./src/aop.ts",
-    "./dal": "./src/dal.ts",
-    "./helper": "./src/helper.ts",
-    "./orm": "./src/orm.ts",
-    "./schedule": "./src/schedule.ts",
-    "./standalone": "./src/standalone.ts",
-    "./transaction": "./src/transaction.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "clean": "rimraf dist *.tsbuildinfo",
     "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsgo --noEmit && tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "author": "killagu <killa123@126.com>",
-  "license": "MIT",
-  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/tegg",
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "tegg/core/tegg"
-  },
-  "engines": {
-    "node": ">=22.18.0"
-  },
   "dependencies": {
     "@eggjs/ajv-decorator": "workspace:*",
     "@eggjs/aop-decorator": "workspace:*",
+    "@eggjs/background-task": "workspace:*",
     "@eggjs/controller-decorator": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/dal-decorator": "workspace:*",
-    "@eggjs/eventbus-decorator": "workspace:*",
-    "@eggjs/standalone-decorator": "workspace:*",
-    "@eggjs/background-task": "workspace:*",
-    "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/dynamic-inject": "workspace:*",
+    "@eggjs/eventbus-decorator": "workspace:*",
     "@eggjs/lifecycle": "workspace:*",
-    "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/metadata": "workspace:*",
     "@eggjs/orm-decorator": "workspace:*",
-    "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/schedule-decorator": "workspace:*",
-    "@eggjs/transaction-decorator": "workspace:*",
-    "@eggjs/tegg-types": "workspace:*"
+    "@eggjs/standalone-decorator": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "@eggjs/transaction-decorator": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "typescript": "catalog:",
     "tsdown": "catalog:",
+    "typescript": "catalog:",
     "unplugin-unused": "catalog:"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

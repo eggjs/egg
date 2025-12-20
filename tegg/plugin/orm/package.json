@@ -1,26 +1,32 @@
 {
   "name": "@eggjs/orm-plugin",
-  "eggPlugin": {
-    "name": "teggOrm",
-    "dependencies": [
-      "tegg"
-    ]
-  },
   "version": "4.0.0-beta.35",
   "description": "orm decorator for egg",
   "keywords": [
     "egg",
-    "plugin",
-    "typescript",
+    "leoric",
     "module",
-    "tegg",
     "orm",
-    "leoric"
+    "plugin",
+    "tegg",
+    "typescript"
   ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/orm",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/plugin/orm"
+  },
   "files": [
     "dist"
   ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./app": "./src/app.ts",
@@ -36,53 +42,6 @@
     "./lib/types": "./src/lib/types.ts",
     "./types": "./src/types.ts",
     "./package.json": "./package.json"
-  },
-  "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit --project tsconfig.build.json",
-    "prepublishOnly": "npm run build",
-    "pretest": "node ./test/fixtures/prepare.js"
-  },
-  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/orm",
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "tegg/plugin/orm"
-  },
-  "engines": {
-    "node": ">=22.18.0"
-  },
-  "dependencies": {
-    "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/module-common": "workspace:*",
-    "@eggjs/lifecycle": "workspace:*",
-    "@eggjs/metadata": "workspace:*",
-    "@eggjs/orm-decorator": "workspace:*",
-    "@eggjs/tegg-runtime": "workspace:*",
-    "leoric": "catalog:",
-    "sdk-base": "catalog:"
-  },
-  "peerDependencies": {
-    "@eggjs/tegg-plugin": "workspace:*",
-    "egg": "workspace:*"
-  },
-  "devDependencies": {
-    "@eggjs/mock": "workspace:*",
-    "@eggjs/module-test-util": "workspace:*",
-    "@eggjs/tegg": "workspace:*",
-    "@eggjs/tegg-config": "workspace:*",
-    "@eggjs/tegg-plugin": "workspace:*",
-    "@eggjs/tracer": "workspace:*",
-    "@types/node": "catalog:",
-    "egg": "workspace:*",
-    "mysql2": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "unplugin-unused": "catalog:"
   },
   "publishConfig": {
     "access": "public",
@@ -103,7 +62,48 @@
       "./package.json": "./package.json"
     }
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit --project tsconfig.build.json",
+    "prepublishOnly": "npm run build",
+    "pretest": "node ./test/fixtures/prepare.js"
+  },
+  "dependencies": {
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
+    "@eggjs/module-common": "workspace:*",
+    "@eggjs/orm-decorator": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "leoric": "catalog:",
+    "sdk-base": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/module-test-util": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@eggjs/tracer": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "mysql2": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "peerDependencies": {
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggPlugin": {
+    "name": "teggOrm",
+    "dependencies": [
+      "tegg"
+    ]
+  }
 }

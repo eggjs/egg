@@ -1,7 +1,7 @@
 {
   "name": "throw-aop-module",
+  "type": "module",
   "eggModule": {
     "name": "throwAopModule"
-  },
-  "type": "module"
+  }
 }

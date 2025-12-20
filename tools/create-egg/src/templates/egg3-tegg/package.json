@@ -1,9 +1,16 @@
 {
   "name": "{{name}}",
-  "description": "Hello Egg.js",
   "private": true,
-  "egg": {
-    "typescript": true
+  "description": "Hello Egg.js",
+  "homepage": "https://github.com/YOUR_USERNAME/YOUR_REPO#readme",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/YOUR_REPO/issues"
+  },
+  "license": "MIT",
+  "author": "Author Name <author.name@mail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_USERNAME/YOUR_REPO.git"
   },
   "scripts": {
     "start": "eggctl start --daemon --title=egg-server-{{name}}",
@@ -27,16 +34,16 @@
     "@eggjs/tegg-eventbus-plugin": "^3.5.2",
     "@eggjs/tegg-plugin": "^3.5.2",
     "@eggjs/tegg-schedule-plugin": "^3.5.2",
+    "egg": "^3.31.0",
     "egg-scripts": "^3.0.0",
-    "egg-tracer": "^2.0.0",
-    "egg": "^3.31.0"
+    "egg-tracer": "^2.0.0"
   },
   "devDependencies": {
-    "egg-bin": "^6.13.0",
-    "egg-mock": "^5.15.2",
     "@eggjs/tsconfig": "3",
     "@types/mocha": "10",
     "@types/node": "24",
+    "egg-bin": "^6.13.0",
+    "egg-mock": "^5.15.2",
     "oxlint": "1",
     "oxlint-tsgolint": "^0.10.0",
     "typescript": "5"
@@ -44,14 +51,7 @@
   "engines": {
     "node": ">=22.18.0"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/YOUR_REPO#readme",
-  "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/YOUR_REPO/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/YOUR_USERNAME/YOUR_REPO.git"
-  },
-  "author": "Author Name <author.name@mail.com>",
-  "license": "MIT"
+  "egg": {
+    "typescript": true
+  }
 }

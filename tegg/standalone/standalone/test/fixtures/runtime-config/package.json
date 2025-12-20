@@ -1,7 +1,7 @@
 {
   "name": "runtime-config",
+  "type": "module",
   "eggModule": {
     "name": "runtime-config"
-  },
-  "type": "module"
+  }
 }

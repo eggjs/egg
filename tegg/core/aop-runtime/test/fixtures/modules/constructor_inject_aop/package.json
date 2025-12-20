@@ -1,7 +1,7 @@
 {
   "name": "aop-module",
+  "type": "module",
   "eggModule": {
     "name": "aopModule"
-  },
-  "type": "module"
+  }
 }

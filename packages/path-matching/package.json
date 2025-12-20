@@ -2,7 +2,33 @@
   "name": "@eggjs/path-matching",
   "version": "3.0.0-beta.35",
   "description": "match or ignore url path",
+  "keywords": [
+    "ignore",
+    "match",
+    "url"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/path-matching",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "dead-horse",
+    "email": "dead_horse@qq.com",
+    "url": "http://deadhorse.me"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "packages/path-matching"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./package.json": "./package.json"
@@ -13,32 +39,6 @@
       ".": "./dist/index.js",
       "./package.json": "./package.json"
     }
-  },
-  "files": [
-    "dist"
-  ],
-  "keywords": [
-    "url",
-    "match",
-    "ignore"
-  ],
-  "license": "MIT",
-  "homepage": "https://github.com/eggjs/egg/tree/next/packages/path-matching",
-  "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "packages/path-matching"
-  },
-  "author": {
-    "name": "dead-horse",
-    "email": "dead_horse@qq.com",
-    "url": "http://deadhorse.me"
-  },
-  "engines": {
-    "node": ">=22.18.0"
   },
   "scripts": {
     "build": "tsdown",
@@ -60,7 +60,7 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "engines": {
+    "node": ">=22.18.0"
+  }
 }

@@ -1,7 +1,17 @@
 {
   "name": "{{name}}",
-  "description": "Hello Egg.js",
   "private": true,
+  "description": "Hello Egg.js",
+  "homepage": "https://github.com/YOUR_USERNAME/YOUR_REPO#readme",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/YOUR_REPO/issues"
+  },
+  "license": "MIT",
+  "author": "Author Name <author.name@mail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_USERNAME/YOUR_REPO.git"
+  },
   "type": "module",
   "scripts": {
     "start": "eggctl start --daemon --title=egg-server-{{name}}",
@@ -31,24 +41,14 @@
     "@eggjs/tsconfig": "beta",
     "@oxc-node/core": "^0.0.35",
     "@types/node": "24",
+    "@vitest/coverage-v8": "4",
     "cross-env": "10",
     "oxlint": "1",
     "oxlint-tsgolint": "^0.10.0",
     "typescript": "5",
-    "vitest": "4",
-    "@vitest/coverage-v8": "4"
+    "vitest": "4"
   },
   "engines": {
     "node": ">=22.18.0"
-  },
-  "homepage": "https://github.com/YOUR_USERNAME/YOUR_REPO#readme",
-  "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/YOUR_REPO/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/YOUR_USERNAME/YOUR_REPO.git"
-  },
-  "author": "Author Name <author.name@mail.com>",
-  "license": "MIT"
+  }
 }

@@ -1,26 +1,7 @@
 {
   "name": "@eggjs/supertest",
-  "description": "SuperAgent driven library for testing HTTP servers",
   "version": "9.0.0-beta.35",
-  "publishConfig": {
-    "access": "public",
-    "exports": {
-      ".": "./dist/index.js",
-      "./package.json": "./package.json"
-    }
-  },
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "author": "TJ Holowaychuk",
+  "description": "SuperAgent driven library for testing HTTP servers",
   "keywords": [
     "bdd",
     "http",
@@ -30,15 +11,38 @@
     "test",
     "testing"
   ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/supertest",
   "license": "MIT",
+  "author": "TJ Holowaychuk",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
     "directory": "packages/supertest"
   },
-  "homepage": "https://github.com/eggjs/egg/tree/next/packages/supertest",
-  "engines": {
-    "node": ">=22.18.0"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "typecheck": "tsgo --noEmit && tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "@types/superagent": "catalog:",
@@ -54,11 +58,7 @@
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
-  "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "test": "vitest run",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "prepublishOnly": "pnpm run build"
+  "engines": {
+    "node": ">=22.18.0"
   }
 }

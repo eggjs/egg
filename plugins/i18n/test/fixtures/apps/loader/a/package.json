@@ -1,7 +1,7 @@
 {
   "name": "a",
+  "type": "module",
   "eggPlugin": {
     "name": "a"
-  },
-  "type": "module"
+  }
 }

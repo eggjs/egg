@@ -1,7 +1,7 @@
 {
   "name": "same-name-object",
+  "type": "module",
   "eggModule": {
     "name": "samename"
-  },
-  "type": "module"
+  }
 }
