@@ -177,9 +177,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
         os: ['ubuntu-latest', 'windows-latest']
-        node: ['22']
+        node: ['24']
         # 0-based index
         shardIndex: [0, 1, 2]
         shardTotal: [3]
