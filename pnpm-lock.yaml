@@ -88,7 +88,7 @@ catalogs:
       specifier: ^1.14.3
       version: 1.14.3
     '@types/js-yaml':
-      specifier: 4.0.9
+      specifier: ^4.0.9
       version: 4.0.9
     '@types/koa-bodyparser':
       specifier: ^4.3.12
@@ -364,7 +364,7 @@ catalogs:
       specifier: ^1.15.3
       version: 1.15.4
     js-yaml:
-      specifier: 4.1.1
+      specifier: ^4.1.1
       version: 4.1.1
     jsonp-body:
       specifier: ^2.0.0
