@@ -222,7 +222,6 @@ The framework follows a specific loading order:
 - **`pnpm-workspace.yaml`** - pnpm workspace configuration with catalog dependencies
 - **`package.json`** - Root monorepo configuration with pnpm scripts
 - **`tsconfig.json`** - Root TypeScript configuration for all packages (extends @eggjs/tsconfig)
-- **`tsconfig.build.json`** - Root build configuration (extends tsconfig.json)
 - **`packages/egg/package.json`** - Main egg package with hybrid CommonJS/ESM exports
 - **`packages/egg/tsconfig.json`** - Extends workspace root tsconfig.json
 - **`packages/egg/tsdown.config.ts`** - tsdown build configuration for unbundled ESM output
@@ -288,7 +287,6 @@ The framework extends Koa's context with Egg-specific features:
 2. Add package.json with workspace dependencies using `workspace:*`
 3. Create minimal TypeScript config files:
    - `tsconfig.json` → `{"extends": "../../tsconfig.json"}`
-   - `tsconfig.build.json` → `{"extends": "../../tsconfig.build.json"}`
 4. Add package reference to root tsconfig.json `references` array
 5. Update root pnpm-workspace.yaml if needed (plugins/\* is already included)
 6. Use `pnpm --filter=<package>` for package-specific commands
@@ -305,34 +303,37 @@ All Egg framework plugins should be placed in the `plugins/` directory:
   - `src/` - TypeScript source code
   - `test/` - Test suite (use Vitest for new plugins)
   - `package.json` with `eggPlugin` configuration
-  - `tsdown.config.ts` - Build configuration (see standard template below)
+  - `tsdown.config.ts` - Only needed if custom build options required (see below)
 
-#### Standard Plugin tsdown Configuration
+#### tsdown Workspace Configuration
 
-**IMPORTANT: All future plugins MUST use this tsdown configuration template** (based on `plugins/development/tsdown.config.ts`):
+**This monorepo uses tsdown workspace mode** for build configuration. The root `/tsdown.config.ts` defines shared defaults for all packages:
+
+- `entry: 'src/**/*.ts'` - Processes all TypeScript files in src directory
+- `unbundle: true` - Creates unbundled output (preserves file structure)
+- `dts: true` - Generates TypeScript declaration files
+- `exports.devExports: true` - Enables development-friendly exports
+- `unused.level: 'error'` - Error on unused dependencies
+- `publint` - Package linting enabled
+
+**Most plugins do NOT need a `tsdown.config.ts` file** - they inherit all settings from the root workspace config.
+
+**Only create a `tsdown.config.ts` if you need custom options** (e.g., copy assets, custom entry points, ignore unused deps):
 
 ```typescript
+// plugins/[plugin-name]/tsdown.config.ts - ONLY if custom options needed
 import { defineConfig } from 'tsdown';
 
 export default defineConfig({
-  entry: 'src/**/*.ts',
-  unbundle: true,
-  unused: {
-    level: 'error',
-  },
-  dts: true,
-  exports: {
-    devExports: true,
-  },
+  // Only specify options that differ from workspace defaults
+  copy: [
+    {
+      from: 'src/assets/template.html',
+      to: 'dist/assets/template.html',
+    },
+  ],
 });
 ```
-
-This configuration ensures:
-
-- **`entry: 'src/**/\*.ts'`\*\* - Processes all TypeScript files in src directory
-- **`unbundle: true`** - Creates unbundled output (preserves file structure)
-- **`dts: true`** - Generates TypeScript declaration files
-- **`exports.devExports: true`** - Enables development-friendly exports
 
 #### Standard Plugin TypeScript Types
 
@@ -427,11 +428,8 @@ Plugins should configure their package.json following this pattern:
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit",
+    "test": "vitest run"
   }
 }
 ```
@@ -471,7 +469,7 @@ Tool packages (like egg-bin) should be placed in the `tools/` directory:
 - Use `oxlint --type-aware` for enhanced TypeScript checking
 - oxlint automatically respects `.gitignore` patterns for file exclusion
 - Package-specific scripts:
-  - `"typecheck": "tsgo --noEmit && tsc --noEmit"` - Pure TypeScript type checking
+  - `"typecheck": "tsgo --noEmit"` - Pure TypeScript type checking
   - `"lint": "oxlint --type-aware"` - Linting with type awareness
 - Remove any `.eslintrc` or `.eslintrc.js` files when migrating packages
 
@@ -509,10 +507,6 @@ Tool packages (like egg-bin) should be placed in the `tools/` directory:
   - Uses `${configDir}` variable for dynamic path resolution
   - Includes project `references` array listing all sub-packages
   - Sets `composite: true` and `incremental: true` for project references
-- `tsconfig.build.json` - Build-specific configuration
-  - Extends from root `tsconfig.json`
-  - Defines `rootDir` as `${configDir}/src` and `outDir` as `${configDir}/dist`
-  - Excludes test files, dist directories, and config files
 
 **Sub-Project Configuration Pattern:**
 
@@ -522,13 +516,6 @@ All packages, plugins, and tools MUST follow this minimal pattern:
 // packages/*/tsconfig.json, plugins/*/tsconfig.json, tools/*/tsconfig.json
 {
   "extends": "../../tsconfig.json"
-}
-```
-
-```json
-// packages/*/tsconfig.build.json, plugins/*/tsconfig.build.json
-{
-  "extends": "../../tsconfig.build.json"
 }
 ```
 
@@ -852,7 +839,7 @@ NODE_OPTIONS='--inspect-brk' pnpm --filter=egg run test
    - Add `"oxlint": "catalog:"` to devDependencies
 2. Delete `.eslintrc`, `.eslintrc.js`, or `.eslintrc.json` files
 3. Update scripts in package.json:
-   - Add `"typecheck": "tsgo --noEmit && tsc --noEmit"` for TypeScript type checking
+   - Add `"typecheck": "tsgo --noEmit"` for TypeScript type checking
    - Change `"lint": "eslint ..."` to `"lint": "oxlint --type-aware"`
    - Add `"lint:fix": "npm run lint -- --fix"`
 4. Ensure both type checking and linting are run:

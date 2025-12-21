@@ -1,4 +1,4 @@
 {
   "extends": "../../../tsconfig.json",
-  "exclude": ["test/fixtures/modules/loader-failed/AppRepo.ts"]
+  "exclude": ["test/fixtures/modules/loader-failed/AppRepo.ts", "*.config.ts"]
 }

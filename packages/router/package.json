@@ -38,12 +38,7 @@
     }
   },
   "scripts": {
-    "lint": "oxlint --type-aware",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "test": "vitest run",
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "prepublishOnly": "npm run build",
-    "prebench": "npm run build",
+    "typecheck": "tsgo --noEmit",
     "bench": "cd bench && make"
   },
   "dependencies": {
@@ -64,9 +59,7 @@
     "@types/koa-compose": "catalog:",
     "@types/methods": "catalog:",
     "@types/urijs": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

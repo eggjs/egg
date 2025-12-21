@@ -39,10 +39,7 @@
     }
   },
   "scripts": {
-    "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
@@ -56,7 +53,6 @@
     "@types/lodash.snakecase": "catalog:",
     "@types/node": "catalog:",
     "@types/pluralize": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {

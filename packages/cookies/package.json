@@ -29,13 +29,7 @@
     }
   },
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest run",
-    "ci": "vitest run --coverage",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "should-send-same-site-none": "catalog:",
@@ -47,8 +41,6 @@
     "benchmark": "catalog:",
     "cookies": "catalog:",
     "keygrip": "catalog:",
-    "oxlint": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {

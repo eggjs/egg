@@ -1,6 +1,6 @@
-import { defineProject, type UserWorkspaceConfig } from 'vitest/config';
+import { defineProject } from 'vitest/config';
 
-const config: UserWorkspaceConfig = defineProject({
+export default defineProject({
   test: {
     include: ['test/**/*.test.ts'],
     exclude: ['test/fixtures/**', '**/node_modules/**', '**/dist/**'],
@@ -8,5 +8,3 @@ const config: UserWorkspaceConfig = defineProject({
     hookTimeout: 25000,
   },
 });
-
-export default config;

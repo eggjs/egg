@@ -10,19 +10,19 @@
   },
   "type": "module",
   "scripts": {
-    "clean": "pnpm -r --parallel run clean && rimraf packages/*/dist plugins/*/dist tools/*/dist examples/*/dist tegg/**/dist **/*/*.tsbuildinfo",
-    "build": "pnpm clean && pnpm -r run build",
-    "build:parallel": "pnpm clean && pnpm -r --parallel run build",
+    "clean-dist": "pnpm -r --parallel exec rimraf dist",
+    "clean": "pnpm -r --parallel run clean && pnpm clean-dist",
+    "build": "tsdown",
+    "prelint": "pnpm clean-dist",
     "lint": "oxlint --type-aware --type-check --quiet",
     "fmt": "oxfmt",
     "typecheck": "pnpm clean && pnpm -r run typecheck",
-    "typecheck:parallel": "pnpm clean && pnpm -r --parallel run typecheck",
     "fmtcheck": "oxfmt --check .",
     "pretest": "pnpm run clean && pnpm -r run pretest",
-    "test": "vitest run --bail 1 --retry 2",
+    "test": "vitest run --bail 1 --retry 2 --testTimeout 20000 --hookTimeout 20000",
     "test:cov": "pnpm run test --coverage",
     "preci": "pnpm -r --parallel run pretest",
-    "ci": "vitest run --bail 1 --retry 2 --coverage --testTimeout 20000 --hookTimeout 20000",
+    "ci": "pnpm run test --coverage",
     "site:dev": "pnpm --filter=site run dev",
     "site:build": "pnpm --filter=site run build",
     "puml": "puml . --dest ./site",
@@ -60,6 +60,7 @@
     "publint": "catalog:",
     "rimraf": "catalog:",
     "semver": "catalog:",
+    "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "urllib": "catalog:",
@@ -67,7 +68,7 @@
   },
   "lint-staged": {
     "*": [
-      "oxfmt",
+      "oxfmt --no-error-on-unmatched-pattern",
       "oxlint --type-aware --fix"
     ]
   },

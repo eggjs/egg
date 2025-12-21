@@ -40,13 +40,7 @@
     }
   },
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest run",
-    "ci": "vitest run --coverage",
-    "prepublishOnly": "npm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/compressible": "^3.0.0",
@@ -55,19 +49,13 @@
     "utility": "catalog:"
   },
   "devDependencies": {
-    "@eggjs/bin": "workspace:*",
     "@eggjs/koa": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@types/fs-readdir-recursive": "catalog:",
     "@types/mime-types": "catalog:",
     "@types/node": "catalog:",
-    "oxlint": "catalog:",
-    "oxlint-tsgolint": "catalog:",
-    "rimraf": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:",
     "ylru": "^2.0.0"
   },
   "engines": {

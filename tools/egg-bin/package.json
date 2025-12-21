@@ -27,26 +27,32 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./baseCommand": "./src/baseCommand.ts",
+    "./commands/cov": "./src/commands/cov.ts",
+    "./commands/dev": "./src/commands/dev.ts",
+    "./commands/test": "./src/commands/test.ts",
+    "./types": "./src/types.ts",
+    "./utils": "./src/utils.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./baseCommand": "./dist/baseCommand.js",
+      "./commands/cov": "./dist/commands/cov.js",
+      "./commands/dev": "./dist/commands/dev.js",
+      "./commands/test": "./dist/commands/test.js",
+      "./types": "./dist/types.js",
+      "./utils": "./dist/utils.js",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
-    "lint": "oxlint --type-aware",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
+    "typecheck": "tsgo --noEmit",
     "test": "node bin/run.js test",
     "cov": "c8 node bin/run.js test",
-    "preci": "npm run clean && npm run lint && npm run prepublishOnly",
-    "ci": "npm run cov",
-    "clean": "rimraf dist",
-    "build": "tsdown",
-    "prepublishOnly": "pnpm run build"
+    "ci": "npm run cov"
   },
   "dependencies": {
     "@eggjs/utils": "workspace:*",
@@ -78,7 +84,6 @@
     "npminstall": "catalog:",
     "rimraf": "catalog:",
     "runscript": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

@@ -18,12 +18,12 @@ const config: UserWorkspaceConfig = defineConfig({
       //   },
       // },
     ],
-    exclude: ['packages/tsdown.config.ts'],
     coverage: {
       provider: 'v8',
       exclude: ['**/test/**'],
     },
     hookTimeout: 20000,
+    testTimeout: 20000,
     env: {
       // disable tegg plugins by default on unittest, make test speed up
       DISABLE_TEGG_PLUGINS: 'true',

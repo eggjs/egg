@@ -37,9 +37,7 @@
     }
   },
   "scripts": {
-    "test": "vitest run",
-    "build": "tsdown",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@clack/prompts": "catalog:",
@@ -52,8 +50,7 @@
     "@eggjs/tracer": "workspace:*",
     "@types/cross-spawn": "catalog:",
     "egg": "workspace:*",
-    "execa": "catalog:",
-    "tsdown": "catalog:"
+    "execa": "catalog:"
   },
   "engines": {
     "node": ">=20.19.0"

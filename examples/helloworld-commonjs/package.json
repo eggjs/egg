@@ -7,9 +7,6 @@
   "scripts": {
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
-    "test": "egg-bin test",
-    "cov": "egg-bin cov",
-    "lint": "oxlint",
     "ci": "pnpm run lint && pnpm run cov",
     "start": "egg-scripts start --daemon",
     "stop": "egg-scripts stop"
@@ -18,8 +15,7 @@
     "egg": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/bin": "workspace:*",
-    "oxlint": "catalog:"
+    "@eggjs/bin": "workspace:*"
   },
   "engines": {
     "node": ">=22.18.0"

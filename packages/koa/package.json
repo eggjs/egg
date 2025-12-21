@@ -37,11 +37,7 @@
     }
   },
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "test": "vitest run",
-    "prepublishOnly": "pnpm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@types/content-disposition": "catalog:",
@@ -81,7 +77,6 @@
     "@types/type-is": "catalog:",
     "@types/vary": "catalog:",
     "mm": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {

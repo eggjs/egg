@@ -56,12 +56,7 @@
     }
   },
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest",
-    "prepublishOnly": "npm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/path-matching": "workspace:*",
@@ -72,17 +67,14 @@
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@eggjs/schedule": "workspace:*",
-    "@eggjs/tsconfig": "workspace:*",
     "@types/bytes": "catalog:",
     "@types/node": "catalog:",
     "egg": "workspace:*",
     "formstream": "catalog:",
     "is-type-of": "catalog:",
     "stream-wormhole": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
-    "urllib": "catalog:",
-    "vitest": "catalog:"
+    "urllib": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"

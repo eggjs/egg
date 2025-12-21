@@ -83,10 +83,7 @@
     }
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "clean": "rimraf dist *.tsbuildinfo",
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "prepublishOnly": "npm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/background-task": "workspace:*",
@@ -110,9 +107,7 @@
     "@types/node": "catalog:",
     "egg": "workspace:*",
     "egg-logger": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "unplugin-unused": "catalog:"
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "@eggjs/tegg-config": "workspace:*",

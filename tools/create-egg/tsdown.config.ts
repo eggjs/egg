@@ -1,9 +1,6 @@
-import { defineConfig, type UserConfig } from 'tsdown';
+import { defineConfig } from 'tsdown';
 
-import baseConfig from '../../tsdown.config.json' with { type: 'json' };
-
-const config: UserConfig = defineConfig({
-  ...(baseConfig as UserConfig),
+export default defineConfig({
   unbundle: false,
   entry: ['src/index.ts', 'src/cli.ts'],
   copy: [
@@ -13,5 +10,3 @@ const config: UserConfig = defineConfig({
     },
   ],
 });
-
-export default config;

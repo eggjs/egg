@@ -25,14 +25,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-    "lint": "oxlint",
-    "test": "vitest run"
-  },
   "devDependencies": {
     "coffee": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

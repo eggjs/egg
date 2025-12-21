@@ -41,11 +41,7 @@
     }
   },
   "scripts": {
-    "build": "tsdown",
-    "typecheck": "tsgo --noEmit && tsc --noEmit",
-    "lint": "oxlint --type-aware",
-    "test": "vitest run",
-    "prepublishOnly": "npm run build"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "path-to-regexp": "catalog:"
@@ -53,12 +49,8 @@
   "devDependencies": {
     "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
-    "oxlint": "catalog:",
     "path-to-regexp-v8": "npm:path-to-regexp@^8.3.0",
-    "rimraf": "catalog:",
-    "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"
