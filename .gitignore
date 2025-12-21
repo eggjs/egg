@@ -104,3 +104,6 @@ tegg/plugin/tegg/test/fixtures/apps/**/*.js
 
 *.tsbuildinfo
 *.tgz
+
+ecosystem-ci/cnpmcore
+ecosystem-ci/examples
