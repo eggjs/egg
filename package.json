@@ -8,6 +8,9 @@
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git"
   },
+  "files": [
+    "README.md"
+  ],
   "type": "module",
   "scripts": {
     "clean-dist": "pnpm -r --parallel exec rimraf dist",

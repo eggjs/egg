@@ -124,7 +124,9 @@ async function patchCnpmcore() {
     }
   }
 
-  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+  const packageJsonString = JSON.stringify(packageJson, null, 2) + '\n';
+  console.log(packageJsonString);
+  fs.writeFileSync(packageJsonPath, packageJsonString);
 }
 
 switch (project) {
