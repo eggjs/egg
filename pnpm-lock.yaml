@@ -2704,9 +2704,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      egg:
-        specifier: workspace:*
-        version: link:../../../packages/egg
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
