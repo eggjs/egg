@@ -6,7 +6,7 @@ export default defineConfig({
   copy: [
     {
       from: 'src/templates',
-      to: 'dist/templates',
+      to: 'dist',
     },
   ],
 });

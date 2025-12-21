@@ -9,7 +9,7 @@ export default defineConfig({
   copy: [
     {
       from: 'scripts',
-      to: 'dist/scripts',
+      to: 'dist',
     },
   ],
 });
