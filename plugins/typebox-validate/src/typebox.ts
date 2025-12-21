@@ -1,1 +1,4 @@
-export * from '@sinclair/typebox';
+import Type from 'typebox';
+
+export * from 'typebox';
+export default Type;

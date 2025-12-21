@@ -41,8 +41,8 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@sinclair/typebox": "catalog:",
-    "ajv": "catalog:"
+    "ajv": "catalog:",
+    "typebox": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
