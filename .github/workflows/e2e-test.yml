@@ -1,7 +1,6 @@
 name: E2E Test
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - next
@@ -10,10 +9,12 @@ on:
   pull_request:
     branches:
       - next
+    paths-ignore:
+      - '**/*.md'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.sha }}
-  cancel-in-progress: ${{ github.ref_name != 'next' }}
+  group: ${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 defaults:
   run:
