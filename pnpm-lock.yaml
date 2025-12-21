@@ -606,6 +606,9 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:packages/tsconfig
+      '@types/js-yaml':
+        specifier: 'catalog:'
+        version: 4.0.9
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2

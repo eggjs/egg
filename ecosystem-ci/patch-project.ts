@@ -1,9 +1,14 @@
 import fs from 'node:fs';
-import { join } from 'node:path';
+import { glob } from 'node:fs/promises';
+import { dirname, join, relative } from 'node:path';
+
+import yaml from 'js-yaml';
 
 import repos from './repo.json' with { type: 'json' };
 
 const projectDir = import.meta.dirname;
+const rootDir = join(projectDir, '..');
+const tgzPath = rootDir;
 
 const projects = Object.keys(repos);
 
@@ -14,109 +19,53 @@ if (!projects.includes(project)) {
   process.exit(1);
 }
 
-const tgzPath = join(projectDir, '..');
+// Read pnpm-workspace.yaml to get workspace patterns
+const workspaceConfig = yaml.load(fs.readFileSync(join(rootDir, 'pnpm-workspace.yaml'), 'utf8')) as {
+  packages: string[];
+};
 
-const packages = [
-  // tools
-  ['@eggjs/scripts', 'tools/scripts'],
-  ['@eggjs/bin', 'tools/egg-bin'],
-  ['create-egg', 'tools/create-egg'],
-  // packages
-  ['egg', 'packages/egg'],
-  ['@eggjs/tsconfig', 'packages/tsconfig'],
-  ['@eggjs/cluster', 'packages/cluster'],
-  ['@eggjs/cookies', 'packages/cookies'],
-  ['@eggjs/core', 'packages/core'],
-  ['@eggjs/errors', 'packages/errors'],
-  ['@eggjs/extend2', 'packages/extend2'],
-  ['@eggjs/koa-static-cache', 'packages/koa-static-cache'],
-  ['@eggjs/koa', 'packages/koa'],
-  ['@eggjs/path-matching', 'packages/path-matching'],
-  ['@eggjs/router', 'packages/router'],
-  ['@eggjs/supertest', 'packages/supertest'],
-  ['@eggjs/utils', 'packages/utils'],
-  // plugins
-  ['@eggjs/mock', 'plugins/mock'],
-  ['@eggjs/redis', 'plugins/redis'],
-  ['@eggjs/tracer', 'plugins/tracer'],
-  ['@eggjs/typebox-validate', 'plugins/typebox-validate'],
-  ['@eggjs/development', 'plugins/development'],
-  ['@eggjs/i18n', 'plugins/i18n'],
-  ['@eggjs/jsonp', 'plugins/jsonp'],
-  ['@eggjs/logrotator', 'plugins/logrotator'],
-  ['@eggjs/multipart', 'plugins/multipart'],
-  ['@eggjs/onerror', 'plugins/onerror'],
-  ['@eggjs/schedule', 'plugins/schedule'],
-  ['@eggjs/security', 'plugins/security'],
-  ['@eggjs/session', 'plugins/session'],
-  ['@eggjs/static', 'plugins/static'],
-  ['@eggjs/view-nunjucks', 'plugins/view-nunjucks'],
-  ['@eggjs/view', 'plugins/view'],
-  ['@eggjs/watcher', 'plugins/watcher'],
-  // tegg/core
-  ['@eggjs/ajv-decorator', 'tegg/core/ajv-decorator'],
-  ['@eggjs/aop-decorator', 'tegg/core/aop-decorator'],
-  ['@eggjs/aop-runtime', 'tegg/core/aop-runtime'],
-  ['@eggjs/background-task', 'tegg/core/background-task'],
-  ['@eggjs/tegg-common-util', 'tegg/core/common-util'],
-  ['@eggjs/controller-decorator', 'tegg/core/controller-decorator'],
-  ['@eggjs/core-decorator', 'tegg/core/core-decorator'],
-  ['@eggjs/dal-decorator', 'tegg/core/dal-decorator'],
-  ['@eggjs/dal-runtime', 'tegg/core/dal-runtime'],
-  ['@eggjs/dynamic-inject', 'tegg/core/dynamic-inject'],
-  ['@eggjs/dynamic-inject-runtime', 'tegg/core/dynamic-inject-runtime'],
-  ['@eggjs/eventbus-decorator', 'tegg/core/eventbus-decorator'],
-  ['@eggjs/eventbus-runtime', 'tegg/core/eventbus-runtime'],
-  ['@eggjs/lifecycle', 'tegg/core/lifecycle'],
-  ['@eggjs/tegg-loader', 'tegg/core/loader'],
-  ['@eggjs/metadata', 'tegg/core/metadata'],
-  ['@eggjs/orm-decorator', 'tegg/core/orm-decorator'],
-  ['@eggjs/tegg-runtime', 'tegg/core/runtime'],
-  ['@eggjs/schedule-decorator', 'tegg/core/schedule-decorator'],
-  ['@eggjs/standalone-decorator', 'tegg/core/standalone-decorator'],
-  ['@eggjs/tegg', 'tegg/core/tegg'],
-  ['@eggjs/module-test-util', 'tegg/core/test-util'],
-  ['@eggjs/transaction-decorator', 'tegg/core/transaction-decorator'],
-  ['@eggjs/tegg-types', 'tegg/core/types'],
-  // tegg/plugin
-  ['@eggjs/ajv-plugin', 'tegg/plugin/ajv'],
-  ['@eggjs/aop-plugin', 'tegg/plugin/aop'],
-  ['@eggjs/module-common', 'tegg/plugin/common'],
-  ['@eggjs/tegg-config', 'tegg/plugin/config'],
-  ['@eggjs/controller-plugin', 'tegg/plugin/controller'],
-  ['@eggjs/dal-plugin', 'tegg/plugin/dal'],
-  ['@eggjs/eventbus-plugin', 'tegg/plugin/eventbus'],
-  ['@eggjs/orm-plugin', 'tegg/plugin/orm'],
-  ['@eggjs/schedule-plugin', 'tegg/plugin/schedule'],
-  ['@eggjs/tegg-plugin', 'tegg/plugin/tegg'],
-  // tegg/standalone
-  ['@eggjs/standalone', 'tegg/standalone/standalone'],
-];
+// Use glob to find all package directories dynamically
+async function discoverPackages(): Promise<[string, string][]> {
+  const packages: [string, string][] = [];
 
-const overrides: Record<string, string> = {};
+  for (const pattern of workspaceConfig.packages) {
+    // Convert pnpm patterns (e.g., 'packages/*') to glob patterns for package.json
+    const globPattern = `${pattern}/package.json`;
 
-for (const [name, path] of packages) {
-  const version = JSON.parse(fs.readFileSync(join(tgzPath, path, 'package.json'), 'utf8')).version;
-  const filename = `${name.replace('@', '').replace('/', '-')}-${version}.tgz`;
-  overrides[name] = `file:${tgzPath}/${filename}`;
+    for await (const entry of glob(globPattern, { cwd: rootDir })) {
+      const pkgJsonPath = join(rootDir, entry);
+      try {
+        const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf8'));
+
+        // Skip private packages and packages without names
+        if (pkgJson.private || !pkgJson.name) continue;
+
+        const relativePath = dirname(relative(rootDir, pkgJsonPath));
+        packages.push([pkgJson.name, relativePath]);
+      } catch {
+        // Skip if package.json is invalid or cannot be read
+        console.warn(`Warning: Could not read ${pkgJsonPath}`);
+      }
+    }
+  }
+
+  return packages;
 }
 
-async function patchCnpmcore() {
-  const packageJsonPath = join(projectDir, 'cnpmcore', 'package.json');
-  await patchPackageJSON(packageJsonPath);
+async function buildOverrides(): Promise<Record<string, string>> {
+  const packages = await discoverPackages();
+  const overrides: Record<string, string> = {};
+
+  for (const [name, path] of packages) {
+    const version = JSON.parse(fs.readFileSync(join(tgzPath, path, 'package.json'), 'utf8')).version;
+    const filename = `${name.replace('@', '').replace('/', '-')}-${version}.tgz`;
+    overrides[name] = `file:${tgzPath}/${path}/${filename}`;
+  }
+
+  return overrides;
 }
 
-async function patchExamples() {
-  // https://github.com/eggjs/examples/tree/master/hello-tegg
-  let packageJsonPath = join(projectDir, 'examples', 'hello-tegg', 'package.json');
-  await patchPackageJSON(packageJsonPath);
-
-  // https://github.com/eggjs/examples/blob/master/helloworld/package.json
-  packageJsonPath = join(projectDir, 'examples', 'helloworld', 'package.json');
-  await patchPackageJSON(packageJsonPath);
-}
-
-async function patchPackageJSON(filePath: string) {
+async function patchPackageJSON(filePath: string, overrides: Record<string, string>): Promise<void> {
   const packageJson = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   // Add overrides with tgz files
   packageJson.overrides = {
@@ -142,14 +91,35 @@ async function patchPackageJSON(filePath: string) {
   fs.writeFileSync(filePath, packageJsonString);
 }
 
-switch (project) {
-  case 'cnpmcore':
-    await patchCnpmcore();
-    break;
-  case 'examples':
-    await patchExamples();
-    break;
-  default:
-    console.error(`Project ${project} is not supported`);
-    process.exit(1);
+async function patchCnpmcore(overrides: Record<string, string>): Promise<void> {
+  const packageJsonPath = join(projectDir, 'cnpmcore', 'package.json');
+  await patchPackageJSON(packageJsonPath, overrides);
 }
+
+async function patchExamples(overrides: Record<string, string>): Promise<void> {
+  // https://github.com/eggjs/examples/tree/master/hello-tegg
+  let packageJsonPath = join(projectDir, 'examples', 'hello-tegg', 'package.json');
+  await patchPackageJSON(packageJsonPath, overrides);
+
+  // https://github.com/eggjs/examples/blob/master/helloworld/package.json
+  packageJsonPath = join(projectDir, 'examples', 'helloworld', 'package.json');
+  await patchPackageJSON(packageJsonPath, overrides);
+}
+
+async function main(): Promise<void> {
+  const overrides = await buildOverrides();
+
+  switch (project) {
+    case 'cnpmcore':
+      await patchCnpmcore(overrides);
+      break;
+    case 'examples':
+      await patchExamples(overrides);
+      break;
+    default:
+      console.error(`Project ${project} is not supported`);
+      process.exit(1);
+  }
+}
+
+main();
