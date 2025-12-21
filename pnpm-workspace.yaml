@@ -232,6 +232,7 @@ minimumReleaseAgeExclude:
   - '@oxfmt/*'
   - '@oxlint/*'
   - '@oxlint-tsgolint/*'
+  - '@typescript/*'
   - egg
   - rolldown
   - tsdown
