@@ -15,7 +15,7 @@ const projects = Object.keys(repos);
 const project = process.argv[2];
 
 if (!projects.includes(project)) {
-  console.error(`Project ${project} is not defined in repo.json`);
+  console.error(`Project ${project} is not defined in repo.json. Valid projects: ${projects.join(', ')}`);
   process.exit(1);
 }
 
