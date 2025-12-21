@@ -88,7 +88,7 @@ catalogs:
       specifier: ^1.14.3
       version: 1.14.3
     '@types/js-yaml':
-      specifier: '4'
+      specifier: ^4.0.9
       version: 4.0.9
     '@types/koa-bodyparser':
       specifier: ^4.3.12
@@ -606,6 +606,9 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:packages/tsconfig
+      '@types/js-yaml':
+        specifier: 'catalog:'
+        version: 4.0.9
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
@@ -2704,9 +2707,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      egg:
-        specifier: workspace:*
-        version: link:../../../packages/egg
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

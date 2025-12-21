@@ -8,6 +8,9 @@
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git"
   },
+  "files": [
+    "README.md"
+  ],
   "type": "module",
   "scripts": {
     "clean-dist": "pnpm -r --parallel exec rimraf dist",
@@ -45,6 +48,7 @@
   "devDependencies": {
     "@eggjs/bin": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
+    "@types/js-yaml": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",

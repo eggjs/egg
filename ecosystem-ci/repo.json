@@ -1,0 +1,12 @@
+{
+  "cnpmcore": {
+    "repository": "https://github.com/cnpm/cnpmcore.git",
+    "branch": "master",
+    "hash": "8a1b79f3e0ec1aa1a9dcd37d059846bc4f4219f8"
+  },
+  "examples": {
+    "repository": "https://github.com/eggjs/examples.git",
+    "branch": "master",
+    "hash": "9191a92e5ec0712a2e4864e999b7db1874fe8ca3"
+  }
+}

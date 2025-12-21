@@ -1,0 +1,91 @@
+name: E2E Test
+
+on:
+  push:
+    branches:
+      - next
+    paths-ignore:
+      - '**/*.md'
+  pull_request:
+    branches:
+      - next
+    paths-ignore:
+      - '**/*.md'
+
+concurrency:
+  group: ${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  e2e-test:
+    name: ${{ matrix.project.name }} E2E test
+    permissions:
+      contents: read
+      packages: read
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - name: cnpmcore
+            node-version: 24
+            command: |
+              npm install
+              npm run lint -- --quiet
+              npm run typecheck
+              npm run build
+              npm run prepublishOnly
+          - name: examples
+            node-version: 24
+            command: |
+              # examples/helloworld https://github.com/eggjs/examples/blob/master/helloworld/package.json
+              cd helloworld
+              npm install
+              npm run lint
+              npm run test
+              npm run prepublishOnly
+              cd ..
+
+              # examples/hello-tegg https://github.com/eggjs/examples/blob/master/hello-tegg/package.json
+              cd hello-tegg
+              npm install
+              npm run lint
+              npm run test
+              npm run prepublishOnly
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: ./.github/actions/clone
+        with:
+          ecosystem-ci-project: ${{ matrix.project.name }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
+        with:
+          node-version: ${{ matrix.project.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Pack packages into tgz
+        run: |
+          pnpm -r pack
+
+      - name: Override dependencies from tgz in ${{ matrix.project.name }}
+        working-directory: ecosystem-ci/${{ matrix.project.name }}
+        run: |
+          node ../patch-project.ts ${{ matrix.project.name }}
+
+      - name: Run e2e test commands in ${{ matrix.project.name }}
+        working-directory: ecosystem-ci/${{ matrix.project.name }}
+        run: ${{ matrix.project.command }}

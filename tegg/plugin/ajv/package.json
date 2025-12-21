@@ -59,11 +59,7 @@
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@types/node": "catalog:",
-    "egg": "workspace:*",
     "typescript": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "engines": {
     "node": ">=22.18.0"

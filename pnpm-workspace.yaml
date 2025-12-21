@@ -40,7 +40,7 @@ catalog:
   '@types/http-errors': ^2.0.4
   '@types/ini': ^4.1.1
   '@types/js-beautify': ^1.14.3
-  '@types/js-yaml': '4'
+  '@types/js-yaml': ^4.0.9
   '@types/koa-bodyparser': ^4.3.12
   '@types/koa-compose': ^3.2.8
   '@types/koa-range': ^0.3.5
