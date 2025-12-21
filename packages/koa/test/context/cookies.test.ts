@@ -8,7 +8,9 @@ import Koa, { type Context } from '../../src/index.ts';
 describe('ctx.cookies', () => {
   describe('ctx.cookies.set()', () => {
     it('should set an unsigned cookie', async () => {
-      const app = new Koa();
+      const app = new Koa({
+        keys: ['a', 'b'],
+      });
 
       app.use((ctx: Context) => {
         ctx.cookies.set('name', 'jon');
@@ -40,7 +42,7 @@ describe('ctx.cookies', () => {
           }
         });
 
-        return request(app.callback()).get('/').expect('.keys required for signed cookies');
+        return request(app.callback()).get('/').expect('keys must be provided and should be an array');
       });
 
       it('should send a signed cookie', async () => {
