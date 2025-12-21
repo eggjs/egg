@@ -40,12 +40,12 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
+    "@eggjs/cookies": "workspace:*",
     "@types/content-disposition": "catalog:",
     "accepts": "catalog:",
     "cache-content-type": "catalog:",
     "content-disposition": "catalog:",
     "content-type": "catalog:",
-    "cookies": "catalog:",
     "destroy": "catalog:",
     "encodeurl": "catalog:",
     "escape-html": "catalog:",
@@ -64,7 +64,6 @@
     "@eggjs/supertest": "workspace:*",
     "@types/accepts": "catalog:",
     "@types/content-type": "catalog:",
-    "@types/cookies": "catalog:",
     "@types/destroy": "catalog:",
     "@types/encodeurl": "catalog:",
     "@types/escape-html": "catalog:",

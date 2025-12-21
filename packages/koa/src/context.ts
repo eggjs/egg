@@ -2,8 +2,8 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { ParsedUrlQuery } from 'node:querystring';
 import util from 'node:util';
 
+import { Cookies } from '@eggjs/cookies';
 import type { Accepts } from 'accepts';
-import Cookies from 'cookies';
 import createError from 'http-errors';
 import statuses from 'statuses';
 
@@ -223,8 +223,8 @@ export class Context {
 
   get cookies() {
     if (!this._cookies) {
-      this._cookies = new Cookies(this.req, this.res, {
-        keys: this.app.keys,
+      // FIXME: keys is required for encrypt/sign cookies
+      this._cookies = new Cookies(this, this.app.keys ?? [], {
         secure: this.request.secure,
       });
     }
