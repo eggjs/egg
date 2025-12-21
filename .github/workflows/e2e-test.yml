@@ -43,11 +43,6 @@ jobs:
         with:
           ecosystem-ci-project: ${{ matrix.project.name }}
 
-      - uses: oxc-project/setup-rust@d286d43bc1f606abbd98096666ff8be68c8d5f57 # v1.0.0
-        with:
-          save-cache: ${{ github.ref_name == 'next' }}
-          cache-key: e2e-test
-
       - name: Set up Node.js
         uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
         with:
