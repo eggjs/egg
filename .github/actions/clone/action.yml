@@ -15,8 +15,8 @@ runs:
       id: ecosystem-ci-project-hash
       if: ${{ inputs.ecosystem-ci-project != '' }}
       run: |
-        node -e "console.log('ECOSYSTEM_CI_PROJECT_HASH=' + require('./ecosystem-ci/repo.json')['${{ inputs.ecosystem-ci-project }}'].hash)" >> $GITHUB_OUTPUT
-        node -e "console.log('ECOSYSTEM_CI_PROJECT_REPOSITORY=' + require('./ecosystem-ci/repo.json')['${{ inputs.ecosystem-ci-project }}'].repository.replace('https://github.com/', '').replace('.git', ''))" >> $GITHUB_OUTPUT
+        node -e "const fs = require('fs'); const data = JSON.parse(fs.readFileSync('./ecosystem-ci/repo.json', 'utf8')); const project = data['${{ inputs.ecosystem-ci-project }}']; console.log('ECOSYSTEM_CI_PROJECT_HASH=' + project.hash);" >> $GITHUB_OUTPUT
+        node -e "const fs = require('fs'); const data = JSON.parse(fs.readFileSync('./ecosystem-ci/repo.json', 'utf8')); const project = data['${{ inputs.ecosystem-ci-project }}']; console.log('ECOSYSTEM_CI_PROJECT_REPOSITORY=' + project.repository.replace('https://github.com/', '').replace('.git', ''));" >> $GITHUB_OUTPUT
 
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       if: ${{ inputs.ecosystem-ci-project != '' }}
