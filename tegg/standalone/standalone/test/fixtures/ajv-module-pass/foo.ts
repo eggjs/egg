@@ -1,5 +1,5 @@
 import { ContextProto, Inject } from '@eggjs/tegg';
-import Type, { type Ajv, type Static, TransformEnum } from '@eggjs/tegg/ajv';
+import { Type, type Ajv, type Static, TransformEnum } from '@eggjs/tegg/ajv';
 import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
 
 const RequestBodySchema = Type.Object({
