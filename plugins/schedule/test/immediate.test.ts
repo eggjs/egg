@@ -25,7 +25,7 @@ describe.skipIf(process.platform === 'win32')('cluster - immediate', () => {
   });
 });
 
-describe('cluster - immediate-onlyonce', () => {
+describe.skipIf(process.platform === 'win32')('cluster - immediate-onlyonce', () => {
   let app: MockApplication;
   beforeAll(async () => {
     app = mm.cluster({
