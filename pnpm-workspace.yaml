@@ -200,7 +200,7 @@ catalog:
   terminal-link: ^5.0.0
   ts-node: ^10.9.2
   tsconfig-paths: ^4.2.0
-  tsdown: ^0.18.0
+  tsdown: ^0.18.2
   tsx: 4.20.6
   type-fest: ^5.0.1
   type-is: ^2.0.0
@@ -244,6 +244,7 @@ minimumReleaseAgeExclude:
   - oxlint-tsgolint
   - oxlint
   - oxc-minify
+  - import-without-cache
 
 overrides:
   vite: npm:rolldown-vite@^7.1.13

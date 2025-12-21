@@ -3,12 +3,12 @@ import { defineConfig } from 'tsdown';
 export default defineConfig({
   // Workspace configuration - builds all library packages from root
   workspace: {
-    include: ['packages/*', 'plugins/*', 'tools/*', 'tegg/core/*', 'tegg/plugin/*', 'tegg/standalone/*'],
+    // include: ['packages/*', 'plugins/*', 'tools/*', 'tegg/core/*', 'tegg/plugin/*', 'tegg/standalone/*'],
     // FIXME: auto mode is not working, rolldown was hang and cpu 400% when using auto mode
-    // include: 'auto',
-    exclude: [
-      'packages/tsconfig', // Config-only package, no src to build
-    ],
+    include: 'auto',
+    // exclude: [
+    //   'packages/tsconfig', // Config-only package, no src to build
+    // ],
   },
 
   // Shared defaults
@@ -16,7 +16,6 @@ export default defineConfig({
   unused: {
     level: 'error',
   },
-  // dts: true,
   exports: {
     devExports: true,
   },
@@ -28,6 +27,5 @@ export default defineConfig({
 
   // Default entry pattern - glob to include all source files
   entry: 'src/**/*.ts',
-  skipNodeModulesBundle: true,
-  external: [/^@eggjs\//, 'egg'],
+  // external: [/^@eggjs\//, 'egg'],
 });
