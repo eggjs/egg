@@ -328,8 +328,8 @@ catalogs:
       specifier: ^11.0.0
       version: 11.0.3
     globby:
-      specifier: ^11.0.2
-      version: 11.1.0
+      specifier: ^16.0.0
+      version: 16.0.0
     graceful:
       specifier: ^2.0.0
       version: 2.0.0
@@ -859,7 +859,7 @@ importers:
         version: 3.4.0
       globby:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 16.0.0
       is-type-of:
         specifier: 'catalog:'
         version: 2.2.0
@@ -2102,7 +2102,7 @@ importers:
         version: 4.0.0
       globby:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 16.0.0
       js-yaml:
         specifier: 'catalog:'
         version: 4.1.1
@@ -2412,7 +2412,7 @@ importers:
         version: link:../types
       globby:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 16.0.0
       is-type-of:
         specifier: 'catalog:'
         version: 2.2.0
@@ -2447,7 +2447,7 @@ importers:
         version: 24.10.2
       globby:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 16.0.0
       is-type-of:
         specifier: 'catalog:'
         version: 2.2.0
@@ -2628,7 +2628,7 @@ importers:
         version: link:../runtime
       globby:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 16.0.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -2825,7 +2825,7 @@ importers:
         version: 2.3.2
       globby:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 16.0.0
       path-to-regexp:
         specifier: catalog:path-to-regexp1
         version: 1.9.0
@@ -2920,7 +2920,7 @@ importers:
         version: link:../../../packages/egg
       globby:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 16.0.0
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3253,7 +3253,7 @@ importers:
         version: 2.1.0
       globby:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 16.0.0
       jest-changed-files:
         specifier: 'catalog:'
         version: 30.2.0
@@ -6220,6 +6220,10 @@ packages:
     resolution: {integrity: sha512-0Ia46fDOaT7k4og1PDW4YbodWWr3scS2vAr2lTbsplOt2WkKp0vQbkI9wKis/T5LV/dqPjO3bpS/z6GTJB82LA==}
     engines: {node: '>=18'}
 
+  globby@16.0.0:
+    resolution: {integrity: sha512-ejy4TJFga99yW6Q0uhM3pFawKWZmtZzZD/v/GwI5+9bCV5Ew+D2pSND6W7fUes5UykqSsJkUfxFVdRh7Q1+P3Q==}
+    engines: {node: '>=20'}
+
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
     engines: {node: '>= 0.4'}
@@ -6531,6 +6535,10 @@ packages:
   is-path-inside@3.0.3:
     resolution: {integrity: sha512-Fd4gABb+ycGAmKou8eMftCupSir5lRxqf4aD/vd0cD2qc4HL07OjCeuHMr8Ro4CoMaeCKDB0/ECBOVWjTwUvPQ==}
     engines: {node: '>=8'}
+
+  is-path-inside@4.0.0:
+    resolution: {integrity: sha512-lJJV/5dYS+RcL8uQdBDW9c9uWFLLBNRyFhnAKXw5tVqLlKZ4RMGZKv+YQ/IA3OhD+RpbJa1LLFM1FQPGyIXvOA==}
+    engines: {node: '>=12'}
 
   is-plain-obj@2.1.0:
     resolution: {integrity: sha512-YWnfyRwxL/+SsrWYfOpUtz5b3YD+nyfkHvjbcanzk8zgyO4ASD67uVMRt8k5bM4lLMDnXfriRhOpemw+NfT1eA==}
@@ -8477,6 +8485,10 @@ packages:
   unicorn-magic@0.3.0:
     resolution: {integrity: sha512-+QBBXBCvifc56fsbuxZQ6Sic3wqqc3WWaqxs58gvJrcOuN83HGTCwz3oS5phzU9LthRNE9VrJCFCLUgHeeFnfA==}
     engines: {node: '>=18'}
+
+  unicorn-magic@0.4.0:
+    resolution: {integrity: sha512-wH590V9VNgYH9g3lH9wWjTrUoKsjLF6sGLjhR4sH1LWpLmCOH0Zf7PukhDA8BiS7KHe4oPNkcTHqYkj7SOGUOw==}
+    engines: {node: '>=20'}
 
   unique-filename@2.0.1:
     resolution: {integrity: sha512-ODWHtkkdx3IAR+veKxFV+VBkUMcN+FaqzUUd7IZzt+0zhDZFPFxhlqwPF3YQvMHx1TD0tdgYl+kuPnJ8E6ql7A==}
@@ -11609,6 +11621,15 @@ snapshots:
       slash: 5.1.0
       unicorn-magic: 0.3.0
 
+  globby@16.0.0:
+    dependencies:
+      '@sindresorhus/merge-streams': 4.0.0
+      fast-glob: 3.3.3
+      ignore: 7.0.5
+      is-path-inside: 4.0.0
+      slash: 5.1.0
+      unicorn-magic: 0.4.0
+
   gopd@1.2.0: {}
 
   graceful-fs@4.2.11: {}
@@ -11901,6 +11922,8 @@ snapshots:
   is-number@7.0.0: {}
 
   is-path-inside@3.0.3: {}
+
+  is-path-inside@4.0.0: {}
 
   is-plain-obj@2.1.0: {}
 
@@ -13969,6 +13992,8 @@ snapshots:
       extend-shallow: 2.0.1
 
   unicorn-magic@0.3.0: {}
+
+  unicorn-magic@0.4.0: {}
 
   unique-filename@2.0.1:
     dependencies:
