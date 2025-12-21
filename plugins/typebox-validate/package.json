@@ -56,10 +56,10 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@sinclair/typebox": "catalog:",
     "ajv": "catalog:",
     "ajv-formats": "catalog:",
-    "ajv-keywords": "catalog:"
+    "ajv-keywords": "catalog:",
+    "typebox": "catalog:"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",

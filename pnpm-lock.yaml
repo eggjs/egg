@@ -21,9 +21,6 @@ catalogs:
     '@oclif/core':
       specifier: ^4.2.0
       version: 4.5.6
-    '@sinclair/typebox':
-      specifier: ^0.34.41
-      version: 0.34.41
     '@swc-node/register':
       specifier: ^1.11.1
       version: 1.11.1
@@ -555,6 +552,9 @@ catalogs:
     type-is:
       specifier: ^2.0.0
       version: 2.0.1
+    typebox:
+      specifier: ^1.0.65
+      version: 1.0.65
     typescript:
       specifier: ^5.9.3
       version: 5.9.3
@@ -1866,9 +1866,6 @@ importers:
 
   plugins/typebox-validate:
     dependencies:
-      '@sinclair/typebox':
-        specifier: 'catalog:'
-        version: 0.34.41
       ajv:
         specifier: 'catalog:'
         version: 8.17.1
@@ -1878,6 +1875,9 @@ importers:
       ajv-keywords:
         specifier: 'catalog:'
         version: 5.1.0(ajv@8.17.1)
+      typebox:
+        specifier: 'catalog:'
+        version: 1.0.65
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
@@ -1988,12 +1988,12 @@ importers:
 
   tegg/core/ajv-decorator:
     dependencies:
-      '@sinclair/typebox':
-        specifier: 'catalog:'
-        version: 0.34.41
       ajv:
         specifier: 'catalog:'
         version: 8.17.1
+      typebox:
+        specifier: 'catalog:'
+        version: 1.0.65
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -8536,6 +8536,9 @@ packages:
     resolution: {integrity: sha512-OZs6gsjF4vMp32qrCbiVSkrFmXtG/AZhY3t0iAMrMBiAZyV9oALtXO8hsrHbMXF9x6L3grlFuwW2oAz7cav+Gw==}
     engines: {node: '>= 0.6'}
 
+  typebox@1.0.65:
+    resolution: {integrity: sha512-3WaZ4QmfAxmelhi0dwusYDoZ+DLDoVrsc3aORzgtk1I8JfIf4wn+F8i1TtrnU2jJKM/hZgjJGfzXrwS4B31zZw==}
+
   typedarray-to-buffer@3.1.5:
     resolution: {integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==}
 
@@ -14101,6 +14104,8 @@ snapshots:
       content-type: 1.0.5
       media-typer: 1.1.0
       mime-types: 3.0.2
+
+  typebox@1.0.65: {}
 
   typedarray-to-buffer@3.1.5:
     dependencies:

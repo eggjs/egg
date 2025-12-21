@@ -306,10 +306,15 @@ describe('standalone/standalone/test/index.test.ts', () => {
           assert.equal(err.name, 'AjvInvalidParamError', err.stack);
           assert.equal(err.message, 'Validation Failed');
           assert.deepEqual(err.errorData, {});
-          assert.equal(
-            err.currentSchema,
-            '{"type":"object","properties":{"fullname":{"transform":["trim"],"maxLength":100,"type":"string"},"skipDependencies":{"type":"boolean"},"registryName":{"type":"string"}},"required":["fullname","skipDependencies"]}',
-          );
+          assert.deepEqual(JSON.parse(err.currentSchema), {
+            type: 'object',
+            required: ['fullname', 'skipDependencies'],
+            properties: {
+              fullname: { type: 'string', transform: ['trim'], maxLength: 100 },
+              skipDependencies: { type: 'boolean' },
+              registryName: { type: 'string' },
+            },
+          });
           assert.deepEqual(err.errors, [
             {
               instancePath: '',

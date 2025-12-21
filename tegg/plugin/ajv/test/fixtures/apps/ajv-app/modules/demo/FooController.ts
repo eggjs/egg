@@ -1,5 +1,5 @@
 import { HTTPController, HTTPMethod, HTTPMethodEnum, Inject, HTTPBody } from '@eggjs/tegg';
-import { type Ajv, type Static, Type, TransformEnum, type TSchema } from '@eggjs/tegg/ajv';
+import { type Ajv, type Static, TransformEnum, type TSchema, Type } from '@eggjs/tegg/ajv';
 
 const RequestBodySchema: TSchema = Type.Object({
   fullname: Type.String({
