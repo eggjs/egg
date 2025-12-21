@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mock",
-  "version": "7.0.0-beta.35",
+  "version": "7.0.0-beta.36",
   "description": "mock server plugin for egg",
   "keywords": [
     "egg",

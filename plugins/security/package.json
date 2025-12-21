@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/security",
-  "version": "5.0.0-beta.35",
+  "version": "5.0.0-beta.36",
   "description": "security plugin in egg framework",
   "keywords": [
     "egg",
