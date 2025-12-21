@@ -329,7 +329,7 @@ export default defineConfig({
   copy: [
     {
       from: 'src/assets/template.html',
-      to: 'dist/assets/template.html',
+      to: 'dist/assets',
     },
   ],
 });
