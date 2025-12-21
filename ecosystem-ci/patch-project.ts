@@ -59,7 +59,7 @@ async function buildOverrides(): Promise<Record<string, string>> {
   for (const [name, path] of packages) {
     const version = JSON.parse(fs.readFileSync(join(tgzPath, path, 'package.json'), 'utf8')).version;
     const filename = `${name.replace('@', '').replace('/', '-')}-${version}.tgz`;
-    overrides[name] = `file:${tgzPath}/${path}/${filename}`;
+    overrides[name] = `file:${tgzPath}/${filename}`;
   }
 
   return overrides;
