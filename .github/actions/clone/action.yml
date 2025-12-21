@@ -18,7 +18,7 @@ runs:
         node -e "const fs = require('fs'); const data = JSON.parse(fs.readFileSync('./ecosystem-ci/repo.json', 'utf8')); const project = data['${{ inputs.ecosystem-ci-project }}']; console.log('ECOSYSTEM_CI_PROJECT_HASH=' + project.hash);" >> $GITHUB_OUTPUT
         node -e "const fs = require('fs'); const data = JSON.parse(fs.readFileSync('./ecosystem-ci/repo.json', 'utf8')); const project = data['${{ inputs.ecosystem-ci-project }}']; console.log('ECOSYSTEM_CI_PROJECT_REPOSITORY=' + project.repository.replace('https://github.com/', '').replace('.git', ''));" >> $GITHUB_OUTPUT
 
-    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       if: ${{ inputs.ecosystem-ci-project != '' }}
       with:
         repository: ${{ steps.ecosystem-ci-project-hash.outputs.ECOSYSTEM_CI_PROJECT_REPOSITORY }}
