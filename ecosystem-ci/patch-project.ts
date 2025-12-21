@@ -103,8 +103,21 @@ for (const [name, path] of packages) {
 
 async function patchCnpmcore() {
   const packageJsonPath = join(projectDir, 'cnpmcore', 'package.json');
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  await patchPackageJSON(packageJsonPath);
+}
 
+async function patchExamples() {
+  // https://github.com/eggjs/examples/tree/master/hello-tegg
+  let packageJsonPath = join(projectDir, 'examples', 'hello-tegg', 'package.json');
+  await patchPackageJSON(packageJsonPath);
+
+  // https://github.com/eggjs/examples/blob/master/helloworld/package.json
+  packageJsonPath = join(projectDir, 'examples', 'helloworld', 'package.json');
+  await patchPackageJSON(packageJsonPath);
+}
+
+async function patchPackageJSON(filePath: string) {
+  const packageJson = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   // Add overrides with tgz files
   packageJson.overrides = {
     ...packageJson.overrides,
@@ -126,12 +139,15 @@ async function patchCnpmcore() {
 
   const packageJsonString = JSON.stringify(packageJson, null, 2) + '\n';
   console.log(packageJsonString);
-  fs.writeFileSync(packageJsonPath, packageJsonString);
+  fs.writeFileSync(filePath, packageJsonString);
 }
 
 switch (project) {
   case 'cnpmcore':
     await patchCnpmcore();
+    break;
+  case 'examples':
+    await patchExamples();
     break;
   default:
     console.error(`Project ${project} is not supported`);

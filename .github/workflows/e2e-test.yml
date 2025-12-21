@@ -39,6 +39,23 @@ jobs:
               npm run typecheck
               npm run build
               npm run prepublishOnly
+          - name: examples
+            node-version: 24
+            command: |
+              # examples/helloworld https://github.com/eggjs/examples/blob/master/helloworld/package.json
+              cd helloworld
+              npm install
+              npm run lint
+              npm run test
+              npm run prepublishOnly
+              cd ..
+
+              # examples/hello-tegg https://github.com/eggjs/examples/blob/master/hello-tegg/package.json
+              cd hello-tegg
+              npm install
+              npm run lint
+              npm run test
+              npm run prepublishOnly
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ./.github/actions/clone
