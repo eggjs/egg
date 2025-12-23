@@ -26,8 +26,6 @@ const startServer = (ip = '127.0.0.1') => {
   });
 };
 
-
-
 describe('test/lib/core/dns_resolver.test.js', () => {
   let app;
   let url1;
@@ -38,7 +36,7 @@ describe('test/lib/core/dns_resolver.test.js', () => {
   process.once('exit', () => {
     if (server1?.server?.close) server1.server.close();
     if (server2?.server?.close) server2.server.close();
-  })
+  });
 
   before(async () => {
     server1 = await startServer('127.0.0.1');
@@ -57,20 +55,20 @@ describe('test/lib/core/dns_resolver.test.js', () => {
   after(() => {
     if (server1?.server?.close) server1.server.close();
     if (server2?.server?.close) server2.server.close();
-  })
+  });
 
   it('should surpass dns resolve', async () => {
-    let res = await app.curl(server1.url + '/get_headers', { dataType: 'json' });
+    const res = await app.curl(server1.url + '/get_headers', { dataType: 'json' });
     assert(res.status === 200);
   });
 
   it('should curl work', async () => {
-    let res = await app.curl(url1 + '/get_headers', { dataType: 'json' });
+    const res = await app.curl(url1 + '/get_headers', { dataType: 'json' });
     assert(res.status === 200);
   });
 
   it('should fetch also work', async () => {
-    let res = await app.fetch(url1 + '/get_headers', { dataType: 'json' });
+    const res = await app.fetch(url1 + '/get_headers', { dataType: 'json' });
     assert(res.status === 200);
   });
 
@@ -87,12 +85,12 @@ describe('test/lib/core/dns_resolver.test.js', () => {
   });
 
   it('should safeCurl also work', async () => {
-    let res = await app.curl(url2 + '/get_headers', { dataType: 'json' });
+    const res = await app.curl(url2 + '/get_headers', { dataType: 'json' });
     assert(res.status === 200);
   });
 
   it('should safeFetch also work', async () => {
-    let res = await app.safeFetch(url2 + '/get_headers', { dataType: 'json' });
+    const res = await app.safeFetch(url2 + '/get_headers', { dataType: 'json' });
     assert(res.status === 200);
   });
 
