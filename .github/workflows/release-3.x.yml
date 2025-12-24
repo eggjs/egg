@@ -1,13 +1,18 @@
-name: Release for 3.x
-
+name: Release 3.x
 on:
   push:
     branches: [ 3.x ]
 
+permissions:
+  contents: write
+  deployments: write
+  issues: write
+  pull-requests: write
+  id-token: write
+
 jobs:
   release:
-    name: Node.js
-    uses: eggjs/github-actions/.github/workflows/node-release.yml@master
+    name: NPM
+    uses: eggjs/github-actions/.github/workflows/npm-release.yml@master
     secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
