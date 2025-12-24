@@ -128,3 +128,31 @@ function formatOptions(name, options) {
     cache: false,
   }, options);
 }
+
+exports.startNewLocalServer = (ip = '127.0.0.1') => {
+  let localServer;
+  return new Promise((resolve, reject) => {
+    const app = new Koa();
+    app.use(async ctx => {
+      if (ctx.path === '/get_headers') {
+        ctx.body = {
+          headers: ctx.request.headers,
+          host: ctx.request.headers.host,
+        };
+        return;
+      }
+      ctx.body = JSON.stringify(`${ctx.method} ${ctx.path}`);
+    });
+    localServer = http.createServer(app.callback());
+
+    localServer.listen(0, err => {
+      if (err) return reject(err);
+      const url = `http://${ip}:` + localServer.address().port;
+      return resolve({ url, server: localServer });
+    });
+  });
+};
+
+exports.getNodeVersion = () => {
+  return parseInt(process.versions.node.split('.')[0]);
+};

@@ -11,7 +11,7 @@ exports.httpclient = {
         callback(null, hostname, family);
       }
     } else {
-      const resultIp = '127.0.0.1'
+      const resultIp = '127.0.0.1';
       if (options.all) {
         callback(null, [{ address: resultIp, family: 4 }]);
       } else {

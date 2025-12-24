@@ -1,8 +1,8 @@
 import accepts = require('accepts');
 import { AsyncLocalStorage } from 'async_hooks';
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'events'
 import { Readable } from 'stream';
-import { LookupFunction, Socket } from 'net';
+import { Socket, LookupFunction } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
 import KoaApplication = require('koa');
 import KoaRouter = require('koa-router');
@@ -23,7 +23,10 @@ import {
   RequestOptions,
   HttpClientResponse as HttpClientResponseNext,
 } from 'urllib-next';
-import { FetchFactory, fetch } from 'urllib4';
+import {
+  FetchFactory,
+  fetch,
+} from 'urllib4';
 import {
   EggCoreBase,
   FileLoaderOption,
@@ -66,36 +69,24 @@ declare module 'egg' {
   export type HttpClientResponse<T = any> = HttpClientResponseNext<T>;
   // Compatible with both urllib@2 and urllib@3 RequestOptions to request
   export interface EggHttpClient extends EventEmitter {
-    request<T = any>(
-      url: HttpClientRequestURL
-    ): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
-    request<T = any>(
-      url: HttpClientRequestURL,
-      options: RequestOptionsOld | HttpClientRequestOptions
-    ): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
-    curl<T = any>(
-      url: HttpClientRequestURL
-    ): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
-    curl<T = any>(
-      url: HttpClientRequestURL,
-      options: RequestOptionsOld | HttpClientRequestOptions
-    ): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
-    safeCurl<T = any>(
-      url: HttpClientRequestURL
-    ): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
-    safeCurl<T = any>(
-      url: HttpClientRequestURL,
-      options: RequestOptionsOld | HttpClientRequestOptions
-    ): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    request<T = any>(url: HttpClientRequestURL): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    request<T = any>(url: HttpClientRequestURL, options: RequestOptionsOld | HttpClientRequestOptions):
+      Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    curl<T = any>(url: HttpClientRequestURL): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    curl<T = any>(url: HttpClientRequestURL, options: RequestOptionsOld | HttpClientRequestOptions):
+      Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    safeCurl<T = any>(url: HttpClientRequestURL): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    safeCurl<T = any>(url: HttpClientRequestURL, options: RequestOptionsOld | HttpClientRequestOptions):
+      Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
   }
 
   interface EggHttpConstructor {
-    new (app: Application): EggHttpClient;
+    new(app: Application): EggHttpClient;
   }
 
-  export interface EggContextHttpClient extends EggHttpClient {}
+  export interface EggContextHttpClient extends EggHttpClient { }
   interface EggContextHttpClientConstructor {
-    new (ctx: Context): EggContextHttpClient;
+    new(ctx: Context): EggContextHttpClient;
   }
 
   /**
@@ -103,13 +94,7 @@ declare module 'egg' {
    * it's instantiated in context level,
    * {@link Helper}, {@link Service} is extending it.
    */
-  export class BaseContextClass extends CoreBaseContextClass<
-    Context,
-    Application,
-    EggAppConfig,
-    IService
-  > {
-    // tslint:disable-line
+  export class BaseContextClass extends CoreBaseContextClass<Context, Application, EggAppConfig, IService> { // tslint:disable-line
     /**
      * logger
      */
@@ -144,8 +129,7 @@ declare module 'egg' {
 
   export type RequestArrayBody = any[];
   export type RequestObjectBody = PlainObject;
-  export interface Request extends KoaApplication.Request {
-    // tslint:disable-line
+  export interface Request extends KoaApplication.Request { // tslint:disable-line
     /**
      * detect if response should be json
      * 1. url path ends with `.json`
@@ -227,9 +211,7 @@ declare module 'egg' {
     body: any;
   }
 
-  export interface Response<ResponseBodyT = any>
-    extends KoaApplication.Response {
-    // tslint:disable-line
+  export interface Response<ResponseBodyT = any> extends KoaApplication.Response { // tslint:disable-line
     /**
      * read response real status code.
      *
@@ -244,6 +226,7 @@ declare module 'egg' {
   }
 
   export type LoggerLevel = EggLoggerLevel;
+
 
   /**
    * egg app info
@@ -272,8 +255,7 @@ declare module 'egg' {
   type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
 
   /** logger config of egg */
-  export interface EggLoggerConfig
-    extends RemoveSpecProp<EggLoggersOptions, 'type'> {
+  export interface EggLoggerConfig extends RemoveSpecProp<EggLoggersOptions, 'type'> {
     /** custom config of coreLogger */
     coreLogger?: Partial<EggLoggerOptions>;
     /** allow debug log at prod, defaults to `false` */
@@ -287,8 +269,7 @@ declare module 'egg' {
   }
 
   /** Custom Loader Configuration */
-  export interface CustomLoaderConfig
-    extends RemoveSpecProp<FileLoaderOption, 'inject' | 'target'> {
+  export interface CustomLoaderConfig extends RemoveSpecProp<FileLoaderOption, 'inject' | 'target'> {
     /**
      * an object you wanner load to, value can only be 'ctx' or 'app'. default to app
      */
@@ -552,7 +533,7 @@ declare module 'egg' {
       };
       hsts: any;
       methodnoallow: { enable: boolean };
-      noopen: { enable: boolean };
+      noopen: { enable: boolean; }
       xssProtection: any;
       csp: any;
     };
@@ -561,11 +542,7 @@ declare module 'egg' {
 
     watcher: PlainObject;
 
-    onClientError(
-      err: Error,
-      socket: Socket,
-      app: EggApplication
-    ): ClientErrorResponse | Promise<ClientErrorResponse>;
+    onClientError(err: Error, socket: Socket, app: EggApplication): ClientErrorResponse | Promise<ClientErrorResponse>;
 
     /**
      * server timeout in milliseconds, default to 0 (no timeout).
@@ -612,8 +589,7 @@ declare module 'egg' {
     methods: string[];
   }
 
-  export interface EggApplication
-    extends Omit<EggCoreBase<EggAppConfig>, 'ctxStorage' | 'currentContext'> {
+  export interface EggApplication extends Omit<EggCoreBase<EggAppConfig>, 'ctxStorage' | 'currentContext'> {
     /**
      * HttpClient instance
      */
@@ -623,7 +599,7 @@ declare module 'egg' {
      * node fetch
      */
     FetchFactory: FetchFactory;
-    fetch: typeof fetch;
+    fetch: typeof fetch,
 
     /**
      * Logger for Application, wrapping app.coreLogger with context infomation
@@ -777,10 +753,7 @@ declare module 'egg' {
      * @param {Function} scope - the first args is an anonymous ctx, scope should be async function
      * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
      */
-    runInAnonymousContextScope<R>(
-      scope: (ctx: Context) => Promise<R>,
-      req?: Request
-    ): Promise<R>;
+    runInAnonymousContextScope<R>(scope: (ctx: Context) => Promise<R>, req?: Request): Promise<R>;
 
     /**
      * Get current execute ctx async local storage
@@ -795,10 +768,9 @@ declare module 'egg' {
     get currentContext(): Context;
   }
 
-  export interface IApplicationLocals extends PlainObject {}
+  export interface IApplicationLocals extends PlainObject { }
 
-  export interface FileStream extends Readable {
-    // tslint:disable-line
+  export interface FileStream extends Readable { // tslint:disable-line
     fields: any;
 
     filename: string;
@@ -838,20 +810,19 @@ declare module 'egg' {
   }
 
   /**
-   * KoaApplication's Context will carry the default 'cookie' property in
-   * the egg's Context interface, which is wrong here because we have our own
-   * special properties (e.g: encrypted). So we must remove this property and
-   * create our own with the same name.
-   * @see https://github.com/eggjs/egg/pull/2958
-   *
-   * However, the latest version of Koa has "[key: string]: any" on the
-   * context, and there'll be a type error for "keyof koa.Context".
-   * So we have to directly inherit from "KoaApplication.BaseContext" and
-   * rewrite all the properties to be compatible with types in Koa.
-   * @see https://github.com/eggjs/egg/pull/3329
-   */
-  export interface Context<ResponseBodyT = any>
-    extends KoaApplication.BaseContext {
+  * KoaApplication's Context will carry the default 'cookie' property in
+  * the egg's Context interface, which is wrong here because we have our own
+  * special properties (e.g: encrypted). So we must remove this property and
+  * create our own with the same name.
+  * @see https://github.com/eggjs/egg/pull/2958
+  *
+  * However, the latest version of Koa has "[key: string]: any" on the
+  * context, and there'll be a type error for "keyof koa.Context".
+  * So we have to directly inherit from "KoaApplication.BaseContext" and
+  * rewrite all the properties to be compatible with types in Koa.
+  * @see https://github.com/eggjs/egg/pull/3329
+  */
+  export interface Context<ResponseBodyT = any> extends KoaApplication.BaseContext {
     [key: string]: any;
     body: ResponseBodyT;
 
@@ -1079,13 +1050,13 @@ declare module 'egg' {
     httpclient: EggContextHttpClient;
   }
 
-  export interface IContextLocals extends PlainObject {}
+  export interface IContextLocals extends PlainObject { }
 
-  export class Controller extends BaseContextClass {}
+  export class Controller extends BaseContextClass { }
 
-  export class Service extends BaseContextClass {}
+  export class Service extends BaseContextClass { }
 
-  export class Subscription extends BaseContextClass {}
+  export class Subscription extends BaseContextClass { }
 
   /**
    * The empty interface `IService` is a placeholder, for egg
@@ -1106,11 +1077,11 @@ declare module 'egg' {
    *
    * Now I can get ctx.service.foo at controller and other service file.
    */
-  export interface IService extends PlainObject {} // tslint:disable-line
+  export interface IService extends PlainObject { } // tslint:disable-line
 
-  export interface IController extends PlainObject {} // tslint:disable-line
+  export interface IController extends PlainObject { } // tslint:disable-line
 
-  export interface IMiddleware extends PlainObject {} // tslint:disable-line
+  export interface IMiddleware extends PlainObject { } // tslint:disable-line
 
   export interface IHelper extends PlainObject, BaseContextClass {
     /**
@@ -1182,7 +1153,8 @@ declare module 'egg' {
   /**
    * Singleton instance in Agent Worker, extend {@link EggApplication}
    */
-  export class Agent extends EggApplication {}
+  export class Agent extends EggApplication {
+  }
 
   export interface ClusterOptions {
     /** specify framework that can be absolute path or npm package */
@@ -1204,10 +1176,7 @@ declare module 'egg' {
     [prop: string]: any;
   }
 
-  export function startCluster(
-    options: ClusterOptions,
-    callback: (...args: any[]) => any
-  ): void;
+  export function startCluster(options: ClusterOptions, callback: (...args: any[]) => any): void;
 
   export interface StartOptions {
     /** specify framework that can be absolute path or npm package */
@@ -1218,7 +1187,7 @@ declare module 'egg' {
     ignoreWarning?: boolean;
   }
 
-  export function start(options?: StartOptions): Promise<Application>;
+  export function start(options?: StartOptions): Promise<Application>
 
   /**
    * Powerful Partial, Support adding ? modifier to a mapped property in deep level
@@ -1229,7 +1198,9 @@ declare module 'egg' {
    * type EggConfig = PowerPartial<EggAppConfig>
    */
   export type PowerPartial<T> = {
-    [U in keyof T]?: T[U] extends object ? PowerPartial<T[U]> : T[U];
+    [U in keyof T]?: T[U] extends object
+    ? PowerPartial<T[U]>
+    : T[U]
   };
 
   // send data can be number|string|boolean|object but not Set|Map
@@ -1264,8 +1235,8 @@ declare module 'egg' {
   }
 
   // compatible
-  export interface EggLoaderOptions extends CoreLoaderOptions {}
-  export interface EggLoader extends CoreLoader {}
+  export interface EggLoaderOptions extends CoreLoaderOptions { }
+  export interface EggLoader extends CoreLoader { }
 
   /**
    * App worker process Loader, will load plugins
