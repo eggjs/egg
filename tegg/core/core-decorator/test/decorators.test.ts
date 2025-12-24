@@ -10,7 +10,7 @@ import {
   InjectType,
 } from '@eggjs/tegg-types';
 import type { EggPrototypeInfo, EggMultiInstancePrototypeInfo, InjectObjectInfo } from '@eggjs/tegg-types';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from '@voidzero-dev/vite-plus/test';
 
 import { PrototypeUtil, QualifierUtil } from '../src/index.ts';
 import CacheService from './fixtures/decators/CacheService.ts';

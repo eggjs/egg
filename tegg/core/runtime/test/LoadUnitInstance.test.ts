@@ -5,7 +5,7 @@ import { mock } from 'node:test';
 import { EggPrototypeFactory } from '@eggjs/metadata';
 import { LoaderUtil } from '@eggjs/module-test-util';
 import { type LoadUnitInstance } from '@eggjs/tegg-types';
-import { describe, beforeEach, afterEach, beforeAll, afterAll, it } from 'vitest';
+import { describe, beforeEach, afterEach, beforeAll, afterAll, it } from '@voidzero-dev/vite-plus/test';
 
 import { EggContainerFactory } from '../src/index.js';
 import { ContextHandler } from '../src/model/ContextHandler.js';

@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 
-import { test, beforeAll, afterAll } from 'vitest';
+import { test, beforeAll, afterAll } from '@voidzero-dev/vite-plus/test';
 
 import { createApp, startLocalServer, type MockApplication } from '../../utils.ts';
 

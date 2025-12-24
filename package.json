@@ -15,14 +15,14 @@
   "scripts": {
     "clean-dist": "pnpm -r --parallel exec rimraf dist",
     "clean": "pnpm -r --parallel run clean && pnpm clean-dist",
-    "build": "tsdown",
+    "build": "vite lib",
     "prelint": "pnpm clean-dist",
-    "lint": "oxlint --type-aware --type-check --quiet",
-    "fmt": "oxfmt",
+    "lint": "vite lint --type-aware --type-check --quiet",
+    "fmt": "vite fmt",
     "typecheck": "pnpm clean && pnpm -r run typecheck",
-    "fmtcheck": "oxfmt --check .",
+    "fmtcheck": "vite fmt --check .",
     "pretest": "pnpm run clean && pnpm -r run pretest",
-    "test": "vitest run --bail 1 --retry 2 --testTimeout 20000 --hookTimeout 20000",
+    "test": "vite test run --bail 1 --retry 2 --testTimeout 20000 --hookTimeout 20000",
     "test:cov": "pnpm run test --coverage",
     "preci": "pnpm -r --parallel run pretest",
     "ci": "pnpm run test --coverage",
@@ -58,22 +58,19 @@
     "js-yaml": "catalog:",
     "lint-staged": "catalog:",
     "mocha": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
-    "oxlint-tsgolint": "catalog:",
     "publint": "catalog:",
     "rimraf": "catalog:",
     "semver": "catalog:",
-    "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "urllib": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "@voidzero-dev/vite-plus": "catalog:"
   },
   "lint-staged": {
     "*": [
-      "oxfmt --no-error-on-unmatched-pattern",
-      "oxlint --type-aware --fix"
+      "vite fmt --no-error-on-unmatched-pattern",
+      "vite lint --type-aware --fix"
     ]
   },
   "engines": {

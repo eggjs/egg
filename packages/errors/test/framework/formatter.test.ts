@@ -1,6 +1,6 @@
 import * as os from 'os';
 
-import { describe, it, afterEach, expect, vi } from 'vitest';
+import { describe, it, afterEach, expect, vi } from '@voidzero-dev/vite-plus/test';
 
 import { FrameworkErrorFormatter, FrameworkBaseError } from '../../src/index.ts';
 

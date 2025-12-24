@@ -5,7 +5,7 @@ import { mock } from 'node:test';
 import { TableModel } from '@eggjs/dal-decorator';
 import { RDSClient } from '@eggjs/rds';
 import type { DeleteResult, InsertResult, UpdateResult } from '@eggjs/rds';
-import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, afterEach, beforeAll, afterAll } from '@voidzero-dev/vite-plus/test';
 
 import { MysqlDataSource, SqlMapLoader, DataSource, TableModelInstanceBuilder, DatabaseForker } from '../src/index.ts';
 import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO.ts';

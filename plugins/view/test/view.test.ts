@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from '@voidzero-dev/vite-plus/test';
 
 import { ViewEngineBase } from '../src/index.ts';
 

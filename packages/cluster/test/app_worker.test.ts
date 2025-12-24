@@ -4,9 +4,9 @@ import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { request } from '@eggjs/supertest';
+import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from '@voidzero-dev/vite-plus/test';
 import { ip } from 'address';
 import urllib from 'urllib';
-import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
 
 import { cluster, getFilepath } from './utils.ts';
 

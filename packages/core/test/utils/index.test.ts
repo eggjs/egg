@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
+import { describe, it, afterEach } from '@voidzero-dev/vite-plus/test';
 import { mm } from 'mm';
-import { describe, it, afterEach } from 'vitest';
 
 import utils from '../../src/utils/index.js';
 import { getFilepath } from '../helper.js';

@@ -3,8 +3,8 @@ import { readFile } from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockClusterApplication } from '@eggjs/mock';
+import { describe, it, afterEach, beforeAll, afterAll } from '@voidzero-dev/vite-plus/test';
 import coffee from 'coffee';
-import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 
 import { cluster, getFilepath } from './utils.ts';
 

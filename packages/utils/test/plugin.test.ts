@@ -4,9 +4,9 @@ import { rm } from 'node:fs/promises';
 import fsPromise from 'node:fs/promises';
 import path from 'node:path';
 
+import { describe, it, beforeEach, afterEach } from '@voidzero-dev/vite-plus/test';
 import coffee from 'coffee';
 import { runscript } from 'runscript';
-import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import utils from '../src/index.js';
 import { getFilepath } from './helper.js';

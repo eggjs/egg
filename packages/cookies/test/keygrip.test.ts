@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import crypto from 'node:crypto';
 
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import { Keygrip } from '../src/index.ts';
 

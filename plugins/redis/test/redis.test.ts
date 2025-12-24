@@ -2,8 +2,8 @@ import compile from 'node:child_process';
 import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from '@voidzero-dev/vite-plus/test';
 import { detectPort } from 'detect-port';
-import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 
 function getFixtures(name: string) {
   return path.resolve(import.meta.dirname, 'fixtures', name);

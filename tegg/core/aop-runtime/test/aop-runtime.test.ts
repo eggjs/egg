@@ -7,10 +7,7 @@ import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } fro
 import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
 import { EggObjectLifecycleUtil, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import type { LoadUnitInstance } from '@eggjs/tegg-types';
-import { describe, beforeEach, afterEach, it } from 'vitest';
-
-// must import before other imports
-import { Hello } from './fixtures/modules/hello_succeed/Hello.js';
+import { describe, beforeEach, afterEach, it } from '@voidzero-dev/vite-plus/test';
 
 import { crossCutGraphHook } from '../src/CrossCutGraphHook.js';
 import { EggObjectAopHook } from '../src/EggObjectAopHook.js';
@@ -21,6 +18,8 @@ import { HelloConstructorInject } from './fixtures/modules/constructor_inject_ao
 import { CallTrace } from './fixtures/modules/hello_cross_cut/CallTrace.js';
 import { crosscutAdviceParams } from './fixtures/modules/hello_cross_cut/HelloCrossCut.js';
 import { pointcutAdviceParams } from './fixtures/modules/hello_point_cut/HelloPointCut.js';
+// must import before other imports
+import { Hello } from './fixtures/modules/hello_succeed/Hello.js';
 
 describe('test/aop-runtime.test.ts', () => {
   afterEach(() => {

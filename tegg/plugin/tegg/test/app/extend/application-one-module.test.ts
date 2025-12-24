@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
+import { describe, it, afterAll, afterEach, beforeAll } from '@voidzero-dev/vite-plus/test';
 
 import PersistenceService from '../../fixtures/apps/egg-app-simple/modules/multi-module-repo/PersistenceService.ts';
 import { getAppBaseDir } from '../../utils.ts';

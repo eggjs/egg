@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 
-import { test, expect } from 'vitest';
+import { test, expect } from '@voidzero-dev/vite-plus/test';
 
 import * as EggCore from '../src/index.ts';
 import type { EggAppConfig } from '../src/index.ts';

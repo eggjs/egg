@@ -1,4 +1,4 @@
-import { expect, test } from 'vitest';
+import { expect, test } from '@voidzero-dev/vite-plus/test';
 
 import * as exports from '../src/aop.ts';
 

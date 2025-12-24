@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import { readFile } from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, beforeAll } from 'vitest';
+import { describe, it, beforeAll } from '@voidzero-dev/vite-plus/test';
 
 import { type MockApplication, createApp, getFilepath } from '../utils.ts';
 

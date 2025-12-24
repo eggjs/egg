@@ -1,5 +1,5 @@
 import { ControllerMetadataUtil } from '@eggjs/tegg';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from '@voidzero-dev/vite-plus/test';
 
 import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';
 import { getFixtures } from '../utils.ts';

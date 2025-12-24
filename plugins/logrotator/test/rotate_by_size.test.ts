@@ -4,7 +4,7 @@ import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, beforeEach, afterEach, expect } from 'vitest';
+import { describe, it, beforeEach, afterEach, expect } from '@voidzero-dev/vite-plus/test';
 
 import { getFixtures } from './utils.ts';
 

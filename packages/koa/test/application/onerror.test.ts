@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { runInNewContext } from 'node:vm';
 
+import { describe, it, afterEach } from '@voidzero-dev/vite-plus/test';
 import { mm } from 'mm';
-import { describe, it, afterEach } from 'vitest';
 
 import Koa from '../../src/index.ts';
 

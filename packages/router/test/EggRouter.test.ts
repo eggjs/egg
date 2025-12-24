@@ -1,7 +1,7 @@
 import { Application } from '@eggjs/koa';
 import request from '@eggjs/supertest';
+import { describe, it, expect } from '@voidzero-dev/vite-plus/test';
 import is from 'is-type-of';
-import { describe, it, expect } from 'vitest';
 
 import { EggRouter } from '../src/index.ts';
 

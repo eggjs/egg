@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { request } from '@eggjs/supertest';
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import Koa, { type Context } from '../../src/index.ts';
 

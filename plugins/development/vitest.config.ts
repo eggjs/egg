@@ -1,4 +1,4 @@
-import { defineProject, type UserWorkspaceConfig } from 'vitest/config';
+import { defineProject, type UserWorkspaceConfig } from '@voidzero-dev/vite-plus';
 
 const config: UserWorkspaceConfig = defineProject({
   test: {

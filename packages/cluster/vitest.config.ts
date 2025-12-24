@@ -1,4 +1,4 @@
-import { defineProject } from 'vitest/config';
+import { defineProject } from '@voidzero-dev/vite-plus';
 
 export default defineProject({
   test: {

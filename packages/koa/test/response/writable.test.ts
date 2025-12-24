@@ -3,7 +3,7 @@ import type { Server } from 'node:http';
 import net, { type AddressInfo } from 'node:net';
 import { setTimeout as sleep } from 'node:timers/promises';
 
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import Koa from '../../src/index.ts';
 

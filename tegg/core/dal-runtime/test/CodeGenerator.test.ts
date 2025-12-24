@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { TableModel } from '@eggjs/dal-decorator';
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import { CodeGenerator } from '../src/CodeGenerator.js';
 import { Foo } from './fixtures/modules/generate_codes/Foo.js';

@@ -2,8 +2,8 @@ import { strict as assert } from 'node:assert';
 import { AsyncLocalStorage } from 'node:async_hooks';
 
 import { request } from '@eggjs/supertest';
+import { test, beforeAll } from '@voidzero-dev/vite-plus/test';
 import { getAsyncLocalStorage, kGALS } from 'gals';
-import { test, beforeAll } from 'vitest';
 
 // @ts-ignore
 import { Application } from './fixtures/egg-esm/index.ts';

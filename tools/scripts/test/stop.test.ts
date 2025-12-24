@@ -2,10 +2,10 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from '@voidzero-dev/vite-plus/test';
 import coffee from 'coffee';
 import { detectPort } from 'detect-port';
 import { mm, restore } from 'mm';
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vitest';
 
 import { isWindows } from '../src/helper.ts';
 import { cleanup, replaceWeakRefMessage, type Coffee } from './utils.ts';

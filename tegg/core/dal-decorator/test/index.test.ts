@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { ColumnType, IndexType } from '@eggjs/tegg-types';
-import { expect, describe, it } from 'vitest';
+import { expect, describe, it } from '@voidzero-dev/vite-plus/test';
 
 import { ColumnInfoUtil, IndexInfoUtil, TableInfoUtil, TableModel } from '../src/index.ts';
 import * as types from '../src/index.ts';

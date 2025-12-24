@@ -1,5 +1,5 @@
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
+import { describe, afterEach, beforeAll, afterAll, it, expect } from '@voidzero-dev/vite-plus/test';
 
 import { MysqlDataSourceManager } from '../src/lib/MysqlDataSourceManager.ts';
 import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.ts';

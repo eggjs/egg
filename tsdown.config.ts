@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsdown';
+import { defineConfig } from '@voidzero-dev/vite-plus/lib';
 
 export default defineConfig({
   // Workspace configuration - builds all library packages from root

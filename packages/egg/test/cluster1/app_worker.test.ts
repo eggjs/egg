@@ -3,8 +3,8 @@ import net from 'node:net';
 import { scheduler } from 'node:timers/promises';
 
 import { request } from '@eggjs/supertest';
+import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from '@voidzero-dev/vite-plus/test';
 import { ip } from 'address';
-import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 
 import { cluster, type MockApplication } from '../utils.ts';
 

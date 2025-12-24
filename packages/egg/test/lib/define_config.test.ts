@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from '@voidzero-dev/vite-plus/test';
 
 import { defineConfig, defineConfigFactory, type EggAppInfo, type PartialEggConfig } from '../../src/index.ts';
 

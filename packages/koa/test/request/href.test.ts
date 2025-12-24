@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import Stream from 'node:stream';
+
 // import http from 'node:http';
 // import type { AddressInfo } from 'node:net';
 
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 // import Koa from '../../src/index.ts';
 import context from '../test-helpers/context.ts';

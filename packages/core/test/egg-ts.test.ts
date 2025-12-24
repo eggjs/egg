@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 
 import { request } from '@eggjs/supertest';
+import { describe, it, beforeEach, afterEach } from '@voidzero-dev/vite-plus/test';
 import coffee from 'coffee';
 import { mm } from 'mm';
-import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { utils } from '../src/index.ts';
 import { createApp, getFilepath, type Application } from './helper.ts';

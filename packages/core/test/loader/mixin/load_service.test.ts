@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import { request } from '@eggjs/supertest';
+import { describe, it, afterEach, beforeAll } from '@voidzero-dev/vite-plus/test';
 import { mm } from 'mm';
-import { describe, it, afterEach, beforeAll } from 'vitest';
 
 import { createApp, getFilepath, type Application } from '../../helper.js';
 

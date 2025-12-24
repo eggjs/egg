@@ -3,8 +3,8 @@ import { once } from 'node:events';
 import type { ServerResponse, IncomingMessage } from 'node:http';
 
 import { request } from '@eggjs/supertest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 import createHttpError, { HttpError } from 'http-errors';
-import { describe, it } from 'vitest';
 
 import Koa from '../../src/index.ts';
 

@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { PrototypeUtil } from '@eggjs/core-decorator';
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import { CrosscutAdviceFactory, AspectMetaBuilder } from '../src/index.ts';
 import {

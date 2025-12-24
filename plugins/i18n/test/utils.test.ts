@@ -1,4 +1,4 @@
-import { test, expect } from 'vitest';
+import { test, expect } from '@voidzero-dev/vite-plus/test';
 
 import { formatLocale } from '../src/utils.ts';
 

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { mm } from '@eggjs/mock';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from '@voidzero-dev/vite-plus/test';
 
 import { type MockApplication, createApp, cluster, getFilepath } from '../../utils.ts';
 

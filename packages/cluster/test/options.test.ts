@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { mm } from '@eggjs/mock';
 import { importResolve } from '@eggjs/utils';
-import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, afterEach, beforeAll, afterAll } from '@voidzero-dev/vite-plus/test';
 
 import { parseOptions } from '../src/utils/options.ts';
 import { getFilepath, cluster } from './utils.ts';

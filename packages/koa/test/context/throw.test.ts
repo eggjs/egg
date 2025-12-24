@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 import type { HttpError } from 'http-errors';
-import { describe, it } from 'vitest';
 
 import context from '../test-helpers/context.ts';
 

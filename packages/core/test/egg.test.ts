@@ -5,9 +5,9 @@ import { setTimeout as sleep } from 'node:timers/promises';
 import util from 'node:util';
 
 import { request } from '@eggjs/supertest';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from '@voidzero-dev/vite-plus/test';
 import coffee from 'coffee';
 import { mm } from 'mm';
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 
 import { EggCore } from '../src/index.js';
 import { createApp, getFilepath, type Application } from './helper.js';

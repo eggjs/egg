@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 
+import { describe, it, beforeAll, afterAll, afterEach } from '@voidzero-dev/vite-plus/test';
 import { detectPort } from 'detect-port';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';

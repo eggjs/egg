@@ -1,4 +1,4 @@
-import { describe } from 'vitest';
+import { describe } from '@voidzero-dev/vite-plus/test';
 // import { strict as assert } from 'node:assert';
 // import dns from 'node:dns/promises';
 // import { parse as urlparse } from 'node:url';

@@ -1,4 +1,4 @@
-import { test, expect } from 'vitest';
+import { test, expect } from '@voidzero-dev/vite-plus/test';
 
 import * as watcher from '../src/index.ts';
 

@@ -49,7 +49,7 @@
   },
   "scripts": {
     "typecheck": "tsgo --noEmit",
-    "test": "vitest run --bail 1 --no-file-parallelism",
+    "test": "vite test run --bail 1 --no-file-parallelism",
     "cov": "pnpm test --coverage",
     "ci": "pnpm run cov"
   },
@@ -67,10 +67,10 @@
     "detect-port": "catalog:",
     "egg": "workspace:*",
     "mm": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
     "urllib": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "@voidzero-dev/vite-plus": "catalog:"
   },
   "oclif": {
     "additionalHelpFlags": [

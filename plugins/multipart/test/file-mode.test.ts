@@ -4,10 +4,10 @@ import { scheduler } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 
 import { mm, mock, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from '@voidzero-dev/vite-plus/test';
 import dayjs from 'dayjs';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
 
 import { getFixtures } from './utils.ts';
 

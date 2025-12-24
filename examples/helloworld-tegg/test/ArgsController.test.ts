@@ -1,5 +1,5 @@
 import { app } from '@eggjs/mock/bootstrap';
-import { expect, test } from 'vitest';
+import { expect, test } from '@voidzero-dev/vite-plus/test';
 
 test('should POST /api/args/request success', async () => {
   app.mockCsrf();

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from '@voidzero-dev/vite-plus/test';
 
 import Router, { KoaRouter, EggRouter } from '../src/index.ts';
 

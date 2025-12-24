@@ -3,8 +3,8 @@ import os from 'node:os';
 import path from 'node:path';
 
 import { getPlugins } from '@eggjs/utils';
+import { describe, it, beforeAll, afterAll, afterEach } from '@voidzero-dev/vite-plus/test';
 import { mm } from 'mm';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { EggLoader } from '../../src/index.js';
 import { createApp, getFilepath, type Application } from '../helper.js';

@@ -2,8 +2,8 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
 import { mm } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from '@voidzero-dev/vite-plus/test';
 import { EggConsoleLogger } from 'egg-logger';
-import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 
 import { AppWorkerLoader, AgentWorkerLoader } from '../../../../src/index.ts';
 import { type MockApplication, createApp, getFilepath } from '../../../utils.ts';

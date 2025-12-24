@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import { UpgradeRequiredError, E426 } from '../../src/index.ts';
 

@@ -6,7 +6,7 @@ import { mm, type MockApplication } from '@eggjs/mock';
 import { BackgroundTaskHelper } from '@eggjs/tegg';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import { type EggContext, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
-import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
+import { describe, it, afterAll, afterEach, beforeAll } from '@voidzero-dev/vite-plus/test';
 
 import { CountService } from './fixtures/apps/background-app/modules/multi-module-background/CountService.ts';
 import { getAppBaseDir } from './utils.ts';

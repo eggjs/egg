@@ -1,9 +1,9 @@
 import path from 'node:path';
 
 import { mock, type MockApplication } from '@eggjs/mock';
+import { describe, it, expect, beforeAll, afterAll, afterEach } from '@voidzero-dev/vite-plus/test';
 import { load } from 'cheerio';
 import { stripIndent } from 'common-tags';
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 
 function getFixtures(name: string): string {
   return path.join(import.meta.dirname, '../fixtures', name);

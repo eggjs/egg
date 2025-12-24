@@ -2,11 +2,11 @@ import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from '@voidzero-dev/vite-plus/test';
 import coffee from 'coffee';
 import { detectPort } from 'detect-port';
 import { mm, restore } from 'mm';
 import { request } from 'urllib';
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 
 import { isWindows } from '../src/helper.ts';
 import { cleanup } from './utils.ts';

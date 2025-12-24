@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import { ModuleGraph } from '../src/index.js';
 import { TestLoader } from './fixtures/TestLoader.js';

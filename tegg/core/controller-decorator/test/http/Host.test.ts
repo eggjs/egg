@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import { ControllerInfoUtil, MethodInfoUtil } from '../../src/util/index.js';
 import { HostController } from '../fixtures/HostController.js';

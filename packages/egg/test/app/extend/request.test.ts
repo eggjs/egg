@@ -2,8 +2,8 @@ import { strict as assert } from 'node:assert';
 import { once } from 'node:events';
 import type { AddressInfo } from 'node:net';
 
+import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from '@voidzero-dev/vite-plus/test';
 import urllib from 'urllib';
-import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 
 import { createApp, type MockApplication, restore, mm } from '../../utils.ts';
 

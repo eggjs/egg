@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import utils from '../src/index.js';
 import { getFilepath } from './helper.js';

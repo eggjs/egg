@@ -1,7 +1,7 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, beforeAll } from 'vitest';
+import { describe, it, afterAll, beforeAll } from '@voidzero-dev/vite-plus/test';
 
 import { getFixtures } from './utils.ts';
 

@@ -1,8 +1,8 @@
 import { scheduler } from 'node:timers/promises';
 
 import { mm } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, afterEach } from '@voidzero-dev/vite-plus/test';
 import coffee, { Coffee } from 'coffee';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { type MockApplication, cluster, getFilepath } from '../utils.ts';
 

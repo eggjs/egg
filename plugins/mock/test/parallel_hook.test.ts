@@ -1,6 +1,6 @@
 import { importResolve } from '@eggjs/utils';
+import { describe, it, afterAll } from '@voidzero-dev/vite-plus/test';
 import coffee from 'coffee';
-import { describe, it, afterAll } from 'vitest';
 
 import mm from '../src/index.ts';
 import { getFixtures } from './helper.ts';

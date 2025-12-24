@@ -4,8 +4,8 @@ import { scheduler } from 'node:timers/promises';
 import { createUnzip } from 'node:zlib';
 
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, beforeEach, afterEach, afterAll, beforeAll, expect } from '@voidzero-dev/vite-plus/test';
 import moment from 'moment';
-import { describe, it, beforeEach, afterEach, afterAll, beforeAll, expect } from 'vitest';
 
 import { getFixtures } from './utils.ts';
 

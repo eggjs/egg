@@ -3,10 +3,10 @@ import fsPromises, { mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, beforeEach, afterEach, expect } from '@voidzero-dev/vite-plus/test';
 import { FileTransport } from 'egg-logger';
 import { glob } from 'glob';
 import moment from 'moment';
-import { describe, it, beforeEach, afterEach, expect } from 'vitest';
 
 import { getFixtures } from './utils.ts';
 

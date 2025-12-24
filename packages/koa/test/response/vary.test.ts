@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import context from '../test-helpers/context.ts';
 

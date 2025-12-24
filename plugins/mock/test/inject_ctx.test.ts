@@ -2,8 +2,8 @@
 import path from 'node:path';
 
 import { importResolve } from '@eggjs/utils';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 import coffee from 'coffee';
-import { describe, it } from 'vitest';
 
 import { getFixtures } from './helper.ts';
 

@@ -1,5 +1,5 @@
 import { mm } from '@eggjs/mock';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from '@voidzero-dev/vite-plus/test';
 
 import { createApp, type MockApplication } from '../../utils.js';
 

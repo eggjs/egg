@@ -1,9 +1,9 @@
 import { strict as assert } from 'node:assert';
 
 import { request } from '@eggjs/supertest';
+import { describe, it, beforeAll, afterAll } from '@voidzero-dev/vite-plus/test';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { createApp, type MockApplication, getFilepath } from '../../utils.ts';
 

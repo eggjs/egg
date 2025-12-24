@@ -4,7 +4,7 @@ import path from 'node:path';
 import { LoadUnitFactory } from '@eggjs/metadata';
 import { EggTestContext, CoreTestHelper } from '@eggjs/module-test-util';
 import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
-import { describe, it, beforeEach, afterEach } from 'vitest';
+import { describe, it, beforeEach, afterEach } from '@voidzero-dev/vite-plus/test';
 
 import { HelloService } from './fixtures/modules/dynamic-inject-module/HelloService.js';
 

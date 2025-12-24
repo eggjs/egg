@@ -3,7 +3,7 @@ import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { request, TestAgent } from '@eggjs/supertest';
-import { describe, it, beforeEach, afterEach, beforeAll, afterAll, expect } from 'vitest';
+import { describe, it, beforeEach, afterEach, beforeAll, afterAll, expect } from '@voidzero-dev/vite-plus/test';
 
 function getFixtures(name: string) {
   return path.join(import.meta.dirname, '../../fixtures', name);

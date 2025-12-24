@@ -5,10 +5,10 @@ import https from 'node:https';
 import type { AddressInfo } from 'node:net';
 import path from 'node:path';
 
+import { describe, it, beforeEach, beforeAll, expect } from '@voidzero-dev/vite-plus/test';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import express, { type Express } from 'express';
-import { describe, it, beforeEach, beforeAll, expect } from 'vitest';
 
 import request, { Test } from '../src/index.ts';
 import { throwError } from './throwError.ts';

@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, beforeAll, afterAll } from 'vitest';
+import { describe, it, beforeAll, afterAll } from '@voidzero-dev/vite-plus/test';
 
 import { createApp, startLocalServer, type MockApplication } from '../../utils.js';
 

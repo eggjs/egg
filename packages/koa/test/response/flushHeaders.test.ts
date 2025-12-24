@@ -5,7 +5,7 @@ import type { AddressInfo } from 'node:net';
 import { PassThrough } from 'node:stream';
 
 import { request } from '@eggjs/supertest';
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import Koa, { type Context } from '../../src/index.ts';
 

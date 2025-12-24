@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
+import { describe, it, afterAll, afterEach, beforeAll } from '@voidzero-dev/vite-plus/test';
 
 import { LONG_STACK_DELIMITER } from '../../../src/lib/run_in_background.ts';
 import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService.ts';

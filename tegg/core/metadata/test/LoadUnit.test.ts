@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import { InitTypeQualifierAttribute, ObjectInitType } from '@eggjs/core-decorator';
-import { describe, it, beforeEach, afterEach } from 'vitest';
+import { describe, it, beforeEach, afterEach } from '@voidzero-dev/vite-plus/test';
 
 import {
   EggLoadUnitType,

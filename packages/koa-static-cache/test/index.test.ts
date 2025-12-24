@@ -7,7 +7,7 @@ import { scheduler } from 'node:timers/promises';
 
 import { Application as Koa } from '@eggjs/koa';
 import { request } from '@eggjs/supertest';
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 import { LRU } from 'ylru';
 
 import { staticCache } from '../src/index.ts';

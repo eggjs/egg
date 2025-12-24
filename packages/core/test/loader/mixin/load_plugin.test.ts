@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { describe, it, afterEach } from '@voidzero-dev/vite-plus/test';
 import { mm } from 'mm';
-import { describe, it, afterEach } from 'vitest';
 
 import { EggCore, EggLoader } from '../../../src/index.js';
 import { createApp, getFilepath, type Application } from '../../helper.js';

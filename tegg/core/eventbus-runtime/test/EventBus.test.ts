@@ -8,7 +8,7 @@ import { type EggPrototype, LoadUnitFactory } from '@eggjs/metadata';
 import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
-import { describe, it, beforeEach, afterEach } from 'vitest';
+import { describe, it, beforeEach, afterEach } from '@voidzero-dev/vite-plus/test';
 
 import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '../src/index.ts';
 import { HelloHandler, HelloProducer } from './fixtures/modules/event/HelloEvent.ts';

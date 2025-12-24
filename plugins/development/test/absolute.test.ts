@@ -3,7 +3,7 @@ import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { beforeAll, afterAll, it, describe } from 'vitest';
+import { beforeAll, afterAll, it, describe } from '@voidzero-dev/vite-plus/test';
 
 import { getFilepath } from './utils.ts';
 

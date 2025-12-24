@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import { once } from 'node:events';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from '@voidzero-dev/vite-plus/test';
 
 import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';

@@ -1,4 +1,4 @@
-import { describe, it, beforeAll } from 'vitest';
+import { describe, it, beforeAll } from '@voidzero-dev/vite-plus/test';
 
 import { createApp, type MockApplication } from '../../utils.js';
 

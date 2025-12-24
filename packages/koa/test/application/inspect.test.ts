@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import util from 'node:util';
 
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import Koa from '../../src/index.ts';
 

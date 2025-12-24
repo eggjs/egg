@@ -6,8 +6,8 @@ import { pathToFileURL } from 'node:url';
 
 import { type ModuleConfig, ModuleConfigs, ModuleDescriptorDumper } from '@eggjs/tegg/helper';
 import { importResolve } from '@eggjs/utils';
+import { describe, it, afterEach, beforeEach } from '@voidzero-dev/vite-plus/test';
 import { mm } from 'mm';
-import { describe, it, afterEach, beforeEach } from 'vitest';
 
 import { main, StandaloneContext, Runner, preLoad } from '../src/index.ts';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello.ts';

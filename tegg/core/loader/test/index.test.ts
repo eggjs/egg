@@ -1,4 +1,4 @@
-import { expect, it } from 'vitest';
+import { expect, it } from '@voidzero-dev/vite-plus/test';
 
 import * as types from '../src/index.js';
 

@@ -2,8 +2,8 @@ import fs from 'node:fs';
 
 import { Application as Koa } from '@eggjs/koa';
 import request from '@eggjs/supertest';
+import { describe, it, expect, beforeAll, beforeEach } from '@voidzero-dev/vite-plus/test';
 import methods from 'methods';
-import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
 
 import Router from '../src/index.ts';
 import type { Next } from '../src/types.ts';

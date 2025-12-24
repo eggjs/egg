@@ -4,9 +4,9 @@ import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
 import { mm } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from '@voidzero-dev/vite-plus/test';
 import assertFile from 'assert-file';
 import { readJSONSync } from 'utility';
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 
 import { createApp, cluster, getFilepath, type MockApplication } from './utils.ts';
 

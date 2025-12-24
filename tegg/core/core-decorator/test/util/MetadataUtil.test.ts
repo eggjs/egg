@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 import { MetadataUtil } from '../../src/index.js';
 

@@ -1,5 +1,5 @@
 import { app } from '@eggjs/mock/bootstrap';
-import { describe, it } from 'vitest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 
 describe('example helloworld test', () => {
   it('should GET / 200', () => {

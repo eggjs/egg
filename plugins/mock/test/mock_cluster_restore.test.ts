@@ -2,7 +2,7 @@
 // import fs from 'node:fs';
 // import { scheduler } from 'node:timers/promises';
 
-import { describe, it, beforeAll, afterAll } from 'vitest';
+import { describe, it, beforeAll, afterAll } from '@voidzero-dev/vite-plus/test';
 
 import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';

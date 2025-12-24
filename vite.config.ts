@@ -1,0 +1,49 @@
+import { defineConfig } from '@voidzero-dev/vite-plus';
+
+import tsdownConfig from './tsdown.config.js';
+
+export default defineConfig({
+  lib: tsdownConfig,
+  fmt: {
+    printWidth: 120,
+    singleQuote: true,
+    ignorePatterns: [
+      'tegg/core/loader/test/fixtures/modules/loader-failed/AppRepo.ts',
+      'tegg/core/aop-runtime/test/aop-runtime.test.ts',
+      'packages/core/test/fixtures/load_dirs/syntax_error/*',
+      'packages/core/test/fixtures/syntaxerror/*',
+      'packages/core/test/fixtures/load_context_syntax_error/**/*',
+      'CHANGELOG.md',
+    ],
+    experimentalSortImports: {
+      groups: [
+        ['type-import'],
+        ['type-builtin', 'value-builtin'],
+        ['type-external', 'value-external', 'type-internal', 'value-internal'],
+        ['type-parent', 'type-sibling', 'type-index', 'value-parent', 'value-sibling', 'value-index'],
+        ['ts-equals-import'],
+        ['unknown'],
+      ],
+      newlinesBetween: true,
+      order: 'asc',
+    },
+    yaml: {
+      singleQuote: true,
+    },
+  },
+  lint: {
+    env: {
+      node: true,
+    },
+    ignorePatterns: [
+      '**/test/fixtures/**',
+      'tegg/benchmark/http',
+      'tools/create-egg/src/templates/egg3-tegg',
+      'tools/create-egg/src/templates/egg3-simple-ts/test',
+    ],
+    rules: {
+      'no-unused-vars': 'error',
+      'preserve-caught-error': 'error',
+    },
+  },
+});

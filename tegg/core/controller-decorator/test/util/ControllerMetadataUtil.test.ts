@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 import { MetadataUtil } from '@eggjs/core-decorator';
 import { CONTROLLER_META_DATA } from '@eggjs/tegg-types';
-import { describe, it, beforeEach } from 'vitest';
+import { describe, it, beforeEach } from '@voidzero-dev/vite-plus/test';
 
 import { ControllerMetadataUtil } from '../../src/index.js';
 import { FooController, ParentController, ChildController } from '../fixtures/HTTPFooController.js';

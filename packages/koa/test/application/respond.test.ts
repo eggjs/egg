@@ -4,8 +4,8 @@ import fs from 'node:fs';
 import { scheduler } from 'node:timers/promises';
 
 import { request } from '@eggjs/supertest';
+import { describe, it } from '@voidzero-dev/vite-plus/test';
 import statuses from 'statuses';
-import { describe, it } from 'vitest';
 
 import Koa from '../../src/index.ts';
 

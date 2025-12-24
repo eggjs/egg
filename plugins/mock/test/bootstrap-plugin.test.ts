@@ -1,6 +1,6 @@
+import { describe, it, afterAll } from '@voidzero-dev/vite-plus/test';
 import coffee from 'coffee';
 import { mock, restore } from 'mm';
-import { describe, it, afterAll } from 'vitest';
 
 import { getFixtures } from './helper.ts';
 

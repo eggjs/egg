@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from '@voidzero-dev/vite-plus/test';
 
 import { Singleton } from '../src/singleton.js';
 

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
+import { describe, it, afterAll, afterEach, beforeAll } from '@voidzero-dev/vite-plus/test';
 
 import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService.ts';
 import TraceService from './fixtures/apps/egg-app/modules/multi-module-service/TraceService.ts';

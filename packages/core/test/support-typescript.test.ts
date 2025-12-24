@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 
 import { request } from '@eggjs/supertest';
-import { describe, it, beforeAll } from 'vitest';
+import { describe, it, beforeAll } from '@voidzero-dev/vite-plus/test';
 
 // @ts-ignore
 import { Application } from './fixtures/egg-esm/index.js';

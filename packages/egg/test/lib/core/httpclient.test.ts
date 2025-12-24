@@ -1,8 +1,8 @@
 import { strict as assert } from 'node:assert';
 
 import { mm } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, afterEach } from '@voidzero-dev/vite-plus/test';
 import { HttpClient } from 'urllib';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { HttpClient as ContextHttpClient } from '../../../src/lib/core/httpclient.ts';
 import { startLocalServer, createApp, type MockApplication } from '../../utils.ts';
