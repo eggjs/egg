@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.32.0 (2025-12-24)
+
+* feat: enable custom lookup for httpclient and fetch (#5749) ([4fa4d4b](https://github.com/eggjs/egg/commit/4fa4d4b)), closes [#5749](https://github.com/eggjs/egg/issues/5749)
+* chore: fix auto release on 3.x ([e4d49a7](https://github.com/eggjs/egg/commit/e4d49a7))
+* chore: remove unuse actions ([5b4e3be](https://github.com/eggjs/egg/commit/5b4e3be))
+
 ## [3.31.0](https://github.com/eggjs/egg/compare/v3.30.1...v3.31.0) (2025-07-04)
 
 
