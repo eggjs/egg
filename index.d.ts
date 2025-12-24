@@ -2,7 +2,7 @@ import accepts = require('accepts');
 import { AsyncLocalStorage } from 'async_hooks';
 import { EventEmitter } from 'events'
 import { Readable } from 'stream';
-import { Socket } from 'net';
+import { Socket, LookupFunction } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
 import KoaApplication = require('koa');
 import KoaRouter = require('koa-router');
@@ -317,6 +317,8 @@ declare module 'egg' {
     useHttpClientNext?: boolean;
     /** Allow to use HTTP2 first, only work on `useHttpClientNext = true`. Default is `false` */
     allowH2?: boolean;
+    /** Custom lookup function for DNS resolution */
+    lookup?: LookupFunction;
   }
 
   export interface EggAppConfig {
