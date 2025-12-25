@@ -25,7 +25,8 @@ export class HttpClient extends RawHttpClient {
 
   constructor(app: EggApplicationCore, options: HttpClientOptions = {}) {
     normalizeConfig(app);
-    const config = app.config.httpclient;
+    const config = app.config.httpclient || {};
+    options.lookup = options.lookup ?? config.lookup;
     const initOptions: HttpClientOptions = {
       ...options,
       defaultArgs: {

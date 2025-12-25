@@ -153,3 +153,41 @@ function formatOptions(name: string | MockOptions, options?: MockOptions) {
     ...options,
   };
 }
+
+export async function startNewLocalServer(ip = '127.0.0.1'): Promise<{
+  url: string;
+  server: http.Server;
+}> {
+  let localServer: http.Server;
+  return new Promise((resolve, reject) => {
+    const app = new Koa();
+    app.use(async (ctx) => {
+      if (ctx.path === '/get_headers') {
+        ctx.body = {
+          headers: ctx.request.headers,
+          host: ctx.request.headers.host,
+        };
+        return;
+      }
+      ctx.body = JSON.stringify(`${ctx.method} ${ctx.path}`);
+    });
+    localServer = http.createServer(app.callback());
+    const serverCallback = () => {
+      const addressRes = localServer.address();
+      const port = addressRes && typeof addressRes === 'object' ? addressRes.port : addressRes;
+      const url = `http://${ip}:` + port;
+      return resolve({ url, server: localServer });
+    };
+    localServer.listen(0, serverCallback);
+    localServer.on('error', (e: any) => {
+      if (e.code === 'EADDRINUSE') {
+        setTimeout(() => {
+          localServer.close();
+          localServer.listen(0, serverCallback);
+        }, 1000);
+      } else {
+        reject(e);
+      }
+    });
+  });
+}
