@@ -1,4 +1,4 @@
-import type { Socket } from 'node:net';
+import type { Socket, LookupFunction } from 'node:net';
 
 import type { FileLoaderOptions, EggAppConfig as EggCoreAppConfig, EggAppInfo } from '@eggjs/core';
 import type { EggLoggerOptions, EggLoggersOptions } from 'egg-logger';
@@ -66,6 +66,7 @@ export interface HttpClientConfig {
    * Allow http2
    */
   allowH2?: boolean;
+  lookup?: LookupFunction;
 }
 
 /**
