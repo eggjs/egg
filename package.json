@@ -21,7 +21,7 @@
     "fmt": "oxfmt",
     "typecheck": "pnpm clean && pnpm -r run typecheck",
     "fmtcheck": "oxfmt --check .",
-    "pretest": "pnpm run clean && pnpm -r run pretest",
+    "pretest": "pnpm run clean && pnpm -r --parallel run pretest",
     "test": "vitest run --bail 1 --retry 2 --testTimeout 20000 --hookTimeout 20000",
     "test:cov": "pnpm run test --coverage",
     "preci": "pnpm -r --parallel run pretest",
