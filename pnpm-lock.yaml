@@ -33,6 +33,9 @@ catalogs:
     '@types/body-parser':
       specifier: ^1.19.5
       version: 1.19.6
+    '@types/busboy':
+      specifier: ^1.5.4
+      version: 1.5.4
     '@types/bytes':
       specifier: ^3.1.5
       version: 3.1.5
@@ -189,9 +192,15 @@ catalogs:
     benchmark:
       specifier: ^2.1.4
       version: 2.1.4
+    black-hole-stream:
+      specifier: ^0.0.1
+      version: 0.0.1
     body-parser:
       specifier: ^2.0.0
       version: 2.2.0
+    busboy:
+      specifier: ^1.6.0
+      version: 1.6.0
     bytes:
       specifier: ^3.1.2
       version: 3.1.2
@@ -339,6 +348,9 @@ catalogs:
     husky:
       specifier: ^9.1.7
       version: 9.1.7
+    inflation:
+      specifier: ^2.1.0
+      version: 2.1.0
     inflection:
       specifier: ^3.0.0
       version: 3.0.2
@@ -805,6 +817,31 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
+
+  packages/co-busboy:
+    dependencies:
+      black-hole-stream:
+        specifier: 'catalog:'
+        version: 0.0.1
+      busboy:
+        specifier: 'catalog:'
+        version: 1.6.0
+      inflation:
+        specifier: 'catalog:'
+        version: 2.1.0
+    devDependencies:
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@types/busboy':
+        specifier: 'catalog:'
+        version: 1.5.4
+      formstream:
+        specifier: 'catalog:'
+        version: 1.5.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
   packages/cookies:
     dependencies:
@@ -4699,6 +4736,9 @@ packages:
 
   '@types/body-parser@1.19.6':
     resolution: {integrity: sha512-HLFeCYgz89uk22N5Qg3dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g==}
+
+  '@types/busboy@1.5.4':
+    resolution: {integrity: sha512-kG7WrUuAKK0NoyxfQHsVE6j1m01s6kMma64E+OZenQABMQyTJop1DumUWcLwAQ2JzpefU7PDYoRDKl8uZosFjw==}
 
   '@types/bytes@3.1.5':
     resolution: {integrity: sha512-VgZkrJckypj85YxEsEavcMmmSOIzkUHqWmM4CCyia5dc54YwsXzJ5uT4fYxBQNEXx+oF1krlhgCbvfubXqZYsQ==}
@@ -9923,6 +9963,10 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
+      '@types/node': 24.10.2
+
+  '@types/busboy@1.5.4':
+    dependencies:
       '@types/node': 24.10.2
 
   '@types/bytes@3.1.5': {}
