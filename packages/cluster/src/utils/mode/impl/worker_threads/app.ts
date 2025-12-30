@@ -140,17 +140,30 @@ export class AppThreadUtils extends BaseAppUtils {
     this.startTime = Date.now();
     this.startSuccessCount = 0;
 
-    const ports = this.options.ports ?? [];
-    if (!ports.length) {
-      ports.push(this.options.port!);
+    if (this.options.reusePort) {
+      // When reusePort is enabled, all workers share the same port
+      // and each worker has its own socket
+      if (!this.options.port) {
+        throw new Error('options.port must be specified when reusePort is enabled');
+      }
+      for (let i = 0; i < this.options.workers; i++) {
+        const argv = [JSON.stringify(this.options)];
+        this.#forkSingle(this.getAppWorkerFile(), { argv }, i + 1);
+      }
+    } else {
+      // Normal mode: each worker can have a different port
+      const ports = this.options.ports ?? [];
+      if (!ports.length) {
+        ports.push(this.options.port!);
+      }
+      this.options.workers = ports.length;
+      let i = 0;
+      do {
+        const options = Object.assign({}, this.options, { port: ports[i] });
+        const argv = [JSON.stringify(options)];
+        this.#forkSingle(this.getAppWorkerFile(), { argv }, ++i);
+      } while (i < ports.length);
     }
-    this.options.workers = ports.length;
-    let i = 0;
-    do {
-      const options = Object.assign({}, this.options, { port: ports[i] });
-      const argv = [JSON.stringify(options)];
-      this.#forkSingle(this.getAppWorkerFile(), { argv }, ++i);
-    } while (i < ports.length);
 
     return this;
   }

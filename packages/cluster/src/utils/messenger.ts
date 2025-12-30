@@ -19,6 +19,12 @@ export interface MessageBody {
   receiverPid?: string;
   receiverWorkerId?: string;
   senderWorkerId?: string;
+  /**
+   * Whether reusePort is enabled for server listen.
+   * When reusePort is true, cluster won't get `listening` event,
+   * so we need to use cluster `message` event instead.
+   */
+  reusePort?: boolean;
 }
 
 /**
