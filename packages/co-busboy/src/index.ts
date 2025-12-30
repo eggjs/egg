@@ -28,6 +28,10 @@ export interface FileStream extends Readable {
   transferEncoding: string;
   mime: string;
   mimeType: string;
+  /**
+   * Set by busboy when file size limit is reached
+   */
+  truncated?: boolean;
 }
 
 /**
@@ -94,6 +98,10 @@ export interface Parts {
   (): Promise<Part | null>;
   field: Record<string, string | string[]>;
   fields: FieldTuple[];
+  /**
+   * Allow adding async iterator at runtime for for-await-of support
+   */
+  [Symbol.asyncIterator]?: () => AsyncIterator<Part>;
 }
 
 /**

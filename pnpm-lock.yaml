@@ -231,9 +231,6 @@ catalogs:
     cluster-reload:
       specifier: ^2.0.0
       version: 2.0.0
-    co-busboy:
-      specifier: ^2.0.1
-      version: 2.0.2
     coffee:
       specifier: '5'
       version: 5.5.1
@@ -1605,15 +1602,15 @@ importers:
 
   plugins/multipart:
     dependencies:
+      '@eggjs/co-busboy':
+        specifier: workspace:*
+        version: link:../../packages/co-busboy
       '@eggjs/path-matching':
         specifier: workspace:*
         version: link:../../packages/path-matching
       bytes:
         specifier: 'catalog:'
         version: 3.1.2
-      co-busboy:
-        specifier: 'catalog:'
-        version: 2.0.2
       dayjs:
         specifier: 'catalog:'
         version: 1.11.18
@@ -5484,9 +5481,6 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
-  chan@0.6.1:
-    resolution: {integrity: sha512-/TdBP2UhbBmw7qnqkzo9Mk4rzvwRv4dlNPXFerqWy90T8oBspKagJNZxrDbExKHhx9uXXHjo3f9mHgs9iKO3nQ==}
-
   change-case@3.1.0:
     resolution: {integrity: sha512-2AZp7uJZbYEzRPsFoa+ijKdvp9zsrnnt6+yFokfwEpeJm0xuJDVoxiRCAaTzyJND8GJkofo2IcKWaUZ/OECVzw==}
 
@@ -5587,10 +5581,6 @@ packages:
   co-body@6.2.0:
     resolution: {integrity: sha512-Kbpv2Yd1NdL1V/V4cwLVxraHDV6K8ayohr2rmH0J87Er8+zJjcTa6dAn9QMPC9CRgU8+aNajKbSf1TzDB1yKPA==}
     engines: {node: '>=8.0.0'}
-
-  co-busboy@2.0.2:
-    resolution: {integrity: sha512-xntc6PdplMQ9M92T5aKWRu8OBh4CbQcLHPnf2K3c+rD2xhAJcIjC5liblUquxDGTErsnHadMOsCcd6xhnpPAFA==}
-    engines: {node: '>= 14.0.0'}
 
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
@@ -10766,8 +10756,6 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
-  chan@0.6.1: {}
-
   change-case@3.1.0:
     dependencies:
       camel-case: 3.0.0
@@ -10910,13 +10898,6 @@ snapshots:
       qs: 6.14.0
       raw-body: 2.5.2
       type-is: 1.6.18
-
-  co-busboy@2.0.2:
-    dependencies:
-      black-hole-stream: 0.0.1
-      busboy: 1.6.0
-      chan: 0.6.1
-      inflation: 2.1.0
 
   co@4.6.0: {}
 

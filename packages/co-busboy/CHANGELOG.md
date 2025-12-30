@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.0.0-beta.36
+## 4.0.0-beta.36
 
 **Initial TypeScript Release**
 
