@@ -285,6 +285,30 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
       const sock = encodeURIComponent(sockFile);
       await request(`http+unix://${sock}`).get('/').expect('done').expect(200);
     });
+
+    it.skipIf(process.platform !== 'linux')('should use reusePort in config on Linux', async () => {
+      app = cluster('apps/app-listen-reusePort', { port: 0, workers: 2 });
+      // app.debug();
+      await app.ready();
+
+      app.expect('code', 0);
+      app.expect('stdout', /egg started on http:\/\/127.0.0.1:17010/);
+
+      await request('http://127.0.0.1:17010').get('/').expect('done').expect(200);
+      await request('http://127.0.0.1:17010').get('/port').expect('17010').expect(200);
+    });
+
+    it('should set reusePort=true in config (non-Linux will fallback to false)', async () => {
+      app = cluster('apps/app-listen-reusePort', { port: 0 });
+      // app.debug();
+      await app.ready();
+
+      app.expect('code', 0);
+      app.expect('stdout', /egg started on http:\/\/127.0.0.1:17010/);
+
+      await request('http://127.0.0.1:17010').get('/').expect('done').expect(200);
+      await request('http://127.0.0.1:17010').get('/port').expect('17010').expect(200);
+    });
   });
 
   it('should exit when EADDRINUSE', async () => {

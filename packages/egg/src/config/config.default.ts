@@ -359,12 +359,15 @@ const factory: EggConfigFactory = defineConfigFactory((appInfo): PartialEggConfi
    * @property {String} listen.path - set a unix sock path when server listen
    * @property {Number} listen.port - set a port when server listen
    * @property {String} listen.hostname - set a hostname binding server when server listen
+   * @property {Boolean} listen.reusePort - enable SO_REUSEPORT socket option, default is `false`.
+   *   Only available on Linux 3.9+, DragonFlyBSD 3.6+, FreeBSD 12.0+, Solaris 11.4, and AIX 7.2.5+.
    */
   config.cluster = {
     listen: {
       path: '',
       port: 7001,
       hostname: '',
+      reusePort: false,
     },
   };
 

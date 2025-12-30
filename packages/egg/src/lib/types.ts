@@ -258,6 +258,12 @@ export interface EggAppConfig extends EggCoreAppConfig {
       path: string;
       port: number;
       hostname: string;
+      /**
+       * enable SO_REUSEPORT socket option for server listen, default is `false`.
+       * Only available on Linux 3.9+, DragonFlyBSD 3.6+, FreeBSD 12.0+, Solaris 11.4, and AIX 7.2.5+.
+       * @see https://nodejs.org/api/net.html#serverlistenoptions-callback
+       */
+      reusePort?: boolean;
     };
   };
 

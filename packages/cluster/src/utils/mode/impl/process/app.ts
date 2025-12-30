@@ -1,4 +1,5 @@
 import cluster, { type Worker as ClusterProcessWorker } from 'node:cluster';
+import { debuglog } from 'node:util';
 
 import { cfork } from 'cfork';
 import { graceful as gracefulExit, type Options as gracefulExitOptions } from 'graceful-process';
@@ -7,6 +8,8 @@ import { sendmessage } from 'sendmessage';
 import type { MessageBody } from '../../../messenger.ts';
 import { terminate } from '../../../terminate.ts';
 import { BaseAppWorker, BaseAppUtils } from '../../base/app.ts';
+
+const debug = debuglog('egg/cluster/utils/mode/impl/process/app');
 
 export class AppProcessWorker extends BaseAppWorker<ClusterProcessWorker> {
   get id(): number {
@@ -45,6 +48,13 @@ export class AppProcessWorker extends BaseAppWorker<ClusterProcessWorker> {
 
   static send(message: MessageBody): void {
     message.senderWorkerId = String(process.pid);
+    // cluster won't get `listening` event when reusePort is true,
+    // use cluster `message` event instead
+    if (message.action === 'app-start' && message.reusePort) {
+      debug('send app-start message with reusePort, use cluster.worker.send()');
+      cluster.worker!.send(message);
+      return;
+    }
     process.send!(message);
   }
 
