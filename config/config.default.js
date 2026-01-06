@@ -307,6 +307,10 @@ module.exports = appInfo => {
    * @property {Boolean} allowH2 - use urllib@4 HttpClient and enable H2, default is false. Only works on Node.js >= 18
    */
   config.httpclient = {
+    /**
+     * @deprecated This option is deprecated.
+     * Use @eggjs/tegg-dns-cache instead.
+     */
     enableDNSCache: false,
     dnsCacheLookupInterval: 10000,
     dnsCacheMaxLength: 1000,
