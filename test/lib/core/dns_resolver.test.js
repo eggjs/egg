@@ -93,6 +93,7 @@ describe('test/lib/core/dns_resolver with dns error', () => {
   let server;
   let app;
   let url;
+  let originalDNSServers;
 
   const cache = new Map();
   before(async () => {
@@ -104,49 +105,90 @@ describe('test/lib/core/dns_resolver with dns error', () => {
     await app.ready();
     app.config.httpclient.lookup = function(hostname, options, callback) {
       if (cache.has(hostname)) {
-        const address = cache.get(hostname);
-        callback(null, address, 4);
+        const record = cache.get(hostname);
+        if (options && options.all) {
+          const addresses = record.map(r => ({ address: r.address, family: 4 }));
+          callback(null, addresses);
+          return;
+        }
+        callback(null, [ record[0].address ], 4);
         return;
       }
-      dns.lookup(hostname, options, (err, address, family) => {
-        if (!err) {
-          cache.set(hostname, address);
-          callback(null, address, family);
+      dnsPromise.resolve4(hostname, { ttl: true }).then(addresses => {
+        if (addresses && addresses.length !== 0) {
+          if (Array.isArray(addresses)) {
+            cache.set(hostname, addresses);
+          } else {
+            cache.set(hostname, [ addresses ]);
+          }
+          if (options && options.all) {
+            const addrList = addresses.map(r => ({ address: r.address, family: 4 }));
+            callback(null, addrList);
+            return;
+          }
+          callback(null, [ addresses[0].address ], 4);
         } else {
-          callback(err);
+          callback(new Error('no addresses found'));
         }
+      }).catch(err => {
+        callback(err);
       });
 
     };
     url = server.url;
     url = url.replace('127.0.0.1', 'localhost');
+    originalDNSServers = dns.promises.getServers();
+    dns.promises.setServers([ '223.5.5.5', '223.6.6.6' ]);
   });
 
   afterEach(mm.restore);
 
   after(() => {
+    dns.promises.setServers(originalDNSServers);
     if (server?.server?.listening) server.server.close();
   });
 
-  it('should curl work', async () => {
-    const res = await app.curl(url + '/get_headers', { dataType: 'json' });
-    assert(res.status === 200);
-    assert(cache.has('localhost'));
-  });
 
   it('should cache work when dns fails', async () => {
-    mm.error(dns, 'lookup', 'mock dns lookup error');
-    const res = await app.curl(url + '/get_headers', { dataType: 'json' });
-    assert(res.status === 200);
+    const res1 = await app.curl(url + '/get_headers', { dataType: 'json' });
+    assert(res1.status === 200);
     assert(cache.has('localhost'));
+
+    mm.error(dnsPromise, 'resolve4', 'mock dns lookup error');
+    const res2 = await app.curl(url + '/get_headers', { dataType: 'json' });
+    assert(res2.status === 200);
     cache.delete('localhost');
     // should fail now
+    // assert.error(app.curl(url + '/get_headers', { dataType: 'json' }))
+    let shouldFail = false;
     try {
       await app.curl(url + '/get_headers', { dataType: 'json' });
     } catch (err) {
-      assert(err);
+      shouldFail = true;
       assert(err.message.includes('mock dns lookup error'));
     }
+    assert(shouldFail);
+  });
+
+  it('should cache work when name server fails', async () => {
+    const successRes = await app.curl(url + '/get_headers', { dataType: 'json' });
+    assert(successRes.status === 200);
+    assert(cache.has('localhost'));
+    // can't resolve localhost now, but cache still works
+    dns.promises.setServers([ '8.8.8.8' ]);
+    const res = await app.curl(url + '/get_headers', { dataType: 'json' });
+    assert(res.status === 200);
+
+    // clear cache, should fail now
+    cache.delete('localhost');
+    let shouldFail = false;
+    try {
+      await app.curl(url + '/get_headers', { dataType: 'json' });
+    } catch (err) {
+      shouldFail = true;
+      assert(err.message.includes('queryA ENOTFOUND localhost'));
+    }
+    assert(shouldFail);
   });
 });
 
