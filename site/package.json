@@ -9,7 +9,8 @@
     "preview": "vitepress preview"
   },
   "dependencies": {
-    "vitepress": "catalog:"
+    "vitepress": "catalog:",
+    "vitepress-plugin-llms": "catalog:"
   },
   "devDependencies": {
     "oxc-minify": "catalog:"

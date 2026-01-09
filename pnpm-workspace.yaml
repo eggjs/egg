@@ -211,6 +211,7 @@ catalog:
   utility: ^2.5.0
   vary: ^1.1.2
   vitepress: 2.0.0-alpha.15
+  vitepress-plugin-llms: ^1.10.0
   vitest: ^4.0.15
   xss: ^1.0.15
   ylru: ^2.0.0
