@@ -45,7 +45,7 @@
     "egg-bin": "^6.13.0",
     "egg-mock": "^5.15.2",
     "oxlint": "1",
-    "oxlint-tsgolint": "^0.10.0",
+    "oxlint-tsgolint": "^0.11.0",
     "typescript": "5"
   },
   "engines": {
