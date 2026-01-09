@@ -91,7 +91,10 @@ describe('test/lib/core/dns_resolver.test.js', () => {
 
 describe('test/lib/core/dns_resolver with dns error', () => {
   let server;
-  let cache = new Map()
+  let app;
+  let url;
+
+  const cache = new Map();
   before(async () => {
     server = await utils.startNewLocalServer('127.0.0.1');
     if (!server) {
@@ -99,22 +102,22 @@ describe('test/lib/core/dns_resolver with dns error', () => {
     }
     app = utils.app('apps/dns_resolver');
     await app.ready();
-    app.config.httpclient.lookup = function (hostname, options, callback) {
+    app.config.httpclient.lookup = function(hostname, options, callback) {
       if (cache.has(hostname)) {
         const address = cache.get(hostname);
         callback(null, address, 4);
         return;
-      } else {
-        dns.lookup(hostname, options, (err, address, family) => {
-          if (!err) {
-            cache.set(hostname, address);
-            callback(null, address, family);
-          } else {
-            callback(err);
-          }
-        });
       }
-    }
+      dns.lookup(hostname, options, (err, address, family) => {
+        if (!err) {
+          cache.set(hostname, address);
+          callback(null, address, family);
+        } else {
+          callback(err);
+        }
+      });
+
+    };
     url = server.url;
     url = url.replace('127.0.0.1', 'localhost');
   });
@@ -129,7 +132,7 @@ describe('test/lib/core/dns_resolver with dns error', () => {
     const res = await app.curl(url + '/get_headers', { dataType: 'json' });
     assert(res.status === 200);
     assert(cache.has('localhost'));
-  })
+  });
 
   it('should cache work when dns fails', async () => {
     mm.error(dns, 'lookup', 'mock dns lookup error');
@@ -144,6 +147,6 @@ describe('test/lib/core/dns_resolver with dns error', () => {
       assert(err);
       assert(err.message.includes('mock dns lookup error'));
     }
-  })
-})
+  });
+});
 
