@@ -105,7 +105,7 @@ The only thing you need to do is setting `scripts.test` in `package.json`.
 
 Then tests would be launched by executing `npm test` command.
 
-```bas
+```bash
 npm test
 
 > unittest-example@ test /Users/mk2/git/github.com/eggjs/examples/unittest

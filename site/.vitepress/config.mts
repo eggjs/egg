@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { defineConfig, type DefaultTheme } from 'vitepress';
+import llmstxt from 'vitepress-plugin-llms';
 
 import { version } from '../../package.json';
 
@@ -117,6 +118,7 @@ export default defineConfig({
 
   // Custom CSS for theme color
   vite: {
+    plugins: [llmstxt()],
     css: {
       preprocessorOptions: {
         scss: {
