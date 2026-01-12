@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.33.0 (2026-01-12)
+
+* feat: httpclient_next proxy (#5763) ([a1169f3](https://github.com/eggjs/egg/commit/a1169f3)), closes [#5763](https://github.com/eggjs/egg/issues/5763)
+* chore: rename to release.yml ([13d9a19](https://github.com/eggjs/egg/commit/13d9a19))
+
 ## 3.32.0 (2025-12-24)
 
 * feat: enable custom lookup for httpclient and fetch (#5749) ([4fa4d4b](https://github.com/eggjs/egg/commit/4fa4d4b)), closes [#5749](https://github.com/eggjs/egg/issues/5749)
