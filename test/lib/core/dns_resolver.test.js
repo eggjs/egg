@@ -111,7 +111,7 @@ describe('test/lib/core/dns_resolver with dns error', () => {
           callback(null, addresses);
           return;
         }
-        callback(null, [ record[0].address ], 4);
+        callback(null, record[0].address, 4);
         return;
       }
       dnsPromise.resolve4(hostname, { ttl: true }).then(addresses => {
@@ -126,7 +126,7 @@ describe('test/lib/core/dns_resolver with dns error', () => {
             callback(null, addrList);
             return;
           }
-          callback(null, [ addresses[0].address ], 4);
+          callback(null, addresses[0].address, 4);
         } else {
           callback(new Error('no addresses found'));
         }
@@ -137,14 +137,14 @@ describe('test/lib/core/dns_resolver with dns error', () => {
     };
     url = server.url;
     url = url.replace('127.0.0.1', 'localhost');
-    originalDNSServers = dns.promises.getServers();
-    dns.promises.setServers([ '223.5.5.5', '223.6.6.6' ]);
+    originalDNSServers = dns.getServers();
+    dns.setServers([ '223.5.5.5', '223.6.6.6' ]);
   });
 
   afterEach(mm.restore);
 
   after(() => {
-    dns.promises.setServers(originalDNSServers);
+    dns.setServers(originalDNSServers);
     if (server?.server?.listening) server.server.close();
   });
 
@@ -175,7 +175,7 @@ describe('test/lib/core/dns_resolver with dns error', () => {
     assert(successRes.status === 200);
     assert(cache.has('localhost'));
     // can't resolve localhost now, but cache still works
-    dns.promises.setServers([ '8.8.8.8' ]);
+    dns.setServers([ '8.8.8.8' ]);
     const res = await app.curl(url + '/get_headers', { dataType: 'json' });
     assert(res.status === 200);
 
