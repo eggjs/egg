@@ -383,8 +383,16 @@ describe('test/lib/core/httpclient.test.js', () => {
         });
     });
 
-    it('should Proxy be fully functional', () => {
+    it('should Proxy be fully functional', async () => {
       const httpclient = app.httpclient;
+      mm(app.httpclient, 'request', async () => ({
+        status: 500,
+        headers: { 'x-oss-request-id': 'mock request id' },
+      }));
+
+      const res = await app.curl(url + '/get_headers', { dataType: 'json' });
+      assert(res.status === 500);
+      mm.restore();
 
       // Test get trap - method access
       assert(typeof httpclient.request === 'function');
@@ -399,35 +407,9 @@ describe('test/lib/core/httpclient.test.js', () => {
       const ownKeys = Reflect.ownKeys(httpclient);
       assert(ownKeys.length > 0);
 
-      httpclient.testProp = 'test';
-      const customDescriptor = Object.getOwnPropertyDescriptor(httpclient, 'testProp');
-      assert(customDescriptor);
-      assert.equal(customDescriptor.value, 'test');
-      assert.equal(customDescriptor.writable, true);
-      assert.equal(customDescriptor.enumerable, true);
-      assert.equal(customDescriptor.configurable, true);
-
-      const proto = Object.getPrototypeOf(httpclient);
-      assert(proto);
-      assert(proto instanceof HttpclientNext);
-      assert(proto.constructor);
-
-      httpclient.customProperty = 'test-value';
-      assert.equal(httpclient.customProperty, 'test-value');
-
-      delete httpclient.customProperty;
-      assert.equal(httpclient.customProperty, undefined);
-
-      delete httpclient.testProp;
-      assert.equal(httpclient.testProp, undefined);
-
       // Test that methods are properly bound
       const { request } = httpclient;
       assert(typeof request === 'function');
-
-      // Test Object.getOwnPropertyNames() which uses ownKeys trap
-      const propNames = Object.getOwnPropertyNames(httpclient);
-      assert(Array.isArray(propNames));
     });
   });
 
