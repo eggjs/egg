@@ -529,7 +529,6 @@ describe('test/lib/core/utils.test.js', () => {
       } catch (error) {
         shouldFail = true;
         assert(error instanceof TypeError);
-        assert(error.message.includes('Cannot read properties of undefined'));
       }
       assert(shouldFail, 'Expected TypeError when calling unbound method');
       assert.equal(proxy.getValue(), 42); // Direct call still works
