@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>3.33.1 (2026-01-16)</small>
+
+* fix: egg-mock for httpclient_next proxy (#5768) ([04cfa1b](https://github.com/eggjs/egg/commit/04cfa1b)), closes [#5768](https://github.com/eggjs/egg/issues/5768)
+
 ## 3.33.0 (2026-01-12)
 
 * feat: httpclient_next proxy (#5763) ([a1169f3](https://github.com/eggjs/egg/commit/a1169f3)), closes [#5763](https://github.com/eggjs/egg/issues/5763)
