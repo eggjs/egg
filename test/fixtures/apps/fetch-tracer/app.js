@@ -51,32 +51,10 @@ module.exports = class TracerApp {
           let traceId;
           let rpcId;
 
-          function setHeader(key, value) {
-            if (!opts.headers) {
-              opts.headers = {};
-            }
-            const headers = opts.headers;
-            if (typeof headers.set === 'function') {
-              headers.set(key, value);
-              return;
-            }
-            if (Array.isArray(headers)) {
-              if (headers.length > 0 && Array.isArray(headers[0])) {
-                headers.push([ key, value ]);
-              } else {
-                headers.push(key, value);
-              }
-              return;
-            }
-            headers[key] = value;
-          }
-
           try {
             if (tracer) {
-              traceId = tracer.traceId;
-              setHeader(HTTP_HEADER_TRACE_ID_KEY, traceId);
-              rpcId = tracer.rpcIdPlus;
-              setHeader(HTTP_HEADER_RPC_ID_KEY, rpcId);
+              traceId = opts.headers[HTTP_HEADER_TRACE_ID_KEY] = tracer.traceId;
+              rpcId = opts.headers[HTTP_HEADER_RPC_ID_KEY] = tracer.rpcIdPlus;
             }
           } catch (e) {
             e.message = '[egg-tracelog] set tracer header failed: ' + e.message;
