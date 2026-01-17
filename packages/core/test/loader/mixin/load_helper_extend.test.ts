@@ -1,5 +1,5 @@
 import { request } from '@eggjs/supertest';
-import { describe, it, beforeAll, afterAll } from 'vitest';
+import { describe, it, beforeAll, afterAll } from 'vite-plus/test';
 
 import { createApp, type Application } from '../../helper.js';
 

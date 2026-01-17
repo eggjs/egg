@@ -2,7 +2,7 @@ import assert from 'node:assert';
 
 import { PointcutAdviceInfoUtil } from '@eggjs/aop-decorator';
 import { ControllerType, HTTPMethodEnum } from '@eggjs/tegg-types';
-import { describe, it, beforeEach } from 'vitest';
+import { describe, it, beforeEach } from 'vite-plus/test';
 
 import {
   BodyParamMeta,

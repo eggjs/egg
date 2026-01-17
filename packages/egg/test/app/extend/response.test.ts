@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vite-plus/test';
 
 import { restore, type MockApplication, createApp } from '../../utils.js';
 

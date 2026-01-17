@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import { mock } from '@eggjs/mock';
-import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vite-plus/test';
 
 import { Ajv } from '../src/index.ts';
 

@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
 import coffee from 'coffee';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vite-plus/test';
 
 import { importResolve, importModule, ImportResolveError, isESM, isSupportTypeScript } from '../src/index.ts';
 import { getFilepath } from './helper.ts';

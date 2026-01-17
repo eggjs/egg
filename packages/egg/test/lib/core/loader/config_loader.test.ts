@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
 import { mm } from '@eggjs/mock';
-import { describe, it, afterEach, expect } from 'vitest';
+import { describe, it, afterEach, expect } from 'vite-plus/test';
 
 import { type MockApplication, createApp, getFilepath } from '../../../utils.ts';
 

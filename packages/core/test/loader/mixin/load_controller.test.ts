@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { request } from '@eggjs/supertest';
 import { isFunction, isAsyncFunction } from 'is-type-of';
-import { describe, it, beforeAll, afterAll } from 'vitest';
+import { describe, it, beforeAll, afterAll } from 'vite-plus/test';
 
 import { createApp, getFilepath, type Application } from '../../helper.js';
 

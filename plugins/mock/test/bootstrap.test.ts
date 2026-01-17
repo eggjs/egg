@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import { importResolve } from '@eggjs/utils';
 import coffee from 'coffee';
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { getFixtures } from './helper.ts';
 

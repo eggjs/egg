@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { type Context } from 'egg';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vite-plus/test';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

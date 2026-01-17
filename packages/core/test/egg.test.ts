@@ -7,7 +7,7 @@ import util from 'node:util';
 import { request } from '@eggjs/supertest';
 import coffee from 'coffee';
 import { mm } from 'mm';
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vite-plus/test';
 
 import { EggCore } from '../src/index.js';
 import { createApp, getFilepath, type Application } from './helper.js';

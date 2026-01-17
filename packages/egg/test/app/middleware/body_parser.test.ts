@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import querystring from 'node:querystring';
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vite-plus/test';
 
 import { createApp, type MockApplication } from '../../utils.ts';
 

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { request } from '@eggjs/supertest';
 import coffee from 'coffee';
 import { mm } from 'mm';
-import { describe, it, beforeEach, afterEach } from 'vitest';
+import { describe, it, beforeEach, afterEach } from 'vite-plus/test';
 
 import { utils } from '../src/index.ts';
 import { createApp, getFilepath, type Application } from './helper.ts';

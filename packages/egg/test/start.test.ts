@@ -1,4 +1,4 @@
-import { describe } from 'vitest';
+import { describe } from 'vite-plus/test';
 
 // import utils from '../utils';
 // import assert from 'assert';

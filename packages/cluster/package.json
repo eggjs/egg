@@ -41,9 +41,9 @@
     }
   },
   "scripts": {
-    "lint": "oxlint",
+    "lint": "vite lint",
     "typecheck": "tsgo --noEmit",
-    "test": "vitest run"
+    "test": "vite test run"
   },
   "dependencies": {
     "@eggjs/utils": "workspace:*",
@@ -65,10 +65,10 @@
     "@eggjs/tsconfig": "workspace:*",
     "address": "catalog:",
     "coffee": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
     "urllib": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "vite-plus": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

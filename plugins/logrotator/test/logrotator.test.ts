@@ -5,7 +5,7 @@ import { createUnzip } from 'node:zlib';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import moment from 'moment';
-import { describe, it, beforeEach, afterEach, afterAll, beforeAll, expect } from 'vitest';
+import { describe, it, beforeEach, afterEach, afterAll, beforeAll, expect } from 'vite-plus/test';
 
 import { getFixtures } from './utils.ts';
 

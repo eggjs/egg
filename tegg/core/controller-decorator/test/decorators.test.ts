@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { PrototypeUtil } from '@eggjs/core-decorator';
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { FooController } from './fixtures/HTTPFooController.js';
 

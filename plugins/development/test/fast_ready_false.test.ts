@@ -1,7 +1,7 @@
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { beforeEach, afterEach, it, describe } from 'vitest';
+import { beforeEach, afterEach, it, describe } from 'vite-plus/test';
 
 import { getFilepath } from './utils.ts';
 

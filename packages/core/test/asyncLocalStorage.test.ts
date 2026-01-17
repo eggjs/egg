@@ -3,7 +3,7 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 
 import { request } from '@eggjs/supertest';
 import { getAsyncLocalStorage, kGALS } from 'gals';
-import { test, beforeAll } from 'vitest';
+import { test, beforeAll } from 'vite-plus/test';
 
 // @ts-ignore
 import { Application } from './fixtures/egg-esm/index.ts';

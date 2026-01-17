@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import accepts from 'accepts';
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import context, { request as createRequest } from '../test-helpers/context.ts';
 

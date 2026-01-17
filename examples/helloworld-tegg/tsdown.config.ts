@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsdown';
+import { defineConfig } from 'vite-plus/lib';
 
 export default defineConfig({
   entry: ['app.ts', 'config/**/*.ts', 'app/**/*.ts'],

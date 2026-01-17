@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, afterEach, beforeAll, afterAll } from 'vite-plus/test';
 
 const FooSubscriberFilePath = path.join(
   import.meta.dirname,

@@ -5,7 +5,7 @@ import { scheduler } from 'node:timers/promises';
 import { mm } from '@eggjs/mock';
 import { request } from '@eggjs/supertest';
 import { start, Application } from 'egg';
-import { beforeAll, afterAll, it, describe } from 'vitest';
+import { beforeAll, afterAll, it, describe } from 'vite-plus/test';
 
 import developmentPlugin from '../src/index.ts';
 import { getFilepath } from './utils.ts';

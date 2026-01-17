@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { beforeAll, afterAll, describe, it } from 'vitest';
+import { beforeAll, afterAll, describe, it } from 'vite-plus/test';
 
 import { getFixtures } from '../../utils.ts';
 

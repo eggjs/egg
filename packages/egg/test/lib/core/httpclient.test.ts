@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 
 import { mm } from '@eggjs/mock';
 import { HttpClient } from 'urllib';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vite-plus/test';
 
 import { HttpClient as ContextHttpClient } from '../../../src/lib/core/httpclient.ts';
 import { startLocalServer, createApp, type MockApplication } from '../../utils.ts';

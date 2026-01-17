@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 import { importModule } from '@eggjs/utils';
 import { mm } from 'mm';
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from 'vite-plus/test';
 
 import { EggLoader, EggCore } from '../../src/index.ts';
 import { createApp, getFilepath, type Application } from '../helper.ts';

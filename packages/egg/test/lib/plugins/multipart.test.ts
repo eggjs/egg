@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert';
 import { request } from '@eggjs/supertest';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { describe, it, beforeAll, afterAll } from 'vitest';
+import { describe, it, beforeAll, afterAll } from 'vite-plus/test';
 
 import { createApp, type MockApplication, getFilepath } from '../../utils.ts';
 

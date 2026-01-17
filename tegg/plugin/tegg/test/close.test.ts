@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { mm } from '@eggjs/mock';
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { getAppBaseDir } from './utils.ts';
 

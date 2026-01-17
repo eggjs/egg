@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import Stream from 'node:stream';
 
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { response } from '../test-helpers/context.ts';
 

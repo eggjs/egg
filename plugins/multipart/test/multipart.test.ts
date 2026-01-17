@@ -4,7 +4,7 @@ import { scheduler } from 'node:timers/promises';
 import { mm, type MockApplication } from '@eggjs/mock';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vite-plus/test';
 
 import { getFixtures } from './utils.ts';
 

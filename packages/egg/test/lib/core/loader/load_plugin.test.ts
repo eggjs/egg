@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { mm } from '@eggjs/mock';
 import { EggConsoleLogger } from 'egg-logger';
-import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vite-plus/test';
 
 import { AppWorkerLoader, AgentWorkerLoader } from '../../../../src/index.ts';
 import { type MockApplication, createApp, getFilepath } from '../../../utils.ts';

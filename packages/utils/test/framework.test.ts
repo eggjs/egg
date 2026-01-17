@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { restore, mm } from 'mm';
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from 'vite-plus/test';
 
 import { getFrameworkPath } from '../src/index.js';
 import { getFilepath, testDir } from './helper.js';

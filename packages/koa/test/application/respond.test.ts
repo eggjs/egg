@@ -5,7 +5,7 @@ import { scheduler } from 'node:timers/promises';
 
 import { request } from '@eggjs/supertest';
 import statuses from 'statuses';
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import Koa from '../../src/index.ts';
 

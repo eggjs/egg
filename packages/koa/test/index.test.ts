@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 
-import { test, expect } from 'vitest';
+import { test, expect } from 'vite-plus/test';
 
 // oxlint-disable-next-line no-namespace
 import Koa, * as KoaModule from '../src/index.ts';

@@ -8,7 +8,7 @@ import path from 'node:path';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import express, { type Express } from 'express';
-import { describe, it, beforeEach, beforeAll, expect } from 'vitest';
+import { describe, it, beforeEach, beforeAll, expect } from 'vite-plus/test';
 
 import request, { Test } from '../src/index.ts';
 import { throwError } from './throwError.ts';

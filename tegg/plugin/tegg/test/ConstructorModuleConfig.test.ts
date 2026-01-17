@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
+import { describe, it, afterAll, afterEach, beforeAll } from 'vite-plus/test';
 
 import { Foo } from './fixtures/apps/constructor-module-config/modules/module-with-config/foo.ts';
 import { getAppBaseDir } from './utils.ts';

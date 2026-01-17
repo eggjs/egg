@@ -6,7 +6,7 @@ import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { request } from '@eggjs/supertest';
-import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, afterEach, beforeAll, afterAll } from 'vite-plus/test';
 
 import { cluster, getFilepath } from '../utils.ts';
 

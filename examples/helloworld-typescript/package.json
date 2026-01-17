@@ -25,15 +25,15 @@
   "scripts": {
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
-    "test": "vitest run",
-    "cov": "vitest run --coverage",
+    "test": "vite test run",
+    "cov": "vite test run --coverage",
     "lint": "eslint . --ext .ts",
     "ci": "pnpm run lint && pnpm run cov",
     "prepublishOnly": "pnpm run build",
     "start": "egg-scripts start --daemon",
     "stop": "egg-scripts stop",
     "typecheck": "tsgo --noEmit",
-    "build": "tsdown"
+    "build": "vite lib"
   },
   "dependencies": {
     "@eggjs/scripts": "workspace:",
@@ -44,9 +44,9 @@
     "@eggjs/bin": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
-    "tsdown": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "vite-plus": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

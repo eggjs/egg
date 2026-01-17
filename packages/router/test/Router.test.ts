@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { Application as Koa } from '@eggjs/koa';
 import request from '@eggjs/supertest';
 import methods from 'methods';
-import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach } from 'vite-plus/test';
 
 import Router from '../src/index.ts';
 import type { Next } from '../src/types.ts';

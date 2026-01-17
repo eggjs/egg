@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { TableModel } from '@eggjs/dal-decorator';
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { SqlGenerator } from '../src/index.ts';
 import { AutoUpdateTime } from './fixtures/modules/dal/AutoUpdateTime.js';

@@ -1,5 +1,5 @@
 import { app } from '@eggjs/mock/bootstrap';
-import { test, expect } from 'vitest';
+import { test, expect } from 'vite-plus/test';
 
 import { HelloService } from '../../../../../app/module/foo/index.ts';
 

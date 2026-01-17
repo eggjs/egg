@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import { mm } from 'mm';
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from 'vite-plus/test';
 
 import utils from '../../src/utils/index.js';
 import { getFilepath } from '../helper.js';

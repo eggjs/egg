@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { mm } from 'mm';
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from 'vite-plus/test';
 
 import { EggCore, EggLoader } from '../../../src/index.js';
 import { createApp, getFilepath, type Application } from '../../helper.js';

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { afterEach, it, beforeAll, afterAll } from 'vitest';
+import { afterEach, it, beforeAll, afterAll } from 'vite-plus/test';
 
 let app: MockApplication;
 

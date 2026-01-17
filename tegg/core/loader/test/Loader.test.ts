@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import { EggLoadUnitType } from '@eggjs/metadata';
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { LoaderFactory, LoaderUtil } from '../src/index.ts';
 

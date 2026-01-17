@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import http from 'node:http';
 
-import { describe, it, beforeAll, afterAll } from 'vitest';
+import { describe, it, beforeAll, afterAll } from 'vite-plus/test';
 
 import { createApp, type MockApplication, startNewLocalServer } from '../../utils.js';
 

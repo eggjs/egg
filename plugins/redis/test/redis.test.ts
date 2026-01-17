@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { detectPort } from 'detect-port';
-import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vite-plus/test';
 
 function getFixtures(name: string) {
   return path.resolve(import.meta.dirname, 'fixtures', name);

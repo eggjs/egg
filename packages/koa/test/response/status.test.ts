@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 import { request } from '@eggjs/supertest';
 import statuses from 'statuses';
-import { describe, it, beforeEach } from 'vitest';
+import { describe, it, beforeEach } from 'vite-plus/test';
 
 import Koa from '../../src/index.ts';
 import { response } from '../test-helpers/context.ts';

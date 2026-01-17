@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { isClass } from 'is-type-of';
 import yaml from 'js-yaml';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vite-plus/test';
 
 import { FileLoader, CaseStyle } from '../../src/loader/file_loader.ts';
 import { getFilepath } from '../helper.ts';

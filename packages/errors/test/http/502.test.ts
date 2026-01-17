@@ -1,6 +1,6 @@
 import { strict as assert } from 'assert';
 
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { BadGatewayError, E502 } from '../../src/index.ts';
 

@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vite-plus/test';
 
 function getFixtures(name: string) {
   return path.join(import.meta.dirname, 'fixtures', name);

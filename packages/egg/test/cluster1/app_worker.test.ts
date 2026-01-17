@@ -4,7 +4,7 @@ import { scheduler } from 'node:timers/promises';
 
 import { request } from '@eggjs/supertest';
 import { ip } from 'address';
-import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vite-plus/test';
 
 import { cluster, type MockApplication } from '../utils.ts';
 

@@ -6,7 +6,7 @@ import { scheduler } from 'node:timers/promises';
 import coffee from 'coffee';
 import { detectPort } from 'detect-port';
 import { mm, restore } from 'mm';
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vite-plus/test';
 
 import { cleanup, replaceWeakRefMessage, type Coffee } from './utils.ts';
 

@@ -3,7 +3,7 @@ import { once } from 'node:events';
 import type { AddressInfo } from 'node:net';
 
 import urllib from 'urllib';
-import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vite-plus/test';
 
 import { createApp, type MockApplication, restore, mm } from '../../utils.ts';
 

@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, beforeAll, afterEach, expect } from 'vitest';
+import { describe, it, afterAll, beforeAll, afterEach, expect } from 'vite-plus/test';
 
 describe('plugin/aop/test/aop.test.ts', () => {
   let app: MockApplication;

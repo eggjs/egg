@@ -10,7 +10,7 @@ import {
 import { EggRouter } from '@eggjs/router';
 import { CONTROLLER_META_DATA, HTTPControllerMeta } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
-import { describe, it, beforeAll, afterAll, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, expect } from 'vite-plus/test';
 
 import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from '../../src/lib/ControllerLoadUnit.ts';
 import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';

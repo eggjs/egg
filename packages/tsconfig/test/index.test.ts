@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import coffee from 'coffee';
-import { test, expect } from 'vitest';
+import { test, expect } from 'vite-plus/test';
 
 test('should tsc build work', async () => {
   const tsc = path.join(import.meta.dirname, '..', 'node_modules', 'typescript', 'bin', 'tsc');

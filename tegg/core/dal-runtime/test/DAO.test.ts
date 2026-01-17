@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import path from 'node:path';
 
 import { TableModel } from '@eggjs/dal-decorator';
-import { describe, it, beforeAll, afterAll } from 'vitest';
+import { describe, it, beforeAll, afterAll } from 'vite-plus/test';
 
 import { MysqlDataSource, SqlMapLoader, DataSource, DatabaseForker } from '../src/index.ts';
 import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO.ts';

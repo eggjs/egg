@@ -3,7 +3,7 @@ import { once } from 'node:events';
 import { scheduler } from 'node:timers/promises';
 
 import { mm } from '@eggjs/mock';
-import { describe, it, beforeAll, afterEach, afterAll } from 'vitest';
+import { describe, it, beforeAll, afterEach, afterAll } from 'vite-plus/test';
 
 import { Messenger } from '../../../../src/lib/core/messenger/ipc.ts';
 import { cluster, type MockApplication } from '../../../utils.ts';

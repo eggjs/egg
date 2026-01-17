@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from 'vite-plus/test';
 
 import { ModuleConfigUtil } from '../src/index.js';
 

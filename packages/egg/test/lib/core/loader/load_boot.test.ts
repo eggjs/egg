@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
-import { describe, it, beforeAll } from 'vitest';
+import { describe, it, beforeAll } from 'vite-plus/test';
 
 import { type MockApplication, createApp } from '../../../utils.ts';
 

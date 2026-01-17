@@ -1,7 +1,7 @@
 import dns from 'node:dns';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, beforeAll, expect, afterEach } from 'vitest';
+import { describe, it, afterAll, beforeAll, expect, afterEach } from 'vite-plus/test';
 
 import { getFixtures } from './utils.ts';
 

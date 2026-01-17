@@ -6,7 +6,7 @@ import path from 'node:path';
 
 import coffee from 'coffee';
 import { runscript } from 'runscript';
-import { describe, it, beforeEach, afterEach } from 'vitest';
+import { describe, it, beforeEach, afterEach } from 'vite-plus/test';
 
 import utils from '../src/index.js';
 import { getFilepath } from './helper.js';

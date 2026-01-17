@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { request } from '@eggjs/supertest';
 import { mm } from 'mm';
-import { describe, it, afterEach, beforeAll } from 'vitest';
+import { describe, it, afterEach, beforeAll } from 'vite-plus/test';
 
 import { createApp, getFilepath, type Application } from '../../helper.js';
 

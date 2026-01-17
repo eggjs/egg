@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import type { SyncOptions, SyncResult } from 'execa';
 import { execaCommandSync } from 'execa';
-import { afterAll, afterEach, beforeAll, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, expect, test } from 'vite-plus/test';
 
 const SRC_PATH = path.join(import.meta.dirname, '../src');
 const CLI_PATH = path.join(SRC_PATH, 'cli.ts');
@@ -119,89 +119,87 @@ test.skipIf(isNode20)('successfully scaffolds a project based on tegg starter te
 });
 
 // FIXME: Command failed with exit code 1: pnpm 'test:local'
-test
-  .skipIf(process.platform === 'win32' || isNode20)
+test.skipIf(process.platform === 'win32' || isNode20)
   .skip('successfully scaffolds a project based on simple-ts starter template', () => {
-    const projectName = 'create-egg-test-simple-ts';
-    const { stdout } = run([projectName, '--template', 'simple-ts', '--overwrite'], {
-      cwd: tempDir,
-    });
-    const projectDir = path.join(tempDir, projectName);
-    const generatedFiles = fs.readdirSync(projectDir).sort();
-
-    // Assertions
-    expect(stdout).toContain(`Scaffolding project with`);
-    expect(generatedFiles).matchSnapshot();
-
-    // run test
-    const monoRepoDir = path.join(import.meta.dirname, '../../../');
-    const eggDir = path.join(monoRepoDir, 'packages/egg');
-    const mockDir = path.join(monoRepoDir, 'plugins/mock');
-    const binDir = path.join(monoRepoDir, 'tools/egg-bin');
-    const tracerDir = path.join(monoRepoDir, 'plugins/tracer');
-    execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir}`, {
-      cwd: projectDir,
-      env: { NODE_OPTIONS: undefined },
-    });
-    // execaCommandSync(`pnpm install`, { cwd: projectDir });
-    const { stdout: testStdout } = execaCommandSync('pnpm test:local', {
-      cwd: projectDir,
-      env: { NODE_OPTIONS: undefined },
-    });
-    expect(testStdout).toContain('2 passed');
-    // run typecheck
-    execaCommandSync('pnpm typecheck', {
-      cwd: projectDir,
-      env: { NODE_OPTIONS: undefined },
-    });
+  const projectName = 'create-egg-test-simple-ts';
+  const { stdout } = run([projectName, '--template', 'simple-ts', '--overwrite'], {
+    cwd: tempDir,
   });
+  const projectDir = path.join(tempDir, projectName);
+  const generatedFiles = fs.readdirSync(projectDir).sort();
+
+  // Assertions
+  expect(stdout).toContain(`Scaffolding project with`);
+  expect(generatedFiles).matchSnapshot();
+
+  // run test
+  const monoRepoDir = path.join(import.meta.dirname, '../../../');
+  const eggDir = path.join(monoRepoDir, 'packages/egg');
+  const mockDir = path.join(monoRepoDir, 'plugins/mock');
+  const binDir = path.join(monoRepoDir, 'tools/egg-bin');
+  const tracerDir = path.join(monoRepoDir, 'plugins/tracer');
+  execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir}`, {
+    cwd: projectDir,
+    env: { NODE_OPTIONS: undefined },
+  });
+  // execaCommandSync(`pnpm install`, { cwd: projectDir });
+  const { stdout: testStdout } = execaCommandSync('pnpm test:local', {
+    cwd: projectDir,
+    env: { NODE_OPTIONS: undefined },
+  });
+  expect(testStdout).toContain('2 passed');
+  // run typecheck
+  execaCommandSync('pnpm typecheck', {
+    cwd: projectDir,
+    env: { NODE_OPTIONS: undefined },
+  });
+});
 
 // use "@oxc-node/core/register" to support decorator metadata
 // TODO: unstable on windows and CI
-test
-  .skipIf(process.platform === 'win32' || process.env.CI || isNode20)
+test.skipIf(process.platform === 'win32' || process.env.CI || isNode20)
   .skip('successfully scaffolds a project based on tegg starter template', () => {
-    const projectName = 'create-egg-test-tegg';
-    const { stdout } = run([projectName, '--template', 'tegg', '--overwrite'], {
-      cwd: tempDir,
-    });
-    const projectDir = path.join(tempDir, projectName);
-    const generatedFiles = fs.readdirSync(projectDir).sort();
-
-    // Assertions
-    expect(stdout).toContain(`Scaffolding project with`);
-    expect(generatedFiles).matchSnapshot();
-
-    // run test
-    // const monoRepoDir = path.join(import.meta.dirname, '../../../');
-    // const eggDir = path.join(monoRepoDir, 'packages/egg');
-    // const teggDir = path.join(monoRepoDir, 'tegg');
-    // const mockDir = path.join(monoRepoDir, 'plugins/mock');
-    // const binDir = path.join(monoRepoDir, 'tools/egg-bin');
-    // const tracerDir = path.join(monoRepoDir, 'plugins/tracer');
-    execaCommandSync(`pnpm install`, {
-      cwd: projectDir,
-      stdout: 'inherit',
-      stderr: 'inherit',
-      env: { NODE_OPTIONS: undefined },
-    });
-    // execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir} ${teggDir}`, {
-    //   cwd: projectDir,
-    //   stdout: 'inherit',
-    //   stderr: 'inherit',
-    //   env: { NODE_OPTIONS: undefined }, // enable tegg plugins for test
-    // });
-    const { stdout: testStdout } = execaCommandSync('pnpm test:local', {
-      cwd: projectDir,
-      env: { NODE_OPTIONS: undefined, DISABLE_TEGG_PLUGINS: 'false' }, // enable tegg plugins for test
-    });
-    expect(testStdout).toContain('2 passed');
-    // run typecheck
-    execaCommandSync('pnpm typecheck', {
-      cwd: projectDir,
-      env: { NODE_OPTIONS: undefined },
-    });
+  const projectName = 'create-egg-test-tegg';
+  const { stdout } = run([projectName, '--template', 'tegg', '--overwrite'], {
+    cwd: tempDir,
   });
+  const projectDir = path.join(tempDir, projectName);
+  const generatedFiles = fs.readdirSync(projectDir).sort();
+
+  // Assertions
+  expect(stdout).toContain(`Scaffolding project with`);
+  expect(generatedFiles).matchSnapshot();
+
+  // run test
+  // const monoRepoDir = path.join(import.meta.dirname, '../../../');
+  // const eggDir = path.join(monoRepoDir, 'packages/egg');
+  // const teggDir = path.join(monoRepoDir, 'tegg');
+  // const mockDir = path.join(monoRepoDir, 'plugins/mock');
+  // const binDir = path.join(monoRepoDir, 'tools/egg-bin');
+  // const tracerDir = path.join(monoRepoDir, 'plugins/tracer');
+  execaCommandSync(`pnpm install`, {
+    cwd: projectDir,
+    stdout: 'inherit',
+    stderr: 'inherit',
+    env: { NODE_OPTIONS: undefined },
+  });
+  // execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir} ${teggDir}`, {
+  //   cwd: projectDir,
+  //   stdout: 'inherit',
+  //   stderr: 'inherit',
+  //   env: { NODE_OPTIONS: undefined }, // enable tegg plugins for test
+  // });
+  const { stdout: testStdout } = execaCommandSync('pnpm test:local', {
+    cwd: projectDir,
+    env: { NODE_OPTIONS: undefined, DISABLE_TEGG_PLUGINS: 'false' }, // enable tegg plugins for test
+  });
+  expect(testStdout).toContain('2 passed');
+  // run typecheck
+  execaCommandSync('pnpm typecheck', {
+    cwd: projectDir,
+    env: { NODE_OPTIONS: undefined },
+  });
+});
 
 test.skipIf(isNode20)('works with the -t alias', () => {
   const { stdout } = run([projectName, '-t', 'tegg', '--overwrite'], {

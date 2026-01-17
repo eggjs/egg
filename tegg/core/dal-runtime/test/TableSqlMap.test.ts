@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { TableModel } from '@eggjs/dal-decorator';
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { SqlMapLoader } from '../src/SqlMapLoader.ts';
 import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO.js';

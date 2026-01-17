@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { EggCore } from '../src/egg.ts';
 import { Lifecycle } from '../src/lifecycle.ts';

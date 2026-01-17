@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vite-plus/test';
 
 describe('test/jsonp.test.ts', () => {
   let app: MockApplication;

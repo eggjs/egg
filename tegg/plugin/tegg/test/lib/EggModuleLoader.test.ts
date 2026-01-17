@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
+
 // import { scheduler } from 'node:timers/promises';
 
 import { mm } from '@eggjs/mock';
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from 'vite-plus/test';
 
 import { getAppBaseDir } from '../utils.ts';
 

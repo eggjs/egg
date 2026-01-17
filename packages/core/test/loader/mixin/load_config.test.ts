@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import { mm } from 'mm';
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from 'vite-plus/test';
 
 import { EggCore } from '../../../src/index.js';
 import { createApp, getFilepath, type Application } from '../../helper.js';

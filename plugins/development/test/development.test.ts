@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { beforeAll, afterAll, it, describe, afterEach } from 'vitest';
+import { beforeAll, afterAll, it, describe, afterEach } from 'vite-plus/test';
 
 import { escape, getFilepath, DELAY } from './utils.ts';
 

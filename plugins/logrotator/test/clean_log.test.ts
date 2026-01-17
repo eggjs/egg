@@ -6,7 +6,7 @@ import { mm, type MockApplication } from '@eggjs/mock';
 import { FileTransport } from 'egg-logger';
 import { glob } from 'glob';
 import moment from 'moment';
-import { describe, it, beforeEach, afterEach, expect } from 'vitest';
+import { describe, it, beforeEach, afterEach, expect } from 'vite-plus/test';
 
 import { getFixtures } from './utils.ts';
 

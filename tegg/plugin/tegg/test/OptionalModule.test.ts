@@ -1,6 +1,6 @@
 import { mm, type MockApplication } from '@eggjs/mock';
 // import assert from 'node:assert/strict';
-import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
+import { describe, it, afterAll, afterEach, beforeAll } from 'vite-plus/test';
 
 import { getAppBaseDir } from './utils.ts';
 // import { RootProto } from './fixtures/apps/optional-module/app/modules/root/Root.js';

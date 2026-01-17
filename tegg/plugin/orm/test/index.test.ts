@@ -4,7 +4,7 @@ import path from 'node:path';
 import { mm, type MockApplication } from '@eggjs/mock';
 import type { Context } from 'egg';
 import Realm from 'leoric';
-import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vite-plus/test';
 
 import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService.ts';
 import { CtxService } from './fixtures/apps/orm-app/modules/orm-module/CtxService.ts';

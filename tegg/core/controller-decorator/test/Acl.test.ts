@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { ControllerType } from '@eggjs/tegg-types';
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { ControllerMetaBuilderFactory, HTTPControllerMeta } from '../src/index.js';
 import { AclController } from './fixtures/AclController.js';

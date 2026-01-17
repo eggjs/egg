@@ -5,7 +5,7 @@ import path from 'node:path';
 import { mm, type MockApplication } from '@eggjs/mock';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { beforeAll, afterAll, beforeEach, afterEach, describe, it } from 'vitest';
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it } from 'vite-plus/test';
 
 describe.skip('test/enable-pathToRegexpModule.test.ts', () => {
   let app: MockApplication;

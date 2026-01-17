@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import { describe, it, beforeEach } from 'vitest';
+import { describe, it, beforeEach } from 'vite-plus/test';
 
 import { BackgroundTaskHelper } from '../src/index.js';
 

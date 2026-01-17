@@ -6,7 +6,7 @@ import { mm, type MockApplication } from '@eggjs/mock';
 import { request } from '@eggjs/supertest';
 import { ip } from 'address';
 import urllib from 'urllib';
-import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
+import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vite-plus/test';
 
 import { cluster, getFilepath } from './utils.ts';
 

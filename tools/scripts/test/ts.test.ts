@@ -7,7 +7,7 @@ import coffee from 'coffee';
 import { detectPort } from 'detect-port';
 import { mm, restore } from 'mm';
 import { request } from 'urllib';
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vite-plus/test';
 
 import { isWindows } from '../src/helper.ts';
 import { cleanup, type Coffee } from './utils.ts';

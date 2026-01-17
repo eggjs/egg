@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vite-plus/test';
 
 import { CookieError, type CookieSetOptions } from '../src/index.ts';
 import Cookies from './cookies.ts';

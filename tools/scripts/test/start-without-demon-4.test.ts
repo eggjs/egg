@@ -7,7 +7,7 @@ import { detectPort } from 'detect-port';
 import { mm, restore } from 'mm';
 import { request } from 'urllib';
 import { exists } from 'utility';
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vite-plus/test';
 
 import { cleanup, replaceWeakRefMessage, type Coffee } from './utils.ts';
 

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { mm } from 'mm';
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from 'vite-plus/test';
 
 import { createApp, getFilepath, type Application } from '../helper.js';
 

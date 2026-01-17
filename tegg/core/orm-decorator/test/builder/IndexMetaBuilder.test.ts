@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { AttributeMetaBuilder, IndexMetaBuilder, IndexMeta } from '../../src/index.js';
 import { DefaultIndexModel } from '../fixtures/DefaultIndexModel.js';

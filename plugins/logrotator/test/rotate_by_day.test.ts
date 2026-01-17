@@ -6,7 +6,7 @@ import { scheduler } from 'node:timers/promises';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { glob } from 'glob';
 import moment from 'moment';
-import { describe, it, afterEach, afterAll, beforeAll, expect } from 'vitest';
+import { describe, it, afterEach, afterAll, beforeAll, expect } from 'vite-plus/test';
 
 import { getFixtures } from './utils.ts';
 

@@ -1,4 +1,4 @@
-import { describe, it, beforeAll, afterAll, expect } from 'vitest';
+import { describe, it, beforeAll, afterAll, expect } from 'vite-plus/test';
 
 import { type MockApplication, createApp } from '../../../utils.ts';
 

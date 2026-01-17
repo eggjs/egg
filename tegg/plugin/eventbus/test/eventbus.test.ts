@@ -1,7 +1,7 @@
 import { mm, type MockApplication } from '@eggjs/mock';
 import { type IEventContext } from '@eggjs/tegg';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
+import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vite-plus/test';
 
 import { HelloLogger } from './fixtures/apps/event-app/app/event-module/HelloLogger.ts';
 import { HelloService } from './fixtures/apps/event-app/app/event-module/HelloService.ts';

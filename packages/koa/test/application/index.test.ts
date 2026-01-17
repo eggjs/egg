@@ -4,7 +4,7 @@ import type { ServerResponse, IncomingMessage } from 'node:http';
 
 import { request } from '@eggjs/supertest';
 import createHttpError, { HttpError } from 'http-errors';
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import Koa from '../../src/index.ts';
 

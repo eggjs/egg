@@ -3,7 +3,7 @@ import path from 'node:path';
 import { mock, type MockApplication } from '@eggjs/mock';
 import { load } from 'cheerio';
 import { stripIndent } from 'common-tags';
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vite-plus/test';
 
 function getFixtures(name: string): string {
   return path.join(import.meta.dirname, '../fixtures', name);

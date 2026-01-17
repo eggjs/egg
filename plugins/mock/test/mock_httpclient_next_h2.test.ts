@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { Server, type AddressInfo } from 'node:net';
 
 import { request } from '@eggjs/supertest';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vite-plus/test';
 
 import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';

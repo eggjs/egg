@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from 'vite-plus/test';
 
 import mm from '../src/index.ts';
 import { formatOptions } from '../src/lib/format_options.ts';

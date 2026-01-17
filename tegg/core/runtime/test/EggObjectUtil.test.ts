@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import { mock } from 'node:test';
 
 import { EggPrototypeFactory } from '@eggjs/metadata';
-import { describe, beforeEach, afterEach, it } from 'vitest';
+import { describe, beforeEach, afterEach, it } from 'vite-plus/test';
 
 import { EggObjectUtil, ContextHandler } from '../src/index.js';
 import { EggTestContext } from './fixtures/EggTestContext.js';

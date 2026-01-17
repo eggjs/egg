@@ -2,7 +2,7 @@ import assert from 'node:assert';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { HttpClient } from 'urllib';
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from 'vite-plus/test';
 
 import { getFilepath, cluster } from './utils.ts';
 

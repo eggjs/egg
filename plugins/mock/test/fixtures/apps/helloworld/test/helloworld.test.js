@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import { app } from '../../../../../dist/esm/bootstrap.js';
 

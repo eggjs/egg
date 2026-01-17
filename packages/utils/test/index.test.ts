@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from 'vite-plus/test';
 
 import { detectType, EggType } from '../src/index.ts';
 import * as all from '../src/index.ts';

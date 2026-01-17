@@ -4,7 +4,7 @@ import type { ServerResponse } from 'node:http';
 import { runInNewContext } from 'node:vm';
 
 import { request } from '@eggjs/supertest';
-import { describe, it } from 'vitest';
+import { describe, it } from 'vite-plus/test';
 
 import Koa, { type Context } from '../../src/index.ts';
 import context from '../test-helpers/context.ts';
