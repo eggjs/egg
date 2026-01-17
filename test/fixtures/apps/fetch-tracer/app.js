@@ -1,5 +1,4 @@
 const assert = require('assert');
-const { AsyncLocalStorage } = require('async_hooks');
 
 const TRACE_ID = Symbol('TRACE_ID');
 const RPC_ID = Symbol('RPC_ID');
@@ -27,8 +26,6 @@ module.exports = class TracerApp {
     assert(app.config);
     // Expose Tracer class for testing
     app.Tracer = Tracer;
-    // Use AsyncLocalStorage for proper context isolation
-    app.ctxStorage = new AsyncLocalStorage();
   }
 
   configWillLoad() {
@@ -45,9 +42,7 @@ module.exports = class TracerApp {
       dispatch => {
         const app = this.app;
         return async function tracerInterceptor(opts, handler) {
-          // Use AsyncLocalStorage to get context instead of global variable
-          const ctx = app.ctxStorage.getStore() || app.currentContext;
-          const tracer = ctx?.tracer;
+          const tracer = app.currentContext?.tracer;
           let traceId;
           let rpcId;
 
