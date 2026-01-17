@@ -323,7 +323,7 @@ declare module 'egg' {
     allowH2?: boolean;
     /** Custom lookup function for DNS resolution */
     lookup?: LookupFunction;
-    interceptors?: Dispatcher.DispatcherComposeInterceptor[];
+    interceptors?: Parameters<Dispatcher['compose']>;
   }
   export interface EggAppConfig {
     workerStartTimeout: number;
