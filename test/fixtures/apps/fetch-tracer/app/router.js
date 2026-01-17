@@ -9,6 +9,11 @@ module.exports = app => {
     // Make a fetch request
     const response = await app.fetch(ctx.query.url);
 
+    const traceId = response.headers.get('x-trace-id');
+    if (traceId) ctx.set('x-trace-id', traceId);
+    const rpcId = response.headers.get('x-rpc-id');
+    if (rpcId) ctx.set('x-rpc-id', rpcId);
+
     ctx.body = {
       status: response.status,
       ok: response.ok,

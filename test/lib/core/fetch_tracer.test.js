@@ -8,13 +8,21 @@ describe('test/lib/core/fetch_tracer.test.js', () => {
 
   let app;
   let mockServer;
-  let receivedHeaders;
 
   before(async () => {
     // Create a mock server to capture headers
     mockServer = http.createServer((req, res) => {
-      receivedHeaders = req.headers;
-      res.writeHead(200, { 'Content-Type': 'application/json' });
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+      if (req.headers['x-trace-id']) {
+        headers['x-trace-id'] = req.headers['x-trace-id'];
+      }
+      if (req.headers['x-rpc-id']) {
+        headers['x-rpc-id'] = req.headers['x-rpc-id'];
+      }
+
+      res.writeHead(200, headers);
       res.end(JSON.stringify({ ok: true }));
     });
 
@@ -32,10 +40,6 @@ describe('test/lib/core/fetch_tracer.test.js', () => {
     }
   });
 
-  afterEach(() => {
-    receivedHeaders = null;
-  });
-
   it('should add tracer headers when fetch is called', async () => {
     const port = mockServer.address().port;
     const targetUrl = `http://127.0.0.1:${port}/mock`;
@@ -49,8 +53,8 @@ describe('test/lib/core/fetch_tracer.test.js', () => {
     assert.strictEqual(response.body.ok, true);
 
     // Verify tracer headers were added with incremented rpcId
-    assert.strictEqual(receivedHeaders['x-trace-id'], 'test-trace-id-123');
-    assert.strictEqual(receivedHeaders['x-rpc-id'], '0.1'); // rpcIdPlus increments from 0
+    assert.strictEqual(response.headers['x-trace-id'], 'test-trace-id-123');
+    assert.strictEqual(response.headers['x-rpc-id'], '0.1'); // rpcIdPlus increments from 0
   });
 
   it('should work when tracer is not set', async () => {
@@ -65,8 +69,8 @@ describe('test/lib/core/fetch_tracer.test.js', () => {
     assert.strictEqual(response.status, 200);
 
     // Verify no tracer headers when tracer is not set
-    assert.strictEqual(receivedHeaders['x-trace-id'], undefined);
-    assert.strictEqual(receivedHeaders['x-rpc-id'], undefined);
+    assert.strictEqual(response.headers.get('x-trace-id'), null);
+    assert.strictEqual(response.headers.get('x-rpc-id'), null);
   });
 
 
@@ -80,10 +84,9 @@ describe('test/lib/core/fetch_tracer.test.js', () => {
     app.currentContext = ctx;
 
     const response = await app.fetch(targetUrl);
-
     assert.strictEqual(response.status, 200);
-    assert.strictEqual(receivedHeaders['x-trace-id'], 'early-trace-id');
-    assert.strictEqual(receivedHeaders['x-rpc-id'], '0.1.1'); // rpcIdPlus increments from 0.1
+    assert.strictEqual(response.headers.get('x-trace-id'), 'early-trace-id');
+    assert.strictEqual(response.headers.get('x-rpc-id'), '0.1.1'); // rpcIdPlus increments from 0.1
   });
 
   it('should increment rpcId on multiple fetch calls', async () => {
@@ -96,18 +99,18 @@ describe('test/lib/core/fetch_tracer.test.js', () => {
     app.currentContext = ctx;
 
     // First fetch
-    await app.fetch(targetUrl);
-    assert.strictEqual(receivedHeaders['x-trace-id'], 'multi-trace-id');
-    assert.strictEqual(receivedHeaders['x-rpc-id'], '0.1');
+    let response = await app.fetch(targetUrl);
+    assert.strictEqual(response.headers.get('x-trace-id'), 'multi-trace-id');
+    assert.strictEqual(response.headers.get('x-rpc-id'), '0.1');
 
     // Second fetch
-    await app.fetch(targetUrl);
-    assert.strictEqual(receivedHeaders['x-trace-id'], 'multi-trace-id');
-    assert.strictEqual(receivedHeaders['x-rpc-id'], '0.2');
+    response = await app.fetch(targetUrl);
+    assert.strictEqual(response.headers.get('x-trace-id'), 'multi-trace-id');
+    assert.strictEqual(response.headers.get('x-rpc-id'), '0.2');
 
     // Third fetch
-    await app.fetch(targetUrl);
-    assert.strictEqual(receivedHeaders['x-trace-id'], 'multi-trace-id');
-    assert.strictEqual(receivedHeaders['x-rpc-id'], '0.3');
+    response = await app.fetch(targetUrl);
+    assert.strictEqual(response.headers.get('x-trace-id'), 'multi-trace-id');
+    assert.strictEqual(response.headers.get('x-rpc-id'), '0.3');
   });
 });
