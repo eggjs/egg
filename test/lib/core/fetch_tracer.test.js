@@ -58,12 +58,11 @@ describe('test/lib/core/fetch_tracer.test.js', () => {
   });
 
   it('should work when tracer is not set', async () => {
-    // Clear currentContext
-    app.currentContext = null;
-
+    // Test without tracer context
     const port = mockServer.address().port;
     const targetUrl = `http://127.0.0.1:${port}/mock`;
 
+    // Call fetch without any context
     const response = await app.fetch(targetUrl);
 
     assert.strictEqual(response.status, 200);
@@ -81,9 +80,10 @@ describe('test/lib/core/fetch_tracer.test.js', () => {
 
     const ctx = app.mockContext();
     ctx.tracer = new app.Tracer('early-trace-id', '0.1');
-    app.currentContext = ctx;
 
-    const response = await app.fetch(targetUrl);
+    const response = await app.ctxStorage.run(ctx, async () => {
+      return await app.fetch(targetUrl);
+    });
     assert.strictEqual(response.status, 200);
     assert.strictEqual(response.headers.get('x-trace-id'), 'early-trace-id');
     assert.strictEqual(response.headers.get('x-rpc-id'), '0.1.1'); // rpcIdPlus increments from 0.1
@@ -96,21 +96,22 @@ describe('test/lib/core/fetch_tracer.test.js', () => {
 
     const ctx = app.mockContext();
     ctx.tracer = new app.Tracer('multi-trace-id', '0');
-    app.currentContext = ctx;
 
-    // First fetch
-    let response = await app.fetch(targetUrl);
-    assert.strictEqual(response.headers.get('x-trace-id'), 'multi-trace-id');
-    assert.strictEqual(response.headers.get('x-rpc-id'), '0.1');
+    await app.ctxStorage.run(ctx, async () => {
+      // First fetch
+      let response = await app.fetch(targetUrl);
+      assert.strictEqual(response.headers.get('x-trace-id'), 'multi-trace-id');
+      assert.strictEqual(response.headers.get('x-rpc-id'), '0.1');
 
-    // Second fetch
-    response = await app.fetch(targetUrl);
-    assert.strictEqual(response.headers.get('x-trace-id'), 'multi-trace-id');
-    assert.strictEqual(response.headers.get('x-rpc-id'), '0.2');
+      // Second fetch
+      response = await app.fetch(targetUrl);
+      assert.strictEqual(response.headers.get('x-trace-id'), 'multi-trace-id');
+      assert.strictEqual(response.headers.get('x-rpc-id'), '0.2');
 
-    // Third fetch
-    response = await app.fetch(targetUrl);
-    assert.strictEqual(response.headers.get('x-trace-id'), 'multi-trace-id');
-    assert.strictEqual(response.headers.get('x-rpc-id'), '0.3');
+      // Third fetch
+      response = await app.fetch(targetUrl);
+      assert.strictEqual(response.headers.get('x-trace-id'), 'multi-trace-id');
+      assert.strictEqual(response.headers.get('x-rpc-id'), '0.3');
+    });
   });
 });
