@@ -295,6 +295,10 @@ declare module 'egg' {
     maxFreeSockets?: number;
   }
 
+  type Dispatcher = FetchFactory['getDispatcher'] extends () => infer R
+    ? R
+    : never;
+
   /** HttpClient config */
   export interface HttpClientConfig extends HttpClientBaseConfig {
     /** http.Agent */
@@ -319,8 +323,8 @@ declare module 'egg' {
     allowH2?: boolean;
     /** Custom lookup function for DNS resolution */
     lookup?: LookupFunction;
+    interceptors?: Parameters<Dispatcher['compose']>;
   }
-
   export interface EggAppConfig {
     workerStartTimeout: number;
     baseDir: string;
