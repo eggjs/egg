@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.34.0 (2026-01-18)
+
+* feat(core): support `config.httpclient.interceptors` for `fetch`/`safeFetch` tracer injection (#5771 ([fdfe958](https://github.com/eggjs/egg/commit/fdfe958)), closes [#5771](https://github.com/eggjs/egg/issues/5771)
+
 ## <small>3.33.1 (2026-01-16)</small>
 
 * fix: egg-mock for httpclient_next proxy (#5768) ([04cfa1b](https://github.com/eggjs/egg/commit/04cfa1b)), closes [#5768](https://github.com/eggjs/egg/issues/5768)
