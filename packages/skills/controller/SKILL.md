@@ -17,22 +17,26 @@ allowed-tools: Read
 
 2. 定时任务，可以使用 Schedule，参考 `references/schedule.md`
 
-3. AI集成 MCP，可以使用 MCPController，参考 `refercens/mcp-controller.md`
+3. AI集成 MCP，可以使用 MCPController，参考 `references/mcp-controller.md`
 ```
+
 ---
 
 ## 控制器快速参考
 
 ### HTTPController
+
 - **装饰器**：`@HTTPController`、`@HTTPMethod`
 - **参数**：`@HTTPParam`、`@HTTPQuery`、`@HTTPBody`、`@HTTPHeaders`、`@Cookies`、`@Request`、`@Context`
 - **详细文档**：`references/httpcontroller.md`
 
 ### MCPController
+
 - **装饰器**：`@MCPController`、`@MCPTool`、`@MCPPrompt`、`@MCPResource`
 - **特点**：集成 LLM、Zod 验证、登录态支持
 
 ### Schedule
+
 - **装饰器**：`@Schedule<T>`、配置
 - **模式**：Worker/All
 
@@ -51,6 +55,7 @@ allowed-tools: Read
 ## 参考资料
 
 详细的控制器开发文档：
+
 - `references/http-controller.md` - HTTP 接口完整指南
 - `references/mcp-controller.md` - MCP/LLM 集成
 - `references/schedule.md` - 定时任务
