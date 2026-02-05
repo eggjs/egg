@@ -1,6 +1,6 @@
 ---
 name: egg-controller
-description: Use when creating API endpoints, implementing protocol handlers, or exposing interfaces for specific clients. Covers HTTP, MCP and Schedule controllers for EGG framework applications.
+description: Use when creating API endpoints, implementing protocol handlers, or exposing interfaces for specific clients. Covers HTTP, MCP, Schedule and Message controllers for EGG framework applications.
 allowed-tools: Read
 ---
 
@@ -18,6 +18,8 @@ allowed-tools: Read
 2. 定时任务，可以使用 Schedule，参考 `references/schedule.md`
 
 3. AI集成 MCP，可以使用 MCPController，参考 `references/mcp-controller.md`
+
+4. 消息订阅（sofamq/sofamqx/msgbroker），可以使用 MessageController，参考 `references/message-controller.md`
 ```
 
 ---
@@ -40,6 +42,13 @@ allowed-tools: Read
 - **装饰器**：`@Schedule<T>`、配置
 - **模式**：Worker/All
 
+### MessageController
+
+- **装饰器**：`@MessageController`、`@MessageMethod`
+- **参数**：MessageRequest（消息元数据）
+- **特点**：支持 sofamq/sofamqx/msgbroker 三种消息类型
+- **详细文档**：`references/message-controller.md`
+
 ---
 
 ## 最佳实践
@@ -59,5 +68,6 @@ allowed-tools: Read
 - `references/http-controller.md` - HTTP 接口完整指南
 - `references/mcp-controller.md` - MCP/LLM 集成
 - `references/schedule.md` - 定时任务
+- `references/message-controller.md` - 消息订阅
 
 核心概念（@eggjs/skills-core）：模块、依赖注入、对象生命周期
