@@ -35,9 +35,17 @@
       "./package.json": "./package.json"
     }
   },
-  "scripts": {},
+  "scripts": {
+    "test": "vitest run eval/static/",
+    "eval": "vitest run eval/dynamic/",
+    "eval:routing": "vitest run eval/dynamic/routing.eval.ts",
+    "eval:quality": "vitest run eval/dynamic/quality.eval.ts"
+  },
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "gray-matter": "^4.0.3",
+    "vitest": "catalog:"
+  },
   "engines": {
     "node": ">=22.18.0"
   }
