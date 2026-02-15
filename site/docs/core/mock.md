@@ -93,7 +93,7 @@ const { app, mm } = require('egg-mock/bootstrap');
 
 // or
 const mock = require('@eggjs/mock');
-mock(mmTarget, 'prop', value);
+mock(target, 'prop', value);
 mock.restore();
 ```
 
