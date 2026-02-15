@@ -247,6 +247,8 @@ minimumReleaseAgeExclude:
   - oxlint
   - oxc-minify
   - import-without-cache
+  # Renovate security update: body-parser@2.2.1
+  - body-parser@2.2.1
 
 overrides:
   vite: npm:rolldown-vite@^7.1.13
