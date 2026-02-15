@@ -4,7 +4,7 @@ title: Mock Helpers ( @eggjs/mock / mm )
 
 Egg provides a dedicated mocking helper package for application unit tests: **`@eggjs/mock`** (historically known as **egg-mock**).
 
-- Repository (Egg 3.x): https://github.com/eggjs/mock/tree/4.x
+- Repository (Egg 3.x / egg-mock@5.x, peerDependencies.egg: ^3.12.0): https://github.com/eggjs/mock/tree/5.x
 - API reference: see README in the repo.
 
 `@eggjs/mock` is built on top of **`mm`** (Mock Mate), which provides low-level monkey-patching utilities.

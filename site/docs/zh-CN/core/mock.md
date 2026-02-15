@@ -4,7 +4,7 @@ title: 测试 Mock 工具（@eggjs/mock / mm）
 
 Egg 为应用单元测试抽取了专门的 Mock 辅助包：**`@eggjs/mock`**（历史上也常被称为 **egg-mock**）。
 
-- 仓库（Egg 3.x）：https://github.com/eggjs/mock/tree/4.x
+- 仓库（Egg 3.x）：https://github.com/eggjs/mock/tree/5.x
 - API 说明：请以仓库 README 为准。
 
 `@eggjs/mock` 底层基于 **`mm`**（Mock Mate），提供更通用的打桩/猴子补丁能力。
