@@ -124,7 +124,10 @@ npm test
 
 我们可能还需要模拟各种网络异常、服务访问异常等特殊情况。
 
-因此我们单独为框架抽取了一个测试 mock 辅助模块：[egg-mock](https://github.com/eggjs/egg-mock)，有了它我们就可以非常快速地编写一个 app 的单元测试，并且还能快速创建一个 ctx 来测试它的属性、方法和 Service 等。
+因此我们单独为框架抽取了一个测试 mock 辅助模块：**`@eggjs/mock`**（历史上也常被称为 egg-mock）。有了它我们就可以非常快速地编写应用单元测试，并且还能快速创建 ctx 来测试属性、方法和 Service 等。
+
+- 仓库（Egg 3.x）：https://github.com/eggjs/mock/tree/4.x
+- 也可以参考：[测试 Mock 工具（@eggjs/mock / mm）](./mock.md)
 
 ### app
 

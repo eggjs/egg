@@ -8,6 +8,7 @@ nav:
 
 - [Local Development](./development.md)
 - [Unit Testing](./unittest.md)
+- [Mock Helpers (@eggjs/mock / mm)](./mock.md)
 - [Deployment](./deployment.md)
 - [Logger](./logger.md)
 - [HttpClient](./httpclient.md)
