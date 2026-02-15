@@ -125,7 +125,10 @@ This chapter introduces you how to write test, and introduction of tests for the
 
 Generally, a complete application test requires initialization and cleanup, such as deleting temporary files or destroy application. Also, we have to deal with exceptional situations like network problem and exception visit of server.
 
-We extracted an [egg-mock](https://github.com/eggjs/egg-mock)module for mock, help for quick implementation of application unit tests, supporting fast creation of ctx to test.
+We extracted a dedicated mocking helper package: **`@eggjs/mock`** (historically called **egg-mock**), to help implement application unit tests quickly and to create contexts easily.
+
+- Repo (Egg 3.x): https://github.com/eggjs/mock/tree/4.x
+- See also: [Mock Helpers (@eggjs/mock / mm)](./mock.md)
 
 ### app
 

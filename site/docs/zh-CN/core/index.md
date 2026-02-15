@@ -2,6 +2,7 @@
 
 - [本地开发](./development.md)
 - [单元测试](./unittest.md)
+- [测试 Mock 工具（@eggjs/mock / mm）](./mock.md)
 - [应用部署](./deployment.md)
 - [日志](./logger.md)
 - [HttpClient](./httpclient.md)
