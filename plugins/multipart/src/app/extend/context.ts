@@ -6,8 +6,7 @@ import path from 'node:path';
 import { Readable, PassThrough } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
-// @ts-expect-error no types
-import parse from 'co-busboy';
+import { parse, type Part } from '@eggjs/co-busboy';
 import dayjs from 'dayjs';
 import { Context } from 'egg';
 
@@ -120,7 +119,7 @@ export default class MultipartContext extends Context {
     // mount asyncIterator, so we can use `for await` to get parts
     const parts = parse(this, parseOptions);
     parts[Symbol.asyncIterator] = async function* () {
-      let part: MultipartFileStream | undefined;
+      let part: Part | null;
       do {
         part = await parts();
 
@@ -157,10 +156,10 @@ export default class MultipartContext extends Context {
         }
 
         // dispatch part to outter logic such as for-await-of
-        yield part;
-      } while (part !== undefined);
+        yield part as MultipartFileStream;
+      } while (part !== null);
     };
-    return parts;
+    return parts as unknown as AsyncIterable<MultipartFileStream>;
   }
 
   /**

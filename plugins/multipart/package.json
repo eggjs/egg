@@ -59,9 +59,9 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
+    "@eggjs/co-busboy": "workspace:*",
     "@eggjs/path-matching": "workspace:*",
     "bytes": "catalog:",
-    "co-busboy": "catalog:",
     "dayjs": "catalog:"
   },
   "devDependencies": {

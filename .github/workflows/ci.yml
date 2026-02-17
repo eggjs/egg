@@ -158,8 +158,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run tests
-        run: pnpm run ci --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run tests with coverage
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: pnpm run test:cov --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+      - name: Run tests without coverage
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: pnpm run test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
       - name: Run example tests
         if: ${{ matrix.node != '20' && matrix.os != 'windows-latest' }}

@@ -33,6 +33,9 @@ catalogs:
     '@types/body-parser':
       specifier: ^1.19.5
       version: 1.19.6
+    '@types/busboy':
+      specifier: ^1.5.4
+      version: 1.5.4
     '@types/bytes':
       specifier: ^3.1.5
       version: 3.1.5
@@ -189,9 +192,15 @@ catalogs:
     benchmark:
       specifier: ^2.1.4
       version: 2.1.4
+    black-hole-stream:
+      specifier: ^0.0.1
+      version: 0.0.1
     body-parser:
       specifier: ^2.0.0
       version: 2.2.0
+    busboy:
+      specifier: ^1.6.0
+      version: 1.6.0
     bytes:
       specifier: ^3.1.2
       version: 3.1.2
@@ -222,9 +231,6 @@ catalogs:
     cluster-reload:
       specifier: ^2.0.0
       version: 2.0.0
-    co-busboy:
-      specifier: ^2.0.1
-      version: 2.0.2
     coffee:
       specifier: '5'
       version: 5.5.1
@@ -339,6 +345,9 @@ catalogs:
     husky:
       specifier: ^9.1.7
       version: 9.1.7
+    inflation:
+      specifier: ^2.1.0
+      version: 2.1.0
     inflection:
       specifier: ^3.0.0
       version: 3.0.2
@@ -808,6 +817,31 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
+
+  packages/co-busboy:
+    dependencies:
+      black-hole-stream:
+        specifier: 'catalog:'
+        version: 0.0.1
+      busboy:
+        specifier: 'catalog:'
+        version: 1.6.0
+      inflation:
+        specifier: 'catalog:'
+        version: 2.1.0
+    devDependencies:
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@types/busboy':
+        specifier: 'catalog:'
+        version: 1.5.4
+      formstream:
+        specifier: 'catalog:'
+        version: 1.5.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
   packages/cookies:
     dependencies:
@@ -1571,15 +1605,15 @@ importers:
 
   plugins/multipart:
     dependencies:
+      '@eggjs/co-busboy':
+        specifier: workspace:*
+        version: link:../../packages/co-busboy
       '@eggjs/path-matching':
         specifier: workspace:*
         version: link:../../packages/path-matching
       bytes:
         specifier: 'catalog:'
         version: 3.1.2
-      co-busboy:
-        specifier: 'catalog:'
-        version: 2.0.2
       dayjs:
         specifier: 'catalog:'
         version: 1.11.18
@@ -4706,6 +4740,9 @@ packages:
   '@types/body-parser@1.19.6':
     resolution: {integrity: sha512-HLFeCYgz89uk22N5Qg3dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g==}
 
+  '@types/busboy@1.5.4':
+    resolution: {integrity: sha512-kG7WrUuAKK0NoyxfQHsVE6j1m01s6kMma64E+OZenQABMQyTJop1DumUWcLwAQ2JzpefU7PDYoRDKl8uZosFjw==}
+
   '@types/bytes@3.1.5':
     resolution: {integrity: sha512-VgZkrJckypj85YxEsEavcMmmSOIzkUHqWmM4CCyia5dc54YwsXzJ5uT4fYxBQNEXx+oF1krlhgCbvfubXqZYsQ==}
 
@@ -5462,9 +5499,6 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
-  chan@0.6.1:
-    resolution: {integrity: sha512-/TdBP2UhbBmw7qnqkzo9Mk4rzvwRv4dlNPXFerqWy90T8oBspKagJNZxrDbExKHhx9uXXHjo3f9mHgs9iKO3nQ==}
-
   change-case@3.1.0:
     resolution: {integrity: sha512-2AZp7uJZbYEzRPsFoa+ijKdvp9zsrnnt6+yFokfwEpeJm0xuJDVoxiRCAaTzyJND8GJkofo2IcKWaUZ/OECVzw==}
 
@@ -5568,10 +5602,6 @@ packages:
   co-body@6.2.0:
     resolution: {integrity: sha512-Kbpv2Yd1NdL1V/V4cwLVxraHDV6K8ayohr2rmH0J87Er8+zJjcTa6dAn9QMPC9CRgU8+aNajKbSf1TzDB1yKPA==}
     engines: {node: '>=8.0.0'}
-
-  co-busboy@2.0.2:
-    resolution: {integrity: sha512-xntc6PdplMQ9M92T5aKWRu8OBh4CbQcLHPnf2K3c+rD2xhAJcIjC5liblUquxDGTErsnHadMOsCcd6xhnpPAFA==}
-    engines: {node: '>= 14.0.0'}
 
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
@@ -10114,6 +10144,10 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/node': 24.10.2
 
+  '@types/busboy@1.5.4':
+    dependencies:
+      '@types/node': 24.10.2
+
   '@types/bytes@3.1.5': {}
 
   '@types/chai@5.2.3':
@@ -10923,8 +10957,6 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
-  chan@0.6.1: {}
-
   change-case@3.1.0:
     dependencies:
       camel-case: 3.0.0
@@ -11069,13 +11101,6 @@ snapshots:
       qs: 6.14.0
       raw-body: 2.5.2
       type-is: 1.6.18
-
-  co-busboy@2.0.2:
-    dependencies:
-      black-hole-stream: 0.0.1
-      busboy: 1.6.0
-      chan: 0.6.1
-      inflation: 2.1.0
 
   co@4.6.0: {}
 

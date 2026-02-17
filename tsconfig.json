@@ -33,6 +33,9 @@
       "path": "./packages/cluster"
     },
     {
+      "path": "./packages/co-busboy"
+    },
+    {
       "path": "./packages/koa"
     },
     {
