@@ -1,0 +1,87 @@
+{
+  "name": "@eggjs/mcp-proxy-plugin",
+  "version": "4.0.0-beta.36",
+  "description": "tegg mcp proxy plugin",
+  "keywords": [
+    "egg",
+    "mcp",
+    "plugin",
+    "tegg",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/mcp-proxy",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/plugin/mcp-proxy"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./agent": "./src/agent.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./agent": "./dist/agent.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/controller-plugin": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "await-event": "catalog:",
+    "cluster-client": "^3.7.0",
+    "content-type": "^1.0.5",
+    "eventsource-parser": "^3.0.1",
+    "koa-compose": "catalog:",
+    "raw-body": "^2.5.2",
+    "sdk-base": "catalog:",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@eggjs/aop-runtime": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "eventsource": "^3.0.5",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "mcpProxy"
+  },
+  "eggPlugin": {
+    "name": "mcpProxy",
+    "dependencies": [
+      "tegg"
+    ]
+  }
+}

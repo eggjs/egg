@@ -1,0 +1,7 @@
+{
+  "name": "langchain",
+  "type": "module",
+  "eggModule": {
+    "name": "langchain"
+  }
+}

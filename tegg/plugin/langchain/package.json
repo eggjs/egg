@@ -1,0 +1,97 @@
+{
+  "name": "@eggjs/langchain-plugin",
+  "version": "4.0.0-beta.36",
+  "description": "langchain for egg",
+  "keywords": [
+    "egg",
+    "langchain",
+    "module",
+    "plugin",
+    "tegg",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/langchain",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/plugin/langchain"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/langchain-decorator": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/mcp-client": "workspace:*",
+    "@eggjs/mcp-client-plugin": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
+    "@eggjs/module-common": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "@langchain/community": "^1.0.0",
+    "@langchain/core": "^1.1.1",
+    "@langchain/langgraph": "^1.0.2",
+    "@langchain/mcp-adapters": "^1.0.0",
+    "@langchain/openai": "^1.0.0",
+    "koa-compose": "catalog:",
+    "langchain": "^1.1.2",
+    "sdk-base": "catalog:",
+    "urllib": "catalog:",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@eggjs/controller-plugin": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/module-test-util": "workspace:*",
+    "@eggjs/router": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@eggjs/tracer": "workspace:*",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "teggLangChain"
+  },
+  "eggPlugin": {
+    "name": "teggLangChain",
+    "dependencies": [
+      "tegg"
+    ]
+  }
+}

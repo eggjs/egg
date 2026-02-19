@@ -1,0 +1,62 @@
+{
+  "name": "@eggjs/tegg-vitest",
+  "version": "4.0.0-beta.36",
+  "description": "Vitest adapter for tegg context injection",
+  "keywords": [
+    "adapter",
+    "egg",
+    "tegg",
+    "test",
+    "vitest"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/vitest",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "killagu <killa123@126.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/core/vitest"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./runner": "./src/runner.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./runner": "./dist/runner.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/mock": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/core-decorator": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

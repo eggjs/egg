@@ -1,5 +1,7 @@
+import assert from 'node:assert';
+
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/controller-decorator';
-import type { LoadUnitLifecycleContext } from '@eggjs/metadata';
+import { GlobalGraph, type LoadUnitLifecycleContext } from '@eggjs/metadata';
 import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
 import type { Application, ILifecycleBoot } from 'egg';
 
@@ -11,6 +13,8 @@ import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';
 import { EggControllerLoader } from './lib/EggControllerLoader.ts';
 import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook.ts';
 import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.ts';
+import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister.ts';
+import { middlewareGraphHook } from './lib/MiddlewareGraphHook.ts';
 import { RootProtoManager } from './lib/RootProtoManager.ts';
 
 // Load Controller process
@@ -61,8 +65,58 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       },
     );
 
+    if (this.app.config.security?.csrf !== void 0) {
+      assert(
+        typeof this.app.config.security.csrf === 'boolean' || typeof this.app.config.security.csrf === 'object',
+        'csrf must be boolean or object',
+      );
+
+      if (typeof this.app.config.security.csrf === 'boolean') {
+        (this.app.config.security as any).csrf = {
+          enable: this.app.config.security.csrf,
+        };
+      }
+    }
+
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
+    if (this.mcpEnable()) {
+      this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, MCPControllerRegister.create);
+      // Don't let the mcp's body be consumed
+      this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
+
+      if (this.app.config.security.csrf.ignore) {
+        if (Array.isArray(this.app.config.security.csrf.ignore)) {
+          this.app.config.security.csrf.ignore = [
+            /^\/mcp\//,
+            this.app.config.mcp.sseInitPath,
+            this.app.config.mcp.sseMessagePath,
+            this.app.config.mcp.streamPath,
+            this.app.config.mcp.statelessStreamPath,
+            ...(Array.isArray(this.app.config.security.csrf.ignore)
+              ? this.app.config.security.csrf.ignore
+              : [this.app.config.security.csrf.ignore]),
+          ];
+        }
+      } else {
+        this.app.config.security.csrf.ignore = [
+          /^\/mcp\//,
+          this.app.config.mcp.sseInitPath,
+          this.app.config.mcp.sseMessagePath,
+          this.app.config.mcp.streamPath,
+          this.app.config.mcp.statelessStreamPath,
+        ];
+      }
+
+      if (this.app.config.mcp.multipleServer) {
+        for (const name of Object.keys(this.app.config.mcp.multipleServer)) {
+          ['sseInitPath', 'sseMessagePath', 'streamPath', 'statelessStreamPath'].forEach((key) => {
+            if (this.app.config.mcp.multipleServer[name][key])
+              (this.app.config.security.csrf.ignore as any[]).push(this.app.config.mcp.multipleServer[name][key]);
+          });
+        }
+      }
+    }
   }
 
   prepareMiddleware(middlewareNames: string[]): string[] {
@@ -85,6 +139,28 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     // The HTTPControllerRegister will collect all the methods
     // and register methods after collect is done.
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
+
+    this.app.config.mcp.hooks = MCPControllerRegister.hooks;
+  }
+
+  configDidLoad(): void {
+    GlobalGraph.instance?.registerBuildHook(middlewareGraphHook);
+  }
+
+  async willReady(): Promise<void> {
+    if (this.mcpEnable()) {
+      await MCPControllerRegister.connectStatelessStreamTransport();
+      const names = MCPControllerRegister.instance?.mcpConfig.getMultipleServerNames();
+      if (names && names.length > 0) {
+        for (const name of names) {
+          await MCPControllerRegister.connectStatelessStreamTransport(name);
+        }
+      }
+    }
+  }
+
+  mcpEnable(): boolean {
+    return !!this.app.plugins.mcpProxy?.enable;
   }
 
   async beforeClose(): Promise<void> {
@@ -95,5 +171,6 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
     ControllerMetadataManager.instance.clear();
     HTTPControllerRegister.clean();
+    MCPControllerRegister.clean();
   }
 }

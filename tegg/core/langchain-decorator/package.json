@@ -1,0 +1,65 @@
+{
+  "name": "@eggjs/langchain-decorator",
+  "version": "4.0.0-beta.36",
+  "description": "tegg langchain decorator",
+  "keywords": [
+    "egg",
+    "langchain",
+    "tegg",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/langchain-decorator",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "akitaSummer <akitasummer@outlook.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/core/langchain-decorator"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "@langchain/community": "^1.0.5",
+    "@langchain/core": "^1.1.1",
+    "@langchain/langgraph": "^1.0.2",
+    "@langchain/openai": "^1.1.0",
+    "langchain": "^1.1.2",
+    "lodash": "catalog:",
+    "pluralize": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/controller-decorator": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zod": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

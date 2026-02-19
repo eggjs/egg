@@ -12,6 +12,7 @@ import {
 } from '@eggjs/controller-decorator';
 import type { EggPrototype } from '@eggjs/metadata';
 import { EggRouter } from '@eggjs/router';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import type { Router, MiddlewareFunc } from 'egg';
 import { FrameworkErrorFormater } from 'egg-errors';
@@ -55,6 +56,7 @@ export class HTTPMethodRegister {
     const hasContext = methodMeta.contextParamIndex !== undefined;
     const contextIndex = methodMeta.contextParamIndex;
     const methodArgsLength = argsLength + (hasContext ? 1 : 0);
+    const timeout = this.controllerMeta.getMethodTimeout(methodMeta);
     // oxlint-disable-next-line no-this-alias
     const methodRegister = this;
     return async function (ctx, next) {
@@ -113,7 +115,17 @@ export class HTTPMethodRegister {
             assert.fail('never arrive');
         }
       }
-      const body = await Reflect.apply(realMethod, realObj, args);
+      let body: unknown;
+      try {
+        body = await TimerUtil.timeout<unknown>(() => Reflect.apply(realMethod, realObj, args), timeout);
+      } catch (e: any) {
+        if (e instanceof TimerUtil.TimeoutError) {
+          ctx.logger.error(`timeout after ${timeout}ms`);
+          ctx.throw(500, 'timeout');
+        }
+        throw e;
+      }
+
       // https://github.com/koajs/koa/blob/master/lib/response.js#L88
       // ctx.status is set
       const explicitStatus = ctx.response._explicitStatus;

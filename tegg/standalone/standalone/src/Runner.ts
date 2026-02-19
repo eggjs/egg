@@ -109,6 +109,11 @@ export class Runner {
         },
       ],
       moduleConfig: [],
+      mysqlDataSourceManager: [
+        {
+          obj: MysqlDataSourceManager.instance,
+        },
+      ],
     };
 
     const runtimeConfig: Partial<RuntimeConfig> = {

@@ -1,0 +1,80 @@
+{
+  "name": "@eggjs/mcp-client-plugin",
+  "version": "4.0.0-beta.36",
+  "description": "mcp client for egg",
+  "keywords": [
+    "egg",
+    "mcp",
+    "module",
+    "plugin",
+    "tegg",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/mcp-client",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/plugin/mcp-client"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/mcp-client": "workspace:*",
+    "@eggjs/module-common": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "sdk-base": "catalog:",
+    "urllib": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/controller-plugin": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "typescript": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "teggMcpClient"
+  },
+  "eggPlugin": {
+    "name": "teggMcpClient",
+    "dependencies": [
+      "tegg"
+    ]
+  }
+}
