@@ -13,8 +13,8 @@ catalogs:
       specifier: ^2.1.0
       version: 2.1.0
     '@eggjs/rds':
-      specifier: ^1.3.0
-      version: 1.3.0
+      specifier: ^1.5.0
+      version: 1.5.0
     '@fengmk2/ps-tree':
       specifier: ^2.0.1
       version: 2.0.2
@@ -2186,7 +2186,7 @@ importers:
         version: link:../core-decorator
       '@eggjs/rds':
         specifier: 'catalog:'
-        version: 1.3.0
+        version: 1.5.0
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
@@ -2223,7 +2223,7 @@ importers:
         version: link:../dal-decorator
       '@eggjs/rds':
         specifier: 'catalog:'
-        version: 1.3.0
+        version: 1.5.0
       '@eggjs/tegg-loader':
         specifier: workspace:*
         version: link:../loader
@@ -3751,8 +3751,8 @@ packages:
     resolution: {integrity: sha512-jOsufOpySKBld+N1GG8IAW9EEQNmQ6bDaBnrRlYFk6AspoxG8gAzXSW93ZFfEPwscS5rL7UbDUKyIHUkmkTPyw==}
     engines: {node: '>= 14.0.0'}
 
-  '@eggjs/rds@1.3.0':
-    resolution: {integrity: sha512-MshrDFuP18G30Zt1U0NcxHFmFEfi6LDXOUDAJ5Qvf4rn6PDzZ8U0kvp/C8tHeWA2RK3rIDGRqWlqvAzwwdGpFA==}
+  '@eggjs/rds@1.5.0':
+    resolution: {integrity: sha512-RFgiEzAJhHbNTFo1s47VnlAgZvoW7f88/+KWsgGS8N+ES9Z9i30X/cxjva1BLm3ROg07nxYx98tr2RLWu30Pnw==}
     engines: {node: '>= 16.17.0'}
 
   '@emnapi/core@1.7.1':
@@ -9762,9 +9762,10 @@ snapshots:
 
   '@eggjs/ip@2.1.0': {}
 
-  '@eggjs/rds@1.3.0':
+  '@eggjs/rds@1.5.0':
     dependencies:
       mysql2: 3.15.2
+      onelogger: 1.0.1
       sqlstring: 2.3.3
 
   '@emnapi/core@1.7.1':
