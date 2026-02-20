@@ -129,9 +129,9 @@ export class Runner {
     ];
 
     // load module.yml and module.env.yml by default
-    if (!ModuleConfigUtil.configNames) {
-      ModuleConfigUtil.configNames = ['module.default', `module.${this.env}`];
-    }
+    // Always set configNames for this runner invocation, since destroy() clears it
+    // asynchronously and may not have completed before the next Runner is created.
+    ModuleConfigUtil.configNames = ['module.default', `module.${this.env}`];
     for (const reference of this.moduleReferences) {
       const absoluteRef = {
         path: ModuleConfigUtil.resolveModuleDir(reference.path, this.cwd),

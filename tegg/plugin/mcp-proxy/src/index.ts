@@ -21,8 +21,6 @@ import { EventSourceParserStream } from 'eventsource-parser/stream';
 // @ts-expect-error koa-compose is not typed
 import compose from 'koa-compose';
 import getRawBody from 'raw-body';
-// @ts-expect-error undici types incompatible
-import { fetch } from 'undici';
 
 import { MCPProxyDataClient } from './lib/MCPProxyDataClient.ts';
 
@@ -239,7 +237,7 @@ export class MCPProxyApiClient extends APIClientBase {
     this.isAgent = !!options.isAgent;
   }
 
-  async _init() {
+  async _init(): Promise<void> {
     if (!this.isAgent) {
       const validProxyActions = new Set<string>(['MCP_STDIO_PROXY', 'MCP_SEE_PROXY', 'MCP_STREAM_PROXY']);
       const server = http.createServer(async (req, res) => {
@@ -271,7 +269,7 @@ export class MCPProxyApiClient extends APIClientBase {
   setProxyHandler(
     type: MCPProtocols,
     handler: StreamableHTTPServerTransport['handleRequest'] | SSEServerTransport['handlePostMessage'],
-  ) {
+  ): void {
     let action: ProxyAction;
     switch (type) {
       case MCPProtocols.SSE:
@@ -435,7 +433,7 @@ export class MCPProxyApiClient extends APIClientBase {
     }
   }
 
-  handleSseStream(ctx: Context, stream: ReadableStream<any>) {
+  handleSseStream(ctx: Context, stream: ReadableStream<any>): void {
     const processStream = async () => {
       try {
         const reader = stream
@@ -473,7 +471,7 @@ export class MCPProxyApiClient extends APIClientBase {
     processStream();
   }
 
-  get delegates() {
+  get delegates(): Record<string, string> {
     return {
       registerClient: 'invoke',
       unregisterClient: 'invoke',
@@ -481,11 +479,11 @@ export class MCPProxyApiClient extends APIClientBase {
     };
   }
 
-  get DataClient() {
+  get DataClient(): typeof MCPProxyDataClient {
     return MCPProxyDataClient;
   }
 
-  get clusterOptions() {
+  get clusterOptions(): { name: string } {
     return {
       name: 'MCPProxy',
     };

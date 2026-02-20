@@ -93,6 +93,7 @@ exports[`should helper exports stable 1`] = `
   "ProtoNode": [Function],
   "ProxyUtil": [Function],
   "StackUtil": [Function],
+  "StreamUtil": [Function],
   "TeggError": [Function],
   "TimerUtil": [Function],
 }

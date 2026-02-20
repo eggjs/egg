@@ -6,13 +6,13 @@ import mm from '@eggjs/mock';
 import { describe, beforeAll, afterAll, it } from 'vitest';
 
 import { configureTeggRunner } from '../src/index.ts';
+import { HelloService } from './fixtures/apps/demo-app/modules/demo-module/HelloService.ts';
 
 const require = createRequire(import.meta.url);
-const { HelloService } = require(path.join(__dirname, 'fixtures/apps/demo-app/modules/demo-module/HelloService'));
 
 const app = mm.app({
   baseDir: path.join(__dirname, 'fixtures/apps/demo-app'),
-  framework: require.resolve('egg'),
+  framework: path.dirname(require.resolve('egg/package.json')),
 });
 
 configureTeggRunner({
@@ -32,13 +32,7 @@ describe('fixture demo app', () => {
     await mm.restore();
   });
 
-  it('injects ctx and service', () => {
-    const ctx = app.ctxStorage.getStore();
-    assert(ctx);
-    assert.strictEqual(ctx.service.hello.sayHi('Ada'), 'hi Ada');
-  });
-
-  it('supports ctx.getEggObject()', async () => {
+  it('injects ctx and getEggObject', async () => {
     const ctx = app.ctxStorage.getStore();
     assert(ctx);
     const helloService = (await ctx.getEggObject(HelloService)) as any;

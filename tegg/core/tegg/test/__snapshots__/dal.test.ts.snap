@@ -61,8 +61,11 @@ exports[`should dal exports stable 1`] = `
   "DAL_IS_DAO": Symbol(EggPrototype#dalIsDao),
   "DAL_IS_TABLE": Symbol(EggPrototype#dalIsTable),
   "DAL_TABLE_PARAMS": Symbol(EggPrototype#dalTableParams),
+  "DalModuleLoadUnitHook": [Function],
+  "DalTableEggPrototypeHook": [Function],
   "Dao": [Function],
   "DaoInfoUtil": [Function],
+  "DataSourceDelegate": [Function],
   "DataSourceInjectName": "dataSource",
   "DataSourceQualifier": [Function],
   "DataSourceQualifierAttribute": Symbol(Qualifier.DataSource),
@@ -85,6 +88,7 @@ exports[`should dal exports stable 1`] = `
     "LAST": "LAST",
     "NO": "NO",
   },
+  "MysqlDataSourceManager": [Function],
   "RowFormat": {
     "COMPACT": "COMPACT",
     "COMPRESSED": "COMPRESSED",
@@ -94,6 +98,7 @@ exports[`should dal exports stable 1`] = `
     "REDUNDANT": "REDUNDANT",
   },
   "SpatialHelper": [Function],
+  "SqlMapManager": [Function],
   "SqlType": {
     "BLOCK": "BLOCK",
     "DELETE": "DELETE",
@@ -105,10 +110,13 @@ exports[`should dal exports stable 1`] = `
   "Table": [Function],
   "TableInfoUtil": [Function],
   "TableModel": [Function],
+  "TableModelManager": [Function],
   "Templates": {
     "BASE_DAO": "base_dao",
     "DAO": "dao",
     "EXTENSION": "extension",
   },
+  "TransactionPrototypeHook": [Function],
+  "TransactionalAOP": [Function],
 }
 `;
