@@ -5,7 +5,7 @@ import type { IGraphEdgeMetadata } from '../model/GraphEdgeMetadata.ts';
 import { GRAPH_EDGE_METADATA } from '../type/metadataKey.ts';
 
 export class GraphEdgeInfoUtil {
-  static setGraphEdgeMetadata(metadata: IGraphEdgeMetadata, clazz: EggProtoImplClass) {
+  static setGraphEdgeMetadata(metadata: IGraphEdgeMetadata, clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(GRAPH_EDGE_METADATA, metadata, clazz);
   }
 

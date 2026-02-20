@@ -3,7 +3,7 @@ import { ClassProtoDescriptor, GlobalGraph } from '@eggjs/metadata';
 
 import { LangGraphTracer } from '../tracing/LangGraphTracer.ts';
 
-export function GraphBuildHook(globalGraph: GlobalGraph) {
+export function GraphBuildHook(globalGraph: GlobalGraph): void {
   let langchainGraphTracerProtoNode;
   for (const moduleNode of globalGraph.moduleGraph.nodes.values()) {
     for (const protoNode of moduleNode.val.protos) {

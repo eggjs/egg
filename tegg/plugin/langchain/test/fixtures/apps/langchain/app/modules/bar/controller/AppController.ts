@@ -7,7 +7,7 @@ import {
 import { HTTPController, HTTPMethod, HTTPMethodEnum, Inject } from '@eggjs/tegg';
 import { AIMessage } from 'langchain';
 
-import { ChatOpenAIModel } from '../../../../../../../../lib/ChatOpenAI';
+import { ChatOpenAIModel } from '../../../../../../../../src/lib/ChatOpenAI.ts';
 import { BoundChatModel } from '../service/BoundChatModel';
 import { FooGraph, FooTool } from '../service/Graph';
 

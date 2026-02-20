@@ -7,8 +7,8 @@ export interface IGraphToolMetadata extends SingletonProtoParams {
 }
 
 export class GraphToolMetadata implements IGraphToolMetadata {
-  toolName = '';
-  description = '';
+  toolName: string = '';
+  description: string = '';
 
   constructor(params: IGraphToolMetadata) {
     Object.assign(this, params);

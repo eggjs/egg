@@ -1,4 +1,3 @@
-import { GlobalGraph } from '@eggjs/metadata';
 import type { Application, IBoot } from 'egg';
 
 import { BoundModelObjectHook } from './lib/boundModel/BoundModelObjectHook.ts';
@@ -25,7 +24,7 @@ export default class ModuleLangChainHook implements IBoot {
     this.#app.loadUnitLifecycleUtil.registerLifecycle(this.#graphLoadUnitHook);
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#graphObjectHook);
     this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#boundModelObjectHook);
     this.#app.eggObjectFactory.registerEggObjectCreateMethod(
@@ -35,11 +34,11 @@ export default class ModuleLangChainHook implements IBoot {
     this.#app.eggPrototypeLifecycleUtil.registerLifecycle(this.#graphPrototypeHook);
   }
 
-  configDidLoad() {
-    GlobalGraph.instance!.registerBuildHook(GraphBuildHook);
+  configDidLoad(): void {
+    this.#app.moduleHandler.registerGlobalGraphBuildHook(GraphBuildHook);
   }
 
-  async beforeClose() {
+  async beforeClose(): Promise<void> {
     this.#app.eggObjectLifecycleUtil.deleteLifecycle(this.#graphObjectHook);
     this.#app.eggObjectLifecycleUtil.deleteLifecycle(this.#boundModelObjectHook);
     this.#app.loadUnitLifecycleUtil.deleteLifecycle(this.#graphLoadUnitHook);

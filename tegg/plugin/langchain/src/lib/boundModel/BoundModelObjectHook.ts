@@ -91,7 +91,7 @@ class BoundModelHandler {
 }
 
 export class BoundModelObjectHook implements LifecycleHook<EggObjectLifeCycleContext, EggObject> {
-  async postCreate(_: EggObjectLifeCycleContext, eggObject: EggObject) {
+  async postCreate(_: EggObjectLifeCycleContext, eggObject: EggObject): Promise<void> {
     const BoundModelMetadata = eggObject.proto.getMetaData<IBoundModelMetadata>(BOUND_MODEL_METADATA);
     // 找到 graph node
     if (BoundModelMetadata) {

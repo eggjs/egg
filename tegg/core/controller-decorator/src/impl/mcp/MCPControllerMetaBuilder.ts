@@ -93,7 +93,7 @@ export class MCPControllerMetaBuilder {
     );
   }
 
-  static create(clazz: EggProtoImplClass) {
+  static create(clazz: EggProtoImplClass): MCPControllerMetaBuilder {
     return new MCPControllerMetaBuilder(clazz);
   }
 }

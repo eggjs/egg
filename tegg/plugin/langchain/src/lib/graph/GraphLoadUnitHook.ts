@@ -54,7 +54,7 @@ export class GraphLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext
     }
   }
 
-  createStructuredTool(clazz: EggProtoImplClass, toolMeta: IGraphToolMetadata) {
+  createStructuredTool(clazz: EggProtoImplClass, toolMeta: IGraphToolMetadata): EggProtoImplClass {
     class StructuredTool {
       @LifecyclePostInject()
       async init() {

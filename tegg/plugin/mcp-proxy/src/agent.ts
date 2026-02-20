@@ -7,7 +7,7 @@ export default class AppHook {
     this.agent = agent;
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     if ((this.agent as any).mcpProxy) {
       await ((this.agent as any).mcpProxy as any)?.ready();
     }

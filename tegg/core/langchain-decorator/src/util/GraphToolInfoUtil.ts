@@ -5,8 +5,8 @@ import type { IGraphToolMetadata } from '../model/GraphToolMetadata.ts';
 import { GRAPH_TOOL_METADATA } from '../type/metadataKey.ts';
 
 export class GraphToolInfoUtil {
-  static graphToolMap = new Map<EggProtoImplClass, IGraphToolMetadata>();
-  static setGraphToolMetadata(metadata: IGraphToolMetadata, clazz: EggProtoImplClass) {
+  static graphToolMap: Map<EggProtoImplClass, IGraphToolMetadata> = new Map<EggProtoImplClass, IGraphToolMetadata>();
+  static setGraphToolMetadata(metadata: IGraphToolMetadata, clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(GRAPH_TOOL_METADATA, metadata, clazz);
     GraphToolInfoUtil.graphToolMap.set(clazz, metadata);
   }

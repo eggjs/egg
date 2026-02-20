@@ -51,7 +51,7 @@ export class MCPConfig {
     this._multipleServer = options.multipleServer ?? {};
   }
 
-  getSseInitPath(name?: string) {
+  getSseInitPath(name?: string): string {
     if (name) {
       const config = this._multipleServer[name];
       if (config?.sseInitPath) {
@@ -62,7 +62,7 @@ export class MCPConfig {
     return this._sseInitPath;
   }
 
-  getSseMessagePath(name?: string) {
+  getSseMessagePath(name?: string): string {
     if (name) {
       const config = this._multipleServer[name];
       if (config?.sseMessagePath) {
@@ -73,7 +73,7 @@ export class MCPConfig {
     return this._sseMessagePath;
   }
 
-  getStreamPath(name?: string) {
+  getStreamPath(name?: string): string {
     if (name) {
       const config = this._multipleServer[name];
       if (config?.streamPath) {
@@ -84,7 +84,7 @@ export class MCPConfig {
     return this._streamPath;
   }
 
-  getStatelessStreamPath(name?: string) {
+  getStatelessStreamPath(name?: string): string {
     if (name) {
       const config = this._multipleServer[name];
       if (config?.statelessStreamPath) {
@@ -95,7 +95,7 @@ export class MCPConfig {
     return this._statelessStreamPath;
   }
 
-  getSessionIdGenerator(name?: string) {
+  getSessionIdGenerator(name?: string): (ctx: Context) => string {
     if (name) {
       const config = this._multipleServer[name];
       if (config?.sessionIdGenerator) {
@@ -106,7 +106,7 @@ export class MCPConfig {
     return this._sessionIdGenerator;
   }
 
-  getEventStore(name?: string) {
+  getEventStore(name?: string): EventStore {
     if (name) {
       const config = this._multipleServer[name];
       if (config?.eventStore) {
@@ -117,7 +117,7 @@ export class MCPConfig {
     return this._eventStore;
   }
 
-  getSseHeartTime(name?: string) {
+  getSseHeartTime(name?: string): number {
     if (name) {
       const config = this._multipleServer[name];
       if (config?.sseHeartTime) {
@@ -128,11 +128,11 @@ export class MCPConfig {
     return this._sseHeartTime;
   }
 
-  getMultipleServerNames() {
+  getMultipleServerNames(): string[] {
     return Object.keys(this._multipleServer);
   }
 
-  getPingElapsed(name?: string) {
+  getPingElapsed(name?: string): number {
     if (name) {
       const config = this._multipleServer[name];
       if (config?.pingElapsed !== undefined) {
@@ -143,7 +143,7 @@ export class MCPConfig {
     return this._pingElapsed;
   }
 
-  getPingInterval(name?: string) {
+  getPingInterval(name?: string): number {
     if (name) {
       const config = this._multipleServer[name];
       if (config?.pingInterval !== undefined) {
@@ -154,7 +154,7 @@ export class MCPConfig {
     return this._pingInterval;
   }
 
-  getSsePingEnabled(name?: string) {
+  getSsePingEnabled(name?: string): boolean {
     if (name) {
       const config = this._multipleServer[name];
       if (config?.ssePingEnabled !== undefined) {
@@ -165,7 +165,7 @@ export class MCPConfig {
     return this._ssePingEnabled;
   }
 
-  getStreamPingEnabled(name?: string) {
+  getStreamPingEnabled(name?: string): boolean {
     if (name) {
       const config = this._multipleServer[name];
       if (config?.streamPingEnabled !== undefined) {
@@ -176,7 +176,7 @@ export class MCPConfig {
     return this._streamPingEnabled;
   }
 
-  setMultipleServerPath(app: Application, name: string) {
+  setMultipleServerPath(app: Application, name: string): void {
     if (!(app.config.mcp as MCPConfigOptions).multipleServer) {
       (app.config.mcp as MCPConfigOptions).multipleServer = {};
     }

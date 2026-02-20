@@ -4,7 +4,7 @@ import { ControllerInfoUtil, MethodInfoUtil } from '@eggjs/tegg';
 import type { GraphNode } from '@eggjs/tegg-common-util';
 import type { EggProtoImplClass, IAdvice } from '@eggjs/tegg-types';
 
-export function middlewareGraphHook(globalGraph: GlobalGraph) {
+export function middlewareGraphHook(globalGraph: GlobalGraph): void {
   for (const moduleNode of globalGraph.moduleGraph.nodes.values()) {
     for (const controllerProtoNode of moduleNode.val.protos) {
       const middlewareProtoNodes = findMiddlewareProtoNodes(globalGraph, controllerProtoNode);

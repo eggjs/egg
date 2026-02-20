@@ -11,7 +11,7 @@ export class LangGraphTracer extends BaseTracer {
   @Inject()
   logger: Logger;
 
-  name = 'LangGraphTracer';
+  name: string = 'LangGraphTracer';
 
   setName(name: string): void {
     this.name = name;

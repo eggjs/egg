@@ -7,9 +7,9 @@ import type { InjectObjectProto } from '@eggjs/tegg-types';
 export class CompiledStateGraphProto implements EggPrototype {
   [key: symbol]: PropertyDescriptor;
   private readonly qualifiers: QualifierInfo[];
-  readonly accessLevel = AccessLevel.PUBLIC;
+  readonly accessLevel: AccessLevel = AccessLevel.PUBLIC;
   id: Id;
-  readonly initType = ObjectInitType.SINGLETON;
+  readonly initType: ObjectInitType = ObjectInitType.SINGLETON;
   readonly injectObjects: InjectObjectProto[] = [];
   loadUnitId: string;
   readonly name: EggPrototypeName;

@@ -5,8 +5,8 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { MCPInfoUtil } from '../../util/MCPInfoUtil.ts';
 import { MethodInfoUtil } from '../../util/MethodInfoUtil.ts';
 
-export function MCPPrompt(params?: MCPPromptParams) {
-  return function (target: any, propertyKey: PropertyKey) {
+export function MCPPrompt(params?: MCPPromptParams): (target: any, propertyKey: PropertyKey) => void {
+  return function (target: any, propertyKey: PropertyKey): void {
     const controllerClazz = target.constructor as EggProtoImplClass;
     const methodName = propertyKey as string;
     MethodInfoUtil.setMethodControllerType(controllerClazz, methodName, ControllerType.MCP);
@@ -23,8 +23,10 @@ export function MCPPrompt(params?: MCPPromptParams) {
   };
 }
 
-export function PromptArgsSchema(argsSchema: Parameters<McpServer['prompt']>['2']) {
-  return function (target: any, propertyKey: PropertyKey, parameterIndex: number) {
+export function PromptArgsSchema(
+  argsSchema: Parameters<McpServer['prompt']>['2'],
+): (target: any, propertyKey: PropertyKey, parameterIndex: number) => void {
+  return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     const controllerClazz = target.constructor as EggProtoImplClass;
     const methodName = propertyKey as string;
     MCPInfoUtil.setMCPPromptArgsInArgs(

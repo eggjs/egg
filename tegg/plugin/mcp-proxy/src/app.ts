@@ -10,11 +10,11 @@ export default class AppHook {
     this.agent = agent;
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     MCPControllerRegister.addHook(MCPProxyHook);
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     if ((this.agent as any).mcpProxy) {
       await ((this.agent as any).mcpProxy as any)?.ready();
     }

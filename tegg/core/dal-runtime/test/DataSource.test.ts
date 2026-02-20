@@ -34,7 +34,8 @@ describe('test/Datasource.test.ts', () => {
 
       const mysql = new MysqlDataSource(mysqlOptions);
       await assert.rejects(mysql.ready(), /fake error/);
-      assert.equal(tracker.mock.callCount(), 1);
+      // DEFAULT_RETRY_TIMES is 3, so query is called 3 times before giving up
+      assert.equal(tracker.mock.callCount(), 3);
     });
 
     it('init should retry', async () => {

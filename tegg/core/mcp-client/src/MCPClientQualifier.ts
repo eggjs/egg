@@ -3,11 +3,11 @@ import assert from 'node:assert';
 import { QualifierUtil } from '@eggjs/core-decorator';
 import type { EggProtoImplClass, ModuleConfig, ObjectInfo } from '@eggjs/tegg-types';
 
-export const MCPClientQualifierAttribute = Symbol.for('Qualifier.MCP_CLIENT');
+export const MCPClientQualifierAttribute: symbol = Symbol.for('Qualifier.MCP_CLIENT');
 export const MCPClientInjectName = 'mcpClient';
 
-export function MCPClientQualifier(mcpClientName: string) {
-  return function (target: any, propertyKey: PropertyKey) {
+export function MCPClientQualifier(mcpClientName: string): (target: any, propertyKey: PropertyKey) => void {
+  return function (target: any, propertyKey: PropertyKey): void {
     QualifierUtil.addProperQualifier(
       target.constructor as EggProtoImplClass,
       propertyKey,

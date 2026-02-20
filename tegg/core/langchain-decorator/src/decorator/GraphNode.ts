@@ -2,8 +2,8 @@ import { SingletonProto, PrototypeUtil } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { AnnotationRoot, StateGraph } from '@langchain/langgraph';
-import type { Runtime, StateDefinition, UpdateType } from '@langchain/langgraph';
+import { StateGraph } from '@langchain/langgraph';
+import type { AnnotationRoot, Runtime, StateDefinition, UpdateType } from '@langchain/langgraph';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
 import { BaseChatOpenAI } from '@langchain/openai';
 import { ConfigurableModel } from 'langchain/chat_models/universal';
@@ -11,8 +11,10 @@ import { ConfigurableModel } from 'langchain/chat_models/universal';
 import type { IGraphNodeMetadata } from '../model/GraphNodeMetadata.ts';
 import { GraphNodeInfoUtil } from '../util/GraphNodeInfoUtil.ts';
 
-export function GraphNode<S extends StateDefinition = StateDefinition>(params: IGraphNodeMetadata) {
-  return (constructor: EggProtoImplClass<IGraphNode<S> | TeggToolNode>) => {
+export function GraphNode<S extends StateDefinition = StateDefinition>(
+  params: IGraphNodeMetadata,
+): (constructor: EggProtoImplClass<IGraphNode<S> | TeggToolNode>) => void {
+  return (constructor: EggProtoImplClass<IGraphNode<S> | TeggToolNode>): void => {
     const func = SingletonProto({
       accessLevel: params?.accessLevel ?? AccessLevel.PUBLIC,
       name: params?.name,
@@ -46,7 +48,7 @@ export interface IGraphNode<S extends StateDefinition = StateDefinition, T = any
 export class TeggToolNode implements IGraphNode {
   toolNode: ToolNode;
 
-  async execute() {
+  async execute(): Promise<ToolNode> {
     return this.toolNode;
   }
 }

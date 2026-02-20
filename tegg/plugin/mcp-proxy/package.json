@@ -27,16 +27,24 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./app": "./src/app.ts",
     "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/agent": "./src/app/extend/agent.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./lib/MCPProxyDataClient": "./src/lib/MCPProxyDataClient.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./app": "./dist/app.js",
       "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./app/extend/agent": "./dist/app/extend/agent.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/MCPProxyDataClient": "./dist/lib/MCPProxyDataClient.js",
       "./package.json": "./package.json"
     }
   },
@@ -53,8 +61,7 @@
     "eventsource-parser": "^3.0.1",
     "koa-compose": "catalog:",
     "raw-body": "^2.5.2",
-    "sdk-base": "catalog:",
-    "zod": "^4.0.0"
+    "sdk-base": "catalog:"
   },
   "devDependencies": {
     "@eggjs/aop-runtime": "workspace:*",

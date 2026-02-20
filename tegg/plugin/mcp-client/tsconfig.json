@@ -1,7 +1,4 @@
 {
   "extends": "../../../tsconfig.json",
-  "compilerOptions": {
-    "types": ["node", "mocha"]
-  },
   "exclude": ["test/fixtures/**/*.ts"]
 }

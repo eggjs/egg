@@ -1,8 +1,8 @@
 import type { EggContext, Next } from '@eggjs/tegg';
 import pathToRegexp from 'path-to-regexp';
 
-export default () => {
-  return async function mcpBodyMiddleware(ctx: EggContext, next: Next) {
+export default (): ((ctx: EggContext, next: Next) => Promise<void>) => {
+  return async function mcpBodyMiddleware(ctx: EggContext, next: Next): Promise<void> {
     const arr = [
       ctx.app.config.mcp.sseInitPath,
       ctx.app.config.mcp.sseMessagePath,

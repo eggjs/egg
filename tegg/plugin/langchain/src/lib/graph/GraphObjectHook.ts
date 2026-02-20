@@ -119,7 +119,7 @@ class GraphNodeHandler {
 }
 
 export class GraphObjectHook implements LifecycleHook<EggObjectLifeCycleContext, EggObject> {
-  async postCreate(_: EggObjectLifeCycleContext, eggObject: EggObject) {
+  async postCreate(_: EggObjectLifeCycleContext, eggObject: EggObject): Promise<void> {
     const nodeMetadata = eggObject.proto.getMetaData<GraphNodeMetadata>(GRAPH_NODE_METADATA);
     // 找到 graph node
     if (nodeMetadata) {

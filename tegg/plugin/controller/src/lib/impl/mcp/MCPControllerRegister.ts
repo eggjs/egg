@@ -68,7 +68,7 @@ interface ServerRegisterRecord<T> {
 }
 
 class InnerSSEServerTransport extends SSEServerTransport {
-  async send(message: JSONRPCMessage) {
+  async send(message: JSONRPCMessage): Promise<void> {
     let err: null | Error = null;
     try {
       await super.send(message);
@@ -95,13 +95,13 @@ export class MCPControllerRegister implements ControllerRegister {
   private controllerProtos: EggPrototype[] = [];
   private registeredControllerProtos: EggPrototype[] = [];
   transports: Record<string, InnerSSEServerTransport> = {};
-  sseConnections = new Map<string, { res: ServerResponse; intervalId: NodeJS.Timeout }>();
+  sseConnections: Map<string, { res: ServerResponse; intervalId: NodeJS.Timeout }> = new Map();
   mcpServerHelperMap: Record<string, () => MCPServerHelper> = {};
   mcpServerMap: Record<string, McpServer> = {};
   private controllerMeta: MCPControllerMeta;
   mcpConfig: MCPConfig;
   streamTransports: Record<string, StreamableHTTPServerTransport> = {};
-  sseTransportsRequestMap = new Map<
+  sseTransportsRequestMap: Map<
     InnerSSEServerTransport,
     Record<
       string,
@@ -110,7 +110,8 @@ export class MCPControllerRegister implements ControllerRegister {
         reject: (reason?: any) => void;
       }
     >
-  >();
+  > = new Map();
+
   static hooks: MCPControllerHook[] = [];
   globalMiddlewares: compose.ComposedMiddleware<EggContext>;
 
@@ -125,7 +126,7 @@ export class MCPControllerRegister implements ControllerRegister {
 
   pingIntervals: Record<string, NodeJS.Timeout> = {};
 
-  static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application) {
+  static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application): MCPControllerRegister {
     assert(controllerMeta.type === ControllerType.MCP, 'controller meta type is not MCP');
     if (!MCPControllerRegister.instance) {
       MCPControllerRegister.instance = new MCPControllerRegister(proto, controllerMeta as MCPControllerMeta, app);
@@ -144,24 +145,24 @@ export class MCPControllerRegister implements ControllerRegister {
     this.mcpConfig = new MCPConfig(app.config.mcp);
   }
 
-  static addHook(hook: MCPControllerHook) {
+  static addHook(hook: MCPControllerHook): void {
     MCPControllerRegister.hooks.push(hook);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static async connectStatelessStreamTransport(_name?: string) {
+  static async connectStatelessStreamTransport(_name?: string): Promise<void> {
     // No-op: MCP SDK >= 1.26 requires stateless transports to be single-use,
     // so transports are now created per-request in the route handler.
   }
 
-  static clean() {
+  static clean(): void {
     if (this.instance) {
       this.instance.controllerProtos = [];
     }
     this.instance = undefined;
   }
 
-  mcpStatelessStreamServerInit(name?: string) {
+  mcpStatelessStreamServerInit(name?: string): void {
     const postRouterFunc = this.router.post;
     const self = this;
     let mw = (self.app.middleware as any).teggCtxLifecycleMiddleware();
@@ -245,7 +246,7 @@ export class MCPControllerRegister implements ControllerRegister {
     ]);
   }
 
-  mcpStreamServerInit(name?: string) {
+  mcpStreamServerInit(name?: string): void {
     const allRouterFunc = this.router.all;
     const self = this;
     let mw = (self.app.middleware as any).teggCtxLifecycleMiddleware();
@@ -398,7 +399,7 @@ export class MCPControllerRegister implements ControllerRegister {
     ]);
   }
 
-  mcpServerInit(name?: string) {
+  mcpServerInit(name?: string): void {
     const routerFunc = this.router.get;
     const self = this;
     const initHandler = async (ctx: Context) => {
@@ -443,7 +444,7 @@ export class MCPControllerRegister implements ControllerRegister {
     Reflect.apply(routerFunc, this.router, ['chairMcpInit', self.mcpConfig.getSseInitPath(name), ...[], initHandler]);
   }
 
-  sseCtxStorageRun(ctx: Context, transport: SSEServerTransport, name?: string) {
+  sseCtxStorageRun(ctx: Context, transport: SSEServerTransport, name?: string): void {
     const self = this;
     let mw = (this.app.middleware as any).teggCtxLifecycleMiddleware();
     if (self.globalMiddlewares) {
@@ -506,7 +507,7 @@ export class MCPControllerRegister implements ControllerRegister {
     };
   }
 
-  mcpServerRegister(name?: string) {
+  mcpServerRegister(name?: string): void {
     const routerFunc = this.router.post;
     const self = this;
 
@@ -568,7 +569,7 @@ export class MCPControllerRegister implements ControllerRegister {
     ]);
   }
 
-  getGlobalMiddleware() {
+  getGlobalMiddleware(): void {
     const middlewareNames = this.app.config.mcp.middleware || [];
     const middlewares: compose.Middleware<EggContext>[] = [];
     for (const name of middlewareNames) {
@@ -584,7 +585,7 @@ export class MCPControllerRegister implements ControllerRegister {
     this.globalMiddlewares = compose(middlewares);
   }
 
-  mcpServerPing(server: Server, sessionId: string, name?: string) {
+  mcpServerPing(server: Server, sessionId: string, name?: string): void {
     const duration = this.mcpConfig.getPingElapsed(name);
     const interval = this.mcpConfig.getPingInterval(name);
 
@@ -609,7 +610,7 @@ export class MCPControllerRegister implements ControllerRegister {
     this.pingIntervals[sessionId] = timerId;
   }
 
-  async register() {
+  async register(): Promise<void> {
     for (const proto of this.controllerProtos) {
       if (this.registeredControllerProtos.includes(proto)) {
         continue;

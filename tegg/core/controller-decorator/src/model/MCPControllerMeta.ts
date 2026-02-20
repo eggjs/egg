@@ -11,7 +11,7 @@ export class MCPControllerMeta implements ControllerMetadata {
   readonly className: string;
   readonly methods: never[];
   readonly middlewares: readonly MiddlewareFunc[];
-  readonly type = ControllerType.MCP;
+  readonly type: ControllerType = ControllerType.MCP;
   readonly name?: string;
   readonly version: string;
   readonly needAcl: boolean;
@@ -21,7 +21,7 @@ export class MCPControllerMeta implements ControllerMetadata {
   readonly prompts: MCPPromptMeta[];
   readonly timeout?: number;
 
-  get id() {
+  get id(): string {
     return `${this.name ?? this.controllerName}:${this.version}`;
   }
 
@@ -54,7 +54,7 @@ export class MCPControllerMeta implements ControllerMetadata {
     this.timeout = meta?.timeout;
   }
 
-  getMethodMiddlewares(method: MCPPromptMeta | MCPToolMeta | MCPResourceMeta) {
+  getMethodMiddlewares(method: MCPPromptMeta | MCPToolMeta | MCPResourceMeta): readonly MiddlewareFunc[] {
     if (this.middlewares.length) {
       return [...this.middlewares, ...method.middlewares];
     }

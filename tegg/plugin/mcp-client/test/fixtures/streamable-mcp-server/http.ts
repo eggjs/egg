@@ -35,8 +35,7 @@ export const headers: Record<string, any> = {};
 export let httpServer: http.Server;
 export async function startStreamableServer(port = 17243) {
   const httpServer = http.createServer(async (req, res) => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { StreamableHTTPServerTransport } = require('@modelcontextprotocol/sdk/server/streamableHttp.js');
+    const { StreamableHTTPServerTransport } = await import('@modelcontextprotocol/sdk/server/streamableHttp.js');
     const url = new URL(`http://127.0.0.1:${port}${req.url!}`);
     const headerKey = `${req.method}${url.pathname}`;
     const serverCode = req.headers['x-mcp-server-code'] as string;
@@ -45,7 +44,7 @@ export async function startStreamableServer(port = 17243) {
     headers[serverCode][headerKey].push(req.headers);
     if (req.method === 'POST') {
       try {
-        const transport: typeof StreamableHTTPServerTransport = new StreamableHTTPServerTransport({
+        const transport = new StreamableHTTPServerTransport({
           sessionIdGenerator: undefined,
         });
         await server.connect(transport);

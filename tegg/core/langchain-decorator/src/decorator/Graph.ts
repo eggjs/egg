@@ -2,13 +2,15 @@ import { SingletonProto, PrototypeUtil } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { AnnotationRoot, CompiledStateGraph, StateGraph } from '@langchain/langgraph';
-import type { StateDefinition, StateType, UpdateType } from '@langchain/langgraph';
+import { StateGraph } from '@langchain/langgraph';
+import type { AnnotationRoot, CompiledStateGraph, StateDefinition, StateType, UpdateType } from '@langchain/langgraph';
 
 import type { IGraphMetadata } from '../model/GraphMetadata.ts';
 import { GraphInfoUtil } from '../util/GraphInfoUtil.ts';
-export function Graph<N extends string = '', S extends StateDefinition = StateDefinition>(params: IGraphMetadata) {
-  return (constructor: EggProtoImplClass<AbstractStateGraph<N, S>>) => {
+export function Graph<N extends string = '', S extends StateDefinition = StateDefinition>(
+  params: IGraphMetadata,
+): (constructor: EggProtoImplClass<AbstractStateGraph<N, S>>) => void {
+  return (constructor: EggProtoImplClass<AbstractStateGraph<N, S>>): void => {
     const func = SingletonProto({
       accessLevel: params?.accessLevel ?? AccessLevel.PUBLIC,
       name: params?.name,

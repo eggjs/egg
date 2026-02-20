@@ -26,9 +26,9 @@ export interface TeggVitestAdapterOptions {
   restoreMocks?: boolean;
 }
 
-export const DEBUG_ENABLED = process.env.DEBUG_TEGG_VITEST === '1';
+export const DEBUG_ENABLED: boolean = process.env.DEBUG_TEGG_VITEST === '1';
 
-export function debugLog(message: string, extra?: unknown) {
+export function debugLog(message: string, extra?: unknown): void {
   if (!DEBUG_ENABLED) return;
   if (extra === undefined) {
     // eslint-disable-next-line no-console
@@ -44,7 +44,7 @@ export async function defaultGetApp(): Promise<EggMockApp | undefined> {
   return (bootstrap as any)?.app;
 }
 
-export async function restoreEggMocksIfNeeded(restoreMocks: boolean) {
+export async function restoreEggMocksIfNeeded(restoreMocks: boolean): Promise<void> {
   if (!restoreMocks) return;
   const eggMock = await import('@eggjs/mock');
   const mm = (eggMock as any)?.default || eggMock;

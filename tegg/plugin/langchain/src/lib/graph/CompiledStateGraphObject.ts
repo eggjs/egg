@@ -44,7 +44,7 @@ export class CompiledStateGraphObject implements EggObject {
     this.graphName = proto.graphName;
   }
 
-  async init() {
+  async init(): Promise<void> {
     this._obj = await this.build();
     const graph = this._obj as CompiledStateGraph<any, any>;
 
@@ -57,7 +57,7 @@ export class CompiledStateGraphObject implements EggObject {
     this.status = EggObjectStatus.READY;
   }
 
-  async build() {
+  async build(): Promise<any> {
     const stateGraph = await EggContainerFactory.getOrCreateEggObjectFromName(this.graphName);
     await this.boundNodes(stateGraph);
     await this.boundEdges(stateGraph);
@@ -85,7 +85,7 @@ export class CompiledStateGraphObject implements EggObject {
     return compileGraph;
   }
 
-  async boundNodes(stateGraph: EggObject) {
+  async boundNodes(stateGraph: EggObject): Promise<void> {
     const graphObj = stateGraph.obj as IGraph<any, any>;
     const nodes = this.graphMetadata.nodes ?? [];
     for (let i = 0; i < nodes.length; i++) {
@@ -102,7 +102,7 @@ export class CompiledStateGraphObject implements EggObject {
     }
   }
 
-  async boundEdges(stateGraph: EggObject) {
+  async boundEdges(stateGraph: EggObject): Promise<void> {
     const graphObj = stateGraph.obj as IGraph<any, any>;
     const edges = this.graphMetadata.edges ?? [];
     for (let i = 0; i < edges.length; i++) {
@@ -126,7 +126,11 @@ export class CompiledStateGraphObject implements EggObject {
   /**
    * 包装 graph 方法，添加 tracing
    */
-  async wrapGraphMethod(originalMethod: (input: any, config?: any) => Promise<any>, input: any, config?: any) {
+  async wrapGraphMethod(
+    originalMethod: (input: any, config?: any) => Promise<any>,
+    input: any,
+    config?: any,
+  ): Promise<any> {
     // 确保 config 对象存在
     const finalConfig = config || {};
 
@@ -149,20 +153,20 @@ export class CompiledStateGraphObject implements EggObject {
     return await originalMethod(input, finalConfig);
   }
 
-  async getTracer() {
+  async getTracer(): Promise<any> {
     const ctx = ContextHandler.getContext()!.get(EGG_CONTEXT);
     return ctx.tracer;
   }
 
-  injectProperty() {
+  injectProperty(): never {
     throw new Error('never call GraphObject#injectProperty');
   }
 
-  get isReady() {
+  get isReady(): boolean {
     return this.status === EggObjectStatus.READY;
   }
 
-  get obj() {
+  get obj(): object {
     return this._obj;
   }
 

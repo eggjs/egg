@@ -28,12 +28,18 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./HeaderUtil": "./src/HeaderUtil.ts",
+    "./HttpMCPClient": "./src/HttpMCPClient.ts",
+    "./MCPClientQualifier": "./src/MCPClientQualifier.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./HeaderUtil": "./dist/HeaderUtil.js",
+      "./HttpMCPClient": "./dist/HttpMCPClient.js",
+      "./MCPClientQualifier": "./dist/MCPClientQualifier.js",
       "./package.json": "./package.json"
     }
   },
@@ -45,7 +51,6 @@
     "@eggjs/tegg-types": "workspace:*",
     "@langchain/mcp-adapters": "^1.0.0",
     "@modelcontextprotocol/sdk": "^1.23.0",
-    "sdk-base": "catalog:",
     "urllib": "catalog:"
   },
   "devDependencies": {

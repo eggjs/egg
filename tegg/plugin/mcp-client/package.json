@@ -28,12 +28,22 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./lib/constants": "./src/lib/constants.ts",
+    "./lib/EggHttpMCPClient": "./src/lib/EggHttpMCPClient.ts",
+    "./lib/EggHttpStaticMCPClient": "./src/lib/EggHttpStaticMCPClient.ts",
+    "./lib/HttpMCPClientFactory": "./src/lib/HttpMCPClientFactory.ts",
+    "./lib/QualifierUtil": "./src/lib/QualifierUtil.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./lib/constants": "./dist/lib/constants.js",
+      "./lib/EggHttpMCPClient": "./dist/lib/EggHttpMCPClient.js",
+      "./lib/EggHttpStaticMCPClient": "./dist/lib/EggHttpStaticMCPClient.js",
+      "./lib/HttpMCPClientFactory": "./dist/lib/HttpMCPClientFactory.js",
+      "./lib/QualifierUtil": "./dist/lib/QualifierUtil.js",
       "./package.json": "./package.json"
     }
   },
@@ -42,22 +52,16 @@
   },
   "dependencies": {
     "@eggjs/mcp-client": "workspace:*",
-    "@eggjs/module-common": "workspace:*",
     "@eggjs/tegg": "workspace:*",
-    "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.23.0",
-    "sdk-base": "catalog:",
     "urllib": "catalog:"
   },
   "devDependencies": {
     "@eggjs/controller-plugin": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
-    "@eggjs/tegg-plugin": "workspace:*",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
-    "egg": "workspace:*",
     "typescript": "catalog:",
     "zod": "catalog:"
   },

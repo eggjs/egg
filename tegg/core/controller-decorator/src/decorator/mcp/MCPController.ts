@@ -6,8 +6,8 @@ import type { MCPControllerParams, EggProtoImplClass } from '@eggjs/tegg-types';
 import { ControllerInfoUtil } from '../../util/ControllerInfoUtil.ts';
 import { MCPInfoUtil } from '../../util/MCPInfoUtil.ts';
 
-export function MCPController(param?: MCPControllerParams) {
-  return function (constructor: EggProtoImplClass) {
+export function MCPController(param?: MCPControllerParams): (constructor: EggProtoImplClass) => void {
+  return function (constructor: EggProtoImplClass): void {
     const func = SingletonProto({
       accessLevel: AccessLevel.PUBLIC,
       name: param?.protoName,

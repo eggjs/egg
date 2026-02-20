@@ -17,9 +17,9 @@ export class MCPProxyDataClient extends Base {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async _init() {}
+  async _init(): Promise<void> {}
 
-  async registerClient(sessionId: string, pid: number) {
+  async registerClient(sessionId: string, pid: number): Promise<void> {
     if (this.clients.has(sessionId)) {
       const oldPid = this.clients.get(sessionId)!;
       this.logger.info('[MCPClientManager] duplicate register client %s new pid %s old pid', sessionId, pid, oldPid);
@@ -34,7 +34,7 @@ export class MCPProxyDataClient extends Base {
     return this.clients.get(sessionId);
   }
 
-  async unregisterClient(sessionId: string) {
+  async unregisterClient(sessionId: string): Promise<void> {
     this.clients.delete(sessionId);
   }
 }

@@ -1,7 +1,7 @@
 import { MysqlDataSourceManager } from '../../lib/MysqlDataSourceManager.ts';
 
 export default {
-  get mysqlDataSourceManager() {
+  get mysqlDataSourceManager(): MysqlDataSourceManager {
     return MysqlDataSourceManager.instance;
   },
 };

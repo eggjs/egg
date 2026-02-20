@@ -1,6 +1,14 @@
 import { randomUUID } from 'node:crypto';
 
-export default () => {
+export default (): {
+  mcp: {
+    sseInitPath: string;
+    sseMessagePath: string;
+    streamPath: string;
+    statelessStreamPath: string;
+    sessionIdGenerator: typeof randomUUID;
+  };
+} => {
   const config = {
     mcp: {
       sseInitPath: '/mcp/sse',

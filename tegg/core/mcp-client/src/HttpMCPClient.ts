@@ -104,7 +104,7 @@ export class HttpMCPClient extends Client {
     };
     this.#transport = new StreamableHTTPClientTransport(url, transportRequestInit);
   }
-  async init() {
+  async init(): Promise<void> {
     if (this.options.transportType === 'SSE') {
       await this.#buildSSESTransport();
     } else {

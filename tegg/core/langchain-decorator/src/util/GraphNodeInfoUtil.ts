@@ -5,7 +5,7 @@ import type { IGraphNodeMetadata } from '../model/GraphNodeMetadata.ts';
 import { GRAPH_NODE_METADATA } from '../type/metadataKey.ts';
 
 export class GraphNodeInfoUtil {
-  static setGraphNodeMetadata(metadata: IGraphNodeMetadata, clazz: EggProtoImplClass) {
+  static setGraphNodeMetadata(metadata: IGraphNodeMetadata, clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(GRAPH_NODE_METADATA, metadata, clazz);
   }
 

@@ -76,7 +76,7 @@ export class EggHttpStaticMCPClient extends EggHttpMCPClient {
   }
 
   @LifecycleInit()
-  async _init() {
+  async _init(): Promise<void> {
     await super.init();
   }
 }

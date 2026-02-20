@@ -31,7 +31,7 @@ export class MCPServerHelper {
     getOrCreateEggObject: (proto: EggPrototype, name?: EggObjectName) => Promise<EggObject>,
     controllerProto: EggPrototype,
     resourceMeta: MCPResourceMeta,
-  ) {
+  ): Promise<void> {
     const handler = async (...args: any[]) => {
       const eggObj = await getOrCreateEggObject(controllerProto, controllerProto.name);
       const realObj = eggObj.obj;
@@ -52,7 +52,7 @@ export class MCPServerHelper {
     getOrCreateEggObject: (proto: EggPrototype, name?: EggObjectName) => Promise<EggObject>,
     controllerProto: EggPrototype,
     toolMeta: MCPToolMeta,
-  ) {
+  ): Promise<void> {
     const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
     const name: string = toolMeta.mcpName ?? toolMeta.name;
     const description: string | undefined = toolMeta.description;
@@ -97,7 +97,7 @@ export class MCPServerHelper {
     getOrCreateEggObject: (proto: EggPrototype, name?: EggObjectName) => Promise<EggObject>,
     controllerProto: EggPrototype,
     promptMeta: MCPPromptMeta,
-  ) {
+  ): Promise<void> {
     const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
     const name: string = promptMeta.mcpName ?? promptMeta.name;
     const description: string | undefined = promptMeta.description;

@@ -46,13 +46,13 @@ export class EggHttpMCPClient extends HttpMCPClient {
     );
     this.logger = options.logger;
   }
-  async init() {
+  async init(): Promise<void> {
     await super.init();
   }
   async listTools(
     params?: Parameters<HttpMCPClient['listTools']>['0'],
     options?: Parameters<HttpMCPClient['listTools']>['1'],
-  ) {
+  ): ReturnType<HttpMCPClient['listTools']> {
     const context = ContextHandler.getContext();
     if (context) {
       context.set(MCP_METHOD, McpMethod.LIST_TOOLS);
@@ -62,7 +62,7 @@ export class EggHttpMCPClient extends HttpMCPClient {
   async listPrompts(
     params?: Parameters<HttpMCPClient['listPrompts']>['0'],
     options?: Parameters<HttpMCPClient['listPrompts']>['1'],
-  ) {
+  ): ReturnType<HttpMCPClient['listPrompts']> {
     const context = ContextHandler.getContext();
     if (context) {
       context.set(MCP_METHOD, McpMethod.LIST_PROMPTS);
@@ -72,7 +72,7 @@ export class EggHttpMCPClient extends HttpMCPClient {
   async listResources(
     params?: Parameters<HttpMCPClient['listResources']>['0'],
     options?: Parameters<HttpMCPClient['listResources']>['1'],
-  ) {
+  ): ReturnType<HttpMCPClient['listResources']> {
     const context = ContextHandler.getContext();
     if (context) {
       context.set(MCP_METHOD, McpMethod.LIST_RESOURCES);
@@ -82,7 +82,7 @@ export class EggHttpMCPClient extends HttpMCPClient {
   async connect(
     transport: Parameters<HttpMCPClient['connect']>['0'],
     options?: Parameters<HttpMCPClient['connect']>['1'],
-  ) {
+  ): ReturnType<HttpMCPClient['connect']> {
     const context = ContextHandler.getContext();
     if (context) {
       context.set(MCP_METHOD, McpMethod.INITIALIZE);
@@ -92,7 +92,7 @@ export class EggHttpMCPClient extends HttpMCPClient {
   async notification(
     notification: Parameters<HttpMCPClient['notification']>['0'],
     options?: Parameters<HttpMCPClient['notification']>['1'],
-  ) {
+  ): ReturnType<HttpMCPClient['notification']> {
     if (notification?.method === 'notifications/initialized') {
       const context = ContextHandler.getContext();
       if (context) {
@@ -105,7 +105,7 @@ export class EggHttpMCPClient extends HttpMCPClient {
     params: Parameters<HttpMCPClient['callTool']>['0'],
     resultSchema?: Parameters<HttpMCPClient['callTool']>['1'],
     options?: Parameters<HttpMCPClient['callTool']>['2'],
-  ) {
+  ): ReturnType<HttpMCPClient['callTool']> {
     const context = ContextHandler.getContext();
     if (context) {
       context.set(MCP_TOOL, params?.name);

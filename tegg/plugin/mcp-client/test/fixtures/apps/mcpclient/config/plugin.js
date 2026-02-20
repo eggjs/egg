@@ -19,7 +19,7 @@ exports.teggMcpClient = {
 };
 
 exports.teggController = {
-  package: '@eggjs/tegg-controller-plugin',
+  package: '@eggjs/controller-plugin',
   enable: true,
 };
 

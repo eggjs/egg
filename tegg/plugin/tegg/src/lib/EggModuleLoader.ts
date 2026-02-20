@@ -1,4 +1,5 @@
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
+import type { GlobalGraphBuildHook } from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import type { Application } from 'egg';
 
@@ -7,9 +8,14 @@ import { EggAppLoader } from './EggAppLoader.ts';
 export class EggModuleLoader {
   app: Application;
   globalGraph: GlobalGraph;
+  private pendingBuildHooks: GlobalGraphBuildHook[] = [];
 
   constructor(app: Application) {
     this.app = app;
+  }
+
+  registerBuildHook(hook: GlobalGraphBuildHook): void {
+    this.pendingBuildHooks.push(hook);
   }
 
   private async loadApp() {
@@ -53,6 +59,9 @@ export class EggModuleLoader {
 
   async load(): Promise<void> {
     GlobalGraph.instance = this.globalGraph = await this.buildAppGraph();
+    for (const hook of this.pendingBuildHooks) {
+      this.globalGraph.registerBuildHook(hook);
+    }
     await this.loadApp();
     await this.loadModule();
   }

@@ -2,8 +2,7 @@ import { SingletonProto, PrototypeUtil } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { AnnotationRoot } from '@langchain/langgraph';
-import type { StateDefinition, UpdateType } from '@langchain/langgraph';
+import type { AnnotationRoot, StateDefinition, UpdateType } from '@langchain/langgraph';
 
 import type { IGraphEdgeMetadata } from '../model/GraphEdgeMetadata.ts';
 import { GraphEdgeInfoUtil } from '../util/GraphEdgeInfoUtil.ts';
@@ -22,8 +21,8 @@ import { GraphEdgeInfoUtil } from '../util/GraphEdgeInfoUtil.ts';
  */
 export function GraphEdge<S extends StateDefinition = StateDefinition, N extends string = '__start__' | '__end__'>(
   params: IGraphEdgeMetadata,
-) {
-  return (constructor: EggProtoImplClass<IGraphEdge<S, N>>) => {
+): (constructor: EggProtoImplClass<IGraphEdge<S, N>>) => void {
+  return (constructor: EggProtoImplClass<IGraphEdge<S, N>>): void => {
     const func = SingletonProto({
       accessLevel: params?.accessLevel ?? AccessLevel.PUBLIC,
       name: params?.name,

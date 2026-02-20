@@ -1,6 +1,7 @@
 import { MCPClientQualifier, MCPClientInjectName, HttpMCPClient } from '@eggjs/mcp-client';
-import { HttpMCPClientFactory } from '@eggjs/mcp-client-plugin';
 import { HTTPController, HTTPMethod, HTTPMethodEnum, Inject } from '@eggjs/tegg';
+
+import { HttpMCPClientFactory } from '../../../../../../../../src/index.ts';
 
 @HTTPController({
   path: '/mcpclient',

@@ -19,17 +19,17 @@ exports.teggLangChain = {
 };
 
 exports.teggController = {
-  package: '@eggjs/tegg-controller-plugin',
+  package: '@eggjs/controller-plugin',
   enable: true,
 };
 
 exports.teggMcpClient = {
   enable: true,
-  package: '@eggjs/tegg-mcp-client',
+  package: '@eggjs/mcp-client-plugin',
 };
 
 exports.tracer = {
-  package: 'egg-tracer',
+  package: '@eggjs/tracer',
   enable: true,
 };
 

@@ -8,8 +8,8 @@ import type { ChatOpenAICallOptions } from '@langchain/openai';
 import type { IBoundModelMetadata } from '../model/BoundModelMetadata.ts';
 import { BoundModelInfoUtil } from '../util/BoundModelInfoUtil.ts';
 
-export function BoundModel(params: IBoundModelMetadata) {
-  return (constructor: EggProtoImplClass) => {
+export function BoundModel(params: IBoundModelMetadata): (constructor: EggProtoImplClass) => void {
+  return (constructor: EggProtoImplClass): void => {
     const func = SingletonProto({
       accessLevel: params?.accessLevel ?? AccessLevel.PUBLIC,
       name: params?.name,
