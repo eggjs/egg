@@ -41,7 +41,7 @@ class BoundModelHandler {
         const tool = new DynamicStructuredTool({
           description: toolMetadata.description,
           name: toolMetadata.toolName,
-          func: (toolsObj.obj as unknown as IGraphTool<any>).execute.bind(toolsObj.obj),
+          func: (toolsObj.obj as unknown as IGraphTool<any>).execute.bind(toolsObj.obj) as any,
           schema: z.object(ToolDetail.argsSchema) as any,
         });
         dTools = dTools.concat(tool);

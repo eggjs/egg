@@ -77,7 +77,7 @@ export class CompiledStateGraphObject implements EggObject {
         ]);
       }
       compileGraph = graphObj.compile({
-        checkpointer: checkpointObj.obj as BaseCheckpointSaver,
+        checkpointer: checkpointObj.obj as BaseCheckpointSaver as any,
       });
     } else {
       compileGraph = graphObj.compile();

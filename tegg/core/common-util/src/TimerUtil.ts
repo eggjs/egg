@@ -6,7 +6,7 @@ class TimeoutError extends Error {
 }
 
 export class TimerUtil {
-  static TimeoutError = TimeoutError;
+  static TimeoutError: typeof TimeoutError = TimeoutError;
 
   static async sleep(ms: number): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, ms));

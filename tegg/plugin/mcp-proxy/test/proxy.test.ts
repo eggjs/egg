@@ -1,5 +1,6 @@
 import assert from 'assert';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import mm from '@eggjs/mock';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -12,6 +13,10 @@ import {
   LoggingMessageNotificationSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { fetch } from 'urllib';
+import { afterAll, afterEach, beforeAll, describe, it } from 'vitest';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 async function listTools(client: Client) {
   const toolsRequest: ListToolsRequest = {
@@ -61,19 +66,13 @@ async function startNotificationTool(client: Client) {
 
 describe('plugin/mcp-proxy/test/proxy.test.ts', () => {
   if (parseInt(process.version.slice(1, 3)) > 17) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { StreamableHTTPClientTransport } = require('@modelcontextprotocol/sdk/client/streamableHttp.js');
-    let app;
+    let app: any;
+    let StreamableHTTPClientTransport: any;
 
-    after(async () => {
-      await app.close();
-    });
+    beforeAll(async () => {
+      const mod = await import('@modelcontextprotocol/sdk/client/streamableHttp.js');
+      StreamableHTTPClientTransport = mod.StreamableHTTPClientTransport;
 
-    afterEach(() => {
-      // mm.restore();
-    });
-
-    before(async () => {
       mm(process.env, 'EGG_TYPESCRIPT', true);
       mm(process, 'cwd', () => {
         return path.join(__dirname, '..');
@@ -81,10 +80,7 @@ describe('plugin/mcp-proxy/test/proxy.test.ts', () => {
       app = mm.cluster({
         baseDir: path.join(__dirname, 'fixtures/apps/mcp-proxy'),
         framework: path.dirname(require.resolve('egg')),
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         workers: 3,
-        sticky: false,
         opt: {
           env: {
             ...process.env,
@@ -95,8 +91,12 @@ describe('plugin/mcp-proxy/test/proxy.test.ts', () => {
       await app.ready();
     });
 
-    after(() => {
-      return app.close();
+    afterAll(async () => {
+      await app.close();
+    });
+
+    afterEach(() => {
+      // mm.restore();
     });
 
     it('sse should work', async () => {
@@ -140,7 +140,7 @@ describe('plugin/mcp-proxy/test/proxy.test.ts', () => {
       const streamableTransport = new StreamableHTTPClientTransport(new URL(baseUrl), {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        fetch: async (...args) => {
+        fetch: async (...args: any[]) => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           const res = await fetch(...args);

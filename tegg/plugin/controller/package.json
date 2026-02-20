@@ -97,6 +97,8 @@
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.23.0",
+    "await-event": "catalog:",
+    "content-type": "catalog:",
     "egg-errors": "catalog:",
     "globby": "catalog:",
     "koa-compose": "catalog:",
