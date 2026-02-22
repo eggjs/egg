@@ -2764,6 +2764,9 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../../packages/egg
+      tsx:
+        specifier: 'catalog:'
+        version: 4.20.6
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

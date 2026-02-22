@@ -52,11 +52,12 @@
     "@eggjs/core-decorator": "workspace:*",
     "@types/node": "catalog:",
     "egg": "workspace:*",
+    "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "vitest": "catalog:"
+    "vitest": "^4.0.15"
   },
   "engines": {
     "node": ">=22.18.0"

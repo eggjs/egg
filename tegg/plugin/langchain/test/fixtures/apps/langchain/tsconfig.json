@@ -1,11 +1,3 @@
 {
-  "compilerOptions": {
-    "outDir": "dist",
-    "module": "node18",
-    "moduleResolution": "node16",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "baseUrl": "./"
-  },
-  "exclude": ["dist", "node_modules", "test"]
+  "extends": "../../../../../../../tsconfig.json"
 }
