@@ -21,6 +21,9 @@
       "path": "./packages/errors"
     },
     {
+      "path": "./packages/logger"
+    },
+    {
       "path": "./packages/path-matching"
     },
     {

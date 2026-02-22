@@ -83,6 +83,7 @@ catalog:
   cache-content-type: ^2.0.0
   camelcase: ^9.0.0
   cfork: ^2.0.0
+  chalk: ^5.4.1
   cheerio: ^1.0.0
   ci-parallel-vars: ^1.0.1
   circular-json-for-egg: ^1.0.0
@@ -132,6 +133,7 @@ catalog:
   husky: ^9.1.7
   inflection: ^3.0.0
   ini: ^6.0.0
+  iconv-lite: ^0.6.3
   ioredis: ^5.4.2
   is-type-of: ^2.2.0
   jest-changed-files: ^30.0.0

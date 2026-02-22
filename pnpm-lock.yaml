@@ -207,6 +207,9 @@ catalogs:
     cfork:
       specifier: ^2.0.0
       version: 2.0.0
+    chalk:
+      specifier: ^5.4.1
+      version: 5.6.2
     cheerio:
       specifier: ^1.0.0
       version: 1.1.2
@@ -339,6 +342,9 @@ catalogs:
     husky:
       specifier: ^9.1.7
       version: 9.1.7
+    iconv-lite:
+      specifier: ^0.6.3
+      version: 0.6.3
     inflection:
       specifier: ^3.0.0
       version: 3.0.2
@@ -1269,6 +1275,49 @@ importers:
       ylru:
         specifier: ^2.0.0
         version: 2.0.0
+
+  packages/logger:
+    dependencies:
+      '@eggjs/errors':
+        specifier: workspace:*
+        version: link:../errors
+      chalk:
+        specifier: 'catalog:'
+        version: 5.6.2
+      circular-json-for-egg:
+        specifier: 'catalog:'
+        version: 1.0.0
+      iconv-lite:
+        specifier: 'catalog:'
+        version: 0.6.3
+      utility:
+        specifier: 'catalog:'
+        version: 2.5.0
+    devDependencies:
+      '@eggjs/koa':
+        specifier: workspace:*
+        version: link:../koa
+      '@eggjs/supertest':
+        specifier: workspace:*
+        version: link:../supertest
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.10.2
+      coffee:
+        specifier: 'catalog:'
+        version: 5.5.1
+      mm:
+        specifier: 'catalog:'
+        version: 4.0.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
 
   packages/path-matching:
     dependencies:
@@ -5869,6 +5918,10 @@ packages:
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
+
+  chalk@5.6.2:
+    resolution: {integrity: sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
 
   chan@0.6.1:
     resolution: {integrity: sha512-/TdBP2UhbBmw7qnqkzo9Mk4rzvwRv4dlNPXFerqWy90T8oBspKagJNZxrDbExKHhx9uXXHjo3f9mHgs9iKO3nQ==}
@@ -11749,6 +11802,8 @@ snapshots:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+
+  chalk@5.6.2: {}
 
   chan@0.6.1: {}
 
