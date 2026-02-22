@@ -40,9 +40,9 @@ describe('test/lib/transports/file_buffer.test.ts', () => {
     logger.close();
   });
 
-  it('should close timer after transport end', () => {
+  it('should close timer after transport close', () => {
     const transport = new FileBufferTransport({ file: filepath, level: 'INFO' });
-    transport.end();
+    transport.close();
     assert.strictEqual(transport._timer, null);
   });
 

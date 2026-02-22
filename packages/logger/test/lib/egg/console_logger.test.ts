@@ -17,8 +17,8 @@ afterEach(async () => {
 });
 
 describe('test/lib/egg/console_logger.test.ts', () => {
-  it('should info by default on NODE_ENV = production', async () => {
-    mm(process.env, 'NODE_ENV', 'production');
+  it('should info by default on EGG_SERVER_ENV = prod', async () => {
+    mm(process.env, 'EGG_SERVER_ENV', 'prod');
     await coffee
       .fork(consoleLoggerFile)
       .notExpect('stdout', /DEBUG \d+ debug foo/)
@@ -28,8 +28,8 @@ describe('test/lib/egg/console_logger.test.ts', () => {
       .end();
   });
 
-  it('should warn by default when NODE_ENV is not production', async () => {
-    mm(process.env, 'NODE_ENV', '');
+  it('should warn by default when EGG_SERVER_ENV is not prod', async () => {
+    mm(process.env, 'EGG_SERVER_ENV', '');
     await coffee
       .fork(consoleLoggerFile)
       .notExpect('stdout', /DEBUG \d+ debug foo/)

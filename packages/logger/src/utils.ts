@@ -52,10 +52,11 @@ export interface ConsoleTransportOptions extends TransportOptions {
   stderrLevel?: LoggerLevel | number;
 }
 
-export interface EggLoggerOptions extends TransportOptions {
+export interface EggLoggerOptions extends Omit<TransportOptions, 'level'> {
+  level?: LoggerLevel;
+  consoleLevel?: LoggerLevel;
   file?: string | null;
   dir?: string;
-  consoleLevel?: LoggerLevel | number;
   buffer?: boolean;
   outputJSON?: boolean;
   outputJSONOnly?: boolean;
@@ -63,6 +64,7 @@ export interface EggLoggerOptions extends TransportOptions {
   concentrateError?: 'duplicate' | 'redirect' | 'ignore';
   concentrateErrorLoggerName?: string;
   flushInterval?: number;
+  [key: string]: unknown;
 }
 
 export interface EggLoggersOptions extends EggLoggerOptions {
@@ -72,9 +74,11 @@ export interface EggLoggersOptions extends EggLoggerOptions {
   coreLogName: string;
   agentLogName: string;
   errorLogName: string;
-  concentrateError?: 'duplicate' | 'redirect' | 'ignore';
-  concentrateErrorLoggerName?: string;
   coreLogger?: Partial<EggLoggersOptions>;
+}
+
+export interface EggConsoleLoggerOptions extends TransportOptions {
+  env?: string;
 }
 
 export interface EggLoggersConfig {
@@ -189,8 +193,7 @@ export function formatLog(
 }
 
 // Like Object.assign, but don't copy undefined values
-export function assign<T>(target: T | null | undefined, ...sources: Array<Partial<T> | null | undefined>): T {
-  if (!target) return {} as T;
+export function assign<T>(target: Partial<T>, ...sources: Array<Partial<T> | null | undefined>): T {
   const t = target as Record<string, unknown>;
   for (const source of sources) {
     if (source == null) continue;
@@ -202,7 +205,7 @@ export function assign<T>(target: T | null | undefined, ...sources: Array<Partia
       }
     }
   }
-  return target;
+  return target as T;
 }
 
 export function formatError(err: Error, options?: TransportOptions, causeLength?: number): string {

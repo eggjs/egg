@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import coffee from 'coffee';
 import { describe, it, afterEach } from 'vitest';
 
-import { EggErrorLogger, levels, defaultFormatter } from '../../../src/index.ts';
+import { EggErrorLogger, defaultFormatter } from '../../../src/index.ts';
 import { rimraf } from '../../utils.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,10 +21,9 @@ describe('test/lib/egg/error_logger.test.ts', () => {
 
   it('default params', () => {
     const logger = new EggErrorLogger({ file: filepath });
-    const opts = logger.options as Record<string, unknown>;
-    assert.strictEqual(opts.level, levels.ERROR);
-    assert.strictEqual(opts.consoleLevel, levels.ERROR);
-    assert.strictEqual(opts.formatter, defaultFormatter);
+    assert.strictEqual(logger.opts.level, 'ERROR');
+    assert.strictEqual(logger.opts.consoleLevel, 'ERROR');
+    assert.strictEqual(logger.opts.formatter, defaultFormatter);
   });
 
   it('should log error level only', async () => {

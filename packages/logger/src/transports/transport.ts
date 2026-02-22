@@ -11,19 +11,19 @@ export type { TransportOptions };
  * console or service.
  * A Logger can configure multiple Transports to meet a variety of complex needs.
  */
-export class Transport<T extends TransportOptions = TransportOptions> {
-  options: T;
+export class Transport {
+  options: TransportOptions;
   #enabled = true;
 
-  constructor(options?: Partial<T>) {
-    this.options = assign({} as T, this.defaults, options);
-    if ((this.options as TransportOptions).encoding === 'utf-8') {
-      (this.options as TransportOptions).encoding = 'utf8';
+  constructor(options?: Partial<TransportOptions>) {
+    this.options = assign<TransportOptions>({}, this.defaults, options);
+    if (this.options.encoding === 'utf-8') {
+      this.options.encoding = 'utf8';
     }
-    (this.options as TransportOptions).level = normalizeLevel((this.options as TransportOptions).level);
+    this.options.level = normalizeLevel(this.options.level);
   }
 
-  get defaults(): Partial<T> {
+  get defaults(): Partial<TransportOptions> {
     return {
       level: 'NONE' as LoggerLevel,
       formatter: null,
@@ -31,7 +31,7 @@ export class Transport<T extends TransportOptions = TransportOptions> {
       json: false,
       encoding: 'utf8',
       eol: os.EOL,
-    } as Partial<T>;
+    };
   }
 
   get enabled(): boolean {
@@ -47,28 +47,27 @@ export class Transport<T extends TransportOptions = TransportOptions> {
   }
 
   set level(level: LoggerLevel | number) {
-    (this.options as TransportOptions).level = normalizeLevel(level);
+    this.options.level = normalizeLevel(level);
   }
 
   get level(): number {
-    return (this.options as TransportOptions).level as number;
+    return this.options.level as number;
   }
 
   shouldLog(level: string): boolean {
     if (!this.#enabled) return false;
-    if ((this.options as TransportOptions).level === levels['NONE']) return false;
-    return ((this.options as TransportOptions).level as number) <= levels[level];
+    if (this.options.level === levels['NONE']) return false;
+    return (this.options.level as number) <= levels[level];
   }
 
   log(level: string, args: unknown[], meta?: LoggerMeta): string | Buffer {
-    const opts = this.options as TransportOptions;
-    if (!meta?.ctx && opts.localStorage) {
-      const ctx = (opts.localStorage as AsyncLocalStorage<unknown>).getStore();
+    if (!meta?.ctx && this.options.localStorage) {
+      const ctx = (this.options.localStorage as AsyncLocalStorage<unknown>).getStore();
       if (ctx) {
         meta = { ...meta, ctx };
       }
     }
-    return formatLog(level, args, meta, opts);
+    return formatLog(level, args, meta, this.options);
   }
 
   reload(): void {}

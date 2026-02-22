@@ -1,5 +1,5 @@
 import { levels, type LoggerLevel } from '../level.ts';
-import { normalizeLevel, type EggLoggerOptions } from '../utils.ts';
+import { type EggLoggerOptions } from '../utils.ts';
 import { EggLogger } from './logger.ts';
 
 /**
@@ -8,14 +8,13 @@ import { EggLogger } from './logger.ts';
 export class EggErrorLogger extends EggLogger {
   constructor(options?: Partial<EggLoggerOptions>) {
     const opts = options ?? {};
-    opts.level = getDefaultLevel(opts.level);
-    opts.consoleLevel = getDefaultLevel(opts.consoleLevel);
+    opts.level = getMinLevel(opts.level);
+    opts.consoleLevel = getMinLevel(opts.consoleLevel);
     super(opts);
   }
 }
 
-function getDefaultLevel(level?: LoggerLevel | number): number {
-  const normalized = normalizeLevel(level);
-  if (normalized === undefined) return levels.ERROR;
-  return normalized > levels.ERROR ? normalized : levels.ERROR;
+function getMinLevel(level?: LoggerLevel): LoggerLevel {
+  if (!level) return 'ERROR';
+  return levels[level] >= levels.ERROR ? level : 'ERROR';
 }

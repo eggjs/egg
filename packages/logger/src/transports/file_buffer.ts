@@ -1,4 +1,4 @@
-import { assign, type FileTransportOptions } from '../utils.ts';
+import { type FileTransportOptions } from '../utils.ts';
 import { FileTransport } from './file.ts';
 
 /**
@@ -17,24 +17,16 @@ export class FileBufferTransport extends FileTransport {
   }
 
   override get defaults(): Partial<FileTransportOptions> {
-    return assign(super.defaults as FileTransportOptions, {
+    return {
+      ...super.defaults,
       flushInterval: 1000,
       maxBufferLength: 1000,
-    });
+    };
   }
 
   override close(): void {
     this._closeInterval();
     super.close();
-  }
-
-  /** @deprecated use close() instead */
-  override end(): void {
-    process.emitWarning('transport.end() is deprecated, use transport.close()', {
-      type: 'DeprecationWarning',
-      code: 'DEP_EGG_LOGGER_TRANSPORT_END',
-    });
-    this.close();
   }
 
   flush(): void {

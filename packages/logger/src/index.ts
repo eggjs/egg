@@ -11,6 +11,7 @@ export type {
   EggLoggerOptions,
   EggLoggersOptions,
   EggLoggersConfig,
+  EggConsoleLoggerOptions,
 } from './utils.ts';
 
 export { Transport } from './transports/transport.ts';
@@ -22,5 +23,4 @@ export { EggLogger } from './egg/logger.ts';
 export { EggErrorLogger } from './egg/error_logger.ts';
 export { EggConsoleLogger } from './egg/console_logger.ts';
 export { EggCustomLogger } from './egg/custom_logger.ts';
-export { EggContextLogger } from './egg/context_logger.ts';
 export { EggLoggers } from './egg/loggers.ts';

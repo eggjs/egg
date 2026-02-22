@@ -1,33 +1,35 @@
 import type { LoggerLevel } from '../level.ts';
 import { Logger } from '../logger.ts';
 import { ConsoleTransport } from '../transports/console.ts';
-import type { Transport } from '../transports/transport.ts';
-import { consoleFormatter, type TransportOptions } from '../utils.ts';
+import { consoleFormatter, assign, type EggConsoleLoggerOptions } from '../utils.ts';
 
 /**
  * Terminal Logger: sends all log output to console.
+ * Uses egg's server environment (EGG_SERVER_ENV or options.env) to determine default level.
+ * Production (prod) defaults to INFO; other environments default to WARN.
  */
 export class EggConsoleLogger extends Logger {
-  constructor(options?: Partial<TransportOptions>) {
+  constructor(options?: Partial<EggConsoleLoggerOptions>) {
     super();
-    this.options = Object.assign({}, this.defaults, options);
+    const opts = assign<EggConsoleLoggerOptions>({}, this.defaults, options);
+    const env = opts.env ?? process.env.EGG_SERVER_ENV ?? '';
+    const envLevel = process.env.NODE_CONSOLE_LOGGRE_LEVEL as LoggerLevel | undefined;
+    const defaultLevel: LoggerLevel = env === 'prod' ? 'INFO' : 'WARN';
+    const level: LoggerLevel = (opts.level as LoggerLevel) ?? envLevel ?? defaultLevel;
 
-    const opts = this.options as TransportOptions;
     this.set(
       'console',
       new ConsoleTransport({
-        level: opts.level as LoggerLevel,
+        level,
         formatter: consoleFormatter,
         maxCauseChainLength: opts.maxCauseChainLength,
-      }) as Transport,
+      }),
     );
   }
 
-  get defaults(): Partial<TransportOptions> {
+  get defaults(): Partial<EggConsoleLoggerOptions> {
     return {
       encoding: 'utf8',
-      level: (process.env.NODE_CONSOLE_LOGGRE_LEVEL ??
-        (process.env.NODE_ENV === 'production' ? 'INFO' : 'WARN')) as LoggerLevel,
       maxCauseChainLength: 10,
     };
   }

@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { logDate } from 'utility';
 
-import { assign, type FileTransportOptions, type LoggerMeta } from '../utils.ts';
+import { type FileTransportOptions, type LoggerMeta } from '../utils.ts';
 import { Transport } from './transport.ts';
 
 type WriteStream = fs.WriteStream & { _onError?: (err: Error) => void };
@@ -12,7 +12,8 @@ type WriteStream = fs.WriteStream & { _onError?: (err: Error) => void };
 /**
  * Output log to file.
  */
-export class FileTransport extends Transport<FileTransportOptions> {
+export class FileTransport extends Transport {
+  declare options: FileTransportOptions;
   declare _stream: WriteStream | null;
 
   constructor(options?: Partial<FileTransportOptions>) {
@@ -23,10 +24,11 @@ export class FileTransport extends Transport<FileTransportOptions> {
   }
 
   override get defaults(): Partial<FileTransportOptions> {
-    return assign(super.defaults as FileTransportOptions, {
+    return {
+      ...super.defaults,
       file: null,
       level: 'INFO',
-    });
+    };
   }
 
   override reload(): void {
@@ -41,23 +43,14 @@ export class FileTransport extends Transport<FileTransportOptions> {
       return '';
     }
     const buf = super.log(level, args, meta);
-    if ((buf as string | Buffer).length) {
-      this._write(buf as string | Buffer);
+    if (buf.length) {
+      this._write(buf);
     }
     return buf;
   }
 
   override close(): void {
     this._closeStream();
-  }
-
-  /** @deprecated use close() instead */
-  override end(): void {
-    process.emitWarning('transport.end() is deprecated, use transport.close()', {
-      type: 'DeprecationWarning',
-      code: 'DEP_EGG_LOGGER_TRANSPORT_END',
-    });
-    this.close();
   }
 
   get writable(): boolean {
@@ -73,13 +66,7 @@ export class FileTransport extends Transport<FileTransportOptions> {
     const stream = fs.createWriteStream(this.options.file!, { flags: 'a' }) as WriteStream;
 
     const onError = (err: Error): void => {
-      console.error(
-        '%s ERROR %s [egg-logger] [%s] %s',
-        logDate(','),
-        process.pid,
-        this.options.file,
-        (err as NodeJS.ErrnoException).stack,
-      );
+      console.error('%s ERROR %s [egg-logger] [%s] %s', logDate(','), process.pid, this.options.file, err.stack);
       this.reload();
       console.warn('%s WARN %s [egg-logger] [%s] reloaded', logDate(','), process.pid, this.options.file);
     };

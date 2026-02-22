@@ -15,7 +15,6 @@ const defaults: EggLoggersOptions = {
   dir: '',
   encoding: 'utf8',
   level: 'INFO',
-  consoleLevel: 'NONE',
   outputJSON: false,
   outputJSONOnly: false,
   buffer: true,
@@ -36,7 +35,14 @@ export class EggLoggers extends Map<string, Logger> {
   constructor(config: EggLoggersConfig) {
     super();
 
-    const loggerConfig = assign({} as EggLoggersOptions, defaults, config.logger);
+    const loggerConfig = assign<EggLoggersOptions>({}, defaults, config.logger);
+
+    // Default consoleLevel based on egg env when not explicitly provided
+    if (loggerConfig.consoleLevel === undefined) {
+      const env = loggerConfig.env ?? 'default';
+      loggerConfig.consoleLevel = env === 'local' || env === 'unittest' ? 'INFO' : 'NONE';
+    }
+
     const customLoggerConfig = config.customLogger ?? {};
 
     debug('Init loggers with options %j', loggerConfig);
@@ -48,9 +54,7 @@ export class EggLoggers extends Map<string, Logger> {
     assert(loggerConfig.errorLogName, 'should pass config.logger.errorLogName');
 
     const errorLogger = new EggErrorLogger(
-      assign({} as EggLoggerOptions, loggerConfig as EggLoggerOptions, {
-        file: loggerConfig.errorLogName,
-      }),
+      assign<EggLoggerOptions>({}, loggerConfig, { file: loggerConfig.errorLogName }),
     );
     this.set('errorLogger', errorLogger);
 
@@ -58,26 +62,14 @@ export class EggLoggers extends Map<string, Logger> {
     let logger: EggLogger;
 
     if (loggerConfig.type === 'agent') {
-      logger = new EggLogger(
-        assign({} as EggLoggerOptions, loggerConfig as EggLoggerOptions, {
-          file: loggerConfig.agentLogName,
-        }),
-      );
+      logger = new EggLogger(assign<EggLoggerOptions>({}, loggerConfig, { file: loggerConfig.agentLogName }));
       coreLogger = new EggLogger(
-        assign({} as EggLoggerOptions, loggerConfig as EggLoggerOptions, loggerConfig.coreLogger as EggLoggerOptions, {
-          file: loggerConfig.agentLogName,
-        }),
+        assign<EggLoggerOptions>({}, loggerConfig, loggerConfig.coreLogger, { file: loggerConfig.agentLogName }),
       );
     } else {
-      logger = new EggLogger(
-        assign({} as EggLoggerOptions, loggerConfig as EggLoggerOptions, {
-          file: loggerConfig.appLogName,
-        }),
-      );
+      logger = new EggLogger(assign<EggLoggerOptions>({}, loggerConfig, { file: loggerConfig.appLogName }));
       coreLogger = new EggLogger(
-        assign({} as EggLoggerOptions, loggerConfig as EggLoggerOptions, loggerConfig.coreLogger as EggLoggerOptions, {
-          file: loggerConfig.coreLogName,
-        }),
+        assign<EggLoggerOptions>({}, loggerConfig, loggerConfig.coreLogger, { file: loggerConfig.coreLogName }),
       );
     }
 
@@ -85,9 +77,7 @@ export class EggLoggers extends Map<string, Logger> {
     this.set('coreLogger', coreLogger);
 
     for (const name in customLoggerConfig) {
-      const customLogger = new EggCustomLogger(
-        assign({} as EggLoggerOptions, loggerConfig as EggLoggerOptions, customLoggerConfig[name]),
-      );
+      const customLogger = new EggCustomLogger(assign<EggLoggerOptions>({}, loggerConfig, customLoggerConfig[name]));
       this.set(name, customLogger);
     }
 
@@ -120,7 +110,7 @@ export class EggLoggers extends Map<string, Logger> {
 
   setConcentrateError(name: string, logger: Logger): void {
     if (name === 'errorLogger') return;
-    const opts = (logger as EggLogger).options as EggLoggerOptions;
+    const opts = (logger as EggLogger).opts;
     const concentrateLoggerName = opts.concentrateErrorLoggerName ?? 'errorLogger';
     const concentrateLogger = this.get(concentrateLoggerName);
     if (!concentrateLogger) return;
