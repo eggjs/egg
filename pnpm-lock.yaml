@@ -1312,6 +1312,12 @@ importers:
       mm:
         specifier: 'catalog:'
         version: 4.0.2
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.32.0(oxlint-tsgolint@0.11.0)
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.2
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
