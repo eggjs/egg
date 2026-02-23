@@ -2092,6 +2092,37 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
+  tegg/core/bundler:
+    dependencies:
+      '@eggjs/controller-decorator':
+        specifier: workspace:*
+        version: link:../controller-decorator
+      '@eggjs/core-decorator':
+        specifier: workspace:*
+        version: link:../core-decorator
+      '@eggjs/metadata':
+        specifier: workspace:*
+        version: link:../metadata
+      '@eggjs/tegg-loader':
+        specifier: workspace:*
+        version: link:../loader
+      '@eggjs/tegg-types':
+        specifier: workspace:*
+        version: link:../types
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.10.2
+      esbuild:
+        specifier: 'catalog:'
+        version: 0.27.0
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.15(@types/node@24.10.2)(@vitest/ui@4.0.15)(esbuild@0.27.0)(jiti@2.6.1)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.2)
+
   tegg/core/common-util:
     dependencies:
       '@eggjs/tegg-types':

@@ -109,6 +109,9 @@
     },
     {
       "path": "./tegg/plugin/orm"
+    },
+    {
+      "path": "./tegg/core/bundler"
     }
   ]
 }
