@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 
 import { mm, type MockApplication } from '@eggjs/mock';
+import { detectPort } from 'detect-port';
 import { HttpClient } from 'urllib';
 import { describe, it, afterEach } from 'vitest';
 
@@ -16,10 +17,10 @@ describe('test/https.test.ts', () => {
     afterEach(() => app && app.close());
 
     it('should success with status 200', async () => {
-      const baseDir = getFilepath('apps/https-server');
+      const port = await detectPort();
       const options = {
-        baseDir,
-        port: 8443,
+        baseDir: getFilepath('apps/https-server'),
+        port,
         https: {
           key: getFilepath('server.key'),
           cert: getFilepath('server.cert'),
@@ -29,7 +30,7 @@ describe('test/https.test.ts', () => {
       app = cluster('apps/https-server', options);
       await app.ready();
 
-      const response = await httpclient.request('https://127.0.0.1:8443', {
+      const response = await httpclient.request(`https://127.0.0.1:${port}`, {
         dataType: 'text',
       });
 
@@ -38,11 +39,12 @@ describe('test/https.test.ts', () => {
     });
 
     it('should listen https and http at the same time', async () => {
-      const baseDir = getFilepath('apps/https-server');
+      const port = await detectPort();
+      const debugPort = await detectPort();
       const options = {
-        baseDir,
-        debugPort: 7001,
-        port: 8443,
+        baseDir: getFilepath('apps/https-server'),
+        debugPort,
+        port,
         https: {
           key: getFilepath('server.key'),
           cert: getFilepath('server.cert'),
@@ -52,13 +54,13 @@ describe('test/https.test.ts', () => {
       app = cluster('apps/https-server', options);
       await app.ready();
 
-      let response = await httpclient.request('https://127.0.0.1:8443', {
+      let response = await httpclient.request(`https://127.0.0.1:${port}`, {
         dataType: 'text',
       });
       assert(response.status === 200);
       assert(response.data === 'https server');
 
-      response = await httpclient.request('http://127.0.0.1:7001', {
+      response = await httpclient.request(`http://127.0.0.1:${debugPort}`, {
         dataType: 'text',
       });
       assert(response.status === 200);
@@ -70,16 +72,16 @@ describe('test/https.test.ts', () => {
     afterEach(() => app && app.close());
 
     it('should success with status 200', async () => {
-      const baseDir = getFilepath('apps/https-server-config');
+      const port = await detectPort();
       const options = {
-        baseDir,
-        port: 8443,
+        baseDir: getFilepath('apps/https-server-config'),
+        port,
       };
 
       app = cluster('apps/https-server-config', options);
       await app.ready();
 
-      const response = await httpclient.request('https://127.0.0.1:8443', {
+      const response = await httpclient.request(`https://127.0.0.1:${port}`, {
         dataType: 'text',
       });
 

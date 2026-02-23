@@ -5,6 +5,13 @@ import { Template } from 'nunjucks';
 import { NunjucksUtils } from './NunjucksUtil.ts';
 import { TemplateUtil } from './TemplateUtil.ts';
 
+const SQL_PARAMS = '$$__sql_params';
+
+export interface GeneratedSql {
+  sql: string;
+  params: any[];
+}
+
 export interface SqlGenerator {
   type: SqlType;
   template: Template;
@@ -41,6 +48,12 @@ export class TableSqlMap {
     env.addFilter('toMultiLine', TemplateUtil.toMultiLine);
     env.addFilter('toMultiPolygon', TemplateUtil.toMultiPolygon);
     env.addFilter('toGeometryCollection', TemplateUtil.toGeometryCollection);
+    env.addFilter('param', function (this: any, value: any) {
+      if (this.ctx[SQL_PARAMS]) {
+        this.ctx[SQL_PARAMS].push(value);
+      }
+      return '?';
+    });
   }
 
   #extract(map: Record<string, SqlMap>) {
@@ -79,7 +92,7 @@ export class TableSqlMap {
     return ret;
   }
 
-  generate(name: string, data: object, timezone: string): string {
+  generate(name: string, data: object, timezone: string): GeneratedSql {
     const generator = this.sqlGenerator[name];
     // istanbul ignore if
     if (!generator) {
@@ -87,8 +100,14 @@ export class TableSqlMap {
     }
 
     const template = generator.template;
+    const params: any[] = [];
     (template as any).env.timezone = timezone;
-    return template.render(data);
+    const context = {
+      ...data,
+      [SQL_PARAMS]: params,
+    };
+    const sql = template.render(context);
+    return { sql, params };
   }
 
   getType(name: string): SqlType {

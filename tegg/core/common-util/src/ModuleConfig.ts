@@ -321,4 +321,61 @@ export class ModuleConfigUtil {
     const moduleYamlContent = fs.readFileSync(moduleYamlPath, 'utf8');
     return yamlLoad(moduleYamlContent) as ModuleConfig;
   }
+
+  /**
+   * Deduplicate module references to avoid adding the same module multiple times.
+   * @param moduleReferences array of module references
+   * @return deduplicated module references
+   */
+  public static deduplicateModules(moduleReferences: readonly ModuleReference[]): readonly ModuleReference[] {
+    const moduleMap = new Map<string, ModuleReference>();
+    const nameMap = new Map<string, ModuleReference>();
+
+    for (const moduleRef of moduleReferences) {
+      const key = moduleRef.path;
+      const existingRef = moduleMap.get(key);
+
+      if (existingRef) {
+        const existingOptional = existingRef.optional ?? false;
+        const currentOptional = moduleRef.optional ?? false;
+
+        if (!existingOptional && currentOptional) {
+          continue;
+        } else if (existingOptional && !currentOptional) {
+          if (existingRef.name !== moduleRef.name) {
+            const existingByName = nameMap.get(moduleRef.name);
+            if (existingByName) {
+              throw new Error(
+                `Duplicate module name "${moduleRef.name}" found: existing at ${existingByName.path}, duplicate at ${moduleRef.path}`,
+              );
+            }
+          }
+
+          const newModuleRef = {
+            ...moduleRef,
+            optional: false,
+          };
+          moduleMap.set(key, newModuleRef);
+          if (nameMap.get(existingRef.name) === existingRef) {
+            nameMap.delete(existingRef.name);
+          }
+          nameMap.set(newModuleRef.name, newModuleRef);
+          continue;
+        }
+        continue;
+      }
+
+      const existingByName = nameMap.get(moduleRef.name);
+      if (existingByName) {
+        throw new Error(
+          `Duplicate module name "${moduleRef.name}" found: existing at ${existingByName.path}, duplicate at ${moduleRef.path}`,
+        );
+      }
+
+      moduleMap.set(key, moduleRef);
+      nameMap.set(moduleRef.name, moduleRef);
+    }
+
+    return Array.from(moduleMap.values());
+  }
 }

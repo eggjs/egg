@@ -63,6 +63,7 @@
     "@eggjs/controller-decorator": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/dal-decorator": "workspace:*",
+    "@eggjs/dal-plugin": "workspace:*",
     "@eggjs/dynamic-inject": "workspace:*",
     "@eggjs/eventbus-decorator": "workspace:*",
     "@eggjs/lifecycle": "workspace:*",

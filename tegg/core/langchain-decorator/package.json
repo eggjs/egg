@@ -1,0 +1,110 @@
+{
+  "name": "@eggjs/langchain-decorator",
+  "version": "4.0.0-beta.36",
+  "description": "tegg langchain decorator",
+  "keywords": [
+    "egg",
+    "langchain",
+    "tegg",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/langchain-decorator",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "akitaSummer <akitasummer@outlook.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/core/langchain-decorator"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./builder/BoundModelMetaBuilder": "./src/builder/BoundModelMetaBuilder.ts",
+    "./builder/GraphEdgeMetaBuilder": "./src/builder/GraphEdgeMetaBuilder.ts",
+    "./builder/GraphMetaBuilder": "./src/builder/GraphMetaBuilder.ts",
+    "./builder/GraphNodeMetaBuilder": "./src/builder/GraphNodeMetaBuilder.ts",
+    "./builder/GraphToolMetaBuilder": "./src/builder/GraphToolMetaBuilder.ts",
+    "./decorator/BoundModel": "./src/decorator/BoundModel.ts",
+    "./decorator/Graph": "./src/decorator/Graph.ts",
+    "./decorator/GraphEdge": "./src/decorator/GraphEdge.ts",
+    "./decorator/GraphNode": "./src/decorator/GraphNode.ts",
+    "./decorator/GraphTool": "./src/decorator/GraphTool.ts",
+    "./model/BoundModelMetadata": "./src/model/BoundModelMetadata.ts",
+    "./model/GraphEdgeMetadata": "./src/model/GraphEdgeMetadata.ts",
+    "./model/GraphMetadata": "./src/model/GraphMetadata.ts",
+    "./model/GraphNodeMetadata": "./src/model/GraphNodeMetadata.ts",
+    "./model/GraphToolMetadata": "./src/model/GraphToolMetadata.ts",
+    "./qualifier/ChatCheckpointSaverQualifier": "./src/qualifier/ChatCheckpointSaverQualifier.ts",
+    "./qualifier/ChatModelQualifier": "./src/qualifier/ChatModelQualifier.ts",
+    "./type/metadataKey": "./src/type/metadataKey.ts",
+    "./util": "./src/util/index.ts",
+    "./util/BoundModelInfoUtil": "./src/util/BoundModelInfoUtil.ts",
+    "./util/GraphEdgeInfoUtil": "./src/util/GraphEdgeInfoUtil.ts",
+    "./util/GraphInfoUtil": "./src/util/GraphInfoUtil.ts",
+    "./util/GraphNodeInfoUtil": "./src/util/GraphNodeInfoUtil.ts",
+    "./util/GraphToolInfoUtil": "./src/util/GraphToolInfoUtil.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./builder/BoundModelMetaBuilder": "./dist/builder/BoundModelMetaBuilder.js",
+      "./builder/GraphEdgeMetaBuilder": "./dist/builder/GraphEdgeMetaBuilder.js",
+      "./builder/GraphMetaBuilder": "./dist/builder/GraphMetaBuilder.js",
+      "./builder/GraphNodeMetaBuilder": "./dist/builder/GraphNodeMetaBuilder.js",
+      "./builder/GraphToolMetaBuilder": "./dist/builder/GraphToolMetaBuilder.js",
+      "./decorator/BoundModel": "./dist/decorator/BoundModel.js",
+      "./decorator/Graph": "./dist/decorator/Graph.js",
+      "./decorator/GraphEdge": "./dist/decorator/GraphEdge.js",
+      "./decorator/GraphNode": "./dist/decorator/GraphNode.js",
+      "./decorator/GraphTool": "./dist/decorator/GraphTool.js",
+      "./model/BoundModelMetadata": "./dist/model/BoundModelMetadata.js",
+      "./model/GraphEdgeMetadata": "./dist/model/GraphEdgeMetadata.js",
+      "./model/GraphMetadata": "./dist/model/GraphMetadata.js",
+      "./model/GraphNodeMetadata": "./dist/model/GraphNodeMetadata.js",
+      "./model/GraphToolMetadata": "./dist/model/GraphToolMetadata.js",
+      "./qualifier/ChatCheckpointSaverQualifier": "./dist/qualifier/ChatCheckpointSaverQualifier.js",
+      "./qualifier/ChatModelQualifier": "./dist/qualifier/ChatModelQualifier.js",
+      "./type/metadataKey": "./dist/type/metadataKey.js",
+      "./util": "./dist/util/index.js",
+      "./util/BoundModelInfoUtil": "./dist/util/BoundModelInfoUtil.js",
+      "./util/GraphEdgeInfoUtil": "./dist/util/GraphEdgeInfoUtil.js",
+      "./util/GraphInfoUtil": "./dist/util/GraphInfoUtil.js",
+      "./util/GraphNodeInfoUtil": "./dist/util/GraphNodeInfoUtil.js",
+      "./util/GraphToolInfoUtil": "./dist/util/GraphToolInfoUtil.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "@langchain/core": "^1.1.1",
+    "@langchain/langgraph": "^1.0.2",
+    "@langchain/openai": "^1.1.0",
+    "langchain": "^1.1.2"
+  },
+  "devDependencies": {
+    "@eggjs/controller-decorator": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "zod": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

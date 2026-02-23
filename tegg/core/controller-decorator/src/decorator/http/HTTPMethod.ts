@@ -17,6 +17,9 @@ export function HTTPMethod(param: HTTPMethodParams) {
     MethodInfoUtil.setMethodControllerType(controllerClazz, methodName, ControllerType.HTTP);
     HTTPInfoUtil.setHTTPMethodPath(param.path, controllerClazz, methodName);
     HTTPInfoUtil.setHTTPMethodMethod(param.method, controllerClazz, methodName);
+    if (param.timeout) {
+      MethodInfoUtil.setMethodTimeout(param.timeout, controllerClazz, methodName);
+    }
     if (param.priority !== undefined) {
       HTTPInfoUtil.setHTTPMethodPriority(param.priority, controllerClazz, methodName);
     }

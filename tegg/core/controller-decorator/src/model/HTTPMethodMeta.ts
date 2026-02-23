@@ -99,6 +99,7 @@ export class HTTPMethodMeta implements MethodMeta {
   public readonly needAcl: boolean;
   public readonly aclCode: string | undefined;
   public readonly hosts: string[] | undefined;
+  public readonly timeout: number | undefined;
 
   constructor(
     name: string,
@@ -111,6 +112,7 @@ export class HTTPMethodMeta implements MethodMeta {
     needAcl: boolean,
     aclCode: string | undefined,
     hosts: string[] | undefined,
+    timeout: number | undefined,
   ) {
     this.name = name;
     this.path = path;
@@ -122,6 +124,7 @@ export class HTTPMethodMeta implements MethodMeta {
     this.needAcl = needAcl;
     this.aclCode = aclCode;
     this.hosts = hosts;
+    this.timeout = timeout;
   }
 }
 

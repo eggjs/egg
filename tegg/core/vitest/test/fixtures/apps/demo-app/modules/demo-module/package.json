@@ -1,0 +1,7 @@
+{
+  "name": "demo-module",
+  "type": "module",
+  "eggModule": {
+    "name": "demoModule"
+  }
+}
