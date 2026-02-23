@@ -50,22 +50,23 @@
   },
   "scripts": {
     "typecheck": "tsgo --noEmit",
-    "test": "node bin/run.js test",
-    "cov": "c8 node bin/run.js test",
+    "pretest": "tsdown",
+    "test": "vitest run",
+    "cov": "vitest run --coverage",
     "ci": "npm run cov"
   },
   "dependencies": {
     "@eggjs/utils": "workspace:*",
     "@oclif/core": "catalog:",
-    "c8": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "ci-parallel-vars": "catalog:",
     "detect-port": "catalog:",
     "globby": "catalog:",
     "jest-changed-files": "catalog:",
-    "mocha": "catalog:",
     "ts-node": "catalog:",
     "tsconfig-paths": "catalog:",
-    "utility": "catalog:"
+    "utility": "catalog:",
+    "vitest": "catalog:"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -73,7 +74,6 @@
     "@eggjs/tsconfig": "workspace:*",
     "@swc-node/register": "catalog:",
     "@swc/core": "catalog:",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
     "assert-file": "catalog:",
     "coffee": "catalog:",

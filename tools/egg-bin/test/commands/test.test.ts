@@ -1,5 +1,7 @@
 import path from 'node:path';
 
+import { describe, it } from 'vitest';
+
 import coffee from '../coffee.ts';
 import { getFixtures, getRootDirname } from '../helper.ts';
 
@@ -15,10 +17,10 @@ describe('test/commands/test.test.ts', () => {
       await coffee
         .fork(eggBin, ['test'], { cwd })
         .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b\/b\.test\.js/)
         .notExpect('stdout', /\ba\.js/)
+        .expect('stdout', /Tests.*passed/)
         .expect('code', 0)
         .end();
     });
@@ -34,10 +36,9 @@ describe('test/commands/test.test.ts', () => {
         })
         // .debug()
         .expect('stdout', /# Split test files in parallel CI jobs: 3\/3, files: 1\/4/)
-        .expect('stdout', /should success/)
         .expect('stdout', /no-timeouts\.test\.js/)
         .notExpect('stdout', /a\.test\.js/)
-        .expect('stdout', /1 passing \(/)
+        .expect('stdout', /1 passed/)
         .expect('code', 0)
         .end();
     });
@@ -46,15 +47,13 @@ describe('test/commands/test.test.ts', () => {
       await coffee
         .fork(eggBin, ['test', 'test/a.test.js'], { cwd })
         // .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
-        .expect('stdout', /2 passing \(/)
+        .expect('stdout', /Tests.*passed/)
         .expect('code', 0)
         .end();
       await coffee
         .fork(eggBin, ['test', 'test/a.test.js,test/ignore.test.js'], { cwd })
         // .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /ignore\.test\.js/)
         .expect('code', 0)
@@ -69,7 +68,6 @@ describe('test/commands/test.test.ts', () => {
           cwd: getFixtures('test-demo-app'),
         })
         .debug()
-        .expect('stdout', /should work/)
         .expect('stdout', /a\.test\.js/)
         .expect('code', 0)
         .end();
@@ -83,7 +81,6 @@ describe('test/commands/test.test.ts', () => {
           cwd: getFixtures('test-demo-app-esm'),
         })
         .debug()
-        .expect('stdout', /should work/)
         .expect('stdout', /a\.test\.js/)
         .expect('code', 0)
         .end();
@@ -114,8 +111,8 @@ describe('test/commands/test.test.ts', () => {
       await coffee
         .fork(eggBin, ['test'], { cwd })
         .debug()
-        .expect('stdout', /should work/)
-        .expect('stdout', /3 passing \(/)
+        .expect('stdout', /index\.test\.ts/)
+        .expect('stdout', /Tests.*passed/)
         .expect('code', 0)
         .end();
     });
@@ -124,7 +121,6 @@ describe('test/commands/test.test.ts', () => {
       await coffee
         .fork(eggBin, ['test', '--bail'], { cwd })
         // .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b\/b\.test\.js/)
         .notExpect('stdout', /\ba\.js/)
@@ -136,8 +132,8 @@ describe('test/commands/test.test.ts', () => {
       await coffee
         .fork(eggBin, ['test'], { cwd: getFixtures('test-files-glob') })
         // .debug()
-        .expect('stdout', /should test index/)
-        .expect('stdout', /should test sub/)
+        .expect('stdout', /index\.test\.js/)
+        .expect('stdout', /sub\.test\.js/)
         .notExpect('stdout', /no-load\.test\.js/)
         .expect('code', 0)
         .end();
@@ -147,7 +143,6 @@ describe('test/commands/test.test.ts', () => {
       await coffee
         .fork(eggBin, ['test'], { cwd, env: { TESTS: 'test/a.test.js' } })
         // .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .notExpect('stdout', /b[/\\]b.test.js/)
         .expect('code', 0)
@@ -161,7 +156,6 @@ describe('test/commands/test.test.ts', () => {
           env: { TESTS: 'test/a.test.js,test/b/b.test.js' },
         })
         // .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b[/\\]b.test.js/)
         .expect('code', 0)
@@ -175,7 +169,6 @@ describe('test/commands/test.test.ts', () => {
           env: { TESTS: 'test/**/*.test.js' },
         })
         // .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .notExpect('stdout', /b[/\\]b.test.js/)
         .expect('code', 0)
@@ -188,7 +181,6 @@ describe('test/commands/test.test.ts', () => {
           cwd,
         })
         // .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .notExpect('stdout', /should show tmp/)
         .expect('code', 0)
@@ -209,13 +201,13 @@ describe('test/commands/test.test.ts', () => {
         .fork(eggBin, ['test'], {
           cwd,
           env: {
-            TESTS: 'test/**/*.test.js',
+            TESTS: 'test/a.test.js,test/b/b.test.js,test/ignore.test.js',
             TEST_REPORTER: 'json',
           },
         })
         // .debug()
-        .expect('stdout', /"stats":/)
-        .expect('stdout', /"tests":/)
+        .expect('stdout', /"numTotalTestSuites":/)
+        .expect('stdout', /"testResults":/)
         .expect('code', 0)
         .end();
     });
@@ -226,15 +218,16 @@ describe('test/commands/test.test.ts', () => {
           cwd,
           env: {
             TEST_TIMEOUT: '60000',
+            TESTS: 'test/a.test.js',
           },
         })
-        .expect('stdout', /should success/)
+        .expect('stdout', /a\.test\.js/)
         .expect('code', 0)
         .end();
     });
 
     it('should force exit', async () => {
-      // add --exit to mocha
+      // vitest handles exit automatically
       const cwd = getFixtures('no-exit');
       await coffee
         .fork(eggBin, ['test'], { cwd })
@@ -253,7 +246,7 @@ describe('test/commands/test.test.ts', () => {
           },
         })
         // .debug()
-        .expect('stdout', /1 passing \(\d+ms\)/)
+        .expect('stdout', /vitest config:/)
         .expect('code', 0)
         .end();
     });
@@ -265,8 +258,8 @@ describe('test/commands/test.test.ts', () => {
           cwd,
         })
         .debug()
-        .expect('stdout', /should work/)
-        .expect('stdout', /2 passing/)
+        .expect('stdout', /\.test\.ts/)
+        .expect('stdout', /Tests.*passed/)
         .notExpect('stderr', /ExperimentalWarning/)
         .expect('code', 0)
         .end();
@@ -279,7 +272,8 @@ describe('test/commands/test.test.ts', () => {
           cwd: getFixtures('test-unhandled-rejection'),
         })
         .debug()
-        .expect('stdout', / Uncaught Error: mock error/)
+        .expect('stderr', /Unhandled Errors/)
+        .expect('stderr', /mock error/)
         .expect('code', 1)
         .end();
     });
@@ -291,26 +285,13 @@ describe('test/commands/test.test.ts', () => {
           cwd: getFixtures('test-demo-app'),
         })
         .debug()
-        .expect('stdout', /should work/)
         .expect('stdout', /a\.test\.js/)
         .expect('code', 0)
         .end();
     });
 
-    it('env.MOCHA_FILE should work', async () => {
-      await coffee
-        .fork(eggBin, ['test', '--parallel'], {
-          cwd: getFixtures('test-demo-app'),
-          env: {
-            MOCHA_FILE: getFixtures('bin/fake_mocha.js'),
-          },
-        })
-        .debug()
-        .expect('stdout', /env\.NODE_ENV: test/)
-        .expect('stdout', /env\.AUTO_AGENT: true/)
-        .expect('stdout', /env\.ENABLE_MOCHA_PARALLEL: true/)
-        .expect('code', 0)
-        .end();
+    it.skip('env.MOCHA_FILE should work', async () => {
+      // MOCHA_FILE is mocha-specific, not supported in vitest
     });
   });
 
@@ -428,7 +409,7 @@ describe('test/commands/test.test.ts', () => {
           cwd: getFixtures('test path with space/test-files'),
         })
         // .debug()
-        .expect('stdout', /should success/)
+        .expect('stdout', /Tests.*passed/)
         .expect('code', 0)
         .end();
     });

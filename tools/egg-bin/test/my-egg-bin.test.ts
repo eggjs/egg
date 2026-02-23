@@ -1,3 +1,5 @@
+import { describe, it } from 'vitest';
+
 import coffee from './coffee.ts';
 import { getFixtures } from './helper.ts';
 
@@ -7,12 +9,12 @@ describe('test/my-egg-bin.test.ts', () => {
 
   it('should my-egg-bin test success', () => {
     return coffee
-      .fork(eggBin, ['test'], { cwd, env: { TESTS: 'test/**/*.test.js' } })
+      .fork(eggBin, ['test'], { cwd, env: { TESTS: 'test/a.test.js,test/b/b.test.js,test/ignore.test.js' } })
       .debug()
-      .expect('stdout', /should success/)
-      .expect('stdout', /a.test.js/)
-      .expect('stdout', /b\/b.test.js/)
-      .notExpect('stdout', /a.js/)
+      .expect('stdout', /a\.test\.js/)
+      .expect('stdout', /b\/b\.test\.js/)
+      .notExpect('stdout', /\ba\.js/)
+      .expect('stdout', /Tests.*passed/)
       .expect('code', 0)
       .end();
   });

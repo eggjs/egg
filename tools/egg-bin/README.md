@@ -108,18 +108,18 @@ Create `.vscode/launch.json` file:
 
 ### test
 
-Using [mocha] to run test.
+Using [vitest] to run test.
 
 ```bash
 egg-bin test [...files] [options]
 ```
 
 - `files` is optional, default to `test/**/*.test.ts`
-- `test/fixtures`, `test/node_modules` is always exclude.
+- `test/fixtures`, `test/node_modules` is always excluded.
 
-#### auto require `test/.setup.ts`
+#### auto load `test/.setup.ts`
 
-If `test/.setup.ts` file exists, it will be auto require as the first test file.
+If `test/.setup.ts` (or `.setup.js`) exists, it will be auto-added as the first vitest `setupFile`.
 
 ```bash
 test
@@ -127,33 +127,38 @@ test
   └── foo.test.ts
 ```
 
+#### auto-inject `@eggjs/mock/setup_vitest`
+
+For egg applications, `@eggjs/mock/setup_vitest` is automatically registered as a vitest setup file when `@eggjs/mock` is installed, handling app lifecycle (`beforeAll` / `afterEach` / `afterAll`).
+
+#### auto use `@eggjs/tegg-vitest/runner`
+
+If `@eggjs/tegg-vitest` is installed in the project, its runner is automatically detected and injected into the vitest config.
+
 #### test options
 
-You can pass any mocha argv.
-
-- `--timeout` milliseconds, default to 60000
-- `--changed` / `-c` only test changed test files(test files means files that match `${pwd}/test/**/*.test.(js|ts)`)
-- `--parallel` enable mocha parallel mode, default to `false`.
-- `--auto-agent` auto start agent in mocha master agent.
-- `--jobs` number of jobs to run in parallel, default to `os.cpus().length - 1`.
+- `--timeout` / `-t` milliseconds, default to `60000`
+- `--no-timeout` disable timeout
+- `--grep` / `-g` only run tests matching pattern
+- `--bail` / `-b` stop after first test failure
+- `--changed` / `-c` only run tests for changed files (matches `test/**/*.test.(js|ts)`)
+- `--watch` / `-w` run in watch mode
 
 #### test environment
 
-Environment is also support, will use it if options not provide.
-
-You can set `TESTS` env to set the tests directory, it support [glob] grammar.
+You can set `TESTS` env to specify test files, supports comma-separated glob patterns.
 
 ```bash
 TESTS=test/a.test.ts egg-bin test
 ```
 
-And the reporter can set by the `TEST_REPORTER` env, default is `spec`.
+The reporter can be set with `TEST_REPORTER` env (any vitest reporter), default is `default`.
 
 ```bash
-TEST_REPORTER=doc egg-bin test
+TEST_REPORTER=verbose egg-bin test
 ```
 
-The test timeout can set by `TEST_TIMEOUT` env, default is `60000` ms.
+The test timeout can be set with `TEST_TIMEOUT` env, default is `60000` ms.
 
 ```bash
 TEST_TIMEOUT=2000 egg-bin test
@@ -161,29 +166,55 @@ TEST_TIMEOUT=2000 egg-bin test
 
 ### cov
 
-Using [mocha] and [c8] to run code coverage, it support all test params above.
+Using [vitest] with [v8 coverage] to run code coverage. Supports all `test` options above.
 
-Coverage reporter will output text-summary, json and lcov.
+Coverage reports are written to `coverage/` and include: `text-summary`, `json-summary`, `json`, `lcov`, `cobertura`.
 
 #### cov options
 
-You can pass any mocha argv.
-
-- `-x` add dir ignore coverage, support multiple argv
-- `--prerequire` prerequire files for coverage instrument, you can use this options if load files slowly when call `mm.app` or `mm.cluster`
-- `--typescript` enable typescript support. If `true`, will auto add `.ts` extension and ignore `typings` and `d.ts`.
-- `--c8` c8 instruments passthrough. you can use this to overwrite egg-bin's default c8 instruments and add additional ones.
-  > - egg-bin have some default instruments passed to c8 like `-r` and `--temp-directory`
-  > - `egg-bin cov --c8="-r teamcity -r text" --c8-report=true`
-- also support all test params above.
+- `-x` add a glob pattern to exclude from coverage, supports multiple
+- also supports all test options above.
 
 #### cov environment
 
-You can set `COV_EXCLUDES` env to add dir ignore coverage.
+You can set `COV_EXCLUDES` env to add glob patterns to exclude from coverage (comma-separated).
 
 ```bash
 COV_EXCLUDES="app/plugins/c*,app/autocreate/**" egg-bin cov
 ```
+
+## Breaking Changes (v8)
+
+### Migrated from Mocha to Vitest
+
+The `test` and `cov` commands now use [vitest] instead of [mocha]. This brings native TypeScript support, faster execution, and built-in watch mode, but removes some Mocha-specific options:
+
+**Removed flags:**
+
+| Old flag            | Reason                                                          |
+| ------------------- | --------------------------------------------------------------- |
+| `--parallel` / `-p` | Vitest handles parallelism natively via worker pools            |
+| `--jobs` / `-j`     | Replaced by vitest's built-in pool configuration                |
+| `--auto-agent`      | Mocha-specific, no equivalent needed in vitest                  |
+| `--prerequire`      | Use `test/.setup.ts` setupFile instead                          |
+| `--c8`              | Coverage is now configured inside vitest, use `-x` for excludes |
+
+**Removed environment variables:**
+
+| Old env var  | Reason                                         |
+| ------------ | ---------------------------------------------- |
+| `MOCHA_FILE` | Mocha-specific, vitest runner is auto-detected |
+
+**Changed output format:**
+
+Test output now follows vitest's format. Assertions in test scripts that match mocha output (e.g. `"N passing"`) should be updated to vitest output (e.g. `"N passed"`).
+
+**Migration guide:**
+
+1. Replace `before()` / `after()` hooks with `beforeAll()` / `afterAll()` (vitest naming)
+2. Import vitest globals explicitly in `.ts` setup files: `import { beforeAll, afterEach } from 'vitest'`
+3. Plain `.js` test files can use globals directly (vitest `globals: true` is enabled by default)
+4. Remove `--parallel` / `--jobs` flags from your npm scripts
 
 ## Custom egg-bin for your team
 
@@ -199,5 +230,6 @@ See <https://oclif.io/docs/configuring_your_cli/>
 
 Made with [contributors-img](https://contrib.rocks).
 
-[mocha]: https://mochajs.org
+[vitest]: https://vitest.dev
+[v8 coverage]: https://vitest.dev/guide/coverage
 [glob]: https://github.com/isaacs/node-glob

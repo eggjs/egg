@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import { mock } from '@eggjs/mock';
 import assertFile from 'assert-file';
+import { describe, it } from 'vitest';
 
 import coffee from '../coffee.ts';
 import { getFixtures, getRootDirname } from '../helper.ts';
@@ -27,10 +28,9 @@ describe('test/commands/cov.test.ts', () => {
       await coffee
         .fork(eggBin, ['cov', '--javascript'], {
           cwd,
-          env: { TESTS: 'test/**/*.test.js' },
+          env: { TESTS: 'test/a.test.js,test/b/b.test.js,test/ignore.test.js' },
         })
         .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b[/|\\]b\.test\.js/)
         .notExpect('stdout', /\ba\.js/)
@@ -46,10 +46,9 @@ describe('test/commands/cov.test.ts', () => {
       await coffee
         .fork(eggBin, ['cov', '--ts=false'], {
           cwd,
-          env: { TESTS: 'test/**/*.test.js' },
+          env: { TESTS: 'test/a.test.js,test/b/b.test.js,test/ignore.test.js' },
         })
         // .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b[/|\\]b\.test\.js/)
         .notExpect('stdout', /\ba\.js/)
@@ -66,8 +65,8 @@ describe('test/commands/cov.test.ts', () => {
       await coffee
         .fork(eggBin, ['cov'], { cwd })
         // .debug()
-        .expect('stdout', /should work/)
-        .expect('stdout', /3 passing/)
+        .expect('stdout', /index\.test\.ts/)
+        .expect('stdout', /Tests.*passed/)
         .expect('stdout', /Statements\s+: 100% \( \d+\/\d+ \)/)
         .expect('code', 0)
         .end();
@@ -81,12 +80,11 @@ describe('test/commands/cov.test.ts', () => {
         .fork(eggBin, ['cov', '--ts=false'], {
           cwd,
           env: {
-            TESTS: 'test/**/*.test.js',
+            TESTS: 'test/a.test.js,test/b/b.test.js,test/ignore.test.js',
             COV_EXCLUDES: 'ignore/*',
           },
         })
         // .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b[/|\\]b\.test\.js/)
         .notExpect('stdout', /a.js/)
@@ -100,9 +98,8 @@ describe('test/commands/cov.test.ts', () => {
 
     it('should success with -x to ignore one dirs', async () => {
       await coffee
-        .fork(eggBin, ['cov', '-x', 'ignore/', 'test/**/*.test.js', '--ts=false'], { cwd })
+        .fork(eggBin, ['cov', '-x', 'ignore/', '--ts=false', 'test/a.test.js,test/b/b.test.js'], { cwd })
         // .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b[/|\\]b\.test\.js/)
         .notExpect('stdout', /a.js/)
@@ -116,9 +113,10 @@ describe('test/commands/cov.test.ts', () => {
 
     it('should success with -x to ignore multi dirs', async () => {
       await coffee
-        .fork(eggBin, ['cov', '-x', 'ignore2/*', '-x', 'ignore/', '--ts=false', 'test/**/*.test.js'], { cwd })
+        .fork(eggBin, ['cov', '-x', 'ignore2/*', '-x', 'ignore/', '--ts=false', 'test/a.test.js,test/b/b.test.js'], {
+          cwd,
+        })
         // .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b[/|\\]b\.test\.js/)
         .notExpect('stdout', /a.js/)
@@ -147,7 +145,6 @@ describe('test/commands/cov.test.ts', () => {
           cwd,
         })
         .debug()
-        .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .notExpect('stdout', /should show tmp/)
         .expect('code', 0)
@@ -159,18 +156,8 @@ describe('test/commands/cov.test.ts', () => {
         coffee
           .fork(eggBin, ['cov'], { cwd, env: { TESTS: 'test/fail.js' } })
           // .debug()
-          .expect('stdout', /1\) should fail/)
-          .expect('stdout', /1 failing/)
-
-          // The formatted coverage report will automatically wrap when output.
-          // There is a certain probability that it will be truncated.
-          // For example:
-          // ==== Coverage Summary ====
-          // Error: xxxxxxxxx.js exit
-          // with code 1
-          // Code: 1
-
-          // .expect('stderr', /exit with code 1/)
+          .expect('stdout', /should fail/)
+          .expect('stdout', /1 failed/)
           .expect('code', 1)
           .end()
       );
@@ -190,7 +177,7 @@ describe('test/commands/cov.test.ts', () => {
       );
     });
 
-    it('should set EGG_BIN_PREREQUIRE', async () => {
+    it('should set NODE_ENV=test', async () => {
       const cwd = getFixtures('prerequire');
       await coffee
         .fork(eggBin, ['cov', '--ts=false'], {
@@ -198,15 +185,6 @@ describe('test/commands/cov.test.ts', () => {
           env: { TESTS: 'test/**/*.test.js' },
         })
         // .debug()
-        .expect('stdout', /EGG_BIN_PREREQUIRE undefined/)
-        .expect('stdout', /NODE_ENV test/)
-        .expect('code', 0)
-        .end();
-
-      await coffee
-        .fork(eggBin, ['cov', '--prerequire', '--ts=false'], { cwd })
-        // .debug()
-        .expect('stdout', /EGG_BIN_PREREQUIRE true/)
         .expect('stdout', /NODE_ENV test/)
         .expect('code', 0)
         .end();
@@ -221,7 +199,6 @@ describe('test/commands/cov.test.ts', () => {
             env: { TESTS: 'test/**/*.test.js' },
           })
           // .debug()
-          .expect('stdout', /should work/)
           .expect('stdout', /a\.test\.js/)
           .expect('code', 0)
           .end()
@@ -236,8 +213,8 @@ describe('test/commands/cov.test.ts', () => {
             cwd,
           })
           // .debug()
-          .expect('stdout', /should work/)
-          .expect('stdout', /2 passing/)
+          .expect('stdout', /\.test\.ts/)
+          .expect('stdout', /Tests.*passed/)
           .expect('code', 0)
           .end()
       );
@@ -252,7 +229,7 @@ describe('test/commands/cov.test.ts', () => {
         })
         .debug()
         .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)
-        .expect('stdout', /1 passing/)
+        .expect('stdout', /1 passed/)
         .expect('code', 0)
         .end();
     });

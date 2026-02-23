@@ -30,42 +30,51 @@ Therefore, code, such as in Controller, Service, Helper, Extend and so on, requi
 
 When [searching 'test framework' in npm](https://www.npmjs.com/search?q=test%20framework&page=1&ranking=popularity), there are a mass of test frameworks owning their own unique characteristics.
 
-### Mocha
+### Vitest
 
-We choose and recommend you to use [Mocha](http://mochajs.org), which is very rich in functionality and supports running in Node.js and Browser, what's more, it's very friendly to asynchronous test support.
+Starting from `@eggjs/bin` v8, Egg uses [Vitest](https://vitest.dev) as the default test runner. Vitest is a next-generation testing framework powered by Vite, providing native TypeScript support, fast execution, and a modern testing experience.
 
-> Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser, making asynchronous testing simple and fun. Mocha tests run serially, allowing for flexible and accurate reporting, while mapping uncaught exceptions to the correct test cases.
+> Vitest is a blazing fast unit test framework powered by Vite. It provides native ESM support, TypeScript out of the box, and a Vite-powered transformation pipeline.
 
-### AVA
+Key advantages:
 
-Why not another recently popular framework [AVA](https://github.com/avajs/ava) which looks like faster? AVA is great, but practice of several projects tells us the truth that code is harder to write.
+- **Native TypeScript support** — no need for ts-node or additional loaders
+- **Fast execution** — leverages Vite's transformation pipeline
+- **Built-in watch mode** — instant feedback during development
+- **Compatible API** — supports `describe`, `it`, `beforeAll`, `afterAll`, etc.
+- **Built-in coverage** — via `@vitest/coverage-v8`, no external tools needed
 
-Comments from [@dead-horse](https://github.com/dead-horse):
+### Mocha (Legacy)
 
-> - AVA is not stable enough, for example, CPU capacity is going to be overloaded when plenty of files are running concurrently. The solution of setting parameter to control concurrent could work, but 'only mode' would be not functioning any more.
-> - Running cases concurrently makes great demands on implementation, because each test has to be independent, especially containing mock.
-> - Considering the expensive initialization of app, it's irrational of AVA to execute each file in an independent process initializing their own app while serial framework does only one time.
+Previous versions of `@eggjs/bin` (v7 and earlier) used [Mocha](http://mochajs.org) as the test runner. If you are migrating from Mocha, note the following hook name changes:
 
-Comments from [@fool2fish](https://github.com/fool2fish)：
-
-> - It's faster to use AVA in simple application(maybe too simple to judge). But it's not recommended to use in complicate one because of its considerable flaws, such as incapability of offering accurate error stacks; meanwhile, concurrency may cause service relying on other test settings to hang up which reduces the success rate of the test. Therefore, process testing, for example, CRUD operations of database, should not use AVA.
+| Mocha          | Vitest                |
+| -------------- | --------------------- |
+| `before()`     | `beforeAll()`         |
+| `after()`      | `afterAll()`          |
+| `beforeEach()` | `beforeEach()` (same) |
+| `afterEach()`  | `afterEach()` (same)  |
 
 ## Assertion Library
 
-[Assertion libraries](https://www.npmjs.com/search?q=assert&page=1&ranking=popularity), as flourishing as test frameworks, are emerged continuously. The one we used has changed from [assert](https://nodejs.org/api/assert.html) to [should](https://github.com/shouldjs/should.js), and then to [expect](https://github.com/Automattic/expect.js)
-, but we are still trying to find better one.
+We recommend using Node.js built-in [assert](https://nodejs.org/api/assert.html) module for assertions. It follows the principle of 『No API is the best API』— simple, familiar, and requires no additional dependencies.
 
-In the end, we go back to the original assertion library because of the appearance of [power-assert], which best expresses [『No API is the best API』](https://github.com/atian25/blog/issues/16).
+```js
+import assert from 'node:assert';
 
-To be Short, Here are it's advantages:
+assert(result.status === 200);
+assert.equal(user.name, 'fengmk2');
+assert.deepStrictEqual(data, { foo: 'bar' });
+```
 
-- No API is the best API. Assert is all.
-- ** powerful failure message **
-- ** powerful failure message **
-- ** powerful failure message **
+Vitest also provides a built-in `expect` API if you prefer BDD-style assertions:
 
-You may intentionally make mistakes in order to see these failure messages.
-![](https://cloud.githubusercontent.com/assets/227713/20919940/19e83de8-bbd9-11e6-8951-bf4a332f9b5a.png)
+```js
+import { expect } from 'vitest';
+
+expect(result.status).toBe(200);
+expect(user.name).toBe('fengmk2');
+```
 
 ## Test Rule
 
@@ -91,7 +100,14 @@ test
 
 ### Test Tool
 
-Consistently using [egg-bin to launch tests](./development.md#unit_testing) , which automatically loads modules like [Mocha], [co-mocha], [power-assert], [nyc] into test scripts, so that we can **concentrate on writing tests** without wasting time on the choice of various test tools or modules.
+Consistently using [egg-bin to launch tests](./development.md#unit_testing), which internally uses [Vitest](https://vitest.dev) to run tests. egg-bin automatically configures vitest with sensible defaults so that we can **concentrate on writing tests** without wasting time on configuration.
+
+Key features provided by egg-bin:
+
+- Auto-detects TypeScript and configures vitest accordingly
+- Auto-loads `test/.setup.ts` (or `.setup.js`) as a setup file
+- Auto-injects `@eggjs/mock/setup_vitest` for egg applications (handles app lifecycle)
+- Injects vitest globals (`describe`, `it`, `beforeAll`, etc.) so plain JS test files work without imports
 
 The only thing you need to do is setting `scripts.test` in `package.json`.
 
@@ -111,10 +127,10 @@ npm test
 > unittest-example@ test /Users/mk2/git/github.com/eggjs/examples/unittest
 > egg-bin test
 
-  test/hello.test.js
-    ✓ should work
+ ✓ test/hello.test.js (1 test) 10ms
 
-  1 passing (10ms)
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
 ```
 
 ## Test Preparation
@@ -134,42 +150,46 @@ We extracted a dedicated mocking helper package: **`@eggjs/mock`** (historically
 
 Before launching, we have to create an instance of App to test code of application-level like Controller, Middleware or Service.
 
-We can easily create an app instance with Mocha's `before` hook through egg-mock.
+We can easily create an app instance with `beforeAll` hook through `@eggjs/mock`.
 
-```js
-// test/controller/home.test.js
-const assert = require('assert');
-const mock = require('@eggjs/mock');
+```ts
+// test/controller/home.test.ts
+import assert from 'node:assert';
+import { mock } from '@eggjs/mock';
+import { beforeAll, describe } from 'vitest';
 
-describe('test/controller/home.test.js', () => {
+describe('test/controller/home.test.ts', () => {
   let app;
-  before(() => {
+  beforeAll(async () => {
     // create a current app instance
     app = mock.app();
     // execute tests after app is ready
-    return app.ready();
+    await app.ready();
   });
 });
 ```
 
 Now, we have an app instance, and it's the base of all the following tests. See more about app at [`mock.app(options)`](https://github.com/eggjs/egg-mock#options).
 
-It's redundancy to create an instance in each test file, so we offered an bootstrap file in egg-mock to create it conveniently.
+It's redundancy to create an instance in each test file, so we offered a bootstrap file in `@eggjs/mock` to create it conveniently.
 
-```js
-// test/controller/home.test.js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+```ts
+// test/controller/home.test.ts
+import { app, mock } from '@eggjs/mock/bootstrap';
+import assert from 'node:assert';
 
-describe('test/controller/home.test.js', () => {
+describe('test/controller/home.test.ts', () => {
   // test cases
 });
 ```
 
+> **Note:** When using egg-bin, `@eggjs/mock/setup_vitest` is automatically injected as a vitest setup file for egg applications. It handles `beforeAll` (app startup), `afterEach` (mock restore), and `afterAll` (app close) automatically.
+
 ### ctx
 
-Except app, tests for Extend, Service and Helper are also taken into consideration. Let's create a context through [`app.mockContext(options)`](https://github.com/eggjs/egg-mock#appmockcontextoptions) offered by egg-mock.
+Except app, tests for Extend, Service and Helper are also taken into consideration. Let's create a context through [`app.mockContext(options)`](https://github.com/eggjs/egg-mock#appmockcontextoptions) offered by `@eggjs/mock`.
 
-```js
+```ts
 it('should get a ctx', () => {
   const ctx = app.mockContext();
   assert(ctx.method === 'GET');
@@ -179,7 +199,7 @@ it('should get a ctx', () => {
 
 If we want to mock the data for `ctx.user`, we can do that by passing the data parameter to mockContext:
 
-```js
+```ts
 it('should mock ctx.user', () => {
   const ctx = app.mockContext({
     user: {
@@ -199,9 +219,9 @@ Pay close attention to testing order, and make sure any chunk of code is execute
 
 Common Error:
 
-```js
+```ts
 // Bad
-const { app } = require('egg-mock/bootstrap');
+import { app } from '@eggjs/mock/bootstrap';
 
 describe('bad test', () => {
   doSomethingBefore();
@@ -212,16 +232,16 @@ describe('bad test', () => {
 });
 ```
 
-Mocha is going to load all the code in the beginning, which means `doSomethingBefore` would be invoked before execution. It's not expected when especially using 'only' to specify the test.
+The test framework loads all the code in the beginning, which means `doSomethingBefore` would be invoked before execution. It's not expected when especially using 'only' to specify the test.
 
-It's supposed to locate in a `before` hook in the suite of a particular test case.
+It's supposed to locate in a `beforeAll` hook in the suite of a particular test case.
 
-```js
+```ts
 // Good
-const { app } = require('egg-mock/bootstrap');
+import { app } from '@eggjs/mock/bootstrap';
 
 describe('good test', () => {
-  before(() => doSomethingBefore());
+  beforeAll(() => doSomethingBefore());
 
   it('should redirect', () => {
     return app.httpRequest().get('/').expect(302);
@@ -229,13 +249,13 @@ describe('good test', () => {
 });
 ```
 
-Mocha have keywords - before, after, beforeEach and afterEach - to set up preconditions and clean-up after your tests. These keywords could be multiple and execute in strict order.
+Vitest provides `beforeAll`, `afterAll`, `beforeEach` and `afterEach` to set up preconditions and clean-up after your tests. These keywords could be multiple and execute in strict order.
 
-```js
+```ts
 describe('egg test', () => {
-  before(() => console.log('order 1'));
-  before(() => console.log('order 2'));
-  after(() => console.log('order 6'));
+  beforeAll(() => console.log('order 1'));
+  beforeAll(() => console.log('order 2'));
+  afterAll(() => console.log('order 6'));
   beforeEach(() => console.log('order 3'));
   afterEach(() => console.log('order 5'));
   it('should worker', () => console.log('order 4'));
@@ -288,11 +308,12 @@ class HomeController extends Controller {
 
 Then a test.
 
-```js
-// test/controller/home.test.js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+```ts
+// test/controller/home.test.ts
+import { app } from '@eggjs/mock/bootstrap';
+import assert from 'node:assert';
 
-describe('test/controller/home.test.js', () => {
+describe('test/controller/home.test.ts', () => {
   describe('GET /', () => {
     it('should status 200 and get the body', () => {
       // load `GET /` request
@@ -305,7 +326,7 @@ describe('test/controller/home.test.js', () => {
     it('should send multi requests', async () => {
       await app.httpRequest()
         .get('/')
-        .expect(200) v
+        .expect(200)
         .expect('hello world'); // set expectation of body to 'hello world'
 
       // once more
@@ -323,7 +344,7 @@ describe('test/controller/home.test.js', () => {
 
 `app.httpRequest` based on SuperTest supports a majority of HTTP methods such as GET, POST, PUT, and it provides rich interfaces to construct request, such as a JSON POST request.
 
-```js
+```ts
 // app/controller/home.js
 class HomeController extends Controller {
   async post() {
@@ -331,9 +352,9 @@ class HomeController extends Controller {
   }
 }
 
-// test/controller/home.test.js
+// test/controller/home.test.ts
 it('should status 200 and get the request body', () => {
-  // mock CSRF token，explain later
+  // mock CSRF token, explain later
   app.mockCsrf();
   return app
     .httpRequest()
@@ -349,7 +370,7 @@ it('should status 200 and get the request body', () => {
 });
 ```
 
-See details at [SuperTest Document](https://github.com/visionmedia/supertest#getting-started)。
+See details at [SuperTest Document](https://github.com/visionmedia/supertest#getting-started).
 
 ### mock CSRF
 
@@ -629,17 +650,17 @@ describe('GET /session', () => {
 
 Remember to restore mock data in an `afterEach` hook, otherwise it would take effect with all the tests that supposed to be independent to each other.
 
-```js
+```ts
 describe('some test', () => {
-  // before hook
+  // beforeAll hook
 
-  afterEach(mock.restore);
+  afterEach(() => mock.restore());
 
   // it tests
 });
 ```
 
-**When you use `egg-mock/bootstrap`, resetting work would be done automatically in an `afterEach` hook, Do not need to write these code any more.**
+**When using egg-bin, `@eggjs/mock/setup_vitest` is automatically injected, which resets all mocks in an `afterEach` hook. You don't need to write this code manually.**
 
 The following will describe the common usage of egg-mock.
 
@@ -752,7 +773,4 @@ describe('GET /httpclient', () => {
 
 All sample code can be found in [eggjs/exmaples/unittest](https://github.com/eggjs/examples/blob/master/unittest)
 
-[mocha]: https://mochajs.org
-[co-mocha]: https://github.com/blakeembrey/co-mocha
-[nyc]: https://github.com/istanbuljs/nyc
-[power-assert]: https://github.com/power-assert-js/power-assert
+[vitest]: https://vitest.dev

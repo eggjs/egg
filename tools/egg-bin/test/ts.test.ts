@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import _cpy from 'cpy';
 import { runScript } from 'runscript';
+import { afterEach, beforeAll, describe, it } from 'vitest';
 
 import coffee from './coffee.js';
 import { getRootDirname, getFixtures } from './helper.js';
@@ -49,7 +50,7 @@ describe.skip('test/ts.test.ts', () => {
   });
 
   describe('real application', () => {
-    before(() => {
+    beforeAll(() => {
       cwd = getFixtures('example-ts');
     });
 
@@ -107,7 +108,7 @@ describe.skip('test/ts.test.ts', () => {
   });
 
   describe('error stacks', () => {
-    before(() => {
+    beforeAll(() => {
       cwd = getFixtures('example-ts-error-stack');
     });
 
@@ -218,7 +219,7 @@ describe.skip('test/ts.test.ts', () => {
       await fs.rm(tempPackageJson, { force: true, recursive: true });
     });
 
-    before(() => {
+    beforeAll(() => {
       cwd = getFixtures('example-ts-pkg');
     });
 
