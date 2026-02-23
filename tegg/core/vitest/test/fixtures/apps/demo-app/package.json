@@ -1,0 +1,7 @@
+{
+  "name": "demo-app",
+  "version": "0.0.1",
+  "private": true,
+  "description": "vitest fixture app",
+  "type": "module"
+}

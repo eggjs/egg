@@ -1,0 +1,11 @@
+[
+  {
+    "path": "../app/modules/bar"
+  },
+  {
+    "package": "../../../../"
+  },
+  {
+    "package": "@eggjs/mcp-client-plugin"
+  }
+]

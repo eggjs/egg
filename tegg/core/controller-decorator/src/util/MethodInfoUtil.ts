@@ -9,6 +9,7 @@ import {
   METHOD_CONTROLLER_HOST,
   METHOD_CONTROLLER_TYPE_MAP,
   METHOD_MIDDLEWARES,
+  METHOD_TIMEOUT_METADATA,
 } from '@eggjs/tegg-types';
 import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
 
@@ -18,6 +19,7 @@ type MethodContextIndexMap = Map<string, number>;
 type MethodMiddlewareMap = Map<string, MiddlewareFunc[]>;
 type MethodAopMiddlewareMap = Map<string, EggProtoImplClass<IAdvice>[]>;
 type MethodAclMap = Map<string, string | undefined>;
+type MethodTimeoutMap = Map<string, number>;
 
 export class MethodInfoUtil {
   static setMethodControllerType(
@@ -137,5 +139,19 @@ export class MethodInfoUtil {
       new Map(),
     );
     methodControllerMap.set(methodName, true);
+  }
+
+  static setMethodTimeout(timeout: number, clazz: EggProtoImplClass, methodName: string): void {
+    const methodTimeoutMap: MethodTimeoutMap = MetadataUtil.initOwnMapMetaData(
+      METHOD_TIMEOUT_METADATA,
+      clazz,
+      new Map(),
+    );
+    methodTimeoutMap.set(methodName, timeout);
+  }
+
+  static getMethodTimeout(clazz: EggProtoImplClass, methodName: string): number | undefined {
+    const methodTimeoutMap: MethodTimeoutMap | undefined = MetadataUtil.getMetaData(METHOD_TIMEOUT_METADATA, clazz);
+    return methodTimeoutMap?.get(methodName);
   }
 }

@@ -96,6 +96,7 @@
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
+    "await-first": "catalog:",
     "extend2": "catalog:",
     "sdk-base": "catalog:"
   },

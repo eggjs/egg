@@ -1,0 +1,14 @@
+mcp:
+  clients:
+    bar:
+      url: http://127.0.0.1:17253/mcp/sse
+      clientName: barSse
+      version: 1.0.0
+      transportType: SSE
+      type: http
+    foo:
+      url: http://127.0.0.1:17263/
+      clientName: barStreamable
+      version: 1.0.0
+      transportType: STREAMABLE_HTTP
+      type: http

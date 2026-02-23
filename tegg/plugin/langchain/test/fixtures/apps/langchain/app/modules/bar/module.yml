@@ -1,0 +1,19 @@
+ChatModel:
+  clients:
+    chat:
+      apiKey: mock_api_key
+      model: Qwen2_5_7B_Instruct
+      temperature: 0
+      timeout: 10
+      type: openai
+      configuration:
+        baseURL: https://antchat.alipay.com/v1
+
+mcp:
+  clients:
+    bar:
+      url: http://127.0.0.1:17283/mcp/sse
+      clientName: barSse
+      version: 1.0.0
+      transportType: SSE
+      type: http

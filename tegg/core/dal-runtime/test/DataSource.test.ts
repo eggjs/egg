@@ -34,7 +34,8 @@ describe('test/Datasource.test.ts', () => {
 
       const mysql = new MysqlDataSource(mysqlOptions);
       await assert.rejects(mysql.ready(), /fake error/);
-      assert.equal(tracker.mock.callCount(), 1);
+      // DEFAULT_RETRY_TIMES is 3, so query is called 3 times before giving up
+      assert.equal(tracker.mock.callCount(), 3);
     });
 
     it('init should retry', async () => {
@@ -83,8 +84,9 @@ describe('test/Datasource.test.ts', () => {
     });
 
     it('execute should work', async () => {
+      const uniqueId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
       const foo = new Foo();
-      foo.name = 'name';
+      foo.name = `name_${uniqueId}`;
       foo.col1 = 'col1';
       foo.bitColumn = Buffer.from([0, 0]);
       foo.boolColumn = 0;
@@ -191,10 +193,10 @@ describe('test/Datasource.test.ts', () => {
         primary: {
           id: insertResult.insertId,
         },
-        $name: 'update_name',
+        $name: `update_name_${uniqueId}`,
       });
       assert.equal(updateResult.affectedRows, 1);
-      foo.name = 'update_name';
+      foo.name = `update_name_${uniqueId}`;
 
       const findRow = await dataSource.executeScalar('findByPrimary', {
         $id: insertResult.insertId,

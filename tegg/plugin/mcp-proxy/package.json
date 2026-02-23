@@ -1,0 +1,94 @@
+{
+  "name": "@eggjs/mcp-proxy-plugin",
+  "version": "4.0.0-beta.36",
+  "description": "tegg mcp proxy plugin",
+  "keywords": [
+    "egg",
+    "mcp",
+    "plugin",
+    "tegg",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/mcp-proxy",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/plugin/mcp-proxy"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/agent": "./src/app/extend/agent.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./lib/MCPProxyDataClient": "./src/lib/MCPProxyDataClient.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./app/extend/agent": "./dist/app/extend/agent.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/MCPProxyDataClient": "./dist/lib/MCPProxyDataClient.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/controller-plugin": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "await-event": "catalog:",
+    "cluster-client": "^3.7.0",
+    "content-type": "^1.0.5",
+    "eventsource-parser": "^3.0.1",
+    "koa-compose": "catalog:",
+    "raw-body": "^2.5.2",
+    "sdk-base": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/aop-runtime": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "eventsource": "^3.0.5",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "mcpProxy"
+  },
+  "eggPlugin": {
+    "name": "mcpProxy",
+    "dependencies": [
+      "tegg"
+    ]
+  }
+}

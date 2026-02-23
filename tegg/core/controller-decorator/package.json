@@ -48,6 +48,7 @@
     "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.23.0",
     "is-type-of": "catalog:",
     "path-to-regexp": "catalog:path-to-regexp1"
   },

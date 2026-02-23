@@ -1,0 +1,6 @@
+{
+  "name": "llm-test-module",
+  "eggModule": {
+    "name": "llmTestModule"
+  }
+}

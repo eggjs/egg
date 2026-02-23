@@ -13,7 +13,7 @@ catalog:
   '@eggjs/compressible': ^3.0.0
   '@eggjs/cookies': ^3.1.0
   '@eggjs/ip': ^2.1.0
-  '@eggjs/rds': ^1.3.0
+  '@eggjs/rds': ^1.5.0
   '@eggjs/redis': ^3.0.0
   '@eggjs/scripts': ^4.0.0
   '@fengmk2/ps-tree': ^2.0.1

@@ -14,6 +14,9 @@ export function HTTPController(param?: HTTPControllerParams) {
     if (param?.path) {
       HTTPInfoUtil.setHTTPPath(param.path, constructor);
     }
+    if (param?.timeout) {
+      ControllerInfoUtil.setControllerTimeout(param.timeout, constructor);
+    }
     // TODO elegant?
     const func = SingletonProto({
       accessLevel: AccessLevel.PUBLIC,
