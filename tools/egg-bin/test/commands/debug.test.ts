@@ -5,7 +5,7 @@ import { getFixtures, getRootDirname } from '../helper.ts';
 
 describe('test/commands/debug.test.ts', () => {
   const eggBin = path.join(getRootDirname(), 'bin/run.js');
-  const cwd = getFixtures('demo-app');
+  const cwd = getFixtures('demo-app-debug');
 
   it('should startCluster success', () => {
     return (

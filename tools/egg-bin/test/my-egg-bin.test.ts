@@ -3,7 +3,7 @@ import { getFixtures } from './helper.ts';
 
 describe('test/my-egg-bin.test.ts', () => {
   const eggBin = getFixtures('my-egg-bin/bin/run.js');
-  const cwd = getFixtures('test-files');
+  const cwd = getFixtures('test-files-my-egg-bin');
 
   it('should my-egg-bin test success', () => {
     return coffee
@@ -63,7 +63,7 @@ describe('test/my-egg-bin.test.ts', () => {
   });
 
   it('should my-egg-bin dev success', () => {
-    const baseDir = getFixtures('custom-framework-app');
+    const baseDir = getFixtures('custom-framework-app-my-egg-bin');
     return coffee
       .fork(eggBin, ['dev'], { cwd: baseDir })
       .debug()

@@ -21,7 +21,7 @@ describe('test/commands/dev/detect-port.test.ts', () => {
 
   it('should auto detect available port', () => {
     const eggBin = path.join(getRootDirname(), 'bin/run.js');
-    const cwd = getFixtures('demo-app');
+    const cwd = getFixtures('demo-app-detect-port');
 
     return (
       coffee

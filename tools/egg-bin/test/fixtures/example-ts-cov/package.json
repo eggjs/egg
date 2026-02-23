@@ -1,0 +1,10 @@
+{
+  "name": "example-ts",
+  "type": "module",
+  "devDependencies": {
+    "@eggjs/mock": "*"
+  },
+  "egg": {
+    "typescript": true
+  }
+}

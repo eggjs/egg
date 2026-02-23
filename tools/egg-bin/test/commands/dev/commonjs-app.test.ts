@@ -6,7 +6,7 @@ import { getRootDirname, getFixtures } from '../../helper.ts';
 describe('test/commands/dev/commonjs-app.test.ts', () => {
   it('should startCluster success on CommonJS', () => {
     const eggBin = path.join(getRootDirname(), 'bin/run.js');
-    const cwd = getFixtures('demo-app');
+    const cwd = getFixtures('demo-app-commonjs');
 
     return (
       coffee

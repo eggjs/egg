@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "typescript": "*"
+  },
+  "egg": {
+    "framework": "ignore-require-egg-mock-register"
+  }
+}
