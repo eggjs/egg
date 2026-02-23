@@ -47,7 +47,10 @@ export class Transport {
   }
 
   set level(level: LoggerLevel | number) {
-    this.options.level = normalizeLevel(level);
+    const normalized = normalizeLevel(level);
+    if (normalized !== undefined) {
+      this.options.level = normalized;
+    }
   }
 
   get level(): number {

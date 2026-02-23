@@ -23,6 +23,7 @@ describe('test/lib/formatter.test.ts', () => {
     transport = new FileTransport({ file: filepath, level: 'INFO' });
   });
   afterEach(() => {
+    transport.close();
     mm.restore();
   });
   afterAll(async () => {
@@ -117,7 +118,7 @@ describe('test/lib/formatter.test.ts', () => {
     logger.info('custom format');
     await sleep(10);
     const content = fs.readFileSync(filepath, 'utf8');
-    assert.strictEqual(content, '[INFO] custom format\n');
+    assert.strictEqual(content, '[INFO] custom format' + os.EOL);
     logger.close();
   });
 

@@ -46,8 +46,8 @@ describe('test/lib/egg/console_logger.test.ts', () => {
       .end();
   });
 
-  it('should use NODE_CONSOLE_LOGGRE_LEVEL env', async () => {
-    mm(process.env, 'NODE_CONSOLE_LOGGRE_LEVEL', 'INFO');
+  it('should use NODE_CONSOLE_LOGGER_LEVEL env', async () => {
+    mm(process.env, 'NODE_CONSOLE_LOGGER_LEVEL', 'INFO');
     await coffee
       .fork(consoleLoggerFile)
       .expect('stdout', /INFO \d+ info foo/)

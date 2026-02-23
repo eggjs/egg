@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -45,7 +46,7 @@ describe('test/lib/logger.test.ts', () => {
     logger.info('info foo 中文');
     await sleep(10);
     const content = fs.readFileSync(filepath);
-    assert.strictEqual(iconv.decode(content, 'gbk'), 'info foo 中文\n');
+    assert.strictEqual(iconv.decode(content, 'gbk'), 'info foo 中文' + os.EOL);
     logger.close();
   });
 
@@ -58,7 +59,7 @@ describe('test/lib/logger.test.ts', () => {
     logger.info('info foo4');
     await sleep(10);
     const content = fs.readFileSync(filepath, 'utf8');
-    assert.strictEqual(content, 'info foo1\ninfo foo2\ninfo foo3\n');
+    assert.strictEqual(content, 'info foo1' + os.EOL + 'info foo2' + os.EOL + 'info foo3' + os.EOL);
     logger.close();
   });
 
@@ -71,7 +72,10 @@ describe('test/lib/logger.test.ts', () => {
     logger.info('info foo4');
     await sleep(10);
     const content = fs.readFileSync(filepath);
-    assert.strictEqual(iconv.decode(content, 'gbk'), 'info foo1 中文\ninfo foo2\ninfo foo3\n');
+    assert.strictEqual(
+      iconv.decode(content, 'gbk'),
+      'info foo1 中文' + os.EOL + 'info foo2' + os.EOL + 'info foo3' + os.EOL,
+    );
     logger.close();
   });
 
@@ -97,8 +101,8 @@ describe('test/lib/logger.test.ts', () => {
 
     await sleep(10);
 
-    assert.strictEqual(fs.readFileSync(file1, 'utf8'), 'info self\n');
-    assert.strictEqual(fs.readFileSync(file2, 'utf8'), 'warn logger2\nerror logger2\n');
+    assert.strictEqual(fs.readFileSync(file1, 'utf8'), 'info self' + os.EOL);
+    assert.strictEqual(fs.readFileSync(file2, 'utf8'), 'warn logger2' + os.EOL + 'error logger2' + os.EOL);
     assert.strictEqual(fs.readFileSync(file3, 'utf8'), '');
     logger1.close();
     logger2.close();
@@ -129,9 +133,12 @@ describe('test/lib/logger.test.ts', () => {
 
     await sleep(10);
 
-    assert.strictEqual(fs.readFileSync(file1, 'utf8'), 'info self\nwarn logger2\nerror logger2\n');
-    assert.strictEqual(fs.readFileSync(file11, 'utf8'), 'info self\nwarn logger2\n');
-    assert.strictEqual(fs.readFileSync(file2, 'utf8'), 'warn logger2\nerror logger2\n');
+    assert.strictEqual(
+      fs.readFileSync(file1, 'utf8'),
+      'info self' + os.EOL + 'warn logger2' + os.EOL + 'error logger2' + os.EOL,
+    );
+    assert.strictEqual(fs.readFileSync(file11, 'utf8'), 'info self' + os.EOL + 'warn logger2' + os.EOL);
+    assert.strictEqual(fs.readFileSync(file2, 'utf8'), 'warn logger2' + os.EOL + 'error logger2' + os.EOL);
     assert.strictEqual(fs.readFileSync(file3, 'utf8'), '');
     logger1.close();
     logger2.close();
@@ -145,7 +152,7 @@ describe('test/lib/logger.test.ts', () => {
     logger.write('none');
     await sleep(10);
     const content = fs.readFileSync(filepath, 'utf8');
-    assert.strictEqual(content, 'none\n');
+    assert.strictEqual(content, 'none' + os.EOL);
     logger.close();
   });
 
@@ -163,7 +170,7 @@ describe('test/lib/logger.test.ts', () => {
     logger.write('write');
     await sleep(10);
     const content = fs.readFileSync(filepath, 'utf8');
-    assert.match(content, /^\d* info\nwrite\n$/);
+    assert.match(content, /^\d* info\r?\nwrite\r?\n$/);
     logger.close();
   });
 
@@ -180,7 +187,7 @@ describe('test/lib/logger.test.ts', () => {
     logger.write('write %j', { foo: 'bar' });
     await sleep(10);
     const content = fs.readFileSync(filepath, 'utf8');
-    assert.match(content, /^write {"foo":"bar"}\n$/);
+    assert.match(content, /^write \{"foo":"bar"\}\r?\n$/);
     logger.close();
   });
 });

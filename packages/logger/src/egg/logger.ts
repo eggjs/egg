@@ -31,7 +31,7 @@ export class EggLogger extends Logger {
 
     const EggFileTransport = opts.buffer === true ? FileBufferTransport : FileTransport;
 
-    if (!opts.outputJSONOnly) {
+    if (!opts.outputJSONOnly && opts.file) {
       this.set(
         'file',
         new EggFileTransport({

@@ -57,7 +57,9 @@ export class FileBufferTransport extends FileTransport {
   }
 
   _createInterval(): ReturnType<typeof setInterval> {
-    return setInterval(() => this.flush(), this.options.flushInterval ?? 1000);
+    const timer = setInterval(() => this.flush(), this.options.flushInterval ?? 1000);
+    timer.unref();
+    return timer;
   }
 
   _closeInterval(): void {

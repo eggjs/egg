@@ -4,16 +4,12 @@ import { describe, it } from 'vitest';
 
 import { formatError } from '../../src/index.ts';
 
-const NODE_MAJOR_VERSION = Number(process.version.split('.')[0].substring(1));
-
 describe('test/lib/utils.test.ts', () => {
-  if (NODE_MAJOR_VERSION < 16) return;
-
   describe('formatError', () => {
     it('should format with no cause', () => {
       const rootError = new Error('root error');
       const msg = formatError(rootError);
-      assert(msg.match(/nodejs.Error: root error/));
+      assert(msg.match(/nodejs\.Error: root error/));
       assert(msg.match(/pid: /));
       assert(msg.match(/hostname: /));
     });
@@ -22,9 +18,9 @@ describe('test/lib/utils.test.ts', () => {
       const rootError = new Error('root error');
       const error = new Error('mock error', { cause: rootError });
       const msg = formatError(error);
-      assert(msg.match(/nodejs.Error: mock error/));
+      assert(msg.match(/nodejs\.Error: mock error/));
       assert(msg.match(/cause:/));
-      assert(msg.match(/nodejs.Error: root error/));
+      assert(msg.match(/nodejs\.Error: root error/));
     });
 
     it('should format AggregateError', () => {
@@ -32,7 +28,7 @@ describe('test/lib/utils.test.ts', () => {
       const e2 = new Error('e2');
       const aggregate = new AggregateError([e1, e2], 'aggregate error');
       const msg = formatError(aggregate);
-      assert(msg.match(/nodejs.AggregateError: aggregate error/));
+      assert(msg.match(/nodejs\.AggregateError: aggregate error/));
       assert(msg.match(/\[error-0\]:/));
       assert(msg.match(/\[error-1\]:/));
     });

@@ -1,18 +1,18 @@
-export const ALL = -Infinity;
+export const ALL: number = -Infinity;
 
 /** Debug log for execute tracing */
-export const DEBUG = 0;
+export const DEBUG: number = 0;
 
 /** Normal information logging */
-export const INFO = 1;
+export const INFO: number = 1;
 
 /** Warning information logging */
-export const WARN = 2;
+export const WARN: number = 2;
 
 /** Error or exception logging */
-export const ERROR = 3;
+export const ERROR: number = 3;
 
-export const NONE = Infinity;
+export const NONE: number = Infinity;
 
 export type LoggerLevel = 'ALL' | 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'NONE';
 

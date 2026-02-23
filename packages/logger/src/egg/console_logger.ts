@@ -13,7 +13,7 @@ export class EggConsoleLogger extends Logger {
     super();
     const opts = assign<EggConsoleLoggerOptions>({}, this.defaults, options);
     const env = opts.env ?? process.env.EGG_SERVER_ENV ?? '';
-    const envLevel = process.env.NODE_CONSOLE_LOGGRE_LEVEL as LoggerLevel | undefined;
+    const envLevel = process.env.NODE_CONSOLE_LOGGER_LEVEL as LoggerLevel | undefined;
     const defaultLevel: LoggerLevel = env === 'prod' ? 'INFO' : 'WARN';
     const level: LoggerLevel = (opts.level as LoggerLevel) ?? envLevel ?? defaultLevel;
 
