@@ -25,7 +25,7 @@ describe('test/lib/transports/console.test.ts', () => {
       .fork(loggerFile, [JSON.stringify(options)])
       .notExpect('stdout', /warn foo\r?\n/)
       .notExpect('stdout', /error foo\r?\n/)
-      .expect('stderr', 'error foo\n')
+      .expect('stderr', /error foo\r?\n/)
       .end();
   });
 
@@ -33,8 +33,8 @@ describe('test/lib/transports/console.test.ts', () => {
     const options = { file: path.join(tmp, 'a.log'), level: 'WARN', stderrLevel: 'WARN' };
     await coffee
       .fork(loggerFile, [JSON.stringify(options)])
-      .expect('stdout', 'write foo\n')
-      .expect('stderr', 'warn foo\nerror foo\n')
+      .expect('stdout', /write foo\r?\n/)
+      .expect('stderr', /warn foo\r?\nerror foo\r?\n/)
       .end();
   });
 
@@ -50,8 +50,8 @@ describe('test/lib/transports/console.test.ts', () => {
     const options = { file: path.join(tmp, 'a.log'), level: levels.ERROR };
     await coffee
       .fork(loggerFile, [JSON.stringify(options)])
-      .expect('stdout', 'write foo\n')
-      .expect('stderr', 'error foo\n')
+      .expect('stdout', /write foo\r?\n/)
+      .expect('stderr', /error foo\r?\n/)
       .end();
   });
 
@@ -72,7 +72,7 @@ describe('test/lib/transports/console.test.ts', () => {
       .expect('stdout', /info foo\r?\n/)
       .expect('stdout', /warn foo\r?\n/)
       .notExpect('stdout', /error foo\r?\n/)
-      .expect('stderr', 'error foo\n')
+      .expect('stderr', /error foo\r?\n/)
       .end();
   });
 
@@ -80,8 +80,8 @@ describe('test/lib/transports/console.test.ts', () => {
     const options = { file: path.join(tmp, 'a.log'), level: 'error', flushInterval: 10 };
     await coffee
       .fork(loggerFile, [JSON.stringify(options)])
-      .expect('stdout', 'write foo\n')
-      .expect('stderr', 'error foo\n')
+      .expect('stdout', /write foo\r?\n/)
+      .expect('stderr', /error foo\r?\n/)
       .end();
   });
 

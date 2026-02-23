@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -36,7 +37,7 @@ describe('test/lib/transports/file_buffer.test.ts', () => {
     assert.strictEqual(fs.readFileSync(filepath, 'utf8'), '');
 
     await sleep(1000);
-    assert.strictEqual(fs.readFileSync(filepath, 'utf8'), 'info foo\n');
+    assert.strictEqual(fs.readFileSync(filepath, 'utf8'), 'info foo' + os.EOL);
     logger.close();
   });
 
@@ -55,7 +56,7 @@ describe('test/lib/transports/file_buffer.test.ts', () => {
     logger.close();
     await sleep(10);
     const content = fs.readFileSync(filepath, 'utf8');
-    assert.strictEqual(content, 'foo1\nfoo2\n');
+    assert.strictEqual(content, 'foo1' + os.EOL + 'foo2' + os.EOL);
   });
 
   it('should flush when maxBufferLength exceeded', async () => {
@@ -66,7 +67,7 @@ describe('test/lib/transports/file_buffer.test.ts', () => {
     logger.info('foo3');
     await sleep(10);
     const content = fs.readFileSync(filepath, 'utf8');
-    assert.strictEqual(content, 'foo1\nfoo2\nfoo3\n');
+    assert.strictEqual(content, 'foo1' + os.EOL + 'foo2' + os.EOL + 'foo3' + os.EOL);
     logger.close();
   });
 });
