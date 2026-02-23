@@ -1,0 +1,6 @@
+{
+  "name": "demo-app",
+  "egg": {
+    "framework": "aliyun-egg"
+  }
+}

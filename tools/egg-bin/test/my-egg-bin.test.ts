@@ -3,7 +3,7 @@ import { getFixtures } from './helper.ts';
 
 describe('test/my-egg-bin.test.ts', () => {
   const eggBin = getFixtures('my-egg-bin/bin/run.js');
-  const cwd = getFixtures('test-files');
+  const cwd = getFixtures('test-files-my-egg-bin');
 
   it('should my-egg-bin test success', () => {
     return coffee
@@ -28,14 +28,14 @@ describe('test/my-egg-bin.test.ts', () => {
     await coffee
       .fork(eggBin, ['nsp'], { cwd })
       // .debug()
-      .expect('stdout', /run nsp check at baseDir: .+test-files, with/)
+      .expect('stdout', /run nsp check at baseDir: .+test-files-my-egg-bin, with/)
       .expect('code', 0)
       .end();
 
     await coffee
       .fork(eggBin, ['nsp', '--foo'], { cwd })
       // .debug()
-      .expect('stdout', /run nsp check at baseDir: .+test-files, with/)
+      .expect('stdout', /run nsp check at baseDir: .+test-files-my-egg-bin, with/)
       .expect('stdout', /foo is true/)
       .expect('code', 0)
       .end();
@@ -63,7 +63,7 @@ describe('test/my-egg-bin.test.ts', () => {
   });
 
   it('should my-egg-bin dev success', () => {
-    const baseDir = getFixtures('custom-framework-app');
+    const baseDir = getFixtures('custom-framework-app-my-egg-bin');
     return coffee
       .fork(eggBin, ['dev'], { cwd: baseDir })
       .debug()

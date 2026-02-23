@@ -145,7 +145,7 @@ describe('test/commands/dev.test.ts', () => {
   });
 
   it('should support --import', () => {
-    const cwd = getFixtures('demo-app-esm');
+    const cwd = getFixtures('demo-app-esm-dev');
     const script = getFixtures('require-script.mjs');
     return coffee
       .fork(eggBin, ['dev', '--import', script], { cwd })
@@ -171,7 +171,7 @@ describe('test/commands/dev.test.ts', () => {
     mm(process.env, 'NODE_ENV', 'development');
     return coffee
       .fork(eggBin, ['dev'], {
-        cwd: getFixtures('egg-revert'),
+        cwd: getFixtures('egg-revert-dev'),
       })
       .debug()
       .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)

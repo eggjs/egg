@@ -12,7 +12,7 @@ const version = Number(process.version.substring(1, 3));
 
 describe('test/commands/cov.test.ts', () => {
   const eggBin = path.join(getRootDirname(), 'bin/run.js');
-  const cwd = getFixtures('test-files');
+  const cwd = getFixtures('test-files-cov');
 
   async function assertCoverage(baseDir: string) {
     assertFile(path.join(baseDir, 'coverage/coverage-final.json'));
@@ -62,7 +62,7 @@ describe('test/commands/cov.test.ts', () => {
     });
 
     it('should success on ts', async () => {
-      const cwd = getFixtures('example-ts');
+      const cwd = getFixtures('example-ts-cov');
       await coffee
         .fork(eggBin, ['cov'], { cwd })
         // .debug()
@@ -229,7 +229,7 @@ describe('test/commands/cov.test.ts', () => {
     });
 
     it('should run cov on ts-esm module', () => {
-      const cwd = getFixtures('mocha-test-ts-esm');
+      const cwd = getFixtures('mocha-test-ts-esm-cov');
       return (
         coffee
           .fork(eggBin, ['cov'], {
@@ -248,7 +248,7 @@ describe('test/commands/cov.test.ts', () => {
       mock(process.env, 'NODE_ENV', 'development');
       return coffee
         .fork(eggBin, ['cov'], {
-          cwd: getFixtures('egg-revert'),
+          cwd: getFixtures('egg-revert-cov'),
         })
         .debug()
         .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)

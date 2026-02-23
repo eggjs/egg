@@ -6,7 +6,7 @@ import { getRootDirname, getFixtures } from '../../helper.ts';
 describe('test/commands/dev/commonjs-app.test.ts', () => {
   it('should startCluster success on CommonJS', () => {
     const eggBin = path.join(getRootDirname(), 'bin/run.js');
-    const cwd = getFixtures('demo-app');
+    const cwd = getFixtures('demo-app-commonjs');
 
     return (
       coffee
@@ -16,7 +16,7 @@ describe('test/commands/dev/commonjs-app.test.ts', () => {
         })
         // .debug()
         .expect('stdout', /"workers":1/)
-        .expect('stdout', /"baseDir":".*?demo-app"/)
+        .expect('stdout', /"baseDir":".*?demo-app-commonjs"/)
         .expect('stdout', /"framework":".*?aliyun-egg"/)
         .expect('stdout', /NODE_ENV: development/)
         .expect('code', 0)
