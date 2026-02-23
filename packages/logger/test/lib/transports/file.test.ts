@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -64,7 +65,7 @@ describe('test/lib/transports/file.test.ts', () => {
     logger.info('info foo 中文');
     await sleep(10);
     const content = fs.readFileSync(filepath);
-    assert.strictEqual(iconv.decode(content, 'gbk'), 'info foo 中文\n');
+    assert.strictEqual(iconv.decode(content, 'gbk'), 'info foo 中文' + os.EOL);
     logger.close();
   });
 
@@ -85,11 +86,11 @@ describe('test/lib/transports/file.test.ts', () => {
     logger.set('file', new FileTransport({ file: filepath, level: 'INFO' }));
     logger.info('foo1');
     await sleep(10);
-    assert.strictEqual(fs.readFileSync(filepath, 'utf8'), 'foo1\n');
+    assert.strictEqual(fs.readFileSync(filepath, 'utf8'), 'foo1' + os.EOL);
     logger.reload();
     logger.info('foo2');
     await sleep(10);
-    assert.strictEqual(fs.readFileSync(filepath, 'utf8'), 'foo1\nfoo2\n');
+    assert.strictEqual(fs.readFileSync(filepath, 'utf8'), 'foo1' + os.EOL + 'foo2' + os.EOL);
     logger.close();
   });
 
@@ -105,7 +106,7 @@ describe('test/lib/transports/file.test.ts', () => {
     );
     logger.info('info foo');
     await sleep(10);
-    assert.strictEqual(fs.readFileSync(filepath, 'utf8'), 'INFO info foo\n');
+    assert.strictEqual(fs.readFileSync(filepath, 'utf8'), 'INFO info foo' + os.EOL);
     logger.close();
   });
 });
