@@ -13,7 +13,7 @@ describe('test/commands/debug.test.ts', () => {
         .fork(eggBin, ['dev', '--inspect'], { cwd })
         // .debug()
         .expect('stdout', /"workers":1/)
-        .expect('stdout', /"baseDir":".*?demo-app"/)
+        .expect('stdout', /"baseDir":".*?demo-app-debug"/)
         .expect('stdout', /"framework":".*?aliyun-egg"/)
         .expect('stdout', /NODE_ENV: development/)
         .expect('stderr', /Debugger listening/)

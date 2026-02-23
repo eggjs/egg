@@ -16,7 +16,7 @@ describe('test/commands/dev/commonjs-app.test.ts', () => {
         })
         // .debug()
         .expect('stdout', /"workers":1/)
-        .expect('stdout', /"baseDir":".*?demo-app"/)
+        .expect('stdout', /"baseDir":".*?demo-app-commonjs"/)
         .expect('stdout', /"framework":".*?aliyun-egg"/)
         .expect('stdout', /NODE_ENV: development/)
         .expect('code', 0)
