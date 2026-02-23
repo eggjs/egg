@@ -23,14 +23,20 @@ describe('test/lib/egg/logger.test.ts', () => {
   it('should create outputJSON .json.log file', async () => {
     const options = { file: filepath, outputJSON: true, level: levels.ERROR };
     await coffee.fork(loggerFile, [JSON.stringify(options)]).end();
-    assert.match(fs.readFileSync(filepath, 'utf8'), /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} ERROR \d+ error foo\n/);
+    assert.match(
+      fs.readFileSync(filepath, 'utf8'),
+      /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} ERROR \d+ error foo\r?\n/,
+    );
     assert.match(fs.readFileSync(filepath.replace(/\.log$/, '.json.log'), 'utf8'), /"message":"error foo"/);
   });
 
   it('should format date with ISO format', async () => {
     const options = { file: filepath, outputJSON: true, dateISOFormat: true, level: levels.ERROR };
     await coffee.fork(loggerFile, [JSON.stringify(options)]).end();
-    assert.match(fs.readFileSync(filepath, 'utf8'), /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z ERROR \d+ error foo\n/);
+    assert.match(
+      fs.readFileSync(filepath, 'utf8'),
+      /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z ERROR \d+ error foo\r?\n/,
+    );
     assert.match(
       fs.readFileSync(filepath.replace(/\.log$/, '.json.log'), 'utf8'),
       /"date":"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z"/,
@@ -67,9 +73,9 @@ describe('test/lib/egg/logger.test.ts', () => {
     const options = { file: filepath };
     await coffee.fork(loggerDynamicallyFile, [JSON.stringify(options)]).end();
     const content = fs.readFileSync(filepath, 'utf8');
-    assert.match(content, /info foo\n/);
-    assert.match(content, /warn foo\n/);
-    assert.doesNotMatch(content, /info foo after level changed\n/);
-    assert.match(content, /warn foo after level changed\n/);
+    assert.match(content, /info foo\r?\n/);
+    assert.match(content, /warn foo\r?\n/);
+    assert.doesNotMatch(content, /info foo after level changed\r?\n/);
+    assert.match(content, /warn foo after level changed\r?\n/);
   });
 });

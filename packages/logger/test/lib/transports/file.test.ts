@@ -35,10 +35,10 @@ describe('test/lib/transports/file.test.ts', () => {
     logger.error('error foo');
     await sleep(10);
     const content = fs.readFileSync(filepath, 'utf8');
-    assert.doesNotMatch(content, /debug foo\n/);
-    assert.doesNotMatch(content, /info foo\n/);
-    assert.doesNotMatch(content, /warn foo\n/);
-    assert.match(content, /error foo\n/);
+    assert.doesNotMatch(content, /debug foo\r?\n/);
+    assert.doesNotMatch(content, /info foo\r?\n/);
+    assert.doesNotMatch(content, /warn foo\r?\n/);
+    assert.match(content, /error foo\r?\n/);
     logger.close();
   });
 
@@ -51,10 +51,10 @@ describe('test/lib/transports/file.test.ts', () => {
     logger.error('error foo');
     await sleep(10);
     const content = fs.readFileSync(filepath, 'utf8');
-    assert.doesNotMatch(content, /debug foo\n/);
-    assert.match(content, /info foo\n/);
-    assert.match(content, /warn foo\n/);
-    assert.match(content, /error foo\n/);
+    assert.doesNotMatch(content, /debug foo\r?\n/);
+    assert.match(content, /info foo\r?\n/);
+    assert.match(content, /warn foo\r?\n/);
+    assert.match(content, /error foo\r?\n/);
     logger.close();
   });
 

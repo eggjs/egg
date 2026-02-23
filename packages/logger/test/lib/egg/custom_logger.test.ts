@@ -21,13 +21,13 @@ describe('test/lib/egg/custom_logger.test.ts', () => {
     const options = { file: filePath, level: 'WARN' };
     await coffee.fork(loggerFile, [JSON.stringify(options)]).end();
     const log = await readFile(filePath, 'utf-8');
-    assert.match(log, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} ERROR \d+ error foo\n/);
+    assert.match(log, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} ERROR \d+ error foo\r?\n/);
   });
 
   it('should support relative path', async () => {
     const options = { dir: tmpDir, file: 'relative.log', level: 'WARN' };
     await coffee.fork(loggerFile, [JSON.stringify(options)]).end();
     const log = await readFile(path.join(tmpDir, options.file), 'utf-8');
-    assert.match(log, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} ERROR \d+ error foo\n/);
+    assert.match(log, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} ERROR \d+ error foo\r?\n/);
   });
 });

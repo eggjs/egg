@@ -23,8 +23,8 @@ describe('test/lib/transports/console.test.ts', () => {
     const options = { file: path.join(tmp, 'a.log'), level: 'WARN' };
     await coffee
       .fork(loggerFile, [JSON.stringify(options)])
-      .notExpect('stdout', /warn foo\n/)
-      .notExpect('stdout', /error foo\n/)
+      .notExpect('stdout', /warn foo\r?\n/)
+      .notExpect('stdout', /error foo\r?\n/)
       .expect('stderr', 'error foo\n')
       .end();
   });
@@ -68,10 +68,10 @@ describe('test/lib/transports/console.test.ts', () => {
     const options = { file: path.join(tmp, 'a.log'), level: 'debug', flushInterval: 10 };
     await coffee
       .fork(loggerFile, [JSON.stringify(options)])
-      .expect('stdout', /debug foo\n/)
-      .expect('stdout', /info foo\n/)
-      .expect('stdout', /warn foo\n/)
-      .notExpect('stdout', /error foo\n/)
+      .expect('stdout', /debug foo\r?\n/)
+      .expect('stdout', /info foo\r?\n/)
+      .expect('stdout', /warn foo\r?\n/)
+      .notExpect('stdout', /error foo\r?\n/)
       .expect('stderr', 'error foo\n')
       .end();
   });
