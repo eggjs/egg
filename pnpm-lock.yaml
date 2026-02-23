@@ -394,8 +394,8 @@ catalogs:
       specifier: ^16.2.7
       version: 16.2.7
     lodash:
-      specifier: ^4.17.21
-      version: 4.17.21
+      specifier: ^4.17.23
+      version: 4.17.23
     lodash.snakecase:
       specifier: ^4.1.1
       version: 4.1.1
@@ -2235,7 +2235,7 @@ importers:
         version: 1.15.4
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.23
       nunjucks:
         specifier: 'catalog:'
         version: 3.2.4(chokidar@3.6.0)
@@ -2542,7 +2542,7 @@ importers:
         version: link:../types
       lodash:
         specifier: 'catalog:'
-        version: 4.17.21
+        version: 4.17.23
       pluralize:
         specifier: 'catalog:'
         version: 8.0.0
@@ -7551,6 +7551,9 @@ packages:
 
   lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
   log-symbols@3.0.0:
     resolution: {integrity: sha512-dSkNGuI7iG3mfvDzUuYZyvk5dD9ocYCYzNU6CYDE6+Xqd+gwme6Z00NS3dUh8mq/73HaEtT7m6W+yUPtU6BZnQ==}
@@ -13602,6 +13605,8 @@ snapshots:
   lodash.snakecase@4.1.1: {}
 
   lodash@4.17.21: {}
+
+  lodash@4.17.23: {}
 
   log-symbols@3.0.0:
     dependencies:

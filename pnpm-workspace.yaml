@@ -148,7 +148,7 @@ catalog:
   koa-static: ^5.0.0
   leoric: ^2.12.2
   lint-staged: ^16.2.7
-  lodash: ^4.17.21
+  lodash: ^4.17.23
   lodash.snakecase: ^4.1.1
   marked: ^17.0.0
   matcher: ^4.0.0
