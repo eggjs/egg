@@ -7,7 +7,7 @@ import { createApp, type MockApplication } from '../../utils.ts';
 describe('test/app/middleware/site_file.test.ts', () => {
   let app: MockApplication;
   beforeAll(() => {
-    app = createApp('apps/middlewares');
+    app = createApp('apps/middlewares-site-file');
     return app.ready();
   });
   afterAll(() => app.close());

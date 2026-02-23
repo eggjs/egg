@@ -30,9 +30,7 @@ export class Foo {
 
   async fetch() {
     // use official registry in CI (GitHub Actions) to avoid npmmirror flakiness
-    const registry = process.env.GITHUB_ACTIONS
-      ? 'https://registry.npmjs.com'
-      : 'https://registry.npmmirror.com';
+    const registry = process.env.GITHUB_ACTIONS ? 'https://registry.npmjs.com' : 'https://registry.npmmirror.com';
     const result = await this.httpClient.request(`${registry}/egg/beta`, {
       dataType: 'json',
     });

@@ -28,14 +28,14 @@ describe('test/my-egg-bin.test.ts', () => {
     await coffee
       .fork(eggBin, ['nsp'], { cwd })
       // .debug()
-      .expect('stdout', /run nsp check at baseDir: .+test-files, with/)
+      .expect('stdout', /run nsp check at baseDir: .+test-files-my-egg-bin, with/)
       .expect('code', 0)
       .end();
 
     await coffee
       .fork(eggBin, ['nsp', '--foo'], { cwd })
       // .debug()
-      .expect('stdout', /run nsp check at baseDir: .+test-files, with/)
+      .expect('stdout', /run nsp check at baseDir: .+test-files-my-egg-bin, with/)
       .expect('stdout', /foo is true/)
       .expect('code', 0)
       .end();
