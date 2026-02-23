@@ -12,7 +12,7 @@ import { logDate } from 'utility';
 import { levels, type LoggerLevel } from './level.ts';
 
 const hostname = os.hostname();
-const durationRegexp = /([0-9]+ms)/g;
+const durationRegexp = /\b(\d+ms)\b/g;
 const categoryRegexp = /(\[[\w\-_.:]+\])/g; // oxlint-disable-line no-useless-escape
 const httpMethodRegexp = /(GET|POST|PUT|PATCH|HEAD|DELETE) /g;
 

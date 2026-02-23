@@ -42,7 +42,7 @@ describe('test/lib/egg/console_logger.test.ts', () => {
   it('should show console log with date/level/pid', async () => {
     await coffee
       .fork(consoleLoggerFile)
-      .expect('stderr', /[\d -,:]+ ERROR \d+ error foo/)
+      .expect('stderr', /[\d ,:.-]+ ERROR \d+ error foo/)
       .end();
   });
 

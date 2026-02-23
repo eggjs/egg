@@ -28,6 +28,9 @@ test/fixtures/apps/app-ts-esm/**/*.d.ts
 
 # site
 site/dist
+
+# Claude Code local settings (machine-personal, never commit)
+.claude/settings.local.json
 !site/public
 
 .umi

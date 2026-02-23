@@ -20,7 +20,10 @@ export class Transport {
     if (this.options.encoding === 'utf-8') {
       this.options.encoding = 'utf8';
     }
-    this.options.level = normalizeLevel(this.options.level);
+    const normalizedLevel = normalizeLevel(this.options.level);
+    if (normalizedLevel !== undefined) {
+      this.options.level = normalizedLevel;
+    }
   }
 
   get defaults(): Partial<TransportOptions> {

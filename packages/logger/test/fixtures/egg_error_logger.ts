@@ -1,6 +1,6 @@
 import { EggErrorLogger } from '../../src/index.ts';
 
-const options = JSON.parse(process.argv[2]);
+const options = process.argv[2] ? JSON.parse(process.argv[2]) : {};
 options.buffer = false;
 const logger = new EggErrorLogger(options);
 logger.debug('debug foo');
