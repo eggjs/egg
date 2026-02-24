@@ -1,5 +1,7 @@
 import path from 'node:path';
 
+import { describe, it } from 'vitest';
+
 import coffee from '../../coffee.ts';
 import { getRootDirname, getFixtures } from '../../helper.ts';
 

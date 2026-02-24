@@ -3,9 +3,8 @@
 ## 快速开始
 
 ```typescript
-import path from 'node:path';
 import assert from 'node:assert';
-import { app } from 'egg-mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 import { FooService } from '../app/foo';
 
 describe('test/xxx.test.ts', () => {
@@ -27,6 +26,13 @@ describe('test/xxx.test.ts', () => {
 $ egg-bin test
 ```
 
+egg-bin v8+ 内部使用 [Vitest](https://vitest.dev) 作为测试运行器，提供以下特性：
+
+- 原生 TypeScript 支持，无需额外配置
+- 自动注入 vitest 全局变量（`describe`、`it`、`beforeAll` 等）
+- 自动加载 `test/.setup.ts` 作为 setup 文件
+- 对 egg 应用自动注入 `@eggjs/mock/setup_vitest`，处理 app 生命周期
+
 ## Mock 方法
 
 ### Context
@@ -42,7 +48,7 @@ export interface Application {
 使用例子
 
 ```typescript
-import { app } from 'egg-mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 
 describe('test', () => {
   let ctx;
@@ -88,7 +94,7 @@ export class HelloService {
 }
 
 // xxx.test.ts
-import { app } from 'egg-mock/bootstrap';
+import { app } from '@eggjs/mock/bootstrap';
 import { HelloService } from '../app/module/foo/HelloService.ts';
 
 describe('test', () => {
@@ -124,13 +130,13 @@ export class FooService {
 }
 
 // xxx.test.ts
-import { app, mm } from 'egg-mock/bootstrap';
+import { app, mm } from '@eggjs/mock/bootstrap';
 import assert from 'node:assert/strict';
 import { HelloService } from '../app/module/foo/HelloService.ts';
 import { FooService } from '../app/module/foo/FooService.ts';
 
 describe('test', () => {
-  it('test', () => {
+  it('test', async () => {
     mm(HelloService.prototype, 'hello', async () => {
       return '123';
     });

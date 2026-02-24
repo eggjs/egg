@@ -1,4 +1,4 @@
-before(() => {
+beforeAll(() => {
   console.log('this is a before function');
 });
 afterEach(() => {

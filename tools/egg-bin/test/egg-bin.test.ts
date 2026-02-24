@@ -1,5 +1,7 @@
 import path from 'node:path';
 
+import { describe, it } from 'vitest';
+
 import coffee from './coffee.js';
 import { getRootDirname, getFixtures } from './helper.js';
 

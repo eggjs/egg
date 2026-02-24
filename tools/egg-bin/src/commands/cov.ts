@@ -1,10 +1,8 @@
-import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { importResolve } from '@eggjs/utils';
 import { Flags } from '@oclif/core';
+import type { InlineConfig as VitestConfig } from 'vitest/node';
 
-import { type ForkNodeOptions } from '../baseCommand.ts';
 import Test from './test.ts';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -20,26 +18,18 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
 
   static override flags = {
     ...Test.flags,
-    // will use on egg-mock https://github.com/eggjs/egg-mock/blob/84a64bd19d0569ec94664c898fb1b28367b95d60/index.js#L7
-    prerequire: Flags.boolean({
-      description: 'prerequire files for coverage instrument',
-    }),
     exclude: Flags.string({
-      description: 'coverage ignore, one or more files patterns`',
+      description: 'coverage ignore, one or more files patterns',
       multiple: true,
       char: 'x',
     }),
-    c8: Flags.string({
-      description: 'c8 instruments passthrough`',
-      default: '--temp-directory node_modules/.c8_output -r text-summary -r json-summary -r json -r lcov -r cobertura',
-    }),
   };
 
-  protected get defaultExcludes(): string[] {
+  protected get defaultCoverageExcludes(): string[] {
     return [
       'example/',
       'examples/',
-      'mocks**/',
+      '**/mocks*/**',
       'docs/',
       // https://github.com/JaKXz/test-exclude/blob/620a7be412d4fc2070d50f0f63e3228314066fc9/index.js#L73
       'test/**',
@@ -52,40 +42,48 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
     ];
   }
 
-  protected override async forkNode(modulePath: string, forkArgs: string[], options: ForkNodeOptions = {}) {
+  /**
+   * Convert a relative exclude pattern to an absolute path pattern.
+   * This prevents vitest's picomatch (with contains:true) from matching
+   * files in parent directories that happen to share path segments.
+   * e.g. 'test/**' should only exclude the project's own test/ dir,
+   * not files whose absolute path contains 'test/' from parent dirs.
+   */
+  protected toAbsoluteExclude(pat: string, base: string): string {
+    // Handle negated patterns (e.g. '!src/**')
+    const isNegated = pat.startsWith('!');
+    const rawPattern = isNegated ? pat.slice(1) : pat;
+
+    // Already absolute or starts with ** (position-agnostic) - keep as-is
+    if (path.isAbsolute(rawPattern) || rawPattern.startsWith('**')) {
+      const normalized = rawPattern.replace(/\\/g, '/');
+      return isNegated ? `!${normalized}` : normalized;
+    }
+
+    const joined = path.join(base, rawPattern).replace(/\\/g, '/');
+    return isNegated ? `!${joined}` : joined;
+  }
+
+  protected override async buildVitestConfig(files: string[]): Promise<VitestConfig> {
     const { flags } = this;
-    if (flags.prerequire) {
-      this.env.EGG_BIN_PREREQUIRE = 'true';
-    }
+    const baseConfig = await super.buildVitestConfig(files);
+    const base = flags.base.replace(/\\/g, '/');
 
-    // add c8 args
-    // https://github.com/eggjs/egg/issues/3930
-    const c8Args = flags.c8.split(' ').filter((a) => a.trim());
-    if (flags.typescript) {
-      this.env.SPAWN_WRAP_SHIM_ROOT = path.join(flags.base, 'node_modules');
-      c8Args.push('--extension');
-      c8Args.push('.ts');
-    }
-
-    const excludes = new Set([
-      ...(process.env.COV_EXCLUDES?.split(',') ?? []),
-      ...this.defaultExcludes,
-      ...Array.from(flags.exclude ?? []),
+    const coverageExcludes = new Set([
+      ...(process.env.COV_EXCLUDES?.split(',') ?? []).map((p) => this.toAbsoluteExclude(p, base)),
+      ...this.defaultCoverageExcludes.map((p) => this.toAbsoluteExclude(p, base)),
+      ...Array.from(flags.exclude ?? []).map((p) => this.toAbsoluteExclude(p, base)),
     ]);
-    for (const exclude of excludes) {
-      c8Args.push('-x');
-      c8Args.push(exclude);
-    }
-    const c8File = importResolve('c8/bin/c8.js');
-    const outputDir = path.join(flags.base, 'node_modules/.c8_output');
-    await fs.rm(outputDir, { force: true, recursive: true });
-    const coverageDir = path.join(flags.base, 'coverage');
-    await fs.rm(coverageDir, { force: true, recursive: true });
 
-    const execArgv = [...this.globalExecArgv, ...(options.execArgv || [])];
-    this.globalExecArgv = [];
-
-    // $ c8 node mocha
-    await super.forkNode(c8File, [...c8Args, process.execPath, ...execArgv, modulePath, ...forkArgs]);
+    return {
+      ...baseConfig,
+      coverage: {
+        enabled: true,
+        provider: 'v8' as const,
+        reporter: ['text-summary', 'json-summary', 'json', 'lcov', 'cobertura'],
+        exclude: Array.from(coverageExcludes),
+        reportsDirectory: path.join(base, 'coverage'),
+      },
+    };
   }
 }

@@ -64,7 +64,7 @@ async function createHeldScope(ctx: any): Promise<HeldScope> {
   return { scopePromise, endScope };
 }
 
-async function releaseHeldScope(scope: HeldScope | null) {
+async function releaseHeldScope(scope: HeldScope | null): Promise<void> {
   if (!scope) return;
   scope.endScope();
   await scope.scopePromise;

@@ -2,6 +2,7 @@ import path from 'node:path';
 
 import { mm } from '@eggjs/mock';
 import { importResolve } from '@eggjs/utils';
+import { describe, it } from 'vitest';
 
 import coffee from '../coffee.ts';
 import { getRootDirname, getFixtures } from '../helper.ts';

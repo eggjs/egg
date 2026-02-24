@@ -2,6 +2,7 @@ import net, { Server } from 'node:net';
 import path from 'node:path';
 
 import { detect } from 'detect-port';
+import { afterAll, beforeAll, describe, it } from 'vitest';
 
 import coffee from '../../coffee.ts';
 import { getRootDirname, getFixtures } from '../../helper.ts';
@@ -9,7 +10,7 @@ import { getRootDirname, getFixtures } from '../../helper.ts';
 describe('test/commands/dev/detect-port.test.ts', () => {
   let server: Server;
   let serverPort: number;
-  before(async () => {
+  beforeAll(async () => {
     serverPort = await detect(7001);
     server = net.createServer();
     await new Promise<void>((resolve) => {
@@ -17,7 +18,12 @@ describe('test/commands/dev/detect-port.test.ts', () => {
     });
   });
 
-  after(() => server.close());
+  afterAll(
+    () =>
+      new Promise<void>((resolve, reject) => {
+        server.close((err) => (err ? reject(err) : resolve()));
+      }),
+  );
 
   it('should auto detect available port', () => {
     const eggBin = path.join(getRootDirname(), 'bin/run.js');
