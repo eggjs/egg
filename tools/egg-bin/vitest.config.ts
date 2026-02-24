@@ -1,11 +1,11 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { UserConfig } from 'vitest/config';
+import type { ViteUserConfig } from 'vitest/config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const config: UserConfig = {
+const config: ViteUserConfig = {
   root: __dirname,
   test: {
     include: ['test/**/*.test.ts'],

@@ -8,7 +8,6 @@ import { Args, Flags } from '@oclif/core';
 import ciParallelVars from 'ci-parallel-vars';
 import globby from 'globby';
 import { getChangedFilesForRoots } from 'jest-changed-files';
-import type { InlineConfig as ViteInlineConfig } from 'vite';
 import { startVitest } from 'vitest/node';
 import type { InlineConfig as VitestConfig } from 'vitest/node';
 
@@ -165,8 +164,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
 
     // pass configFile:false as vite override to prevent vitest from walking up
     // the directory tree and picking up a parent vitest.config.ts
-    const viteOverrides: ViteInlineConfig = { configFile: false };
-    const vitest = await startVitest('test', [], config, viteOverrides);
+    const vitest = await startVitest('test', [], config, { configFile: false } as Record<string, unknown>);
     if (!vitest) {
       throw new ForkError('vitest failed to start', 1);
     }
