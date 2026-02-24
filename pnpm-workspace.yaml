@@ -249,6 +249,8 @@ minimumReleaseAgeExclude:
   - oxlint
   - oxc-minify
   - import-without-cache
+  # Renovate security update: lodash@4.17.23
+  - lodash@4.17.23
 
 overrides:
   vite: npm:rolldown-vite@^7.1.13
