@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/orm-plugin",
-  "version": "4.0.0-beta.37",
+  "version": "4.0.0-beta.38",
   "description": "orm decorator for egg",
   "keywords": [
     "egg",

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/redis",
-  "version": "4.0.0-beta.37",
+  "version": "4.0.0-beta.38",
   "description": "Valkey / Redis plugin for egg",
   "keywords": [
     "Valkey",

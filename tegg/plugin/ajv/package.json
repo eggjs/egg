@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/ajv-plugin",
-  "version": "4.0.0-beta.37",
+  "version": "4.0.0-beta.38",
   "description": "ajv plugin for egg and tegg",
   "keywords": [
     "ajv",
