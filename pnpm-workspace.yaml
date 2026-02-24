@@ -9,7 +9,7 @@ packages:
   - tegg/standalone/*
 
 catalog:
-  '@clack/prompts': ^0.11.0
+  '@clack/prompts': ^1.0.0
   '@eggjs/compressible': ^3.0.0
   '@eggjs/cookies': ^3.1.0
   '@eggjs/ip': ^2.1.0
