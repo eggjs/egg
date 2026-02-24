@@ -54,6 +54,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@utoo/pack": "catalog:",
     "esbuild": "catalog:",
     "vitest": "catalog:"
   },

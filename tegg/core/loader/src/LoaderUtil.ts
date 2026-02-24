@@ -1,4 +1,5 @@
 import BuiltinModule from 'node:module';
+import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { PrototypeUtil } from '@eggjs/core-decorator';
@@ -58,6 +59,8 @@ export class LoaderUtil {
   }
 
   static async loadFile(filePath: string): Promise<EggProtoImplClass[]> {
+    // Save the original absolute path before Windows conversion
+    const absoluteFilePath = filePath;
     if (process.platform === 'win32') {
       // convert to file:// url
       // avoid windows path issue: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
@@ -81,6 +84,12 @@ export class LoaderUtil {
         isClass(clazz) && (PrototypeUtil.isEggPrototype(clazz) || PrototypeUtil.isEggMultiInstancePrototype(clazz));
       if (!isEggProto) {
         continue;
+      }
+      // Ensure file path is correct — async module evaluators (e.g. vitest)
+      // can cause StackUtil.getCalleeFromStack to capture wrong stack frames
+      const currentPath = PrototypeUtil.getFilePath(clazz);
+      if (!currentPath || !path.isAbsolute(currentPath)) {
+        PrototypeUtil.setFilePath(clazz, absoluteFilePath);
       }
       clazzList.push(clazz);
     }

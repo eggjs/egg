@@ -95,4 +95,24 @@ describe('MethodAnalyzer', () => {
       assert.equal(accessed.size, 0, 'healthCheck should access no services');
     });
   });
+
+  describe('edge cases', () => {
+    it('should return empty set for non-existent file path', () => {
+      const accessed = analyzer.analyze('/non/existent/file.ts', 'SomeClass', 'someMethod');
+
+      assert.equal(accessed.size, 0, 'should return empty set for non-existent file');
+    });
+
+    it('should cache programs and return consistent results on repeated calls', () => {
+      const filePath = PrototypeUtil.getFilePath(UserController);
+      assert(filePath);
+
+      const result1 = analyzer.analyze(filePath, 'UserController', 'getUser');
+      const result2 = analyzer.analyze(filePath, 'UserController', 'getUser');
+
+      assert.deepEqual([...result1].sort(), [...result2].sort(), 'repeated calls should return same results');
+      assert(result1.has('userService'), 'first call should find userService');
+      assert(result2.has('userService'), 'second call should find userService');
+    });
+  });
 });

@@ -221,4 +221,70 @@ describe('MetaGenerator', () => {
       assert.equal(meta.dependencies.length, 0, 'healthCheck should have no dependencies');
     });
   });
+
+  describe('dependency classification (direct vs transitive)', () => {
+    it('should distinguish direct deps (with refName) from transitive deps', async () => {
+      const graph = await buildMultiModuleGraph();
+      const resolver = new DependencyResolver(graph);
+
+      const barProtos = graph.moduleProtoDescriptorMap.get('bar') ?? [];
+      const controllerProto = barProtos.find(
+        (p) => ClassProtoDescriptor.isClassProtoDescriptor(p) && p.clazz === BarController,
+      );
+      assert(controllerProto, 'BarController proto should exist');
+
+      const controllerMeta = ControllerMetadataUtil.getControllerMetadata(BarController);
+      assert(controllerMeta instanceof HTTPControllerMeta);
+
+      const fetchUserMethod = controllerMeta.methods.find((m) => m.name === 'fetchUser');
+      assert(fetchUserMethod, 'fetchUser method should exist');
+
+      const filePath = PrototypeUtil.getFilePath(BarController)!;
+      const accessedProps = analyzer.analyze(filePath, 'BarController', 'fetchUser');
+      const deps = resolver.resolve(controllerProto, accessedProps);
+      const meta = metaGenerator.generate(controllerMeta, fetchUserMethod, deps, controllerProto, accessedProps);
+
+      // fooService is a direct inject on BarController — refName comes from @Inject property name
+      const fooServiceDep = meta.dependencies.find((d) => d.protoName === 'fooService');
+      assert(fooServiceDep, 'fooService should be in dependencies');
+      assert.equal(fooServiceDep.refName, 'fooService', 'direct dep refName should match inject property name');
+
+      // fooRepository is transitive (injected by FooService, not by BarController)
+      // Its refName should equal its protoName since it is not a direct controller inject
+      const fooRepoDep = meta.dependencies.find((d) => d.protoName === 'fooRepository');
+      assert(fooRepoDep, 'fooRepository should be in dependencies');
+      assert.equal(fooRepoDep.refName, 'fooRepository', 'transitive dep refName should equal protoName');
+    });
+
+    it('should include correct moduleName for cross-module dependencies', async () => {
+      const graph = await buildMultiModuleGraph();
+      const resolver = new DependencyResolver(graph);
+
+      const barProtos = graph.moduleProtoDescriptorMap.get('bar') ?? [];
+      const controllerProto = barProtos.find(
+        (p) => ClassProtoDescriptor.isClassProtoDescriptor(p) && p.clazz === BarController,
+      );
+      assert(controllerProto, 'BarController proto should exist');
+
+      const controllerMeta = ControllerMetadataUtil.getControllerMetadata(BarController);
+      assert(controllerMeta instanceof HTTPControllerMeta);
+
+      const fetchUserMethod = controllerMeta.methods.find((m) => m.name === 'fetchUser');
+      assert(fetchUserMethod);
+
+      const filePath = PrototypeUtil.getFilePath(BarController)!;
+      const accessedProps = analyzer.analyze(filePath, 'BarController', 'fetchUser');
+      const deps = resolver.resolve(controllerProto, accessedProps);
+      const meta = metaGenerator.generate(controllerMeta, fetchUserMethod, deps, controllerProto, accessedProps);
+
+      // FooService and FooRepository are from the foo module
+      const fooServiceDep = meta.dependencies.find((d) => d.protoName === 'fooService');
+      assert(fooServiceDep);
+      assert.equal(fooServiceDep.moduleName, 'foo', 'fooService moduleName should be "foo"');
+
+      const fooRepoDep = meta.dependencies.find((d) => d.protoName === 'fooRepository');
+      assert(fooRepoDep);
+      assert.equal(fooRepoDep.moduleName, 'foo', 'fooRepository moduleName should be "foo"');
+    });
+  });
 });

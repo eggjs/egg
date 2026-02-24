@@ -45,6 +45,9 @@
     "version:beta": "node scripts/version.js prerelease --prerelease-tag=beta",
     "version:rc": "node scripts/version.js prerelease --prerelease-tag=rc"
   },
+  "dependencies": {
+    "@utoo/pack": "link:../../../../../tnpm/utoo/packages/pack"
+  },
   "devDependencies": {
     "@eggjs/bin": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",

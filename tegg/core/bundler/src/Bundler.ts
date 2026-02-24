@@ -1,5 +1,4 @@
 import fs from 'node:fs/promises';
-import os from 'node:os';
 import path from 'node:path';
 
 import { ControllerMetadataUtil, HTTPControllerMeta } from '@eggjs/controller-decorator';
@@ -47,10 +46,15 @@ export interface MethodBundleResult {
 export interface BuildOptions {
   entry: Array<{ name: string; import: string }>;
   target: string;
+  platform: 'browser' | 'node';
   output: { path: string; type: string };
   externals: Record<string, string>;
   optimization: { treeShaking: boolean; removeUnusedExports: boolean };
   mode: 'production' | 'development';
+  /** Project root path — used by Turbopack to resolve entry imports */
+  projectPath?: string;
+  /** Root path — filesystem boundary for module resolution */
+  rootPath?: string;
 }
 
 /**
@@ -78,7 +82,17 @@ export class Bundler {
   }
 
   async bundle(options: BundlerOptions): Promise<MethodBundleResult[]> {
-    const { outputPath, moduleReferences, externals = {}, mode = 'production' } = options;
+    const {
+      outputPath,
+      moduleReferences,
+      mode = 'production',
+      externals = {
+        // @swc/helpers is injected by SWC when compiling decorators
+        // (experimentalDecorators). It must be external so the bundled
+        // output can resolve it from node_modules at runtime.
+        '@swc/helpers': '@swc/helpers',
+      },
+    } = options;
 
     // Load all modules and build the global dependency graph
     const moduleDescriptors = await LoaderFactory.loadApp(moduleReferences);
@@ -91,8 +105,23 @@ export class Bundler {
     const entryGenerator = new EntryGenerator();
     const metaGenerator = new MetaGenerator();
 
-    // Create temp dir for generated entry files
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'tegg-bundler-'));
+    // Create temp dir for generated entry files inside outputPath
+    // so Turbopack can resolve them relative to the project root
+    const tmpDir = path.join(outputPath, '.tegg-entries');
+
+    // Write a tsconfig.json in outputPath so Turbopack/SWC enables
+    // experimentalDecorators when compiling TypeScript source files.
+    // Without this, decorator syntax (@Controller, @Inject, etc.) fails
+    // at the chunk code generation stage.
+    await fs.mkdir(outputPath, { recursive: true });
+    await fs.writeFile(
+      path.join(outputPath, 'tsconfig.json'),
+      JSON.stringify({
+        compilerOptions: {
+          experimentalDecorators: true,
+        },
+      }) + '\n',
+    );
 
     const results: MethodBundleResult[] = [];
 
@@ -124,15 +153,34 @@ export class Bundler {
             const entryPath = await entryGenerator.generate(tmpDir, proto.clazz, methodMeta.name, deps);
 
             // Step 4: Bundle via user-provided build function
-            const bundlePath = path.join(outputPath, `${key}.js`);
+            // Each method gets its own output subdirectory to avoid filename collisions
+            // (@utoo/pack may merge entries sharing the same controller into one file)
+            const methodOutputPath = path.join(outputPath, key);
+            await fs.mkdir(methodOutputPath, { recursive: true });
+            // Turbopack platform:'node' outputs CJS bundles (require/module.exports).
+            // Write a package.json to ensure Node.js treats .js files as CommonJS,
+            // even if a parent package.json has "type": "module".
+            await fs.writeFile(path.join(methodOutputPath, 'package.json'), '{"type":"commonjs"}\n');
             await this.buildFunc({
               entry: [{ name: key, import: entryPath }],
-              target: 'node',
-              output: { path: outputPath, type: 'standalone' },
+              target: 'node 22',
+              platform: 'node',
+              output: { path: methodOutputPath, type: 'standalone' },
               externals,
               optimization: { treeShaking: true, removeUnusedExports: true },
               mode,
+              // Use parent outputPath as projectPath so Turbopack can resolve
+              // entry files in .tegg-entries/; rootPath is auto-detected so
+              // it can resolve source files outside the output directory
+              projectPath: outputPath,
             });
+            // Find the actual output JS file (entry name may be transformed by the bundler)
+            const outputFiles = await fs.readdir(methodOutputPath);
+            const jsFile = outputFiles.find((f) => f.endsWith('.js') && !f.startsWith('_turbopack'));
+            if (!jsFile) {
+              throw new Error(`No JS output file found in ${methodOutputPath} for ${key}`);
+            }
+            const bundlePath = path.join(methodOutputPath, jsFile);
 
             // Step 5: Generate meta file
             const meta = metaGenerator.generate(controllerMeta, methodMeta, deps, proto, accessedProps);
@@ -144,7 +192,6 @@ export class Bundler {
         }
       }
     } finally {
-      // Clean up temp entry files
       await fs.rm(tmpDir, { recursive: true, force: true });
     }
 
@@ -153,12 +200,17 @@ export class Bundler {
 }
 
 async function defaultBuildFunc(options: BuildOptions): Promise<void> {
-  // Dynamically import @utoo/pack to avoid hard dependency
-  // Users must install @utoo/pack themselves if using the default build function
+  // Dynamically import @utoo/pack build command to avoid hard dependency.
+  // Uses the sub-path import to avoid loading HMR/WebSocket code from the root entry.
+  // Users must install @utoo/pack themselves if using the default build function.
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const utoo = (await import('@utoo/pack' as any)) as { build: BuildFunc };
-    await utoo.build(options);
+    const { build } = (await import('@utoo/pack/esm/commands/build.js' as any)) as {
+      build: (options: { config: BuildOptions }, projectPath?: string, rootPath?: string) => Promise<void>;
+    };
+    const projectPath = options.projectPath ?? options.output.path;
+    const rootPath = options.rootPath;
+    await build({ config: options }, projectPath, rootPath);
   } catch (err: unknown) {
     if ((err as NodeJS.ErrnoException).code === 'ERR_MODULE_NOT_FOUND') {
       throw new Error(

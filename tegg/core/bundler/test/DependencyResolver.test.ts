@@ -192,4 +192,23 @@ describe('DependencyResolver', () => {
       assert(!depNames.includes('eventBus'), 'should NOT include eventBus (framework built-in)');
     });
   });
+
+  describe('edge cases', () => {
+    it('should return empty deps when accessedProps do not match any inject object', async () => {
+      const graph = await buildGraph();
+      const resolver = new DependencyResolver(graph);
+
+      const protos = graph.moduleProtoDescriptorMap.get('user') ?? [];
+      const controllerProto = protos.find(
+        (p) => ClassProtoDescriptor.isClassProtoDescriptor(p) && p.clazz === UserController,
+      );
+      assert(controllerProto, 'UserController proto should exist');
+
+      // Pass prop names that do not match any inject refName
+      const accessedProps = new Set(['nonExistentService', 'anotherMissing']);
+      const deps = resolver.resolve(controllerProto, accessedProps);
+
+      assert.equal(deps.length, 0, 'should return empty deps when no inject matches');
+    });
+  });
 });

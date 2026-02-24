@@ -342,4 +342,160 @@ describe('Bundler', () => {
       }
     });
   });
+
+  describe('error paths', () => {
+    it('should throw when build function produces no JS output file', async () => {
+      const outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'bundler-test-'));
+
+      try {
+        // Build function that creates a directory but no .js file
+        const noJsBuildFunc = async (opts: BuildOptions): Promise<void> => {
+          await fs.mkdir(opts.output.path, { recursive: true });
+          await fs.writeFile(path.join(opts.output.path, 'not-a-js-file.txt'), 'nope');
+        };
+
+        const bundler = new Bundler(noJsBuildFunc);
+        await assert.rejects(
+          () =>
+            bundler.bundle({
+              outputPath,
+              moduleReferences: [{ name: 'user', path: MODULE_PATH }],
+            }),
+          (err: Error) => {
+            assert(
+              err.message.includes('No JS output file found'),
+              `expected "No JS output file found" in: ${err.message}`,
+            );
+            return true;
+          },
+        );
+      } finally {
+        await fs.rm(outputPath, { recursive: true, force: true });
+      }
+    });
+
+    it('should propagate errors from build function', async () => {
+      const outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'bundler-test-'));
+
+      try {
+        const failingBuildFunc = async (_opts: BuildOptions): Promise<void> => {
+          throw new Error('build exploded');
+        };
+
+        const bundler = new Bundler(failingBuildFunc);
+        await assert.rejects(
+          () =>
+            bundler.bundle({
+              outputPath,
+              moduleReferences: [{ name: 'user', path: MODULE_PATH }],
+            }),
+          (err: Error) => {
+            assert.equal(err.message, 'build exploded');
+            return true;
+          },
+        );
+      } finally {
+        await fs.rm(outputPath, { recursive: true, force: true });
+      }
+    });
+
+    it('should return empty results when modules have no HTTP controllers', async () => {
+      const outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'bundler-test-'));
+
+      try {
+        const bundler = new Bundler(mockBuildFunc);
+        // foo module only has FooService + FooRepository, no controller
+        const results = await bundler.bundle({
+          outputPath,
+          moduleReferences: [{ name: 'foo', path: FOO_MODULE_PATH }],
+        });
+
+        assert.equal(results.length, 0, 'should produce 0 bundle results for module without controllers');
+      } finally {
+        await fs.rm(outputPath, { recursive: true, force: true });
+      }
+    });
+  });
+
+  describe('configuration pass-through', () => {
+    it('should use default @swc/helpers external when no externals provided', async () => {
+      const outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'bundler-test-'));
+      const capturedOptions: BuildOptions[] = [];
+
+      try {
+        const capturingBuildFunc = async (opts: BuildOptions): Promise<void> => {
+          capturedOptions.push(opts);
+          await mockBuildFunc(opts);
+        };
+
+        const bundler = new Bundler(capturingBuildFunc);
+        await bundler.bundle({
+          outputPath,
+          moduleReferences: [{ name: 'user', path: MODULE_PATH }],
+          // No externals specified — should use default
+        });
+
+        assert(capturedOptions.length > 0, 'build func should be called');
+        for (const opts of capturedOptions) {
+          assert.deepEqual(
+            opts.externals,
+            { '@swc/helpers': '@swc/helpers' },
+            'should use default @swc/helpers external',
+          );
+        }
+      } finally {
+        await fs.rm(outputPath, { recursive: true, force: true });
+      }
+    });
+
+    it('should pass mode through to build function', async () => {
+      const outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'bundler-test-'));
+      const capturedOptions: BuildOptions[] = [];
+
+      try {
+        const capturingBuildFunc = async (opts: BuildOptions): Promise<void> => {
+          capturedOptions.push(opts);
+          await mockBuildFunc(opts);
+        };
+
+        const bundler = new Bundler(capturingBuildFunc);
+        await bundler.bundle({
+          outputPath,
+          moduleReferences: [{ name: 'user', path: MODULE_PATH }],
+          mode: 'development',
+        });
+
+        assert(capturedOptions.length > 0, 'build func should be called');
+        for (const opts of capturedOptions) {
+          assert.equal(opts.mode, 'development', 'mode should be passed through');
+        }
+      } finally {
+        await fs.rm(outputPath, { recursive: true, force: true });
+      }
+    });
+
+    it('should write tsconfig.json with experimentalDecorators in outputPath', async () => {
+      const outputPath = await fs.mkdtemp(path.join(os.tmpdir(), 'bundler-test-'));
+
+      try {
+        const bundler = new Bundler(mockBuildFunc);
+        await bundler.bundle({
+          outputPath,
+          moduleReferences: [{ name: 'user', path: MODULE_PATH }],
+        });
+
+        const tsconfigPath = path.join(outputPath, 'tsconfig.json');
+        const tsconfigContent = await fs.readFile(tsconfigPath, 'utf-8');
+        const tsconfig = JSON.parse(tsconfigContent);
+
+        assert.equal(
+          tsconfig.compilerOptions.experimentalDecorators,
+          true,
+          'tsconfig should have experimentalDecorators: true',
+        );
+      } finally {
+        await fs.rm(outputPath, { recursive: true, force: true });
+      }
+    });
+  });
 });
