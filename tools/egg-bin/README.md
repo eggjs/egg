@@ -187,7 +187,7 @@ COV_EXCLUDES="app/plugins/c*,app/autocreate/**" egg-bin cov
 
 ### Migrated from Mocha to Vitest
 
-The `test` and `cov` commands now use [vitest] instead of [mocha]. This brings native TypeScript support, faster execution, and built-in watch mode, but removes some Mocha-specific options:
+The `test` and `cov` commands now use [vitest] instead of [Mocha](https://mochajs.org). This brings native TypeScript support, faster execution, and built-in watch mode, but removes some Mocha-specific options:
 
 **Removed flags:**
 
@@ -232,4 +232,3 @@ Made with [contributors-img](https://contrib.rocks).
 
 [vitest]: https://vitest.dev
 [v8 coverage]: https://vitest.dev/guide/coverage
-[glob]: https://github.com/isaacs/node-glob

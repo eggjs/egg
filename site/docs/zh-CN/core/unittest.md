@@ -773,5 +773,3 @@ describe('GET /httpclient', () => {
 ## 示例代码
 
 完整示例代码可以在 [eggjs/examples/unittest](https://github.com/eggjs/examples/blob/master/unittest) 找到。
-
-[vitest]: https://vitest.dev

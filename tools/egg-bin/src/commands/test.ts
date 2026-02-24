@@ -8,6 +8,7 @@ import { Args, Flags } from '@oclif/core';
 import ciParallelVars from 'ci-parallel-vars';
 import globby from 'globby';
 import { getChangedFilesForRoots } from 'jest-changed-files';
+import type { InlineConfig as ViteInlineConfig } from 'vite';
 import { startVitest } from 'vitest/node';
 import type { InlineConfig as VitestConfig } from 'vitest/node';
 
@@ -164,8 +165,8 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
 
     // pass configFile:false as vite override to prevent vitest from walking up
     // the directory tree and picking up a parent vitest.config.ts
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const vitest = await startVitest('test', [], config, { configFile: false } as any);
+    const viteOverrides: ViteInlineConfig = { configFile: false };
+    const vitest = await startVitest('test', [], config, viteOverrides);
     if (!vitest) {
       throw new ForkError('vitest failed to start', 1);
     }
@@ -191,7 +192,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     const setupFile = path.join(flags.base, `test/.setup.${ext}`);
     try {
       await fs.access(setupFile);
-      setupFiles.push(setupFile);
+      setupFiles.push(setupFile.replace(/\\/g, '/'));
     } catch {
       // ignore
     }

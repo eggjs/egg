@@ -50,11 +50,18 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
    * not files whose absolute path contains 'test/' from parent dirs.
    */
   protected toAbsoluteExclude(pat: string, base: string): string {
+    // Handle negated patterns (e.g. '!src/**')
+    const isNegated = pat.startsWith('!');
+    const rawPattern = isNegated ? pat.slice(1) : pat;
+
     // Already absolute or starts with ** (position-agnostic) - keep as-is
-    if (path.isAbsolute(pat) || pat.startsWith('**')) {
-      return pat.replace(/\\/g, '/');
+    if (path.isAbsolute(rawPattern) || rawPattern.startsWith('**')) {
+      const normalized = rawPattern.replace(/\\/g, '/');
+      return isNegated ? `!${normalized}` : normalized;
     }
-    return path.join(base, pat).replace(/\\/g, '/');
+
+    const joined = path.join(base, rawPattern).replace(/\\/g, '/');
+    return isNegated ? `!${joined}` : joined;
   }
 
   protected override async buildVitestConfig(files: string[]): Promise<VitestConfig> {
@@ -75,7 +82,7 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
         provider: 'v8' as const,
         reporter: ['text-summary', 'json-summary', 'json', 'lcov', 'cobertura'],
         exclude: Array.from(coverageExcludes),
-        reportsDirectory: path.join(flags.base, 'coverage'),
+        reportsDirectory: path.join(base, 'coverage'),
       },
     };
   }

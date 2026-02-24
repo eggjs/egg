@@ -34,7 +34,7 @@ When [searching 'test framework' in npm](https://www.npmjs.com/search?q=test%20f
 
 Starting from `@eggjs/bin` v8, Egg uses [Vitest](https://vitest.dev) as the default test runner. Vitest is a next-generation testing framework powered by Vite, providing native TypeScript support, fast execution, and a modern testing experience.
 
-> Vitest is a blazing fast unit test framework powered by Vite. It provides native ESM support, TypeScript out of the box, and a Vite-powered transformation pipeline.
+> Vitest is a blazing-fast unit test framework powered by Vite. It provides native ESM support, TypeScript out of the box, and a Vite-powered transformation pipeline.
 
 Key advantages:
 
@@ -772,5 +772,3 @@ describe('GET /httpclient', () => {
 ## Sample Code
 
 All sample code can be found in [eggjs/exmaples/unittest](https://github.com/eggjs/examples/blob/master/unittest)
-
-[vitest]: https://vitest.dev

@@ -1,11 +1,11 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { defineConfig } from 'vitest/config';
+import type { UserConfig } from 'vitest/config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig({
+const config: UserConfig = {
   root: __dirname,
   test: {
     include: ['test/**/*.test.ts'],
@@ -13,4 +13,6 @@ export default defineConfig({
     testTimeout: 60000,
     globals: true,
   },
-});
+};
+
+export default config;
