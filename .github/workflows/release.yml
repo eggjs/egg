@@ -75,9 +75,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run build
-        run: pnpm build
-
       - name: Configure Git
         run: |
           git config --local user.email "action@github.com"
@@ -109,6 +106,9 @@ jobs:
 
           # Push changes and tags
           git push origin ${{ github.event.inputs.branch }} --tags
+
+      - name: Run build
+        run: pnpm build
 
       - name: Publish packages (dry run)
         if: ${{ github.event.inputs.dry_run == 'true' }}
