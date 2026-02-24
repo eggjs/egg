@@ -149,6 +149,19 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       return;
     }
 
+    // Propagate NODE_OPTIONS from this.env to process.env so vitest fork
+    // workers inherit them (e.g. ts-node/esm loader for TypeScript support).
+    // Also disable Node.js native type stripping when TypeScript loader is active,
+    // because native type stripping can't handle decorators and runs before
+    // custom ESM loaders like ts-node/esm.
+    if (this.env.NODE_OPTIONS) {
+      let nodeOptions = this.env.NODE_OPTIONS;
+      if (flags.typescript && !nodeOptions.includes('--no-experimental-strip-types')) {
+        nodeOptions = `--no-experimental-strip-types ${nodeOptions}`;
+      }
+      process.env.NODE_OPTIONS = nodeOptions;
+    }
+
     // pass configFile:false as vite override to prevent vitest from walking up
     // the directory tree and picking up a parent vitest.config.ts
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -226,16 +239,22 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       runner,
       reporters: [process.env.TEST_REPORTER ?? 'default'],
       pool: 'forks',
-      execArgv: [
-        ...this.globalExecArgv,
-        // Enable full TypeScript transform (including decorators, enums, namespaces)
-        // Node.js 22.18+ only strips types by default, which doesn't handle decorators
-        '--experimental-transform-types',
-        '--no-warnings',
-      ],
+      // vitest 4 moved poolOptions to top-level
+      execArgv: [...this.globalExecArgv],
       watch: flags.watch,
       // inject vitest globals (describe, it, expect, beforeAll, etc.) so plain JS test files work without imports
       globals: true,
+      // Inline all non-vitest node_modules so dynamic import() calls within
+      // dependencies go through vitest's module system. Without this, packages like
+      // @eggjs/tegg-loader use native import() which creates separate module instances,
+      // breaking class identity checks (e.g. tegg's getEggObject(MyClass) won't find
+      // the prototype). @vitest/* packages are excluded to avoid breaking the V8
+      // coverage inspector session.
+      server: {
+        deps: {
+          inline: [/^(?!.*@vitest)/],
+        },
+      },
     };
   }
 
