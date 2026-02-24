@@ -289,7 +289,8 @@ The framework extends Koa's context with Egg-specific features:
    - `tsconfig.json` → `{"extends": "../../tsconfig.json"}`
 4. Add package reference to root tsconfig.json `references` array
 5. Update root pnpm-workspace.yaml if needed (plugins/\* is already included)
-6. Use `pnpm --filter=<package>` for package-specific commands
+6. **CRITICAL: Run `pnpm install` and commit the updated `pnpm-lock.yaml`** — CI uses `--frozen-lockfile` and will fail immediately if the lockfile is out of sync with any package.json
+7. Use `pnpm --filter=<package>` for package-specific commands
 
 ### Plugin Packages Structure
 
