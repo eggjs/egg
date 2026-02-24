@@ -249,6 +249,8 @@ minimumReleaseAgeExclude:
   - oxlint
   - oxc-minify
   - import-without-cache
+  # Renovate security update: ajv@8.18.0
+  - ajv@8.18.0
 
 overrides:
   vite: npm:rolldown-vite@^7.1.13
