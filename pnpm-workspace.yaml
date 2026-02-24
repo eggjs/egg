@@ -168,7 +168,7 @@ catalog:
   mz-modules: ^2.1.0
   nanoid: ^5.0.0
   node-homedir: ^2.0.0
-  npminstall: ^7.12.0
+  npminstall: ^8.0.0
   nunjucks: ^3.2.4
   nunjucks-markdown: ^2.0.1
   on-finished: ^2.4.1
