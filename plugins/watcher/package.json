@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/watcher",
-  "version": "5.0.0-beta.36",
+  "version": "5.0.0-beta.37",
   "description": "file watcher plugin for egg",
   "keywords": [
     "egg",

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/bin",
-  "version": "8.0.0-beta.36",
+  "version": "8.0.0-beta.37",
   "description": "egg developer tool",
   "homepage": "https://github.com/eggjs/egg/tree/next/tools/egg-bin",
   "bugs": {

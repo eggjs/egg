@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mcp-client",
-  "version": "4.0.0-beta.36",
+  "version": "4.0.0-beta.37",
   "description": "tegg mcp client",
   "keywords": [
     "egg",
