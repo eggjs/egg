@@ -116,10 +116,10 @@ jobs:
           echo "🧪 Running publish in dry-run mode..."
           if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
             echo "Setting npm tag to: ${{ github.event.inputs.prerelease_tag }}"
-            pnpm -r publish --dry-run --no-git-checks --tag=${{ github.event.inputs.prerelease_tag }}
+            pnpm -r publish --dry-run --no-git-checks --access public --tag=${{ github.event.inputs.prerelease_tag }}
           else
             echo "Setting npm tag to: latest"
-            pnpm -r publish --dry-run --no-git-checks --tag=latest
+            pnpm -r publish --dry-run --no-git-checks --access public --tag=latest
           fi
 
       - name: Publish packages
@@ -128,10 +128,10 @@ jobs:
           echo "📦 Publishing packages..."
           if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
             echo "Setting npm tag to: ${{ github.event.inputs.prerelease_tag }}"
-            pnpm -r publish --no-git-checks --tag=${{ github.event.inputs.prerelease_tag }}
+            NPM_CONFIG_LOGLEVEL=verbose pnpm -r publish --no-git-checks --access public --provenance --tag=${{ github.event.inputs.prerelease_tag }} || tail -n 100 ~/.npm/_logs/*.log && exit 1
           else
             echo "Setting npm tag to: latest"
-            pnpm -r publish --no-git-checks --tag=latest
+            NPM_CONFIG_LOGLEVEL=verbose pnpm -r publish --no-git-checks --access public --provenance --tag=latest || tail -n 100 ~/.npm/_logs/*.log || tail -n 100 ~/.npm/_logs/*.log && exit 1
           fi
 
       - name: Create GitHub Release (draft)
