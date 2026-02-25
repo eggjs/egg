@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/dal-decorator",
-  "version": "4.0.1-beta.0",
+  "version": "4.0.2-beta.0",
   "description": "tegg dal decorator",
   "keywords": [
     "dal",
