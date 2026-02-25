@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/typebox-validate",
-  "version": "4.0.0-beta.39",
+  "version": "4.0.1-beta.0",
   "description": "another validate for typescript egg projects",
   "keywords": [
     "ajv",

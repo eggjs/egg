@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/background-task",
-  "version": "4.0.0-beta.39",
+  "version": "4.0.1-beta.0",
   "description": "background task util for tegg",
   "keywords": [
     "async",

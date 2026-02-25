@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/core-decorator",
-  "version": "4.0.0-beta.39",
+  "version": "4.0.1-beta.0",
   "description": "tegg core decorator",
   "keywords": [
     "decorator",

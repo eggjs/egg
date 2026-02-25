@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-loader",
-  "version": "4.0.0-beta.39",
+  "version": "4.0.1-beta.0",
   "description": "tegg default loader implement",
   "keywords": [
     "egg",
