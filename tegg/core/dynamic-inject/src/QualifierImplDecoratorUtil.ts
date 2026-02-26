@@ -14,10 +14,10 @@ export class QualifierImplDecoratorUtil {
     abstractClazz: EggAbstractClazz<T>,
     attribute: QualifierAttribute,
   ): ImplDecorator<T, Enum> {
-    return function (type: Enum[keyof Enum], isForceReplacement?: boolean) {
+    return function (type: Enum[keyof Enum]) {
       return function (clazz: EggProtoImplClass<T>) {
-        QualifierImplUtil.addQualifierImpl(abstractClazz, type, clazz, isForceReplacement);
-        QualifierUtil.addProtoQualifier(clazz, attribute, type, isForceReplacement);
+        QualifierImplUtil.addQualifierImpl(abstractClazz, type, clazz);
+        QualifierUtil.addProtoQualifier(clazz, attribute, type);
       };
     };
   }
