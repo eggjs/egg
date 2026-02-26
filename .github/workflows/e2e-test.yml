@@ -57,7 +57,8 @@ jobs:
               npm run clean
 
               # Run the full test suite
-              echo "Preparing database for tests..."
+              echo "Preparing databases..."
+              mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS cnpmcore_unittest"
               CNPMCORE_DATABASE_NAME=cnpmcore_unittest bash ./prepare-database-mysql.sh
               CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
               npm run test:local
