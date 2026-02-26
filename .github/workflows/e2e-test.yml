@@ -53,8 +53,17 @@ jobs:
               npm run build
               npm run prepublishOnly
 
+              # Clean build artifacts to avoid double-loading (src + dist)
+              npm run clean
+
+              # Run the full test suite
+              echo "Preparing database for tests..."
+              CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
+              npm run test:local
+
               # Deployment test: start the app and verify it boots correctly
-              echo "Preparing database..."
+              npm run clean
+              echo "Preparing database for deployment test..."
               CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
 
               echo "Starting cnpmcore..."
