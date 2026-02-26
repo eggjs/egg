@@ -58,6 +58,7 @@ jobs:
 
               # Run the full test suite
               echo "Preparing database for tests..."
+              CNPMCORE_DATABASE_NAME=cnpmcore_unittest bash ./prepare-database-mysql.sh
               CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
               npm run test:local
 
