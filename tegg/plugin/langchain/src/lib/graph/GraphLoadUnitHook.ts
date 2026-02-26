@@ -6,6 +6,7 @@ import { EggPrototypeCreatorFactory, EggPrototypeFactory, ProtoDescriptorHelper 
 import type { ClassProtoDescriptor, EggPrototypeWithClazz, LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
 import { AccessLevel, LifecyclePostInject, MCPInfoUtil, SingletonProto } from '@eggjs/tegg';
 import type { EggProtoImplClass, LifecycleHook } from '@eggjs/tegg';
+import { NameUtil } from '@eggjs/tegg-common-util';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { DynamicStructuredTool } from 'langchain';
 import * as z from 'zod/v4';
@@ -29,7 +30,7 @@ export class GraphLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext
     for (const clazz of clazzList) {
       const meta = this.clazzMap.get(clazz as EggProtoImplClass);
       if (meta) {
-        const protoName = clazz.name[0].toLowerCase() + clazz.name.substring(1);
+        const protoName = NameUtil.getClassName(clazz);
         const graphMetadata = GraphInfoUtil.getGraphMetadata(clazz as EggProtoImplClass);
         assert(graphMetadata, `${clazz.name} graphMetadata should not be null`);
         const proto = new CompiledStateGraphProto(

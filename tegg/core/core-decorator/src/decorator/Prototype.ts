@@ -23,7 +23,7 @@ export function Prototype(param?: PrototypeParams): PrototypeDecorator {
     const property: Partial<EggPrototypeInfo> = {
       ...DEFAULT_PARAMS,
       ...param,
-      className: clazz.name,
+      className: NameUtil.cleanName(clazz.name),
     };
     if (!property.name) {
       property.name = NameUtil.getClassName(clazz);
