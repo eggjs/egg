@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/static",
-  "version": "4.0.2-beta.0",
+  "version": "4.0.2-beta.1",
   "description": "static server plugin for egg",
   "keywords": [
     "egg",
