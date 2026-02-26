@@ -101,18 +101,24 @@ export default class TeggVitestRunner extends VitestTestRunner {
     const result = await super.importFile(filepath, source);
 
     if (source === 'collect') {
+      // Use per-file config from configureTeggRunner() if available,
+      // otherwise fall back to default (auto-detect @eggjs/mock/bootstrap app)
       const rawConfig = (globalThis as any).__teggVitestConfig;
+      delete (globalThis as any).__teggVitestConfig;
+
+      const config: TeggRunnerConfig = {
+        restoreMocks: rawConfig?.restoreMocks ?? true,
+        getApp: rawConfig?.getApp ?? defaultGetApp,
+      };
+
       if (rawConfig) {
-        delete (globalThis as any).__teggVitestConfig;
-
-        const config: TeggRunnerConfig = {
-          restoreMocks: rawConfig.restoreMocks ?? true,
-          getApp: rawConfig.getApp ?? defaultGetApp,
-        };
-
         debugLog(`captured config for ${filepath}`);
+      } else {
+        debugLog(`auto-detect app for ${filepath}`);
+      }
 
-        // Resolve app and await ready during collection
+      // Resolve app and await ready during collection
+      if (!this.fileAppMap.has(filepath)) {
         try {
           const app = await config.getApp();
           if (app) {
@@ -120,11 +126,10 @@ export default class TeggVitestRunner extends VitestTestRunner {
             this.fileAppMap.set(filepath, { app, config });
             debugLog(`app ready for ${filepath}`);
           }
-        } catch (err) {
+        } catch {
           if (!this.warned) {
             this.warned = true;
-            // eslint-disable-next-line no-console
-            console.warn('[tegg-vitest] getApp failed, skip context injection.', err);
+            debugLog('getApp failed, skip context injection.');
           }
         }
       }
