@@ -38,14 +38,15 @@
     }
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsgo --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
+    "@eggjs/controller-decorator": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/controller-decorator": "workspace:*",
     "@types/node": "catalog:",
     "typescript": "catalog:"
   },

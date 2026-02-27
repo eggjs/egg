@@ -2052,6 +2052,9 @@ importers:
 
   tegg/core/agent-runtime:
     dependencies:
+      '@eggjs/controller-decorator':
+        specifier: workspace:*
+        version: link:../controller-decorator
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../runtime
@@ -2059,9 +2062,6 @@ importers:
         specifier: workspace:*
         version: link:../types
     devDependencies:
-      '@eggjs/controller-decorator':
-        specifier: workspace:*
-        version: link:../controller-decorator
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2

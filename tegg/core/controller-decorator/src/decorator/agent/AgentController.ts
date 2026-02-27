@@ -3,6 +3,7 @@ import { StackUtil } from '@eggjs/tegg-common-util';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { AccessLevel, ControllerType, HTTPMethodEnum, HTTPParamType } from '@eggjs/tegg-types';
 
+import { AgentInfoUtil } from '../../util/AgentInfoUtil.ts';
 import { ControllerInfoUtil } from '../../util/ControllerInfoUtil.ts';
 import { HTTPInfoUtil } from '../../util/HTTPInfoUtil.ts';
 import { MethodInfoUtil } from '../../util/MethodInfoUtil.ts';
@@ -31,7 +32,7 @@ function createNotImplemented(methodName: string, hasParam: boolean) {
       throw new Error(`${methodName} not implemented`);
     };
   }
-  (fn as any)[Symbol.for('AGENT_NOT_IMPLEMENTED')] = true;
+  AgentInfoUtil.setNotImplemented(fn);
   return fn;
 }
 
@@ -104,6 +105,7 @@ export function AgentController() {
     func(constructor);
 
     // Set file path for prototype
+    // Stack depth 5: [0] getCalleeFromStack → [1] decorator fn → [2-4] reflect/oxc runtime → [5] user source
     PrototypeUtil.setFilePath(constructor, StackUtil.getCalleeFromStack(false, 5));
 
     // Register each agent route
@@ -132,6 +134,6 @@ export function AgentController() {
     }
 
     // Mark the class as an AgentController for precise detection
-    (constructor as any)[Symbol.for('AGENT_CONTROLLER')] = true;
+    AgentInfoUtil.setIsAgentController(constructor);
   };
 }

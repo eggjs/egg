@@ -4,6 +4,7 @@ import { ControllerType, HTTPMethodEnum } from '@eggjs/tegg-types';
 import { describe, it } from 'vitest';
 
 import {
+  AgentInfoUtil,
   ControllerMetaBuilderFactory,
   BodyParamMeta,
   PathParamMeta,
@@ -21,8 +22,8 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
       assert.strictEqual(controllerType, ControllerType.HTTP);
     });
 
-    it('should set AGENT_CONTROLLER symbol on the class', () => {
-      assert.strictEqual((AgentFooController as any)[Symbol.for('AGENT_CONTROLLER')], true);
+    it('should set AGENT_CONTROLLER metadata on the class', () => {
+      assert.strictEqual(AgentInfoUtil.isAgentController(AgentFooController), true);
     });
 
     it('should set fixed base path /api/v1', () => {
@@ -122,7 +123,7 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
       for (const methodName of routeMethods) {
         assert(typeof proto[methodName] === 'function', `${methodName} should be a function`);
         assert.strictEqual(
-          proto[methodName][Symbol.for('AGENT_NOT_IMPLEMENTED')],
+          AgentInfoUtil.isNotImplemented(proto[methodName]),
           true,
           `${methodName} should be marked as AGENT_NOT_IMPLEMENTED`,
         );
