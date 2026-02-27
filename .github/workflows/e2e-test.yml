@@ -61,7 +61,7 @@ jobs:
               mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS cnpmcore_unittest"
               CNPMCORE_DATABASE_NAME=cnpmcore_unittest bash ./prepare-database-mysql.sh
               CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
-              npm run test:local
+              EGG_FILE_PARALLELISM=false npm run test:local
 
               # Deployment test: start the app and verify it boots correctly
               npm run clean

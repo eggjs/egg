@@ -246,6 +246,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       runner,
       reporters: [process.env.TEST_REPORTER ?? 'default'],
       pool: 'forks',
+      fileParallelism: process.env.EGG_FILE_PARALLELISM !== 'false',
       // vitest 4 moved poolOptions to top-level
       execArgv: [...this.globalExecArgv],
       watch: flags.watch,
