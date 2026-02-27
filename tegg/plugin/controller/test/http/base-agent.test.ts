@@ -38,7 +38,7 @@ describe('plugin/controller/test/http/base-agent.test.ts', () => {
       assert.equal(res.body.object, 'thread');
       assert(typeof res.body.created_at === 'number');
       // Unix seconds
-      assert(res.body.created_at < Date.now());
+      assert(res.body.created_at <= Math.floor(Date.now() / 1000));
       assert(typeof res.body.metadata === 'object');
     });
   });

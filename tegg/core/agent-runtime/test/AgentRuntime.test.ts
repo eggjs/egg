@@ -48,8 +48,8 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       assert(result.id.startsWith('thread_'));
       assert.equal(result.object, 'thread');
       assert(typeof result.created_at === 'number');
-      // Unix seconds — should be much smaller than Date.now()
-      assert(result.created_at < Date.now());
+      // Unix seconds
+      assert(result.created_at <= Math.floor(Date.now() / 1000));
       assert(typeof result.metadata === 'object');
     });
   });

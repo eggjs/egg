@@ -28,8 +28,8 @@ describe('core/agent-runtime/test/FileAgentStore.test.ts', () => {
       assert(Array.isArray(thread.messages));
       assert.equal(thread.messages.length, 0);
       assert(typeof thread.created_at === 'number');
-      // Unix seconds — should be much smaller than Date.now()
-      assert(thread.created_at < Date.now());
+      // Unix seconds
+      assert(thread.created_at <= Math.floor(Date.now() / 1000));
     });
 
     it('should create a thread with metadata', async () => {
@@ -98,7 +98,7 @@ describe('core/agent-runtime/test/FileAgentStore.test.ts', () => {
       assert.equal(run.input.length, 1);
       assert(typeof run.created_at === 'number');
       // Unix seconds
-      assert(run.created_at < Date.now());
+      assert(run.created_at <= Math.floor(Date.now() / 1000));
     });
 
     it('should create a run with thread_id and config', async () => {
