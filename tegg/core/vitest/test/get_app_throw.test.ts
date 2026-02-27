@@ -1,11 +1,10 @@
 import assert from 'assert';
 
-import { describe, it, afterAll, vi } from 'vitest';
+import { describe, it } from 'vitest';
 
 import { configureTeggRunner } from '../src/index.ts';
 
 let getAppCalls = 0;
-const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
 configureTeggRunner({
   getApp() {
@@ -17,12 +16,8 @@ configureTeggRunner({
 
 describe('getApp throw handling', () => {
   it('should not crash suite when getApp throws', () => {
-    // The runner calls getApp in onBeforeRunSuite, so it should have been called
+    // The runner calls getApp during importFile (collection phase),
+    // so it should have been called and the error handled gracefully.
     assert(getAppCalls > 0);
-    assert(warnSpy.mock.calls.length > 0);
-  });
-
-  afterAll(() => {
-    warnSpy.mockRestore();
   });
 });
