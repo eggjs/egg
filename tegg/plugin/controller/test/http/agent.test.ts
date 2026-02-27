@@ -55,8 +55,8 @@ describe('plugin/controller/test/http/agent.test.ts', () => {
       assert(typeof res.body.created_at === 'number');
     });
 
-    it('should return 500 for non-existent thread', async () => {
-      await app.httpRequest().get('/api/v1/threads/non_existent').expect(500);
+    it('should return 404 for non-existent thread', async () => {
+      await app.httpRequest().get('/api/v1/threads/non_existent').expect(404);
     });
   });
 
@@ -240,8 +240,8 @@ describe('plugin/controller/test/http/agent.test.ts', () => {
       assert(typeof res.body.created_at === 'number');
     });
 
-    it('should return 500 for non-existent run', async () => {
-      await app.httpRequest().get('/api/v1/runs/non_existent').expect(500);
+    it('should return 404 for non-existent run', async () => {
+      await app.httpRequest().get('/api/v1/runs/non_existent').expect(404);
     });
   });
 

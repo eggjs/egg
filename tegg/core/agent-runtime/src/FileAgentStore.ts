@@ -5,6 +5,7 @@ import path from 'node:path';
 import type { InputMessage, MessageObject, AgentRunConfig } from '@eggjs/controller-decorator';
 
 import type { AgentStore, ThreadRecord, RunRecord } from './AgentStore.ts';
+import { AgentNotFoundError } from './errors.ts';
 
 export interface FileAgentStoreOptions {
   dataDir: string;
@@ -54,7 +55,7 @@ export class FileAgentStore implements AgentStore {
     const filePath = this.safePath(this.threadsDir, threadId);
     const data = await this.readFile(filePath);
     if (!data) {
-      throw new Error(`Thread ${threadId} not found`);
+      throw new AgentNotFoundError(`Thread ${threadId} not found`);
     }
     return data as ThreadRecord;
   }
@@ -92,14 +93,15 @@ export class FileAgentStore implements AgentStore {
     const filePath = this.safePath(this.runsDir, runId);
     const data = await this.readFile(filePath);
     if (!data) {
-      throw new Error(`Run ${runId} not found`);
+      throw new AgentNotFoundError(`Run ${runId} not found`);
     }
     return data as RunRecord;
   }
 
   async updateRun(runId: string, updates: Partial<RunRecord>): Promise<void> {
     const run = await this.getRun(runId);
-    Object.assign(run, updates);
+    const { id: _, object: __, ...safeUpdates } = updates;
+    Object.assign(run, safeUpdates);
     await this.writeFile(this.safePath(this.runsDir, runId), run);
   }
 

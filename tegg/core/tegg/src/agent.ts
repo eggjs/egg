@@ -3,7 +3,7 @@ export { AgentController } from '@eggjs/controller-decorator';
 
 // Utility types and classes from agent-runtime
 export type { AgentStore, ThreadRecord, RunRecord } from '@eggjs/agent-runtime';
-export { FileAgentStore } from '@eggjs/agent-runtime';
+export { AgentNotFoundError, AgentConflictError, FileAgentStore } from '@eggjs/agent-runtime';
 
 // Original types and interfaces from controller-decorator
 export type { AgentHandler } from '@eggjs/controller-decorator';

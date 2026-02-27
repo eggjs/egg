@@ -13,6 +13,11 @@ import type {
 import { ContextHandler } from '@eggjs/tegg-runtime';
 
 import type { AgentStore } from './AgentStore.ts';
+import { AgentConflictError } from './errors.ts';
+
+// Canonical definition in @eggjs/module-common (tegg/plugin/common).
+// Re-declared here to avoid a core→plugin dependency.
+const EGG_CONTEXT: symbol = Symbol.for('context#eggContext');
 
 interface AgentInstance {
   __agentStore: AgentStore;
@@ -106,13 +111,13 @@ function extractFromStreamMessages(
  */
 function toInputMessageObjects(messages: CreateRunInput['input']['messages'], threadId?: string): MessageObject[] {
   return messages
-    .filter((m) => m.role !== 'system')
+    .filter((m): m is typeof m & { role: 'user' | 'assistant' } => m.role !== 'system')
     .map((m) => ({
       id: newMsgId(),
       object: 'thread.message' as const,
       created_at: nowUnix(),
       thread_id: threadId,
-      role: m.role as 'user' | 'assistant',
+      role: m.role,
       status: 'completed' as const,
       content:
         typeof m.content === 'string'
@@ -250,9 +255,12 @@ function defaultAsyncRun() {
               last_error: { code: 'EXEC_ERROR', message: err.message },
               failed_at: nowUnix(),
             });
-          } catch {
-            // Ignore store update failure to avoid swallowing the original error
+          } catch (storeErr) {
+            // Log store update failure but don't swallow the original error
+            console.error('[AgentController] failed to update run status after error:', storeErr);
           }
+        } else {
+          console.error('[AgentController] execRun error during abort:', err);
         }
       } finally {
         this.__runningTasks.delete(run.id);
@@ -278,7 +286,7 @@ function defaultStreamRun() {
     if (!runtimeCtx) {
       throw new Error('streamRun must be called within a request context');
     }
-    const ctx = runtimeCtx.get(Symbol.for('context#eggContext'));
+    const ctx = runtimeCtx.get(EGG_CONTEXT);
 
     // Bypass Koa response handling — write SSE directly to the raw response
     ctx.respond = false;
@@ -373,7 +381,9 @@ function defaultStreamRun() {
         }
         runObj.status = 'cancelled';
         runObj.cancelled_at = cancelledAt;
-        res.write(`event: thread.run.cancelled\ndata: ${JSON.stringify(runObj)}\n\n`);
+        if (!res.writableEnded) {
+          res.write(`event: thread.run.cancelled\ndata: ${JSON.stringify(runObj)}\n\n`);
+        }
         return;
       }
 
@@ -420,19 +430,24 @@ function defaultStreamRun() {
           last_error: { code: 'EXEC_ERROR', message: err.message },
           failed_at: failedAt,
         });
-      } catch {
-        // Ignore store update failure to avoid swallowing the original error
+      } catch (storeErr) {
+        // Log store update failure but don't swallow the original error
+        console.error('[AgentController] failed to update run status after error:', storeErr);
       }
 
       // event: thread.run.failed
       runObj.status = 'failed';
       runObj.failed_at = failedAt;
       runObj.last_error = { code: 'EXEC_ERROR', message: err.message };
-      res.write(`event: thread.run.failed\ndata: ${JSON.stringify(runObj)}\n\n`);
+      if (!res.writableEnded) {
+        res.write(`event: thread.run.failed\ndata: ${JSON.stringify(runObj)}\n\n`);
+      }
     } finally {
       // event: done
-      res.write('event: done\ndata: [DONE]\n\n');
-      res.end();
+      if (!res.writableEnded) {
+        res.write('event: done\ndata: [DONE]\n\n');
+        res.end();
+      }
     }
   };
 }
@@ -476,7 +491,7 @@ function defaultCancelRun() {
     // Re-read run status after background task has settled
     const run = await this.__agentStore.getRun(runId);
     if (TERMINAL_RUN_STATUSES.has(run.status)) {
-      throw new Error(`Cannot cancel run with status '${run.status}'`);
+      throw new AgentConflictError(`Cannot cancel run with status '${run.status}'`);
     }
 
     const cancelledAt = nowUnix();

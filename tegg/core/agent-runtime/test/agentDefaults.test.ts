@@ -5,6 +5,7 @@ import path from 'node:path';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { AGENT_DEFAULT_FACTORIES } from '../src/agentDefaults.ts';
+import { AgentNotFoundError } from '../src/errors.ts';
 import { FileAgentStore } from '../src/FileAgentStore.ts';
 
 describe('core/agent-runtime/test/agentDefaults.test.ts', () => {
@@ -68,9 +69,16 @@ describe('core/agent-runtime/test/agentDefaults.test.ts', () => {
       assert(Array.isArray(result.messages));
     });
 
-    it('should throw for non-existent thread', async () => {
+    it('should throw AgentNotFoundError for non-existent thread', async () => {
       const getFn = AGENT_DEFAULT_FACTORIES.getThread();
-      await assert.rejects(() => getFn.call(mockInstance, 'thread_xxx'), /Thread thread_xxx not found/);
+      await assert.rejects(
+        () => getFn.call(mockInstance, 'thread_xxx'),
+        (err: unknown) => {
+          assert(err instanceof AgentNotFoundError);
+          assert.equal(err.status, 404);
+          return true;
+        },
+      );
     });
   });
 

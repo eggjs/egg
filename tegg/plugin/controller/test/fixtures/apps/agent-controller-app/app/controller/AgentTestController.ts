@@ -1,4 +1,4 @@
-import { AgentController } from '@eggjs/tegg/agent';
+import { AgentController, AgentNotFoundError } from '@eggjs/tegg/agent';
 import type {
   AgentHandler,
   CreateRunInput,
@@ -10,6 +10,9 @@ import type {
   AgentStreamMessage,
 } from '@eggjs/tegg/agent';
 import { ContextHandler } from '@eggjs/tegg/helper';
+
+// Canonical definition in @eggjs/module-common
+const EGG_CONTEXT: symbol = Symbol.for('context#eggContext');
 
 // In-memory store for threads and runs
 const threads = new Map<
@@ -46,7 +49,7 @@ export class AgentTestController implements AgentHandler {
   async getThread(threadId: string): Promise<ThreadObjectWithMessages> {
     const thread = threads.get(threadId);
     if (!thread) {
-      throw new Error(`Thread ${threadId} not found`);
+      throw new AgentNotFoundError(`Thread ${threadId} not found`);
     }
     return {
       id: thread.id,
@@ -72,7 +75,7 @@ export class AgentTestController implements AgentHandler {
 
   async streamRun(input: CreateRunInput): Promise<void> {
     const runtimeCtx = ContextHandler.getContext()!;
-    const ctx = runtimeCtx.get(Symbol.for('context#eggContext'));
+    const ctx = runtimeCtx.get(EGG_CONTEXT);
 
     // Bypass Koa response handling — write SSE directly to the raw response
     ctx.respond = false;
@@ -174,7 +177,7 @@ export class AgentTestController implements AgentHandler {
   async getRun(runId: string): Promise<RunObject> {
     const run = runs.get(runId);
     if (!run) {
-      throw new Error(`Run ${runId} not found`);
+      throw new AgentNotFoundError(`Run ${runId} not found`);
     }
     return {
       id: run.id,

@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
+import { AgentNotFoundError } from '../src/errors.ts';
 import { FileAgentStore } from '../src/FileAgentStore.ts';
 
 describe('core/agent-runtime/test/FileAgentStore.test.ts', () => {
@@ -49,8 +50,16 @@ describe('core/agent-runtime/test/FileAgentStore.test.ts', () => {
       assert.equal(fetched.created_at, created.created_at);
     });
 
-    it('should throw for non-existent thread', async () => {
-      await assert.rejects(() => store.getThread('thread_non_existent'), /Thread thread_non_existent not found/);
+    it('should throw AgentNotFoundError for non-existent thread', async () => {
+      await assert.rejects(
+        () => store.getThread('thread_non_existent'),
+        (err: unknown) => {
+          assert(err instanceof AgentNotFoundError);
+          assert.equal(err.status, 404);
+          assert.match(err.message, /Thread thread_non_existent not found/);
+          return true;
+        },
+      );
     });
 
     it('should append messages to a thread', async () => {
@@ -124,8 +133,16 @@ describe('core/agent-runtime/test/FileAgentStore.test.ts', () => {
       assert.equal(fetched.status, 'queued');
     });
 
-    it('should throw for non-existent run', async () => {
-      await assert.rejects(() => store.getRun('run_non_existent'), /Run run_non_existent not found/);
+    it('should throw AgentNotFoundError for non-existent run', async () => {
+      await assert.rejects(
+        () => store.getRun('run_non_existent'),
+        (err: unknown) => {
+          assert(err instanceof AgentNotFoundError);
+          assert.equal(err.status, 404);
+          assert.match(err.message, /Run run_non_existent not found/);
+          return true;
+        },
+      );
     });
 
     it('should update a run', async () => {
