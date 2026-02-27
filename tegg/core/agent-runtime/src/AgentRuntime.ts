@@ -1,5 +1,3 @@
-import crypto from 'node:crypto';
-
 import type {
   CreateRunInput,
   ThreadObject,
@@ -14,24 +12,25 @@ import { ContextHandler } from '@eggjs/tegg-runtime';
 
 import type { AgentStore } from './AgentStore.ts';
 import { AgentConflictError } from './errors.ts';
+import { nowUnix, newMsgId } from './utils.ts';
 
 // Canonical definition in @eggjs/module-common (tegg/plugin/common).
 // Re-declared here to avoid a core→plugin dependency.
 const EGG_CONTEXT: symbol = Symbol.for('context#eggContext');
 
-interface AgentInstance {
-  __agentStore: AgentStore;
-  __runningTasks: Map<string, { promise: Promise<void>; abortController: AbortController }>;
+export const AGENT_RUNTIME: unique symbol = Symbol('agentRuntime');
+
+/**
+ * The host interface — only requires execRun so the runtime can delegate
+ * execution back through the controller's prototype chain (AOP/mock friendly).
+ */
+export interface AgentControllerHost {
   execRun(input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentStreamMessage>;
 }
 
-function nowUnix(): number {
-  return Math.floor(Date.now() / 1000);
-}
+// ─── helper functions ──────────────────────────────────────────────
 
-function newMsgId(): string {
-  return `msg_${crypto.randomUUID()}`;
-}
+const TERMINAL_RUN_STATUSES = new Set(['completed', 'failed', 'cancelled', 'expired']);
 
 /**
  * Convert an AgentStreamMessage's message field into OpenAI MessageContentBlock[].
@@ -126,21 +125,31 @@ function toInputMessageObjects(messages: CreateRunInput['input']['messages'], th
     }));
 }
 
-function defaultCreateThread() {
-  return async function (this: AgentInstance): Promise<ThreadObject> {
-    const thread = await this.__agentStore.createThread();
+// ─── AgentRuntime class ────────────────────────────────────────────
+
+export class AgentRuntime {
+  private store: AgentStore;
+  private runningTasks: Map<string, { promise: Promise<void>; abortController: AbortController }>;
+  private host: AgentControllerHost;
+
+  constructor(host: AgentControllerHost, store: AgentStore) {
+    this.host = host;
+    this.store = store;
+    this.runningTasks = new Map();
+  }
+
+  async createThread(): Promise<ThreadObject> {
+    const thread = await this.store.createThread();
     return {
       id: thread.id,
       object: 'thread',
       created_at: thread.created_at,
       metadata: thread.metadata ?? {},
     };
-  };
-}
+  }
 
-function defaultGetThread() {
-  return async function (this: AgentInstance, threadId: string): Promise<ThreadObjectWithMessages> {
-    const thread = await this.__agentStore.getThread(threadId);
+  async getThread(threadId: string): Promise<ThreadObjectWithMessages> {
+    const thread = await this.store.getThread(threadId);
     return {
       id: thread.id,
       object: 'thread',
@@ -148,42 +157,37 @@ function defaultGetThread() {
       metadata: thread.metadata ?? {},
       messages: thread.messages,
     };
-  };
-}
+  }
 
-function defaultSyncRun() {
-  return async function (this: AgentInstance, input: CreateRunInput): Promise<RunObject> {
+  async syncRun(input: CreateRunInput): Promise<RunObject> {
     let threadId = input.thread_id;
     if (!threadId) {
-      const thread = await this.__agentStore.createThread();
+      const thread = await this.store.createThread();
       threadId = thread.id;
       input = { ...input, thread_id: threadId };
     }
 
-    const run = await this.__agentStore.createRun(input.input.messages, threadId, input.config, input.metadata);
+    const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
 
     try {
       const startedAt = nowUnix();
-      await this.__agentStore.updateRun(run.id, { status: 'in_progress', started_at: startedAt });
+      await this.store.updateRun(run.id, { status: 'in_progress', started_at: startedAt });
 
       const streamMessages: AgentStreamMessage[] = [];
-      for await (const msg of this.execRun(input)) {
+      for await (const msg of this.host.execRun(input)) {
         streamMessages.push(msg);
       }
       const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
 
       const completedAt = nowUnix();
-      await this.__agentStore.updateRun(run.id, {
+      await this.store.updateRun(run.id, {
         status: 'completed',
         output,
         usage,
         completed_at: completedAt,
       });
 
-      await this.__agentStore.appendMessages(threadId, [
-        ...toInputMessageObjects(input.input.messages, threadId),
-        ...output,
-      ]);
+      await this.store.appendMessages(threadId, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
 
       return {
         id: run.id,
@@ -199,35 +203,33 @@ function defaultSyncRun() {
       };
     } catch (err: any) {
       const failedAt = nowUnix();
-      await this.__agentStore.updateRun(run.id, {
+      await this.store.updateRun(run.id, {
         status: 'failed',
         last_error: { code: 'EXEC_ERROR', message: err.message },
         failed_at: failedAt,
       });
       throw err;
     }
-  };
-}
+  }
 
-function defaultAsyncRun() {
-  return async function (this: AgentInstance, input: CreateRunInput): Promise<RunObject> {
+  async asyncRun(input: CreateRunInput): Promise<RunObject> {
     let threadId = input.thread_id;
     if (!threadId) {
-      const thread = await this.__agentStore.createThread();
+      const thread = await this.store.createThread();
       threadId = thread.id;
       input = { ...input, thread_id: threadId };
     }
 
-    const run = await this.__agentStore.createRun(input.input.messages, threadId, input.config, input.metadata);
+    const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
 
     const abortController = new AbortController();
 
     const promise = (async () => {
       try {
-        await this.__agentStore.updateRun(run.id, { status: 'in_progress', started_at: nowUnix() });
+        await this.store.updateRun(run.id, { status: 'in_progress', started_at: nowUnix() });
 
         const streamMessages: AgentStreamMessage[] = [];
-        for await (const msg of this.execRun(input, abortController.signal)) {
+        for await (const msg of this.host.execRun(input, abortController.signal)) {
           if (abortController.signal.aborted) break;
           streamMessages.push(msg);
         }
@@ -236,38 +238,37 @@ function defaultAsyncRun() {
 
         const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
 
-        await this.__agentStore.updateRun(run.id, {
+        await this.store.updateRun(run.id, {
           status: 'completed',
           output,
           usage,
           completed_at: nowUnix(),
         });
 
-        await this.__agentStore.appendMessages(threadId!, [
+        await this.store.appendMessages(threadId!, [
           ...toInputMessageObjects(input.input.messages, threadId),
           ...output,
         ]);
       } catch (err: any) {
         if (!abortController.signal.aborted) {
           try {
-            await this.__agentStore.updateRun(run.id, {
+            await this.store.updateRun(run.id, {
               status: 'failed',
               last_error: { code: 'EXEC_ERROR', message: err.message },
               failed_at: nowUnix(),
             });
           } catch (storeErr) {
-            // Log store update failure but don't swallow the original error
             console.error('[AgentController] failed to update run status after error:', storeErr);
           }
         } else {
           console.error('[AgentController] execRun error during abort:', err);
         }
       } finally {
-        this.__runningTasks.delete(run.id);
+        this.runningTasks.delete(run.id);
       }
     })();
 
-    this.__runningTasks.set(run.id, { promise, abortController });
+    this.runningTasks.set(run.id, { promise, abortController });
 
     return {
       id: run.id,
@@ -277,11 +278,9 @@ function defaultAsyncRun() {
       status: 'queued',
       metadata: run.metadata,
     };
-  };
-}
+  }
 
-function defaultStreamRun() {
-  return async function (this: AgentInstance, input: CreateRunInput): Promise<void> {
+  async streamRun(input: CreateRunInput): Promise<void> {
     const runtimeCtx = ContextHandler.getContext();
     if (!runtimeCtx) {
       throw new Error('streamRun must be called within a request context');
@@ -303,12 +302,12 @@ function defaultStreamRun() {
 
     let threadId = input.thread_id;
     if (!threadId) {
-      const thread = await this.__agentStore.createThread();
+      const thread = await this.store.createThread();
       threadId = thread.id;
       input = { ...input, thread_id: threadId };
     }
 
-    const run = await this.__agentStore.createRun(input.input.messages, threadId, input.config, input.metadata);
+    const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
 
     const runObj: RunObject = {
       id: run.id,
@@ -325,7 +324,7 @@ function defaultStreamRun() {
     // event: thread.run.in_progress
     runObj.status = 'in_progress';
     runObj.started_at = nowUnix();
-    await this.__agentStore.updateRun(run.id, { status: 'in_progress', started_at: runObj.started_at });
+    await this.store.updateRun(run.id, { status: 'in_progress', started_at: runObj.started_at });
     res.write(`event: thread.run.in_progress\ndata: ${JSON.stringify(runObj)}\n\n`);
 
     const msgId = newMsgId();
@@ -349,7 +348,7 @@ function defaultStreamRun() {
     let hasUsage = false;
 
     try {
-      for await (const msg of this.execRun(input, abortController.signal)) {
+      for await (const msg of this.host.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) break;
         if (msg.message) {
           const contentBlocks = toContentBlocks(msg.message);
@@ -375,7 +374,7 @@ function defaultStreamRun() {
       if (abortController.signal.aborted) {
         const cancelledAt = nowUnix();
         try {
-          await this.__agentStore.updateRun(run.id, { status: 'cancelled', cancelled_at: cancelledAt });
+          await this.store.updateRun(run.id, { status: 'cancelled', cancelled_at: cancelledAt });
         } catch {
           // Ignore store update failure during abort
         }
@@ -404,17 +403,14 @@ function defaultStreamRun() {
       }
 
       const completedAt = nowUnix();
-      await this.__agentStore.updateRun(run.id, {
+      await this.store.updateRun(run.id, {
         status: 'completed',
         output,
         usage,
         completed_at: completedAt,
       });
 
-      await this.__agentStore.appendMessages(threadId!, [
-        ...toInputMessageObjects(input.input.messages, threadId),
-        ...output,
-      ]);
+      await this.store.appendMessages(threadId!, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
 
       // event: thread.run.completed
       runObj.status = 'completed';
@@ -425,13 +421,12 @@ function defaultStreamRun() {
     } catch (err: any) {
       const failedAt = nowUnix();
       try {
-        await this.__agentStore.updateRun(run.id, {
+        await this.store.updateRun(run.id, {
           status: 'failed',
           last_error: { code: 'EXEC_ERROR', message: err.message },
           failed_at: failedAt,
         });
       } catch (storeErr) {
-        // Log store update failure but don't swallow the original error
         console.error('[AgentController] failed to update run status after error:', storeErr);
       }
 
@@ -449,12 +444,10 @@ function defaultStreamRun() {
         res.end();
       }
     }
-  };
-}
+  }
 
-function defaultGetRun() {
-  return async function (this: AgentInstance, runId: string): Promise<RunObject> {
-    const run = await this.__agentStore.getRun(runId);
+  async getRun(runId: string): Promise<RunObject> {
+    const run = await this.store.getRun(runId);
     return {
       id: run.id,
       object: 'thread.run',
@@ -471,15 +464,11 @@ function defaultGetRun() {
       config: run.config,
       metadata: run.metadata,
     };
-  };
-}
+  }
 
-const TERMINAL_RUN_STATUSES = new Set(['completed', 'failed', 'cancelled', 'expired']);
-
-function defaultCancelRun() {
-  return async function (this: AgentInstance, runId: string): Promise<RunObject> {
+  async cancelRun(runId: string): Promise<RunObject> {
     // Abort running task first to prevent it from writing completed status
-    const task = this.__runningTasks.get(runId);
+    const task = this.runningTasks.get(runId);
     if (task) {
       task.abortController.abort();
       // Wait for the background task to finish so it won't race with our update
@@ -489,13 +478,13 @@ function defaultCancelRun() {
     }
 
     // Re-read run status after background task has settled
-    const run = await this.__agentStore.getRun(runId);
+    const run = await this.store.getRun(runId);
     if (TERMINAL_RUN_STATUSES.has(run.status)) {
       throw new AgentConflictError(`Cannot cancel run with status '${run.status}'`);
     }
 
     const cancelledAt = nowUnix();
-    await this.__agentStore.updateRun(runId, {
+    await this.store.updateRun(runId, {
       status: 'cancelled',
       cancelled_at: cancelledAt,
     });
@@ -508,15 +497,18 @@ function defaultCancelRun() {
       status: 'cancelled',
       cancelled_at: cancelledAt,
     };
-  };
-}
+  }
 
-export const AGENT_DEFAULT_FACTORIES: Record<string, () => Function> = {
-  createThread: defaultCreateThread,
-  getThread: defaultGetThread,
-  syncRun: defaultSyncRun,
-  asyncRun: defaultAsyncRun,
-  streamRun: defaultStreamRun,
-  getRun: defaultGetRun,
-  cancelRun: defaultCancelRun,
-};
+  async destroy(): Promise<void> {
+    // Wait for in-flight background tasks
+    if (this.runningTasks.size) {
+      const pending = Array.from(this.runningTasks.values()).map((t) => t.promise);
+      await Promise.allSettled(pending);
+    }
+
+    // Destroy store
+    if (this.store.destroy) {
+      await this.store.destroy();
+    }
+  }
+}

@@ -2,14 +2,14 @@ import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { AgentInfoUtil } from '@eggjs/controller-decorator';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
+import { AgentRuntime, AGENT_RUNTIME } from '../src/AgentRuntime.ts';
 import { enhanceAgentController } from '../src/enhanceAgentController.ts';
 
-const NOT_IMPLEMENTED = Symbol.for('AGENT_NOT_IMPLEMENTED');
-
 // Helper: create a stub function like the @AgentController decorator does
-function createStub(hasParam: boolean) {
+function createStub(hasParam: boolean): Function {
   let fn;
   if (hasParam) {
     fn = async function (_arg: unknown) {
@@ -20,7 +20,7 @@ function createStub(hasParam: boolean) {
       throw new Error('not implemented');
     };
   }
-  (fn as any)[NOT_IMPLEMENTED] = true;
+  AgentInfoUtil.setNotImplemented(fn);
   return fn;
 }
 
@@ -38,7 +38,7 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
     });
   });
 
-  it('should skip classes without AGENT_CONTROLLER symbol', () => {
+  it('should skip classes without AGENT_CONTROLLER metadata', () => {
     class NoMarker {
       async *execRun() {
         yield {
@@ -48,10 +48,10 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
       }
     }
     (NoMarker.prototype as any)['syncRun'] = createStub(true);
-    // Should not throw — class has execRun but no Symbol marker
+    // Should not throw — class has execRun but no AgentController marker
     enhanceAgentController(NoMarker as any);
     // syncRun should remain unchanged (still the stub)
-    assert((NoMarker.prototype as any).syncRun[NOT_IMPLEMENTED]);
+    assert(AgentInfoUtil.isNotImplemented((NoMarker.prototype as any).syncRun));
   });
 
   it('should replace stub methods with smart defaults', async () => {
@@ -63,7 +63,7 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
         };
       }
     }
-    (MyAgent as any)[Symbol.for('AGENT_CONTROLLER')] = true;
+    AgentInfoUtil.setIsAgentController(MyAgent as any);
     // Simulate stubs set by @AgentController
     (MyAgent.prototype as any)['createThread'] = createStub(false);
     (MyAgent.prototype as any)['getThread'] = createStub(true);
@@ -75,19 +75,18 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
 
     enhanceAgentController(MyAgent as any);
 
-    // Stubs should be replaced — no longer marked
-    assert(!(MyAgent.prototype as any).createThread[NOT_IMPLEMENTED]);
-    assert(!(MyAgent.prototype as any).syncRun[NOT_IMPLEMENTED]);
+    // Stubs should be replaced — no longer marked as not implemented
+    assert(!AgentInfoUtil.isNotImplemented((MyAgent.prototype as any).createThread));
+    assert(!AgentInfoUtil.isNotImplemented((MyAgent.prototype as any).syncRun));
 
     // init/destroy should be wrapped
     assert(typeof (MyAgent.prototype as any).init === 'function');
     assert(typeof (MyAgent.prototype as any).destroy === 'function');
 
-    // Actually call init to verify store is created
+    // Actually call init to verify AgentRuntime is created
     const instance = new MyAgent() as any;
     await instance.init();
-    assert(instance.__agentStore);
-    assert(instance.__runningTasks instanceof Map);
+    assert(instance[AGENT_RUNTIME] instanceof AgentRuntime);
 
     // createThread should work and return OpenAI format
     const thread = await instance.createThread();
@@ -113,7 +112,7 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
         return customResult;
       }
     }
-    (MyAgent as any)[Symbol.for('AGENT_CONTROLLER')] = true;
+    AgentInfoUtil.setIsAgentController(MyAgent as any);
     // All other methods are stubs
     (MyAgent.prototype as any)['createThread'] = createStub(false);
     (MyAgent.prototype as any)['getThread'] = createStub(true);
@@ -131,7 +130,7 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
     assert.deepEqual(result, customResult);
 
     // Stubs should be replaced
-    assert(!(instance as any).createThread[NOT_IMPLEMENTED]);
+    assert(!AgentInfoUtil.isNotImplemented((instance as any).createThread));
 
     await instance.destroy();
   });
@@ -151,7 +150,7 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
         originalInitCalled = true;
       }
     }
-    (MyAgent as any)[Symbol.for('AGENT_CONTROLLER')] = true;
+    AgentInfoUtil.setIsAgentController(MyAgent as any);
     (MyAgent.prototype as any)['syncRun'] = createStub(true);
 
     enhanceAgentController(MyAgent as any);
@@ -159,7 +158,7 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
     const instance = new MyAgent() as any;
     await instance.init();
     assert(originalInitCalled);
-    assert(instance.__agentStore);
+    assert(instance[AGENT_RUNTIME] instanceof AgentRuntime);
 
     await instance.destroy();
   });
@@ -179,7 +178,7 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
         originalDestroyCalled = true;
       }
     }
-    (MyAgent as any)[Symbol.for('AGENT_CONTROLLER')] = true;
+    AgentInfoUtil.setIsAgentController(MyAgent as any);
     (MyAgent.prototype as any)['syncRun'] = createStub(true);
 
     enhanceAgentController(MyAgent as any);
@@ -234,14 +233,14 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
         };
       }
     }
-    (MyAgent as any)[Symbol.for('AGENT_CONTROLLER')] = true;
+    AgentInfoUtil.setIsAgentController(MyAgent as any);
     (MyAgent.prototype as any)['syncRun'] = createStub(true);
 
     enhanceAgentController(MyAgent as any);
 
     const instance = new MyAgent() as any;
     await instance.init();
-    assert.strictEqual(instance.__agentStore, customStore);
+    assert(instance[AGENT_RUNTIME] instanceof AgentRuntime);
 
     await instance.destroy();
   });
@@ -256,7 +255,7 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
       }
       // No methods defined at all — no stubs either
     }
-    (MyAgent as any)[Symbol.for('AGENT_CONTROLLER')] = true;
+    AgentInfoUtil.setIsAgentController(MyAgent as any);
 
     enhanceAgentController(MyAgent as any);
 

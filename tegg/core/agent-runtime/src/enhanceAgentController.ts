@@ -1,35 +1,33 @@
 import path from 'node:path';
 
+import { AgentInfoUtil } from '@eggjs/controller-decorator';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
-import { AGENT_DEFAULT_FACTORIES } from './agentDefaults.ts';
+import { AgentRuntime, AGENT_RUNTIME } from './AgentRuntime.ts';
 import type { AgentStore } from './AgentStore.ts';
 import { FileAgentStore } from './FileAgentStore.ts';
 
 const AGENT_METHOD_NAMES = ['createThread', 'getThread', 'asyncRun', 'streamRun', 'syncRun', 'getRun', 'cancelRun'];
 
-const NOT_IMPLEMENTED = Symbol.for('AGENT_NOT_IMPLEMENTED');
-const AGENT_ENHANCED = Symbol.for('AGENT_CONTROLLER_ENHANCED');
-
 // Enhance an AgentController class with smart default implementations.
 //
 // Called by the plugin/controller lifecycle hook AFTER the decorator has set
 // HTTP metadata and injected stub methods. Detects which methods are
-// user-defined vs stubs (via Symbol.for('AGENT_NOT_IMPLEMENTED') marker)
-// and replaces stubs with store-backed default implementations.
-// Also wraps init()/destroy() to manage the AgentStore lifecycle.
+// user-defined vs stubs (via AgentInfoUtil.isNotImplemented() marker)
+// and replaces stubs with AgentRuntime-delegating methods.
+// Also wraps init()/destroy() to manage the AgentRuntime lifecycle.
 //
 // Prerequisites:
-// - The class must be marked with Symbol.for('AGENT_CONTROLLER') (otherwise this is a no-op).
-// - Stub methods must be marked with Symbol.for('AGENT_NOT_IMPLEMENTED').
+// - The class must be marked via AgentInfoUtil.isAgentController() (otherwise this is a no-op).
+// - Stub methods must be marked via AgentInfoUtil.isNotImplemented().
 export function enhanceAgentController(clazz: EggProtoImplClass): void {
   // Only enhance classes marked by @AgentController decorator
-  if (!(clazz as any)[Symbol.for('AGENT_CONTROLLER')]) {
+  if (!AgentInfoUtil.isAgentController(clazz)) {
     return;
   }
 
   // Guard against repeated enhancement (e.g., multiple lifecycle hook calls)
-  if ((clazz as any)[AGENT_ENHANCED]) {
+  if (AgentInfoUtil.isEnhanced(clazz)) {
     return;
   }
 
@@ -37,45 +35,39 @@ export function enhanceAgentController(clazz: EggProtoImplClass): void {
   const stubMethods = new Set<string>();
   for (const name of AGENT_METHOD_NAMES) {
     const method = clazz.prototype[name];
-    if (!method || (method as any)[NOT_IMPLEMENTED]) {
+    if (!method || AgentInfoUtil.isNotImplemented(method)) {
       stubMethods.add(name);
     }
   }
 
-  // Wrap init() lifecycle to create store and task tracking
+  // Wrap init() lifecycle to create AgentRuntime
   const originalInit = clazz.prototype.init;
   clazz.prototype.init = async function () {
     // Allow user to provide custom store via createStore()
+    let store: AgentStore;
     if (typeof this.createStore === 'function') {
-      this.__agentStore = await this.createStore();
+      store = await this.createStore();
     } else {
       const dataDir = process.env.TEGG_AGENT_DATA_DIR || path.join(process.cwd(), '.agent-data');
-      this.__agentStore = new FileAgentStore({ dataDir });
+      store = new FileAgentStore({ dataDir });
     }
 
-    if (this.__agentStore.init) {
-      await (this.__agentStore as AgentStore).init!();
+    if (store.init) {
+      await store.init();
     }
 
-    this.__runningTasks = new Map();
+    this[AGENT_RUNTIME] = new AgentRuntime(this, store);
 
     if (originalInit) {
       await originalInit.call(this);
     }
   };
 
-  // Wrap destroy() lifecycle to wait for in-flight tasks and cleanup
+  // Wrap destroy() lifecycle to cleanup AgentRuntime
   const originalDestroy = clazz.prototype.destroy;
   clazz.prototype.destroy = async function () {
-    // Wait for in-flight background tasks
-    if (this.__runningTasks?.size) {
-      const pending = Array.from(this.__runningTasks.values()).map((t: any) => t.promise);
-      await Promise.allSettled(pending);
-    }
-
-    // Destroy store
-    if (this.__agentStore?.destroy) {
-      await this.__agentStore.destroy();
+    if (this[AGENT_RUNTIME]) {
+      await this[AGENT_RUNTIME].destroy();
     }
 
     if (originalDestroy) {
@@ -83,14 +75,13 @@ export function enhanceAgentController(clazz: EggProtoImplClass): void {
     }
   };
 
-  // Inject smart defaults for stub methods
+  // Replace stub methods with AgentRuntime delegation
   for (const methodName of AGENT_METHOD_NAMES) {
     if (!stubMethods.has(methodName)) continue;
-    const factory = AGENT_DEFAULT_FACTORIES[methodName];
-    if (factory) {
-      clazz.prototype[methodName] = factory();
-    }
+    clazz.prototype[methodName] = function (...args: unknown[]) {
+      return (this[AGENT_RUNTIME] as AgentRuntime)[methodName as keyof AgentRuntime](...args);
+    };
   }
 
-  (clazz as any)[AGENT_ENHANCED] = true;
+  AgentInfoUtil.setEnhanced(clazz);
 }

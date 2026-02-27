@@ -6,6 +6,7 @@ import type { InputMessage, MessageObject, AgentRunConfig } from '@eggjs/control
 
 import type { AgentStore, ThreadRecord, RunRecord } from './AgentStore.ts';
 import { AgentNotFoundError } from './errors.ts';
+import { nowUnix } from './utils.ts';
 
 export interface FileAgentStoreOptions {
   dataDir: string;
@@ -45,7 +46,7 @@ export class FileAgentStore implements AgentStore {
       object: 'thread',
       messages: [],
       metadata: metadata ?? {},
-      created_at: Math.floor(Date.now() / 1000),
+      created_at: nowUnix(),
     };
     await this.writeFile(this.safePath(this.threadsDir, threadId), record);
     return record;
@@ -60,8 +61,9 @@ export class FileAgentStore implements AgentStore {
     return data as ThreadRecord;
   }
 
-  // Note: read-modify-write without locking. Concurrent appends to the same thread may lose messages.
-  // This is acceptable for a default file-based store; production stores should implement proper locking.
+  // Note: read-modify-write without locking. In cluster mode with multiple workers
+  // sharing the same dataDir, concurrent operations on the same thread may lose data.
+  // For production multi-worker deployments, use a database-backed AgentStore instead.
   async appendMessages(threadId: string, messages: MessageObject[]): Promise<void> {
     const thread = await this.getThread(threadId);
     thread.messages.push(...messages);
@@ -83,7 +85,7 @@ export class FileAgentStore implements AgentStore {
       input,
       config,
       metadata,
-      created_at: Math.floor(Date.now() / 1000),
+      created_at: nowUnix(),
     };
     await this.writeFile(this.safePath(this.runsDir, runId), record);
     return record;
@@ -106,20 +108,19 @@ export class FileAgentStore implements AgentStore {
   }
 
   private async writeFile(filePath: string, data: unknown): Promise<void> {
-    const tmpPath = `${filePath}.${crypto.randomUUID()}.tmp`;
-    await fs.writeFile(tmpPath, JSON.stringify(data), 'utf-8');
-    await fs.rename(tmpPath, filePath);
+    await fs.writeFile(filePath, JSON.stringify(data), 'utf-8');
   }
 
   private async readFile(filePath: string): Promise<unknown | null> {
+    let content: string;
     try {
-      const content = await fs.readFile(filePath, 'utf-8');
-      return JSON.parse(content);
-    } catch (err: any) {
-      if (err.code === 'ENOENT') {
+      content = await fs.readFile(filePath, 'utf-8');
+    } catch (err: unknown) {
+      if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
         return null;
       }
       throw err;
     }
+    return JSON.parse(content);
   }
 }
