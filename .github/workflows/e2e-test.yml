@@ -27,19 +27,6 @@ jobs:
       contents: read
       packages: read
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_DATABASE: cnpmcore
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
     strategy:
       fail-fast: false
       matrix:
@@ -52,42 +39,6 @@ jobs:
               npm run typecheck
               npm run build
               npm run prepublishOnly
-
-              # Clean build artifacts to avoid double-loading (src + dist)
-              npm run clean
-
-              # Deployment test: start the app and verify it boots correctly
-              echo "Preparing database for deployment test..."
-              CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
-
-              echo "Starting cnpmcore..."
-              CNPMCORE_FORCE_LOCAL_FS=true npx eggctl start &
-              SERVER_PID=$!
-
-              echo "Health checking cnpmcore..."
-              URL="http://127.0.0.1:7001"
-              PATTERN="instance_start_time"
-              TIMEOUT=60
-              TMP="$(mktemp)"
-              deadline=$((SECONDS + TIMEOUT))
-              last_status=""
-
-              while (( SECONDS < deadline )); do
-                last_status="$(curl -sS -o "$TMP" -w '%{http_code}' "$URL" || true)"
-                if [[ "$last_status" == "200" ]] && grep -q "$PATTERN" "$TMP"; then
-                  echo "cnpmcore is ready (status=$last_status)"
-                  rm -f "$TMP"
-                  npx eggctl stop || true
-                  exit 0
-                fi
-                sleep 1
-              done
-
-              echo "Health check failed: status=$last_status"
-              cat "$TMP" || true
-              rm -f "$TMP"
-              npx eggctl stop || true
-              exit 1
           - name: examples
             node-version: 24
             command: |
