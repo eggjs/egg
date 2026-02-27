@@ -1,0 +1,55 @@
+{
+  "name": "@eggjs/agent-runtime",
+  "version": "4.0.2-beta.1",
+  "description": "Smart default runtime for @AgentController in tegg",
+  "keywords": [
+    "agent",
+    "egg",
+    "tegg",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/agent-runtime",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "killagu <killa123@126.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/core/agent-runtime"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/controller-decorator": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}
