@@ -56,6 +56,7 @@
     "ci": "npm run cov"
   },
   "dependencies": {
+    "@eggjs/tegg-vitest": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "@oclif/core": "catalog:",
     "@vitest/coverage-v8": "catalog:",
