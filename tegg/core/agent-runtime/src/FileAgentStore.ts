@@ -63,7 +63,6 @@ export class FileAgentStore implements AgentStore {
 
   // Note: read-modify-write without locking. In cluster mode with multiple workers
   // sharing the same dataDir, concurrent operations on the same thread may lose data.
-  // For production multi-worker deployments, use a database-backed AgentStore instead.
   async appendMessages(threadId: string, messages: MessageObject[]): Promise<void> {
     const thread = await this.getThread(threadId);
     thread.messages.push(...messages);
@@ -108,7 +107,11 @@ export class FileAgentStore implements AgentStore {
   }
 
   private async writeFile(filePath: string, data: unknown): Promise<void> {
-    await fs.writeFile(filePath, JSON.stringify(data), 'utf-8');
+    // Write to a temp file first, then atomically rename to avoid data corruption
+    // if the process crashes mid-write.
+    const tmpPath = filePath + '.tmp';
+    await fs.writeFile(tmpPath, JSON.stringify(data), 'utf-8');
+    await fs.rename(tmpPath, filePath);
   }
 
   private async readFile(filePath: string): Promise<unknown | null> {

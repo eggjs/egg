@@ -28,106 +28,105 @@ export interface AgentControllerHost {
   execRun(input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentStreamMessage>;
 }
 
-// ─── helper functions ──────────────────────────────────────────────
+export class AgentRuntime {
+  private static readonly TERMINAL_RUN_STATUSES = new Set(['completed', 'failed', 'cancelled', 'expired']);
 
-const TERMINAL_RUN_STATUSES = new Set(['completed', 'failed', 'cancelled', 'expired']);
-
-/**
- * Convert an AgentStreamMessage's message field into OpenAI MessageContentBlock[].
- */
-function toContentBlocks(msg: AgentStreamMessage['message']): MessageContentBlock[] {
-  if (!msg) return [];
-  const content = msg.content;
-  if (typeof content === 'string') {
-    return [{ type: 'text', text: { value: content, annotations: [] } }];
-  }
-  if (Array.isArray(content)) {
-    return content
-      .filter((part) => part.type === 'text')
-      .map((part) => ({ type: 'text' as const, text: { value: part.text, annotations: [] } }));
-  }
-  return [];
-}
-
-/**
- * Build a completed MessageObject from an AgentStreamMessage.
- */
-function toMessageObject(msg: AgentStreamMessage['message'], runId?: string): MessageObject {
-  return {
-    id: newMsgId(),
-    object: 'thread.message',
-    created_at: nowUnix(),
-    run_id: runId,
-    role: 'assistant',
-    status: 'completed',
-    content: toContentBlocks(msg),
-  };
-}
-
-/**
- * Extract MessageObjects and accumulated usage from AgentStreamMessage objects.
- */
-function extractFromStreamMessages(
-  messages: AgentStreamMessage[],
-  runId?: string,
-): {
-  output: MessageObject[];
-  usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
-} {
-  const output: MessageObject[] = [];
-  let promptTokens = 0;
-  let completionTokens = 0;
-  let totalTokens = 0;
-  let hasUsage = false;
-
-  for (const msg of messages) {
-    if (msg.message) {
-      output.push(toMessageObject(msg.message, runId));
+  /**
+   * Convert an AgentStreamMessage's message field into OpenAI MessageContentBlock[].
+   */
+  private static toContentBlocks(msg: AgentStreamMessage['message']): MessageContentBlock[] {
+    if (!msg) return [];
+    const content = msg.content;
+    if (typeof content === 'string') {
+      return [{ type: 'text', text: { value: content, annotations: [] } }];
     }
-    if (msg.usage) {
-      hasUsage = true;
-      promptTokens += msg.usage.prompt_tokens ?? 0;
-      completionTokens += msg.usage.completion_tokens ?? 0;
-      totalTokens += msg.usage.total_tokens ?? 0;
+    if (Array.isArray(content)) {
+      return content
+        .filter((part) => part.type === 'text')
+        .map((part) => ({ type: 'text' as const, text: { value: part.text, annotations: [] } }));
     }
+    return [];
   }
 
-  let usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number } | undefined;
-  if (hasUsage) {
-    usage = {
-      prompt_tokens: promptTokens,
-      completion_tokens: completionTokens,
-      total_tokens: Math.max(promptTokens + completionTokens, totalTokens),
+  /**
+   * Build a completed MessageObject from an AgentStreamMessage.
+   */
+  private static toMessageObject(msg: AgentStreamMessage['message'], runId?: string): MessageObject {
+    return {
+      id: newMsgId(),
+      object: 'thread.message',
+      created_at: nowUnix(),
+      run_id: runId,
+      role: 'assistant',
+      status: 'completed',
+      content: AgentRuntime.toContentBlocks(msg),
     };
   }
 
-  return { output, usage };
-}
+  /**
+   * Extract MessageObjects and accumulated usage from AgentStreamMessage objects.
+   */
+  private static extractFromStreamMessages(
+    messages: AgentStreamMessage[],
+    runId?: string,
+  ): {
+    output: MessageObject[];
+    usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
+  } {
+    const output: MessageObject[] = [];
+    let promptTokens = 0;
+    let completionTokens = 0;
+    let totalTokens = 0;
+    let hasUsage = false;
 
-/**
- * Convert input messages to MessageObjects for thread history.
- * System messages are filtered out — they are transient instructions, not conversation history.
- */
-function toInputMessageObjects(messages: CreateRunInput['input']['messages'], threadId?: string): MessageObject[] {
-  return messages
-    .filter((m): m is typeof m & { role: 'user' | 'assistant' } => m.role !== 'system')
-    .map((m) => ({
-      id: newMsgId(),
-      object: 'thread.message' as const,
-      created_at: nowUnix(),
-      thread_id: threadId,
-      role: m.role,
-      status: 'completed' as const,
-      content:
-        typeof m.content === 'string'
-          ? [{ type: 'text' as const, text: { value: m.content, annotations: [] } }]
-          : m.content.map((p) => ({ type: 'text' as const, text: { value: p.text, annotations: [] } })),
-    }));
-}
+    for (const msg of messages) {
+      if (msg.message) {
+        output.push(AgentRuntime.toMessageObject(msg.message, runId));
+      }
+      if (msg.usage) {
+        hasUsage = true;
+        promptTokens += msg.usage.prompt_tokens ?? 0;
+        completionTokens += msg.usage.completion_tokens ?? 0;
+        totalTokens += msg.usage.total_tokens ?? 0;
+      }
+    }
 
-// ─── AgentRuntime class ────────────────────────────────────────────
+    let usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number } | undefined;
+    if (hasUsage) {
+      usage = {
+        prompt_tokens: promptTokens,
+        completion_tokens: completionTokens,
+        total_tokens: Math.max(promptTokens + completionTokens, totalTokens),
+      };
+    }
 
-export class AgentRuntime {
+    return { output, usage };
+  }
+
+  /**
+   * Convert input messages to MessageObjects for thread history.
+   * System messages are filtered out — they are transient instructions, not conversation history.
+   */
+  private static toInputMessageObjects(
+    messages: CreateRunInput['input']['messages'],
+    threadId?: string,
+  ): MessageObject[] {
+    return messages
+      .filter((m): m is typeof m & { role: 'user' | 'assistant' } => m.role !== 'system')
+      .map((m) => ({
+        id: newMsgId(),
+        object: 'thread.message' as const,
+        created_at: nowUnix(),
+        thread_id: threadId,
+        role: m.role,
+        status: 'completed' as const,
+        content:
+          typeof m.content === 'string'
+            ? [{ type: 'text' as const, text: { value: m.content, annotations: [] } }]
+            : m.content.map((p) => ({ type: 'text' as const, text: { value: p.text, annotations: [] } })),
+      }));
+  }
+
   private store: AgentStore;
   private runningTasks: Map<string, { promise: Promise<void>; abortController: AbortController }>;
   private host: AgentControllerHost;
@@ -177,7 +176,7 @@ export class AgentRuntime {
       for await (const msg of this.host.execRun(input)) {
         streamMessages.push(msg);
       }
-      const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
+      const { output, usage } = AgentRuntime.extractFromStreamMessages(streamMessages, run.id);
 
       const completedAt = nowUnix();
       await this.store.updateRun(run.id, {
@@ -187,7 +186,10 @@ export class AgentRuntime {
         completed_at: completedAt,
       });
 
-      await this.store.appendMessages(threadId, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
+      await this.store.appendMessages(threadId, [
+        ...AgentRuntime.toInputMessageObjects(input.input.messages, threadId),
+        ...output,
+      ]);
 
       return {
         id: run.id,
@@ -236,7 +238,7 @@ export class AgentRuntime {
 
         if (abortController.signal.aborted) return;
 
-        const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
+        const { output, usage } = AgentRuntime.extractFromStreamMessages(streamMessages, run.id);
 
         await this.store.updateRun(run.id, {
           status: 'completed',
@@ -246,7 +248,7 @@ export class AgentRuntime {
         });
 
         await this.store.appendMessages(threadId!, [
-          ...toInputMessageObjects(input.input.messages, threadId),
+          ...AgentRuntime.toInputMessageObjects(input.input.messages, threadId),
           ...output,
         ]);
       } catch (err: any) {
@@ -351,7 +353,7 @@ export class AgentRuntime {
       for await (const msg of this.host.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) break;
         if (msg.message) {
-          const contentBlocks = toContentBlocks(msg.message);
+          const contentBlocks = AgentRuntime.toContentBlocks(msg.message);
           accumulatedContent.push(...contentBlocks);
 
           // event: thread.message.delta
@@ -410,7 +412,10 @@ export class AgentRuntime {
         completed_at: completedAt,
       });
 
-      await this.store.appendMessages(threadId!, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
+      await this.store.appendMessages(threadId!, [
+        ...AgentRuntime.toInputMessageObjects(input.input.messages, threadId),
+        ...output,
+      ]);
 
       // event: thread.run.completed
       runObj.status = 'completed';
@@ -479,7 +484,7 @@ export class AgentRuntime {
 
     // Re-read run status after background task has settled
     const run = await this.store.getRun(runId);
-    if (TERMINAL_RUN_STATUSES.has(run.status)) {
+    if (AgentRuntime.TERMINAL_RUN_STATUSES.has(run.status)) {
       throw new AgentConflictError(`Cannot cancel run with status '${run.status}'`);
     }
 
