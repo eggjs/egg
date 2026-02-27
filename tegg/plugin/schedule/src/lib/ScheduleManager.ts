@@ -1,5 +1,6 @@
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { EggPrototype } from '@eggjs/metadata';
+import { importResolve } from '@eggjs/utils';
 import type { Application } from 'egg';
 
 /**
@@ -27,7 +28,9 @@ export class ScheduleManager {
    * Unregister a single schedule by prototype
    */
   unregister(proto: EggPrototype): void {
-    const key = proto.getMetaData(PrototypeUtil.FILE_PATH) as string;
+    const rawKey = proto.getMetaData(PrototypeUtil.FILE_PATH) as string;
+    // Normalize key with importResolve to match the normalized key used during registration
+    const key = importResolve(rawKey);
     if (this.registeredSchedules.has(key)) {
       (this.app as any).scheduleWorker.unregisterSchedule(key);
       this.registeredSchedules.delete(key);

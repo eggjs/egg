@@ -3432,6 +3432,9 @@ importers:
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
+      '@eggjs/utils':
+        specifier: workspace:*
+        version: link:../../../packages/utils
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
