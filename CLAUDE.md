@@ -694,6 +694,41 @@ NODE_OPTIONS='--inspect-brk' pnpm --filter=egg run test test/app/extend/context.
 - `EGG_TYPESCRIPT` - Enable TypeScript support (true/false)
 - `DEBUG` - Enable debug output (egg:\*)
 
+### Debugging E2E Tests Locally
+
+The `ecosystem-ci/` directory contains E2E test infrastructure for downstream projects (e.g., cnpmcore). To reproduce and debug E2E failures locally:
+
+```bash
+# 1. Build all monorepo packages
+pnpm run build
+
+# 2. Pack all packages as tgz files (placed at workspace root)
+pnpm -r pack
+
+# 3. Clone the downstream project into ecosystem-ci/
+git clone https://github.com/cnpmjs/cnpmcore.git ecosystem-ci/cnpmcore
+
+# 4. Patch the project's package.json with local tgz overrides
+npx tsx ecosystem-ci/patch-project.ts cnpmcore
+
+# 5. Install (clean cache to avoid stale tgz)
+cd ecosystem-ci/cnpmcore
+npm cache clean --force
+npm install
+
+# 6. Run tests
+npm run clean
+npx egg-bin test test/path/to/specific.test.ts
+```
+
+After making changes to monorepo packages, repeat steps 1-5 (build → pack → patch → clean install).
+
+**Key files:**
+
+- `ecosystem-ci/patch-project.ts` - Generates `overrides` field in target project's package.json pointing to local tgz files
+- `ecosystem-ci/repo.json` - Defines which downstream projects can be tested
+- `.github/workflows/e2e-test.yml` - CI workflow that runs E2E tests with MySQL/Redis services
+
 ### Common Development Patterns
 
 #### Creating a New Service

@@ -23,7 +23,7 @@ const isDryRun = args.includes('--dry-run');
 const useProvenance = args.includes('--provenance');
 
 let npmTag = 'latest';
-const tagArg = args.find(arg => arg.startsWith('--tag='));
+const tagArg = args.find((arg) => arg.startsWith('--tag='));
 if (tagArg) {
   npmTag = tagArg.split('=')[1];
 }
@@ -31,7 +31,9 @@ if (tagArg) {
 const baseDir = path.join(import.meta.dirname, '..');
 const packages = getPublishablePackages(baseDir);
 
-console.log(`📦 Publishing ${packages.length} packages (tag: ${npmTag}${isDryRun ? ', dry-run' : ''}${useProvenance ? ', provenance' : ''})`);
+console.log(
+  `📦 Publishing ${packages.length} packages (tag: ${npmTag}${isDryRun ? ', dry-run' : ''}${useProvenance ? ', provenance' : ''})`,
+);
 
 /**
  * Check if a specific version of a package is already published on npm.
@@ -56,10 +58,7 @@ function isPublished(name, version) {
  * so that workspace: protocol references are properly resolved).
  */
 function publishOne(pkg) {
-  const publishArgs = [
-    '--filter', pkg.name,
-    'publish', '--no-git-checks', '--access', 'public', '--tag', npmTag,
-  ];
+  const publishArgs = ['--filter', pkg.name, 'publish', '--no-git-checks', '--access', 'public', '--tag', npmTag];
   if (useProvenance) publishArgs.push('--provenance');
   if (isDryRun) publishArgs.push('--dry-run');
 

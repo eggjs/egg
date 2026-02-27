@@ -14,6 +14,20 @@ if (!g.afterEach) g.afterEach = afterEach;
 // so setupApp() in app_handler.ts should skip registering duplicate hooks
 (globalThis as Record<string, unknown>).__eggMockVitestSetup = true;
 
+// Auto-configure @eggjs/tegg-vitest runner for context injection.
+// The runner checks __teggVitestConfig to decide whether to create
+// per-test tegg module scopes (so app.currentContext is available).
+// Tegg scope creation is handled exclusively by the runner, not here.
+if (!(globalThis as Record<string, unknown>).__teggVitestConfig) {
+  (globalThis as Record<string, unknown>).__teggVitestConfig = {
+    restoreMocks: true,
+    getApp: async () => {
+      const bootstrap = await import('./bootstrap.ts');
+      return (bootstrap as any)?.app;
+    },
+  };
+}
+
 let app: MockApplication | undefined;
 
 // Cache the startup promise so that:

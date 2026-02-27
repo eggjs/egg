@@ -58,6 +58,7 @@ export class LoaderUtil {
   }
 
   static async loadFile(filePath: string): Promise<EggProtoImplClass[]> {
+    const originalFilePath = filePath;
     if (process.platform === 'win32') {
       // convert to file:// url
       // avoid windows path issue: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
@@ -82,6 +83,10 @@ export class LoaderUtil {
       if (!isEggProto) {
         continue;
       }
+      // Correct FILE_PATH after async import, because decorators like @Schedule
+      // use StackUtil.getCalleeFromStack() which may return <anonymous> when
+      // modules are loaded via async import() (e.g., in vitest environment)
+      PrototypeUtil.setFilePath(clazz, originalFilePath);
       clazzList.push(clazz);
     }
     return clazzList;

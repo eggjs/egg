@@ -216,15 +216,23 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     }
 
     // auto detect @eggjs/tegg-vitest/runner
+    // Try resolving from the project first, then from egg-bin's own dependencies.
+    // This ensures tegg context injection works even when the project doesn't
+    // explicitly depend on @eggjs/tegg-vitest (e.g. cnpmcore).
     let runner: string | undefined;
-    try {
-      runner = importResolve('@eggjs/tegg-vitest/runner', {
-        paths: [flags.base],
-      });
-      debug('auto use @eggjs/tegg-vitest/runner: %o', runner);
-    } catch (err) {
-      if (!(err instanceof ImportResolveError)) throw err;
-      debug('skip @eggjs/tegg-vitest/runner: @eggjs/tegg-vitest not installed');
+    for (const resolveFrom of [flags.base, import.meta.dirname]) {
+      try {
+        runner = importResolve('@eggjs/tegg-vitest/runner', {
+          paths: [resolveFrom],
+        });
+        debug('auto use @eggjs/tegg-vitest/runner from %s: %o', resolveFrom, runner);
+        break;
+      } catch (err) {
+        if (!(err instanceof ImportResolveError)) throw err;
+      }
+    }
+    if (!runner) {
+      debug('skip @eggjs/tegg-vitest/runner: not resolvable');
     }
 
     return {
@@ -238,6 +246,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       runner,
       reporters: [process.env.TEST_REPORTER ?? 'default'],
       pool: 'forks',
+      fileParallelism: process.env.EGG_FILE_PARALLELISM !== 'false',
       // vitest 4 moved poolOptions to top-level
       execArgv: [...this.globalExecArgv],
       watch: flags.watch,

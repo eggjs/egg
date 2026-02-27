@@ -67,7 +67,8 @@
     "@eggjs/module-common": "workspace:*",
     "@eggjs/schedule-decorator": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
-    "@eggjs/tegg-runtime": "workspace:*"
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/utils": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",

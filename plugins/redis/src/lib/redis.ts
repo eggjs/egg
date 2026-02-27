@@ -2,7 +2,8 @@ import assert from 'node:assert';
 import { once } from 'node:events';
 
 import type { ILifecycleBoot, EggApplicationCore } from 'egg';
-import { Redis } from 'ioredis';
+import type { Redis } from 'ioredis';
+import IoRedis from 'ioredis';
 
 import type { RedisClusterOptions, RedisClientOptions } from '../config/config.default.ts';
 
@@ -25,7 +26,10 @@ export class RedisBoot implements ILifecycleBoot {
 
 let count = 0;
 function createClient(options: RedisClusterOptions | RedisClientOptions, app: EggApplicationCore) {
-  const RedisClass = app.config.redis.Redis ?? Redis;
+  // Use default import for ioredis CJS module to avoid named export interop issues.
+  // ioredis uses `exports = module.exports = require("./Redis").default` which causes
+  // cjs-module-lexer to fail resolving named exports in some ESM interop scenarios.
+  const RedisClass: typeof Redis = app.config.redis.Redis ?? (IoRedis as unknown as typeof Redis);
   let client;
 
   if ('cluster' in options && options.cluster === true) {

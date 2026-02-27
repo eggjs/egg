@@ -81,7 +81,12 @@ export class QualifierUtil {
   }
 
   static getQualifierValue(clazz: EggProtoImplClass, attribute: QualifierAttribute): QualifierValue | undefined {
-    const qualifiers: Map<QualifierAttribute, QualifierValue> | undefined = MetadataUtil.getMetaData(
+    // Use getOwnMetaData instead of getMetaData to avoid reading qualifiers
+    // from parent classes via the prototype chain. Without this, subclasses
+    // (e.g., ElectronBinary extends GithubBinary) would incorrectly see the
+    // parent's qualifier as their own, causing the duplicate qualifier check
+    // in addProtoQualifier to throw a false positive.
+    const qualifiers: Map<QualifierAttribute, QualifierValue> | undefined = MetadataUtil.getOwnMetaData(
       QUALIFIER_META_DATA,
       clazz,
     );
