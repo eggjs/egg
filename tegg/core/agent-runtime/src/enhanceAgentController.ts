@@ -5,7 +5,8 @@ import type { CreateRunInput } from '@eggjs/controller-decorator';
 import { ContextHandler } from '@eggjs/tegg-runtime';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
-import { AgentRuntime, AGENT_RUNTIME } from './AgentRuntime.ts';
+import type { AgentRuntime } from './AgentRuntime.ts';
+import { AGENT_RUNTIME, createAgentRuntime } from './AgentRuntime.ts';
 import type { AgentStore } from './AgentStore.ts';
 import { FileAgentStore } from './FileAgentStore.ts';
 import { NodeSSEWriter } from './SSEWriter.ts';
@@ -21,8 +22,8 @@ const AGENT_METHOD_NAMES = ['createThread', 'getThread', 'asyncRun', 'syncRun', 
 // Called by the plugin/controller lifecycle hook AFTER the decorator has set
 // HTTP metadata and injected stub methods. Detects which methods are
 // user-defined vs stubs (via AgentInfoUtil.isNotImplemented() marker)
-// and replaces stubs with AgentRuntime-delegating methods.
-// Also wraps init()/destroy() to manage the AgentRuntime lifecycle.
+// and installs AgentRuntime-delegating methods on each instance (not on
+// the prototype) during init().
 //
 // Prerequisites:
 // - The class must be marked via AgentInfoUtil.isAgentController() (otherwise this is a no-op).
@@ -46,8 +47,10 @@ export function enhanceAgentController(clazz: EggProtoImplClass): void {
       stubMethods.add(name);
     }
   }
+  // Check streamRun separately (handled specially below)
+  const streamRunIsStub = !clazz.prototype.streamRun || AgentInfoUtil.isNotImplemented(clazz.prototype.streamRun);
 
-  // Wrap init() lifecycle to create AgentRuntime
+  // Wrap init() lifecycle to create AgentRuntime and install per-instance delegates
   const originalInit = clazz.prototype.init;
   clazz.prototype.init = async function () {
     // Allow user to provide custom store via createStore()
@@ -63,7 +66,29 @@ export function enhanceAgentController(clazz: EggProtoImplClass): void {
       await store.init();
     }
 
-    this[AGENT_RUNTIME] = new AgentRuntime({ host: this, store });
+    const runtime = createAgentRuntime({ host: this, store });
+    this[AGENT_RUNTIME] = runtime;
+
+    // Install delegate methods on this instance (not on prototype)
+    for (const methodName of stubMethods) {
+      this[methodName] = (...args: unknown[]) => {
+        return (runtime as any)[methodName](...args);
+      };
+    }
+
+    // streamRun needs special handling: create SSEWriter from request context
+    if (streamRunIsStub) {
+      this.streamRun = async (input: CreateRunInput) => {
+        const runtimeCtx = ContextHandler.getContext();
+        if (!runtimeCtx) {
+          throw new Error('streamRun must be called within a request context');
+        }
+        const ctx = runtimeCtx.get(EGG_CONTEXT);
+        ctx.respond = false;
+        const writer = new NodeSSEWriter(ctx.res);
+        return runtime.streamRun(input, writer);
+      };
+    }
 
     if (originalInit) {
       await originalInit.call(this);
@@ -74,35 +99,13 @@ export function enhanceAgentController(clazz: EggProtoImplClass): void {
   const originalDestroy = clazz.prototype.destroy;
   clazz.prototype.destroy = async function () {
     if (this[AGENT_RUNTIME]) {
-      await this[AGENT_RUNTIME].destroy();
+      await (this[AGENT_RUNTIME] as AgentRuntime).destroy();
     }
 
     if (originalDestroy) {
       await originalDestroy.call(this);
     }
   };
-
-  // Replace stub methods with AgentRuntime delegation
-  for (const methodName of AGENT_METHOD_NAMES) {
-    if (!stubMethods.has(methodName)) continue;
-    clazz.prototype[methodName] = function (...args: unknown[]) {
-      return (this[AGENT_RUNTIME] as AgentRuntime)[methodName as keyof AgentRuntime](...args);
-    };
-  }
-
-  // streamRun needs special handling: create SSEWriter from request context
-  if (stubMethods.has('streamRun')) {
-    clazz.prototype.streamRun = async function (input: CreateRunInput) {
-      const runtimeCtx = ContextHandler.getContext();
-      if (!runtimeCtx) {
-        throw new Error('streamRun must be called within a request context');
-      }
-      const ctx = runtimeCtx.get(EGG_CONTEXT);
-      ctx.respond = false;
-      const writer = new NodeSSEWriter(ctx.res);
-      return (this[AGENT_RUNTIME] as AgentRuntime).streamRun(input, writer);
-    };
-  }
 
   AgentInfoUtil.setEnhanced(clazz);
 }

@@ -75,18 +75,23 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
 
     enhanceAgentController(MyAgent as any);
 
-    // Stubs should be replaced — no longer marked as not implemented
-    assert(!AgentInfoUtil.isNotImplemented((MyAgent.prototype as any).createThread));
-    assert(!AgentInfoUtil.isNotImplemented((MyAgent.prototype as any).syncRun));
+    // Prototype stubs remain untouched — delegates are set per-instance in init()
+    assert(AgentInfoUtil.isNotImplemented((MyAgent.prototype as any).createThread));
+    assert(AgentInfoUtil.isNotImplemented((MyAgent.prototype as any).syncRun));
 
     // init/destroy should be wrapped
     assert(typeof (MyAgent.prototype as any).init === 'function');
     assert(typeof (MyAgent.prototype as any).destroy === 'function');
 
-    // Actually call init to verify AgentRuntime is created
+    // Actually call init to verify AgentRuntime is created and delegates installed
     const instance = new MyAgent() as any;
     await instance.init();
     assert(instance[AGENT_RUNTIME] instanceof AgentRuntime);
+
+    // Instance methods should be own properties (not on prototype)
+    assert(Object.hasOwn(instance, 'createThread'));
+    assert(Object.hasOwn(instance, 'syncRun'));
+    assert(Object.hasOwn(instance, 'streamRun'));
 
     // createThread should work and return OpenAI format
     const thread = await instance.createThread();
@@ -129,8 +134,8 @@ describe('core/agent-runtime/test/enhanceAgentController.test.ts', () => {
     const result = await instance.syncRun();
     assert.deepEqual(result, customResult);
 
-    // Stubs should be replaced
-    assert(!AgentInfoUtil.isNotImplemented((instance as any).createThread));
+    // Stubs should be replaced on the instance
+    assert(Object.hasOwn(instance, 'createThread'));
 
     await instance.destroy();
   });

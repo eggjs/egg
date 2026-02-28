@@ -379,3 +379,8 @@ export class AgentRuntime {
     }
   }
 }
+
+/** Factory function — avoids the spread-arg type issue with dynamic delegation. */
+export function createAgentRuntime(options: AgentRuntimeOptions): AgentRuntime {
+  return new AgentRuntime(options);
+}
