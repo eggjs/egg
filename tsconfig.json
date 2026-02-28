@@ -118,6 +118,9 @@
     },
     {
       "path": "./tegg/core/agent-runtime"
+    },
+    {
+      "path": "./tegg/core/agent-tracing"
     }
   ]
 }
