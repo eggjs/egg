@@ -34,7 +34,7 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
         };
       },
     } as any;
-    runtime = new AgentRuntime(host, store);
+    runtime = new AgentRuntime({ host, store });
   });
 
   afterEach(async () => {

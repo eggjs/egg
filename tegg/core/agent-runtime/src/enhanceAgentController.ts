@@ -63,7 +63,7 @@ export function enhanceAgentController(clazz: EggProtoImplClass): void {
       await store.init();
     }
 
-    this[AGENT_RUNTIME] = new AgentRuntime(this, store);
+    this[AGENT_RUNTIME] = new AgentRuntime({ host: this, store });
 
     if (originalInit) {
       await originalInit.call(this);

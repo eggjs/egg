@@ -26,6 +26,16 @@ export interface AgentControllerHost {
   execRun(input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentStreamMessage>;
 }
 
+export interface AgentRuntimeLogger {
+  error(...args: unknown[]): void;
+}
+
+export interface AgentRuntimeOptions {
+  host: AgentControllerHost;
+  store: AgentStore;
+  logger?: AgentRuntimeLogger;
+}
+
 export class AgentRuntime {
   private static readonly TERMINAL_RUN_STATUSES = new Set<RunStatus>([
     RunStatus.Completed,
@@ -37,10 +47,12 @@ export class AgentRuntime {
   private store: AgentStore;
   private runningTasks: Map<string, { promise: Promise<void>; abortController: AbortController }>;
   private host: AgentControllerHost;
+  private logger: AgentRuntimeLogger;
 
-  constructor(host: AgentControllerHost, store: AgentStore) {
-    this.host = host;
-    this.store = store;
+  constructor(options: AgentRuntimeOptions) {
+    this.host = options.host;
+    this.store = options.store;
+    this.logger = options.logger ?? console;
     this.runningTasks = new Map();
   }
 
@@ -161,10 +173,10 @@ export class AgentRuntime {
               failed_at: failed.failed_at,
             });
           } catch (storeErr) {
-            console.error('[AgentController] failed to update run status after error:', storeErr);
+            this.logger.error('[AgentController] failed to update run status after error:', storeErr);
           }
         } else {
-          console.error('[AgentController] execRun error during abort:', err);
+          this.logger.error('[AgentController] execRun error during abort:', err);
         }
       } finally {
         this.runningTasks.delete(run.id);
@@ -291,7 +303,7 @@ export class AgentRuntime {
           failed_at: failed.failed_at,
         });
       } catch (storeErr) {
-        console.error('[AgentController] failed to update run status after error:', storeErr);
+        this.logger.error('[AgentController] failed to update run status after error:', storeErr);
       }
 
       // event: thread.run.failed
