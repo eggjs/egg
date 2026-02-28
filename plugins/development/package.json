@@ -66,5 +66,11 @@
   },
   "engines": {
     "node": ">=22.18.0"
+  },
+  "eggPlugin": {
+    "name": "development",
+    "dependencies": [
+      "watcher"
+    ]
   }
 }

@@ -82,5 +82,12 @@
   },
   "engines": {
     "node": ">=22.18.0"
+  },
+  "eggPlugin": {
+    "name": "nunjucks",
+    "dependencies": [
+      "security",
+      "view"
+    ]
   }
 }
