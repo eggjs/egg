@@ -8,17 +8,13 @@ import type {
   AgentStreamMessage,
 } from '@eggjs/controller-decorator';
 import { RunStatus, AgentSSEEvent } from '@eggjs/controller-decorator';
-import { ContextHandler } from '@eggjs/tegg-runtime';
 
 import type { AgentStore } from './AgentStore.ts';
 import { AgentConflictError } from './errors.ts';
 import { toContentBlocks, extractFromStreamMessages, toInputMessageObjects } from './MessageConverter.ts';
 import { RunBuilder } from './RunBuilder.ts';
+import type { SSEWriter } from './SSEWriter.ts';
 import { nowUnix, newMsgId } from './utils.ts';
-
-// Canonical definition in @eggjs/module-common (tegg/plugin/common).
-// Re-declared here to avoid a core→plugin dependency.
-const EGG_CONTEXT: symbol = Symbol.for('context#eggContext');
 
 export const AGENT_RUNTIME: unique symbol = Symbol('agentRuntime');
 
@@ -180,25 +176,10 @@ export class AgentRuntime {
     return queuedSnapshot;
   }
 
-  async streamRun(input: CreateRunInput): Promise<void> {
-    const runtimeCtx = ContextHandler.getContext();
-    if (!runtimeCtx) {
-      throw new Error('streamRun must be called within a request context');
-    }
-    const ctx = runtimeCtx.get(EGG_CONTEXT);
-
-    // Bypass Koa response handling — write SSE directly to the raw response
-    ctx.respond = false;
-    const res = ctx.res;
-    res.writeHead(200, {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      Connection: 'keep-alive',
-    });
-
+  async streamRun(input: CreateRunInput, writer: SSEWriter): Promise<void> {
     // Abort execRun generator when client disconnects
     const abortController = new AbortController();
-    res.on('close', () => abortController.abort());
+    writer.onClose(() => abortController.abort());
 
     let threadId = input.thread_id;
     if (!threadId) {
@@ -211,12 +192,12 @@ export class AgentRuntime {
     const rb = RunBuilder.create(run, threadId);
 
     // event: thread.run.created
-    res.write(`event: ${AgentSSEEvent.ThreadRunCreated}\ndata: ${JSON.stringify(rb.snapshot())}\n\n`);
+    writer.writeEvent(AgentSSEEvent.ThreadRunCreated, rb.snapshot());
 
     // event: thread.run.in_progress
     const started = rb.start();
     await this.store.updateRun(run.id, { status: started.status, started_at: started.started_at });
-    res.write(`event: ${AgentSSEEvent.ThreadRunInProgress}\ndata: ${JSON.stringify(started)}\n\n`);
+    writer.writeEvent(AgentSSEEvent.ThreadRunInProgress, started);
 
     const msgId = newMsgId();
     const accumulatedContent: MessageObject['content'] = [];
@@ -231,7 +212,7 @@ export class AgentRuntime {
       status: 'in_progress',
       content: [],
     };
-    res.write(`event: ${AgentSSEEvent.ThreadMessageCreated}\ndata: ${JSON.stringify(msgObj)}\n\n`);
+    writer.writeEvent(AgentSSEEvent.ThreadMessageCreated, msgObj);
 
     let promptTokens = 0;
     let completionTokens = 0;
@@ -250,7 +231,7 @@ export class AgentRuntime {
             object: 'thread.message.delta',
             delta: { content: contentBlocks },
           };
-          res.write(`event: ${AgentSSEEvent.ThreadMessageDelta}\ndata: ${JSON.stringify(delta)}\n\n`);
+          writer.writeEvent(AgentSSEEvent.ThreadMessageDelta, delta);
         }
         if (msg.usage) {
           hasUsage = true;
@@ -267,8 +248,8 @@ export class AgentRuntime {
         } catch {
           // Ignore store update failure during abort
         }
-        if (!res.writableEnded) {
-          res.write(`event: ${AgentSSEEvent.ThreadRunCancelled}\ndata: ${JSON.stringify(cancelled)}\n\n`);
+        if (!writer.closed) {
+          writer.writeEvent(AgentSSEEvent.ThreadRunCancelled, cancelled);
         }
         return;
       }
@@ -276,7 +257,7 @@ export class AgentRuntime {
       // event: thread.message.completed
       msgObj.status = 'completed';
       msgObj.content = accumulatedContent;
-      res.write(`event: ${AgentSSEEvent.ThreadMessageCompleted}\ndata: ${JSON.stringify(msgObj)}\n\n`);
+      writer.writeEvent(AgentSSEEvent.ThreadMessageCompleted, msgObj);
 
       // Build final output
       const output: MessageObject[] = accumulatedContent.length > 0 ? [msgObj] : [];
@@ -300,7 +281,7 @@ export class AgentRuntime {
       await this.store.appendMessages(threadId!, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
 
       // event: thread.run.completed
-      res.write(`event: ${AgentSSEEvent.ThreadRunCompleted}\ndata: ${JSON.stringify(completed)}\n\n`);
+      writer.writeEvent(AgentSSEEvent.ThreadRunCompleted, completed);
     } catch (err: any) {
       const failed = rb.fail(err);
       try {
@@ -314,14 +295,14 @@ export class AgentRuntime {
       }
 
       // event: thread.run.failed
-      if (!res.writableEnded) {
-        res.write(`event: ${AgentSSEEvent.ThreadRunFailed}\ndata: ${JSON.stringify(failed)}\n\n`);
+      if (!writer.closed) {
+        writer.writeEvent(AgentSSEEvent.ThreadRunFailed, failed);
       }
     } finally {
       // event: done
-      if (!res.writableEnded) {
-        res.write(`event: ${AgentSSEEvent.Done}\ndata: [DONE]\n\n`);
-        res.end();
+      if (!writer.closed) {
+        writer.writeEvent(AgentSSEEvent.Done, '[DONE]');
+        writer.end();
       }
     }
   }

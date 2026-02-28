@@ -1,13 +1,20 @@
 import path from 'node:path';
 
 import { AgentInfoUtil } from '@eggjs/controller-decorator';
+import type { CreateRunInput } from '@eggjs/controller-decorator';
+import { ContextHandler } from '@eggjs/tegg-runtime';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
 import { AgentRuntime, AGENT_RUNTIME } from './AgentRuntime.ts';
 import type { AgentStore } from './AgentStore.ts';
 import { FileAgentStore } from './FileAgentStore.ts';
+import { NodeSSEWriter } from './SSEWriter.ts';
 
-const AGENT_METHOD_NAMES = ['createThread', 'getThread', 'asyncRun', 'streamRun', 'syncRun', 'getRun', 'cancelRun'];
+// Canonical definition in @eggjs/module-common (tegg/plugin/common).
+// Re-declared here to avoid a core→plugin dependency.
+const EGG_CONTEXT: symbol = Symbol.for('context#eggContext');
+
+const AGENT_METHOD_NAMES = ['createThread', 'getThread', 'asyncRun', 'syncRun', 'getRun', 'cancelRun'];
 
 // Enhance an AgentController class with smart default implementations.
 //
@@ -80,6 +87,20 @@ export function enhanceAgentController(clazz: EggProtoImplClass): void {
     if (!stubMethods.has(methodName)) continue;
     clazz.prototype[methodName] = function (...args: unknown[]) {
       return (this[AGENT_RUNTIME] as AgentRuntime)[methodName as keyof AgentRuntime](...args);
+    };
+  }
+
+  // streamRun needs special handling: create SSEWriter from request context
+  if (stubMethods.has('streamRun')) {
+    clazz.prototype.streamRun = async function (input: CreateRunInput) {
+      const runtimeCtx = ContextHandler.getContext();
+      if (!runtimeCtx) {
+        throw new Error('streamRun must be called within a request context');
+      }
+      const ctx = runtimeCtx.get(EGG_CONTEXT);
+      ctx.respond = false;
+      const writer = new NodeSSEWriter(ctx.res);
+      return (this[AGENT_RUNTIME] as AgentRuntime).streamRun(input, writer);
     };
   }
 

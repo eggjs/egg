@@ -3,6 +3,7 @@ export * from './errors.ts';
 export * from './FileAgentStore.ts';
 export * from './MessageConverter.ts';
 export * from './RunBuilder.ts';
+export * from './SSEWriter.ts';
 export * from './utils.ts';
 export { AgentRuntime, AGENT_RUNTIME } from './AgentRuntime.ts';
 export type { AgentControllerHost } from './AgentRuntime.ts';
