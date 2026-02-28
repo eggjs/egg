@@ -47,7 +47,16 @@ export interface ThreadObjectWithMessages extends ThreadObject {
 
 // ===== Run types =====
 
-export type RunStatus = 'queued' | 'in_progress' | 'completed' | 'failed' | 'cancelled' | 'cancelling' | 'expired';
+export const RunStatus = {
+  Queued: 'queued',
+  InProgress: 'in_progress',
+  Completed: 'completed',
+  Failed: 'failed',
+  Cancelled: 'cancelled',
+  Cancelling: 'cancelling',
+  Expired: 'expired',
+} as const;
+export type RunStatus = (typeof RunStatus)[keyof typeof RunStatus];
 
 export interface RunObject {
   id: string; // "run_xxx"
@@ -85,7 +94,31 @@ export interface MessageDeltaObject {
   delta: { content: MessageContentBlock[] };
 }
 
+// ===== SSE Event names =====
+
+export const AgentSSEEvent = {
+  ThreadRunCreated: 'thread.run.created',
+  ThreadRunInProgress: 'thread.run.in_progress',
+  ThreadRunCompleted: 'thread.run.completed',
+  ThreadRunFailed: 'thread.run.failed',
+  ThreadRunCancelled: 'thread.run.cancelled',
+  ThreadMessageCreated: 'thread.message.created',
+  ThreadMessageDelta: 'thread.message.delta',
+  ThreadMessageCompleted: 'thread.message.completed',
+  Done: 'done',
+} as const;
+export type AgentSSEEvent = (typeof AgentSSEEvent)[keyof typeof AgentSSEEvent];
+
+// ===== Error codes =====
+
+export const AgentErrorCode = {
+  ExecError: 'EXEC_ERROR',
+} as const;
+export type AgentErrorCode = (typeof AgentErrorCode)[keyof typeof AgentErrorCode];
+
 // ===== Internal types =====
+
+export type AgentStreamMessagePayload = AgentStreamMessage['message'];
 
 export interface AgentRunUsage {
   total_tokens?: number;

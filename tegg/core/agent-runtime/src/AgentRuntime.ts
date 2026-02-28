@@ -4,14 +4,15 @@ import type {
   ThreadObjectWithMessages,
   RunObject,
   MessageObject,
-  MessageContentBlock,
   MessageDeltaObject,
   AgentStreamMessage,
 } from '@eggjs/controller-decorator';
+import { RunStatus, AgentSSEEvent, AgentErrorCode } from '@eggjs/controller-decorator';
 import { ContextHandler } from '@eggjs/tegg-runtime';
 
 import type { AgentStore } from './AgentStore.ts';
 import { AgentConflictError } from './errors.ts';
+import { toContentBlocks, extractFromStreamMessages, toInputMessageObjects } from './MessageConverter.ts';
 import { nowUnix, newMsgId } from './utils.ts';
 
 // Canonical definition in @eggjs/module-common (tegg/plugin/common).
@@ -29,103 +30,12 @@ export interface AgentControllerHost {
 }
 
 export class AgentRuntime {
-  private static readonly TERMINAL_RUN_STATUSES = new Set(['completed', 'failed', 'cancelled', 'expired']);
-
-  /**
-   * Convert an AgentStreamMessage's message field into OpenAI MessageContentBlock[].
-   */
-  private static toContentBlocks(msg: AgentStreamMessage['message']): MessageContentBlock[] {
-    if (!msg) return [];
-    const content = msg.content;
-    if (typeof content === 'string') {
-      return [{ type: 'text', text: { value: content, annotations: [] } }];
-    }
-    if (Array.isArray(content)) {
-      return content
-        .filter((part) => part.type === 'text')
-        .map((part) => ({ type: 'text' as const, text: { value: part.text, annotations: [] } }));
-    }
-    return [];
-  }
-
-  /**
-   * Build a completed MessageObject from an AgentStreamMessage.
-   */
-  private static toMessageObject(msg: AgentStreamMessage['message'], runId?: string): MessageObject {
-    return {
-      id: newMsgId(),
-      object: 'thread.message',
-      created_at: nowUnix(),
-      run_id: runId,
-      role: 'assistant',
-      status: 'completed',
-      content: AgentRuntime.toContentBlocks(msg),
-    };
-  }
-
-  /**
-   * Extract MessageObjects and accumulated usage from AgentStreamMessage objects.
-   */
-  private static extractFromStreamMessages(
-    messages: AgentStreamMessage[],
-    runId?: string,
-  ): {
-    output: MessageObject[];
-    usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
-  } {
-    const output: MessageObject[] = [];
-    let promptTokens = 0;
-    let completionTokens = 0;
-    let totalTokens = 0;
-    let hasUsage = false;
-
-    for (const msg of messages) {
-      if (msg.message) {
-        output.push(AgentRuntime.toMessageObject(msg.message, runId));
-      }
-      if (msg.usage) {
-        hasUsage = true;
-        promptTokens += msg.usage.prompt_tokens ?? 0;
-        completionTokens += msg.usage.completion_tokens ?? 0;
-        totalTokens += msg.usage.total_tokens ?? 0;
-      }
-    }
-
-    let usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number } | undefined;
-    if (hasUsage) {
-      usage = {
-        prompt_tokens: promptTokens,
-        completion_tokens: completionTokens,
-        total_tokens: Math.max(promptTokens + completionTokens, totalTokens),
-      };
-    }
-
-    return { output, usage };
-  }
-
-  /**
-   * Convert input messages to MessageObjects for thread history.
-   * System messages are filtered out — they are transient instructions, not conversation history.
-   */
-  private static toInputMessageObjects(
-    messages: CreateRunInput['input']['messages'],
-    threadId?: string,
-  ): MessageObject[] {
-    return messages
-      .filter((m): m is typeof m & { role: 'user' | 'assistant' } => m.role !== 'system')
-      .map((m) => ({
-        id: newMsgId(),
-        object: 'thread.message' as const,
-        created_at: nowUnix(),
-        thread_id: threadId,
-        role: m.role,
-        status: 'completed' as const,
-        content:
-          typeof m.content === 'string'
-            ? [{ type: 'text' as const, text: { value: m.content, annotations: [] } }]
-            : m.content.map((p) => ({ type: 'text' as const, text: { value: p.text, annotations: [] } })),
-      }));
-  }
+  private static readonly TERMINAL_RUN_STATUSES = new Set<RunStatus>([
+    RunStatus.Completed,
+    RunStatus.Failed,
+    RunStatus.Cancelled,
+    RunStatus.Expired,
+  ]);
 
   private store: AgentStore;
   private runningTasks: Map<string, { promise: Promise<void>; abortController: AbortController }>;
@@ -170,33 +80,30 @@ export class AgentRuntime {
 
     try {
       const startedAt = nowUnix();
-      await this.store.updateRun(run.id, { status: 'in_progress', started_at: startedAt });
+      await this.store.updateRun(run.id, { status: RunStatus.InProgress, started_at: startedAt });
 
       const streamMessages: AgentStreamMessage[] = [];
       for await (const msg of this.host.execRun(input)) {
         streamMessages.push(msg);
       }
-      const { output, usage } = AgentRuntime.extractFromStreamMessages(streamMessages, run.id);
+      const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
 
       const completedAt = nowUnix();
       await this.store.updateRun(run.id, {
-        status: 'completed',
+        status: RunStatus.Completed,
         output,
         usage,
         completed_at: completedAt,
       });
 
-      await this.store.appendMessages(threadId, [
-        ...AgentRuntime.toInputMessageObjects(input.input.messages, threadId),
-        ...output,
-      ]);
+      await this.store.appendMessages(threadId, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
 
       return {
         id: run.id,
         object: 'thread.run',
         created_at: run.created_at,
         thread_id: threadId,
-        status: 'completed',
+        status: RunStatus.Completed,
         started_at: startedAt,
         completed_at: completedAt,
         output,
@@ -206,8 +113,8 @@ export class AgentRuntime {
     } catch (err: any) {
       const failedAt = nowUnix();
       await this.store.updateRun(run.id, {
-        status: 'failed',
-        last_error: { code: 'EXEC_ERROR', message: err.message },
+        status: RunStatus.Failed,
+        last_error: { code: AgentErrorCode.ExecError, message: err.message },
         failed_at: failedAt,
       });
       throw err;
@@ -228,7 +135,7 @@ export class AgentRuntime {
 
     const promise = (async () => {
       try {
-        await this.store.updateRun(run.id, { status: 'in_progress', started_at: nowUnix() });
+        await this.store.updateRun(run.id, { status: RunStatus.InProgress, started_at: nowUnix() });
 
         const streamMessages: AgentStreamMessage[] = [];
         for await (const msg of this.host.execRun(input, abortController.signal)) {
@@ -238,25 +145,25 @@ export class AgentRuntime {
 
         if (abortController.signal.aborted) return;
 
-        const { output, usage } = AgentRuntime.extractFromStreamMessages(streamMessages, run.id);
+        const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
 
         await this.store.updateRun(run.id, {
-          status: 'completed',
+          status: RunStatus.Completed,
           output,
           usage,
           completed_at: nowUnix(),
         });
 
         await this.store.appendMessages(threadId!, [
-          ...AgentRuntime.toInputMessageObjects(input.input.messages, threadId),
+          ...toInputMessageObjects(input.input.messages, threadId),
           ...output,
         ]);
       } catch (err: any) {
         if (!abortController.signal.aborted) {
           try {
             await this.store.updateRun(run.id, {
-              status: 'failed',
-              last_error: { code: 'EXEC_ERROR', message: err.message },
+              status: RunStatus.Failed,
+              last_error: { code: AgentErrorCode.ExecError, message: err.message },
               failed_at: nowUnix(),
             });
           } catch (storeErr) {
@@ -277,7 +184,7 @@ export class AgentRuntime {
       object: 'thread.run',
       created_at: run.created_at,
       thread_id: threadId,
-      status: 'queued',
+      status: RunStatus.Queued,
       metadata: run.metadata,
     };
   }
@@ -316,18 +223,18 @@ export class AgentRuntime {
       object: 'thread.run',
       created_at: run.created_at,
       thread_id: threadId,
-      status: 'queued',
+      status: RunStatus.Queued,
       metadata: run.metadata,
     };
 
     // event: thread.run.created
-    res.write(`event: thread.run.created\ndata: ${JSON.stringify(runObj)}\n\n`);
+    res.write(`event: ${AgentSSEEvent.ThreadRunCreated}\ndata: ${JSON.stringify(runObj)}\n\n`);
 
     // event: thread.run.in_progress
-    runObj.status = 'in_progress';
+    runObj.status = RunStatus.InProgress;
     runObj.started_at = nowUnix();
-    await this.store.updateRun(run.id, { status: 'in_progress', started_at: runObj.started_at });
-    res.write(`event: thread.run.in_progress\ndata: ${JSON.stringify(runObj)}\n\n`);
+    await this.store.updateRun(run.id, { status: RunStatus.InProgress, started_at: runObj.started_at });
+    res.write(`event: ${AgentSSEEvent.ThreadRunInProgress}\ndata: ${JSON.stringify(runObj)}\n\n`);
 
     const msgId = newMsgId();
     const accumulatedContent: MessageObject['content'] = [];
@@ -342,18 +249,17 @@ export class AgentRuntime {
       status: 'in_progress',
       content: [],
     };
-    res.write(`event: thread.message.created\ndata: ${JSON.stringify(msgObj)}\n\n`);
+    res.write(`event: ${AgentSSEEvent.ThreadMessageCreated}\ndata: ${JSON.stringify(msgObj)}\n\n`);
 
     let promptTokens = 0;
     let completionTokens = 0;
-    let totalTokens = 0;
     let hasUsage = false;
 
     try {
       for await (const msg of this.host.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) break;
         if (msg.message) {
-          const contentBlocks = AgentRuntime.toContentBlocks(msg.message);
+          const contentBlocks = toContentBlocks(msg.message);
           accumulatedContent.push(...contentBlocks);
 
           // event: thread.message.delta
@@ -362,13 +268,12 @@ export class AgentRuntime {
             object: 'thread.message.delta',
             delta: { content: contentBlocks },
           };
-          res.write(`event: thread.message.delta\ndata: ${JSON.stringify(delta)}\n\n`);
+          res.write(`event: ${AgentSSEEvent.ThreadMessageDelta}\ndata: ${JSON.stringify(delta)}\n\n`);
         }
         if (msg.usage) {
           hasUsage = true;
           promptTokens += msg.usage.prompt_tokens ?? 0;
           completionTokens += msg.usage.completion_tokens ?? 0;
-          totalTokens += msg.usage.total_tokens ?? 0;
         }
       }
 
@@ -376,14 +281,14 @@ export class AgentRuntime {
       if (abortController.signal.aborted) {
         const cancelledAt = nowUnix();
         try {
-          await this.store.updateRun(run.id, { status: 'cancelled', cancelled_at: cancelledAt });
+          await this.store.updateRun(run.id, { status: RunStatus.Cancelled, cancelled_at: cancelledAt });
         } catch {
           // Ignore store update failure during abort
         }
-        runObj.status = 'cancelled';
+        runObj.status = RunStatus.Cancelled;
         runObj.cancelled_at = cancelledAt;
         if (!res.writableEnded) {
-          res.write(`event: thread.run.cancelled\ndata: ${JSON.stringify(runObj)}\n\n`);
+          res.write(`event: ${AgentSSEEvent.ThreadRunCancelled}\ndata: ${JSON.stringify(runObj)}\n\n`);
         }
         return;
       }
@@ -391,7 +296,7 @@ export class AgentRuntime {
       // event: thread.message.completed
       msgObj.status = 'completed';
       msgObj.content = accumulatedContent;
-      res.write(`event: thread.message.completed\ndata: ${JSON.stringify(msgObj)}\n\n`);
+      res.write(`event: ${AgentSSEEvent.ThreadMessageCompleted}\ndata: ${JSON.stringify(msgObj)}\n\n`);
 
       // Build final output
       const output: MessageObject[] = accumulatedContent.length > 0 ? [msgObj] : [];
@@ -400,35 +305,32 @@ export class AgentRuntime {
         usage = {
           prompt_tokens: promptTokens,
           completion_tokens: completionTokens,
-          total_tokens: Math.max(promptTokens + completionTokens, totalTokens),
+          total_tokens: promptTokens + completionTokens,
         };
       }
 
       const completedAt = nowUnix();
       await this.store.updateRun(run.id, {
-        status: 'completed',
+        status: RunStatus.Completed,
         output,
         usage,
         completed_at: completedAt,
       });
 
-      await this.store.appendMessages(threadId!, [
-        ...AgentRuntime.toInputMessageObjects(input.input.messages, threadId),
-        ...output,
-      ]);
+      await this.store.appendMessages(threadId!, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
 
       // event: thread.run.completed
-      runObj.status = 'completed';
+      runObj.status = RunStatus.Completed;
       runObj.completed_at = completedAt;
       runObj.usage = usage;
       runObj.output = output;
-      res.write(`event: thread.run.completed\ndata: ${JSON.stringify(runObj)}\n\n`);
+      res.write(`event: ${AgentSSEEvent.ThreadRunCompleted}\ndata: ${JSON.stringify(runObj)}\n\n`);
     } catch (err: any) {
       const failedAt = nowUnix();
       try {
         await this.store.updateRun(run.id, {
-          status: 'failed',
-          last_error: { code: 'EXEC_ERROR', message: err.message },
+          status: RunStatus.Failed,
+          last_error: { code: AgentErrorCode.ExecError, message: err.message },
           failed_at: failedAt,
         });
       } catch (storeErr) {
@@ -436,16 +338,16 @@ export class AgentRuntime {
       }
 
       // event: thread.run.failed
-      runObj.status = 'failed';
+      runObj.status = RunStatus.Failed;
       runObj.failed_at = failedAt;
-      runObj.last_error = { code: 'EXEC_ERROR', message: err.message };
+      runObj.last_error = { code: AgentErrorCode.ExecError, message: err.message };
       if (!res.writableEnded) {
-        res.write(`event: thread.run.failed\ndata: ${JSON.stringify(runObj)}\n\n`);
+        res.write(`event: ${AgentSSEEvent.ThreadRunFailed}\ndata: ${JSON.stringify(runObj)}\n\n`);
       }
     } finally {
       // event: done
       if (!res.writableEnded) {
-        res.write('event: done\ndata: [DONE]\n\n');
+        res.write(`event: ${AgentSSEEvent.Done}\ndata: [DONE]\n\n`);
         res.end();
       }
     }
@@ -490,7 +392,7 @@ export class AgentRuntime {
 
     const cancelledAt = nowUnix();
     await this.store.updateRun(runId, {
-      status: 'cancelled',
+      status: RunStatus.Cancelled,
       cancelled_at: cancelledAt,
     });
 
@@ -499,7 +401,7 @@ export class AgentRuntime {
       object: 'thread.run',
       created_at: run.created_at,
       thread_id: run.thread_id,
-      status: 'cancelled',
+      status: RunStatus.Cancelled,
       cancelled_at: cancelledAt,
     };
   }

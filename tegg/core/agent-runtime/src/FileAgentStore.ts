@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import type { InputMessage, MessageObject, AgentRunConfig } from '@eggjs/controller-decorator';
+import { RunStatus } from '@eggjs/controller-decorator';
 
 import type { AgentStore, ThreadRecord, RunRecord } from './AgentStore.ts';
 import { AgentNotFoundError } from './errors.ts';
@@ -80,7 +81,7 @@ export class FileAgentStore implements AgentStore {
       id: runId,
       object: 'thread.run',
       thread_id: threadId,
-      status: 'queued',
+      status: RunStatus.Queued,
       input,
       config,
       metadata,
