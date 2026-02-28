@@ -630,12 +630,13 @@ export class EggLoader {
       plugin.path = await this.#formatPluginPathFromPackageJSON(plugin.path as string, pkg);
     }
 
-    const logger = this.options.logger;
     if (!eggPluginConfig) {
-      logger.warn('[@eggjs/core/egg_loader] pkg.eggPlugin is missing in %s, plugin: %j', pluginPackage, plugin);
+      // eggPlugin in package.json is no longer required since plugins
+      // now use definePluginFactory() to declare their config
       return;
     }
 
+    const logger = this.options.logger;
     if (eggPluginConfig.name && eggPluginConfig.strict !== false && eggPluginConfig.name !== plugin.name) {
       // pluginName is configured in config/plugin.js
       // pluginConfigName is pkg.eggPlugin.name
