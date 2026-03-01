@@ -99,11 +99,12 @@ function createClient(options: RedisClusterOptions | RedisClientOptions, app: Eg
   });
 
   const index = count++;
-  // When using a custom Redis class (e.g., ioredis-mock), the client may emit
-  // 'ready' synchronously before registerBeforeStart listener is attached.
-  // Auto-enable weakDependent for custom Redis classes to avoid hanging.
-  const isCustomRedis = app.config.redis.Redis !== undefined;
-  const isWeakDependent = ('weakDependent' in options && options.weakDependent) || isCustomRedis;
+  // Auto-enable weakDependent for non-default Redis classes (e.g., ioredis-mock)
+  // to avoid hanging when mock clients emit 'ready' synchronously.
+  // An explicit weakDependent option always takes precedence.
+  const isCustomRedis = app.config.redis.Redis !== undefined && app.config.redis.Redis !== IoRedis;
+  const explicitWeakDependent = 'weakDependent' in options ? options.weakDependent : undefined;
+  const isWeakDependent = explicitWeakDependent ?? isCustomRedis;
   app.lifecycle.registerBeforeStart(async () => {
     if (isWeakDependent) {
       app.coreLogger.info(`[@eggjs/redis] instance[${index}] is weak dependent and won't block app start`);

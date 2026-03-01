@@ -58,12 +58,18 @@ export interface RedisConfig {
    *
    * @example
    * ```ts
-   * // config/config.unittest.ts - use ioredis-mock for faster tests
+   * // config/config.unittest.ts
    * import RedisMock from 'ioredis-mock';
-   * config.redis = {
-   *   Redis: RedisMock,
-   *   client: { host: '127.0.0.1', port: 6379, password: '', db: 0 },
-   * };
+   * import type { EggAppInfo, PartialEggConfig } from 'egg';
+   *
+   * export default function (_appInfo: EggAppInfo): PartialEggConfig {
+   *   return {
+   *     redis: {
+   *       Redis: RedisMock,
+   *       client: { host: '127.0.0.1', port: 6379, password: '', db: 0 },
+   *     },
+   *   };
+   * }
    * ```
    *
    * Default to `undefined`, which means using the built-in ioredis

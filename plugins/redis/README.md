@@ -293,21 +293,20 @@ In your test config (e.g., `config/config.unittest.ts`), override the `Redis` cl
 
 ```ts
 import RedisMock from 'ioredis-mock';
+import type { EggAppInfo, PartialEggConfig } from 'egg';
 
-export default function () {
-  const config = {};
-
-  config.redis = {
-    Redis: RedisMock,
-    client: {
-      host: '127.0.0.1',
-      port: 6379,
-      password: '',
-      db: 0,
+export default function (_appInfo: EggAppInfo): PartialEggConfig {
+  return {
+    redis: {
+      Redis: RedisMock,
+      client: {
+        host: '127.0.0.1',
+        port: 6379,
+        password: '',
+        db: 0,
+      },
     },
   };
-
-  return config;
 }
 ```
 
