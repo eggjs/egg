@@ -50,7 +50,28 @@ export interface RedisConfig {
    */
   agent: boolean;
   /**
-   * Customize iovalkey version, only set when you needed
+   * Customize Redis client class. Use this to replace ioredis with a compatible
+   * alternative, such as iovalkey or ioredis-mock for unit testing.
+   *
+   * When using ioredis-mock, you must also set `weakDependent: true` in the
+   * client config to avoid startup hangs (mock clients emit 'ready' synchronously
+   * before the plugin's listener is attached).
+   *
+   * @example
+   * ```ts
+   * // config/config.unittest.ts
+   * import RedisMock from 'ioredis-mock';
+   * import type { EggAppInfo, PartialEggConfig } from 'egg';
+   *
+   * export default function (_appInfo: EggAppInfo): PartialEggConfig {
+   *   return {
+   *     redis: {
+   *       Redis: RedisMock,
+   *       client: { host: '127.0.0.1', port: 6379, password: '', db: 0, weakDependent: true },
+   *     },
+   *   };
+   * }
+   * ```
    *
    * Default to `undefined`, which means using the built-in ioredis
    */
