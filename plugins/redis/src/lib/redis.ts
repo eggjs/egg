@@ -99,9 +99,8 @@ function createClient(options: RedisClusterOptions | RedisClientOptions, app: Eg
   });
 
   const index = count++;
-  const isWeakDependent = options.weakDependent;
   app.lifecycle.registerBeforeStart(async () => {
-    if (isWeakDependent) {
+    if ('weakDependent' in options && options.weakDependent) {
       app.coreLogger.info(`[@eggjs/redis] instance[${index}] is weak dependent and won't block app start`);
       client.once('ready', () => {
         app.coreLogger.info(`[@eggjs/redis] instance[${index}] status OK`);
