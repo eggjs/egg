@@ -96,8 +96,8 @@ const AGENT_ROUTES: AgentRouteDefinition[] = [
   },
 ];
 
-export function AgentController() {
-  return function (constructor: EggProtoImplClass) {
+export function AgentController(): (constructor: EggProtoImplClass) => void {
+  return function (constructor: EggProtoImplClass): void {
     // Set controller type as HTTP so existing infrastructure handles it
     ControllerInfoUtil.setControllerType(constructor, ControllerType.HTTP);
 
