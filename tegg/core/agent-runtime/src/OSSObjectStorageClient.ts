@@ -35,7 +35,7 @@ export class OSSObjectStorageClient implements ObjectStorageClient {
       }
       return null;
     } catch (err: unknown) {
-      if ((err as { code?: string }).code === 'NoSuchKey') {
+      if (err && typeof err === 'object' && 'code' in err && err.code === 'NoSuchKey') {
         return null;
       }
       throw err;

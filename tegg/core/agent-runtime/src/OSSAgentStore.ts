@@ -57,6 +57,8 @@ export class OSSAgentStore implements AgentStore {
     return JSON.parse(data) as ThreadRecord;
   }
 
+  // Note: read-modify-write is NOT atomic. Concurrent appends may lose data.
+  // Acceptable for single-writer scenarios; use a locking store for multi-writer.
   async appendMessages(threadId: string, messages: MessageObject[]): Promise<void> {
     const thread = await this.getThread(threadId);
     thread.messages.push(...messages);
@@ -92,6 +94,8 @@ export class OSSAgentStore implements AgentStore {
     return JSON.parse(data) as RunRecord;
   }
 
+  // Note: read-modify-write is NOT atomic. Concurrent updates may lose data.
+  // Acceptable for single-writer scenarios; use a locking store for multi-writer.
   async updateRun(runId: string, updates: Partial<RunRecord>): Promise<void> {
     const run = await this.getRun(runId);
     const { id: _, object: __, ...safeUpdates } = updates;

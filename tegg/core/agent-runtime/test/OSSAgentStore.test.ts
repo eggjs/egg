@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 
-import { describe, it, beforeEach } from 'vitest';
+import { describe, it, beforeEach, vi } from 'vitest';
 
 import { AgentNotFoundError } from '../src/errors.ts';
 import type { ObjectStorageClient } from '../src/ObjectStorageClient.ts';
@@ -185,6 +185,30 @@ describe('core/agent-runtime/test/OSSAgentStore.test.ts', () => {
       assert.equal(fetched.id, run.id);
       assert.equal(fetched.object, 'thread.run');
       assert.equal(fetched.status, 'completed');
+    });
+  });
+
+  describe('init / destroy', () => {
+    it('should call client init when present', async () => {
+      const client = new MapStorageClient();
+      client.init = vi.fn();
+      const s = new OSSAgentStore({ client });
+      await s.init();
+      assert.equal((client.init as ReturnType<typeof vi.fn>).mock.calls.length, 1);
+    });
+
+    it('should call client destroy when present', async () => {
+      const client = new MapStorageClient();
+      client.destroy = vi.fn();
+      const s = new OSSAgentStore({ client });
+      await s.destroy();
+      assert.equal((client.destroy as ReturnType<typeof vi.fn>).mock.calls.length, 1);
+    });
+
+    it('should not throw when client has no init/destroy', async () => {
+      const s = new OSSAgentStore({ client: new MapStorageClient() });
+      await s.init();
+      await s.destroy();
     });
   });
 
