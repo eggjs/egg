@@ -277,6 +277,49 @@ Stop test redis service
 docker compose -f docker-compose.yml down
 ```
 
+## Using ioredis-mock for Unit Tests
+
+You can use [ioredis-mock](https://github.com/stipsan/ioredis-mock) to replace the real Redis client in unit tests. This eliminates the need for a running Redis server during testing, making your CI faster and local development simpler.
+
+### Install
+
+```bash
+npm i --save-dev ioredis-mock
+```
+
+### Configure
+
+In your test config (e.g., `config/config.unittest.ts`), override the `Redis` class:
+
+```ts
+import RedisMock from 'ioredis-mock';
+
+export default function () {
+  const config = {};
+
+  config.redis = {
+    Redis: RedisMock,
+    client: {
+      host: '127.0.0.1',
+      port: 6379,
+      password: '',
+      db: 0,
+    },
+  };
+
+  return config;
+}
+```
+
+When `config.redis.Redis` is set to a custom class, the plugin automatically enables `weakDependent` mode. This prevents startup hangs that can occur when mock clients emit the `ready` event synchronously before the plugin's listener is attached.
+
+### Notes
+
+- `ioredis-mock` provides an in-memory Redis implementation that supports most common commands (`get`, `set`, `setex`, `del`, `incr`, `zadd`, `zpopmin`, `zcount`, etc.)
+- Each test worker gets an isolated in-memory Redis instance
+- For production deployment testing, you should still use a real Redis server
+- You can remove `redis` service containers from your CI workflow when using `ioredis-mock` for unit tests
+
 ## Questions & Suggestions
 
 Please open an issue [here](https://github.com/eggjs/egg/issues).
