@@ -42,6 +42,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@eggjs/controller-decorator": "workspace:*",
     "oss-client": "catalog:"
   },
   "devDependencies": {

@@ -1,43 +1,14 @@
-// ===== Object types =====
+import {
+  type InputMessage,
+  type MessageObject,
+  type AgentRunConfig,
+  type RunStatus,
+  AgentObjectType,
+} from '@eggjs/controller-decorator';
 
-export enum AgentObjectType {
-  Thread = 'thread',
-  ThreadRun = 'thread.run',
-}
-
-// ===== Run statuses =====
-
-export enum RunStatus {
-  Queued = 'queued',
-  InProgress = 'in_progress',
-  Completed = 'completed',
-  Failed = 'failed',
-  Cancelled = 'cancelled',
-  Cancelling = 'cancelling',
-  Expired = 'expired',
-}
-
-// ===== Input / Output message types =====
-
-export interface InputMessage {
-  role: string;
-  content: string | { type: string; text: string }[];
-  metadata?: Record<string, unknown>;
-}
-
-export interface MessageObject {
-  id: string;
-  object: string;
-  created_at: number;
-  [key: string]: unknown;
-}
-
-// ===== Run configuration =====
-
-export interface AgentRunConfig {
-  max_iterations?: number;
-  timeout_ms?: number;
-}
+// Re-export for backwards compatibility (OSSAgentStore imports from here)
+export { AgentObjectType, RunStatus } from '@eggjs/controller-decorator';
+export type { InputMessage, MessageObject, AgentRunConfig } from '@eggjs/controller-decorator';
 
 // ===== Store records =====
 
