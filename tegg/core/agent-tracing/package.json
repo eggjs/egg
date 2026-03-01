@@ -54,8 +54,7 @@
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "ali-oss": "^6.21.0",
-    "onelogger": "catalog:",
-    "uuid": "^10.0.0"
+    "onelogger": "catalog:"
   },
   "devDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.52",
@@ -65,7 +64,6 @@
     "@langchain/langgraph": "^0.2.74",
     "@types/ali-oss": "^6.16.0",
     "@types/node": "catalog:",
-    "@types/uuid": "^10.0.0",
     "typescript": "catalog:"
   },
   "peerDependencies": {

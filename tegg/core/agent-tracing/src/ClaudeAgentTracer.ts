@@ -1,9 +1,10 @@
+import { randomUUID } from 'node:crypto';
+
 import type { SDKMessage, SDKResultMessage } from '@anthropic-ai/claude-agent-sdk';
 import { SingletonProto, Inject } from '@eggjs/core-decorator';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { Logger } from '@eggjs/tegg-types';
 import type { Run } from '@langchain/core/tracers/base';
-import { v4 as uuidv4 } from 'uuid';
 
 import type { TracingService } from './TracingService.ts';
 import {
@@ -31,8 +32,8 @@ export class TraceSession {
 
   constructor(tracer: ClaudeAgentTracer, sessionId?: string) {
     this.tracer = tracer;
-    this.traceId = sessionId || uuidv4();
-    this.rootRunId = uuidv4();
+    this.traceId = sessionId || randomUUID();
+    this.rootRunId = randomUUID();
     this.startTime = Date.now();
   }
 
@@ -59,13 +60,13 @@ export class TraceSession {
     }
   }
 
-  private async handleInit(message: ClaudeMessage): Promise<void> {
+  private handleInit(message: ClaudeMessage): void {
     this.traceId = message.session_id || this.traceId;
     this.rootRun = this.tracer.createRootRunInternal(message, this.startTime, this.traceId, this.rootRunId);
     this.tracer.logTrace(this.rootRun, RunStatus.START);
   }
 
-  private async handleAssistant(message: ClaudeMessage): Promise<void> {
+  private handleAssistant(message: ClaudeMessage): void {
     if (!this.rootRun) {
       this.tracer.logger.warn('[ClaudeAgentTracer] Received assistant message before init');
       return;
@@ -118,7 +119,7 @@ export class TraceSession {
     }
   }
 
-  private async handleUser(message: ClaudeMessage): Promise<void> {
+  private handleUser(message: ClaudeMessage): void {
     if (!message.message?.content) return;
 
     for (const block of message.message.content) {
@@ -134,7 +135,7 @@ export class TraceSession {
     }
   }
 
-  private async handleResult(message: ClaudeMessage): Promise<void> {
+  private handleResult(message: ClaudeMessage): void {
     if (!this.rootRun) {
       this.tracer.logger.warn('[ClaudeAgentTracer] Received result message before init');
       return;
@@ -278,7 +279,7 @@ export class ClaudeAgentTracer {
     if (msg.type === 'user' && 'message' in msg && !('isReplay' in msg && (msg as any).isReplay)) {
       return {
         type: 'user',
-        uuid: msg.uuid || uuidv4(),
+        uuid: msg.uuid || randomUUID(),
         session_id: msg.session_id,
         message: msg.message as any,
         parent_tool_use_id: (msg as any).parent_tool_use_id,
@@ -314,7 +315,7 @@ export class ClaudeAgentTracer {
    * Create root run from init message (used by TraceSession)
    */
   createRootRunInternal(initMsg: ClaudeMessage, startTime: number, traceId: string, rootRunId?: string): Run {
-    const runId = rootRunId || initMsg.uuid || uuidv4();
+    const runId = rootRunId || initMsg.uuid || randomUUID();
 
     return {
       id: runId,
@@ -359,7 +360,7 @@ export class ClaudeAgentTracer {
     startTime: number,
     isToolCall: boolean,
   ): Run {
-    const runId = msg.uuid || uuidv4();
+    const runId = msg.uuid || randomUUID();
     const content = msg.message?.content || [];
 
     const textBlocks = content.filter((c) => c.type === 'text');
@@ -417,7 +418,7 @@ export class ClaudeAgentTracer {
     startTime: number,
   ): Run {
     const toolUse = toolUseBlock as any;
-    const runId = uuidv4();
+    const runId = randomUUID();
 
     return {
       id: runId,
