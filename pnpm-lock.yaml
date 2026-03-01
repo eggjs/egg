@@ -354,6 +354,9 @@ catalogs:
     ioredis:
       specifier: ^5.4.2
       version: 5.8.1
+    ioredis-mock:
+      specifier: ^8.13.1
+      version: 8.13.1
     is-type-of:
       specifier: ^2.2.0
       version: 2.2.0
@@ -1726,7 +1729,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/egg
       ioredis-mock:
-        specifier: ^8.13.1
+        specifier: 'catalog:'
         version: 8.13.1(@types/ioredis-mock@8.2.6(ioredis@5.8.1))(ioredis@5.8.1)
       typescript:
         specifier: 'catalog:'

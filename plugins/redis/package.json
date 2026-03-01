@@ -61,8 +61,8 @@
     "@types/node": "catalog:",
     "detect-port": "^2.1.0",
     "egg": "workspace:*",
-    "typescript": "catalog:",
-    "ioredis-mock": "^8.13.1"
+    "ioredis-mock": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"
