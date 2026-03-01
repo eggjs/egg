@@ -163,7 +163,7 @@ export default class HomeController {
 #### 安装
 
 ```bash
-npm i --save-dev ioredis-mock
+npm i --save-dev ioredis-mock @types/ioredis-mock
 ```
 
 #### 配置

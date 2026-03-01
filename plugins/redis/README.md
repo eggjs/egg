@@ -284,7 +284,7 @@ You can use [ioredis-mock](https://github.com/stipsan/ioredis-mock) to replace t
 ### Install
 
 ```bash
-npm i --save-dev ioredis-mock
+npm i --save-dev ioredis-mock @types/ioredis-mock
 ```
 
 ### Configure

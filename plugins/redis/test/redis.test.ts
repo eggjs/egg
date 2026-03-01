@@ -180,35 +180,6 @@ describe.skipIf(skip)('test/redis.test.ts', () => {
     });
   });
 
-  describe('ioredis-mock', () => {
-    let app: MockApplication;
-    beforeAll(async () => {
-      app = mm.app({
-        baseDir: getFixtures('apps/redisapp-mock'),
-      });
-      await app.ready();
-    });
-    afterAll(() => app.close());
-    afterEach(mm.restore);
-
-    it('should work with ioredis-mock (no real Redis needed)', () => {
-      return app.httpRequest().get('/').expect(200).expect('bar');
-    });
-
-    it('should support setex and get', async () => {
-      await app.redis.setex('test-key', 60, 'test-value');
-      const val = await app.redis.get('test-key');
-      assert.equal(val, 'test-value');
-    });
-
-    it('should support del', async () => {
-      await app.redis.set('del-key', 'val');
-      await app.redis.del('del-key');
-      const val = await app.redis.get('del-key');
-      assert.equal(val, null);
-    });
-  });
-
   // TODO: make github action support redis start with path
   describe.skip('redis path', () => {
     let app: MockApplication;
@@ -224,5 +195,34 @@ describe.skipIf(skip)('test/redis.test.ts', () => {
     it('should query', () => {
       return app.httpRequest().get('/').expect(200).expect('bar');
     });
+  });
+});
+
+describe('ioredis-mock', () => {
+  let app: MockApplication;
+  beforeAll(async () => {
+    app = mm.app({
+      baseDir: getFixtures('apps/redisapp-mock'),
+    });
+    await app.ready();
+  });
+  afterAll(() => app.close());
+  afterEach(mm.restore);
+
+  it('should work with ioredis-mock (no real Redis needed)', () => {
+    return app.httpRequest().get('/').expect(200).expect('bar');
+  });
+
+  it('should support setex and get', async () => {
+    await app.redis.setex('test-key', 60, 'test-value');
+    const val = await app.redis.get('test-key');
+    assert.equal(val, 'test-value');
+  });
+
+  it('should support del', async () => {
+    await app.redis.set('del-key', 'val');
+    await app.redis.del('del-key');
+    const val = await app.redis.get('del-key');
+    assert.equal(val, null);
   });
 });
