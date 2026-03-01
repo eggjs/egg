@@ -7,6 +7,7 @@ exports.redis = {
     port: 6379,
     password: '',
     db: '0',
+    weakDependent: true,
   },
 };
 

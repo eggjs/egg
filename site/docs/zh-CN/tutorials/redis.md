@@ -182,13 +182,14 @@ export default function (_appInfo: EggAppInfo): PartialEggConfig {
         port: 6379,
         password: '',
         db: 0,
+        weakDependent: true,
       },
     },
   };
 }
 ```
 
-当 `config.redis.Redis` 设置为自定义类（非内置 ioredis）时，插件会自动启用 `weakDependent` 模式，避免因 mock 客户端同步触发 `ready` 事件而导致启动挂起。
+> **重要**：使用 `ioredis-mock` 时必须设置 `weakDependent: true`。Mock 客户端会在构造时同步触发 `ready` 事件，早于插件的监听器注册。如果不设置 `weakDependent: true`，应用启动时会挂起。
 
 #### 优势
 

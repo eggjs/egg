@@ -53,8 +53,9 @@ export interface RedisConfig {
    * Customize Redis client class. Use this to replace ioredis with a compatible
    * alternative, such as iovalkey or ioredis-mock for unit testing.
    *
-   * When set, the plugin automatically enables weakDependent mode to avoid
-   * startup hangs caused by mock clients that emit 'ready' synchronously.
+   * When using ioredis-mock, you must also set `weakDependent: true` in the
+   * client config to avoid startup hangs (mock clients emit 'ready' synchronously
+   * before the plugin's listener is attached).
    *
    * @example
    * ```ts
@@ -66,7 +67,7 @@ export interface RedisConfig {
    *   return {
    *     redis: {
    *       Redis: RedisMock,
-   *       client: { host: '127.0.0.1', port: 6379, password: '', db: 0 },
+   *       client: { host: '127.0.0.1', port: 6379, password: '', db: 0, weakDependent: true },
    *     },
    *   };
    * }

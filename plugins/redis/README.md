@@ -304,13 +304,14 @@ export default function (_appInfo: EggAppInfo): PartialEggConfig {
         port: 6379,
         password: '',
         db: 0,
+        weakDependent: true,
       },
     },
   };
 }
 ```
 
-When `config.redis.Redis` is set to a custom class, the plugin automatically enables `weakDependent` mode. This prevents startup hangs that can occur when mock clients emit the `ready` event synchronously before the plugin's listener is attached.
+> **Important**: You must set `weakDependent: true` when using `ioredis-mock`. Mock clients emit the `ready` event synchronously during construction, before the plugin's listener is attached. Without `weakDependent: true`, the app will hang on startup waiting for a `ready` event that was already emitted.
 
 ### Notes
 
