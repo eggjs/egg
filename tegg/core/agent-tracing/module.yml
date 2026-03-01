@@ -1,3 +1,0 @@
-# @eggjs/agent-tracing module configuration
-#
-# Config is passed via tracer.configure(). See TracerConfig interface.

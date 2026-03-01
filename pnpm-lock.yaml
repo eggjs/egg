@@ -2073,9 +2073,6 @@ importers:
       onelogger:
         specifier: 'catalog:'
         version: 1.0.1
-      uuid:
-        specifier: ^10.0.0
-        version: 10.0.0
     devDependencies:
       '@anthropic-ai/claude-agent-sdk':
         specifier: ^0.2.52
@@ -2098,9 +2095,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.2
-      '@types/uuid':
-        specifier: ^10.0.0
-        version: 10.0.0
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

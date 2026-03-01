@@ -4,7 +4,7 @@ import type { SDKMessage } from '@anthropic-ai/claude-agent-sdk';
 import { describe, it } from 'vitest';
 
 import { ClaudeAgentTracer } from '../src/ClaudeAgentTracer.ts';
-import { createMockLogger, createMockTracingService } from './test-utils.ts';
+import { createMockLogger, createMockTracingService } from './TestUtils.ts';
 
 // ---------- Tracing log helpers ----------
 
@@ -191,7 +191,7 @@ function createMockStreamEvent(): SDKMessage {
 
 // ---------- Tests ----------
 
-describe('egg-agent-tracing/test/claude-agent-integration.test.ts', () => {
+describe('test/ClaudeAgentTracer.test.ts', () => {
   describe('Streaming mode + tool use', () => {
     it('should trace tool execution with session.processMessage', async () => {
       const { claudeTracer, parseAllRuns } = createTestEnv();

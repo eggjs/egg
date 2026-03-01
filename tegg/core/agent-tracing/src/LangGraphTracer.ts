@@ -64,7 +64,7 @@ export class LangGraphTracer extends BaseTracer {
   }
 
   onRetrieverStart(run: Run): void | Promise<void> {
-    return this.logTrace(run, RunStatus.START);
+    this.logTrace(run, RunStatus.START);
   }
   onRetrieverEnd(run: Run): void | Promise<void> {
     this.logTrace(run, RunStatus.END);

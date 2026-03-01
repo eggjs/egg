@@ -5,7 +5,7 @@ import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
 import { describe, it, beforeEach } from 'vitest';
 
 import { LangGraphTracer } from '../src/LangGraphTracer.ts';
-import { createMockTracingService } from './test-utils.ts';
+import { createMockTracingService } from './TestUtils.ts';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -24,7 +24,7 @@ const GraphState = Annotation.Root({
   result: Annotation<string>,
 });
 
-describe('egg-agent-tracing/test/langgraph-integration.test.ts', () => {
+describe('test/LangGraphTracer.test.ts', () => {
   let tracer: LangGraphTracer;
   let logs: string[] = [];
 

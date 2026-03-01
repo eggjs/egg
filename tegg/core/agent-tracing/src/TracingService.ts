@@ -71,23 +71,13 @@ export class TracingService {
    */
   getLogInfoPrefix(run: Run, status: RunStatus, name: string): string {
     const env = this.getEnv();
-    if (process.env.FAAS_ENV || env === 'local') {
-      return (
-        `[agent_run][${name}]:` +
-        `traceId=${run.trace_id},` +
-        `type=${run.parent_run_id ? 'child_run' : 'root_run'},` +
-        `status=${status},` +
-        `run_id=${run.id},` +
-        `parent_run_id=${run.parent_run_id ?? ''}`
-      );
-    }
-
+    const envSegment = process.env.FAAS_ENV || env === 'local' ? '' : `env=${env},`;
     return (
       `[agent_run][${name}]:` +
       `traceId=${run.trace_id},` +
       `type=${run.parent_run_id ? 'child_run' : 'root_run'},` +
       `status=${status},` +
-      `env=${env},` +
+      `${envSegment}` +
       `run_id=${run.id},` +
       `parent_run_id=${run.parent_run_id ?? ''}`
     );

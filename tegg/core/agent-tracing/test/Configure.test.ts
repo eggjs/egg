@@ -5,9 +5,9 @@ import { describe, it, beforeEach } from 'vitest';
 import { ClaudeAgentTracer } from '../src/ClaudeAgentTracer.ts';
 import { LangGraphTracer } from '../src/LangGraphTracer.ts';
 import { TracingService } from '../src/TracingService.ts';
-import { createMockLogger, createMockTracingService } from './test-utils.ts';
+import { createMockLogger, createMockTracingService } from './TestUtils.ts';
 
-describe('egg-agent-tracing/test/configure.test.ts', () => {
+describe('test/Configure.test.ts', () => {
   describe('TracingService.configure()', () => {
     let tracingService: TracingService;
 
