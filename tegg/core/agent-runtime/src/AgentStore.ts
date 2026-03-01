@@ -1,8 +1,14 @@
-import type { InputMessage, MessageObject, AgentRunConfig, RunStatus } from '@eggjs/controller-decorator';
+import type {
+  InputMessage,
+  MessageObject,
+  AgentRunConfig,
+  RunStatus,
+  AgentObjectType,
+} from '@eggjs/controller-decorator';
 
 export interface ThreadRecord {
   id: string;
-  object: 'thread';
+  object: typeof AgentObjectType.Thread;
   messages: MessageObject[];
   metadata: Record<string, unknown>;
   created_at: number; // Unix seconds
@@ -10,7 +16,7 @@ export interface ThreadRecord {
 
 export interface RunRecord {
   id: string;
-  object: 'thread.run';
+  object: typeof AgentObjectType.ThreadRun;
   thread_id?: string;
   status: RunStatus;
   input: InputMessage[];

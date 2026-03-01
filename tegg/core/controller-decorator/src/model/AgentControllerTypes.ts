@@ -1,13 +1,48 @@
+// ===== Object types =====
+
+export const AgentObjectType = {
+  Thread: 'thread',
+  ThreadRun: 'thread.run',
+  ThreadMessage: 'thread.message',
+  ThreadMessageDelta: 'thread.message.delta',
+} as const;
+export type AgentObjectType = (typeof AgentObjectType)[keyof typeof AgentObjectType];
+
+// ===== Message roles =====
+
+export const MessageRole = {
+  User: 'user',
+  Assistant: 'assistant',
+  System: 'system',
+} as const;
+export type MessageRole = (typeof MessageRole)[keyof typeof MessageRole];
+
+// ===== Message statuses =====
+
+export const MessageStatus = {
+  InProgress: 'in_progress',
+  Incomplete: 'incomplete',
+  Completed: 'completed',
+} as const;
+export type MessageStatus = (typeof MessageStatus)[keyof typeof MessageStatus];
+
+// ===== Content block types =====
+
+export const ContentBlockType = {
+  Text: 'text',
+} as const;
+export type ContentBlockType = (typeof ContentBlockType)[keyof typeof ContentBlockType];
+
 // ===== Input Message (what clients send in request body) =====
 
 export interface InputMessage {
-  role: 'user' | 'assistant' | 'system';
+  role: MessageRole;
   content: string | InputContentPart[];
   metadata?: Record<string, unknown>;
 }
 
 export interface InputContentPart {
-  type: 'text';
+  type: ContentBlockType;
   text: string;
 }
 
@@ -15,18 +50,18 @@ export interface InputContentPart {
 
 export interface MessageObject {
   id: string; // "msg_xxx"
-  object: 'thread.message';
+  object: typeof AgentObjectType.ThreadMessage;
   created_at: number; // Unix seconds
   thread_id?: string;
   run_id?: string;
-  role: 'user' | 'assistant';
-  status: 'in_progress' | 'incomplete' | 'completed';
+  role: Exclude<MessageRole, typeof MessageRole.System>;
+  status: MessageStatus;
   content: MessageContentBlock[];
   metadata?: Record<string, unknown>;
 }
 
 export interface TextContentBlock {
-  type: 'text';
+  type: ContentBlockType;
   text: { value: string; annotations: unknown[] };
 }
 
@@ -36,7 +71,7 @@ export type MessageContentBlock = TextContentBlock;
 
 export interface ThreadObject {
   id: string; // "thread_xxx"
-  object: 'thread';
+  object: typeof AgentObjectType.Thread;
   created_at: number; // Unix seconds
   metadata: Record<string, unknown>;
 }
@@ -60,7 +95,7 @@ export type RunStatus = (typeof RunStatus)[keyof typeof RunStatus];
 
 export interface RunObject {
   id: string; // "run_xxx"
-  object: 'thread.run';
+  object: typeof AgentObjectType.ThreadRun;
   created_at: number; // Unix seconds
   thread_id?: string;
   status: RunStatus;
@@ -90,7 +125,7 @@ export interface CreateRunInput {
 
 export interface MessageDeltaObject {
   id: string;
-  object: 'thread.message.delta';
+  object: typeof AgentObjectType.ThreadMessageDelta;
   delta: { content: MessageContentBlock[] };
 }
 

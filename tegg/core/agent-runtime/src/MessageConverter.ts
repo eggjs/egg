@@ -5,7 +5,9 @@ import type {
   AgentStreamMessage,
   AgentStreamMessagePayload,
 } from '@eggjs/controller-decorator';
+import { AgentObjectType, MessageRole, MessageStatus, ContentBlockType } from '@eggjs/controller-decorator';
 
+import type { RunUsage } from './RunBuilder.ts';
 import { nowUnix, newMsgId } from './utils.ts';
 
 /**
@@ -15,12 +17,12 @@ export function toContentBlocks(msg: AgentStreamMessagePayload): MessageContentB
   if (!msg) return [];
   const content = msg.content;
   if (typeof content === 'string') {
-    return [{ type: 'text', text: { value: content, annotations: [] } }];
+    return [{ type: ContentBlockType.Text, text: { value: content, annotations: [] } }];
   }
   if (Array.isArray(content)) {
     return content
-      .filter((part) => part.type === 'text')
-      .map((part) => ({ type: 'text' as const, text: { value: part.text, annotations: [] } }));
+      .filter((part) => part.type === ContentBlockType.Text)
+      .map((part) => ({ type: ContentBlockType.Text, text: { value: part.text, annotations: [] } }));
   }
   return [];
 }
@@ -31,24 +33,25 @@ export function toContentBlocks(msg: AgentStreamMessagePayload): MessageContentB
 export function toMessageObject(msg: AgentStreamMessagePayload, runId?: string): MessageObject {
   return {
     id: newMsgId(),
-    object: 'thread.message',
+    object: AgentObjectType.ThreadMessage,
     created_at: nowUnix(),
     run_id: runId,
-    role: 'assistant',
-    status: 'completed',
+    role: MessageRole.Assistant,
+    status: MessageStatus.Completed,
     content: toContentBlocks(msg),
   };
 }
 
 /**
  * Extract MessageObjects and accumulated usage from AgentStreamMessage objects.
+ * Returns camelCase `RunUsage` for internal use; callers convert to snake_case at boundaries.
  */
 export function extractFromStreamMessages(
   messages: AgentStreamMessage[],
   runId?: string,
 ): {
   output: MessageObject[];
-  usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number };
+  usage?: RunUsage;
 } {
   const output: MessageObject[] = [];
   let promptTokens = 0;
@@ -66,12 +69,12 @@ export function extractFromStreamMessages(
     }
   }
 
-  let usage: { prompt_tokens: number; completion_tokens: number; total_tokens: number } | undefined;
+  let usage: RunUsage | undefined;
   if (hasUsage) {
     usage = {
-      prompt_tokens: promptTokens,
-      completion_tokens: completionTokens,
-      total_tokens: promptTokens + completionTokens,
+      promptTokens,
+      completionTokens,
+      totalTokens: promptTokens + completionTokens,
     };
   }
 
@@ -87,17 +90,19 @@ export function toInputMessageObjects(
   threadId?: string,
 ): MessageObject[] {
   return messages
-    .filter((m): m is typeof m & { role: 'user' | 'assistant' } => m.role !== 'system')
+    .filter(
+      (m): m is typeof m & { role: Exclude<typeof m.role, typeof MessageRole.System> } => m.role !== MessageRole.System,
+    )
     .map((m) => ({
       id: newMsgId(),
-      object: 'thread.message' as const,
+      object: AgentObjectType.ThreadMessage,
       created_at: nowUnix(),
       thread_id: threadId,
       role: m.role,
-      status: 'completed' as const,
+      status: MessageStatus.Completed,
       content:
         typeof m.content === 'string'
-          ? [{ type: 'text' as const, text: { value: m.content, annotations: [] } }]
-          : m.content.map((p) => ({ type: 'text' as const, text: { value: p.text, annotations: [] } })),
+          ? [{ type: ContentBlockType.Text, text: { value: m.content, annotations: [] } }]
+          : m.content.map((p) => ({ type: ContentBlockType.Text, text: { value: p.text, annotations: [] } })),
     }));
 }

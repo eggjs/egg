@@ -34,7 +34,15 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
         };
       },
     } as any;
-    runtime = new AgentRuntime({ host, store });
+    runtime = new AgentRuntime({
+      host,
+      store,
+      logger: {
+        error() {
+          /* noop */
+        },
+      },
+    });
   });
 
   afterEach(async () => {
@@ -167,8 +175,8 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
         input: { messages: [{ role: 'user', content: 'Hi' }] },
       } as any);
 
-      // Wait for background task to complete via destroy
-      await runtime.destroy();
+      // Wait for background task to complete naturally
+      await runtime.waitForPendingTasks();
 
       const run = await store.getRun(result.id);
       assert.equal(run.status, 'completed');
@@ -181,8 +189,8 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       } as any);
       assert(result.thread_id);
 
-      // Wait for background task to complete via destroy
-      await runtime.destroy();
+      // Wait for background task to complete naturally
+      await runtime.waitForPendingTasks();
 
       // Verify thread was created and messages were appended
       const thread = await store.getThread(result.thread_id);
@@ -199,8 +207,8 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       } as any);
       assert.deepEqual(result.metadata, meta);
 
-      // Wait for background task to complete via destroy
-      await runtime.destroy();
+      // Wait for background task to complete naturally
+      await runtime.waitForPendingTasks();
 
       // Verify stored in store
       const run = await store.getRun(result.id);

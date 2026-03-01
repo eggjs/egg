@@ -42,3 +42,5 @@ export const METHOD_TIMEOUT_METADATA: symbol = Symbol.for('EggPrototype#method#t
 export const CONTROLLER_AGENT_CONTROLLER: symbol = Symbol.for('EggPrototype#controller#agent#isAgent');
 export const CONTROLLER_AGENT_NOT_IMPLEMENTED: symbol = Symbol.for('EggPrototype#controller#agent#notImplemented');
 export const CONTROLLER_AGENT_ENHANCED: symbol = Symbol.for('EggPrototype#controller#agent#enhanced');
+
+export const AGENT_CONTROLLER_PROTO_IMPL_TYPE = 'AGENT_CONTROLLER_PROTO';

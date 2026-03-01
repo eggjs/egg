@@ -1,7 +1,13 @@
 import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { AccessLevel, ControllerType, HTTPMethodEnum, HTTPParamType } from '@eggjs/tegg-types';
+import {
+  AccessLevel,
+  AGENT_CONTROLLER_PROTO_IMPL_TYPE,
+  ControllerType,
+  HTTPMethodEnum,
+  HTTPParamType,
+} from '@eggjs/tegg-types';
 
 import { AgentInfoUtil } from '../../util/AgentInfoUtil.ts';
 import { ControllerInfoUtil } from '../../util/ControllerInfoUtil.ts';
@@ -98,9 +104,10 @@ export function AgentController() {
     // Set the fixed base HTTP path
     HTTPInfoUtil.setHTTPPath('/api/v1', constructor);
 
-    // Apply SingletonProto
+    // Apply SingletonProto with custom proto impl type
     const func = SingletonProto({
       accessLevel: AccessLevel.PUBLIC,
+      protoImplType: AGENT_CONTROLLER_PROTO_IMPL_TYPE,
     });
     func(constructor);
 

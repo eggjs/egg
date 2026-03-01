@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import type { InputMessage, MessageObject, AgentRunConfig } from '@eggjs/controller-decorator';
-import { RunStatus } from '@eggjs/controller-decorator';
+import { RunStatus, AgentObjectType } from '@eggjs/controller-decorator';
 
 import type { AgentStore, ThreadRecord, RunRecord } from './AgentStore.ts';
 import { AgentNotFoundError } from './errors.ts';
@@ -44,7 +44,7 @@ export class FileAgentStore implements AgentStore {
     const threadId = `thread_${crypto.randomUUID()}`;
     const record: ThreadRecord = {
       id: threadId,
-      object: 'thread',
+      object: AgentObjectType.Thread,
       messages: [],
       metadata: metadata ?? {},
       created_at: nowUnix(),
@@ -79,7 +79,7 @@ export class FileAgentStore implements AgentStore {
     const runId = `run_${crypto.randomUUID()}`;
     const record: RunRecord = {
       id: runId,
-      object: 'thread.run',
+      object: AgentObjectType.ThreadRun,
       thread_id: threadId,
       status: RunStatus.Queued,
       input,

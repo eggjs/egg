@@ -5,14 +5,16 @@ import type {
   RunObject,
   MessageObject,
   MessageDeltaObject,
+  MessageContentBlock,
   AgentStreamMessage,
 } from '@eggjs/controller-decorator';
-import { RunStatus, AgentSSEEvent } from '@eggjs/controller-decorator';
+import { RunStatus, AgentSSEEvent, AgentObjectType, MessageRole, MessageStatus } from '@eggjs/controller-decorator';
 
 import type { AgentStore } from './AgentStore.ts';
 import { AgentConflictError } from './errors.ts';
 import { toContentBlocks, extractFromStreamMessages, toInputMessageObjects } from './MessageConverter.ts';
 import { RunBuilder } from './RunBuilder.ts';
+import type { RunUsage } from './RunBuilder.ts';
 import type { SSEWriter } from './SSEWriter.ts';
 import { nowUnix, newMsgId } from './utils.ts';
 
@@ -33,7 +35,7 @@ export interface AgentRuntimeLogger {
 export interface AgentRuntimeOptions {
   host: AgentControllerHost;
   store: AgentStore;
-  logger?: AgentRuntimeLogger;
+  logger: AgentRuntimeLogger;
 }
 
 export class AgentRuntime {
@@ -52,7 +54,10 @@ export class AgentRuntime {
   constructor(options: AgentRuntimeOptions) {
     this.host = options.host;
     this.store = options.store;
-    this.logger = options.logger ?? console;
+    if (!options.logger) {
+      throw new Error('AgentRuntimeOptions.logger is required');
+    }
+    this.logger = options.logger;
     this.runningTasks = new Map();
   }
 
@@ -60,7 +65,7 @@ export class AgentRuntime {
     const thread = await this.store.createThread();
     return {
       id: thread.id,
-      object: 'thread',
+      object: AgentObjectType.Thread,
       created_at: thread.created_at,
       metadata: thread.metadata ?? {},
     };
@@ -70,7 +75,7 @@ export class AgentRuntime {
     const thread = await this.store.getThread(threadId);
     return {
       id: thread.id,
-      object: 'thread',
+      object: AgentObjectType.Thread,
       created_at: thread.created_at,
       metadata: thread.metadata ?? {},
       messages: thread.messages,
@@ -89,8 +94,7 @@ export class AgentRuntime {
     const rb = RunBuilder.create(run, threadId);
 
     try {
-      const started = rb.start();
-      await this.store.updateRun(run.id, { status: started.status, started_at: started.started_at });
+      await this.store.updateRun(run.id, rb.start());
 
       const streamMessages: AgentStreamMessage[] = [];
       for await (const msg of this.host.execRun(input)) {
@@ -98,24 +102,13 @@ export class AgentRuntime {
       }
       const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
 
-      const completed = rb.complete(output, usage);
-      await this.store.updateRun(run.id, {
-        status: completed.status,
-        output,
-        usage,
-        completed_at: completed.completed_at,
-      });
+      await this.store.updateRun(run.id, rb.complete(output, usage));
 
       await this.store.appendMessages(threadId, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
 
-      return completed;
-    } catch (err: any) {
-      const failed = rb.fail(err);
-      await this.store.updateRun(run.id, {
-        status: failed.status,
-        last_error: failed.last_error,
-        failed_at: failed.failed_at,
-      });
+      return rb.snapshot();
+    } catch (err: unknown) {
+      await this.store.updateRun(run.id, rb.fail(err as Error));
       throw err;
     }
   }
@@ -138,8 +131,7 @@ export class AgentRuntime {
 
     const promise = (async () => {
       try {
-        const started = rb.start();
-        await this.store.updateRun(run.id, { status: started.status, started_at: started.started_at });
+        await this.store.updateRun(run.id, rb.start());
 
         const streamMessages: AgentStreamMessage[] = [];
         for await (const msg of this.host.execRun(input, abortController.signal)) {
@@ -151,27 +143,16 @@ export class AgentRuntime {
 
         const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
 
-        const completed = rb.complete(output, usage);
-        await this.store.updateRun(run.id, {
-          status: completed.status,
-          output,
-          usage,
-          completed_at: completed.completed_at,
-        });
+        await this.store.updateRun(run.id, rb.complete(output, usage));
 
         await this.store.appendMessages(threadId!, [
           ...toInputMessageObjects(input.input.messages, threadId),
           ...output,
         ]);
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (!abortController.signal.aborted) {
           try {
-            const failed = rb.fail(err);
-            await this.store.updateRun(run.id, {
-              status: failed.status,
-              last_error: failed.last_error,
-              failed_at: failed.failed_at,
-            });
+            await this.store.updateRun(run.id, rb.fail(err as Error));
           } catch (storeErr) {
             this.logger.error('[AgentController] failed to update run status after error:', storeErr);
           }
@@ -207,108 +188,65 @@ export class AgentRuntime {
     writer.writeEvent(AgentSSEEvent.ThreadRunCreated, rb.snapshot());
 
     // event: thread.run.in_progress
-    const started = rb.start();
-    await this.store.updateRun(run.id, { status: started.status, started_at: started.started_at });
-    writer.writeEvent(AgentSSEEvent.ThreadRunInProgress, started);
+    await this.store.updateRun(run.id, rb.start());
+    writer.writeEvent(AgentSSEEvent.ThreadRunInProgress, rb.snapshot());
 
     const msgId = newMsgId();
-    const accumulatedContent: MessageObject['content'] = [];
 
     // event: thread.message.created
     const msgObj: MessageObject = {
       id: msgId,
-      object: 'thread.message',
+      object: AgentObjectType.ThreadMessage,
       created_at: nowUnix(),
       run_id: run.id,
-      role: 'assistant',
-      status: 'in_progress',
+      role: MessageRole.Assistant,
+      status: MessageStatus.InProgress,
       content: [],
     };
     writer.writeEvent(AgentSSEEvent.ThreadMessageCreated, msgObj);
 
-    let promptTokens = 0;
-    let completionTokens = 0;
-    let hasUsage = false;
-
     try {
-      for await (const msg of this.host.execRun(input, abortController.signal)) {
-        if (abortController.signal.aborted) break;
-        if (msg.message) {
-          const contentBlocks = toContentBlocks(msg.message);
-          accumulatedContent.push(...contentBlocks);
+      const { content, usage, aborted } = await this.consumeStreamMessages(
+        input,
+        abortController.signal,
+        writer,
+        msgId,
+      );
 
-          // event: thread.message.delta
-          const delta: MessageDeltaObject = {
-            id: msgId,
-            object: 'thread.message.delta',
-            delta: { content: contentBlocks },
-          };
-          writer.writeEvent(AgentSSEEvent.ThreadMessageDelta, delta);
-        }
-        if (msg.usage) {
-          hasUsage = true;
-          promptTokens += msg.usage.prompt_tokens ?? 0;
-          completionTokens += msg.usage.completion_tokens ?? 0;
-        }
-      }
-
-      // If client disconnected / abort signaled, emit cancelled and return
-      if (abortController.signal.aborted) {
-        const cancelled = rb.cancel();
+      if (aborted) {
         try {
-          await this.store.updateRun(run.id, { status: cancelled.status, cancelled_at: cancelled.cancelled_at });
+          await this.store.updateRun(run.id, rb.cancel());
         } catch {
           // Ignore store update failure during abort
         }
         if (!writer.closed) {
-          writer.writeEvent(AgentSSEEvent.ThreadRunCancelled, cancelled);
+          writer.writeEvent(AgentSSEEvent.ThreadRunCancelled, rb.snapshot());
         }
         return;
       }
 
       // event: thread.message.completed
-      msgObj.status = 'completed';
-      msgObj.content = accumulatedContent;
+      msgObj.status = MessageStatus.Completed;
+      msgObj.content = content;
       writer.writeEvent(AgentSSEEvent.ThreadMessageCompleted, msgObj);
 
-      // Build final output
-      const output: MessageObject[] = accumulatedContent.length > 0 ? [msgObj] : [];
-      let usage: RunObject['usage'];
-      if (hasUsage) {
-        usage = {
-          prompt_tokens: promptTokens,
-          completion_tokens: completionTokens,
-          total_tokens: promptTokens + completionTokens,
-        };
-      }
-
-      const completed = rb.complete(output, usage);
-      await this.store.updateRun(run.id, {
-        status: completed.status,
-        output,
-        usage,
-        completed_at: completed.completed_at,
-      });
-
+      // Persist and emit completion
+      const output: MessageObject[] = content.length > 0 ? [msgObj] : [];
+      await this.store.updateRun(run.id, rb.complete(output, usage));
       await this.store.appendMessages(threadId!, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
 
       // event: thread.run.completed
-      writer.writeEvent(AgentSSEEvent.ThreadRunCompleted, completed);
-    } catch (err: any) {
-      const failed = rb.fail(err);
+      writer.writeEvent(AgentSSEEvent.ThreadRunCompleted, rb.snapshot());
+    } catch (err: unknown) {
       try {
-        await this.store.updateRun(run.id, {
-          status: failed.status,
-          last_error: failed.last_error,
-          failed_at: failed.failed_at,
-        });
+        await this.store.updateRun(run.id, rb.fail(err as Error));
       } catch (storeErr) {
         this.logger.error('[AgentController] failed to update run status after error:', storeErr);
       }
 
       // event: thread.run.failed
       if (!writer.closed) {
-        writer.writeEvent(AgentSSEEvent.ThreadRunFailed, failed);
+        writer.writeEvent(AgentSSEEvent.ThreadRunFailed, rb.snapshot());
       }
     } finally {
       // event: done
@@ -319,11 +257,54 @@ export class AgentRuntime {
     }
   }
 
+  /**
+   * Consume the execRun async generator, emitting SSE message.delta events
+   * for each chunk and accumulating content blocks and token usage.
+   */
+  private async consumeStreamMessages(
+    input: CreateRunInput,
+    signal: AbortSignal,
+    writer: SSEWriter,
+    msgId: string,
+  ): Promise<{ content: MessageContentBlock[]; usage?: RunUsage; aborted: boolean }> {
+    const content: MessageContentBlock[] = [];
+    let promptTokens = 0;
+    let completionTokens = 0;
+    let hasUsage = false;
+
+    for await (const msg of this.host.execRun(input, signal)) {
+      if (signal.aborted) break;
+      if (msg.message) {
+        const contentBlocks = toContentBlocks(msg.message);
+        content.push(...contentBlocks);
+
+        // event: thread.message.delta
+        const delta: MessageDeltaObject = {
+          id: msgId,
+          object: AgentObjectType.ThreadMessageDelta,
+          delta: { content: contentBlocks },
+        };
+        writer.writeEvent(AgentSSEEvent.ThreadMessageDelta, delta);
+      }
+      if (msg.usage) {
+        hasUsage = true;
+        promptTokens += msg.usage.prompt_tokens ?? 0;
+        completionTokens += msg.usage.completion_tokens ?? 0;
+      }
+    }
+
+    return {
+      content,
+      usage: hasUsage ? { promptTokens, completionTokens, totalTokens: promptTokens + completionTokens } : undefined,
+      aborted: signal.aborted,
+    };
+  }
+
   async getRun(runId: string): Promise<RunObject> {
     const run = await this.store.getRun(runId);
     return {
       id: run.id,
-      object: 'thread.run',
+      object: AgentObjectType.ThreadRun,
       created_at: run.created_at,
       thread_id: run.thread_id,
       status: run.status,
@@ -357,21 +338,25 @@ export class AgentRuntime {
     }
 
     const rb = RunBuilder.create(run, run.thread_id ?? '');
-    const cancelled = rb.cancel();
-    await this.store.updateRun(runId, {
-      status: cancelled.status,
-      cancelled_at: cancelled.cancelled_at,
-    });
+    await this.store.updateRun(runId, rb.cancel());
 
-    return cancelled;
+    return rb.snapshot();
   }
 
-  async destroy(): Promise<void> {
-    // Wait for in-flight background tasks
+  /** Wait for all in-flight background tasks to complete naturally (without aborting). */
+  async waitForPendingTasks(): Promise<void> {
     if (this.runningTasks.size) {
       const pending = Array.from(this.runningTasks.values()).map((t) => t.promise);
       await Promise.allSettled(pending);
     }
+  }
+
+  async destroy(): Promise<void> {
+    // Abort all in-flight background tasks, then wait for them to settle
+    for (const task of this.runningTasks.values()) {
+      task.abortController.abort();
+    }
+    await this.waitForPendingTasks();
 
     // Destroy store
     if (this.store.destroy) {
