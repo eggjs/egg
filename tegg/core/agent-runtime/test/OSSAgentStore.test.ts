@@ -12,6 +12,8 @@ import { OSSAgentStore } from '../src/OSSAgentStore.ts';
  */
 class MapStorageClient implements ObjectStorageClient {
   private readonly store = new Map<string, string>();
+  init?(): Promise<void>;
+  destroy?(): Promise<void>;
 
   async put(key: string, value: string): Promise<void> {
     this.store.set(key, value);
