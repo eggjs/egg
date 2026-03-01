@@ -115,6 +115,9 @@
     },
     {
       "path": "./tegg/core/vitest"
+    },
+    {
+      "path": "./tegg/core/agent-runtime"
     }
   ]
 }
