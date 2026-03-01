@@ -43,6 +43,7 @@ npx create-egg@beta --template tegg
 - [egg-sequelize]
 - [egg-mongoose]
 - [egg-mysql]，可查看 [MySQL 教程](./mysql.md)
+- [@eggjs/redis]，可查看 [Redis 教程](./redis.md)
 - [egg-graphql]
 
 [egg-sequelize]: https://github.com/eggjs/egg-sequelize
@@ -59,3 +60,4 @@ npx create-egg@beta --template tegg
 [egg-graphql]: https://github.com/eggjs/egg-graphql
 [egg-orm]: https://github.com/eggjs/egg-orm/blob/master/Readme.zh-CN.md
 [Leoric]: https://leoric.js.org/zh
+[@eggjs/redis]: https://github.com/eggjs/egg/tree/next/plugins/redis
