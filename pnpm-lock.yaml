@@ -2050,6 +2050,25 @@ importers:
         specifier: 'catalog:'
         version: 0.105.0
 
+  tegg/core/agent-runtime:
+    dependencies:
+      '@eggjs/controller-decorator':
+        specifier: workspace:*
+        version: link:../controller-decorator
+      '@eggjs/tegg-runtime':
+        specifier: workspace:*
+        version: link:../runtime
+      '@eggjs/tegg-types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.10.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
   tegg/core/ajv-decorator:
     dependencies:
       ajv:
@@ -2679,6 +2698,9 @@ importers:
 
   tegg/core/tegg:
     dependencies:
+      '@eggjs/agent-runtime':
+        specifier: workspace:*
+        version: link:../agent-runtime
       '@eggjs/ajv-decorator':
         specifier: workspace:*
         version: link:../ajv-decorator
@@ -2954,6 +2976,9 @@ importers:
 
   tegg/plugin/controller:
     dependencies:
+      '@eggjs/agent-runtime':
+        specifier: workspace:*
+        version: link:../../core/agent-runtime
       '@eggjs/controller-decorator':
         specifier: workspace:*
         version: link:../../core/controller-decorator
