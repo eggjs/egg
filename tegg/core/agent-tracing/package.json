@@ -60,7 +60,7 @@
     "@anthropic-ai/claude-agent-sdk": "^0.2.52",
     "@anthropic-ai/sdk": "^0.78.0",
     "@eggjs/tegg-common-util": "workspace:*",
-    "@langchain/core": "^1.1.1",
+    "@langchain/core": "^1.1.29",
     "@langchain/langgraph": "^0.2.74",
     "@types/ali-oss": "^6.16.0",
     "@types/node": "catalog:",
@@ -68,7 +68,7 @@
   },
   "peerDependencies": {
     "@anthropic-ai/claude-agent-sdk": ">=0.2.52",
-    "@langchain/core": "^1.1.1"
+    "@langchain/core": "^1.1.29"
   },
   "peerDependenciesMeta": {
     "@anthropic-ai/claude-agent-sdk": {

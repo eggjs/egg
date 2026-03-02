@@ -92,7 +92,7 @@
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
-    "@langchain/core": "^1.1.1",
+    "@langchain/core": "^1.1.29",
     "@langchain/langgraph": "^1.0.2",
     "@langchain/openai": "^1.1.0",
     "langchain": "^1.1.2"
