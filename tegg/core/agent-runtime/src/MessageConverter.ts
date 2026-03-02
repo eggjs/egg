@@ -7,8 +7,8 @@ import type {
 } from '@eggjs/controller-decorator';
 import { AgentObjectType, MessageRole, MessageStatus, ContentBlockType } from '@eggjs/controller-decorator';
 
-import type { RunUsage } from './RunBuilder.ts';
 import { nowUnix, newMsgId } from './AgentStoreUtils.ts';
+import type { RunUsage } from './RunBuilder.ts';
 
 /**
  * Convert an AgentStreamMessage's message payload into OpenAI MessageContentBlock[].

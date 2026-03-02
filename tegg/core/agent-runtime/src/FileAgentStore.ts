@@ -6,8 +6,8 @@ import type { InputMessage, MessageObject, AgentRunConfig } from '@eggjs/control
 import { RunStatus, AgentObjectType } from '@eggjs/controller-decorator';
 
 import type { AgentStore, ThreadRecord, RunRecord } from './AgentStore.ts';
-import { AgentNotFoundError } from './errors.ts';
 import { nowUnix } from './AgentStoreUtils.ts';
+import { AgentNotFoundError } from './errors.ts';
 
 export interface FileAgentStoreOptions {
   dataDir: string;
