@@ -8,9 +8,32 @@ import { OSSAgentStore } from '../src/OSSAgentStore.ts';
 
 /**
  * In-memory ObjectStorageClient for testing.
- * Not exported — purely an inline test helper.
+ * Supports put/get/append — mirrors the contract used by OSSAgentStore.
  */
 class MapStorageClient implements ObjectStorageClient {
+  private readonly store = new Map<string, string>();
+  init?(): Promise<void>;
+  destroy?(): Promise<void>;
+
+  async put(key: string, value: string): Promise<void> {
+    this.store.set(key, value);
+  }
+
+  async get(key: string): Promise<string | null> {
+    return this.store.get(key) ?? null;
+  }
+
+  async append(key: string, value: string): Promise<void> {
+    const existing = this.store.get(key) ?? '';
+    this.store.set(key, existing + value);
+  }
+}
+
+/**
+ * MapStorageClient without append — used to test the fallback path
+ * where OSSAgentStore does get-concat-put instead of native append.
+ */
+class MapStorageClientWithoutAppend implements ObjectStorageClient {
   private readonly store = new Map<string, string>();
   init?(): Promise<void>;
   destroy?(): Promise<void>;
@@ -60,6 +83,12 @@ describe('core/agent-runtime/test/OSSAgentStore.test.ts', () => {
       assert.equal(fetched.created_at, created.created_at);
     });
 
+    it('should return empty messages for a new thread', async () => {
+      const thread = await store.createThread();
+      const fetched = await store.getThread(thread.id);
+      assert.deepEqual(fetched.messages, []);
+    });
+
     it('should throw AgentNotFoundError for non-existent thread', async () => {
       await assert.rejects(
         () => store.getThread('thread_non_existent'),
@@ -94,8 +123,87 @@ describe('core/agent-runtime/test/OSSAgentStore.test.ts', () => {
       ]);
       const fetched = await store.getThread(thread.id);
       assert.equal(fetched.messages.length, 2);
-      assert.equal((fetched.messages[0] as Record<string, unknown>).id, 'msg_1');
-      assert.equal((fetched.messages[1] as Record<string, unknown>).id, 'msg_2');
+      assert.equal((fetched.messages[0] as unknown as Record<string, unknown>).id, 'msg_1');
+      assert.equal((fetched.messages[1] as unknown as Record<string, unknown>).id, 'msg_2');
+    });
+
+    it('should append messages incrementally', async () => {
+      const thread = await store.createThread();
+      await store.appendMessages(thread.id, [
+        {
+          id: 'msg_1',
+          object: 'thread.message',
+          created_at: Math.floor(Date.now() / 1000),
+          role: 'user',
+          status: 'completed',
+          content: [{ type: 'text', text: { value: 'First', annotations: [] } }],
+        },
+      ]);
+      await store.appendMessages(thread.id, [
+        {
+          id: 'msg_2',
+          object: 'thread.message',
+          created_at: Math.floor(Date.now() / 1000),
+          role: 'assistant',
+          status: 'completed',
+          content: [{ type: 'text', text: { value: 'Second', annotations: [] } }],
+        },
+      ]);
+      const fetched = await store.getThread(thread.id);
+      assert.equal(fetched.messages.length, 2);
+      assert.equal((fetched.messages[0] as unknown as Record<string, unknown>).id, 'msg_1');
+      assert.equal((fetched.messages[1] as unknown as Record<string, unknown>).id, 'msg_2');
+    });
+
+    it('should throw AgentNotFoundError when appending to non-existent thread', async () => {
+      await assert.rejects(
+        () =>
+          store.appendMessages('thread_non_existent', [
+            {
+              id: 'msg_1',
+              object: 'thread.message',
+              created_at: Math.floor(Date.now() / 1000),
+              role: 'user',
+              status: 'completed',
+              content: [{ type: 'text', text: { value: 'Hello', annotations: [] } }],
+            },
+          ]),
+        (err: unknown) => {
+          assert(err instanceof AgentNotFoundError);
+          return true;
+        },
+      );
+    });
+  });
+
+  describe('threads (without append)', () => {
+    it('should fall back to get-concat-put when client has no append', async () => {
+      const fallbackStore = new OSSAgentStore({ client: new MapStorageClientWithoutAppend() });
+      const thread = await fallbackStore.createThread();
+      await fallbackStore.appendMessages(thread.id, [
+        {
+          id: 'msg_1',
+          object: 'thread.message',
+          created_at: Math.floor(Date.now() / 1000),
+          role: 'user',
+          status: 'completed',
+          content: [{ type: 'text', text: { value: 'Hello', annotations: [] } }],
+        },
+      ]);
+      await fallbackStore.appendMessages(thread.id, [
+        {
+          id: 'msg_2',
+          object: 'thread.message',
+          created_at: Math.floor(Date.now() / 1000),
+          role: 'assistant',
+          status: 'completed',
+          content: [{ type: 'text', text: { value: 'Hi!', annotations: [] } }],
+        },
+      ]);
+      const fetched = await fallbackStore.getThread(thread.id);
+      assert.equal(fetched.messages.length, 2);
+      assert.equal((fetched.messages[0] as unknown as Record<string, unknown>).id, 'msg_1');
+      assert.equal((fetched.messages[1] as unknown as Record<string, unknown>).id, 'msg_2');
     });
   });
 

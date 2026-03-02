@@ -10,8 +10,27 @@ export interface OSSObjectStorageClientOptions {
   region?: string;
 }
 
+/**
+ * ObjectStorageClient backed by Alibaba Cloud OSS (via oss-client).
+ *
+ * Supports both `put`/`get` for normal objects and `append` for
+ * OSS Appendable Objects. The append path uses a local position cache
+ * to avoid extra HEAD requests; on position mismatch it falls back to
+ * HEAD + retry automatically.
+ */
 export class OSSObjectStorageClient implements ObjectStorageClient {
   private readonly client: OSSObject;
+
+  /**
+   * In-memory cache of next-append positions.
+   *
+   * After each successful `append()`, OSS returns `nextAppendPosition`.
+   * We cache it here so the next append can skip a HEAD round-trip.
+   * If the cached position is stale (e.g., process restarted or another
+   * writer appended), the append will fail with PositionNotEqualToLength
+   * and we fall back to HEAD + retry.
+   */
+  private readonly appendPositions = new Map<string, number>();
 
   constructor(options: OSSObjectStorageClientOptions) {
     this.client = new OSSObject({
@@ -39,6 +58,43 @@ export class OSSObjectStorageClient implements ObjectStorageClient {
         return null;
       }
       throw err;
+    }
+  }
+
+  /**
+   * Append data to an OSS Appendable Object.
+   *
+   * OSS AppendObject requires a `position` parameter that must equal the
+   * current object size. We use a three-step strategy:
+   *
+   * 1. Use the cached position (0 for new objects, or the value from the
+   *    last successful append).
+   * 2. If OSS returns PositionNotEqualToLength (cache is stale), issue a
+   *    HEAD request to learn the current object size, then retry once.
+   * 3. Update the cache with `nextAppendPosition` from the response.
+   *
+   * This gives us single-round-trip performance in the common case (single
+   * writer, no restarts) while still being self-healing when the cache is
+   * stale.
+   */
+  async append(key: string, value: string): Promise<void> {
+    const buf = Buffer.from(value, 'utf-8');
+    const position = this.appendPositions.get(key) ?? 0;
+
+    try {
+      const result = await this.client.append(key, buf, { position });
+      this.appendPositions.set(key, Number(result.nextAppendPosition));
+    } catch (err: unknown) {
+      // Position mismatch — the object grew since our last cached position.
+      // Fall back to HEAD to learn the actual size, then retry.
+      if (err && typeof err === 'object' && 'code' in err && err.code === 'PositionNotEqualToLength') {
+        const head = await this.client.head(key);
+        const currentPos = Number(head.res.headers['content-length'] ?? 0);
+        const result = await this.client.append(key, buf, { position: currentPos });
+        this.appendPositions.set(key, Number(result.nextAppendPosition));
+      } else {
+        throw err;
+      }
     }
   }
 }
