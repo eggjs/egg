@@ -152,6 +152,15 @@ export class AgentControllerObject implements EggObject {
       // 9. Ready
       this.status = EggObjectStatus.READY;
     } catch (e) {
+      // Clean up runtime if it was created but init failed
+      if (this.runtime) {
+        try {
+          await this.runtime.destroy();
+        } catch {
+          // Swallow cleanup errors to preserve the original exception
+        }
+        this.runtime = undefined;
+      }
       this.status = EggObjectStatus.ERROR;
       throw e;
     }

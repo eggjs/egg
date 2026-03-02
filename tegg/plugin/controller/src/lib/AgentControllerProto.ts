@@ -23,7 +23,7 @@ import { DEFAULT_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
  *
  * All EggPrototype interface members are delegated to the inner proto.
  * Symbol-keyed properties (qualifier descriptors set by the runtime) are
- * forwarded via a Proxy on `this`.
+ * copied from the delegate in the constructor via Object.defineProperty.
  */
 export class AgentControllerProto implements EggPrototype {
   [key: symbol]: PropertyDescriptor;
