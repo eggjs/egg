@@ -2,9 +2,9 @@ import crypto from 'node:crypto';
 
 import type { AgentRunConfig, AgentStore, InputMessage, MessageObject, RunRecord, ThreadRecord } from './AgentStore.ts';
 import { AgentObjectType, RunStatus } from './AgentStore.ts';
+import { nowUnix } from './AgentStoreUtils.ts';
 import { AgentNotFoundError } from './errors.ts';
 import type { ObjectStorageClient } from './ObjectStorageClient.ts';
-import { nowUnix } from './utils.ts';
 
 export interface OSSAgentStoreOptions {
   client: ObjectStorageClient;

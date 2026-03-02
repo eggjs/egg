@@ -3,4 +3,4 @@ export * from './errors.ts';
 export * from './ObjectStorageClient.ts';
 export * from './OSSObjectStorageClient.ts';
 export * from './OSSAgentStore.ts';
-export * from './utils.ts';
+export * from './AgentStoreUtils.ts';
