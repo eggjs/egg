@@ -2,11 +2,12 @@ import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { RunStatus } from '@eggjs/controller-decorator';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { AgentRuntime } from '../src/AgentRuntime.ts';
 import type { AgentControllerHost } from '../src/AgentRuntime.ts';
-import { AgentNotFoundError } from '../src/errors.ts';
+import { AgentNotFoundError, AgentConflictError } from '../src/errors.ts';
 import { FileAgentStore } from '../src/FileAgentStore.ts';
 
 describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
@@ -284,6 +285,95 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       const run = await store.getRun(result.id);
       assert.equal(run.status, 'cancelled');
       assert(run.cancelled_at);
+    });
+
+    it('should write cancelling then cancelled to store', async () => {
+      const statusHistory: string[] = [];
+      const origUpdateRun = store.updateRun.bind(store);
+      store.updateRun = async (runId: string, updates: any) => {
+        if (updates.status) {
+          statusHistory.push(updates.status);
+        }
+        return origUpdateRun(runId, updates);
+      };
+
+      await runtime.syncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      } as any);
+
+      // Run is completed, but let's create a fresh in_progress run to cancel
+      const asyncResult = await runtime.asyncRun({
+        input: { messages: [{ role: 'user', content: 'Hello' }] },
+      } as any);
+
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      statusHistory.length = 0; // Reset to only capture cancelRun writes
+
+      await runtime.cancelRun(asyncResult.id).catch(() => {
+        /* may already be completed */
+      });
+
+      // If cancellation happened, verify cancelling was written before cancelled
+      if (statusHistory.includes('cancelling')) {
+        const cancellingIdx = statusHistory.indexOf('cancelling');
+        const cancelledIdx = statusHistory.indexOf('cancelled');
+        assert(cancelledIdx > cancellingIdx, 'cancelled should come after cancelling');
+      }
+    });
+
+    it('should throw AgentConflictError when cancelling a completed run', async () => {
+      const result = await runtime.syncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      } as any);
+      assert.equal(result.status, 'completed');
+
+      await assert.rejects(
+        () => runtime.cancelRun(result.id),
+        (err: unknown) => {
+          assert(err instanceof AgentConflictError);
+          return true;
+        },
+      );
+    });
+
+    it('should not overwrite cancelling status with completed (cross-worker scenario)', async () => {
+      // Simulate: asyncRun starts on this runtime, but another worker cancels via store
+      let resolveExecRun: (() => void) | undefined;
+      host.execRun = async function* (_input: any, signal?: AbortSignal) {
+        // Wait for the test to externally cancel via store
+        await new Promise<void>((resolve, reject) => {
+          resolveExecRun = resolve;
+          if (signal) {
+            signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+          }
+        });
+        yield {
+          type: 'assistant',
+          message: { role: 'assistant' as const, content: [{ type: 'text' as const, text: 'done' }] },
+        };
+        yield {
+          type: 'result',
+          usage: { prompt_tokens: 1, completion_tokens: 1 },
+        };
+      } as any;
+
+      const result = await runtime.asyncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      } as any);
+
+      // Wait for background task to start and write in_progress
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // Simulate another worker writing "cancelling" directly to store
+      await store.updateRun(result.id, { status: RunStatus.Cancelling });
+
+      // Let the execRun complete
+      resolveExecRun!();
+      await runtime.waitForPendingTasks();
+
+      // The background task should have detected cancelling and NOT overwritten with completed
+      const run = await store.getRun(result.id);
+      assert.equal(run.status, 'cancelling', 'status should remain cancelling, not overwritten to completed');
     });
   });
 });

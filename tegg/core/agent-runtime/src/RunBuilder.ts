@@ -89,7 +89,13 @@ export class RunBuilder {
     };
   }
 
-  /** in_progress/queued → cancelled. Returns store update (snake_case). */
+  /** in_progress/queued → cancelling. Returns store update (snake_case). */
+  cancelling(): Partial<RunRecord> {
+    this.status = RunStatus.Cancelling;
+    return { status: this.status };
+  }
+
+  /** cancelling → cancelled. Returns store update (snake_case). */
   cancel(): Partial<RunRecord> {
     this.status = RunStatus.Cancelled;
     this.cancelledAt = nowUnix();

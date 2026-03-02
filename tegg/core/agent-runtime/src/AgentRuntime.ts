@@ -11,12 +11,12 @@ import type {
 import { RunStatus, AgentSSEEvent, AgentObjectType, MessageRole, MessageStatus } from '@eggjs/controller-decorator';
 
 import type { AgentStore } from './AgentStore.ts';
+import { nowUnix, newMsgId } from './AgentStoreUtils.ts';
 import { AgentConflictError } from './errors.ts';
 import { toContentBlocks, extractFromStreamMessages, toInputMessageObjects } from './MessageConverter.ts';
 import { RunBuilder } from './RunBuilder.ts';
 import type { RunUsage } from './RunBuilder.ts';
 import type { SSEWriter } from './SSEWriter.ts';
-import { nowUnix, newMsgId } from './AgentStoreUtils.ts';
 
 export const AGENT_RUNTIME: unique symbol = Symbol('agentRuntime');
 
@@ -71,6 +71,9 @@ export class AgentRuntime {
     };
   }
 
+  // TODO(followup): messages are returned in full here. Add a paginated
+  // listMessages(threadId, { limit, order, after, before }) method to support
+  // large threads, similar to OpenAI's GET /threads/{id}/messages endpoint.
   async getThread(threadId: string): Promise<ThreadObjectWithMessages> {
     const thread = await this.store.getThread(threadId);
     return {
@@ -141,6 +144,12 @@ export class AgentRuntime {
 
         if (abortController.signal.aborted) return;
 
+        // Check if another worker has cancelled this run before writing final state
+        const currentRun = await this.store.getRun(run.id);
+        if (currentRun.status === RunStatus.Cancelling || currentRun.status === RunStatus.Cancelled) {
+          return;
+        }
+
         const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
 
         await this.store.updateRun(run.id, rb.complete(output, usage));
@@ -151,8 +160,12 @@ export class AgentRuntime {
         ]);
       } catch (err: unknown) {
         if (!abortController.signal.aborted) {
+          // Check store before writing failed state — another worker may have cancelled
           try {
-            await this.store.updateRun(run.id, rb.fail(err as Error));
+            const currentRun = await this.store.getRun(run.id);
+            if (currentRun.status !== RunStatus.Cancelling && currentRun.status !== RunStatus.Cancelled) {
+              await this.store.updateRun(run.id, rb.fail(err as Error));
+            }
           } catch (storeErr) {
             this.logger.error('[AgentController] failed to update run status after error:', storeErr);
           }
@@ -321,23 +334,27 @@ export class AgentRuntime {
   }
 
   async cancelRun(runId: string): Promise<RunObject> {
-    // Abort running task first to prevent it from writing completed status
-    const task = this.runningTasks.get(runId);
-    if (task) {
-      task.abortController.abort();
-      // Wait for the background task to finish so it won't race with our update
-      await task.promise.catch(() => {
-        /* ignore */
-      });
-    }
-
-    // Re-read run status after background task has settled
+    // 1. Check current status — reject if already terminal
     const run = await this.store.getRun(runId);
     if (AgentRuntime.TERMINAL_RUN_STATUSES.has(run.status)) {
       throw new AgentConflictError(`Cannot cancel run with status '${run.status}'`);
     }
 
     const rb = RunBuilder.create(run, run.thread_id ?? '');
+
+    // 2. Write "cancelling" to store first — visible to all workers
+    await this.store.updateRun(runId, rb.cancelling());
+
+    // 3. If the task is running locally, abort it for immediate effect
+    const task = this.runningTasks.get(runId);
+    if (task) {
+      task.abortController.abort();
+      await task.promise.catch(() => {
+        /* ignore */
+      });
+    }
+
+    // 4. Transition to final "cancelled" state
     await this.store.updateRun(runId, rb.cancel());
 
     return rb.snapshot();
