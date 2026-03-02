@@ -123,8 +123,8 @@ describe('core/agent-runtime/test/OSSAgentStore.test.ts', () => {
       ]);
       const fetched = await store.getThread(thread.id);
       assert.equal(fetched.messages.length, 2);
-      assert.equal((fetched.messages[0] as unknown as Record<string, unknown>).id, 'msg_1');
-      assert.equal((fetched.messages[1] as unknown as Record<string, unknown>).id, 'msg_2');
+      assert.equal(fetched.messages[0].id, 'msg_1');
+      assert.equal(fetched.messages[1].id, 'msg_2');
     });
 
     it('should append messages incrementally', async () => {
@@ -151,8 +151,8 @@ describe('core/agent-runtime/test/OSSAgentStore.test.ts', () => {
       ]);
       const fetched = await store.getThread(thread.id);
       assert.equal(fetched.messages.length, 2);
-      assert.equal((fetched.messages[0] as unknown as Record<string, unknown>).id, 'msg_1');
-      assert.equal((fetched.messages[1] as unknown as Record<string, unknown>).id, 'msg_2');
+      assert.equal(fetched.messages[0].id, 'msg_1');
+      assert.equal(fetched.messages[1].id, 'msg_2');
     });
 
     it('should throw AgentNotFoundError when appending to non-existent thread', async () => {
@@ -202,8 +202,8 @@ describe('core/agent-runtime/test/OSSAgentStore.test.ts', () => {
       ]);
       const fetched = await fallbackStore.getThread(thread.id);
       assert.equal(fetched.messages.length, 2);
-      assert.equal((fetched.messages[0] as unknown as Record<string, unknown>).id, 'msg_1');
-      assert.equal((fetched.messages[1] as unknown as Record<string, unknown>).id, 'msg_2');
+      assert.equal(fetched.messages[0].id, 'msg_1');
+      assert.equal(fetched.messages[1].id, 'msg_2');
     });
   });
 

@@ -15,6 +15,8 @@ export class AgentNotFoundError extends Error {
 /**
  * Error thrown when an operation conflicts with the current state
  * (e.g., cancelling a completed run).
+ *
+ * TODO(PR2): used by AgentRuntime.cancelRun() — remove this comment after PR2 lands
  */
 export class AgentConflictError extends Error {
   status: number = 409;

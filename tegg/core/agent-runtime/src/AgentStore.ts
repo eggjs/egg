@@ -46,6 +46,11 @@ export interface AgentRunConfig {
 export interface ThreadRecord {
   id: string;
   object: typeof AgentObjectType.Thread;
+  /**
+   * Logically belongs to the thread. In OSSAgentStore the messages are stored
+   * separately as a JSONL file and assembled on read — callers should treat
+   * this as a unified view regardless of the underlying storage layout.
+   */
   messages: MessageObject[];
   metadata: Record<string, unknown>;
   created_at: number; // Unix seconds
