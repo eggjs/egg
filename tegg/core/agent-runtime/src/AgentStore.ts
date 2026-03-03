@@ -1,23 +1,21 @@
 // ===== Object types =====
 
-export const AgentObjectType = {
-  Thread: 'thread',
-  ThreadRun: 'thread.run',
-} as const;
-export type AgentObjectType = (typeof AgentObjectType)[keyof typeof AgentObjectType];
+export enum AgentObjectType {
+  Thread = 'thread',
+  ThreadRun = 'thread.run',
+}
 
 // ===== Run statuses =====
 
-export const RunStatus = {
-  Queued: 'queued',
-  InProgress: 'in_progress',
-  Completed: 'completed',
-  Failed: 'failed',
-  Cancelled: 'cancelled',
-  Cancelling: 'cancelling',
-  Expired: 'expired',
-} as const;
-export type RunStatus = (typeof RunStatus)[keyof typeof RunStatus];
+export enum RunStatus {
+  Queued = 'queued',
+  InProgress = 'in_progress',
+  Completed = 'completed',
+  Failed = 'failed',
+  Cancelled = 'cancelled',
+  Cancelling = 'cancelling',
+  Expired = 'expired',
+}
 
 // ===== Input / Output message types =====
 
@@ -45,7 +43,7 @@ export interface AgentRunConfig {
 
 export interface ThreadRecord {
   id: string;
-  object: typeof AgentObjectType.Thread;
+  object: AgentObjectType.Thread;
   /**
    * Logically belongs to the thread. In OSSAgentStore the messages are stored
    * separately as a JSONL file and assembled on read — callers should treat
@@ -58,7 +56,7 @@ export interface ThreadRecord {
 
 export interface RunRecord {
   id: string;
-  object: typeof AgentObjectType.ThreadRun;
+  object: AgentObjectType.ThreadRun;
   thread_id?: string;
   status: RunStatus;
   input: InputMessage[];
