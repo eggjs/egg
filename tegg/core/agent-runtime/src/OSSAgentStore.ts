@@ -1,21 +1,19 @@
 import crypto from 'node:crypto';
 
-import type { AgentRunConfig, AgentStore, InputMessage, MessageObject, RunRecord, ThreadRecord } from './AgentStore.ts';
-import { AgentObjectType, RunStatus } from './AgentStore.ts';
+import type { AgentRunConfig, AgentStore, InputMessage, MessageObject } from './AgentStore.ts';
+import { RunStatus } from './AgentStore.ts';
 import { nowUnix } from './AgentStoreUtils.ts';
 import { AgentNotFoundError } from './errors.ts';
 import type { ObjectStorageClient } from './ObjectStorageClient.ts';
+import type { RunRecordJSON, RunRecordUpdate } from './RunRecord.ts';
+import { RunRecord } from './RunRecord.ts';
+import { ThreadRecord } from './ThreadRecord.ts';
+import type { ThreadRecordJSON } from './ThreadRecord.ts';
 
 export interface OSSAgentStoreOptions {
   client: ObjectStorageClient;
   prefix?: string;
 }
-
-/**
- * Thread metadata stored as a JSON object (excludes messages).
- * Messages are stored separately in a JSONL file for append-friendly writes.
- */
-type ThreadMetadata = Omit<ThreadRecord, 'messages'>;
 
 /**
  * AgentStore implementation backed by an ObjectStorageClient (OSS, S3, etc.).
@@ -87,16 +85,16 @@ export class OSSAgentStore implements AgentStore {
   // ── Thread operations ────────────────────────────────────────────────
 
   async createThread(metadata?: Record<string, unknown>): Promise<ThreadRecord> {
-    const threadId = `thread_${crypto.randomUUID()}`;
-    const meta: ThreadMetadata = {
-      id: threadId,
-      object: AgentObjectType.Thread,
-      metadata: metadata ?? {},
-      created_at: nowUnix(),
-    };
-    await this.client.put(this.threadMetaKey(threadId), JSON.stringify(meta));
+    const thread = new ThreadRecord({
+      id: `thread_${crypto.randomUUID()}`,
+      metadata,
+      createdAt: nowUnix(),
+    });
+    // Store as snake_case JSON (toJSON() is called by JSON.stringify)
+    const { messages: _, ...metaJSON } = thread.toJSON();
+    await this.client.put(this.threadMetaKey(thread.id), JSON.stringify(metaJSON));
     // Messages file is created lazily on first appendMessages call.
-    return { ...meta, messages: [] };
+    return thread;
   }
 
   async getThread(threadId: string): Promise<ThreadRecord> {
@@ -104,7 +102,7 @@ export class OSSAgentStore implements AgentStore {
     if (!metaData) {
       throw new AgentNotFoundError(`Thread ${threadId} not found`);
     }
-    const meta = JSON.parse(metaData) as ThreadMetadata;
+    const meta = JSON.parse(metaData) as Omit<ThreadRecordJSON, 'messages'>;
 
     // Read messages JSONL — may not exist yet if no messages were appended.
     const messagesData = await this.client.get(this.threadMessagesKey(threadId));
@@ -115,7 +113,7 @@ export class OSSAgentStore implements AgentStore {
           .map((line) => JSON.parse(line) as MessageObject)
       : [];
 
-    return { ...meta, messages };
+    return ThreadRecord.fromJSON({ ...meta, messages });
   }
 
   /**
@@ -154,18 +152,17 @@ export class OSSAgentStore implements AgentStore {
     config?: AgentRunConfig,
     metadata?: Record<string, unknown>,
   ): Promise<RunRecord> {
-    const runId = `run_${crypto.randomUUID()}`;
-    const record: RunRecord = {
-      id: runId,
-      object: AgentObjectType.ThreadRun,
-      thread_id: threadId,
+    const record = new RunRecord({
+      id: `run_${crypto.randomUUID()}`,
+      threadId,
       status: RunStatus.Queued,
       input,
       config,
       metadata,
-      created_at: nowUnix(),
-    };
-    await this.client.put(this.runKey(runId), JSON.stringify(record));
+      createdAt: nowUnix(),
+    });
+    // toJSON() is called by JSON.stringify — writes snake_case to storage
+    await this.client.put(this.runKey(record.id), JSON.stringify(record));
     return record;
   }
 
@@ -174,16 +171,21 @@ export class OSSAgentStore implements AgentStore {
     if (!data) {
       throw new AgentNotFoundError(`Run ${runId} not found`);
     }
-    return JSON.parse(data) as RunRecord;
+    return RunRecord.fromJSON(JSON.parse(data) as RunRecordJSON);
   }
 
   // TODO: read-modify-write is NOT atomic. Concurrent updates may lose data.
   // Acceptable for single-writer scenarios; for multi-writer, consider ETag-based
   // conditional writes with retry, or use a database-backed AgentStore instead.
-  async updateRun(runId: string, updates: Partial<RunRecord>): Promise<void> {
-    const run = await this.getRun(runId);
-    const { id: _, object: __, ...safeUpdates } = updates;
-    Object.assign(run, safeUpdates);
-    await this.client.put(this.runKey(runId), JSON.stringify(run));
+  async updateRun(runId: string, updates: RunRecordUpdate): Promise<void> {
+    // Read raw JSON from storage — keep in snake_case to match RunRecordUpdate format
+    const data = await this.client.get(this.runKey(runId));
+    if (!data) {
+      throw new AgentNotFoundError(`Run ${runId} not found`);
+    }
+    const raw = JSON.parse(data) as RunRecordJSON;
+    const { id: _, object: __, ...safeUpdates } = updates as Record<string, unknown>;
+    Object.assign(raw, safeUpdates);
+    await this.client.put(this.runKey(runId), JSON.stringify(raw));
   }
 }

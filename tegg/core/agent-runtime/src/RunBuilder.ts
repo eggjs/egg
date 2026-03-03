@@ -1,8 +1,9 @@
 import type { MessageObject, RunObject } from '@eggjs/controller-decorator';
 import { RunStatus, AgentErrorCode, AgentObjectType } from '@eggjs/controller-decorator';
 
-import type { RunRecord } from './AgentStore.ts';
 import { nowUnix } from './AgentStoreUtils.ts';
+import type { RunRecordUpdate } from './RunRecord.ts';
+import type { RunRecord } from './RunRecord.ts';
 
 /**
  * Accumulated token usage in camelCase for internal use.
@@ -18,7 +19,7 @@ export interface RunUsage {
  * Encapsulates run state transitions using camelCase internally.
  *
  * Mutation methods (`start`, `complete`, `fail`, `cancel`) update internal
- * state and return `Partial<RunRecord>` (snake_case) for the store.
+ * state and return `RunRecordUpdate` (snake_case) for the store.
  *
  * `snapshot()` converts the full internal state to a snake_case `RunObject`
  * suitable for API responses and SSE events.
@@ -47,18 +48,18 @@ export class RunBuilder {
 
   /** Create a RunBuilder from a store RunRecord. */
   static create(run: RunRecord, threadId: string): RunBuilder {
-    return new RunBuilder(run.id, threadId, run.created_at, run.metadata);
+    return new RunBuilder(run.id, threadId, run.createdAt, run.metadata);
   }
 
   /** queued → in_progress. Returns store update (snake_case). */
-  start(): Partial<RunRecord> {
+  start(): RunRecordUpdate {
     this.status = RunStatus.InProgress;
     this.startedAt = nowUnix();
     return { status: this.status, started_at: this.startedAt };
   }
 
   /** in_progress → completed. Returns store update (snake_case). */
-  complete(output: MessageObject[], usage?: RunUsage): Partial<RunRecord> {
+  complete(output: MessageObject[], usage?: RunUsage): RunRecordUpdate {
     this.status = RunStatus.Completed;
     this.completedAt = nowUnix();
     this.output = output;
@@ -78,7 +79,7 @@ export class RunBuilder {
   }
 
   /** in_progress → failed. Returns store update (snake_case). */
-  fail(error: Error): Partial<RunRecord> {
+  fail(error: Error): RunRecordUpdate {
     this.status = RunStatus.Failed;
     this.failedAt = nowUnix();
     this.lastError = { code: AgentErrorCode.ExecError, message: error.message };
@@ -90,13 +91,13 @@ export class RunBuilder {
   }
 
   /** in_progress/queued → cancelling. Returns store update (snake_case). */
-  cancelling(): Partial<RunRecord> {
+  cancelling(): RunRecordUpdate {
     this.status = RunStatus.Cancelling;
     return { status: this.status };
   }
 
   /** cancelling → cancelled. Returns store update (snake_case). */
-  cancel(): Partial<RunRecord> {
+  cancel(): RunRecordUpdate {
     this.status = RunStatus.Cancelled;
     this.cancelledAt = nowUnix();
     return {

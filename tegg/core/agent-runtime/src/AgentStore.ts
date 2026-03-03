@@ -1,10 +1,4 @@
-import {
-  type InputMessage,
-  type MessageObject,
-  type AgentRunConfig,
-  type RunStatus,
-  AgentObjectType,
-} from '@eggjs/controller-decorator';
+import type { InputMessage, MessageObject, AgentRunConfig } from '@eggjs/controller-decorator';
 
 // Re-export for backwards compatibility (OSSAgentStore imports from here)
 export { AgentObjectType, RunStatus } from '@eggjs/controller-decorator';
@@ -12,36 +6,16 @@ export type { InputMessage, MessageObject, AgentRunConfig } from '@eggjs/control
 
 // ===== Store records =====
 
-export interface ThreadRecord {
-  id: string;
-  object: AgentObjectType.Thread;
-  /**
-   * Logically belongs to the thread. In OSSAgentStore the messages are stored
-   * separately as a JSONL file and assembled on read — callers should treat
-   * this as a unified view regardless of the underlying storage layout.
-   */
-  messages: MessageObject[];
-  metadata: Record<string, unknown>;
-  created_at: number; // Unix seconds
-}
+// Re-export ThreadRecord class — replaces the old ThreadRecord interface
+import { ThreadRecord } from './ThreadRecord.ts';
+export { ThreadRecord } from './ThreadRecord.ts';
+export type { ThreadRecordJSON } from './ThreadRecord.ts';
 
-export interface RunRecord {
-  id: string;
-  object: AgentObjectType.ThreadRun;
-  thread_id?: string;
-  status: RunStatus;
-  input: InputMessage[];
-  output?: MessageObject[];
-  last_error?: { code: string; message: string } | null;
-  usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number } | null;
-  config?: AgentRunConfig;
-  metadata?: Record<string, unknown>;
-  created_at: number;
-  started_at?: number | null;
-  completed_at?: number | null;
-  cancelled_at?: number | null;
-  failed_at?: number | null;
-}
+// Re-export RunRecord class — replaces the old RunRecordJSON interface
+import { RunRecord } from './RunRecord.ts';
+import type { RunRecordUpdate } from './RunRecord.ts';
+export { RunRecord } from './RunRecord.ts';
+export type { RunRecordJSON, RunRecordUpdate } from './RunRecord.ts';
 
 // ===== Store interface =====
 
@@ -58,5 +32,5 @@ export interface AgentStore {
     metadata?: Record<string, unknown>,
   ): Promise<RunRecord>;
   getRun(runId: string): Promise<RunRecord>;
-  updateRun(runId: string, updates: Partial<RunRecord>): Promise<void>;
+  updateRun(runId: string, updates: RunRecordUpdate): Promise<void>;
 }

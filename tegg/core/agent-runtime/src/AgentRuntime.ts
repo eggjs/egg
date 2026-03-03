@@ -66,7 +66,7 @@ export class AgentRuntime {
     return {
       id: thread.id,
       object: AgentObjectType.Thread,
-      created_at: thread.created_at,
+      created_at: thread.createdAt,
       metadata: thread.metadata ?? {},
     };
   }
@@ -79,7 +79,7 @@ export class AgentRuntime {
     return {
       id: thread.id,
       object: AgentObjectType.Thread,
-      created_at: thread.created_at,
+      created_at: thread.createdAt,
       metadata: thread.metadata ?? {},
       messages: thread.messages,
     };
@@ -315,22 +315,7 @@ export class AgentRuntime {
 
   async getRun(runId: string): Promise<RunObject> {
     const run = await this.store.getRun(runId);
-    return {
-      id: run.id,
-      object: AgentObjectType.ThreadRun,
-      created_at: run.created_at,
-      thread_id: run.thread_id,
-      status: run.status,
-      last_error: run.last_error,
-      started_at: run.started_at,
-      completed_at: run.completed_at,
-      cancelled_at: run.cancelled_at,
-      failed_at: run.failed_at,
-      usage: run.usage,
-      output: run.output,
-      config: run.config,
-      metadata: run.metadata,
-    };
+    return run.toRunObject();
   }
 
   async cancelRun(runId: string): Promise<RunObject> {
@@ -340,7 +325,7 @@ export class AgentRuntime {
       throw new AgentConflictError(`Cannot cancel run with status '${run.status}'`);
     }
 
-    const rb = RunBuilder.create(run, run.thread_id ?? '');
+    const rb = RunBuilder.create(run, run.threadId ?? '');
 
     // 2. Write "cancelling" to store first — visible to all workers
     await this.store.updateRun(runId, rb.cancelling());

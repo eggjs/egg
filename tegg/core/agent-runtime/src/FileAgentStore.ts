@@ -3,11 +3,15 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import type { InputMessage, MessageObject, AgentRunConfig } from '@eggjs/controller-decorator';
-import { RunStatus, AgentObjectType } from '@eggjs/controller-decorator';
+import { RunStatus } from '@eggjs/controller-decorator';
 
-import type { AgentStore, ThreadRecord, RunRecord } from './AgentStore.ts';
+import type { AgentStore } from './AgentStore.ts';
 import { nowUnix } from './AgentStoreUtils.ts';
 import { AgentNotFoundError } from './errors.ts';
+import type { RunRecordJSON, RunRecordUpdate } from './RunRecord.ts';
+import { RunRecord } from './RunRecord.ts';
+import { ThreadRecord } from './ThreadRecord.ts';
+import type { ThreadRecordJSON } from './ThreadRecord.ts';
 
 export interface FileAgentStoreOptions {
   dataDir: string;
@@ -41,16 +45,14 @@ export class FileAgentStore implements AgentStore {
   }
 
   async createThread(metadata?: Record<string, unknown>): Promise<ThreadRecord> {
-    const threadId = `thread_${crypto.randomUUID()}`;
-    const record: ThreadRecord = {
-      id: threadId,
-      object: AgentObjectType.Thread,
-      messages: [],
-      metadata: metadata ?? {},
-      created_at: nowUnix(),
-    };
-    await this.writeFile(this.safePath(this.threadsDir, threadId), record);
-    return record;
+    const thread = new ThreadRecord({
+      id: `thread_${crypto.randomUUID()}`,
+      metadata,
+      createdAt: nowUnix(),
+    });
+    // toJSON() is called by JSON.stringify — writes snake_case to disk
+    await this.writeFile(this.safePath(this.threadsDir, thread.id), thread);
+    return thread;
   }
 
   async getThread(threadId: string): Promise<ThreadRecord> {
@@ -59,7 +61,7 @@ export class FileAgentStore implements AgentStore {
     if (!data) {
       throw new AgentNotFoundError(`Thread ${threadId} not found`);
     }
-    return data as ThreadRecord;
+    return ThreadRecord.fromJSON(data as ThreadRecordJSON);
   }
 
   // Note: read-modify-write without locking. In cluster mode with multiple workers
@@ -76,18 +78,17 @@ export class FileAgentStore implements AgentStore {
     config?: AgentRunConfig,
     metadata?: Record<string, unknown>,
   ): Promise<RunRecord> {
-    const runId = `run_${crypto.randomUUID()}`;
-    const record: RunRecord = {
-      id: runId,
-      object: AgentObjectType.ThreadRun,
-      thread_id: threadId,
+    const record = new RunRecord({
+      id: `run_${crypto.randomUUID()}`,
+      threadId,
       status: RunStatus.Queued,
       input,
       config,
       metadata,
-      created_at: nowUnix(),
-    };
-    await this.writeFile(this.safePath(this.runsDir, runId), record);
+      createdAt: nowUnix(),
+    });
+    // toJSON() is called by JSON.stringify — writes snake_case to disk
+    await this.writeFile(this.safePath(this.runsDir, record.id), record);
     return record;
   }
 
@@ -97,14 +98,20 @@ export class FileAgentStore implements AgentStore {
     if (!data) {
       throw new AgentNotFoundError(`Run ${runId} not found`);
     }
-    return data as RunRecord;
+    return RunRecord.fromJSON(data as RunRecordJSON);
   }
 
-  async updateRun(runId: string, updates: Partial<RunRecord>): Promise<void> {
-    const run = await this.getRun(runId);
-    const { id: _, object: __, ...safeUpdates } = updates;
-    Object.assign(run, safeUpdates);
-    await this.writeFile(this.safePath(this.runsDir, runId), run);
+  async updateRun(runId: string, updates: RunRecordUpdate): Promise<void> {
+    // Read raw JSON from disk — keep in snake_case to match RunRecordUpdate format
+    const filePath = this.safePath(this.runsDir, runId);
+    const data = await this.readFile(filePath);
+    if (!data) {
+      throw new AgentNotFoundError(`Run ${runId} not found`);
+    }
+    const raw = data as RunRecordJSON;
+    const { id: _, object: __, ...safeUpdates } = updates as Record<string, unknown>;
+    Object.assign(raw, safeUpdates);
+    await this.writeFile(filePath, raw);
   }
 
   private async writeFile(filePath: string, data: unknown): Promise<void> {

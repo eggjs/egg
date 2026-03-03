@@ -127,7 +127,7 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       } as any);
       const run = await store.getRun(result.id);
       assert.equal(run.status, 'completed');
-      assert(run.completed_at);
+      assert(run.completedAt);
     });
 
     it('should append messages to thread when thread_id provided', async () => {
@@ -284,7 +284,7 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
 
       const run = await store.getRun(result.id);
       assert.equal(run.status, 'cancelled');
-      assert(run.cancelled_at);
+      assert(run.cancelledAt);
     });
 
     it('should write cancelling then cancelled to store', async () => {
