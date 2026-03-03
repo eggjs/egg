@@ -1,14 +1,6 @@
-import { OSSObject } from 'oss-client';
+import type { OSSObject } from 'oss-client';
 
 import type { ObjectStorageClient } from './ObjectStorageClient.ts';
-
-export interface OSSObjectStorageClientOptions {
-  endpoint: string;
-  accessKeyId: string;
-  accessKeySecret: string;
-  bucket: string;
-  region?: string;
-}
 
 /**
  * ObjectStorageClient backed by Alibaba Cloud OSS (via oss-client).
@@ -17,6 +9,9 @@ export interface OSSObjectStorageClientOptions {
  * OSS Appendable Objects. The append path uses a local position cache
  * to avoid extra HEAD requests; on position mismatch it falls back to
  * HEAD + retry automatically.
+ *
+ * The OSSObject instance should be constructed and injected by the caller,
+ * following the IoC/DI principle.
  */
 export class OSSObjectStorageClient implements ObjectStorageClient {
   private readonly client: OSSObject;
@@ -32,14 +27,8 @@ export class OSSObjectStorageClient implements ObjectStorageClient {
    */
   private readonly appendPositions = new Map<string, number>();
 
-  constructor(options: OSSObjectStorageClientOptions) {
-    this.client = new OSSObject({
-      endpoint: options.endpoint,
-      accessKeyId: options.accessKeyId,
-      accessKeySecret: options.accessKeySecret,
-      bucket: options.bucket,
-      region: options.region,
-    });
+  constructor(client: OSSObject) {
+    this.client = client;
   }
 
   async put(key: string, value: string): Promise<void> {
