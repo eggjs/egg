@@ -90,9 +90,7 @@ export function toInputMessageObjects(
   threadId?: string,
 ): MessageObject[] {
   return messages
-    .filter(
-      (m): m is typeof m & { role: Exclude<typeof m.role, typeof MessageRole.System> } => m.role !== MessageRole.System,
-    )
+    .filter((m): m is typeof m & { role: Exclude<typeof m.role, MessageRole.System> } => m.role !== MessageRole.System)
     .map((m) => ({
       id: newMsgId(),
       object: AgentObjectType.ThreadMessage,

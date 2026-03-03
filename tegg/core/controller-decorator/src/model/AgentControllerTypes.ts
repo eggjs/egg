@@ -1,37 +1,33 @@
 // ===== Object types =====
 
-export const AgentObjectType = {
-  Thread: 'thread',
-  ThreadRun: 'thread.run',
-  ThreadMessage: 'thread.message',
-  ThreadMessageDelta: 'thread.message.delta',
-} as const;
-export type AgentObjectType = (typeof AgentObjectType)[keyof typeof AgentObjectType];
+export enum AgentObjectType {
+  Thread = 'thread',
+  ThreadRun = 'thread.run',
+  ThreadMessage = 'thread.message',
+  ThreadMessageDelta = 'thread.message.delta',
+}
 
 // ===== Message roles =====
 
-export const MessageRole = {
-  User: 'user',
-  Assistant: 'assistant',
-  System: 'system',
-} as const;
-export type MessageRole = (typeof MessageRole)[keyof typeof MessageRole];
+export enum MessageRole {
+  User = 'user',
+  Assistant = 'assistant',
+  System = 'system',
+}
 
 // ===== Message statuses =====
 
-export const MessageStatus = {
-  InProgress: 'in_progress',
-  Incomplete: 'incomplete',
-  Completed: 'completed',
-} as const;
-export type MessageStatus = (typeof MessageStatus)[keyof typeof MessageStatus];
+export enum MessageStatus {
+  InProgress = 'in_progress',
+  Incomplete = 'incomplete',
+  Completed = 'completed',
+}
 
 // ===== Content block types =====
 
-export const ContentBlockType = {
-  Text: 'text',
-} as const;
-export type ContentBlockType = (typeof ContentBlockType)[keyof typeof ContentBlockType];
+export enum ContentBlockType {
+  Text = 'text',
+}
 
 // ===== Input Message (what clients send in request body) =====
 
@@ -50,11 +46,11 @@ export interface InputContentPart {
 
 export interface MessageObject {
   id: string; // "msg_xxx"
-  object: typeof AgentObjectType.ThreadMessage;
+  object: AgentObjectType.ThreadMessage;
   created_at: number; // Unix seconds
   thread_id?: string;
   run_id?: string;
-  role: Exclude<MessageRole, typeof MessageRole.System>;
+  role: Exclude<MessageRole, MessageRole.System>;
   status: MessageStatus;
   content: MessageContentBlock[];
   metadata?: Record<string, unknown>;
@@ -71,7 +67,7 @@ export type MessageContentBlock = TextContentBlock;
 
 export interface ThreadObject {
   id: string; // "thread_xxx"
-  object: typeof AgentObjectType.Thread;
+  object: AgentObjectType.Thread;
   created_at: number; // Unix seconds
   metadata: Record<string, unknown>;
 }
@@ -82,20 +78,19 @@ export interface ThreadObjectWithMessages extends ThreadObject {
 
 // ===== Run types =====
 
-export const RunStatus = {
-  Queued: 'queued',
-  InProgress: 'in_progress',
-  Completed: 'completed',
-  Failed: 'failed',
-  Cancelled: 'cancelled',
-  Cancelling: 'cancelling',
-  Expired: 'expired',
-} as const;
-export type RunStatus = (typeof RunStatus)[keyof typeof RunStatus];
+export enum RunStatus {
+  Queued = 'queued',
+  InProgress = 'in_progress',
+  Completed = 'completed',
+  Failed = 'failed',
+  Cancelled = 'cancelled',
+  Cancelling = 'cancelling',
+  Expired = 'expired',
+}
 
 export interface RunObject {
   id: string; // "run_xxx"
-  object: typeof AgentObjectType.ThreadRun;
+  object: AgentObjectType.ThreadRun;
   created_at: number; // Unix seconds
   thread_id?: string;
   status: RunStatus;
@@ -125,31 +120,29 @@ export interface CreateRunInput {
 
 export interface MessageDeltaObject {
   id: string;
-  object: typeof AgentObjectType.ThreadMessageDelta;
+  object: AgentObjectType.ThreadMessageDelta;
   delta: { content: MessageContentBlock[] };
 }
 
 // ===== SSE Event names =====
 
-export const AgentSSEEvent = {
-  ThreadRunCreated: 'thread.run.created',
-  ThreadRunInProgress: 'thread.run.in_progress',
-  ThreadRunCompleted: 'thread.run.completed',
-  ThreadRunFailed: 'thread.run.failed',
-  ThreadRunCancelled: 'thread.run.cancelled',
-  ThreadMessageCreated: 'thread.message.created',
-  ThreadMessageDelta: 'thread.message.delta',
-  ThreadMessageCompleted: 'thread.message.completed',
-  Done: 'done',
-} as const;
-export type AgentSSEEvent = (typeof AgentSSEEvent)[keyof typeof AgentSSEEvent];
+export enum AgentSSEEvent {
+  ThreadRunCreated = 'thread.run.created',
+  ThreadRunInProgress = 'thread.run.in_progress',
+  ThreadRunCompleted = 'thread.run.completed',
+  ThreadRunFailed = 'thread.run.failed',
+  ThreadRunCancelled = 'thread.run.cancelled',
+  ThreadMessageCreated = 'thread.message.created',
+  ThreadMessageDelta = 'thread.message.delta',
+  ThreadMessageCompleted = 'thread.message.completed',
+  Done = 'done',
+}
 
 // ===== Error codes =====
 
-export const AgentErrorCode = {
-  ExecError: 'EXEC_ERROR',
-} as const;
-export type AgentErrorCode = (typeof AgentErrorCode)[keyof typeof AgentErrorCode];
+export enum AgentErrorCode {
+  ExecError = 'EXEC_ERROR',
+}
 
 // ===== Internal types =====
 
