@@ -14,7 +14,7 @@ export type { InputMessage, MessageObject, AgentRunConfig } from '@eggjs/control
 
 export interface ThreadRecord {
   id: string;
-  object: AgentObjectType.Thread;
+  object: typeof AgentObjectType.Thread;
   /**
    * Logically belongs to the thread. In OSSAgentStore the messages are stored
    * separately as a JSONL file and assembled on read — callers should treat
@@ -27,7 +27,7 @@ export interface ThreadRecord {
 
 export interface RunRecord {
   id: string;
-  object: AgentObjectType.ThreadRun;
+  object: typeof AgentObjectType.ThreadRun;
   thread_id?: string;
   status: RunStatus;
   input: InputMessage[];
