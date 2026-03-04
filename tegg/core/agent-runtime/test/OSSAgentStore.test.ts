@@ -337,6 +337,17 @@ describe('core/agent-runtime/test/OSSAgentStore.test.ts', () => {
       assert.equal(fetchedRun.id, run.id);
     });
 
+    it('should normalize prefix without trailing slash', async () => {
+      const client = new MapStorageClient();
+      const withSlash = new OSSAgentStore({ client, prefix: 'myapp/' });
+      const withoutSlash = new OSSAgentStore({ client, prefix: 'myapp' });
+
+      // Both stores should write to the same keys
+      const thread = await withSlash.createThread();
+      const fetched = await withoutSlash.getThread(thread.id);
+      assert.equal(fetched.id, thread.id);
+    });
+
     it('should isolate data between different prefixes', async () => {
       const client = new MapStorageClient();
       const store1 = new OSSAgentStore({ client, prefix: 'app1/' });
