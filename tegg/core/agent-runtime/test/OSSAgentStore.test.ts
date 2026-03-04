@@ -2,9 +2,9 @@ import { strict as assert } from 'node:assert';
 
 import { describe, it, beforeEach, vi } from 'vitest';
 
-import { AgentNotFoundError } from '../src/errors.ts';
-import type { ObjectStorageClient } from '../src/ObjectStorageClient.ts';
-import { OSSAgentStore } from '../src/OSSAgentStore.ts';
+import { AgentNotFoundError } from '../src/index.ts';
+import type { ObjectStorageClient } from '../src/index.ts';
+import { OSSAgentStore } from '../src/index.ts';
 
 /**
  * In-memory ObjectStorageClient for testing.
