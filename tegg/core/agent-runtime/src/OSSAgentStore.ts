@@ -54,7 +54,9 @@ export class OSSAgentStore implements AgentStore {
 
   constructor(options: OSSAgentStoreOptions) {
     this.client = options.client;
-    this.prefix = options.prefix ?? '';
+    // Normalize: ensure non-empty prefix ends with '/'
+    const raw = options.prefix ?? '';
+    this.prefix = raw && !raw.endsWith('/') ? raw + '/' : raw;
   }
 
   // ── Key helpers ──────────────────────────────────────────────────────
