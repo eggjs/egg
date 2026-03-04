@@ -1,6 +1,5 @@
+import type { ObjectStorageClient } from '@eggjs/tegg-types/agent-runtime';
 import type { OSSObject } from 'oss-client';
-
-import type { ObjectStorageClient } from './ObjectStorageClient.ts';
 
 /**
  * ObjectStorageClient backed by Alibaba Cloud OSS (via oss-client).

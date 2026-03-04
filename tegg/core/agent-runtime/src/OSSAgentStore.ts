@@ -1,10 +1,18 @@
 import crypto from 'node:crypto';
 
-import type { AgentRunConfig, AgentStore, InputMessage, MessageObject, RunRecord, ThreadRecord } from './AgentStore.ts';
-import { AgentObjectType, RunStatus } from './AgentStore.ts';
+import type {
+  AgentRunConfig,
+  AgentStore,
+  InputMessage,
+  MessageObject,
+  RunRecord,
+  ThreadRecord,
+} from '@eggjs/tegg-types/agent-runtime';
+import { AgentObjectType, RunStatus } from '@eggjs/tegg-types/agent-runtime';
+import { AgentNotFoundError } from '@eggjs/tegg-types/agent-runtime';
+import type { ObjectStorageClient } from '@eggjs/tegg-types/agent-runtime';
+
 import { nowUnix } from './AgentStoreUtils.ts';
-import { AgentNotFoundError } from './errors.ts';
-import type { ObjectStorageClient } from './ObjectStorageClient.ts';
 
 export interface OSSAgentStoreOptions {
   client: ObjectStorageClient;

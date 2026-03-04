@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 
 import { describe, it } from 'vitest';
 
-import { AgentConflictError, AgentNotFoundError } from '../src/errors.ts';
+import { AgentConflictError, AgentNotFoundError } from '../src/index.ts';
 
 describe('core/agent-runtime/test/errors.test.ts', () => {
   it('AgentNotFoundError should have status 404', () => {
