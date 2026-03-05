@@ -119,8 +119,11 @@ export class RunBuilder {
     };
   }
 
-  /** in_progress/queued → cancelling. Returns store update (snake_case). */
+  /** in_progress/queued → cancelling (idempotent if already cancelling). Returns store update (snake_case). */
   cancelling(): Partial<RunRecord> {
+    if (this.status === RunStatus.Cancelling) {
+      return { status: this.status };
+    }
     if (this.status !== RunStatus.InProgress && this.status !== RunStatus.Queued) {
       throw new InvalidRunStateTransitionError(this.status, RunStatus.Cancelling);
     }

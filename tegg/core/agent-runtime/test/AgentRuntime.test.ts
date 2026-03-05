@@ -93,6 +93,22 @@ class MockSSEWriter implements SSEWriter {
   }
 }
 
+/** Poll store until the run reaches (or passes) the expected status. */
+async function waitForRunStatus(
+  agentStore: OSSAgentStore,
+  runId: string,
+  expectedStatus: RunStatus,
+  timeoutMs = 2000,
+): Promise<void> {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const run = await agentStore.getRun(runId);
+    if (run.status === expectedStatus) return;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  throw new Error(`Run ${runId} did not reach status '${expectedStatus}' within ${timeoutMs}ms`);
+}
+
 // ── Tests ─────────────────────────────────────────────────────────────
 
 describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
@@ -359,12 +375,20 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
     });
 
     it('should emit cancelled event on client disconnect', async () => {
-      // Use a slow execRun that can be aborted
+      // Use a slow execRun that can be aborted; it notifies via
+      // yieldedPromise when the first chunk has been yielded so the
+      // test can disconnect at a deterministic point.
+      let resolveYielded!: () => void;
+      const yieldedPromise = new Promise<void>((r) => {
+        resolveYielded = r;
+      });
+
       host.execRun = async function* (_input: any, signal?: AbortSignal) {
         yield {
           type: 'assistant',
           message: { role: 'assistant' as const, content: [{ type: 'text' as const, text: 'start' }] },
         };
+        resolveYielded();
         await new Promise<void>((resolve) => {
           const timer = setTimeout(resolve, 5000);
           if (signal) {
@@ -382,14 +406,13 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
 
       const writer = new MockSSEWriter();
 
-      // Start streamRun but simulate disconnect shortly after
+      // Start streamRun but simulate disconnect after the first chunk is yielded
       const streamPromise = runtime.streamRun(
         { input: { messages: [{ role: 'user', content: 'Hi' }] } } as any,
         writer,
       );
 
-      // Wait a bit then disconnect
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await yieldedPromise;
       writer.simulateClose();
 
       await streamPromise;
@@ -472,8 +495,8 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
         input: { messages: [{ role: 'user', content: 'Hi' }] },
       } as any);
 
-      // Let background task start running
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      // Wait for background task to reach in_progress deterministically
+      await waitForRunStatus(store, result.id, RunStatus.InProgress);
 
       const cancelResult = await runtime.cancelRun(result.id);
       assert.equal(cancelResult.id, result.id);
@@ -486,6 +509,27 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
     });
 
     it('should write cancelling then cancelled to store', async () => {
+      // Use a slow execRun so the run stays in in_progress long enough to cancel
+      host.execRun = async function* (_input: any, signal?: AbortSignal) {
+        yield {
+          type: 'assistant',
+          message: { role: 'assistant' as const, content: [{ type: 'text' as const, text: 'start' }] },
+        };
+        await new Promise<void>((resolve) => {
+          const timer = setTimeout(resolve, 5000);
+          if (signal) {
+            signal.addEventListener(
+              'abort',
+              () => {
+                clearTimeout(timer);
+                resolve();
+              },
+              { once: true },
+            );
+          }
+        });
+      } as any;
+
       const statusHistory: string[] = [];
       const origUpdateRun = store.updateRun.bind(store);
       store.updateRun = async (runId: string, updates: any) => {
@@ -495,28 +539,19 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
         return origUpdateRun(runId, updates);
       };
 
-      await runtime.syncRun({
-        input: { messages: [{ role: 'user', content: 'Hi' }] },
-      } as any);
-
-      // Run is completed, but let's create a fresh in_progress run to cancel
       const asyncResult = await runtime.asyncRun({
         input: { messages: [{ role: 'user', content: 'Hello' }] },
       } as any);
 
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await waitForRunStatus(store, asyncResult.id, RunStatus.InProgress);
       statusHistory.length = 0; // Reset to only capture cancelRun writes
 
-      await runtime.cancelRun(asyncResult.id).catch(() => {
-        /* may already be completed */
-      });
+      await runtime.cancelRun(asyncResult.id);
 
-      // If cancellation happened, verify cancelling was written before cancelled
-      if (statusHistory.includes('cancelling')) {
-        const cancellingIdx = statusHistory.indexOf('cancelling');
-        const cancelledIdx = statusHistory.indexOf('cancelled');
-        assert(cancelledIdx > cancellingIdx, 'cancelled should come after cancelling');
-      }
+      const cancellingIdx = statusHistory.indexOf('cancelling');
+      const cancelledIdx = statusHistory.indexOf('cancelled');
+      assert(cancellingIdx >= 0, 'cancelling should have been written');
+      assert(cancelledIdx > cancellingIdx, 'cancelled should come after cancelling');
     });
 
     it('should throw AgentConflictError when cancelling a completed run', async () => {
@@ -559,8 +594,8 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
         input: { messages: [{ role: 'user', content: 'Hi' }] },
       } as any);
 
-      // Wait for background task to start and write in_progress
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      // Wait for background task to reach in_progress deterministically
+      await waitForRunStatus(store, result.id, RunStatus.InProgress);
 
       // Simulate another worker writing "cancelling" directly to store
       await store.updateRun(result.id, { status: RunStatus.Cancelling });
@@ -595,8 +630,8 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       const result = await runtime.asyncRun({
         input: { messages: [{ role: 'user', content: 'Hi' }] },
       } as any);
-      // Wait for background task to reach in_progress
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      // Wait for background task to reach in_progress deterministically
+      await waitForRunStatus(store, result.id, RunStatus.InProgress);
 
       // Intercept store.updateRun: after writing 'cancelling', simulate the run completing
       // in the store (as if the background task finished between cancelling and cancelled writes)
@@ -666,6 +701,18 @@ describe('RunBuilder', () => {
     it('should allow Queued -> Cancelling -> Cancelled', () => {
       const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
       rb.cancelling();
+      const cancelUpdate = rb.cancel();
+      assert.equal(cancelUpdate.status, RunStatus.Cancelled);
+    });
+
+    it('should allow idempotent cancelling() when already in Cancelling state', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      rb.start();
+      rb.cancelling();
+      // Second call should be idempotent, not throw
+      const update = rb.cancelling();
+      assert.equal(update.status, RunStatus.Cancelling);
+      // Should still be able to proceed to cancelled
       const cancelUpdate = rb.cancel();
       assert.equal(cancelUpdate.status, RunStatus.Cancelled);
     });

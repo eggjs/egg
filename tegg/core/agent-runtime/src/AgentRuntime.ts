@@ -103,9 +103,14 @@ export class AgentRuntime {
       }
     }
 
-    // Register in runningTasks so cancelRun can find and abort this run
-    const promise = Promise.resolve(); // syncRun is awaited directly; placeholder for the map
-    this.runningTasks.set(run.id, { promise, abortController });
+    // Register in runningTasks so cancelRun can find and await this run.
+    // Use a real pending promise (not Promise.resolve()) so cancelRun's
+    // `await task.promise` blocks until syncRun's try/finally completes.
+    let resolveTask!: () => void;
+    const taskPromise = new Promise<void>((r) => {
+      resolveTask = r;
+    });
+    this.runningTasks.set(run.id, { promise: taskPromise, abortController });
 
     try {
       await this.store.updateRun(run.id, rb.start());
@@ -117,8 +122,9 @@ export class AgentRuntime {
       }
 
       if (abortController.signal.aborted) {
-        // Run was cancelled externally — cancelRun handles the store transition
-        return rb.snapshot();
+        // Run was cancelled externally — re-read store for the latest state
+        const latest = await this.store.getRun(run.id);
+        return RunBuilder.create(latest, latest.thread_id ?? '').snapshot();
       }
 
       const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
@@ -130,8 +136,9 @@ export class AgentRuntime {
       return rb.snapshot();
     } catch (err: unknown) {
       if (abortController.signal.aborted) {
-        // Cancelled — cancelRun handles the store transition
-        return rb.snapshot();
+        // Cancelled — re-read store for the latest state
+        const latest = await this.store.getRun(run.id);
+        return RunBuilder.create(latest, latest.thread_id ?? '').snapshot();
       }
       try {
         await this.store.updateRun(run.id, rb.fail(err as Error));
@@ -140,6 +147,7 @@ export class AgentRuntime {
       }
       throw err;
     } finally {
+      resolveTask();
       this.runningTasks.delete(run.id);
     }
   }
@@ -195,6 +203,8 @@ export class AgentRuntime {
               await this.store.updateRun(run.id, rb.fail(err as Error));
             }
           } catch (storeErr) {
+            // TODO: need a background expiry mechanism to clean up runs stuck in non-terminal states
+            // (e.g. in_progress or cancelling) when store writes fail persistently.
             this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
           }
         } else {
@@ -257,9 +267,13 @@ export class AgentRuntime {
       if (aborted) {
         try {
           await this.store.updateRun(run.id, rb.cancelling());
+        } catch (storeErr) {
+          this.logger.error('[AgentRuntime] failed to write cancelling status during stream abort:', storeErr);
+        }
+        try {
           await this.store.updateRun(run.id, rb.cancel());
         } catch (storeErr) {
-          this.logger.error('[AgentRuntime] failed to update run status during stream abort:', storeErr);
+          this.logger.error('[AgentRuntime] failed to write cancelled status during stream abort:', storeErr);
         }
         if (!writer.closed) {
           writer.writeEvent(AgentSSEEvent.ThreadRunCancelled, rb.snapshot());
@@ -393,7 +407,14 @@ export class AgentRuntime {
     }
 
     // 5. Transition to final "cancelled" state
-    await this.store.updateRun(runId, rb.cancel());
+    try {
+      await this.store.updateRun(runId, rb.cancel());
+    } catch (err) {
+      this.logger.error('[AgentRuntime] failed to write cancelled state after cancelling:', err);
+      // Return best-effort snapshot from store
+      const fallback = await this.store.getRun(runId);
+      return RunBuilder.create(fallback, fallback.thread_id ?? '').snapshot();
+    }
 
     return rb.snapshot();
   }
