@@ -20,31 +20,6 @@ describe('test/Configure.test.ts', () => {
         tracingService.configure({});
       });
     });
-
-    it('should accept complete logService config', () => {
-      assert.doesNotThrow(() => {
-        tracingService.configure({
-          logService: {
-            url: 'https://log.example.com/api',
-            headers: { Authorization: 'Bearer token' },
-          },
-        });
-      });
-    });
-
-    it('should throw TypeError when logService.url is missing', () => {
-      assert.throws(
-        () => {
-          tracingService.configure({
-            logService: {
-              url: '',
-            },
-          });
-        },
-        TypeError,
-        'should throw TypeError for missing logService url',
-      );
-    });
   });
 
   describe('LangGraphTracer.configure()', () => {

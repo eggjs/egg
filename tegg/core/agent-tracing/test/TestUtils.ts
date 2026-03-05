@@ -1,5 +1,6 @@
 import type { Logger } from '@eggjs/tegg-types';
 
+import { ILogServiceClient } from '../src/ILogServiceClient.ts';
 import { IOssClient } from '../src/IOssClient.ts';
 import { TracingService } from '../src/TracingService.ts';
 
@@ -29,10 +30,19 @@ export function createMockOssClient(): IOssClient {
   } as IOssClient;
 }
 
+export function createMockLogServiceClient(logs?: string[]): ILogServiceClient {
+  return {
+    send: async (log: string) => {
+      logs?.push(log);
+    },
+  } as ILogServiceClient;
+}
+
 export function createMockTracingService(logs?: string[]): TracingService {
   const tracingService = new TracingService();
   (tracingService as any).logger = createMockLogger(logs);
   (tracingService as any).backgroundTaskHelper = createMockBackgroundTaskHelper();
   (tracingService as any).ossClient = createMockOssClient();
+  (tracingService as any).logServiceClient = createMockLogServiceClient(logs);
   return tracingService;
 }

@@ -5,6 +5,7 @@ import type { Logger } from '@eggjs/tegg-types';
 import type { Run } from '@langchain/core/tracers/base';
 import { getCustomLogger } from 'onelogger';
 
+import { ILogServiceClient } from './ILogServiceClient.ts';
 import { IOssClient } from './IOssClient.ts';
 import { type AgentTracingConfig, FIELDS_TO_OSS, type IResource, RunStatus } from './types.ts';
 
@@ -25,19 +26,11 @@ export class TracingService {
   @InjectOptional()
   private readonly ossClient: IOssClient;
 
-  private config: AgentTracingConfig = {};
+  @InjectOptional()
+  private readonly logServiceClient: ILogServiceClient;
 
-  /**
-   * Configure logService credentials.
-   * Validates required fields.
-   */
-  configure(config: AgentTracingConfig): void {
-    if (config.logService) {
-      if (!config.logService.url) {
-        throw new TypeError('[TracingService] logService config requires url');
-      }
-    }
-    this.config = config;
+  configure(_config: AgentTracingConfig): void {
+    // Reserved for future configuration options
   }
 
   /**
@@ -91,32 +84,19 @@ export class TracingService {
   }
 
   /**
-   * Sync local tracing logs to a log service endpoint.
-   * Configured via configure({ logService: { url, headers } }).
-   * Silently skips if logService is not configured.
+   * Sync local tracing logs to the injected ILogServiceClient implementation.
+   * Silently skips if no ILogServiceClient is registered.
    */
   async syncLocalToLogService(log: string, agentName: string): Promise<void> {
-    const logServiceConfig = this.config.logService;
-    if (!logServiceConfig?.url) {
+    if (!this.logServiceClient) {
       return;
     }
-
     if (!agentName) {
       this.logger.warn('[TraceLogErr] syncLocalToLogService: agentName is empty');
       return;
     }
-
     try {
-      await fetch(logServiceConfig.url, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          ...logServiceConfig.headers,
-        },
-        body: JSON.stringify({
-          log: `[${agentName}]${log}`,
-        }),
-      });
+      await this.logServiceClient.send(`[${agentName}]${log}`);
     } catch (e) {
       this.logger.warn('[TraceLogErr] syncLocalToLogService error:', e);
     }

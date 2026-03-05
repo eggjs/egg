@@ -152,20 +152,14 @@ export interface OssConfig {
   endpoint?: string;
 }
 
-export interface LogServiceConfig {
-  url: string;
-  headers?: Record<string, string>;
-}
-
 /** Internal config used by TracingService */
 export interface AgentTracingConfig {
-  logService?: LogServiceConfig;
+  // Reserved for future configuration options
 }
 
 /** User-facing config passed to tracer.configure() */
 export interface TracerConfig {
   agentName?: string;
-  logService?: LogServiceConfig;
 }
 
 /** Apply user-facing TracerConfig to a tracer instance and its TracingService. */
@@ -177,9 +171,7 @@ export function applyTracerConfig(
   if (config.agentName !== undefined) {
     tracer.agentName = config.agentName;
   }
-  tracingService.configure({
-    logService: config.logService,
-  });
+  tracingService.configure({});
 }
 
 export { FIELDS_TO_OSS };
