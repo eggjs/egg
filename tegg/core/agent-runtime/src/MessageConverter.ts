@@ -4,8 +4,8 @@ import type {
   MessageContentBlock,
   AgentStreamMessage,
   AgentStreamMessagePayload,
-} from '@eggjs/controller-decorator';
-import { AgentObjectType, MessageRole, MessageStatus, ContentBlockType } from '@eggjs/controller-decorator';
+} from '@eggjs/tegg-types/agent-runtime';
+import { AgentObjectType, MessageRole, MessageStatus, ContentBlockType } from '@eggjs/tegg-types/agent-runtime';
 
 import { nowUnix, newMsgId } from './AgentStoreUtils.ts';
 import type { RunUsage } from './RunBuilder.ts';
@@ -90,7 +90,9 @@ export function toInputMessageObjects(
   threadId?: string,
 ): MessageObject[] {
   return messages
-    .filter((m): m is typeof m & { role: Exclude<typeof m.role, MessageRole.System> } => m.role !== MessageRole.System)
+    .filter(
+      (m): m is typeof m & { role: Exclude<typeof m.role, typeof MessageRole.System> } => m.role !== MessageRole.System,
+    )
     .map((m) => ({
       id: newMsgId(),
       object: AgentObjectType.ThreadMessage,

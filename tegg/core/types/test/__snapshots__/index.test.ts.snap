@@ -8,10 +8,26 @@ exports[`should export stable 1`] = `
     "PUBLIC": "PUBLIC",
   },
   "AgentConflictError": [Function],
+  "AgentErrorCode": {
+    "ExecError": "exec_error",
+  },
   "AgentNotFoundError": [Function],
   "AgentObjectType": {
     "Thread": "thread",
+    "ThreadMessage": "thread.message",
+    "ThreadMessageDelta": "thread.message.delta",
     "ThreadRun": "thread.run",
+  },
+  "AgentSSEEvent": {
+    "Done": "done",
+    "ThreadMessageCompleted": "thread.message.completed",
+    "ThreadMessageCreated": "thread.message.created",
+    "ThreadMessageDelta": "thread.message.delta",
+    "ThreadRunCancelled": "thread.run.cancelled",
+    "ThreadRunCompleted": "thread.run.completed",
+    "ThreadRunCreated": "thread.run.created",
+    "ThreadRunFailed": "thread.run.failed",
+    "ThreadRunInProgress": "thread.run.in_progress",
   },
   "CONSTRUCTOR_QUALIFIER_META_DATA": Symbol(EggPrototype#constructorQualifier),
   "CONTROLLER_ACL": Symbol(EggPrototype#controller#acl),
@@ -92,6 +108,9 @@ exports[`should export stable 1`] = `
     "ZLIB": "ZLIB",
   },
   "ConfigSourceQualifierAttribute": Symbol(Qualifier.ConfigSource),
+  "ContentBlockType": {
+    "Text": "text",
+  },
   "ControllerType": {
     "HEADERS": "HEADERS",
     "HTTP": "HTTP",
@@ -201,6 +220,16 @@ exports[`should export stable 1`] = `
   "MODEL_DATA_SOURCE": Symbol(EggPrototype#model#dataSource),
   "MODEL_DATA_TABLE_NAME": Symbol(EggPrototype#model#tableName),
   "MODEL_PROTO_IMPL_TYPE": "MODEL_PROTO",
+  "MessageRole": {
+    "Assistant": "assistant",
+    "System": "system",
+    "User": "user",
+  },
+  "MessageStatus": {
+    "Completed": "completed",
+    "InProgress": "in_progress",
+    "Incomplete": "incomplete",
+  },
   "MethodType": {
     "HTTP": "HTTP",
     "MESSAGE": "MESSAGE",

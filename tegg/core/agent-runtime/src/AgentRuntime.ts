@@ -7,12 +7,12 @@ import type {
   MessageDeltaObject,
   MessageContentBlock,
   AgentStreamMessage,
-} from '@eggjs/controller-decorator';
-import { RunStatus, AgentSSEEvent, AgentObjectType, MessageRole, MessageStatus } from '@eggjs/controller-decorator';
+  AgentStore,
+} from '@eggjs/tegg-types/agent-runtime';
+import { RunStatus, AgentSSEEvent, AgentObjectType, MessageRole, MessageStatus } from '@eggjs/tegg-types/agent-runtime';
+import { AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
 
-import type { AgentStore } from './AgentStore.ts';
 import { nowUnix, newMsgId } from './AgentStoreUtils.ts';
-import { AgentConflictError } from './errors.ts';
 import { toContentBlocks, extractFromStreamMessages, toInputMessageObjects } from './MessageConverter.ts';
 import { RunBuilder } from './RunBuilder.ts';
 import type { RunUsage } from './RunBuilder.ts';
@@ -71,9 +71,6 @@ export class AgentRuntime {
     };
   }
 
-  // TODO(followup): messages are returned in full here. Add a paginated
-  // listMessages(threadId, { limit, order, after, before }) method to support
-  // large threads, similar to OpenAI's GET /threads/{id}/messages endpoint.
   async getThread(threadId: string): Promise<ThreadObjectWithMessages> {
     const thread = await this.store.getThread(threadId);
     return {
@@ -167,10 +164,10 @@ export class AgentRuntime {
               await this.store.updateRun(run.id, rb.fail(err as Error));
             }
           } catch (storeErr) {
-            this.logger.error('[AgentController] failed to update run status after error:', storeErr);
+            this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
           }
         } else {
-          this.logger.error('[AgentController] execRun error during abort:', err);
+          this.logger.error('[AgentRuntime] execRun error during abort:', err);
         }
       } finally {
         this.runningTasks.delete(run.id);
@@ -254,7 +251,7 @@ export class AgentRuntime {
       try {
         await this.store.updateRun(run.id, rb.fail(err as Error));
       } catch (storeErr) {
-        this.logger.error('[AgentController] failed to update run status after error:', storeErr);
+        this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
       }
 
       // event: thread.run.failed
@@ -319,7 +316,7 @@ export class AgentRuntime {
       id: run.id,
       object: AgentObjectType.ThreadRun,
       created_at: run.created_at,
-      thread_id: run.thread_id,
+      thread_id: run.thread_id ?? '',
       status: run.status,
       last_error: run.last_error,
       started_at: run.started_at,

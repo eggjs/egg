@@ -1,24 +1,42 @@
 import { strict as assert } from 'node:assert';
-import fs from 'node:fs/promises';
-import path from 'node:path';
 
-import { RunStatus } from '@eggjs/controller-decorator';
+import { RunStatus } from '@eggjs/tegg-types/agent-runtime';
+import type { ObjectStorageClient } from '@eggjs/tegg-types/agent-runtime';
+import { AgentNotFoundError, AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { AgentRuntime } from '../src/AgentRuntime.ts';
 import type { AgentControllerHost } from '../src/AgentRuntime.ts';
-import { AgentNotFoundError, AgentConflictError } from '../src/errors.ts';
-import { FileAgentStore } from '../src/FileAgentStore.ts';
+import { OSSAgentStore } from '../src/OSSAgentStore.ts';
+
+/**
+ * In-memory ObjectStorageClient for testing.
+ * Supports put/get/append — mirrors the contract used by OSSAgentStore.
+ */
+class MapStorageClient implements ObjectStorageClient {
+  private readonly store = new Map<string, string>();
+
+  async put(key: string, value: string): Promise<void> {
+    this.store.set(key, value);
+  }
+
+  async get(key: string): Promise<string | null> {
+    return this.store.get(key) ?? null;
+  }
+
+  async append(key: string, value: string): Promise<void> {
+    const existing = this.store.get(key) ?? '';
+    this.store.set(key, existing + value);
+  }
+}
 
 describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
-  const dataDir = path.join(import.meta.dirname, '.agent-runtime-test-data');
   let runtime: AgentRuntime;
-  let store: FileAgentStore;
+  let store: OSSAgentStore;
   let host: AgentControllerHost;
 
-  beforeEach(async () => {
-    store = new FileAgentStore({ dataDir });
-    await store.init();
+  beforeEach(() => {
+    store = new OSSAgentStore({ client: new MapStorageClient() });
     host = {
       async *execRun(input: any) {
         const messages = input.input.messages;
@@ -48,11 +66,10 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
 
   afterEach(async () => {
     await runtime.destroy();
-    await fs.rm(dataDir, { recursive: true, force: true });
   });
 
   describe('createThread', () => {
-    it('should create a thread and return OpenAI ThreadObject', async () => {
+    it('should create a thread and return ThreadObject', async () => {
       const result = await runtime.createThread();
       assert(result.id.startsWith('thread_'));
       assert.equal(result.object, 'thread');
@@ -97,11 +114,11 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       assert(result.thread_id.startsWith('thread_'));
       assert.equal(result.output!.length, 1);
       assert.equal(result.output![0].object, 'thread.message');
-      assert.equal(result.output![0].role, 'assistant');
-      assert.equal(result.output![0].status, 'completed');
-      assert.equal(result.output![0].content[0].type, 'text');
-      assert.equal(result.output![0].content[0].text.value, 'Hello 1 messages');
-      assert(Array.isArray(result.output![0].content[0].text.annotations));
+      assert.equal((result.output![0] as any).role, 'assistant');
+      assert.equal((result.output![0] as any).status, 'completed');
+      assert.equal((result.output![0] as any).content[0].type, 'text');
+      assert.equal((result.output![0] as any).content[0].text.value, 'Hello 1 messages');
+      assert(Array.isArray((result.output![0] as any).content[0].text.annotations));
       assert.equal(result.usage!.prompt_tokens, 10);
       assert.equal(result.usage!.completion_tokens, 5);
       assert.equal(result.usage!.total_tokens, 15);
@@ -140,8 +157,8 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
 
       const updated = await runtime.getThread(thread.id);
       assert.equal(updated.messages.length, 2); // user + assistant
-      assert.equal(updated.messages[0].role, 'user');
-      assert.equal(updated.messages[1].role, 'assistant');
+      assert.equal((updated.messages[0] as any).role, 'user');
+      assert.equal((updated.messages[1] as any).role, 'assistant');
     });
 
     it('should auto-create thread and append messages when thread_id not provided', async () => {
@@ -154,8 +171,8 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       // Verify thread was created and messages were appended
       const thread = await runtime.getThread(result.thread_id);
       assert.equal(thread.messages.length, 2); // user + assistant
-      assert.equal(thread.messages[0].role, 'user');
-      assert.equal(thread.messages[1].role, 'assistant');
+      assert.equal((thread.messages[0] as any).role, 'user');
+      assert.equal((thread.messages[1] as any).role, 'assistant');
     });
   });
 
@@ -181,7 +198,7 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
 
       const run = await store.getRun(result.id);
       assert.equal(run.status, 'completed');
-      assert.equal(run.output![0].content[0].text.value, 'Hello 1 messages');
+      assert.equal((run.output![0] as any).content[0].text.value, 'Hello 1 messages');
     });
 
     it('should auto-create thread and append messages when thread_id not provided', async () => {
@@ -196,8 +213,8 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       // Verify thread was created and messages were appended
       const thread = await store.getThread(result.thread_id);
       assert.equal(thread.messages.length, 2); // user + assistant
-      assert.equal(thread.messages[0].role, 'user');
-      assert.equal(thread.messages[1].role, 'assistant');
+      assert.equal((thread.messages[0] as any).role, 'user');
+      assert.equal((thread.messages[1] as any).role, 'assistant');
     });
 
     it('should pass metadata through to store and return it', async () => {

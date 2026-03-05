@@ -1,7 +1,6 @@
-import type { MessageObject, RunObject } from '@eggjs/controller-decorator';
-import { RunStatus, AgentErrorCode, AgentObjectType } from '@eggjs/controller-decorator';
+import type { MessageObject, RunObject, RunRecord } from '@eggjs/tegg-types/agent-runtime';
+import { RunStatus, AgentErrorCode, AgentObjectType } from '@eggjs/tegg-types/agent-runtime';
 
-import type { RunRecord } from './AgentStore.ts';
 import { nowUnix } from './AgentStoreUtils.ts';
 
 /**
