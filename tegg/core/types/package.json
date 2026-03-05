@@ -119,6 +119,10 @@
     "./runtime/model/LoadUnitInstance": "./src/runtime/model/LoadUnitInstance.ts",
     "./schedule": "./src/schedule.ts",
     "./transaction": "./src/transaction.ts",
+    "./agent-runtime": "./src/agent-runtime/index.ts",
+    "./agent-runtime/AgentStore": "./src/agent-runtime/AgentStore.ts",
+    "./agent-runtime/ObjectStorageClient": "./src/agent-runtime/ObjectStorageClient.ts",
+    "./agent-runtime/errors": "./src/agent-runtime/errors.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -216,6 +220,10 @@
       "./runtime/model/LoadUnitInstance": "./dist/runtime/model/LoadUnitInstance.js",
       "./schedule": "./dist/schedule.js",
       "./transaction": "./dist/transaction.js",
+      "./agent-runtime": "./dist/agent-runtime/index.js",
+      "./agent-runtime/AgentStore": "./dist/agent-runtime/AgentStore.js",
+      "./agent-runtime/ObjectStorageClient": "./dist/agent-runtime/ObjectStorageClient.js",
+      "./agent-runtime/errors": "./dist/agent-runtime/errors.js",
       "./package.json": "./package.json"
     }
   },

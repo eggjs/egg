@@ -10,3 +10,4 @@ export * from './orm.ts';
 export * from './runtime/index.ts';
 export * from './schedule.ts';
 export * from './transaction.ts';
+export * from './agent-runtime/index.ts';
