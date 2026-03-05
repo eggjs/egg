@@ -1,11 +1,11 @@
 import type { BackgroundTaskHelper } from '@eggjs/background-task';
-import { SingletonProto, Inject } from '@eggjs/core-decorator';
+import { SingletonProto, Inject, InjectOptional } from '@eggjs/core-decorator';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { Logger } from '@eggjs/tegg-types';
 import type { Run } from '@langchain/core/tracers/base';
-import OSS from 'ali-oss';
 import { getCustomLogger } from 'onelogger';
 
+import { IOssClient } from './IOssClient.ts';
 import { type AgentTracingConfig, FIELDS_TO_OSS, type IResource, RunStatus } from './types.ts';
 
 /**
@@ -22,29 +22,22 @@ export class TracingService {
   @Inject()
   private backgroundTaskHelper: BackgroundTaskHelper;
 
+  @InjectOptional()
+  private readonly ossClient: IOssClient;
+
   private config: AgentTracingConfig = {};
-  private ossClient: OSS | null = null;
-  private ossInitialized = false;
 
   /**
-   * Configure OSS and/or logService credentials.
-   * Validates required fields and resets cached OSS client.
+   * Configure logService credentials.
+   * Validates required fields.
    */
   configure(config: AgentTracingConfig): void {
-    if (config.oss) {
-      const { accessKeyId, accessKeySecret, bucket, region } = config.oss;
-      if (!accessKeyId || !accessKeySecret || !bucket || !region) {
-        throw new TypeError('[TracingService] oss config requires accessKeyId, accessKeySecret, bucket, and region');
-      }
-    }
     if (config.logService) {
       if (!config.logService.url) {
         throw new TypeError('[TracingService] logService config requires url');
       }
     }
     this.config = config;
-    this.ossClient = null;
-    this.ossInitialized = false;
   }
 
   /**
@@ -84,50 +77,17 @@ export class TracingService {
   }
 
   /**
-   * Lazily initialize the ali-oss client from configured credentials.
-   * Returns null if OSS is not configured via configure().
-   */
-  private getOssClient(): OSS | null {
-    if (this.ossInitialized) {
-      return this.ossClient;
-    }
-    this.ossInitialized = true;
-
-    const ossConfig = this.config.oss;
-    if (!ossConfig) {
-      this.logger.warn(
-        '[TracingService] OSS not configured. Call configure({ oss: { ... } }) first. OSS uploads will be skipped.',
-      );
-      return null;
-    }
-
-    const options: OSS.Options = {
-      accessKeyId: ossConfig.accessKeyId,
-      accessKeySecret: ossConfig.accessKeySecret,
-      bucket: ossConfig.bucket,
-      region: ossConfig.region,
-    };
-
-    if (ossConfig.endpoint) {
-      options.endpoint = ossConfig.endpoint;
-    }
-
-    this.ossClient = new OSS(options);
-    return this.ossClient;
-  }
-
-  /**
-   * Upload content to OSS using ali-oss SDK.
-   * Gracefully skips if OSS env vars are not configured.
+   * Upload content to OSS using the injected IOssClient implementation.
+   * Gracefully skips if no IOssClient is provided.
    */
   async uploadToOss(key: string, fileContent: string): Promise<void> {
-    const client = this.getOssClient();
-    if (!client) {
+    if (!this.ossClient) {
+      this.logger.warn('[TracingService] OSS client not configured. Provide an IOssClient implementation.');
       return;
     }
     this.logger.info(`Uploading to OSS with key: ${key}`);
-    const result = await client.put(key, Buffer.from(fileContent));
-    this.logger.info(`Upload response for key ${key}: ${result.res.status}`);
+    await this.ossClient.put(key, Buffer.from(fileContent));
+    this.logger.info(`Upload completed for key: ${key}`);
   }
 
   /**

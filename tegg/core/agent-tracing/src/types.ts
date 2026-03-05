@@ -159,14 +159,12 @@ export interface LogServiceConfig {
 
 /** Internal config used by TracingService */
 export interface AgentTracingConfig {
-  oss?: OssConfig;
   logService?: LogServiceConfig;
 }
 
 /** User-facing config passed to tracer.configure() */
 export interface TracerConfig {
   agentName?: string;
-  oss?: OssConfig;
   logService?: LogServiceConfig;
 }
 
@@ -180,7 +178,6 @@ export function applyTracerConfig(
     tracer.agentName = config.agentName;
   }
   tracingService.configure({
-    oss: config.oss,
     logService: config.logService,
   });
 }
