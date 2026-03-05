@@ -21,19 +21,6 @@ describe('test/Configure.test.ts', () => {
       });
     });
 
-    it('should accept complete oss config', () => {
-      assert.doesNotThrow(() => {
-        tracingService.configure({
-          oss: {
-            accessKeyId: 'ak',
-            accessKeySecret: 'sk',
-            bucket: 'my-bucket',
-            region: 'cn-hangzhou',
-          },
-        });
-      });
-    });
-
     it('should accept complete logService config', () => {
       assert.doesNotThrow(() => {
         tracingService.configure({
@@ -43,90 +30,6 @@ describe('test/Configure.test.ts', () => {
           },
         });
       });
-    });
-
-    it('should accept both oss and logService config', () => {
-      assert.doesNotThrow(() => {
-        tracingService.configure({
-          oss: {
-            accessKeyId: 'ak',
-            accessKeySecret: 'sk',
-            bucket: 'my-bucket',
-            region: 'cn-hangzhou',
-          },
-          logService: {
-            url: 'https://log.example.com/api',
-          },
-        });
-      });
-    });
-
-    it('should throw TypeError when oss.accessKeyId is missing', () => {
-      assert.throws(
-        () => {
-          tracingService.configure({
-            oss: {
-              accessKeyId: '',
-              accessKeySecret: 'sk',
-              bucket: 'my-bucket',
-              region: 'cn-hangzhou',
-            },
-          });
-        },
-        TypeError,
-        'should throw TypeError for missing accessKeyId',
-      );
-    });
-
-    it('should throw TypeError when oss.accessKeySecret is missing', () => {
-      assert.throws(
-        () => {
-          tracingService.configure({
-            oss: {
-              accessKeyId: 'ak',
-              accessKeySecret: '',
-              bucket: 'my-bucket',
-              region: 'cn-hangzhou',
-            },
-          });
-        },
-        TypeError,
-        'should throw TypeError for missing accessKeySecret',
-      );
-    });
-
-    it('should throw TypeError when oss.bucket is missing', () => {
-      assert.throws(
-        () => {
-          tracingService.configure({
-            oss: {
-              accessKeyId: 'ak',
-              accessKeySecret: 'sk',
-              bucket: '',
-              region: 'cn-hangzhou',
-            },
-          });
-        },
-        TypeError,
-        'should throw TypeError for missing bucket',
-      );
-    });
-
-    it('should throw TypeError when oss.region is missing', () => {
-      assert.throws(
-        () => {
-          tracingService.configure({
-            oss: {
-              accessKeyId: 'ak',
-              accessKeySecret: 'sk',
-              bucket: 'my-bucket',
-              region: '',
-            },
-          });
-        },
-        TypeError,
-        'should throw TypeError for missing region',
-      );
     });
 
     it('should throw TypeError when logService.url is missing', () => {
@@ -142,21 +45,6 @@ describe('test/Configure.test.ts', () => {
         'should throw TypeError for missing logService url',
       );
     });
-
-    it('should reset OSS client when reconfigured', () => {
-      tracingService.configure({
-        oss: {
-          accessKeyId: 'ak1',
-          accessKeySecret: 'sk1',
-          bucket: 'bucket1',
-          region: 'region1',
-        },
-      });
-
-      // Access private state to verify reset
-      assert.strictEqual((tracingService as any).ossInitialized, false);
-      assert.strictEqual((tracingService as any).ossClient, null);
-    });
   });
 
   describe('LangGraphTracer.configure()', () => {
@@ -167,12 +55,6 @@ describe('test/Configure.test.ts', () => {
 
       tracer.configure({
         agentName: 'MyAgent',
-        oss: {
-          accessKeyId: 'ak',
-          accessKeySecret: 'sk',
-          bucket: 'bucket',
-          region: 'region',
-        },
       });
 
       assert.strictEqual(tracer.agentName, 'MyAgent');
@@ -201,12 +83,6 @@ describe('test/Configure.test.ts', () => {
 
       tracer.configure({
         agentName: 'MyClaude',
-        oss: {
-          accessKeyId: 'ak',
-          accessKeySecret: 'sk',
-          bucket: 'bucket',
-          region: 'region',
-        },
       });
 
       assert.strictEqual(tracer.agentName, 'MyClaude');

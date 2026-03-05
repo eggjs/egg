@@ -53,7 +53,6 @@
     "@eggjs/background-task": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
-    "ali-oss": "^6.21.0",
     "onelogger": "catalog:"
   },
   "devDependencies": {
@@ -62,7 +61,6 @@
     "@eggjs/tegg-common-util": "workspace:*",
     "@langchain/core": "^1.1.29",
     "@langchain/langgraph": "^0.2.74",
-    "@types/ali-oss": "^6.16.0",
     "@types/node": "catalog:",
     "typescript": "catalog:"
   },
