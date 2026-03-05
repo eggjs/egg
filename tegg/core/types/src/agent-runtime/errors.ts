@@ -24,3 +24,16 @@ export class AgentConflictError extends Error {
     this.name = 'AgentConflictError';
   }
 }
+
+/**
+ * Error thrown when a RunBuilder state transition is invalid
+ * (e.g., calling `complete()` on a queued run).
+ */
+export class InvalidRunStateTransitionError extends Error {
+  status: number = 409;
+
+  constructor(from: string, to: string) {
+    super(`Invalid run state transition: '${from}' -> '${to}'`);
+    this.name = 'InvalidRunStateTransitionError';
+  }
+}

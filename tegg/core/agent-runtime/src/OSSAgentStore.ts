@@ -122,6 +122,7 @@ export class OSSAgentStore implements AgentStore {
       ? messagesData
           .trim()
           .split('\n')
+          .filter((line) => line.length > 0)
           .map((line) => JSON.parse(line) as MessageObject)
       : [];
 
@@ -136,6 +137,8 @@ export class OSSAgentStore implements AgentStore {
    * O(1) write — no need to read the existing messages first.
    */
   async appendMessages(threadId: string, messages: MessageObject[]): Promise<void> {
+    if (messages.length === 0) return;
+
     // Verify the thread exists before writing messages.
     const metaData = await this.client.get(this.threadMetaKey(threadId));
     if (!metaData) {

@@ -1,13 +1,23 @@
 import { strict as assert } from 'node:assert';
 
-import { RunStatus } from '@eggjs/tegg-types/agent-runtime';
-import type { ObjectStorageClient } from '@eggjs/tegg-types/agent-runtime';
-import { AgentNotFoundError, AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
+import { RunStatus, AgentSSEEvent, AgentObjectType } from '@eggjs/tegg-types/agent-runtime';
+import type { ObjectStorageClient, RunRecord } from '@eggjs/tegg-types/agent-runtime';
+import {
+  AgentNotFoundError,
+  AgentConflictError,
+  InvalidRunStateTransitionError,
+} from '@eggjs/tegg-types/agent-runtime';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { AgentRuntime } from '../src/AgentRuntime.ts';
 import type { AgentControllerHost } from '../src/AgentRuntime.ts';
+import { toContentBlocks, extractFromStreamMessages, toInputMessageObjects } from '../src/MessageConverter.ts';
 import { OSSAgentStore } from '../src/OSSAgentStore.ts';
+import { RunBuilder } from '../src/RunBuilder.ts';
+import type { SSEWriter } from '../src/SSEWriter.ts';
+import { NodeSSEWriter } from '../src/SSEWriter.ts';
+
+// ── Test helpers ──────────────────────────────────────────────────────
 
 /**
  * In-memory ObjectStorageClient for testing.
@@ -29,6 +39,61 @@ class MapStorageClient implements ObjectStorageClient {
     this.store.set(key, existing + value);
   }
 }
+
+/**
+ * In-memory ObjectStorageClient WITHOUT append — for testing the fallback path.
+ */
+class MapStorageClientWithoutAppend implements ObjectStorageClient {
+  private readonly store = new Map<string, string>();
+
+  async put(key: string, value: string): Promise<void> {
+    this.store.set(key, value);
+  }
+
+  async get(key: string): Promise<string | null> {
+    return this.store.get(key) ?? null;
+  }
+}
+
+/** Create a minimal RunRecord for RunBuilder tests. */
+function makeRunRecord(overrides?: Partial<RunRecord>): RunRecord {
+  return {
+    id: 'run_test',
+    object: AgentObjectType.ThreadRun,
+    thread_id: 'thread_test',
+    status: RunStatus.Queued,
+    input: [{ role: 'user', content: 'hi' }],
+    created_at: 1000,
+    ...overrides,
+  };
+}
+
+/** Mock SSEWriter that records events in-memory for assertions. */
+class MockSSEWriter implements SSEWriter {
+  events: Array<{ event: string; data: unknown }> = [];
+  closed = false;
+  private closeCallbacks: Array<() => void> = [];
+
+  writeEvent(event: string, data: unknown): void {
+    this.events.push({ event, data });
+  }
+
+  end(): void {
+    this.closed = true;
+  }
+
+  onClose(callback: () => void): void {
+    this.closeCallbacks.push(callback);
+  }
+
+  /** Simulate client disconnect. */
+  simulateClose(): void {
+    this.closed = true;
+    for (const cb of this.closeCallbacks) cb();
+  }
+}
+
+// ── Tests ─────────────────────────────────────────────────────────────
 
 describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
   let runtime: AgentRuntime;
@@ -174,6 +239,34 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       assert.equal((thread.messages[0] as any).role, 'user');
       assert.equal((thread.messages[1] as any).role, 'assistant');
     });
+
+    it('should not throw when store.updateRun fails in catch block', async () => {
+      // execRun throws an error
+      host.execRun = async function* () {
+        throw new Error('exec failed');
+      } as any;
+
+      // Make store.updateRun fail on the fail() update
+      let callCount = 0;
+      const origUpdateRun = store.updateRun.bind(store);
+      store.updateRun = async (runId: string, updates: any) => {
+        callCount++;
+        // Fail on second call (the fail() update in catch block)
+        if (callCount === 2) {
+          throw new Error('store down');
+        }
+        return origUpdateRun(runId, updates);
+      };
+
+      await assert.rejects(
+        () => runtime.syncRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } } as any),
+        (err: unknown) => {
+          assert(err instanceof Error);
+          assert.equal(err.message, 'exec failed');
+          return true;
+        },
+      );
+    });
   });
 
   describe('asyncRun', () => {
@@ -231,6 +324,94 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       // Verify stored in store
       const run = await store.getRun(result.id);
       assert.deepEqual(run.metadata, meta);
+    });
+  });
+
+  describe('streamRun', () => {
+    it('should emit correct SSE event sequence for normal flow', async () => {
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } } as any, writer);
+
+      const eventNames = writer.events.map((e) => e.event);
+      assert(eventNames.includes(AgentSSEEvent.ThreadRunCreated));
+      assert(eventNames.includes(AgentSSEEvent.ThreadRunInProgress));
+      assert(eventNames.includes(AgentSSEEvent.ThreadMessageCreated));
+      assert(eventNames.includes(AgentSSEEvent.ThreadMessageDelta));
+      assert(eventNames.includes(AgentSSEEvent.ThreadMessageCompleted));
+      assert(eventNames.includes(AgentSSEEvent.ThreadRunCompleted));
+      assert(eventNames.includes(AgentSSEEvent.Done));
+      assert(writer.closed);
+
+      // Verify order: created < in_progress < message.created < delta < message.completed < run.completed < done
+      const createdIdx = eventNames.indexOf(AgentSSEEvent.ThreadRunCreated);
+      const progressIdx = eventNames.indexOf(AgentSSEEvent.ThreadRunInProgress);
+      const msgCreatedIdx = eventNames.indexOf(AgentSSEEvent.ThreadMessageCreated);
+      const deltaIdx = eventNames.indexOf(AgentSSEEvent.ThreadMessageDelta);
+      const msgCompletedIdx = eventNames.indexOf(AgentSSEEvent.ThreadMessageCompleted);
+      const runCompletedIdx = eventNames.indexOf(AgentSSEEvent.ThreadRunCompleted);
+      const doneIdx = eventNames.indexOf(AgentSSEEvent.Done);
+      assert(createdIdx < progressIdx);
+      assert(progressIdx < msgCreatedIdx);
+      assert(msgCreatedIdx < deltaIdx);
+      assert(deltaIdx < msgCompletedIdx);
+      assert(msgCompletedIdx < runCompletedIdx);
+      assert(runCompletedIdx < doneIdx);
+    });
+
+    it('should emit cancelled event on client disconnect', async () => {
+      // Use a slow execRun that can be aborted
+      host.execRun = async function* (_input: any, signal?: AbortSignal) {
+        yield {
+          type: 'assistant',
+          message: { role: 'assistant' as const, content: [{ type: 'text' as const, text: 'start' }] },
+        };
+        await new Promise<void>((resolve) => {
+          const timer = setTimeout(resolve, 5000);
+          if (signal) {
+            signal.addEventListener(
+              'abort',
+              () => {
+                clearTimeout(timer);
+                resolve();
+              },
+              { once: true },
+            );
+          }
+        });
+      } as any;
+
+      const writer = new MockSSEWriter();
+
+      // Start streamRun but simulate disconnect shortly after
+      const streamPromise = runtime.streamRun(
+        { input: { messages: [{ role: 'user', content: 'Hi' }] } } as any,
+        writer,
+      );
+
+      // Wait a bit then disconnect
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      writer.simulateClose();
+
+      await streamPromise;
+
+      const eventNames = writer.events.map((e) => e.event);
+      // Should have run.created and run.in_progress, then cancelled
+      assert(eventNames.includes(AgentSSEEvent.ThreadRunCreated));
+      assert(eventNames.includes(AgentSSEEvent.ThreadRunInProgress));
+    });
+
+    it('should emit failed event when execRun throws', async () => {
+      host.execRun = async function* () {
+        throw new Error('model unavailable');
+      } as any;
+
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } } as any, writer);
+
+      const eventNames = writer.events.map((e) => e.event);
+      assert(eventNames.includes(AgentSSEEvent.ThreadRunFailed));
+      assert(eventNames.includes(AgentSSEEvent.Done));
+      assert(writer.closed);
     });
   });
 
@@ -392,5 +573,492 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
       const run = await store.getRun(result.id);
       assert.equal(run.status, 'cancelling', 'status should remain cancelling, not overwritten to completed');
     });
+
+    it('should not overwrite terminal state when run completes during cancellation (TOCTOU)', async () => {
+      // Scenario: cancelRun writes cancelling, then between the cancelling write and
+      // the cancelled write, the run completes. The re-read check should detect this.
+      let resolveExecRun: (() => void) | undefined;
+      host.execRun = async function* (_input: any, signal?: AbortSignal) {
+        await new Promise<void>((resolve, reject) => {
+          resolveExecRun = resolve;
+          if (signal) {
+            signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+          }
+        });
+        yield {
+          type: 'assistant',
+          message: { role: 'assistant' as const, content: [{ type: 'text' as const, text: 'done' }] },
+        };
+        yield { type: 'result', usage: { prompt_tokens: 1, completion_tokens: 1 } };
+      } as any;
+
+      const result = await runtime.asyncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      } as any);
+      // Wait for background task to reach in_progress
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // Intercept store.updateRun: after writing 'cancelling', simulate the run completing
+      // in the store (as if the background task finished between cancelling and cancelled writes)
+      const origUpdateRun = store.updateRun.bind(store);
+      store.updateRun = async (runId: string, updates: any) => {
+        await origUpdateRun(runId, updates);
+        if (updates.status === RunStatus.Cancelling) {
+          // Simulate the background task completing in the store
+          await origUpdateRun(runId, { status: RunStatus.Completed, completed_at: Math.floor(Date.now() / 1000) });
+          // Restore original to avoid infinite interception
+          store.updateRun = origUpdateRun;
+        }
+      };
+
+      // Let execRun finish so it doesn't block cancelRun's await task.promise
+      resolveExecRun!();
+
+      const cancelResult = await runtime.cancelRun(result.id);
+      // The TOCTOU re-read should detect that the run is now completed
+      assert.equal(cancelResult.status, 'completed');
+    });
+  });
+});
+
+// ── RunBuilder state machine tests ────────────────────────────────────
+
+describe('RunBuilder', () => {
+  describe('state transitions', () => {
+    it('should allow Queued -> InProgress -> Completed', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      const startUpdate = rb.start();
+      assert.equal(startUpdate.status, RunStatus.InProgress);
+      assert(startUpdate.started_at);
+
+      const completeUpdate = rb.complete([], { promptTokens: 1, completionTokens: 2, totalTokens: 3 });
+      assert.equal(completeUpdate.status, RunStatus.Completed);
+      assert(completeUpdate.completed_at);
+      assert.deepEqual(completeUpdate.usage, { prompt_tokens: 1, completion_tokens: 2, total_tokens: 3 });
+    });
+
+    it('should allow Queued -> InProgress -> Failed', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      rb.start();
+      const failUpdate = rb.fail(new Error('oops'));
+      assert.equal(failUpdate.status, RunStatus.Failed);
+      assert(failUpdate.failed_at);
+      assert.equal(failUpdate.last_error!.message, 'oops');
+    });
+
+    it('should allow Queued -> Failed (start itself might throw)', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      const failUpdate = rb.fail(new Error('store down'));
+      assert.equal(failUpdate.status, RunStatus.Failed);
+    });
+
+    it('should allow Queued -> InProgress -> Cancelling -> Cancelled', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      rb.start();
+      const cancellingUpdate = rb.cancelling();
+      assert.equal(cancellingUpdate.status, RunStatus.Cancelling);
+
+      const cancelUpdate = rb.cancel();
+      assert.equal(cancelUpdate.status, RunStatus.Cancelled);
+      assert(cancelUpdate.cancelled_at);
+    });
+
+    it('should allow Queued -> Cancelling -> Cancelled', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      rb.cancelling();
+      const cancelUpdate = rb.cancel();
+      assert.equal(cancelUpdate.status, RunStatus.Cancelled);
+    });
+  });
+
+  describe('invalid state transitions', () => {
+    it('should throw on start() from non-Queued state', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      rb.start(); // Queued -> InProgress
+      assert.throws(
+        () => rb.start(),
+        (err: unknown) => {
+          assert(err instanceof InvalidRunStateTransitionError);
+          assert.equal(err.status, 409);
+          return true;
+        },
+      );
+    });
+
+    it('should throw on complete() from Queued state', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      assert.throws(
+        () => rb.complete([], undefined),
+        (err: unknown) => err instanceof InvalidRunStateTransitionError,
+      );
+    });
+
+    it('should throw on complete() from Failed state', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      rb.start();
+      rb.fail(new Error('fail'));
+      assert.throws(
+        () => rb.complete([], undefined),
+        (err: unknown) => err instanceof InvalidRunStateTransitionError,
+      );
+    });
+
+    it('should throw on fail() from Completed state', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      rb.start();
+      rb.complete([], undefined);
+      assert.throws(
+        () => rb.fail(new Error('late')),
+        (err: unknown) => err instanceof InvalidRunStateTransitionError,
+      );
+    });
+
+    it('should throw on cancelling() from Completed state', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      rb.start();
+      rb.complete([], undefined);
+      assert.throws(
+        () => rb.cancelling(),
+        (err: unknown) => err instanceof InvalidRunStateTransitionError,
+      );
+    });
+
+    it('should throw on cancel() from InProgress state (must go through cancelling)', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_test');
+      rb.start();
+      assert.throws(
+        () => rb.cancel(),
+        (err: unknown) => err instanceof InvalidRunStateTransitionError,
+      );
+    });
+  });
+
+  describe('create() restores full state from RunRecord', () => {
+    it('should restore started_at and status from an InProgress RunRecord', () => {
+      const record = makeRunRecord({
+        status: RunStatus.InProgress,
+        started_at: 2000,
+      });
+      const rb = RunBuilder.create(record, 'thread_test');
+      const snap = rb.snapshot();
+      assert.equal(snap.status, RunStatus.InProgress);
+      assert.equal(snap.started_at, 2000);
+    });
+
+    it('should restore all timestamps and fields from a Completed RunRecord', () => {
+      const record = makeRunRecord({
+        status: RunStatus.Completed,
+        started_at: 2000,
+        completed_at: 3000,
+        usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+        output: [{ id: 'msg_1', object: 'thread.message', created_at: 2500 }],
+      });
+      const rb = RunBuilder.create(record, 'thread_test');
+      const snap = rb.snapshot();
+      assert.equal(snap.status, RunStatus.Completed);
+      assert.equal(snap.started_at, 2000);
+      assert.equal(snap.completed_at, 3000);
+      assert.equal(snap.usage!.prompt_tokens, 10);
+      assert.equal(snap.usage!.completion_tokens, 5);
+      assert.equal(snap.usage!.total_tokens, 15);
+      assert.equal(snap.output!.length, 1);
+    });
+
+    it('should restore last_error from a Failed RunRecord', () => {
+      const record = makeRunRecord({
+        status: RunStatus.Failed,
+        started_at: 2000,
+        failed_at: 3000,
+        last_error: { code: 'exec_error', message: 'timeout' },
+      });
+      const rb = RunBuilder.create(record, 'thread_test');
+      const snap = rb.snapshot();
+      assert.equal(snap.status, RunStatus.Failed);
+      assert.equal(snap.failed_at, 3000);
+      assert.equal(snap.last_error!.message, 'timeout');
+    });
+
+    it('should restore cancelled_at from a Cancelled RunRecord', () => {
+      const record = makeRunRecord({
+        status: RunStatus.Cancelled,
+        cancelled_at: 4000,
+      });
+      const rb = RunBuilder.create(record, 'thread_test');
+      const snap = rb.snapshot();
+      assert.equal(snap.status, RunStatus.Cancelled);
+      assert.equal(snap.cancelled_at, 4000);
+    });
+  });
+});
+
+// ── OSSAgentStore boundary tests ──────────────────────────────────────
+
+describe('OSSAgentStore', () => {
+  describe('JSONL empty line tolerance', () => {
+    it('should handle JSONL data with trailing empty lines', async () => {
+      const client = new MapStorageClient();
+      const agentStore = new OSSAgentStore({ client });
+
+      // Create a thread
+      const thread = await agentStore.createThread();
+
+      // Manually write JSONL with trailing newlines (simulating append edge case)
+      const msg = { id: 'msg_1', object: 'thread.message', created_at: 1000, role: 'user', content: 'hi' };
+      const key = `threads/${thread.id}/messages.jsonl`;
+      await client.put(key, JSON.stringify(msg) + '\n\n\n');
+
+      const result = await agentStore.getThread(thread.id);
+      assert.equal(result.messages.length, 1);
+      assert.equal(result.messages[0].id, 'msg_1');
+    });
+
+    it('should handle completely empty JSONL data', async () => {
+      const client = new MapStorageClient();
+      const agentStore = new OSSAgentStore({ client });
+      const thread = await agentStore.createThread();
+
+      // Write empty content to messages key
+      const key = `threads/${thread.id}/messages.jsonl`;
+      await client.put(key, '');
+
+      const result = await agentStore.getThread(thread.id);
+      assert.equal(result.messages.length, 0);
+    });
+  });
+
+  describe('appendMessages empty array', () => {
+    it('should return immediately for empty messages array', async () => {
+      const client = new MapStorageClient();
+      const agentStore = new OSSAgentStore({ client });
+      const thread = await agentStore.createThread();
+
+      // This should not throw even though messages key doesn't exist yet
+      await agentStore.appendMessages(thread.id, []);
+
+      // Verify no messages file was created
+      const result = await agentStore.getThread(thread.id);
+      assert.equal(result.messages.length, 0);
+    });
+
+    it('should skip thread existence check for empty messages', async () => {
+      const client = new MapStorageClient();
+      const agentStore = new OSSAgentStore({ client });
+
+      // Calling with non-existent thread and empty array should not throw
+      await agentStore.appendMessages('thread_nonexistent', []);
+    });
+  });
+
+  describe('fallback without append method', () => {
+    it('should use read-modify-write when client has no append method', async () => {
+      const client = new MapStorageClientWithoutAppend();
+      const agentStore = new OSSAgentStore({ client });
+      const thread = await agentStore.createThread();
+
+      const msg1 = { id: 'msg_1', object: 'thread.message', created_at: 1000 };
+      const msg2 = { id: 'msg_2', object: 'thread.message', created_at: 2000 };
+      await agentStore.appendMessages(thread.id, [msg1]);
+      await agentStore.appendMessages(thread.id, [msg2]);
+
+      const result = await agentStore.getThread(thread.id);
+      assert.equal(result.messages.length, 2);
+      assert.equal(result.messages[0].id, 'msg_1');
+      assert.equal(result.messages[1].id, 'msg_2');
+    });
+  });
+});
+
+// ── MessageConverter tests ────────────────────────────────────────────
+
+describe('MessageConverter', () => {
+  describe('toContentBlocks', () => {
+    it('should handle string content', () => {
+      const blocks = toContentBlocks({ content: 'hello world' });
+      assert.equal(blocks.length, 1);
+      assert.equal(blocks[0].type, 'text');
+      assert.equal(blocks[0].text.value, 'hello world');
+      assert(Array.isArray(blocks[0].text.annotations));
+    });
+
+    it('should handle array content with text parts', () => {
+      const blocks = toContentBlocks({
+        content: [
+          { type: 'text', text: 'part1' },
+          { type: 'text', text: 'part2' },
+        ],
+      });
+      assert.equal(blocks.length, 2);
+      assert.equal(blocks[0].text.value, 'part1');
+      assert.equal(blocks[1].text.value, 'part2');
+    });
+
+    it('should return empty array for null/undefined input', () => {
+      assert.equal(toContentBlocks(null as any).length, 0);
+      assert.equal(toContentBlocks(undefined as any).length, 0);
+    });
+
+    it('should filter out non-text content types', () => {
+      const blocks = toContentBlocks({
+        content: [{ type: 'text', text: 'keep' }, { type: 'image', url: 'ignored' } as any],
+      });
+      assert.equal(blocks.length, 1);
+      assert.equal(blocks[0].text.value, 'keep');
+    });
+  });
+
+  describe('extractFromStreamMessages', () => {
+    it('should extract messages and accumulate usage', () => {
+      const { output, usage } = extractFromStreamMessages(
+        [
+          { message: { role: 'assistant', content: 'chunk1' } },
+          { usage: { prompt_tokens: 10, completion_tokens: 5 } },
+          { message: { role: 'assistant', content: 'chunk2' } },
+          { usage: { prompt_tokens: 0, completion_tokens: 3 } },
+        ],
+        'run_1',
+      );
+
+      assert.equal(output.length, 2);
+      assert.equal(usage!.promptTokens, 10);
+      assert.equal(usage!.completionTokens, 8);
+      assert.equal(usage!.totalTokens, 18);
+    });
+
+    it('should return undefined usage when no usage messages present', () => {
+      const { output, usage } = extractFromStreamMessages([{ message: { role: 'assistant', content: 'hello' } }]);
+      assert.equal(output.length, 1);
+      assert.equal(usage, undefined);
+    });
+
+    it('should handle empty message array', () => {
+      const { output, usage } = extractFromStreamMessages([]);
+      assert.equal(output.length, 0);
+      assert.equal(usage, undefined);
+    });
+  });
+
+  describe('toInputMessageObjects', () => {
+    it('should convert user messages to MessageObjects', () => {
+      const result = toInputMessageObjects([{ role: 'user' as const, content: 'hello' }], 'thread_1');
+      assert.equal(result.length, 1);
+      assert.equal((result[0] as any).role, 'user');
+      assert.equal(result[0].object, 'thread.message');
+      assert.equal((result[0] as any).thread_id, 'thread_1');
+    });
+
+    it('should filter out system messages', () => {
+      const result = toInputMessageObjects(
+        [
+          { role: 'system' as const, content: 'You are an assistant' },
+          { role: 'user' as const, content: 'hello' },
+        ],
+        'thread_1',
+      );
+      assert.equal(result.length, 1);
+      assert.equal((result[0] as any).role, 'user');
+    });
+
+    it('should handle array content parts', () => {
+      const result = toInputMessageObjects([
+        { role: 'user' as const, content: [{ type: 'text' as const, text: 'part1' }] },
+      ]);
+      assert.equal(result.length, 1);
+      assert.equal((result[0] as any).content[0].text.value, 'part1');
+    });
+  });
+});
+
+// ── NodeSSEWriter tests ───────────────────────────────────────────────
+
+describe('NodeSSEWriter', () => {
+  function createMockResponse(): {
+    res: any;
+    chunks: string[];
+    headers: Record<string, string>;
+    ended: boolean;
+    closeCallbacks: Array<() => void>;
+  } {
+    const state = {
+      chunks: [] as string[],
+      headers: {} as Record<string, string>,
+      ended: false,
+      closeCallbacks: [] as Array<() => void>,
+      res: null as any,
+    };
+    state.res = {
+      writeHead(_status: number, headers: Record<string, string>) {
+        Object.assign(state.headers, headers);
+      },
+      write(data: string) {
+        state.chunks.push(data);
+      },
+      end() {
+        state.ended = true;
+      },
+      get writableEnded() {
+        return state.ended;
+      },
+      once(event: string, cb: () => void) {
+        if (event === 'close') {
+          state.closeCallbacks.push(cb);
+        }
+      },
+    };
+    return state;
+  }
+
+  it('should set correct SSE headers', () => {
+    const mock = createMockResponse();
+    new NodeSSEWriter(mock.res);
+    assert.equal(mock.headers['Content-Type'], 'text/event-stream');
+    assert.equal(mock.headers['Cache-Control'], 'no-cache');
+    assert.equal(mock.headers['Connection'], 'keep-alive');
+  });
+
+  it('should format events correctly', () => {
+    const mock = createMockResponse();
+    const writer = new NodeSSEWriter(mock.res);
+    writer.writeEvent('thread.run.created', { id: 'run_1', status: 'queued' });
+
+    assert.equal(mock.chunks.length, 1);
+    assert.equal(mock.chunks[0], 'event: thread.run.created\ndata: {"id":"run_1","status":"queued"}\n\n');
+  });
+
+  it('should write string data directly', () => {
+    const mock = createMockResponse();
+    const writer = new NodeSSEWriter(mock.res);
+    writer.writeEvent('done', '[DONE]');
+
+    assert.equal(mock.chunks[0], 'event: done\ndata: [DONE]\n\n');
+  });
+
+  it('should report closed state correctly', () => {
+    const mock = createMockResponse();
+    const writer = new NodeSSEWriter(mock.res);
+    assert.equal(writer.closed, false);
+
+    writer.end();
+    assert.equal(writer.closed, true);
+  });
+
+  it('should not end twice', () => {
+    const mock = createMockResponse();
+    const writer = new NodeSSEWriter(mock.res);
+    writer.end();
+    writer.end(); // should not throw
+    assert.equal(mock.ended, true);
+  });
+
+  it('should register onClose callback', () => {
+    const mock = createMockResponse();
+    const writer = new NodeSSEWriter(mock.res);
+    let called = false;
+    writer.onClose(() => {
+      called = true;
+    });
+
+    assert.equal(mock.closeCallbacks.length, 1);
+    mock.closeCallbacks[0]();
+    assert.equal(called, true);
   });
 });

@@ -1,5 +1,6 @@
 import type { MessageObject, RunObject, RunRecord } from '@eggjs/tegg-types/agent-runtime';
 import { RunStatus, AgentErrorCode, AgentObjectType } from '@eggjs/tegg-types/agent-runtime';
+import { InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
 
 import { nowUnix } from './AgentStoreUtils.ts';
 
@@ -28,7 +29,7 @@ export class RunBuilder {
   private readonly createdAt: number;
   private readonly metadata?: Record<string, unknown>;
 
-  private status: RunStatus = RunStatus.Queued;
+  private status: RunStatus;
   private startedAt?: number;
   private completedAt?: number;
   private cancelledAt?: number;
@@ -37,20 +38,44 @@ export class RunBuilder {
   private usage?: RunUsage;
   private output?: MessageObject[];
 
-  private constructor(id: string, threadId: string, createdAt: number, metadata?: Record<string, unknown>) {
+  private constructor(
+    id: string,
+    threadId: string,
+    createdAt: number,
+    status: RunStatus,
+    metadata?: Record<string, unknown>,
+  ) {
     this.id = id;
     this.threadId = threadId;
     this.createdAt = createdAt;
+    this.status = status;
     this.metadata = metadata;
   }
 
-  /** Create a RunBuilder from a store RunRecord. */
+  /** Create a RunBuilder from a store RunRecord, restoring all mutable state. */
   static create(run: RunRecord, threadId: string): RunBuilder {
-    return new RunBuilder(run.id, threadId, run.created_at, run.metadata);
+    const rb = new RunBuilder(run.id, threadId, run.created_at, run.status, run.metadata);
+    rb.startedAt = run.started_at ?? undefined;
+    rb.completedAt = run.completed_at ?? undefined;
+    rb.cancelledAt = run.cancelled_at ?? undefined;
+    rb.failedAt = run.failed_at ?? undefined;
+    rb.lastError = run.last_error ?? undefined;
+    rb.output = run.output;
+    if (run.usage) {
+      rb.usage = {
+        promptTokens: run.usage.prompt_tokens,
+        completionTokens: run.usage.completion_tokens,
+        totalTokens: run.usage.total_tokens,
+      };
+    }
+    return rb;
   }
 
   /** queued → in_progress. Returns store update (snake_case). */
   start(): Partial<RunRecord> {
+    if (this.status !== RunStatus.Queued) {
+      throw new InvalidRunStateTransitionError(this.status, RunStatus.InProgress);
+    }
     this.status = RunStatus.InProgress;
     this.startedAt = nowUnix();
     return { status: this.status, started_at: this.startedAt };
@@ -58,6 +83,9 @@ export class RunBuilder {
 
   /** in_progress → completed. Returns store update (snake_case). */
   complete(output: MessageObject[], usage?: RunUsage): Partial<RunRecord> {
+    if (this.status !== RunStatus.InProgress) {
+      throw new InvalidRunStateTransitionError(this.status, RunStatus.Completed);
+    }
     this.status = RunStatus.Completed;
     this.completedAt = nowUnix();
     this.output = output;
@@ -76,8 +104,11 @@ export class RunBuilder {
     };
   }
 
-  /** in_progress → failed. Returns store update (snake_case). */
+  /** queued/in_progress → failed. Returns store update (snake_case). */
   fail(error: Error): Partial<RunRecord> {
+    if (this.status !== RunStatus.InProgress && this.status !== RunStatus.Queued) {
+      throw new InvalidRunStateTransitionError(this.status, RunStatus.Failed);
+    }
     this.status = RunStatus.Failed;
     this.failedAt = nowUnix();
     this.lastError = { code: AgentErrorCode.ExecError, message: error.message };
@@ -90,12 +121,18 @@ export class RunBuilder {
 
   /** in_progress/queued → cancelling. Returns store update (snake_case). */
   cancelling(): Partial<RunRecord> {
+    if (this.status !== RunStatus.InProgress && this.status !== RunStatus.Queued) {
+      throw new InvalidRunStateTransitionError(this.status, RunStatus.Cancelling);
+    }
     this.status = RunStatus.Cancelling;
     return { status: this.status };
   }
 
   /** cancelling → cancelled. Returns store update (snake_case). */
   cancel(): Partial<RunRecord> {
+    if (this.status !== RunStatus.Cancelling) {
+      throw new InvalidRunStateTransitionError(this.status, RunStatus.Cancelled);
+    }
     this.status = RunStatus.Cancelled;
     this.cancelledAt = nowUnix();
     return {

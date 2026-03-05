@@ -82,7 +82,7 @@ export class AgentRuntime {
     };
   }
 
-  async syncRun(input: CreateRunInput): Promise<RunObject> {
+  async syncRun(input: CreateRunInput, signal?: AbortSignal): Promise<RunObject> {
     let threadId = input.thread_id;
     if (!threadId) {
       const thread = await this.store.createThread();
@@ -93,13 +93,34 @@ export class AgentRuntime {
     const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
     const rb = RunBuilder.create(run, threadId);
 
+    // Bridge external signal to an internal AbortController so cancelRun can abort syncRun
+    const abortController = new AbortController();
+    if (signal) {
+      if (signal.aborted) {
+        abortController.abort();
+      } else {
+        signal.addEventListener('abort', () => abortController.abort(), { once: true });
+      }
+    }
+
+    // Register in runningTasks so cancelRun can find and abort this run
+    const promise = Promise.resolve(); // syncRun is awaited directly; placeholder for the map
+    this.runningTasks.set(run.id, { promise, abortController });
+
     try {
       await this.store.updateRun(run.id, rb.start());
 
       const streamMessages: AgentStreamMessage[] = [];
-      for await (const msg of this.host.execRun(input)) {
+      for await (const msg of this.host.execRun(input, abortController.signal)) {
+        if (abortController.signal.aborted) break;
         streamMessages.push(msg);
       }
+
+      if (abortController.signal.aborted) {
+        // Run was cancelled externally — cancelRun handles the store transition
+        return rb.snapshot();
+      }
+
       const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
 
       await this.store.updateRun(run.id, rb.complete(output, usage));
@@ -108,8 +129,18 @@ export class AgentRuntime {
 
       return rb.snapshot();
     } catch (err: unknown) {
-      await this.store.updateRun(run.id, rb.fail(err as Error));
+      if (abortController.signal.aborted) {
+        // Cancelled — cancelRun handles the store transition
+        return rb.snapshot();
+      }
+      try {
+        await this.store.updateRun(run.id, rb.fail(err as Error));
+      } catch (storeErr) {
+        this.logger.error('[AgentRuntime] failed to update run status after syncRun error:', storeErr);
+      }
       throw err;
+    } finally {
+      this.runningTasks.delete(run.id);
     }
   }
 
@@ -225,9 +256,10 @@ export class AgentRuntime {
 
       if (aborted) {
         try {
+          await this.store.updateRun(run.id, rb.cancelling());
           await this.store.updateRun(run.id, rb.cancel());
-        } catch {
-          // Ignore store update failure during abort
+        } catch (storeErr) {
+          this.logger.error('[AgentRuntime] failed to update run status during stream abort:', storeErr);
         }
         if (!writer.closed) {
           writer.writeEvent(AgentSSEEvent.ThreadRunCancelled, rb.snapshot());
@@ -351,7 +383,16 @@ export class AgentRuntime {
       });
     }
 
-    // 4. Transition to final "cancelled" state
+    // 4. Re-read store to mitigate TOCTOU: if the run completed/failed between
+    //    steps 2 and 4, do not overwrite the terminal state.
+    // TODO: For full atomicity, use CAS / ETag-based conditional writes.
+    const freshRun = await this.store.getRun(runId);
+    if (AgentRuntime.TERMINAL_RUN_STATUSES.has(freshRun.status)) {
+      // Run reached a terminal state while we were cancelling — return as-is
+      return RunBuilder.create(freshRun, freshRun.thread_id ?? '').snapshot();
+    }
+
+    // 5. Transition to final "cancelled" state
     await this.store.updateRun(runId, rb.cancel());
 
     return rb.snapshot();
