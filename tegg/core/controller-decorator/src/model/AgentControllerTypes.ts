@@ -1,48 +1,13 @@
-// ===== Object types =====
-
-export const AgentObjectType = {
-  Thread: 'thread',
-  ThreadRun: 'thread.run',
-  ThreadMessage: 'thread.message',
-  ThreadMessageDelta: 'thread.message.delta',
-} as const;
-export type AgentObjectType = (typeof AgentObjectType)[keyof typeof AgentObjectType];
-
-// ===== Message roles =====
-
-export const MessageRole = {
-  User: 'user',
-  Assistant: 'assistant',
-  System: 'system',
-} as const;
-export type MessageRole = (typeof MessageRole)[keyof typeof MessageRole];
-
-// ===== Message statuses =====
-
-export const MessageStatus = {
-  InProgress: 'in_progress',
-  Incomplete: 'incomplete',
-  Completed: 'completed',
-} as const;
-export type MessageStatus = (typeof MessageStatus)[keyof typeof MessageStatus];
-
-// ===== Content block types =====
-
-export const ContentBlockType = {
-  Text: 'text',
-} as const;
-export type ContentBlockType = (typeof ContentBlockType)[keyof typeof ContentBlockType];
-
 // ===== Input Message (what clients send in request body) =====
 
 export interface InputMessage {
-  role: MessageRole;
+  role: 'user' | 'assistant' | 'system';
   content: string | InputContentPart[];
   metadata?: Record<string, unknown>;
 }
 
 export interface InputContentPart {
-  type: ContentBlockType;
+  type: 'text';
   text: string;
 }
 
@@ -50,18 +15,18 @@ export interface InputContentPart {
 
 export interface MessageObject {
   id: string; // "msg_xxx"
-  object: typeof AgentObjectType.ThreadMessage;
+  object: 'thread.message';
   created_at: number; // Unix seconds
   thread_id?: string;
   run_id?: string;
-  role: Exclude<MessageRole, typeof MessageRole.System>;
-  status: MessageStatus;
+  role: 'user' | 'assistant';
+  status: 'in_progress' | 'incomplete' | 'completed';
   content: MessageContentBlock[];
   metadata?: Record<string, unknown>;
 }
 
 export interface TextContentBlock {
-  type: ContentBlockType;
+  type: 'text';
   text: { value: string; annotations: unknown[] };
 }
 
@@ -71,7 +36,7 @@ export type MessageContentBlock = TextContentBlock;
 
 export interface ThreadObject {
   id: string; // "thread_xxx"
-  object: typeof AgentObjectType.Thread;
+  object: 'thread';
   created_at: number; // Unix seconds
   metadata: Record<string, unknown>;
 }
@@ -82,20 +47,11 @@ export interface ThreadObjectWithMessages extends ThreadObject {
 
 // ===== Run types =====
 
-export const RunStatus = {
-  Queued: 'queued',
-  InProgress: 'in_progress',
-  Completed: 'completed',
-  Failed: 'failed',
-  Cancelled: 'cancelled',
-  Cancelling: 'cancelling',
-  Expired: 'expired',
-} as const;
-export type RunStatus = (typeof RunStatus)[keyof typeof RunStatus];
+export type RunStatus = 'queued' | 'in_progress' | 'completed' | 'failed' | 'cancelled' | 'cancelling' | 'expired';
 
 export interface RunObject {
   id: string; // "run_xxx"
-  object: typeof AgentObjectType.ThreadRun;
+  object: 'thread.run';
   created_at: number; // Unix seconds
   thread_id?: string;
   status: RunStatus;
@@ -125,35 +81,11 @@ export interface CreateRunInput {
 
 export interface MessageDeltaObject {
   id: string;
-  object: typeof AgentObjectType.ThreadMessageDelta;
+  object: 'thread.message.delta';
   delta: { content: MessageContentBlock[] };
 }
 
-// ===== SSE Event names =====
-
-export const AgentSSEEvent = {
-  ThreadRunCreated: 'thread.run.created',
-  ThreadRunInProgress: 'thread.run.in_progress',
-  ThreadRunCompleted: 'thread.run.completed',
-  ThreadRunFailed: 'thread.run.failed',
-  ThreadRunCancelled: 'thread.run.cancelled',
-  ThreadMessageCreated: 'thread.message.created',
-  ThreadMessageDelta: 'thread.message.delta',
-  ThreadMessageCompleted: 'thread.message.completed',
-  Done: 'done',
-} as const;
-export type AgentSSEEvent = (typeof AgentSSEEvent)[keyof typeof AgentSSEEvent];
-
-// ===== Error codes =====
-
-export const AgentErrorCode = {
-  ExecError: 'EXEC_ERROR',
-} as const;
-export type AgentErrorCode = (typeof AgentErrorCode)[keyof typeof AgentErrorCode];
-
 // ===== Internal types =====
-
-export type AgentStreamMessagePayload = AgentStreamMessage['message'];
 
 export interface AgentRunUsage {
   total_tokens?: number;

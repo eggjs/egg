@@ -3,26 +3,6 @@
 exports[`should export stable 1`] = `
 {
   "Acl": [Function],
-  "AgentErrorCode": {
-    "ExecError": "EXEC_ERROR",
-  },
-  "AgentObjectType": {
-    "Thread": "thread",
-    "ThreadMessage": "thread.message",
-    "ThreadMessageDelta": "thread.message.delta",
-    "ThreadRun": "thread.run",
-  },
-  "AgentSSEEvent": {
-    "Done": "done",
-    "ThreadMessageCompleted": "thread.message.completed",
-    "ThreadMessageCreated": "thread.message.created",
-    "ThreadMessageDelta": "thread.message.delta",
-    "ThreadRunCancelled": "thread.run.cancelled",
-    "ThreadRunCompleted": "thread.run.completed",
-    "ThreadRunCreated": "thread.run.created",
-    "ThreadRunFailed": "thread.run.failed",
-    "ThreadRunInProgress": "thread.run.in_progress",
-  },
   "BodyParamMeta": [Function],
   "CONTROLLER_ACL": Symbol(EggPrototype#controller#acl),
   "CONTROLLER_AOP_MIDDLEWARES": Symbol(EggPrototype#controller#aopMiddlewares),
@@ -50,9 +30,6 @@ exports[`should export stable 1`] = `
   "CONTROLLER_NAME": Symbol(EggPrototype#controllerName),
   "CONTROLLER_TIMEOUT_METADATA": Symbol(EggPrototype#controller#timeout),
   "CONTROLLER_TYPE": Symbol(EggPrototype#controllerType),
-  "ContentBlockType": {
-    "Text": "text",
-  },
   "ControllerInfoUtil": [Function],
   "ControllerMetaBuilderFactory": [Function],
   "ControllerMetadataUtil": [Function],
@@ -135,16 +112,6 @@ exports[`should export stable 1`] = `
   "METHOD_CONTROLLER_TYPE_MAP": Symbol(EggPrototype#controller#mthods),
   "METHOD_MIDDLEWARES": Symbol(EggPrototype#method#middlewares),
   "METHOD_TIMEOUT_METADATA": Symbol(EggPrototype#method#timeout),
-  "MessageRole": {
-    "Assistant": "assistant",
-    "System": "system",
-    "User": "user",
-  },
-  "MessageStatus": {
-    "Completed": "completed",
-    "InProgress": "in_progress",
-    "Incomplete": "incomplete",
-  },
   "MethodInfoUtil": [Function],
   "MethodType": {
     "HTTP": "HTTP",
@@ -164,15 +131,6 @@ exports[`should export stable 1`] = `
   "QueriesParamMeta": [Function],
   "QueryParamMeta": [Function],
   "RequestParamMeta": [Function],
-  "RunStatus": {
-    "Cancelled": "cancelled",
-    "Cancelling": "cancelling",
-    "Completed": "completed",
-    "Expired": "expired",
-    "Failed": "failed",
-    "InProgress": "in_progress",
-    "Queued": "queued",
-  },
   "ToolArgsSchema": [Function],
 }
 `;
