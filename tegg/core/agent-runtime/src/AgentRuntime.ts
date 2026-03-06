@@ -82,13 +82,17 @@ export class AgentRuntime {
     };
   }
 
-  async syncRun(input: CreateRunInput, signal?: AbortSignal): Promise<RunObject> {
-    let threadId = input.thread_id;
-    if (!threadId) {
-      const thread = await this.store.createThread();
-      threadId = thread.id;
-      input = { ...input, thread_id: threadId };
+  private async ensureThread(input: CreateRunInput): Promise<{ threadId: string; input: CreateRunInput }> {
+    if (input.thread_id) {
+      return { threadId: input.thread_id, input };
     }
+    const thread = await this.store.createThread();
+    return { threadId: thread.id, input: { ...input, thread_id: thread.id } };
+  }
+
+  async syncRun(input: CreateRunInput, signal?: AbortSignal): Promise<RunObject> {
+    const { threadId, input: resolvedInput } = await this.ensureThread(input);
+    input = resolvedInput;
 
     const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
     const rb = RunBuilder.create(run, threadId);
@@ -153,12 +157,8 @@ export class AgentRuntime {
   }
 
   async asyncRun(input: CreateRunInput): Promise<RunObject> {
-    let threadId = input.thread_id;
-    if (!threadId) {
-      const thread = await this.store.createThread();
-      threadId = thread.id;
-      input = { ...input, thread_id: threadId };
-    }
+    const { threadId, input: resolvedInput } = await this.ensureThread(input);
+    input = resolvedInput;
 
     const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
     const rb = RunBuilder.create(run, threadId);
@@ -190,7 +190,7 @@ export class AgentRuntime {
 
         await this.store.updateRun(run.id, rb.complete(output, usage));
 
-        await this.store.appendMessages(threadId!, [
+        await this.store.appendMessages(threadId, [
           ...toInputMessageObjects(input.input.messages, threadId),
           ...output,
         ]);
@@ -225,12 +225,8 @@ export class AgentRuntime {
     const abortController = new AbortController();
     writer.onClose(() => abortController.abort());
 
-    let threadId = input.thread_id;
-    if (!threadId) {
-      const thread = await this.store.createThread();
-      threadId = thread.id;
-      input = { ...input, thread_id: threadId };
-    }
+    const { threadId, input: resolvedInput } = await this.ensureThread(input);
+    input = resolvedInput;
 
     const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
     const rb = RunBuilder.create(run, threadId);
@@ -289,7 +285,7 @@ export class AgentRuntime {
       // Persist and emit completion
       const output: MessageObject[] = content.length > 0 ? [msgObj] : [];
       await this.store.updateRun(run.id, rb.complete(output, usage));
-      await this.store.appendMessages(threadId!, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
+      await this.store.appendMessages(threadId, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
 
       // event: thread.run.completed
       writer.writeEvent(AgentSSEEvent.ThreadRunCompleted, rb.snapshot());
