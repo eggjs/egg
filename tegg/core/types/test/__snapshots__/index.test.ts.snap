@@ -9,7 +9,7 @@ exports[`should export stable 1`] = `
   },
   "AgentConflictError": [Function],
   "AgentErrorCode": {
-    "ExecError": "exec_error",
+    "ExecError": "EXEC_ERROR",
   },
   "AgentNotFoundError": [Function],
   "AgentObjectType": {
@@ -201,6 +201,7 @@ exports[`should export stable 1`] = `
     "LAST": "LAST",
     "NO": "NO",
   },
+  "InvalidRunStateTransitionError": [Function],
   "LoadUnitNameQualifierAttribute": Symbol(Qualifier.LoadUnitName),
   "MCPProtocols": {
     "SSE": "SSE",

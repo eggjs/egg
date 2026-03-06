@@ -41,7 +41,7 @@ export type AgentSSEEvent = (typeof AgentSSEEvent)[keyof typeof AgentSSEEvent];
 // ===== Error codes =====
 
 export const AgentErrorCode = {
-  ExecError: 'exec_error',
+  ExecError: 'EXEC_ERROR',
 } as const;
 export type AgentErrorCode = (typeof AgentErrorCode)[keyof typeof AgentErrorCode];
 
