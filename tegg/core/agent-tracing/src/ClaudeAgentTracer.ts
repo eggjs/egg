@@ -77,13 +77,14 @@ export class TraceSession {
     const hasText = content.some((c) => c.type === 'text');
 
     if (hasToolUse) {
+      const eventTime = Date.now();
       // Create LLM run that initiated tool calls
       const llmRun = this.#tracer.createLLMRunInternal(
         message,
         this.#rootRunId,
         this.#traceId,
         this.#executionOrder++,
-        this.#startTime,
+        eventTime,
         true,
       );
       this.#rootRun.child_runs.push(llmRun);
@@ -97,7 +98,7 @@ export class TraceSession {
             this.#rootRunId,
             this.#traceId,
             this.#executionOrder++,
-            this.#startTime,
+            eventTime,
           );
           this.#rootRun.child_runs.push(toolRun);
           this.#pendingToolUses.set(block.id, toolRun);
@@ -111,7 +112,7 @@ export class TraceSession {
         this.#rootRunId,
         this.#traceId,
         this.#executionOrder++,
-        this.#startTime,
+        Date.now(),
         false,
       );
       this.#rootRun.child_runs.push(llmRun);
@@ -126,7 +127,7 @@ export class TraceSession {
       if (block.type === 'tool_result') {
         const toolRun = this.#pendingToolUses.get(block.tool_use_id);
         if (toolRun) {
-          this.#tracer.completeToolRunInternal(toolRun, block, this.#startTime);
+          this.#tracer.completeToolRunInternal(toolRun, block, Date.now());
           const status = block.is_error ? RunStatus.ERROR : RunStatus.END;
           this.#tracer.logTrace(toolRun, status);
           this.#pendingToolUses.delete(block.tool_use_id);
@@ -144,7 +145,7 @@ export class TraceSession {
     // Complete any pending tool runs
     for (const [toolUseId, toolRun] of this.#pendingToolUses) {
       this.#tracer.logger.warn(`[ClaudeAgentTracer] Tool run ${toolUseId} did not receive result`);
-      toolRun.end_time = this.#startTime;
+      toolRun.end_time = Date.now();
       this.#tracer.logTrace(toolRun, RunStatus.ERROR);
     }
     this.#pendingToolUses.clear();
