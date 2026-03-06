@@ -1,18 +1,18 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 
 import { describe, it, beforeEach } from 'vitest';
 
 import { ClaudeAgentTracer } from '../src/ClaudeAgentTracer.ts';
 import { LangGraphTracer } from '../src/LangGraphTracer.ts';
 import { TracingService } from '../src/TracingService.ts';
-import { createMockLogger, createMockTracingService } from './TestUtils.ts';
+import { createMockLogger, createCapturingTracingService } from './TestUtils.ts';
 
 describe('test/Configure.test.ts', () => {
   describe('TracingService.configure()', () => {
     let tracingService: TracingService;
 
     beforeEach(() => {
-      tracingService = createMockTracingService();
+      tracingService = createCapturingTracingService().tracingService;
     });
 
     it('should accept empty config', () => {
@@ -24,7 +24,7 @@ describe('test/Configure.test.ts', () => {
 
   describe('LangGraphTracer.configure()', () => {
     it('should set agentName and delegate to TracingService', () => {
-      const tracingService = createMockTracingService();
+      const { tracingService } = createCapturingTracingService();
       const tracer = new LangGraphTracer();
       (tracer as any).tracingService = tracingService;
 
@@ -37,7 +37,7 @@ describe('test/Configure.test.ts', () => {
     });
 
     it('should not change agentName when not provided', () => {
-      const tracingService = createMockTracingService();
+      const { tracingService } = createCapturingTracingService();
       const tracer = new LangGraphTracer();
       (tracer as any).tracingService = tracingService;
       tracer.agentName = 'existing';
@@ -50,7 +50,7 @@ describe('test/Configure.test.ts', () => {
 
   describe('ClaudeAgentTracer.configure()', () => {
     it('should set agentName and delegate to TracingService', () => {
-      const tracingService = createMockTracingService();
+      const { tracingService } = createCapturingTracingService();
       const mockLogger = createMockLogger();
       const tracer = new ClaudeAgentTracer();
       (tracer as any).logger = mockLogger;
@@ -65,7 +65,7 @@ describe('test/Configure.test.ts', () => {
     });
 
     it('should not change agentName when not provided', () => {
-      const tracingService = createMockTracingService();
+      const { tracingService } = createCapturingTracingService();
       const mockLogger = createMockLogger();
       const tracer = new ClaudeAgentTracer();
       (tracer as any).logger = mockLogger;

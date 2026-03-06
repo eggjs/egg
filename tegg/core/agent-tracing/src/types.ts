@@ -144,14 +144,6 @@ export const RunStatus = {
 } as const;
 export type RunStatus = (typeof RunStatus)[keyof typeof RunStatus];
 
-export interface OssConfig {
-  accessKeyId: string;
-  accessKeySecret: string;
-  bucket: string;
-  region: string;
-  endpoint?: string;
-}
-
 /** Internal config used by TracingService */
 export interface AgentTracingConfig {
   // Reserved for future configuration options

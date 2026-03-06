@@ -1,59 +1,25 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 
 import type { SDKMessage } from '@anthropic-ai/claude-agent-sdk';
 import { describe, it } from 'vitest';
 
 import { ClaudeAgentTracer } from '../src/ClaudeAgentTracer.ts';
-import { createMockLogger, createMockTracingService } from './TestUtils.ts';
-
-// ---------- Tracing log helpers ----------
-
-function extractRunFromLog(log: string): any {
-  const match = log.match(/,run=({.*})$/);
-  return match ? JSON.parse(match[1]) : null;
-}
-
-function extractStatus(log: string): string | null {
-  const match = log.match(/status=(\w+)/);
-  return match ? match[1] : null;
-}
-
-function extractRunType(log: string): string | null {
-  const match = log.match(/type=(root_run|child_run)/);
-  return match ? match[1] : null;
-}
+import { RunStatus } from '../src/types.ts';
+import { createMockLogger, createCapturingTracingService } from './TestUtils.ts';
 
 // ---------- Shared setup ----------
 
 function createTestEnv() {
-  const logs: string[] = [];
   process.env.FAAS_ENV = 'dev';
 
-  const mockLogger = createMockLogger(logs);
-  const tracingService = createMockTracingService(logs);
+  const { tracingService, capturedRuns } = createCapturingTracingService();
+  const mockLogger = createMockLogger();
 
   const claudeTracer = new ClaudeAgentTracer();
   (claudeTracer as any).logger = mockLogger;
   (claudeTracer as any).tracingService = tracingService;
 
-  function getTracingLogs(): string[] {
-    return logs.filter((log) => log.includes('[agent_run][ClaudeAgentTracer]'));
-  }
-
-  function parseAllRuns(): Array<{ run: any; status: string; logType: string }> {
-    const entries: Array<{ run: any; status: string; logType: string }> = [];
-    for (const log of getTracingLogs()) {
-      const run = extractRunFromLog(log);
-      const status = extractStatus(log);
-      const logType = extractRunType(log);
-      if (run && status && logType) {
-        entries.push({ run, status, logType });
-      }
-    }
-    return entries;
-  }
-
-  return { logs, claudeTracer, parseAllRuns, getTracingLogs };
+  return { claudeTracer, capturedRuns };
 }
 
 // ---------- Mock data factories ----------
@@ -194,7 +160,7 @@ function createMockStreamEvent(): SDKMessage {
 describe('test/ClaudeAgentTracer.test.ts', () => {
   describe('Streaming mode + tool use', () => {
     it('should trace tool execution with session.processMessage', async () => {
-      const { claudeTracer, parseAllRuns } = createTestEnv();
+      const { claudeTracer, capturedRuns } = createTestEnv();
       const session = claudeTracer.createSession();
 
       // Feed messages one-by-one, including noise messages that should be filtered
@@ -211,58 +177,56 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
         await session.processMessage(msg);
       }
 
-      const entries = parseAllRuns();
-
       // Root run start + end
-      const rootStart = entries.find((e) => e.logType === 'root_run' && e.status === 'start');
+      const rootStart = capturedRuns.find((e) => !e.run.parent_run_id && e.status === RunStatus.START);
       assert(rootStart, 'Should have root_run start');
-      assert.strictEqual(rootStart!.run.run_type, 'chain');
+      assert.strictEqual(rootStart.run.run_type, 'chain');
 
-      const rootEnd = entries.find((e) => e.logType === 'root_run' && e.status === 'end');
+      const rootEnd = capturedRuns.find((e) => !e.run.parent_run_id && e.status === RunStatus.END);
       assert(rootEnd, 'Should have root_run end');
 
       // LLM child run
-      const llmRuns = entries.filter((e) => e.logType === 'child_run' && e.run.run_type === 'llm');
+      const llmRuns = capturedRuns.filter((e) => !!e.run.parent_run_id && e.run.run_type === 'llm');
       assert(llmRuns.length >= 1, `Should have >= 1 LLM run, got ${llmRuns.length}`);
 
       // Tool child run start + end
-      const toolRuns = entries.filter((e) => e.logType === 'child_run' && e.run.run_type === 'tool');
+      const toolRuns = capturedRuns.filter((e) => !!e.run.parent_run_id && e.run.run_type === 'tool');
       assert(toolRuns.length >= 2, `Should have >= 2 tool run entries (start+end), got ${toolRuns.length}`);
 
-      const toolStart = toolRuns.find((e) => e.status === 'start');
+      const toolStart = toolRuns.find((e) => e.status === RunStatus.START);
       assert(toolStart, 'Should have tool start');
-      assert.strictEqual(toolStart!.run.name, 'Bash');
+      assert.strictEqual(toolStart.run.name, 'Bash');
 
-      const toolEnd = toolRuns.find((e) => e.status === 'end');
+      const toolEnd = toolRuns.find((e) => e.status === RunStatus.END);
       assert(toolEnd, 'Should have tool end');
 
       // All runs share the same trace_id = session_id
-      const traceIds = new Set(entries.map((e) => e.run.trace_id));
+      const traceIds = new Set(capturedRuns.map((e) => e.run.trace_id));
       assert.strictEqual(traceIds.size, 1, `All runs should share one trace_id, got ${traceIds.size}`);
       assert.strictEqual([...traceIds][0], 'test-session-001', 'trace_id should match session_id');
 
       // Child runs reference root run as parent
-      const childEntries = entries.filter((e) => e.logType === 'child_run');
+      const childEntries = capturedRuns.filter((e) => !!e.run.parent_run_id);
       for (const child of childEntries) {
         assert.strictEqual(
           child.run.parent_run_id,
-          rootStart!.run.id,
+          rootStart.run.id,
           `Child run ${child.run.name} should reference root as parent`,
         );
       }
 
       // Cost data on root end
-      const cost = rootEnd!.run.cost;
-      assert(cost, 'Root end should have cost');
-      assert.strictEqual(cost.promptTokens, 100);
-      assert.strictEqual(cost.completionTokens, 50);
-      assert.strictEqual(cost.totalCost, 0.003);
+      const llmOutput = (rootEnd.run.outputs as any)?.llmOutput;
+      assert(llmOutput, 'Root end should have llmOutput');
+      assert.strictEqual(llmOutput.promptTokens, 100);
+      assert.strictEqual(llmOutput.completionTokens, 50);
+      assert.strictEqual(llmOutput.totalCost, 0.003);
     });
   });
 
   describe('Batch mode + text-only', () => {
     it('should trace a text-only response via processMessages', async () => {
-      const { claudeTracer, parseAllRuns } = createTestEnv();
+      const { claudeTracer, capturedRuns } = createTestEnv();
 
       const messages: SDKMessage[] = [
         createMockInit(),
@@ -280,41 +244,40 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
 
       await claudeTracer.processMessages(messages);
 
-      const entries = parseAllRuns();
-      assert(entries.length > 0, 'Should have tracing entries');
+      assert(capturedRuns.length > 0, 'Should have tracing entries');
 
       // Root run start + end
-      const rootEntries = entries.filter((e) => e.logType === 'root_run');
+      const rootEntries = capturedRuns.filter((e) => !e.run.parent_run_id);
       assert(rootEntries.length >= 2, `Should have root start + end, got ${rootEntries.length}`);
 
-      const rootEnd = rootEntries.find((e) => e.status === 'end');
+      const rootEnd = rootEntries.find((e) => e.status === RunStatus.END);
       assert(rootEnd, 'Should have root end');
 
       // LLM child run with text content
-      const llmRuns = entries.filter((e) => e.logType === 'child_run' && e.run.run_type === 'llm');
+      const llmRuns = capturedRuns.filter((e) => !!e.run.parent_run_id && e.run.run_type === 'llm');
       assert(llmRuns.length >= 1, `Should have >= 1 LLM run, got ${llmRuns.length}`);
 
       // No tool runs
-      const toolRuns = entries.filter((e) => e.logType === 'child_run' && e.run.run_type === 'tool');
+      const toolRuns = capturedRuns.filter((e) => !!e.run.parent_run_id && e.run.run_type === 'tool');
       assert.strictEqual(toolRuns.length, 0, 'Should have no tool runs for text-only');
 
       // Cost and token counts
-      const cost = rootEnd!.run.cost;
-      assert(cost, 'Should have cost');
-      assert.strictEqual(cost.promptTokens, 80);
-      assert.strictEqual(cost.completionTokens, 30);
-      assert.strictEqual(cost.totalTokens, 110);
-      assert.strictEqual(cost.totalCost, 0.002);
+      const llmOutput = (rootEnd.run.outputs as any)?.llmOutput;
+      assert(llmOutput, 'Should have llmOutput');
+      assert.strictEqual(llmOutput.promptTokens, 80);
+      assert.strictEqual(llmOutput.completionTokens, 30);
+      assert.strictEqual(llmOutput.totalTokens, 110);
+      assert.strictEqual(llmOutput.totalCost, 0.002);
 
       // trace_id consistency
-      const traceIds = new Set(entries.map((e) => e.run.trace_id));
+      const traceIds = new Set(capturedRuns.map((e) => e.run.trace_id));
       assert.strictEqual(traceIds.size, 1, 'All runs should share one trace_id');
     });
   });
 
   describe('Error scenario', () => {
     it('should trace an error result with ERROR status', async () => {
-      const { claudeTracer, parseAllRuns } = createTestEnv();
+      const { claudeTracer, capturedRuns } = createTestEnv();
       const session = claudeTracer.createSession();
 
       const messages: SDKMessage[] = [
@@ -347,15 +310,10 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
         await session.processMessage(msg);
       }
 
-      const entries = parseAllRuns();
-
       // Root run should end with ERROR status
-      const rootEnd = entries.find((e) => e.logType === 'root_run' && e.status === 'error');
-      assert(rootEnd, 'Should have root_run with error status');
-
-      // The root run should have error field populated
-      // (error is extracted from result message via convertSDKMessage)
-      assert(rootEnd!.run, 'Root end run should exist');
+      const rootError = capturedRuns.find((e) => !e.run.parent_run_id && e.status === RunStatus.ERROR);
+      assert(rootError, 'Should have root_run with error status');
+      assert(rootError.run, 'Root error run should exist');
     });
   });
 });

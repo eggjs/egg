@@ -1,8 +1,14 @@
 import type { Logger } from '@eggjs/tegg-types';
+import type { Run } from '@langchain/core/tracers/base';
 
-import { ILogServiceClient } from '../src/ILogServiceClient.ts';
-import { IOssClient } from '../src/IOssClient.ts';
 import { TracingService } from '../src/TracingService.ts';
+
+export interface CapturedEntry {
+  run: Run;
+  status: string;
+  name: string;
+  agentName: string;
+}
 
 export function createMockLogger(logs?: string[]): Logger {
   return {
@@ -18,31 +24,20 @@ export function createMockLogger(logs?: string[]): Logger {
   } as unknown as Logger;
 }
 
-export function createMockBackgroundTaskHelper(): { run: (fn: () => Promise<any>) => Promise<any> } {
-  return {
-    run: async (fn: () => Promise<any>) => fn(),
-  };
-}
-
-export function createMockOssClient(): IOssClient {
-  return {
-    put: async (_key: string, _content: string | Buffer) => {},
-  } as IOssClient;
-}
-
-export function createMockLogServiceClient(logs?: string[]): ILogServiceClient {
-  return {
-    send: async (log: string) => {
-      logs?.push(log);
+/**
+ * Create a mock TracingService that captures Run objects directly.
+ * Use capturedRuns to assert on traced runs without parsing log strings.
+ */
+export function createCapturingTracingService(): {
+  tracingService: TracingService;
+  capturedRuns: CapturedEntry[];
+} {
+  const capturedRuns: CapturedEntry[] = [];
+  const tracingService = {
+    configure: () => {},
+    logTrace: (run: Run, status: string, name: string, agentName: string) => {
+      capturedRuns.push({ run, status, name, agentName });
     },
-  } as ILogServiceClient;
-}
-
-export function createMockTracingService(logs?: string[]): TracingService {
-  const tracingService = new TracingService();
-  (tracingService as any).logger = createMockLogger(logs);
-  (tracingService as any).backgroundTaskHelper = createMockBackgroundTaskHelper();
-  (tracingService as any).ossClient = createMockOssClient();
-  (tracingService as any).logServiceClient = createMockLogServiceClient(logs);
-  return tracingService;
+  } as unknown as TracingService;
+  return { tracingService, capturedRuns };
 }

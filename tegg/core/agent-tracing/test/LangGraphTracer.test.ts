@@ -1,22 +1,14 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 
 import { FakeLLM } from '@langchain/core/utils/testing';
 import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
 import { describe, it, beforeEach } from 'vitest';
 
 import { LangGraphTracer } from '../src/LangGraphTracer.ts';
-import { createMockTracingService } from './TestUtils.ts';
+import { RunStatus } from '../src/types.ts';
+import { type CapturedEntry, createCapturingTracingService } from './TestUtils.ts';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/**
- * Extract the run JSON object from a tracing log line.
- * Log format: "[agent_run][...]:traceId=...,run={...JSON...}"
- */
-function extractRunFromLog(log: string): any {
-  const match = log.match(/,run=({.*})$/);
-  return match ? JSON.parse(match[1]) : null;
-}
 
 /** Shared state schema for test graphs */
 const GraphState = Annotation.Root({
@@ -26,22 +18,17 @@ const GraphState = Annotation.Root({
 
 describe('test/LangGraphTracer.test.ts', () => {
   let tracer: LangGraphTracer;
-  let logs: string[] = [];
+  let capturedRuns: CapturedEntry[];
 
   beforeEach(() => {
-    logs = [];
     process.env.FAAS_ENV = 'dev';
 
-    const tracingService = createMockTracingService(logs);
+    const capturing = createCapturingTracingService();
+    capturedRuns = capturing.capturedRuns;
 
     tracer = new LangGraphTracer();
-    (tracer as any).tracingService = tracingService;
+    (tracer as any).tracingService = capturing.tracingService;
   });
-
-  /** Helper: get only [agent_run] tracing logs */
-  function getTracingLogs(): string[] {
-    return logs.filter((log) => log.includes('[agent_run]'));
-  }
 
   describe('Single-node StateGraph triggers chain lifecycle hooks', () => {
     it('should trigger onChainStart and onChainEnd via graph.invoke', async () => {
@@ -57,19 +44,15 @@ describe('test/LangGraphTracer.test.ts', () => {
 
       await sleep(500);
 
-      const tracingLogs = getTracingLogs();
-      const startLogs = tracingLogs.filter((log) => log.includes('status=start'));
-      const endLogs = tracingLogs.filter((log) => log.includes('status=end'));
+      const startEntries = capturedRuns.filter((e) => e.status === RunStatus.START);
+      const endEntries = capturedRuns.filter((e) => e.status === RunStatus.END);
 
-      assert(startLogs.length >= 1, `Should have at least one start log, got ${startLogs.length}`);
-      assert(endLogs.length >= 1, `Should have at least one end log, got ${endLogs.length}`);
+      assert(startEntries.length >= 1, `Should have at least one start entry, got ${startEntries.length}`);
+      assert(endEntries.length >= 1, `Should have at least one end entry, got ${endEntries.length}`);
 
-      // Parse run data and verify run_type is chain (StateGraph nodes are chain runs)
-      const chainStartLog = startLogs.find((log) => {
-        const run = extractRunFromLog(log);
-        return run && run.run_type === 'chain';
-      });
-      assert(chainStartLog, 'Should have a chain start log with run_type=chain');
+      // Verify a chain run is present with run_type=chain
+      const chainStart = startEntries.find((e) => e.run.run_type === 'chain');
+      assert(chainStart, 'Should have a chain start entry with run_type=chain');
     });
 
     it('should produce Run with valid id, trace_id, and run_type fields', async () => {
@@ -85,15 +68,12 @@ describe('test/LangGraphTracer.test.ts', () => {
 
       await sleep(500);
 
-      const tracingLogs = getTracingLogs();
-      assert(tracingLogs.length > 0, 'Should have tracing logs');
+      assert(capturedRuns.length > 0, 'Should have captured runs');
 
-      for (const log of tracingLogs) {
-        const run = extractRunFromLog(log);
-        if (!run) continue;
-        assert(run.id, 'Run should have an id');
-        assert(run.trace_id, 'Run should have a trace_id');
-        assert(run.run_type, 'Run should have a run_type');
+      for (const entry of capturedRuns) {
+        assert(entry.run.id, 'Run should have an id');
+        assert(entry.run.trace_id, 'Run should have a trace_id');
+        assert(entry.run.run_type, 'Run should have a run_type');
       }
     });
   });
@@ -116,34 +96,25 @@ describe('test/LangGraphTracer.test.ts', () => {
 
       await sleep(500);
 
-      const tracingLogs = getTracingLogs();
-
-      // Collect all runs by parsing logs
-      const runs: Array<{ run: any; status: string }> = [];
-      for (const log of tracingLogs) {
-        const statusMatch = log.match(/status=(\w+)/);
-        const run = extractRunFromLog(log);
-        if (run && statusMatch) {
-          runs.push({ run, status: statusMatch[1] });
-        }
-      }
-
-      const chainRuns = runs.filter((r) => r.run.run_type === 'chain');
-      assert(chainRuns.length >= 2, `Should have at least 2 chain runs (root + child nodes), got ${chainRuns.length}`);
+      const chainEntries = capturedRuns.filter((e) => e.run.run_type === 'chain');
+      assert(
+        chainEntries.length >= 2,
+        `Should have at least 2 chain runs (root + child nodes), got ${chainEntries.length}`,
+      );
 
       // The graph root run should have no parent_run_id
-      const rootRun = chainRuns.find((r) => !r.run.parent_run_id);
+      const rootRun = chainEntries.find((e) => !e.run.parent_run_id);
       assert(rootRun, 'Should have a root chain run (no parent_run_id)');
 
       // Child node runs should have parent_run_id
-      const childRuns = chainRuns.filter((r) => r.run.parent_run_id);
+      const childRuns = chainEntries.filter((e) => e.run.parent_run_id);
       assert(childRuns.length >= 1, 'Should have at least one child chain run with parent_run_id');
 
-      // Verify the log prefix correctly marks root vs child
-      const rootLogs = tracingLogs.filter((log) => log.includes('type=root_run'));
-      const childLogs = tracingLogs.filter((log) => log.includes('type=child_run'));
-      assert(rootLogs.length >= 1, 'Should have root_run type logs');
-      assert(childLogs.length >= 1, 'Should have child_run type logs');
+      // Verify root vs child distinction
+      const rootEntries = capturedRuns.filter((e) => !e.run.parent_run_id);
+      const childEntries = capturedRuns.filter((e) => !!e.run.parent_run_id);
+      assert(rootEntries.length >= 1, 'Should have root run entries');
+      assert(childEntries.length >= 1, 'Should have child run entries');
     });
 
     it('should share the same trace_id across all runs in a graph invocation', async () => {
@@ -163,17 +134,12 @@ describe('test/LangGraphTracer.test.ts', () => {
 
       await sleep(500);
 
-      const tracingLogs = getTracingLogs();
-      const traceIds = new Set<string>();
-
-      for (const log of tracingLogs) {
-        const run = extractRunFromLog(log);
-        if (run?.trace_id) {
-          traceIds.add(run.trace_id);
-        }
-      }
-
-      assert(traceIds.size === 1, `All runs should share the same trace_id, got ${traceIds.size} distinct trace_ids`);
+      const traceIds = new Set(capturedRuns.map((e) => e.run.trace_id).filter(Boolean));
+      assert.strictEqual(
+        traceIds.size,
+        1,
+        `All runs should share the same trace_id, got ${traceIds.size} distinct trace_ids`,
+      );
     });
   });
 
@@ -194,29 +160,18 @@ describe('test/LangGraphTracer.test.ts', () => {
 
       await sleep(500);
 
-      const tracingLogs = getTracingLogs();
-
-      const runs: Array<{ run: any; status: string }> = [];
-      for (const log of tracingLogs) {
-        const statusMatch = log.match(/status=(\w+)/);
-        const run = extractRunFromLog(log);
-        if (run && statusMatch) {
-          runs.push({ run, status: statusMatch[1] });
-        }
-      }
-
       // Should have chain runs from the graph itself
-      const chainRuns = runs.filter((r) => r.run.run_type === 'chain');
-      assert(chainRuns.length >= 1, `Should have at least one chain run, got ${chainRuns.length}`);
+      const chainEntries = capturedRuns.filter((e) => e.run.run_type === 'chain');
+      assert(chainEntries.length >= 1, `Should have at least one chain run, got ${chainEntries.length}`);
 
       // Should have LLM runs from the FakeLLM invocation inside the node
-      const llmRuns = runs.filter((r) => r.run.run_type === 'llm');
-      assert(llmRuns.length >= 2, `Should have at least 2 LLM logs (start + end), got ${llmRuns.length}`);
+      const llmEntries = capturedRuns.filter((e) => e.run.run_type === 'llm');
+      assert(llmEntries.length >= 2, `Should have at least 2 LLM entries (start + end), got ${llmEntries.length}`);
     });
   });
 
   describe('StateGraph node error triggers onChainError', () => {
-    it('should trigger error hook and include error status in log', async () => {
+    it('should trigger error hook and include error status in captured runs', async () => {
       const graph = new StateGraph(GraphState)
         .addNode('fail_node', () => {
           throw new Error('Node execution failed');
@@ -233,20 +188,17 @@ describe('test/LangGraphTracer.test.ts', () => {
 
       await sleep(500);
 
-      const tracingLogs = getTracingLogs();
+      // Should have a start entry
+      const startEntries = capturedRuns.filter((e) => e.status === RunStatus.START);
+      assert(startEntries.length >= 1, 'Should have at least one start entry before the error');
 
-      // Should have a start log
-      const startLogs = tracingLogs.filter((log) => log.includes('status=start'));
-      assert(startLogs.length >= 1, 'Should have at least one start log before the error');
+      // Should have an error entry
+      const errorEntries = capturedRuns.filter((e) => e.status === RunStatus.ERROR);
+      assert(errorEntries.length >= 1, `Should have at least one error entry, got ${errorEntries.length}`);
 
-      // Should have an error log
-      const errorLogs = tracingLogs.filter((log) => log.includes('status=error'));
-      assert(errorLogs.length >= 1, `Should have at least one error log, got ${errorLogs.length}`);
-
-      // Verify the error run has the correct error field
-      const errorRun = extractRunFromLog(errorLogs[0]);
-      assert(errorRun, 'Should be able to parse error run from log');
-      assert(errorRun.error, 'Error run should have error field set');
+      // Verify the error run has the error field set
+      assert(errorEntries[0].run, 'Error run should exist');
+      assert(errorEntries[0].run.error, 'Error run should have error field set');
     });
   });
 
@@ -264,26 +216,20 @@ describe('test/LangGraphTracer.test.ts', () => {
 
       await sleep(500);
 
-      const tracingLogs = getTracingLogs();
-      assert(tracingLogs.length > 0, 'Should have tracing logs');
+      assert(capturedRuns.length > 0, 'Should have captured runs');
 
-      for (const log of tracingLogs) {
-        const run = extractRunFromLog(log);
-        if (!run) continue;
-
-        // Core fields must be present
-        assert(typeof run.id === 'string' && run.id.length > 0, 'Run must have non-empty id');
-        assert(typeof run.trace_id === 'string' && run.trace_id.length > 0, 'Run must have non-empty trace_id');
-        assert(typeof run.run_type === 'string', 'Run must have run_type');
-        assert(typeof run.name === 'string', 'Run must have name');
-
-        // Log prefix must contain traceId and run_id
-        assert(log.includes(`traceId=${run.trace_id}`), 'Log prefix must include traceId');
-        assert(log.includes(`run_id=${run.id}`), 'Log prefix must include run_id');
+      for (const entry of capturedRuns) {
+        assert(typeof entry.run.id === 'string' && entry.run.id.length > 0, 'Run must have non-empty id');
+        assert(
+          typeof entry.run.trace_id === 'string' && entry.run.trace_id.length > 0,
+          'Run must have non-empty trace_id',
+        );
+        assert(typeof entry.run.run_type === 'string', 'Run must have run_type');
+        assert(typeof entry.run.name === 'string', 'Run must have name');
       }
     });
 
-    it('should produce end runs with non-null outputs or OSS reference', async () => {
+    it('should produce end runs with outputs present', async () => {
       const graph = new StateGraph(GraphState)
         .addNode('output_node', (state: typeof GraphState.State) => {
           return { result: `output for ${state.query}` };
@@ -296,18 +242,12 @@ describe('test/LangGraphTracer.test.ts', () => {
 
       await sleep(500);
 
-      const endLogs = getTracingLogs().filter((log) => log.includes('status=end'));
-      assert(endLogs.length >= 1, 'Should have end logs');
+      const endEntries = capturedRuns.filter((e) => e.status === RunStatus.END);
+      assert(endEntries.length >= 1, 'Should have end entries');
 
-      for (const log of endLogs) {
-        const run = extractRunFromLog(log);
-        if (!run) continue;
-        // Outputs should be uploaded to OSS, so the field should be an IResource
-        if (run.outputs) {
-          assert(
-            run.outputs.key || typeof run.outputs === 'object',
-            'End run outputs should be present (as OSS resource or object)',
-          );
+      for (const entry of endEntries) {
+        if (entry.run.outputs) {
+          assert(typeof entry.run.outputs === 'object', 'End run outputs should be an object');
         }
       }
     });

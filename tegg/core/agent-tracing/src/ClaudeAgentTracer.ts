@@ -22,19 +22,19 @@ import {
  * Allows processing messages one-by-one and logging them immediately.
  */
 export class TraceSession {
-  private traceId: string;
-  private rootRun: Run | null = null;
-  private rootRunId: string;
-  private startTime: number;
-  private executionOrder = 2; // Start at 2, root is 1
-  private pendingToolUses = new Map<string, Run>();
-  private tracer: ClaudeAgentTracer;
+  #traceId: string;
+  #rootRun: Run | null = null;
+  #rootRunId: string;
+  #startTime: number;
+  #executionOrder = 2; // Start at 2, root is 1
+  #pendingToolUses = new Map<string, Run>();
+  #tracer: ClaudeAgentTracer;
 
   constructor(tracer: ClaudeAgentTracer, sessionId?: string) {
-    this.tracer = tracer;
-    this.traceId = sessionId || randomUUID();
-    this.rootRunId = randomUUID();
-    this.startTime = Date.now();
+    this.#tracer = tracer;
+    this.#traceId = sessionId || randomUUID();
+    this.#rootRunId = randomUUID();
+    this.#startTime = Date.now();
   }
 
   /**
@@ -43,32 +43,32 @@ export class TraceSession {
    */
   async processMessage(message: SDKMessage): Promise<void> {
     try {
-      const converted = this.tracer.convertSDKMessage(message);
+      const converted = this.#tracer.convertSDKMessage(message);
       if (!converted) return;
 
       if (converted.type === 'system' && converted.subtype === 'init') {
-        await this.handleInit(converted);
+        this.handleInit(converted);
       } else if (converted.type === 'assistant') {
-        await this.handleAssistant(converted);
+        this.handleAssistant(converted);
       } else if (converted.type === 'user') {
-        await this.handleUser(converted);
+        this.handleUser(converted);
       } else if (converted.type === 'result') {
-        await this.handleResult(converted);
+        this.handleResult(converted);
       }
     } catch (e) {
-      this.tracer.logger.warn('[ClaudeAgentTracer] processMessage error:', e);
+      this.#tracer.logger.warn('[ClaudeAgentTracer] processMessage error:', e);
     }
   }
 
   private handleInit(message: ClaudeMessage): void {
-    this.traceId = message.session_id || this.traceId;
-    this.rootRun = this.tracer.createRootRunInternal(message, this.startTime, this.traceId, this.rootRunId);
-    this.tracer.logTrace(this.rootRun, RunStatus.START);
+    this.#traceId = message.session_id || this.#traceId;
+    this.#rootRun = this.#tracer.createRootRunInternal(message, this.#startTime, this.#traceId, this.#rootRunId);
+    this.#tracer.logTrace(this.#rootRun, RunStatus.START);
   }
 
   private handleAssistant(message: ClaudeMessage): void {
-    if (!this.rootRun) {
-      this.tracer.logger.warn('[ClaudeAgentTracer] Received assistant message before init');
+    if (!this.#rootRun) {
+      this.#tracer.logger.warn('[ClaudeAgentTracer] Received assistant message before init');
       return;
     }
 
@@ -78,44 +78,44 @@ export class TraceSession {
 
     if (hasToolUse) {
       // Create LLM run that initiated tool calls
-      const llmRun = this.tracer.createLLMRunInternal(
+      const llmRun = this.#tracer.createLLMRunInternal(
         message,
-        this.rootRunId,
-        this.traceId,
-        this.executionOrder++,
-        this.startTime,
+        this.#rootRunId,
+        this.#traceId,
+        this.#executionOrder++,
+        this.#startTime,
         true,
       );
-      this.rootRun.child_runs.push(llmRun);
-      this.tracer.logTrace(llmRun, RunStatus.END);
+      this.#rootRun.child_runs.push(llmRun);
+      this.#tracer.logTrace(llmRun, RunStatus.END);
 
       // Create tool runs (will be completed when tool_result arrives)
       for (const block of content) {
         if (block.type === 'tool_use') {
-          const toolRun = this.tracer.createToolRunStartInternal(
+          const toolRun = this.#tracer.createToolRunStartInternal(
             block,
-            this.rootRunId,
-            this.traceId,
-            this.executionOrder++,
-            this.startTime,
+            this.#rootRunId,
+            this.#traceId,
+            this.#executionOrder++,
+            this.#startTime,
           );
-          this.rootRun.child_runs.push(toolRun);
-          this.pendingToolUses.set(block.id, toolRun);
-          this.tracer.logTrace(toolRun, RunStatus.START);
+          this.#rootRun.child_runs.push(toolRun);
+          this.#pendingToolUses.set(block.id, toolRun);
+          this.#tracer.logTrace(toolRun, RunStatus.START);
         }
       }
     } else if (hasText) {
       // Text-only response
-      const llmRun = this.tracer.createLLMRunInternal(
+      const llmRun = this.#tracer.createLLMRunInternal(
         message,
-        this.rootRunId,
-        this.traceId,
-        this.executionOrder++,
-        this.startTime,
+        this.#rootRunId,
+        this.#traceId,
+        this.#executionOrder++,
+        this.#startTime,
         false,
       );
-      this.rootRun.child_runs.push(llmRun);
-      this.tracer.logTrace(llmRun, RunStatus.END);
+      this.#rootRun.child_runs.push(llmRun);
+      this.#tracer.logTrace(llmRun, RunStatus.END);
     }
   }
 
@@ -124,60 +124,60 @@ export class TraceSession {
 
     for (const block of message.message.content) {
       if (block.type === 'tool_result') {
-        const toolRun = this.pendingToolUses.get(block.tool_use_id);
+        const toolRun = this.#pendingToolUses.get(block.tool_use_id);
         if (toolRun) {
-          this.tracer.completeToolRunInternal(toolRun, block, this.startTime);
+          this.#tracer.completeToolRunInternal(toolRun, block, this.#startTime);
           const status = block.is_error ? RunStatus.ERROR : RunStatus.END;
-          this.tracer.logTrace(toolRun, status);
-          this.pendingToolUses.delete(block.tool_use_id);
+          this.#tracer.logTrace(toolRun, status);
+          this.#pendingToolUses.delete(block.tool_use_id);
         }
       }
     }
   }
 
   private handleResult(message: ClaudeMessage): void {
-    if (!this.rootRun) {
-      this.tracer.logger.warn('[ClaudeAgentTracer] Received result message before init');
+    if (!this.#rootRun) {
+      this.#tracer.logger.warn('[ClaudeAgentTracer] Received result message before init');
       return;
     }
 
     // Complete any pending tool runs
-    for (const [toolUseId, toolRun] of this.pendingToolUses) {
-      this.tracer.logger.warn(`[ClaudeAgentTracer] Tool run ${toolUseId} did not receive result`);
-      toolRun.end_time = this.startTime;
-      this.tracer.logTrace(toolRun, RunStatus.ERROR);
+    for (const [toolUseId, toolRun] of this.#pendingToolUses) {
+      this.#tracer.logger.warn(`[ClaudeAgentTracer] Tool run ${toolUseId} did not receive result`);
+      toolRun.end_time = this.#startTime;
+      this.#tracer.logTrace(toolRun, RunStatus.ERROR);
     }
-    this.pendingToolUses.clear();
+    this.#pendingToolUses.clear();
 
     // Update and log root run end
-    this.rootRun.end_time = this.startTime + (message.duration_ms || 0);
-    this.rootRun.outputs = {
+    this.#rootRun.end_time = this.#startTime + (message.duration_ms || 0);
+    this.#rootRun.outputs = {
       result: message.result,
       is_error: message.is_error,
       num_turns: message.num_turns,
     };
 
     if (message.usage || message.modelUsage) {
-      const cost = this.tracer.createRunCostInternal(message);
-      if (this.rootRun.outputs) {
-        (this.rootRun.outputs as any).llmOutput = cost;
+      const cost = this.#tracer.createRunCostInternal(message);
+      if (this.#rootRun.outputs) {
+        (this.#rootRun.outputs as any).llmOutput = cost;
       }
     }
 
     if (message.is_error) {
-      this.rootRun.error = message.result;
+      this.#rootRun.error = message.result;
     }
 
-    this.rootRun.child_execution_order = this.executionOrder - 1;
+    this.#rootRun.child_execution_order = this.#executionOrder - 1;
     const status = message.is_error ? RunStatus.ERROR : RunStatus.END;
-    this.tracer.logTrace(this.rootRun, status);
+    this.#tracer.logTrace(this.#rootRun, status);
   }
 
   /**
    * Get current trace ID
    */
   getTraceId(): string {
-    return this.traceId;
+    return this.#traceId;
   }
 }
 
@@ -382,7 +382,7 @@ export class ClaudeAgentTracer {
     }
 
     if (msg.message?.usage) {
-      outputs.llmOutput = this.createLLMOutput(msg.message.usage);
+      outputs.llmOutput = this.extractTokenUsage(msg.message.usage);
     }
 
     return {
@@ -485,13 +485,6 @@ export class ClaudeAgentTracer {
     }
 
     return result;
-  }
-
-  /**
-   * Create LLM output from usage
-   */
-  private createLLMOutput(usage: ClaudeTokenUsage): IRunCost {
-    return this.extractTokenUsage(usage);
   }
 
   /**
