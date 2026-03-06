@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 
+import type { Run } from '@langchain/core/tracers/base';
 import { FakeLLM } from '@langchain/core/utils/testing';
 import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
 import { describe, it, beforeEach } from 'vitest';
@@ -7,6 +8,28 @@ import { describe, it, beforeEach } from 'vitest';
 import { LangGraphTracer } from '../src/LangGraphTracer.ts';
 import { RunStatus } from '../src/types.ts';
 import { type CapturedEntry, createCapturingTracingService } from './TestUtils.ts';
+
+function makeMockRun(overrides?: Partial<Run>): Run {
+  return {
+    id: 'run-001',
+    name: 'TestRun',
+    run_type: 'chain',
+    inputs: {},
+    outputs: {},
+    start_time: Date.now(),
+    end_time: Date.now() + 100,
+    execution_order: 1,
+    child_execution_order: 1,
+    child_runs: [],
+    events: [],
+    trace_id: 'trace-001',
+    parent_run_id: undefined,
+    tags: [],
+    extra: {},
+    error: undefined,
+    ...overrides,
+  } as Run;
+}
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -199,6 +222,56 @@ describe('test/LangGraphTracer.test.ts', () => {
       // Verify the error run has the error field set
       assert(errorEntries[0].run, 'Error run should exist');
       assert(errorEntries[0].run.error, 'Error run should have error field set');
+    });
+  });
+
+  describe('Direct hook invocation (unit coverage)', () => {
+    it('should log tool hooks: onToolStart, onToolEnd, onToolError', () => {
+      const run = makeMockRun({ run_type: 'tool', name: 'BashTool' });
+      tracer.onToolStart(run);
+      tracer.onToolEnd(run);
+      tracer.onToolError({ ...run, error: 'tool failed' } as Run);
+
+      const toolEntries = capturedRuns.filter((e) => e.run.run_type === 'tool');
+      assert.strictEqual(toolEntries.length, 3);
+      assert.strictEqual(toolEntries[0].status, RunStatus.START);
+      assert.strictEqual(toolEntries[1].status, RunStatus.END);
+      assert.strictEqual(toolEntries[2].status, RunStatus.ERROR);
+    });
+
+    it('should log LLM hooks: onLLMStart, onLLMEnd, onLLMError', () => {
+      const run = makeMockRun({ run_type: 'llm', name: 'claude-3' });
+      tracer.onLLMStart(run);
+      tracer.onLLMEnd(run);
+      tracer.onLLMError({ ...run, error: 'llm error' } as Run);
+
+      const llmEntries = capturedRuns.filter((e) => e.run.run_type === 'llm');
+      assert.strictEqual(llmEntries.length, 3);
+      assert.strictEqual(llmEntries[0].status, RunStatus.START);
+      assert.strictEqual(llmEntries[1].status, RunStatus.END);
+      assert.strictEqual(llmEntries[2].status, RunStatus.ERROR);
+    });
+
+    it('should log retriever hooks: onRetrieverStart, onRetrieverEnd, onRetrieverError', () => {
+      const run = makeMockRun({ run_type: 'retriever', name: 'VectorRetriever' });
+      tracer.onRetrieverStart(run);
+      tracer.onRetrieverEnd(run);
+      tracer.onRetrieverError({ ...run, error: 'retriever error' } as Run);
+
+      const retrieverEntries = capturedRuns.filter((e) => e.run.run_type === 'retriever');
+      assert.strictEqual(retrieverEntries.length, 3);
+      assert.strictEqual(retrieverEntries[0].status, RunStatus.START);
+      assert.strictEqual(retrieverEntries[1].status, RunStatus.END);
+      assert.strictEqual(retrieverEntries[2].status, RunStatus.ERROR);
+    });
+
+    it('should log agent hooks: onAgentAction, onAgentEnd', () => {
+      const run = makeMockRun({ run_type: 'chain', name: 'AgentExecutor' });
+      tracer.onAgentAction(run);
+      tracer.onAgentEnd(run);
+
+      assert.strictEqual(capturedRuns[0].status, RunStatus.START);
+      assert.strictEqual(capturedRuns[1].status, RunStatus.END);
     });
   });
 
