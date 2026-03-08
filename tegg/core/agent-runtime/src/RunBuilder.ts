@@ -1,4 +1,4 @@
-import type { MessageObject, RunObject, RunRecord } from '@eggjs/tegg-types/agent-runtime';
+import type { MessageObject, RunObject, RunRecord, AgentRunConfig } from '@eggjs/tegg-types/agent-runtime';
 import { RunStatus, AgentErrorCode, AgentObjectType } from '@eggjs/tegg-types/agent-runtime';
 import { InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
 
@@ -28,6 +28,7 @@ export class RunBuilder {
   private readonly threadId: string;
   private readonly createdAt: number;
   private readonly metadata?: Record<string, unknown>;
+  private readonly config?: AgentRunConfig;
 
   private status: RunStatus;
   private startedAt?: number;
@@ -44,17 +45,19 @@ export class RunBuilder {
     createdAt: number,
     status: RunStatus,
     metadata?: Record<string, unknown>,
+    config?: AgentRunConfig,
   ) {
     this.id = id;
     this.threadId = threadId;
     this.createdAt = createdAt;
     this.status = status;
     this.metadata = metadata;
+    this.config = config;
   }
 
   /** Create a RunBuilder from a store RunRecord, restoring all mutable state. */
   static create(run: RunRecord, threadId: string): RunBuilder {
-    const rb = new RunBuilder(run.id, threadId, run.created_at, run.status, run.metadata);
+    const rb = new RunBuilder(run.id, threadId, run.created_at, run.status, run.metadata, run.config);
     rb.startedAt = run.started_at ?? undefined;
     rb.completedAt = run.completed_at ?? undefined;
     rb.cancelledAt = run.cancelled_at ?? undefined;
@@ -166,6 +169,7 @@ export class RunBuilder {
         : null,
       metadata: this.metadata,
       output: this.output,
+      config: this.config,
     };
   }
 }

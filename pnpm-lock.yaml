@@ -2064,6 +2064,9 @@ importers:
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
+      egg-logger:
+        specifier: 'catalog:'
+        version: 3.6.1
       oss-client:
         specifier: 'catalog:'
         version: 2.5.1

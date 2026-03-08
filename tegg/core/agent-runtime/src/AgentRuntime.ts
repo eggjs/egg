@@ -9,11 +9,12 @@ import type {
   AgentStreamMessage,
   AgentStore,
 } from '@eggjs/tegg-types/agent-runtime';
-import { RunStatus, AgentSSEEvent, AgentObjectType, MessageRole, MessageStatus } from '@eggjs/tegg-types/agent-runtime';
+import { RunStatus, AgentSSEEvent, AgentObjectType, MessageStatus } from '@eggjs/tegg-types/agent-runtime';
 import { AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
+import type { EggLogger } from 'egg-logger';
 
-import { nowUnix, newMsgId } from './AgentStoreUtils.ts';
-import { toContentBlocks, extractFromStreamMessages, toInputMessageObjects } from './MessageConverter.ts';
+import { newMsgId } from './AgentStoreUtils.ts';
+import { MessageConverter } from './MessageConverter.ts';
 import { RunBuilder } from './RunBuilder.ts';
 import type { RunUsage } from './RunBuilder.ts';
 import type { SSEWriter } from './SSEWriter.ts';
@@ -21,21 +22,17 @@ import type { SSEWriter } from './SSEWriter.ts';
 export const AGENT_RUNTIME: unique symbol = Symbol('agentRuntime');
 
 /**
- * The host interface — only requires execRun so the runtime can delegate
+ * The executor interface — only requires execRun so the runtime can delegate
  * execution back through the controller's prototype chain (AOP/mock friendly).
  */
-export interface AgentControllerHost {
+export interface AgentExecutor {
   execRun(input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentStreamMessage>;
 }
 
-export interface AgentRuntimeLogger {
-  error(...args: unknown[]): void;
-}
-
 export interface AgentRuntimeOptions {
-  host: AgentControllerHost;
+  host: AgentExecutor;
   store: AgentStore;
-  logger: AgentRuntimeLogger;
+  logger: EggLogger;
 }
 
 export class AgentRuntime {
@@ -48,8 +45,8 @@ export class AgentRuntime {
 
   private store: AgentStore;
   private runningTasks: Map<string, { promise: Promise<void>; abortController: AbortController }>;
-  private host: AgentControllerHost;
-  private logger: AgentRuntimeLogger;
+  private host: AgentExecutor;
+  private logger: EggLogger;
 
   constructor(options: AgentRuntimeOptions) {
     this.host = options.host;
@@ -131,11 +128,17 @@ export class AgentRuntime {
         return RunBuilder.create(latest, latest.thread_id ?? '').snapshot();
       }
 
-      const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
+      const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, run.id);
 
+      // TODO: updateRun + appendMessages are not atomic — if updateRun succeeds but
+      // appendMessages fails, the run shows completed but thread history is incomplete.
+      // Consider reordering (append first, then complete) or adding an aggregate store method.
       await this.store.updateRun(run.id, rb.complete(output, usage));
 
-      await this.store.appendMessages(threadId, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
+      await this.store.appendMessages(threadId, [
+        ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
+        ...output,
+      ]);
 
       return rb.snapshot();
     } catch (err: unknown) {
@@ -186,12 +189,13 @@ export class AgentRuntime {
           return;
         }
 
-        const { output, usage } = extractFromStreamMessages(streamMessages, run.id);
+        const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, run.id);
 
+        // TODO: same atomicity concern as syncRun — see comment there
         await this.store.updateRun(run.id, rb.complete(output, usage));
 
         await this.store.appendMessages(threadId, [
-          ...toInputMessageObjects(input.input.messages, threadId),
+          ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
           ...output,
         ]);
       } catch (err: unknown) {
@@ -241,15 +245,7 @@ export class AgentRuntime {
     const msgId = newMsgId();
 
     // event: thread.message.created
-    const msgObj: MessageObject = {
-      id: msgId,
-      object: AgentObjectType.ThreadMessage,
-      created_at: nowUnix(),
-      run_id: run.id,
-      role: MessageRole.Assistant,
-      status: MessageStatus.InProgress,
-      content: [],
-    };
+    const msgObj = MessageConverter.createStreamMessage(msgId, run.id);
     writer.writeEvent(AgentSSEEvent.ThreadMessageCreated, msgObj);
 
     try {
@@ -283,9 +279,13 @@ export class AgentRuntime {
       writer.writeEvent(AgentSSEEvent.ThreadMessageCompleted, msgObj);
 
       // Persist and emit completion
+      // TODO: same atomicity concern as syncRun — see comment there
       const output: MessageObject[] = content.length > 0 ? [msgObj] : [];
       await this.store.updateRun(run.id, rb.complete(output, usage));
-      await this.store.appendMessages(threadId, [...toInputMessageObjects(input.input.messages, threadId), ...output]);
+      await this.store.appendMessages(threadId, [
+        ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
+        ...output,
+      ]);
 
       // event: thread.run.completed
       writer.writeEvent(AgentSSEEvent.ThreadRunCompleted, rb.snapshot());
@@ -327,7 +327,7 @@ export class AgentRuntime {
     for await (const msg of this.host.execRun(input, signal)) {
       if (signal.aborted) break;
       if (msg.message) {
-        const contentBlocks = toContentBlocks(msg.message);
+        const contentBlocks = MessageConverter.toContentBlocks(msg.message);
         content.push(...contentBlocks);
 
         // event: thread.message.delta
@@ -354,22 +354,7 @@ export class AgentRuntime {
 
   async getRun(runId: string): Promise<RunObject> {
     const run = await this.store.getRun(runId);
-    return {
-      id: run.id,
-      object: AgentObjectType.ThreadRun,
-      created_at: run.created_at,
-      thread_id: run.thread_id ?? '',
-      status: run.status,
-      last_error: run.last_error,
-      started_at: run.started_at,
-      completed_at: run.completed_at,
-      cancelled_at: run.cancelled_at,
-      failed_at: run.failed_at,
-      usage: run.usage,
-      output: run.output,
-      config: run.config,
-      metadata: run.metadata,
-    };
+    return RunBuilder.create(run, run.thread_id ?? '').snapshot();
   }
 
   async cancelRun(runId: string): Promise<RunObject> {
@@ -435,9 +420,9 @@ export class AgentRuntime {
       await this.store.destroy();
     }
   }
-}
 
-/** Factory function — avoids the spread-arg type issue with dynamic delegation. */
-export function createAgentRuntime(options: AgentRuntimeOptions): AgentRuntime {
-  return new AgentRuntime(options);
+  /** Factory method — avoids the spread-arg type issue with dynamic delegation. */
+  static create(options: AgentRuntimeOptions): AgentRuntime {
+    return new AgentRuntime(options);
+  }
 }
