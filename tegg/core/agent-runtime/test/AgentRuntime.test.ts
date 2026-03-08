@@ -7,6 +7,8 @@ import type {
   RunRecord,
   CreateRunInput,
   AgentStreamMessage,
+  AgentStreamMessagePayload,
+  InputContentPart,
   MessageContentBlock,
 } from '@eggjs/tegg-types/agent-runtime';
 import {
@@ -17,7 +19,7 @@ import {
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { AgentRuntime } from '../src/AgentRuntime.ts';
-import type { AgentExecutor } from '../src/AgentRuntime.ts';
+import type { AgentExecutor, AgentRuntimeOptions } from '../src/AgentRuntime.ts';
 import { MessageConverter } from '../src/MessageConverter.ts';
 import { OSSAgentStore } from '../src/OSSAgentStore.ts';
 import { RunBuilder } from '../src/RunBuilder.ts';
@@ -186,7 +188,7 @@ describe('core/agent-runtime/test/AgentRuntime.test.ts', () => {
         error() {
           /* noop */
         },
-      } as any,
+      } as unknown as AgentRuntimeOptions['logger'],
     });
   });
 
@@ -935,13 +937,13 @@ describe('MessageConverter', () => {
     });
 
     it('should return empty array for null/undefined input', () => {
-      assert.equal(MessageConverter.toContentBlocks(null as any).length, 0);
-      assert.equal(MessageConverter.toContentBlocks(undefined as any).length, 0);
+      assert.equal(MessageConverter.toContentBlocks(null as unknown as AgentStreamMessagePayload).length, 0);
+      assert.equal(MessageConverter.toContentBlocks(undefined as unknown as AgentStreamMessagePayload).length, 0);
     });
 
     it('should filter out non-text content types', () => {
       const blocks = MessageConverter.toContentBlocks({
-        content: [{ type: 'text', text: 'keep' }, { type: 'image', url: 'ignored' } as any],
+        content: [{ type: 'text', text: 'keep' }, { type: 'image', url: 'ignored' } as unknown as InputContentPart],
       });
       assert.equal(blocks.length, 1);
       assert.equal(blocks[0].text.value, 'keep');
