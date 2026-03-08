@@ -1,4 +1,4 @@
-const assert = require('assert');
+const assert = require('node:assert');
 const utils = require('../../utils');
 
 describe('test/lib/core/context_httpclient_timeout.test.js', () => {

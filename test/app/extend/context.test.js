@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const mm = require('egg-mock');
-const assert = require('assert');
+const assert = require('node:assert');
 const utils = require('../../utils');
 
 describe('test/app/extend/context.test.js', () => {

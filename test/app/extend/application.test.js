@@ -1,7 +1,7 @@
 
-const assert = require('assert');
-const fs = require('fs');
-const path = require('path');
+const assert = require('node:assert');
+const fs = require('node:fs');
+const path = require('node:path');
 const utils = require('../../utils');
 
 describe('test/app/extend/application.test.js', () => {

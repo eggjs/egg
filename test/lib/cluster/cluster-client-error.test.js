@@ -1,6 +1,6 @@
-const { readFile } = require('fs/promises');
-const path = require('path');
-const assert = require('assert');
+const { readFile } = require('node:fs/promises');
+const path = require('node:path');
+const assert = require('node:assert');
 const utils = require('../../utils');
 
 describe('test/lib/cluster/cluster-client-error.test.js', () => {

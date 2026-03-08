@@ -1,6 +1,6 @@
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
 const mm = require('egg-mock');
 const utils = require('../../../lib/core/utils');
 
@@ -368,7 +368,7 @@ describe('test/lib/core/utils.test.js', () => {
       try {
         'use strict';
         proxy.bar = 2;
-      } catch (err) {
+      } catch {
         errorThrown = true;
       }
       assert(errorThrown || proxy.bar === undefined, 'Should not add property after preventExtensions');

@@ -1,5 +1,5 @@
 const assert = require('node:assert');
-const http = require('http');
+const http = require('node:http');
 const utils = require('../../utils');
 
 describe('test/lib/core/fetch_tracer.test.js', () => {

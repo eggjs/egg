@@ -1,6 +1,6 @@
-const assert = require('assert');
+const assert = require('node:assert');
 const mm = require('egg-mock');
-const fs = require('fs/promises');
+const fs = require('node:fs/promises');
 const utils = require('../../utils');
 
 describe('test/app/middleware/meta.test.js', () => {

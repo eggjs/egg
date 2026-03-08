@@ -1,8 +1,8 @@
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
 
-const fs = require('fs').promises;
+const fs = require('node:fs').promises;
 const utils = require('../../utils');
 const sleep = async ms => new Promise(resolve => setTimeout(resolve, ms));
 

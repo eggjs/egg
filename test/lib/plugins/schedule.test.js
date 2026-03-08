@@ -1,6 +1,6 @@
-const assert = require('assert');
-const path = require('path');
-const fs = require('fs');
+const assert = require('node:assert');
+const path = require('node:path');
+const fs = require('node:fs');
 const utils = require('../../utils');
 
 describe('test/lib/plugins/schedule.test.js', () => {

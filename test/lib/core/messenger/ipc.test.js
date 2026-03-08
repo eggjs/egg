@@ -1,4 +1,4 @@
-const assert = require('assert');
+const assert = require('node:assert');
 const mm = require('egg-mock');
 const utils = require('../../../utils');
 const Messenger = require('../../../../lib/core/messenger/ipc');

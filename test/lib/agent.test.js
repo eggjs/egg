@@ -1,9 +1,9 @@
 'use strict';
 
-const assert = require('assert');
-const fs = require('fs');
-const path = require('path');
-const execSync = require('child_process').execSync;
+const assert = require('node:assert');
+const fs = require('node:fs');
+const path = require('node:path');
+const execSync = require('node:child_process').execSync;
 const mm = require('egg-mock');
 const utils = require('../utils');
 

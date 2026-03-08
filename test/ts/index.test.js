@@ -1,6 +1,6 @@
-const assert = require('assert');
+const assert = require('node:assert');
 const coffee = require('coffee');
-const path = require('path');
+const path = require('node:path');
 const utils = require('../utils');
 
 describe('test/ts/index.test.js', () => {
