@@ -1,6 +1,6 @@
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
 const utils = require('../../../utils');
 
 describe('test/lib/core/loader/load_app.test.js', () => {

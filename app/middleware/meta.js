@@ -2,7 +2,7 @@
  * meta middleware, should be the first middleware
  */
 
-const { performance } = require('perf_hooks');
+const { performance } = require('node:perf_hooks');
 
 module.exports = options => {
   return async function meta(ctx, next) {

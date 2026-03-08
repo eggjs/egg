@@ -1,6 +1,6 @@
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
 const utils = require('../../utils');
 
 describe('test/lib/core/context_performance_starttime.test.js', () => {

@@ -1,8 +1,8 @@
 const utils = require('../../utils');
 const mm = require('egg-mock');
-const dns = require('dns');
-const dnsPromise = require('dns').promises;
-const assert = require('assert');
+const dns = require('node:dns');
+const dnsPromise = require('node:dns').promises;
+const assert = require('node:assert');
 
 describe('test/lib/core/dns_resolver.test.js', () => {
   let app;

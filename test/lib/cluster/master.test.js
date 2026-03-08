@@ -19,7 +19,7 @@ describe('test/lib/cluster/master.test.js', () => {
       try {
         await app.httpRequest()
           .get('/exit');
-      } catch (_) {
+      } catch {
         // do nothing
       }
 
@@ -37,7 +37,7 @@ describe('test/lib/cluster/master.test.js', () => {
       try {
         await app.httpRequest()
           .get('/uncaughtException');
-      } catch (_) {
+      } catch {
         // do nothing
       }
 
@@ -63,7 +63,7 @@ describe('test/lib/cluster/master.test.js', () => {
       try {
         await app.httpRequest()
           .get('/uncaughtException');
-      } catch (_) {
+      } catch {
         // do nothing
       }
 
@@ -78,7 +78,7 @@ describe('test/lib/cluster/master.test.js', () => {
       try {
         await app.httpRequest()
           .get('/uncaughtException');
-      } catch (_) {
+      } catch {
         // do nothing
       }
 

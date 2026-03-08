@@ -1,7 +1,7 @@
 'use strict';
 
 const mm = require('egg-mock');
-const assert = require('assert');
+const assert = require('node:assert');
 const innerClient = require('cluster-client/lib/symbol').innerClient;
 const utils = require('../../utils');
 

@@ -1,9 +1,9 @@
-const { readFileSync } = require('fs');
-const { rm } = require('fs/promises');
-const path = require('path');
+const { readFileSync } = require('node:fs');
+const { rm } = require('node:fs/promises');
+const path = require('node:path');
 const mm = require('egg-mock');
 const Koa = require('koa');
-const http = require('http');
+const http = require('node:http');
 const request = require('supertest');
 const egg = require('..');
 

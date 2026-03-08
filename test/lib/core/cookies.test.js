@@ -1,10 +1,10 @@
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
 const mm = require('egg-mock');
 const utils = require('../../utils');
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 describe('test/lib/core/cookies.test.js', () => {
   afterEach(mm.restore);

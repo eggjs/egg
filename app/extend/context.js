@@ -1,6 +1,6 @@
 'use strict';
 
-const { performance } = require('perf_hooks');
+const { performance } = require('node:perf_hooks');
 const delegate = require('delegates');
 const { assign } = require('utility');
 const eggUtils = require('egg-core').utils;

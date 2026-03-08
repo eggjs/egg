@@ -2,7 +2,7 @@
 
 const utils = require('../../../utils');
 const pedding = require('pedding');
-const assert = require('assert');
+const assert = require('node:assert');
 const mm = require('egg-mock');
 
 describe('test/lib/core/messenger/local.test.js', () => {

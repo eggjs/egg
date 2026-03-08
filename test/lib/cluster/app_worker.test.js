@@ -1,5 +1,5 @@
-const net = require('net');
-const assert = require('assert');
+const net = require('node:net');
+const assert = require('node:assert');
 const request = require('supertest');
 const address = require('address');
 const utils = require('../../utils');

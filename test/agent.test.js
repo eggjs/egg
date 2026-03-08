@@ -1,8 +1,8 @@
 'use strict';
 
-const assert = require('assert');
+const assert = require('node:assert');
 const mock = require('egg-mock');
-const path = require('path');
+const path = require('node:path');
 const utils = require('./utils');
 
 describe('test/agent.test.js', () => {

@@ -1,6 +1,6 @@
 'use strict';
 
-const querystring = require('querystring');
+const querystring = require('node:querystring');
 const accepts = require('accepts');
 
 const _querycache = Symbol('_querycache');

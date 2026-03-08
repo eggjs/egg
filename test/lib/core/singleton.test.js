@@ -1,4 +1,4 @@
-const assert = require('assert');
+const assert = require('node:assert');
 const Singleton = require('../../../lib/core/singleton');
 const { sleep } = require('../../utils');
 class DataService {

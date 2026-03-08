@@ -1,9 +1,9 @@
 'use strict';
 
-const path = require('path');
-const fs = require('fs');
+const path = require('node:path');
+const fs = require('node:fs');
 const mm = require('egg-mock');
-const assert = require('assert');
+const assert = require('node:assert');
 const AppWorkerLoader = require('../../../../').AppWorkerLoader;
 const AgentWorkerLoader = require('../../../../').AgentWorkerLoader;
 const utils = require('../../../utils');

@@ -1,7 +1,7 @@
 const mm = require('egg-mock');
-const assert = require('assert');
-const dns = require('dns').promises;
-const urlparse = require('url').parse;
+const assert = require('node:assert');
+const dns = require('node:dns').promises;
+const urlparse = require('node:url').parse;
 const utils = require('../../utils');
 
 describe('test/lib/core/dnscache_httpclient.test.js', () => {

@@ -1,6 +1,6 @@
 'use strict';
 
-const url = require('url');
+const url = require('node:url');
 
 
 module.exports = {

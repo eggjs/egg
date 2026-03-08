@@ -1,5 +1,5 @@
-const assert = require('assert');
-const querystring = require('querystring');
+const assert = require('node:assert');
+const querystring = require('node:querystring');
 const utils = require('../../utils');
 
 describe('test/app/middleware/body_parser.test.js', () => {
