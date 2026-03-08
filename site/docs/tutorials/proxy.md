@@ -25,7 +25,7 @@ When the proxy configuration is enabled, the app parses the [X-Forwarded-For](ht
 ```js
 // config/config.default.js
 
-exports.ipHeaders = 'X-Real-Ip, X-Forwarded-For';
+exports.ipHeaders = "X-Real-Ip, X-Forwarded-For";
 ```
 
 ### `config.maxIpsCount`
@@ -59,7 +59,7 @@ When the proxy configuration is enabled, the application will parse the [X-Forwa
 ```js
 // config/config.default.js
 
-exports.protocolHeaders = 'X-Real-Proto, X-Forwarded-Proto';
+exports.protocolHeaders = "X-Real-Proto, X-Forwarded-Proto";
 ```
 
 ### `config.hostHeaders`
@@ -69,5 +69,5 @@ When the proxy configuration is enabled, the application still reads `host` dire
 ```js
 // config/config.default.js
 
-exports.hostHeaders = 'X-Forwarded-Host';
+exports.hostHeaders = "X-Forwarded-Host";
 ```

@@ -1,9 +1,9 @@
-const assert = require('assert');
+const assert = require("assert");
 
-module.exports = app => {
+module.exports = (app) => {
   class CustomHttpClient extends app.HttpClientNext {
     async request(url, opt) {
-      assert(/^http/.test(url), 'url should start with http, but got ' + url);
+      assert(/^http/.test(url), "url should start with http, but got " + url);
       return await super.request(url, opt);
     }
 

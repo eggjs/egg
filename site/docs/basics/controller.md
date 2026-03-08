@@ -30,13 +30,13 @@ You can write a Controller by defining a Controller class:
 
 ```js
 // app/controller/post.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 class PostController extends Controller {
   async create() {
     const { ctx, service } = this;
     const createRule = {
-      title: { type: 'string' },
-      content: { type: 'string' },
+      title: { type: "string" },
+      content: { type: "string" },
     };
     // verify parameters
     ctx.validate(createRule);
@@ -59,7 +59,7 @@ We've defined a `PostController` class above and every method of this Controller
 // app/router.js
 module.exports = (app) => {
   const { router, controller } = app;
-  router.post('createPost', '/api/posts', controller.post.create);
+  router.post("createPost", "/api/posts", controller.post.create);
 };
 ```
 
@@ -68,7 +68,7 @@ Multi-level directory is supported, for example, put the above code into `app/co
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.post('createPost', '/api/posts', app.controller.sub.post.create);
+  app.router.post("createPost", "/api/posts", app.controller.sub.post.create);
 };
 ```
 
@@ -86,7 +86,7 @@ Defining a Controller class helps us not only abstract the Controller layer code
 
 ```js
 // app/core/base_controller.js
-const { Controller } = require('egg');
+const { Controller } = require("egg");
 class BaseController extends Controller {
   get user() {
     return this.ctx.session.user;
@@ -100,7 +100,7 @@ class BaseController extends Controller {
   }
 
   notFound(msg) {
-    msg = msg || 'not found';
+    msg = msg || "not found";
     this.ctx.throw(404, msg);
   }
 }
@@ -111,7 +111,7 @@ Now we can use base class' methods by inheriting from `BaseController`:
 
 ```js
 //app/controller/post.js
-const Controller = require('../core/base_controller');
+const Controller = require("../core/base_controller");
 class PostController extends Controller {
   async list() {
     const posts = await this.service.listByUser(this.user);
@@ -130,8 +130,8 @@ For example, when we define a Controller relative to `POST /api/posts`, we creat
 // app/controller/post.js
 exports.create = async (ctx) => {
   const createRule = {
-    title: { type: 'string' },
-    content: { type: 'string' },
+    title: { type: "string" },
+    content: { type: "string" },
   };
   // verify parameters
   ctx.validate(createRule);
@@ -223,8 +223,8 @@ If duplicated keys exist in Query String, only the first value of this key is us
 This is for unity reason, because we usually do not design users to pass parameters with same keys in Query String then we write codes like below:
 
 ```js
-const key = ctx.query.key || '';
-if (key.startsWith('egg')) {
+const key = ctx.query.key || "";
+if (key.startsWith("egg")) {
   // do something
 }
 ```
@@ -259,8 +259,8 @@ In [Router](./router.md) part, we say Router is allowed to declare parameters wh
 // GET /projects/1/app/2
 class AppController extends Controller {
   async listApp() {
-    assert.equal(this.ctx.params.projectId, '1');
-    assert.equal(this.ctx.params.appId, '2');
+    assert.equal(this.ctx.params.projectId, "1");
+    assert.equal(this.ctx.params.appId, "2");
   }
 }
 ```
@@ -284,8 +284,8 @@ The [bodyParser](https://github.com/koajs/bodyparser) middleware is built in by 
 // {"title": "controller", "content": "what is controller"}
 class PostController extends Controller {
   async listPosts() {
-    assert.equal(this.ctx.request.body.title, 'controller');
-    assert.equal(this.ctx.request.body.content, 'what is controller');
+    assert.equal(this.ctx.request.body.title, "controller");
+    assert.equal(this.ctx.request.body.content, "what is controller");
   }
 }
 ```
@@ -301,8 +301,8 @@ The mostly adjusted config field is the maximum length of the request body for p
 ```js
 module.exports = {
   bodyParser: {
-    jsonLimit: '1mb',
-    formLimit: '1mb',
+    jsonLimit: "1mb",
+    formLimit: "1mb",
   },
 };
 ```
@@ -325,7 +325,7 @@ The `body` in the request can carry parameters as well as files. Generally speak
 ```js
 // config/config.default.js
 exports.multipart = {
-  mode: 'file',
+  mode: "file",
 };
 ```
 
@@ -336,11 +336,7 @@ exports.multipart = {
 Your HTML static front-end codes should look like this below:
 
 ```html
-<form
-  method="POST"
-  action="/upload?_csrf={{ ctx.csrf | safe }}"
-  enctype="multipart/form-data"
->
+<form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
   title: <input name="title" /> file: <input name="file" type="file" />
   <button type="submit">Upload</button>
 </form>
@@ -350,14 +346,14 @@ The corresponding backend codes are:
 
 ```js
 // app/controller/upload.js
-const Controller = require('egg').Controller;
-const fs = require('fs/promises');
+const Controller = require("egg").Controller;
+const fs = require("fs/promises");
 
 module.exports = class extends Controller {
   async upload() {
     const { ctx } = this;
     const file = ctx.request.files[0];
-    const name = 'egg-multipart-test/' + path.basename(file.filename);
+    const name = "egg-multipart-test/" + path.basename(file.filename);
     let result;
     try {
       // process file (e.g: upload to cloud storage)
@@ -383,11 +379,7 @@ For multiple files, with the help of `ctx.request.files`, we can loop each of th
 Your HTML static front-end codes should look like this below:
 
 ```html
-<form
-  method="POST"
-  action="/upload?_csrf={{ ctx.csrf | safe }}"
-  enctype="multipart/form-data"
->
+<form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
   title: <input name="title" /> file1: <input name="file1" type="file" /> file2:
   <input name="file2" type="file" />
   <button type="submit">Upload</button>
@@ -398,27 +390,24 @@ The corresponding backend codes are:
 
 ```js
 // app/controller/upload.js
-const Controller = require('egg').Controller;
-const fs = require('fs/promises');
+const Controller = require("egg").Controller;
+const fs = require("fs/promises");
 
 module.exports = class extends Controller {
   async upload() {
     const { ctx } = this;
     console.log(ctx.request.body);
-    console.log('got %d files', ctx.request.files.length);
+    console.log("got %d files", ctx.request.files.length);
     for (const file of ctx.request.files) {
-      console.log('field: ' + file.fieldname);
-      console.log('filename: ' + file.filename);
-      console.log('encoding: ' + file.encoding);
-      console.log('mime: ' + file.mime);
-      console.log('tmp filepath: ' + file.filepath);
+      console.log("field: " + file.fieldname);
+      console.log("filename: " + file.filename);
+      console.log("encoding: " + file.encoding);
+      console.log("mime: " + file.mime);
+      console.log("tmp filepath: " + file.filepath);
       let result;
       try {
         // process file (e.g: upload to cloud storage)
-        result = await ctx.oss.put(
-          'egg-multipart-test/' + file.filename,
-          file.filepath,
-        );
+        result = await ctx.oss.put("egg-multipart-test/" + file.filename, file.filepath);
       } finally {
         // need to remove the tmp file
         await fs.unlink(file.filepath);
@@ -435,26 +424,22 @@ module.exports = class extends Controller {
 1. For Single File：
 
 ```html
-<form
-  method="POST"
-  action="/upload?_csrf={{ ctx.csrf | safe }}"
-  enctype="multipart/form-data"
->
+<form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
   title: <input name="title" /> file: <input name="file" type="file" />
   <button type="submit">Upload</button>
 </form>
 ```
 
 ```js
-const path = require('path');
-const sendToWormhole = require('stream-wormhole');
-const Controller = require('egg').Controller;
+const path = require("path");
+const sendToWormhole = require("stream-wormhole");
+const Controller = require("egg").Controller;
 
 class UploaderController extends Controller {
   async upload() {
     const ctx = this.ctx;
     const stream = await ctx.getFileStream();
-    const name = 'egg-multipart-test/' + path.basename(stream.filename);
+    const name = "egg-multipart-test/" + path.basename(stream.filename);
     let result;
     try {
       // process file (e.g: upload to cloud storage)
@@ -486,8 +471,8 @@ To acquire the uploaded files easily, there're two conditions at least:
 For multiple files, you should do the following instead of using `ctx.getFileStream()`:
 
 ```js
-const sendToWormhole = require('stream-wormhole');
-const Controller = require('egg').Controller;
+const sendToWormhole = require("stream-wormhole");
+const Controller = require("egg").Controller;
 
 class UploaderController extends Controller {
   async upload() {
@@ -498,10 +483,10 @@ class UploaderController extends Controller {
     while ((part = await parts()) != null) {
       if (part.length) {
         // arrays are busboy fields
-        console.log('field: ' + part[0]);
-        console.log('value: ' + part[1]);
-        console.log('valueTruncated: ' + part[2]);
-        console.log('fieldnameTruncated: ' + part[3]);
+        console.log("field: " + part[0]);
+        console.log("value: " + part[1]);
+        console.log("valueTruncated: " + part[2]);
+        console.log("fieldnameTruncated: " + part[3]);
       } else {
         if (!part.filename) {
           // When a user clicks `upload` before choosing a file,
@@ -511,17 +496,14 @@ class UploaderController extends Controller {
           return;
         }
         // otherwise, it's a fully-filled stream
-        console.log('field: ' + part.fieldname);
-        console.log('filename: ' + part.filename);
-        console.log('encoding: ' + part.encoding);
-        console.log('mime: ' + part.mime);
+        console.log("field: " + part.fieldname);
+        console.log("filename: " + part.filename);
+        console.log("encoding: " + part.encoding);
+        console.log("mime: " + part.mime);
         let result;
         try {
           // process file (e.g: upload to cloud storage)
-          result = await ctx.oss.put(
-            'egg-multipart-test/' + part.filename,
-            part,
-          );
+          result = await ctx.oss.put("egg-multipart-test/" + part.filename, part);
         } catch (err) {
           // You MUST consume the file stream, otherwises the browser cannot response any more
           await sendToWormhole(part);
@@ -530,7 +512,7 @@ class UploaderController extends Controller {
         console.log(result);
       }
     }
-    console.log('and we are done parsing the form!');
+    console.log("and we are done parsing the form!");
   }
 }
 
@@ -572,7 +554,7 @@ Users can add new file extensions in `config/config.default.js`, or rewrite a wh
 ```js
 module.exports = {
   multipart: {
-    fileExtensions: ['.apk'], // Add support for apk files
+    fileExtensions: [".apk"], // Add support for apk files
   },
 };
 ```
@@ -582,7 +564,7 @@ module.exports = {
 ```js
 module.exports = {
   multipart: {
-    whitelist: ['.png'], // ONLY files of png is allowed
+    whitelist: [".png"], // ONLY files of png is allowed
   },
 };
 ```
@@ -640,15 +622,15 @@ Through `ctx.cookies`, we can conveniently and safely set and get Cookie in Cont
 class CookieController extends Controller {
   async add() {
     const ctx = this.ctx;
-    let count = ctx.cookies.get('count');
+    let count = ctx.cookies.get("count");
     count = count ? Number(count) : 0;
-    ctx.cookies.set('count', ++count);
+    ctx.cookies.set("count", ++count);
     ctx.body = count;
   }
 
   async remove() {
     const ctx = this.ctx;
-    const count = ctx.cookies.set('count', null);
+    const count = ctx.cookies.set("count", null);
     ctx.status = 204;
   }
 }
@@ -676,7 +658,7 @@ e.g.: Configured application level Cookie [SameSite](https://www.ruanyifeng.com/
 ```js
 module.exports = {
   cookies: {
-    sameSite: 'lax',
+    sameSite: "lax",
   },
 };
 ```
@@ -722,7 +704,7 @@ There are mainly these attributes below can be used to configure Session in `con
 
 ```js
 module.exports = {
-  key: 'EGG_SESS', // the name of key-value pairs, which is specially used by Cookie to store Session
+  key: "EGG_SESS", // the name of key-value pairs, which is specially used by Cookie to store Session
   maxAge: 86400000, // Session maximum valid time
 };
 ```
@@ -737,7 +719,7 @@ With the help of the convenient parameter validation mechanism provided by [Vali
 // config/plugin.js
 exports.validate = {
   enable: true,
-  package: 'egg-validate',
+  package: "egg-validate",
 };
 ```
 
@@ -749,8 +731,8 @@ class PostController extends Controller {
     // validate parameters
     // if the second parameter is absent, `ctx.request.body` is validated automatically
     this.ctx.validate({
-      title: { type: 'string' },
-      content: { type: 'string' },
+      title: { type: "string" },
+      content: { type: "string" },
     });
   }
 }
@@ -783,11 +765,11 @@ In addition to built-in validation types introduced in the previous section, som
 
 ```js
 // app.js
-app.validator.addRule('json', (rule, value) => {
+app.validator.addRule("json", (rule, value) => {
   try {
     JSON.parse(value);
   } catch (err) {
-    return 'must be json string';
+    return "must be json string";
   }
 });
 ```
@@ -799,7 +781,7 @@ class PostController extends Controller {
   async handler() {
     const ctx = this.ctx;
     // query.test field must be a json string
-    const rule = { test: 'json' };
+    const rule = { test: "json" };
     ctx.validate(rule, ctx.query);
   }
 }
@@ -861,14 +843,14 @@ Most data is sent to requesters through the body and, just like the body in the 
 class ViewController extends Controller {
   async show() {
     this.ctx.body = {
-      name: 'egg',
-      category: 'framework',
-      language: 'Node.js',
+      name: "egg",
+      category: "framework",
+      language: "Node.js",
     };
   }
 
   async page() {
-    this.ctx.body = '<html><h1>Hello</h1></html>';
+    this.ctx.body = "<html><h1>Hello</h1></html>";
   }
 }
 ```
@@ -898,7 +880,7 @@ Egg itself does not integrate any template engine, but it establishes the [View 
 class HomeController extends Controller {
   async index() {
     const ctx = this.ctx;
-    await ctx.render('home.tpl', { name: 'egg' });
+    await ctx.render("home.tpl", { name: "egg" });
     // ctx.body = await ctx.renderString('hi, {{ name }}', { name: 'egg' });
   }
 }
@@ -918,8 +900,8 @@ Since misuse of JSONP leads to dozens of security issues, the framework supplies
 // app/router.js
 module.exports = (app) => {
   const jsonp = app.jsonp();
-  app.router.get('/api/posts/:id', jsonp, app.controller.posts.show);
-  app.router.get('/api/posts', jsonp, app.controller.posts.list);
+  app.router.get("/api/posts/:id", jsonp, app.controller.posts.show);
+  app.router.get("/api/posts", jsonp, app.controller.posts.list);
 };
 ```
 
@@ -930,9 +912,9 @@ module.exports = (app) => {
 class PostController extends Controller {
   async show() {
     this.ctx.body = {
-      name: 'egg',
-      category: 'framework',
-      language: 'Node.js',
+      name: "egg",
+      category: "framework",
+      language: "Node.js",
     };
   }
 }
@@ -947,7 +929,7 @@ By default, the framework determines whether to return data in JSONP format or n
 ```js
 // config/config.default.js
 exports.jsonp = {
-  callback: 'callback', // inspecting the `callback` parameter in the query
+  callback: "callback", // inspecting the `callback` parameter in the query
   limit: 100, // the maximum size of the method name is 100 characters
 };
 ```
@@ -960,12 +942,8 @@ Also we can overwrite the default configuration in `app.jsonp()` when creating t
 // app/router.js
 module.exports = (app) => {
   const { router, controller, jsonp } = app;
-  router.get(
-    '/api/posts/:id',
-    jsonp({ callback: 'callback' }),
-    controller.posts.show,
-  );
-  router.get('/api/posts', jsonp({ callback: 'cb' }), controller.posts.list);
+  router.get("/api/posts/:id", jsonp({ callback: "callback" }), controller.posts.show);
+  router.get("/api/posts", jsonp({ callback: "cb" }), controller.posts.list);
 };
 ```
 
@@ -1027,7 +1005,7 @@ exports.jsonp = {
 
 ```js
 exports.jsonp = {
-  whiteList: '.test.com',
+  whiteList: ".test.com",
 };
 // matches domain test.com:
 // https://test.com/hello
@@ -1038,7 +1016,7 @@ exports.jsonp = {
 // http://sub.sub.test.com/
 
 exports.jsonp = {
-  whiteList: 'sub.test.com',
+  whiteList: "sub.test.com",
 };
 // only matches domain sub.test.com:
 // https://sub.test.com/hello
@@ -1049,7 +1027,7 @@ exports.jsonp = {
 
 ```js
 exports.jsonp = {
-  whiteList: ['sub.test.com', 'sub2.test.com'],
+  whiteList: ["sub.test.com", "sub2.test.com"],
 };
 // matches domain sub.test.com and sub2.test.com:
 // https://sub.test.com/hello
@@ -1073,7 +1051,7 @@ class ProxyController extends Controller {
     ctx.body = await ctx.service.post.get();
     const used = Date.now() - start;
     // set one response header
-    ctx.set('show-response-time', used.toString());
+    ctx.set("show-response-time", used.toString());
   }
 }
 ```
@@ -1090,7 +1068,7 @@ If you use the `ctx.redirect` method, you need to configure the application conf
 ```js
 // config/config.default.js
 exports.security = {
-  domainWhiteList: ['.domain.com'], // Security whitelist, starts with `.`
+  domainWhiteList: [".domain.com"], // Security whitelist, starts with `.`
 };
 ```
 

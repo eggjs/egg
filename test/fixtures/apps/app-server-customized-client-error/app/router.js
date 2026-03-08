@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  app.get('/', function* () {
+module.exports = (app) => {
+  app.get("/", function* () {
     this.body = this.app.serverEmit;
   });
 };

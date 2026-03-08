@@ -1,13 +1,13 @@
-import { defineConfig } from 'dumi';
+import { defineConfig } from "dumi";
 
 export default defineConfig({
-  mode: 'site',
-  title: 'Egg',
+  mode: "site",
+  title: "Egg",
 
-  description: 'Born to build better enterprise frameworks and apps',
+  description: "Born to build better enterprise frameworks and apps",
 
-  logo: '/logo.svg',
-  favicon: '/favicon.png',
+  logo: "/logo.svg",
+  favicon: "/favicon.png",
 
   // algolia: {
   //   apiKey: '1561de31a86f79507ea00cdb54ce647c',
@@ -15,60 +15,60 @@ export default defineConfig({
   // },
 
   theme: {
-    '@c-primary': '#22ab28',
+    "@c-primary": "#22ab28",
   },
 
   exportStatic: {},
 
   sitemap: {
-    hostname: 'https://v3.eggjs.org',
+    hostname: "https://v3.eggjs.org",
   },
 
   navs: {
-    'en-US': [
+    "en-US": [
       null,
       {
-        title: 'GitHub',
-        path: 'https://github.com/eggjs/egg',
+        title: "GitHub",
+        path: "https://github.com/eggjs/egg",
       },
       {
-        title: 'Release',
-        path: 'https://github.com/eggjs/egg/releases',
+        title: "Release",
+        path: "https://github.com/eggjs/egg/releases",
       },
       {
-        title: 'Plugins',
-        path: 'https://github.com/search?q=topic%3Aegg-plugin&type=Repositories',
+        title: "Plugins",
+        path: "https://github.com/search?q=topic%3Aegg-plugin&type=Repositories",
       },
       {
-        title: 'v3.x',
-        path: 'https://v3.eggjs.org',
+        title: "v3.x",
+        path: "https://v3.eggjs.org",
       },
       {
-        title: 'v4.x',
-        path: 'https://eggjs.org',
+        title: "v4.x",
+        path: "https://eggjs.org",
       },
     ],
-    'zh-CN': [
+    "zh-CN": [
       null,
       {
-        title: 'GitHub',
-        path: 'https://github.com/eggjs/egg',
+        title: "GitHub",
+        path: "https://github.com/eggjs/egg",
       },
       {
-        title: '发布日志',
-        path: 'https://github.com/eggjs/egg/releases',
+        title: "发布日志",
+        path: "https://github.com/eggjs/egg/releases",
       },
       {
-        title: '插件列表',
-        path: 'https://github.com/search?q=topic%3Aegg-plugin&type=Repositories',
+        title: "插件列表",
+        path: "https://github.com/search?q=topic%3Aegg-plugin&type=Repositories",
       },
       {
-        title: 'v3.x',
-        path: 'https://v3.eggjs.org',
+        title: "v3.x",
+        path: "https://v3.eggjs.org",
       },
       {
-        title: 'v4.x',
-        path: 'https://eggjs.org',
+        title: "v4.x",
+        path: "https://eggjs.org",
       },
     ],
   },
@@ -76,49 +76,49 @@ export default defineConfig({
   themeConfig: {
     links: [
       {
-        title: 'Resources',
+        title: "Resources",
         list: [
           {
-            name: 'Egg',
-            url: 'https://github.com/eggjs/egg',
+            name: "Egg",
+            url: "https://github.com/eggjs/egg",
           },
           {
-            name: 'Organization',
-            url: 'https://github.com/eggjs',
-          },
-        ],
-      },
-      {
-        title: 'XTech',
-        list: [
-          { name: 'EggJS - 企业级 Node.js 开发框架', url: 'https://eggjs.org' },
-          { name: 'Ant Design - UI 体系', url: 'https://ant.design' },
-          { name: 'AntV - 数据可视化', url: 'https://antv.vision' },
-          {
-            name: '语雀 - 知识创作与分享工具',
-            url: 'https://www.yuque.com',
+            name: "Organization",
+            url: "https://github.com/eggjs",
           },
         ],
       },
       {
-        title: 'Community',
+        title: "XTech",
         list: [
-          { name: 'Artus.js 官网', url: 'https://artusjs.org' },
-          { name: 'CNode 社区', url: 'https://cnodejs.org/' },          
-          { name: 'Node.js 专栏', url: 'https://www.yuque.com/egg/nodejs' },
+          { name: "EggJS - 企业级 Node.js 开发框架", url: "https://eggjs.org" },
+          { name: "Ant Design - UI 体系", url: "https://ant.design" },
+          { name: "AntV - 数据可视化", url: "https://antv.vision" },
           {
-            name: '提交反馈',
-            url: 'https://github.com/eggjs/egg/issues',
+            name: "语雀 - 知识创作与分享工具",
+            url: "https://www.yuque.com",
           },
-          { name: '发布日志', url: 'https://github.com/eggjs/egg/releases' },
         ],
       },
       {
-        title: 'Egg.js Telegram Channel',
+        title: "Community",
+        list: [
+          { name: "Artus.js 官网", url: "https://artusjs.org" },
+          { name: "CNode 社区", url: "https://cnodejs.org/" },
+          { name: "Node.js 专栏", url: "https://www.yuque.com/egg/nodejs" },
+          {
+            name: "提交反馈",
+            url: "https://github.com/eggjs/egg/issues",
+          },
+          { name: "发布日志", url: "https://github.com/eggjs/egg/releases" },
+        ],
+      },
+      {
+        title: "Egg.js Telegram Channel",
         list: [
           {
-            name: '钉钉',
-            qrcode: '/img_egg/qrcode_egg_channel.png',
+            name: "钉钉",
+            qrcode: "/img_egg/qrcode_egg_channel.png",
           },
         ],
       },

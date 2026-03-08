@@ -40,7 +40,7 @@ Core code:
 module.exports = {
   get isIOS() {
     const iosReg = /iphone|ipad|ipod/i;
-    return iosReg.test(this.get('user-agent'));
+    return iosReg.test(this.get("user-agent"));
   },
 };
 ```
@@ -93,10 +93,10 @@ Core code:
 
 ```js
 // config/plugin.js
-const path = require('path');
+const path = require("path");
 exports.ua = {
   enable: true,
-  path: path.join(__dirname, '../lib/plugin/egg-ua'),
+  path: path.join(__dirname, "../lib/plugin/egg-ua"),
 };
 ```
 
@@ -135,7 +135,7 @@ Then modify the application, details refer to [step3/example-app](https://github
 // config/plugin.js
 exports.ua = {
   enable: true,
-  package: 'egg-ua',
+  package: "egg-ua",
 };
 ```
 

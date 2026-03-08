@@ -12,8 +12,8 @@ In [the previous chapter](../intro/egg-and-koa.md), we say that Egg is based on 
 Let's take a look at how to write a middleware from a simple gzip example.
 
 ```js
-const isJSON = require('koa-is-json');
-const zlib = require('zlib');
+const isJSON = require("koa-is-json");
+const zlib = require("zlib");
 
 async function gzip(ctx, next) {
   await next();
@@ -27,7 +27,7 @@ async function gzip(ctx, next) {
   const stream = zlib.createGzip();
   stream.end(body);
   ctx.body = stream;
-  ctx.set('Content-Encoding', 'gzip');
+  ctx.set("Content-Encoding", "gzip");
 }
 ```
 
@@ -44,8 +44,8 @@ We will do a simple optimization to the gzip middleware above, making it do gzip
 
 ```js
 // app/middleware/gzip.js
-const isJSON = require('koa-is-json');
-const zlib = require('zlib');
+const isJSON = require("koa-is-json");
+const zlib = require("zlib");
 
 module.exports = (options) => {
   return async function gzip(ctx, next) {
@@ -64,7 +64,7 @@ module.exports = (options) => {
     const stream = zlib.createGzip();
     stream.end(body);
     ctx.body = stream;
-    ctx.set('Content-Encoding', 'gzip');
+    ctx.set("Content-Encoding", "gzip");
   };
 };
 ```
@@ -82,7 +82,7 @@ we can edit `config.default.js` like this:
 ```js
 module.exports = {
   // configure the middleware you need, which loads in the order of array
-  middleware: ['gzip'],
+  middleware: ["gzip"],
 
   // configure the gzip middleware
   gzip: {
@@ -101,7 +101,7 @@ Framework and Plugin don't support to configure `middleware` in `config.default.
 // app.js
 module.exports = (app) => {
   // put to the first place to count request cost
-  app.config.coreMiddleware.unshift('report');
+  app.config.coreMiddleware.unshift("report");
 };
 
 // app/middleware/report.js
@@ -125,7 +125,7 @@ If you do want to take effect only for single route, you could just instantiate 
 ```js
 module.exports = (app) => {
   const gzip = app.middleware.gzip({ threshold: 1024 });
-  app.router.get('/needgzip', gzip, app.controller.handler);
+  app.router.get("/needgzip", gzip, app.controller.handler);
 };
 ```
 
@@ -136,7 +136,7 @@ In addition to application layer loading middleware, the framework itself and ot
 ```js
 module.exports = {
   bodyParser: {
-    jsonLimit: '10m',
+    jsonLimit: "10m",
   },
 };
 ```
@@ -150,8 +150,8 @@ Developer is free to use Koa Middleware, all middlewares used in Koa can be dire
 For example, Koa uses [koa-compress](https://github.com/koajs/compress) in this way:
 
 ```js
-const koa = require('koa');
-const compress = require('koa-compress');
+const koa = require("koa");
+const compress = require("koa-compress");
 
 const app = koa();
 
@@ -164,13 +164,13 @@ We can load the middleware according to the framework specification like this:
 ```js
 // app/middleware/compress.js
 // interfaces(`(options) => middleware`) exposed by koa-compress match the framework middleware requirements
-module.exports = require('koa-compress');
+module.exports = require("koa-compress");
 ```
 
 ```js
 // config/config.default.js
 module.exports = {
-  middleware: ['compress'],
+  middleware: ["compress"],
   compress: {
     threshold: 2048,
   },
@@ -189,7 +189,7 @@ module.exports = {
 };
 
 // app/middleware/webpack.js
-const webpackMiddleware = require('some-koa-middleware');
+const webpackMiddleware = require("some-koa-middleware");
 
 module.exports = (options, app) => {
   return webpackMiddleware(options.compiler, options.others);
@@ -225,7 +225,7 @@ If we want gzip to be used only by url requests starting with `/static`, the mat
 ```js
 module.exports = {
   gzip: {
-    match: '/static',
+    match: "/static",
   },
 };
 ```
@@ -242,7 +242,7 @@ module.exports = {
     match(ctx) {
       // enabled on ios devices
       const reg = /iphone|ipad|ipod/i;
-      return reg.test(ctx.get('user-agent'));
+      return reg.test(ctx.get("user-agent"));
     },
   },
 };

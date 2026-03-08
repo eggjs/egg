@@ -70,11 +70,11 @@ is a [controller](../basics/controller.md) and [router](../basics/router.md).
 
 ```js
 // app/controller/home.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 class HomeController extends Controller {
   async index() {
-    this.ctx.body = 'Hello world';
+    this.ctx.body = "Hello world";
   }
 }
 
@@ -87,7 +87,7 @@ Then edit the router file and add a mapping.
 // app/router.js
 module.exports = (app) => {
   const { router, controller } = app;
-  router.get('/', controller.home.index);
+  router.get("/", controller.home.index);
 };
 ```
 
@@ -168,7 +168,7 @@ And enable it.
 // config/plugin.js
 exports.nunjucks = {
   enable: true,
-  package: 'egg-view-nunjucks',
+  package: "egg-view-nunjucks",
 };
 ```
 
@@ -212,17 +212,17 @@ Then add a controller and router.
 
 ```js
 // app/controller/news.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 class NewsController extends Controller {
   async list() {
     const dataList = {
       list: [
-        { id: 1, title: 'this is news 1', url: '/news/1' },
-        { id: 2, title: 'this is news 2', url: '/news/2' },
+        { id: 1, title: "this is news 1", url: "/news/1" },
+        { id: 2, title: "this is news 2", url: "/news/2" },
       ],
     };
-    await this.ctx.render('news/list.tpl', dataList);
+    await this.ctx.render("news/list.tpl", dataList);
   }
 }
 
@@ -231,8 +231,8 @@ module.exports = NewsController;
 // app/router.js
 module.exports = (app) => {
   const { router, controller } = app;
-  router.get('/', controller.home.index);
-  router.get('/news', controller.news.list);
+  router.get("/", controller.home.index);
+  router.get("/news", controller.news.list);
 };
 ```
 
@@ -253,7 +253,7 @@ Let's create a service to fetch data from the
 
 ```js
 // app/service/news.js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 
 class NewsService extends Service {
   async list(page = 1) {
@@ -261,23 +261,20 @@ class NewsService extends Service {
     const { serverUrl, pageSize } = this.config.news;
 
     // use build-in http client to GET hacker-news api
-    const { data: idList } = await this.ctx.curl(
-      `${serverUrl}/topstories.json`,
-      {
-        data: {
-          orderBy: '"$key"',
-          startAt: `"${pageSize * (page - 1)}"`,
-          endAt: `"${pageSize * page - 1}"`,
-        },
-        dataType: 'json',
+    const { data: idList } = await this.ctx.curl(`${serverUrl}/topstories.json`, {
+      data: {
+        orderBy: '"$key"',
+        startAt: `"${pageSize * (page - 1)}"`,
+        endAt: `"${pageSize * page - 1}"`,
       },
-    );
+      dataType: "json",
+    });
 
     // parallel GET detail
     const newsList = await Promise.all(
       Object.keys(idList).map(async (key) => {
         const url = `${serverUrl}/item/${idList[key]}.json`;
-        return await this.ctx.curl(url, { dataType: 'json' });
+        return await this.ctx.curl(url, { dataType: "json" });
       }),
     );
     return newsList.map((res) => res.data);
@@ -293,14 +290,14 @@ Then slightly modify our previous controller.
 
 ```js
 // app/controller/news.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 class NewsController extends Controller {
   async list() {
     const ctx = this.ctx;
     const page = ctx.query.page || 1;
     const newsList = await ctx.service.news.list(page);
-    await ctx.render('news/list.tpl', { list: newsList });
+    await ctx.render("news/list.tpl", { list: newsList });
   }
 }
 
@@ -314,7 +311,7 @@ And also add config.
 // add news' configurations
 exports.news = {
   pageSize: 5,
-  serverUrl: 'https://hacker-news.firebaseio.com/v0',
+  serverUrl: "https://hacker-news.firebaseio.com/v0",
 };
 ```
 
@@ -336,7 +333,7 @@ $ npm i moment --save
 
 ```js
 // app/extend/helper.js
-const moment = require('moment');
+const moment = require("moment");
 exports.relativeTime = (time) => moment(new Date(time * 1000)).fromNow();
 ```
 
@@ -359,11 +356,11 @@ that checks the User-Agent.
 // options === app.config.robot
 module.exports = (options, app) => {
   return async function robotMiddleware(ctx, next) {
-    const source = ctx.get('user-agent') || '';
+    const source = ctx.get("user-agent") || "";
     const match = options.ua.some((ua) => ua.test(source));
     if (match) {
       ctx.status = 403;
-      ctx.message = 'Go away, robot.';
+      ctx.message = "Go away, robot.";
     } else {
       await next();
     }
@@ -372,7 +369,7 @@ module.exports = (options, app) => {
 
 // config/config.default.js
 // add middleware robot
-exports.middleware = ['robot'];
+exports.middleware = ["robot"];
 // robot's configurations
 exports.robot = {
   ua: [/Baiduspider/i],
@@ -406,7 +403,7 @@ exports.robot = {
 };
 
 // app/service/some.js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 
 class SomeService extends Service {
   async list() {
@@ -425,15 +422,11 @@ All the test files should be placed at `{app_root}/test/**/*.test.js`.
 
 ```js
 // test/app/middleware/robot.test.js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+const { app, mock, assert } = require("egg-mock/bootstrap");
 
-describe('test/app/middleware/robot.test.js', () => {
-  it('should block robot', () => {
-    return app
-      .httpRequest()
-      .get('/')
-      .set('User-Agent', 'Baiduspider')
-      .expect(403);
+describe("test/app/middleware/robot.test.js", () => {
+  it("should block robot", () => {
+    return app.httpRequest().get("/").set("User-Agent", "Baiduspider").expect(403);
   });
 });
 ```

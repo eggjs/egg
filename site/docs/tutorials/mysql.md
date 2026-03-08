@@ -22,7 +22,7 @@ Enable Plugin:
 // config/plugin.js
 exports.mysql = {
   enable: true,
-  package: 'egg-mysql',
+  package: "egg-mysql",
 };
 ```
 
@@ -37,11 +37,11 @@ Configuration to accesss single MySQL instance as shown below:
 exports.mysql = {
   // database configuration
   client: {
-    host: 'mysql.com',
-    port: '3306',
-    user: 'test_user',
-    password: 'test_password',
-    database: 'test',
+    host: "mysql.com",
+    port: "3306",
+    user: "test_user",
+    password: "test_password",
+    database: "test",
   },
   // load into app, default true
   app: true,
@@ -65,18 +65,18 @@ exports.mysql = {
   clients: {
     // clientId, obtain the client instances using the app.mysql.get('clientId')
     db1: {
-      host: 'mysql.com',
-      port: '3306',
-      user: 'test_user',
-      password: 'test_password',
-      database: 'test',
+      host: "mysql.com",
+      port: "3306",
+      user: "test_user",
+      password: "test_password",
+      database: "test",
     },
     db2: {
-      host: 'mysql2.com',
-      port: '3307',
-      user: 'test_user',
-      password: 'test_password',
-      database: 'test',
+      host: "mysql2.com",
+      port: "3307",
+      user: "test_user",
+      password: "test_password",
+      database: "test",
     },
     // ...
   },
@@ -93,10 +93,10 @@ exports.mysql = {
 Use:
 
 ```js
-const client1 = app.mysql.get('db1');
+const client1 = app.mysql.get("db1");
 await client1.query(sql, values);
 
-const client2 = app.mysql.get('db2');
+const client2 = app.mysql.get("db2");
 await client2.query(sql, values);
 ```
 
@@ -110,7 +110,7 @@ module.exports = (app) => {
   app.beforeStart(async () => {
     // obtain the MySQL configuration from the configuration center
     // { host: 'mysql.com', port: '3306', user: 'test_user', password: 'test_password', database: 'test' }
-    const mysqlConfig = await app.configCenter.fetch('mysql');
+    const mysqlConfig = await app.configCenter.fetch("mysql");
     app.database = app.mysql.createInstance(mysqlConfig);
   });
 };
@@ -129,7 +129,7 @@ Details of Service layer, refer to [service](../basics/service.md)
 class UserService extends Service {
   async find(uid) {
     // assume we have the user id then trying to get the user details from database
-    const user = await this.app.mysql.get('users', { id: 11 });
+    const user = await this.app.mysql.get("users", { id: 11 });
     return { user };
   }
 }

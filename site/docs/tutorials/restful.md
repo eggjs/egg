@@ -94,9 +94,7 @@ For example, passing invalided parameters from the client may return a response 
 ```json
 {
   "error": "Validation Failed",
-  "detail": [
-    { "message": "required", "field": "title", "code": "missing_field" }
-  ]
+  "detail": [{ "message": "required", "field": "title", "code": "missing_field" }]
 }
 ```
 
@@ -122,7 +120,7 @@ $ npm i
 // config/plugin.js
 exports.validate = {
   enable: true,
-  package: 'egg-validate',
+  package: "egg-validate",
 };
 ```
 
@@ -133,7 +131,7 @@ First of all, we follower previous design to register [router](../basics/router.
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.resources('topics', '/api/v2/topics', app.controller.topics);
+  app.router.resources("topics", "/api/v2/topics", app.controller.topics);
 };
 ```
 
@@ -145,14 +143,14 @@ In [controller](../basics/controller.md), we only need to implement the interfac
 
 ```js
 // app/controller/topics.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 // defining the rule of request parameters
 const createRule = {
-  accesstoken: 'string',
-  title: 'string',
-  tab: { type: 'enum', values: ['ask', 'share', 'job'], required: false },
-  content: 'string',
+  accesstoken: "string",
+  title: "string",
+  tab: { type: "enum", values: ["ask", "share", "job"], required: false },
+  content: "string",
 };
 
 class TopicController extends Controller {
@@ -185,21 +183,21 @@ We will more focus on writing effective business logic in [service](../basics/se
 
 ```js
 // app/service/topics.js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 
 class TopicService extends Service {
   constructor(ctx) {
     super(ctx);
-    this.root = 'https://cnodejs.org/api/v1';
+    this.root = "https://cnodejs.org/api/v1";
   }
 
   async create(params) {
     // call CNode V1 API
     const result = await this.ctx.curl(`${this.root}/topics`, {
-      method: 'post',
+      method: "post",
       data: params,
-      dataType: 'json',
-      contentType: 'json',
+      dataType: "json",
+      contentType: "json",
     });
     // check whether the call was successful, throws an exception if it fails
     this.checkSuccess(result);
@@ -211,14 +209,12 @@ class TopicService extends Service {
   checkSuccess(result) {
     if (result.status !== 200) {
       const errorMsg =
-        result.data && result.data.error_msg
-          ? result.data.error_msg
-          : 'unknown error';
+        result.data && result.data.error_msg ? result.data.error_msg : "unknown error";
       this.ctx.throw(result.status, errorMsg);
     }
     if (!result.data.success) {
       // remote response error
-      this.ctx.throw(500, 'remote response error', { data: result.data });
+      this.ctx.throw(500, "remote response error", { data: result.data });
     }
   }
 }
@@ -248,14 +244,12 @@ module.exports = () => {
       await next();
     } catch (err) {
       // All exceptions will trigger an error event on the app and the error log will be recorded
-      ctx.app.emit('error', err, ctx);
+      ctx.app.emit("error", err, ctx);
 
       const status = err.status || 500;
       // error 500 not returning to client when in the production environment because it may contain sensitive information
       const error =
-        status === 500 && ctx.app.config.env === 'prod'
-          ? 'Internal Server Error'
-          : err.message;
+        status === 500 && ctx.app.config.env === "prod" ? "Internal Server Error" : err.message;
 
       // Reading from the properties of error object and set it to the response
       ctx.body = { error };
@@ -274,10 +268,10 @@ We can catch all exceptions and follow the expected format to encapsulate the re
 // config/config.default.js
 module.exports = {
   // load the errorHandler middleware
-  middleware: ['errorHandler'],
+  middleware: ["errorHandler"],
   // only takes effect on URL prefix with '/api'
   errorHandler: {
-    match: '/api',
+    match: "/api",
   },
 };
 ```
@@ -291,39 +285,39 @@ Completing the coding just the first step, furthermore we need to add [Unit Test
 Let's start writing the unit test for the Controller. We can simulate the implementation of the Service layer in an appropriate way because the most important part is to test the logic as for Controller. And mocking up the Service layer according the convention of interface, so we can develop layered testing because the Service layer itself can also covered by Service unit test.
 
 ```js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+const { app, mock, assert } = require("egg-mock/bootstrap");
 
-describe('test/app/controller/topics.test.js', () => {
+describe("test/app/controller/topics.test.js", () => {
   // test the response of passing the error parameters
-  it('should POST /api/v2/topics/ 422', () => {
+  it("should POST /api/v2/topics/ 422", () => {
     app.mockCsrf();
     return app
       .httpRequest()
-      .post('/api/v2/topics')
+      .post("/api/v2/topics")
       .send({
-        accesstoken: '123',
+        accesstoken: "123",
       })
       .expect(422)
       .expect({
-        error: 'Validation Failed',
+        error: "Validation Failed",
         detail: [
-          { message: 'required', field: 'title', code: 'missing_field' },
-          { message: 'required', field: 'content', code: 'missing_field' },
+          { message: "required", field: "title", code: "missing_field" },
+          { message: "required", field: "content", code: "missing_field" },
         ],
       });
   });
 
   // mock up the service layer and test the response of normal request
-  it('should POST /api/v2/topics/ 201', () => {
+  it("should POST /api/v2/topics/ 201", () => {
     app.mockCsrf();
-    app.mockService('topics', 'create', 123);
+    app.mockService("topics", "create", 123);
     return app
       .httpRequest()
-      .post('/api/v2/topics')
+      .post("/api/v2/topics")
       .send({
-        accesstoken: '123',
-        title: 'title',
-        content: 'hello',
+        accesstoken: "123",
+        title: "title",
+        content: "hello",
       })
       .expect(201)
       .expect({
@@ -340,9 +334,9 @@ As the Controller testing above, we create an application using [egg-mock](https
 Unit Test of Service layer may focus on the coding logic. [egg-mock](https://github.com/eggjs/egg-mock) provides a quick method to test the Service by calling the test method in the Service, and SuperTest to simulate the client request is no longer needed.
 
 ```js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+const { app, mock, assert } = require("egg-mock/bootstrap");
 
-describe('test/app/service/topics.test.js', () => {
+describe("test/app/service/topics.test.js", () => {
   let ctx;
 
   beforeEach(() => {
@@ -350,38 +344,38 @@ describe('test/app/service/topics.test.js', () => {
     ctx = app.mockContext();
   });
 
-  describe('create()', () => {
-    it('should create failed by accesstoken error', async () => {
+  describe("create()", () => {
+    it("should create failed by accesstoken error", async () => {
       try {
         // calling service method on ctx directly
         await ctx.service.topics.create({
-          accesstoken: 'hello',
-          title: 'title',
-          content: 'content',
+          accesstoken: "hello",
+          title: "title",
+          content: "content",
         });
       } catch (err) {
         assert(err.status === 401);
-        assert(err.message === 'error accessToken');
+        assert(err.message === "error accessToken");
       }
-      throw 'should not run here';
+      throw "should not run here";
     });
 
-    it('should create success', async () => {
+    it("should create success", async () => {
       // not affect the normal operation of CNode by simulating the interface calling of CNode based on interface convention
       // app.mockHttpclient method can easily simulate the appliation's HTTP request
-      app.mockHttpclient(`${ctx.service.topics.root}/topics`, 'POST', {
+      app.mockHttpclient(`${ctx.service.topics.root}/topics`, "POST", {
         data: {
           success: true,
-          topic_id: '5433d5e4e737cbe96dcef312',
+          topic_id: "5433d5e4e737cbe96dcef312",
         },
       });
 
       const id = await ctx.service.topics.create({
-        accesstoken: 'hello',
-        title: 'title',
-        content: 'content',
+        accesstoken: "hello",
+        title: "title",
+        content: "content",
       });
-      assert(id === '5433d5e4e737cbe96dcef312');
+      assert(id === "5433d5e4e737cbe96dcef312");
     });
   });
 });

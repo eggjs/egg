@@ -207,13 +207,13 @@ There's a built-in [Log](./logger.md) in the egg, so you may use logger.debug() 
 
 ```js
 // controller
-this.logger.debug('current user: %j', this.user);
+this.logger.debug("current user: %j", this.user);
 
 // service
-this.ctx.logger.debug('debug info from service');
+this.ctx.logger.debug("debug info from service");
 
 // app/init.js
-app.logger.debug('app init');
+app.logger.debug("app init");
 ```
 
 Levels of logs can be configured via `config.logger.level` for printing into file, and `config.logger.consoleLevel` for printing into console.

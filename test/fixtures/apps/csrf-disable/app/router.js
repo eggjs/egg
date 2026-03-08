@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  app.post('/api/user', app.controller.api.user);
+module.exports = (app) => {
+  app.post("/api/user", app.controller.api.user);
 };

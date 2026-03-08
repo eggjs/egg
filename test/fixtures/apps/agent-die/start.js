@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-const utils = require('../../../utils');
+const utils = require("../../../utils");
 
-require('../../../../index').startCluster({
+require("../../../../index").startCluster({
   baseDir: __dirname,
-  workers: 1
-})
+  workers: 1,
+});
 
 setTimeout(() => {
   process.exit();
-// coverage will be slow
+  // coverage will be slow
 }, 5000);

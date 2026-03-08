@@ -1,20 +1,19 @@
-'use strict';
+"use strict";
 
-const { performance } = require('node:perf_hooks');
-const delegate = require('delegates');
-const { assign } = require('utility');
-const eggUtils = require('egg-core').utils;
+const { performance } = require("node:perf_hooks");
+const delegate = require("delegates");
+const { assign } = require("utility");
+const eggUtils = require("egg-core").utils;
 
-const HELPER = Symbol('Context#helper');
-const LOCALS = Symbol('Context#locals');
-const LOCALS_LIST = Symbol('Context#localsList');
-const COOKIES = Symbol('Context#cookies');
-const CONTEXT_LOGGERS = Symbol('Context#logger');
-const CONTEXT_HTTPCLIENT = Symbol('Context#httpclient');
-const CONTEXT_ROUTER = Symbol('Context#router');
+const HELPER = Symbol("Context#helper");
+const LOCALS = Symbol("Context#locals");
+const LOCALS_LIST = Symbol("Context#localsList");
+const COOKIES = Symbol("Context#cookies");
+const CONTEXT_LOGGERS = Symbol("Context#logger");
+const CONTEXT_HTTPCLIENT = Symbol("Context#httpclient");
+const CONTEXT_ROUTER = Symbol("Context#router");
 
-const proto = module.exports = {
-
+const proto = (module.exports = {
   /**
    * Get the current visitor's cookies.
    */
@@ -127,7 +126,7 @@ const proto = module.exports = {
    * ```
    */
   get logger() {
-    return this.getLogger('logger');
+    return this.getLogger("logger");
   },
 
   /**
@@ -138,7 +137,7 @@ const proto = module.exports = {
    * @since 1.0.0
    */
   get coreLogger() {
-    return this.getLogger('coreLogger');
+    return this.getLogger("coreLogger");
   },
 
   /**
@@ -216,7 +215,7 @@ const proto = module.exports = {
     /* istanbul ignore next */
     const taskName = scope._name || scope.name || eggUtils.getCalleeFromStack(true);
     scope._name = taskName;
-    this._runInBackground(scope);
+    void this._runInBackground(scope);
   },
 
   // let plugins or frameworks to reuse _runInBackground in some cases.
@@ -227,59 +226,67 @@ const proto = module.exports = {
     /* istanbul ignore next */
     const taskName = scope._name || scope.name || eggUtils.getCalleeFromStack(true);
     // use setImmediate to ensure all sync logic will run async
-    return new Promise(resolve => setImmediate(resolve))
-      // use app.toAsyncFunction to support both generator function and async function
-      .then(() => ctx.app.toAsyncFunction(scope)(ctx))
-      .then(() => {
-        ctx.coreLogger.info('[egg:background] task:%s success (%dms)',
-          taskName, Math.floor((performance.now() - start) * 1000) / 1000);
-      })
-      .catch(err => {
-        // background task process log
-        ctx.coreLogger.info('[egg:background] task:%s fail (%dms)',
-          taskName, Math.floor((performance.now() - start) * 1000) / 1000);
+    return (
+      new Promise((resolve) => setImmediate(resolve))
+        // use app.toAsyncFunction to support both generator function and async function
+        .then(() => ctx.app.toAsyncFunction(scope)(ctx))
+        .then(() => {
+          ctx.coreLogger.info(
+            "[egg:background] task:%s success (%dms)",
+            taskName,
+            Math.floor((performance.now() - start) * 1000) / 1000,
+          );
+        })
+        .catch((err) => {
+          // background task process log
+          ctx.coreLogger.info(
+            "[egg:background] task:%s fail (%dms)",
+            taskName,
+            Math.floor((performance.now() - start) * 1000) / 1000,
+          );
 
-        // emit error when promise catch, and set err.runInBackground flag
-        err.runInBackground = true;
-        ctx.app.emit('error', err, ctx);
-      });
+          // emit error when promise catch, and set err.runInBackground flag
+          err.runInBackground = true;
+          ctx.app.emit("error", err, ctx);
+        })
+    );
   },
-};
+});
 
 /**
  * Context delegation.
  */
 
-delegate(proto, 'request')
+delegate(proto, "request")
   /**
    * @member {Boolean} Context#acceptJSON
    * @see Request#acceptJSON
    * @since 1.0.0
    */
-  .getter('acceptJSON')
+  .getter("acceptJSON")
   /**
    * @member {Array} Context#queries
    * @see Request#queries
    * @since 1.0.0
    */
-  .getter('queries')
+  .getter("queries")
   /**
    * @member {Boolean} Context#accept
    * @see Request#accept
    * @since 1.0.0
    */
-  .getter('accept')
+  .getter("accept")
   /**
    * @member {string} Context#ip
    * @see Request#ip
    * @since 1.0.0
    */
-  .access('ip');
+  .access("ip");
 
-delegate(proto, 'response')
+delegate(proto, "response")
   /**
    * @member {Number} Context#realStatus
    * @see Response#realStatus
    * @since 1.0.0
    */
-  .access('realStatus');
+  .access("realStatus");

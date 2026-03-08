@@ -1,17 +1,17 @@
-'use strict';
+"use strict";
 
-const sleep = timeout => callback => setTimeout(callback, timeout);
+const sleep = (timeout) => (callback) => setTimeout(callback, timeout);
 
-module.exports = app => {
-  app.get('/getData', function*() {
-    this.body = yield app.mockClient.getData('hello');
+module.exports = (app) => {
+  app.get("/getData", function* () {
+    this.body = yield app.mockClient.getData("hello");
   });
 
-  app.get('/getDataGenerator', function*() {
-    this.body = yield app.mockClient.getDataGenerator('hello');
+  app.get("/getDataGenerator", function* () {
+    this.body = yield app.mockClient.getDataGenerator("hello");
   });
 
-  app.get('/getError', function*() {
+  app.get("/getError", function* () {
     try {
       yield app.mockClient.getError();
     } catch (err) {
@@ -20,12 +20,12 @@ module.exports = app => {
   });
 
   function subThunk() {
-    return callback => {
-      app.mockClient.subscribe({ id: 'foo' }, val => callback(null, val));
+    return (callback) => {
+      app.mockClient.subscribe({ id: "foo" }, (val) => callback(null, val));
     };
   }
 
-  app.get('/sub', function*() {
+  app.get("/sub", function* () {
     const first = yield subThunk();
     yield sleep(1000);
     const second = yield subThunk();
@@ -36,17 +36,17 @@ module.exports = app => {
     };
   });
 
-  app.get('/save', function*() {
-    app.mockClient.saveAsync('hello', 'node');
-    this.body = 'ok';
+  app.get("/save", function* () {
+    app.mockClient.saveAsync("hello", "node");
+    this.body = "ok";
   });
 
-  app.get('/timeout', function*() {
+  app.get("/timeout", function* () {
     try {
       yield app.mockClient.getTimeout();
-      this.body = 'ok';
+      this.body = "ok";
     } catch (err) {
-      this.body = 'timeout';
+      this.body = "timeout";
     }
   });
 };

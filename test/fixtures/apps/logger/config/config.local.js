@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = {
   logger: {
-    consoleLevel: 'INFO',
+    consoleLevel: "INFO",
   },
 };

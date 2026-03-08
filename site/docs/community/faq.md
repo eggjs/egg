@@ -27,10 +27,10 @@ Please make sure you don't make a mistake like the code below:
 
 ```js
 // config/config.default.js
-exports.someKeys = 'abc';
+exports.someKeys = "abc";
 module.exports = (appInfo) => {
   const config = {};
-  config.keys = '123456';
+  config.keys = "123456";
   return config;
 };
 ```
@@ -55,9 +55,9 @@ Firstly, put a start file in the root directory of your project:
 
 ```js
 // server.js
-const egg = require('egg');
+const egg = require("egg");
 
-const workers = Number(process.argv[2] || require('os').cpus().length);
+const workers = Number(process.argv[2] || require("os").cpus().length);
 egg.startCluster({
   workers,
   baseDir: __dirname,

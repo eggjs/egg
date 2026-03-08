@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 exports.watcher = {
-  type: 'default',
+  type: "default",
 };
 
-exports.keys = 'test key';
+exports.keys = "test key";

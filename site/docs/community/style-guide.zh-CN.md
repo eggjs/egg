@@ -12,7 +12,7 @@ title: 代码风格指南
 module.exports = (app) => {
   class UserService extends app.Service {
     async list() {
-      return await this.ctx.curl('https://eggjs.org');
+      return await this.ctx.curl("https://eggjs.org");
     }
   }
   return UserService;
@@ -22,10 +22,10 @@ module.exports = (app) => {
 修改为：
 
 ```js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 class UserService extends Service {
   async list() {
-    return await this.ctx.curl('https://eggjs.org');
+    return await this.ctx.curl("https://eggjs.org");
   }
 }
 module.exports = UserService;
@@ -34,7 +34,7 @@ module.exports = UserService;
 同时，框架开发者需要改变写法如下，否则应用开发者自定义 Service 等基类会有问题：
 
 ```js
-const egg = require('egg');
+const egg = require("egg");
 
 module.exports = Object.assign(egg, {
   Application: class MyApplication extends egg.Application {
@@ -52,8 +52,8 @@ module.exports = Object.assign(egg, {
 
 ```js
 // app/extend/application.js
-const CACHE = Symbol('Application#cache');
-const CacheManager = require('../../lib/cache_manager');
+const CACHE = Symbol("Application#cache");
+const CacheManager = require("../../lib/cache_manager");
 
 module.exports = {
   get cache() {

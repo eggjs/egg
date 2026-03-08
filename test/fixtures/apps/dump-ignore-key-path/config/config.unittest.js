@@ -1,5 +1,5 @@
 exports.dump = {
   ignoreKeyPaths: {
-    'config.withKeyPaths.inner.key1': true,
+    "config.withKeyPaths.inner.key1": true,
   },
 };

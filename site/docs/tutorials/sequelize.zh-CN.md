@@ -38,7 +38,7 @@ npm install --save egg-sequelize mysql2
 ```js
 exports.sequelize = {
   enable: true,
-  package: 'egg-sequelize',
+  package: "egg-sequelize",
 };
 ```
 
@@ -46,10 +46,10 @@ exports.sequelize = {
 
 ```js
 exports.sequelize = {
-  dialect: 'mysql',
-  host: '127.0.0.1',
+  dialect: "mysql",
+  host: "127.0.0.1",
   port: 3306,
-  database: 'egg-sequelize-doc-default',
+  database: "egg-sequelize-doc-default",
 };
 ```
 
@@ -57,14 +57,15 @@ exports.sequelize = {
 
 ```js
 exports.sequelize = {
-  dialect: 'mysql',
-  host: '127.0.0.1',
+  dialect: "mysql",
+  host: "127.0.0.1",
   port: 3306,
-  database: 'egg-sequelize-doc-unittest',
+  database: "egg-sequelize-doc-unittest",
 };
 ```
 
 完成上述配置之后，一个使用 sequelize 的项目就初始化完成了。[egg-sequelize] 和 [sequelize] 还支持更多的配置项，你可以在他们的文档中找到。
+
 ## 初始化数据库和 Migrations
 
 接下来我们先暂时离开 egg 项目的代码，设计和初始化一下我们的数据库。首先我们通过 MySQL 命令在本地快速创建开发和测试要用到的两个数据库：
@@ -100,15 +101,15 @@ npm install --save-dev sequelize-cli
 在 egg 项目中，我们希望将所有数据库 Migrations 相关的内容都放在 `database` 目录下，所以我们在项目根目录下新建一个 `.sequelizerc` 配置文件：
 
 ```js
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 module.exports = {
-  "config": path.join(__dirname, 'database/config.json'),
-  "migrations-path": path.join(__dirname, 'database/migrations'),
-  "seeders-path": path.join(__dirname, 'database/seeders'),
-  "models-path": path.join(__dirname, 'app/model'),
+  config: path.join(__dirname, "database/config.json"),
+  "migrations-path": path.join(__dirname, "database/migrations"),
+  "seeders-path": path.join(__dirname, "database/seeders"),
+  "models-path": path.join(__dirname, "app/model"),
 };
 ```
 
@@ -149,13 +150,13 @@ npx sequelize migration:generate --name=init-users
 执行完后会在 `database/migrations` 目录下生成一个 migration 文件（`${timestamp}-init-users.js`），我们修改它来处理初始化 `users` 表：
 
 ```js
-'use strict';
+"use strict";
 
 module.exports = {
   // 在执行数据库升级时调用的函数，创建 users 表
   up: async (queryInterface, Sequelize) => {
     const { INTEGER, DATE, STRING } = Sequelize;
-    await queryInterface.createTable('users', {
+    await queryInterface.createTable("users", {
       id: { type: INTEGER, primaryKey: true, autoIncrement: true },
       name: STRING(30),
       age: INTEGER,
@@ -165,7 +166,7 @@ module.exports = {
   },
   // 在执行数据库降级时调用的函数，删除 users 表
   down: async (queryInterface) => {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable("users");
   },
 };
 ```
@@ -182,6 +183,7 @@ npx sequelize db:migrate
 
 # 可以通过 `db:migrate:undo:all` 回退到初始状态
 ```
+
 # NPX Sequelize DB:Migrate:Undo:All
 
 执行之后，我们的数据库初始化就完成了。
@@ -191,12 +193,12 @@ npx sequelize db:migrate
 现在终于可以开始编写代码实现业务逻辑了。首先我们来在 `app/model/` 目录下编写 `user` 这个 Model：
 
 ```js
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   const { STRING, INTEGER, DATE } = app.Sequelize;
 
-  const User = app.model.define('user', {
+  const User = app.model.define("user", {
     id: { type: INTEGER, primaryKey: true, autoIncrement: true },
     name: STRING(30),
     age: INTEGER,
@@ -212,10 +214,10 @@ module.exports = app => {
 
 ```js
 // app/controller/users.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 function toInt(str) {
-  if (typeof str === 'number') return str;
+  if (typeof str === "number") return str;
   if (!str) return str;
   return parseInt(str, 10) || 0;
 }
@@ -278,13 +280,14 @@ module.exports = UserController;
 
 ```js
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   const { router, controller } = app;
-  router.resources('users', '/users', controller.users);
+  router.resources("users", "/users", controller.users);
 };
 ```
 
 针对 `users` 表的 CURD 操作的接口就开发完了。为了验证代码逻辑是否正确，我们接下来需要编写单元测试来验证。
+
 ## 单元测试
 
 在编写测试之前，由于在前面的 egg 配置中，我们将单元测试环境和开发环境指向了不同的数据库，因此需要通过 Migrations 来初始化测试数据库的数据结构：
@@ -305,17 +308,17 @@ NODE_ENV=test npx sequelize db:migrate:up
 
   ```js
   // test/factories.js
-  'use strict';
+  "use strict";
 
-  const { factory } = require('factory-girl');
+  const { factory } = require("factory-girl");
 
   module.exports = (app) => {
     // 可以通过 app.factory 访问 factory 实例
     app.factory = factory;
 
     // 定义 user 模型和默认数据
-    factory.define('user', app.model.User, {
-      name: factory.sequence('User.name', (n) => `name_${n}`),
+    factory.define("user", app.model.User, {
+      name: factory.sequence("User.name", (n) => `name_${n}`),
       age: 18,
     });
   };
@@ -324,15 +327,13 @@ NODE_ENV=test npx sequelize db:migrate:up
 - 初始化文件 `test/.setup.js`，引入 factory，并确保测试执行完后清理数据，避免被影响。
 
   ```js
-  const { app } = require('egg-mock/bootstrap');
-  const factories = require('./factories');
+  const { app } = require("egg-mock/bootstrap");
+  const factories = require("./factories");
 
   before(() => factories(app));
   afterEach(async () => {
     // 在每个测试案例执行完后清理数据库
-    await Promise.all([
-      app.model.User.destroy({ truncate: true, force: true }),
-    ]);
+    await Promise.all([app.model.User.destroy({ truncate: true, force: true })]);
   });
   ```
 
@@ -340,14 +341,14 @@ NODE_ENV=test npx sequelize db:migrate:up
 
 ```js
 // test/app/controller/users.test.js
-const { assert, app } = require('egg-mock/bootstrap');
+const { assert, app } = require("egg-mock/bootstrap");
 
-describe('test/app/controller/users.test.js', () => {
-  describe('GET /users', () => {
-    it('should work', async () => {
+describe("test/app/controller/users.test.js", () => {
+  describe("GET /users", () => {
+    it("should work", async () => {
       // 通过 factory-girl 快速创建用户对象到数据库中
-      await app.factory.createMany('user', 3);
-      const res = await app.httpRequest().get('/users?limit=2');
+      await app.factory.createMany("user", 3);
+      const res = await app.httpRequest().get("/users?limit=2");
       assert(res.status === 200);
       assert(res.body.length === 2);
       assert(res.body[0].name);
@@ -355,34 +356,34 @@ describe('test/app/controller/users.test.js', () => {
     });
   });
 
-  describe('GET /users/:id', () => {
-    it('should work', async () => {
-      const user = await app.factory.create('user');
+  describe("GET /users/:id", () => {
+    it("should work", async () => {
+      const user = await app.factory.create("user");
       const res = await app.httpRequest().get(`/users/${user.id}`);
       assert(res.status === 200);
       assert(res.body.age === user.age);
     });
   });
 
-  describe('POST /users', () => {
-    it('should work', async () => {
+  describe("POST /users", () => {
+    it("should work", async () => {
       app.mockCsrf();
-      let res = await app.httpRequest().post('/users').send({
+      let res = await app.httpRequest().post("/users").send({
         age: 10,
-        name: 'name',
+        name: "name",
       });
       assert(res.status === 201);
       assert(res.body.id);
 
       res = await app.httpRequest().get(`/users/${res.body.id}`);
       assert(res.status === 200);
-      assert(res.body.name === 'name');
+      assert(res.body.name === "name");
     });
   });
 
-  describe('DELETE /users/:id', () => {
-    it('should work', async () => {
-      const user = await app.factory.create('user');
+  describe("DELETE /users/:id", () => {
+    it("should work", async () => {
+      const user = await app.factory.create("user");
 
       app.mockCsrf();
       const res = await app.httpRequest().delete(`/users/${user.id}`);

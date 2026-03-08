@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = function (app) {
   class User extends app.Service {
@@ -6,9 +6,9 @@ module.exports = function (app) {
       super(ctx);
     }
 
-    * get(uid) {
+    *get(uid) {
       return {
-        userId: '123mock',
+        userId: "123mock",
       };
     }
   }

@@ -70,7 +70,7 @@ We abstract the client interface into the following two broad categories, which 
 Client example
 
 ```js
-const Base = require('sdk-base');
+const Base = require("sdk-base");
 
 class Client extends Base {
   constructor(options) {
@@ -168,14 +168,14 @@ In the following I will use a simple example to introduce how to make a client s
 
 ```js
 // registry_client.js
-const URL = require('url');
-const Base = require('sdk-base');
+const URL = require("url");
+const Base = require("sdk-base");
 
 class RegistryClient extends Base {
   constructor(options) {
     super({
       // Specify a method for asynchronous start
-      initMethod: 'init',
+      initMethod: "init",
     });
     this._options = options;
     this._registered = new Map();
@@ -249,7 +249,7 @@ module.exports = RegistryClient;
 
 ```js
 // agent.js
-const RegistryClient = require('registry_client');
+const RegistryClient = require("registry_client");
 
 module.exports = (agent) => {
   // encapsulate and instantiate RegistryClient
@@ -259,7 +259,7 @@ module.exports = (agent) => {
 
   agent.beforeStart(async () => {
     await agent.registryClient.ready();
-    agent.coreLogger.info('registry client is ready');
+    agent.coreLogger.info("registry client is ready");
   });
 };
 ```
@@ -268,18 +268,18 @@ module.exports = (agent) => {
 
 ```js
 // app.js
-const RegistryClient = require('registry_client');
+const RegistryClient = require("registry_client");
 
 module.exports = (app) => {
   app.registryClient = app.cluster(RegistryClient).create({});
   app.beforeStart(async () => {
     await app.registryClient.ready();
-    app.coreLogger.info('registry client is ready');
+    app.coreLogger.info("registry client is ready");
 
     // invoke subscribe to subscribe
     app.registryClient.subscribe(
       {
-        dataId: 'demo.DemoService',
+        dataId: "demo.DemoService",
       },
       (val) => {
         // ...
@@ -288,12 +288,12 @@ module.exports = (app) => {
 
     // invoke publish to publsih data
     app.registryClient.publish({
-      dataId: 'demo.DemoService',
-      publishData: 'xxx',
+      dataId: "demo.DemoService",
+      publishData: "xxx",
     });
 
     // invoke getConfig interface
-    const res = await app.registryClient.getConfig('demo.DemoService');
+    const res = await app.registryClient.getConfig("demo.DemoService");
     console.log(res);
   });
 };
@@ -339,7 +339,7 @@ module.exports = (agent) => {
   agent.mockClient = agent
     .cluster(MockClient)
     // delegate sub to logic of subscribe
-    .delegate('sub', 'subscribe')
+    .delegate("sub", "subscribe")
     .create();
 
   agent.beforeStart(async () => {
@@ -354,13 +354,13 @@ module.exports = (app) => {
   app.mockClient = app
     .cluster(MockClient)
     // delegate sub to subscribe logic
-    .delegate('sub', 'subscribe')
+    .delegate("sub", "subscribe")
     .create();
 
   app.beforeStart(async () => {
     await app.mockClient.ready();
 
-    app.sub({ id: 'test-id' }, (val) => {
+    app.sub({ id: "test-id" }, (val) => {
       // put your code here
     });
   });
@@ -384,8 +384,8 @@ For example, add a synchronous get method with buffer in the `APIClient` module:
 
 ```js
 // some-client/index.js
-const cluster = require('cluster-client');
-const RegistryClient = require('./registry_client');
+const cluster = require("cluster-client");
+const RegistryClient = require("./registry_client");
 
 class APIClient extends Base {
   constructor(options) {
@@ -454,8 +454,8 @@ exports.apiClient = {
 To make it easy for you to encapsulate `APIClient`, we provide an` APIClientBase` base class in the [cluster-client](https://www.npmjs.com/package/cluster-client) module. Then `APIClient` above can be rewritten as:
 
 ```js
-const APIClientBase = require('cluster-client').APIClientBase;
-const RegistryClient = require('./registry_client');
+const APIClientBase = require("cluster-client").APIClientBase;
+const RegistryClient = require("./registry_client");
 
 class APIClient extends APIClientBase {
   // return the original client class
@@ -537,8 +537,8 @@ app.registryClient = app
 - You can also override the `getter` attribute of `clusterOptions` in `APIClientBase`:
 
 ```js
-const APIClientBase = require('cluster-client').APIClientBase;
-const RegistryClient = require('./registry_client');
+const APIClientBase = require("cluster-client").APIClientBase;
+const RegistryClient = require("./registry_client");
 
 class APIClient extends APIClientBase {
   get DataClient() {

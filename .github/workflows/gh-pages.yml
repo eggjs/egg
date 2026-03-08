@@ -2,7 +2,7 @@ name: Github Pages
 
 on:
   push:
-    branches: [ 3.x ]
+    branches: [3.x]
 
 jobs:
   Runner:
@@ -10,25 +10,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest ]
-        node-version: [ 18 ]
+        os: [ubuntu-latest]
+        node-version: [18]
     steps:
-    - name: Checkout Git Source
-      uses: actions/checkout@master
+      - name: Checkout Git Source
+        uses: actions/checkout@master
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install Dependencies
-      run: npm i -g npminstall && npminstall
+      - name: Install Dependencies
+        run: npm i -g npminstall && npminstall
 
-    - name: Build Documents
-      run: npm run site:build
+      - name: Build Documents
+        run: npm run site:build
 
-    - name: Deploy Documents
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./site/dist
+      - name: Deploy Documents
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site/dist

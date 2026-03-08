@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 exports.schedule = {
-  type: 'worker',
-  cron: '*/5 * * * * *',
+  type: "worker",
+  cron: "*/5 * * * * *",
 };
 
 exports.task = function* (ctx) {
-  ctx.logger.warn('cron wow');
+  ctx.logger.warn("cron wow");
 };

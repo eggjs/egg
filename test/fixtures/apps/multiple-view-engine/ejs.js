@@ -1,4 +1,4 @@
-const { sleep } = require('../../../utils');
+const { sleep } = require("../../../utils");
 
 class EjsView {
   async render(filename, locals, options) {
@@ -7,7 +7,7 @@ class EjsView {
       filename,
       locals,
       options,
-      type: 'ejs',
+      type: "ejs",
     };
   }
 
@@ -17,7 +17,7 @@ class EjsView {
       tpl,
       locals,
       options,
-      type: 'ejs',
+      type: "ejs",
     };
   }
 }

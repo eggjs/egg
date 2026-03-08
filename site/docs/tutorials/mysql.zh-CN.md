@@ -22,7 +22,7 @@ $ npm i --save egg-mysql
 // config/plugin.js
 exports.mysql = {
   enable: true,
-  package: 'egg-mysql'
+  package: "egg-mysql",
 };
 ```
 
@@ -38,20 +38,20 @@ exports.mysql = {
   // 单数据库信息配置
   client: {
     // host
-    host: 'mysql.com',
+    host: "mysql.com",
     // 端口号
-    port: '3306',
+    port: "3306",
     // 用户名
-    user: 'test_user',
+    user: "test_user",
     // 密码
-    password: 'test_password',
+    password: "test_password",
     // 数据库名
-    database: 'test'
+    database: "test",
   },
   // 是否加载到 app 上，默认开启
   app: true,
   // 是否加载到 agent 上，默认关闭
-  agent: false
+  agent: false,
 };
 ```
 
@@ -71,28 +71,28 @@ exports.mysql = {
     // clientId, 获取 client 实例，需通过 app.mysql.get('clientId') 获取
     db1: {
       // host
-      host: 'mysql.com',
+      host: "mysql.com",
       // 端口号
-      port: '3306',
+      port: "3306",
       // 用户名
-    user: 'test_user',
+      user: "test_user",
       // 密码
-    password: 'test_password',
+      password: "test_password",
       // 数据库名
-    database: 'test'
+      database: "test",
     },
     db2: {
       // host
-    host: 'mysql2.com',
+      host: "mysql2.com",
       // 端口号
-    port: '3307',
+      port: "3307",
       // 用户名
-    user: 'test_user',
+      user: "test_user",
       // 密码
-    password: 'test_password',
+      password: "test_password",
       // 数据库名
-    database: 'test'
-    }
+      database: "test",
+    },
     // ...
   },
   // 所有数据库配置的默认值
@@ -101,17 +101,17 @@ exports.mysql = {
   // 是否加载到 app 上，默认开启
   app: true,
   // 是否加载到 agent 上，默认关闭
-  agent: false
+  agent: false,
 };
 ```
 
 使用方式：
 
 ```js
-const client1 = app.mysql.get('db1');
+const client1 = app.mysql.get("db1");
 await client1.query(sql, values);
 
-const client2 = app.mysql.get('db2');
+const client2 = app.mysql.get("db2");
 await client2.query(sql, values);
 ```
 
@@ -121,17 +121,18 @@ await client2.query(sql, values);
 
 ```js
 // {app_root}/app.js
-module.exports = app => {
+module.exports = (app) => {
   app.beforeStart(async () => {
     // 从配置中心获取 MySQL 的配置
     // { host: 'mysql.com', port: '3306', user: 'test_user', password: 'test_password', database: 'test' }
-    const mysqlConfig = await app.configCenter.fetch('mysql');
+    const mysqlConfig = await app.configCenter.fetch("mysql");
     app.database = app.mysql.createInstance(mysqlConfig);
   });
 };
 ```
 
 [egg-mysql]: https://github.com/eggjs/egg-mysql "egg-mysql"
+
 ## Service 层
 
 由于对 MySQL 数据库的访问操作属于 Web 层中的数据处理层，因此我们强烈建议将这部分代码放在 Service 层中维护。
@@ -145,7 +146,7 @@ module.exports = app => {
 class UserService extends Service {
   async find(uid) {
     // 假如我们拿到用户 id，从数据库获取用户详细信息
-    const user = await this.app.mysql.get('users', { id: uid });
+    const user = await this.app.mysql.get("users", { id: uid });
     return { user };
   }
 }
@@ -163,9 +164,10 @@ class UserController extends Controller {
     ctx.body = user;
   }
 }
-``` 
+```
 
 在上述代码中，我们首先在 Service 层中定义了一个名为 `UserService` 的类，该类继承自 Service 基类。在 `UserService` 类中，我们定义了一个异步方法 `find`，该方法通过调用 `this.app.mysql.get` 方法从 `users` 表中获取到了 id 等于 uid 参数的用户数据，在获取数据后将用户信息以对象的形式返回。在 Controller 层，我们定义了一个名为 `UserController` 的类，该类继承自 Controller 基类。在 `UserController` 类中，我们定义了一个异步方法 `info`，该方法从上下文 `ctx` 中获取到了用户 ID，然后通过调用 `ctx.service.user.find` 方法获取到了用户信息，并最终将这个用户信息赋值给响应体 `ctx.body`。通过这种方式，我们就可以在 Controller 层中获取 Service 层提供的数据，从而实现层与层之间的数据传递和业务逻辑的分离。
+
 ## 如何编写 CRUD 语句
 
 下面的语句，若没有特殊注明，默认都书写在 `app/service` 下。
@@ -176,7 +178,7 @@ class UserController extends Controller {
 
 ```js
 // 插入
-const result = await this.app.mysql.insert('posts', { title: 'Hello World' }); // 在 posts 表中，插入 title 为 Hello World 的记录
+const result = await this.app.mysql.insert("posts", { title: "Hello World" }); // 在 posts 表中，插入 title 为 Hello World 的记录
 
 // SQL 语句相当于
 // INSERT INTO `posts`(`title`) VALUES('Hello World');
@@ -206,7 +208,7 @@ const insertSuccess = result.affectedRows === 1;
 - 查询一条记录
 
 ```js
-const post = await this.app.mysql.get('posts', { id: 12 });
+const post = await this.app.mysql.get("posts", { id: 12 });
 
 // SQL 语句相当于
 // SELECT * FROM `posts` WHERE `id` = 12 LIMIT 0, 1;
@@ -215,7 +217,7 @@ const post = await this.app.mysql.get('posts', { id: 12 });
 - 查询全表
 
 ```js
-const results = await this.app.mysql.select('posts');
+const results = await this.app.mysql.select("posts");
 
 // SQL 语句相当于
 // SELECT * FROM `posts`;
@@ -224,10 +226,14 @@ const results = await this.app.mysql.select('posts');
 - 条件查询和结果定制
 
 ```js
-const results = await this.app.mysql.select('posts', { // 搜索 posts 表
-  where: { status: 'draft', author: ['author1', 'author2'] }, // WHERE 条件
-  columns: ['author', 'title'], // 要查询的字段
-  orders: [['created_at','desc'], ['id','desc']], // 排序方式
+const results = await this.app.mysql.select("posts", {
+  // 搜索 posts 表
+  where: { status: "draft", author: ["author1", "author2"] }, // WHERE 条件
+  columns: ["author", "title"], // 要查询的字段
+  orders: [
+    ["created_at", "desc"],
+    ["id", "desc"],
+  ], // 排序方式
   limit: 10, // 返回数据量
   offset: 0, // 数据偏移量
 });
@@ -241,7 +247,7 @@ const results = await this.app.mysql.select('posts', { // 搜索 posts 表
 - 统计查询结果的行数
 
 ```js
-const total = await this.app.mysql.count('posts', { status: 'published' }); // 统计 posts 表中 status 为 published 的行数
+const total = await this.app.mysql.count("posts", { status: "published" }); // 统计 posts 表中 status 为 published 的行数
 
 // SQL 语句相当于
 // SELECT COUNT(*) FROM `posts` WHERE `status` = 'published'
@@ -255,11 +261,11 @@ const total = await this.app.mysql.count('posts', { status: 'published' }); // �
 // 修改数据
 const row = {
   id: 123,
-  name: 'fengmk2',
-  otherField: 'other field value', // 其他想要更新的字段
+  name: "fengmk2",
+  otherField: "other field value", // 其他想要更新的字段
   modifiedAt: this.app.mysql.literals.now, // 数据库服务器上的当前时间
 };
-const result = await this.app.mysql.update('posts', row); // 更新 posts 表中的记录
+const result = await this.app.mysql.update("posts", row); // 更新 posts 表中的记录
 
 // SQL 语句相当于
 // UPDATE `posts` SET `name` = 'fengmk2', `modifiedAt` = NOW() WHERE `id` = 123;
@@ -269,17 +275,17 @@ const updateSuccess = result.affectedRows === 1;
 
 // 如果主键是自定义的 ID 名称，如 custom_id，则需要在 `where` 里配置
 const row2 = {
-  name: 'fengmk2',
-  otherField: 'other field value', // 其他想要更新的字段
+  name: "fengmk2",
+  otherField: "other field value", // 其他想要更新的字段
   modifiedAt: this.app.mysql.literals.now, // 数据库服务器上的当前时间
 };
 
 const options = {
   where: {
-    custom_id: 456
-  }
+    custom_id: 456,
+  },
 };
-const result2 = await this.app.mysql.update('posts', row2, options); // 更新 posts 表中的记录
+const result2 = await this.app.mysql.update("posts", row2, options); // 更新 posts 表中的记录
 
 // SQL 语句相当于
 // UPDATE `posts` SET `name` = 'fengmk2', `modifiedAt` = NOW() WHERE `custom_id` = 456 ;
@@ -293,13 +299,14 @@ const updateSuccess2 = result2.affectedRows === 1;
 可以直接使用 `delete` 方法删除数据库记录。
 
 ```js
-const result = await this.app.mysql.delete('posts', {
-  author: 'fengmk2',
+const result = await this.app.mysql.delete("posts", {
+  author: "fengmk2",
 });
 
 // SQL 语句相当于
 // DELETE FROM `posts` WHERE `author` = 'fengmk2';
 ```
+
 ## 直接执行 SQL 语句
 
 插件本身也支持拼接与直接执行 SQL 语句。使用 `query` 方法可以执行合法的 SQL 语句。
@@ -312,7 +319,10 @@ const result = await this.app.mysql.delete('posts', {
 
 ```js
 const postId = 1;
-const results = await this.app.mysql.query('update posts set hits = (hits + ?) where id = ?', [1, postId]);
+const results = await this.app.mysql.query("update posts set hits = (hits + ?) where id = ?", [
+  1,
+  postId,
+]);
 
 // => update posts set hits = (hits + 1) where id = 1;
 ```
@@ -391,8 +401,8 @@ await this.app.mysql.insert(table, {
 
 ```js
 const Literal = this.app.mysql.literals.Literal;
-const first = 'James';
-const last = 'Bond';
+const first = "James";
+const last = "Bond";
 await this.app.mysql.insert(table, {
   id: 123,
   fullname: new Literal(`CONCAT("${first}", "${last}")`),

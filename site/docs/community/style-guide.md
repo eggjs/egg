@@ -12,7 +12,7 @@ Old Style:
 module.exports = (app) => {
   class UserService extends app.Service {
     async list() {
-      return await this.ctx.curl('https://eggjs.org');
+      return await this.ctx.curl("https://eggjs.org");
     }
   }
   return UserService;
@@ -22,10 +22,10 @@ module.exports = (app) => {
 change to:
 
 ```js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 class UserService extends Service {
   async list() {
-    return await this.ctx.curl('https://eggjs.org');
+    return await this.ctx.curl("https://eggjs.org");
   }
 }
 module.exports = UserService;
@@ -34,7 +34,7 @@ module.exports = UserService;
 Additionally, the `framework developer` needs to change the syntax as follows, otherwise the `application developer` will have problems customizing base classes such as Service:
 
 ```js
-const egg = require('egg');
+const egg = require("egg");
 
 module.exports = Object.assign(egg, {
   Application: class MyApplication extends egg.Application {
@@ -52,8 +52,8 @@ module.exports = Object.assign(egg, {
 
 ```js
 // app/extend/application.js
-const CACHE = Symbol('Application#cache');
-const CacheManager = require('../../lib/cache_manager');
+const CACHE = Symbol("Application#cache");
+const CacheManager = require("../../lib/cache_manager");
 
 module.exports = {
   get cache() {

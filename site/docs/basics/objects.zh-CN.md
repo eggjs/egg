@@ -21,16 +21,16 @@ Application 是全局应用对象。在一个应用中，每个进程只会实�
 // app.js
 
 module.exports = (app) => {
-  app.once('server', (server) => {
+  app.once("server", (server) => {
     // websocket 相关操作
   });
-  app.on('error', (err, ctx) => {
+  app.on("error", (err, ctx) => {
     // 上报错误
   });
-  app.on('request', (ctx) => {
+  app.on("request", (ctx) => {
     // 记录收到的请求
   });
-  app.on('response', (ctx) => {
+  app.on("response", (ctx) => {
     // ctx.starttime 是由框架设置的
     const used = Date.now() - ctx.starttime;
     // 记录请求总耗时
@@ -85,6 +85,7 @@ class UserController extends Controller {
   }
 }
 ```
+
 ## Context
 
 Context 是一个**请求级别的对象**，继承自 [Koa.Context]。在每次收到用户请求时，框架都会实例化一个 Context 对象。这个对象封装了这次用户请求的信息，并提供了许多便捷的方法来获取请求参数或者设置响应信息。框架会将所有的 [Service] 挂载到 Context 实例上。部分插件也会将其他方法和对象挂载至其上（如 [egg-sequelize] 会将所有的 model 挂到 Context 上）。
@@ -131,6 +132,7 @@ exports.task = async (ctx) => {
   await ctx.service.posts.refresh();
 };
 ```
+
 ## Request & Response
 
 Request 是一个**请求级别的对象**，继承自 `[Koa.Request]`。封装了 Node.js 原生的 HTTP Request 对象，提供了一系列辅助方法获取 HTTP 请求常用参数。
@@ -157,6 +159,7 @@ class UserController extends Controller {
 - `[Koa]` 会在 Context 上代理一部分 Request 和 Response 上的方法和属性，参见 `[Koa.Context]`。
 - 如上面例子中的 `ctx.request.query.id` 和 `ctx.query.id` 是等价的，`ctx.response.body =` 和 `ctx.body =` 也是等价的。
 - 需要注意的是，获取 POST 的 body 应该使用 `ctx.request.body`，而不是 `ctx.body`。
+
 ## Controller
 
 框架提供了一个 Controller 基类，并推荐所有的 `Controller` 都继承于该基类实现。这个 Controller 基类有下列属性：
@@ -173,7 +176,7 @@ class UserController extends Controller {
 // app/controller/user.js
 
 // 从 egg 上获取（推荐）
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 class UserController extends Controller {
   // 实现
 }
@@ -186,6 +189,7 @@ module.exports = (app) => {
   };
 };
 ```
+
 ## Service
 
 框架提供了一个 Service 基类，并推荐所有的 Service 都继承于该基类实现。
@@ -196,7 +200,7 @@ Service 基类的属性和 [Controller](#controller) 基类属性一致，访问
 // app/service/user.js
 
 // 从 egg 上获取（推荐）
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 class UserService extends Service {
   // implement
 }
@@ -209,6 +213,7 @@ module.exports = (app) => {
   };
 };
 ```
+
 ## Helper
 
 Helper 用来提供一些实用的 utility 函数。它的作用在于我们可以将一些常用的动作抽离在 `helper.js` 里面成为一个独立的函数。这样可以利用 JavaScript 编写复杂的逻辑，避免逻辑分散于各个地方，同时便于更好地编写测试用例。
@@ -246,10 +251,11 @@ class UserController extends Controller {
 // app/extend/helper.js
 module.exports = {
   formatUser(user) {
-    return only(user, ['name', 'phone']);
+    return only(user, ["name", "phone"]);
   },
 };
 ```
+
 ## Config
 
 我们推荐应用开发遵循配置和代码分离的原则，将一些需要硬编码的业务配置都放到配置文件中。同时，配置文件支持各个不同的运行环境使用不同的配置，使用起来也非常方便。所有框架、插件和应用级别的配置都可以通过 `Config` 对象获取到。关于框架的配置，可以详细阅读[Config 配置](./config.md)章节。
@@ -257,6 +263,7 @@ module.exports = {
 ### 获取方式
 
 我们可以通过 `app.config` 从 `Application` 实例上获取到 `config` 对象，也可以在 Controller、Service、Helper 的实例上通过 `this.config` 获取到 `config` 对象。
+
 ## Logger
 
 框架内置了功能强大的[日志功能](../core/logger.md)，可以非常方便地打印各种级别的日志到对应的日志文件中，每一个 logger 对象都提供了 4 个级别的方法：
@@ -295,7 +302,7 @@ module.exports = {
 你可以通过以下方式来引用 `Subscription` 基类：
 
 ```js
-const Subscription = require('egg').Subscription;
+const Subscription = require("egg").Subscription;
 
 class Schedule extends Subscription {
   // 需要实现此方法
@@ -307,6 +314,7 @@ class Schedule extends Subscription {
 插件开发者可以根据自己的需求，基于它定制订阅规范，例如定时任务就是使用这种规范实现的。
 
 相关链接：
+
 - [koa](http://koajs.com)
 - [koa.application](http://koajs.com/#application)
 - [koa.context](http://koajs.com/#context)

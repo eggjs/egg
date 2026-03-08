@@ -18,21 +18,21 @@ All scheduled tasks should be placed in directory `app/schedule`. Each file is a
 A simple example, to define a scheduled task to update the remote data to the memory cache, we can create a `update_cache.js` file in the directory 'app/schedule`
 
 ```js
-const Subscription = require('egg').Subscription;
+const Subscription = require("egg").Subscription;
 
 class UpdateCache extends Subscription {
   // using `schedule` property to set the scheduled task execution interval and other configurations
   static get schedule() {
     return {
-      interval: '1m', // 1 minute interval
-      type: 'all', // specify all `workers` need to execute
+      interval: "1m", // 1 minute interval
+      type: "all", // specify all `workers` need to execute
     };
   }
 
   // `subscribe` is the function to be executed when the scheduled task is triggered
   async subscribe() {
-    const res = await this.ctx.curl('http://www.api.com/cache', {
-      dataType: 'json',
+    const res = await this.ctx.curl("http://www.api.com/cache", {
+      dataType: "json",
     });
     this.ctx.app.cache = res.data;
   }
@@ -46,12 +46,12 @@ Can also be abbreviated as
 ```js
 module.exports = {
   schedule: {
-    interval: '1m', // 1 minute interval
-    type: 'all', // specify all `workers` need to execute
+    interval: "1m", // 1 minute interval
+    type: "all", // specify all `workers` need to execute
   },
   async task(ctx) {
-    const res = await ctx.curl('http://www.api.com/cache', {
-      dataType: 'json',
+    const res = await ctx.curl("http://www.api.com/cache", {
+      dataType: "json",
     });
     ctx.app.cache = res.data;
   },
@@ -80,7 +80,7 @@ Configure the scheduled tasks by `schedule.interval`, scheduled tasks will be ex
 module.exports = {
   schedule: {
     // executed every 10 seconds
-    interval: '10s',
+    interval: "10s",
   },
 };
 ```
@@ -107,7 +107,7 @@ Configure the scheduled tasks by `schedule.cron`, scheduled tasks will be execut
 module.exports = {
   schedule: {
     // executed every three hours (zero minutes and zero seconds)
-    cron: '0 0 */3 * * *',
+    cron: "0 0 */3 * * *",
   },
 };
 ```
@@ -151,11 +151,11 @@ module.exports = (app) => {
   return {
     schedule: {
       interval: app.config.cacheTick,
-      type: 'all',
+      type: "all",
     },
     async task(ctx) {
-      const res = await ctx.curl('http://www.api.com/cache', {
-        contentType: 'json',
+      const res = await ctx.curl("http://www.api.com/cache", {
+        contentType: "json",
       });
       ctx.app.cache = res.data;
     },
@@ -172,13 +172,13 @@ There are some scenarios we may need to manually execute scheduled tasks, for ex
 - Executing scheduled tasks manually for more elegant unit testing of scheduled tasks.
 
 ```js
-const mm = require('egg-mock');
-const assert = require('assert');
+const mm = require("egg-mock");
+const assert = require("assert");
 
-it('should schedule work fine', async () => {
+it("should schedule work fine", async () => {
   const app = mm.app();
   await app.ready();
-  await app.runSchedule('update_cache');
+  await app.runSchedule("update_cache");
   assert(app.cache);
 });
 ```
@@ -190,7 +190,7 @@ module.exports = (app) => {
   app.beforeStart(async () => {
     // ensure the data is ready before the application starts listening port
     // follow-up data updates automatically by the scheduled task
-    await app.runSchedule('update_cache');
+    await app.runSchedule("update_cache");
   });
 };
 ```
@@ -212,7 +212,7 @@ module.exports = (agent) => {
       agent.mq.subscribe(this.schedule.scene, () => this.sendOne());
     }
   }
-  agent.schedule.use('cluster', ClusterStrategy);
+  agent.schedule.use("cluster", ClusterStrategy);
 };
 ```
 

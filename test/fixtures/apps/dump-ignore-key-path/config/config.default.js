@@ -4,13 +4,13 @@ exports.withKeyPaths = {
       nested: true,
     },
   },
-  key2: 'str',
+  key2: "str",
 };
 
 exports.dump = {
   ignoreKeyPaths: {
-    'config.withKeyPaths.key2': true,
+    "config.withKeyPaths.key2": true,
   },
 };
 
-exports.keys = 'test key';
+exports.keys = "test key";

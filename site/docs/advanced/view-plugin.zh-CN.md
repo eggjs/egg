@@ -8,6 +8,7 @@ order: 5
 本文将阐述框架对 View 插件的规范约束。我们可以依此来封装对应的模板引擎插件。以下以 [egg-view-ejs](https://github.com/eggjs/egg-view-ejs) 为例。
 
 ## 插件目录结构
+
 ```bash
 egg-view-ejs
 ├── config
@@ -54,11 +55,10 @@ View 基类需要提供 `render` 和 `renderString` 两个方法，支持 genera
 以下为简化代码，您可以直接[查看源码](https://github.com/eggjs/egg-view-ejs/blob/master/lib/view.js)：
 
 ```js
-const ejs = require('ejs');
+const ejs = require("ejs");
 
 Mmdule.exports = class EjsView {
   render(filename, locals, viewOptions) {
-
     const config = Object.assign({}, this.config, viewOptions, { filename });
 
     return new Promise((resolve, reject) => {
@@ -88,14 +88,16 @@ Mmdule.exports = class EjsView {
 ### 参数
 
 `render` 方法的参数：
-  - `filename`：是完整文件路径，框架查找文件时已确认文件是否存在，因此这里不需要处理。
-  - `locals`：渲染所需数据，来源包括 `app.locals`、`ctx.locals` 以及调用 `render` 方法传入的数据。框架还内置了 `ctx`、`request` 和 `ctx.helper` 这几个对象。
-  - `viewOptions`：用户传入的配置，可以覆盖模板引擎的默认配置。这个可根据模板引擎的特征考虑是否支持。例如，默认开启了缓存，而某个页面不需要缓存。
+
+- `filename`：是完整文件路径，框架查找文件时已确认文件是否存在，因此这里不需要处理。
+- `locals`：渲染所需数据，来源包括 `app.locals`、`ctx.locals` 以及调用 `render` 方法传入的数据。框架还内置了 `ctx`、`request` 和 `ctx.helper` 这几个对象。
+- `viewOptions`：用户传入的配置，可以覆盖模板引擎的默认配置。这个可根据模板引擎的特征考虑是否支持。例如，默认开启了缓存，而某个页面不需要缓存。
 
 `renderString` 方法的三个参数：
-  - `tpl`: 模板字符串，没有文件路径。
-  - `locals`: 同 `render`。
-  - `viewOptions`: 同 `render`。
+
+- `tpl`: 模板字符串，没有文件路径。
+- `locals`: 同 `render`。
+- `viewOptions`: 同 `render`。
 
 ## 插件配置
 
@@ -107,8 +109,8 @@ Mmdule.exports = class EjsView {
 // config/config.default.js
 module.exports = {
   ejs: {
-    cache: true
-  }
+    cache: true,
+  },
 };
 ```
 
@@ -145,7 +147,7 @@ module.exports = (app) => {
 
 ```js
 // {plugin_root}/lib/view.js
-const ViewHelper = require('./helper');
+const ViewHelper = require("./helper");
 
 module.exports = class MyCustomView {
   render(filename, locals) {

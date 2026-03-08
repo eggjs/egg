@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 module.exports = () => {
   return {
     mock: {
-      name: 'mock',
+      name: "mock",
     },
   };
-}
+};

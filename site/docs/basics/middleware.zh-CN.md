@@ -13,8 +13,8 @@ order: 5
 
 ```js
 // app/middleware/gzip.js
-const isJSON = require('koa-is-json');
-const zlib = require('zlib');
+const isJSON = require("koa-is-json");
+const zlib = require("zlib");
 
 async function gzip(ctx, next) {
   await next();
@@ -28,7 +28,7 @@ async function gzip(ctx, next) {
   const stream = zlib.createGzip();
   stream.end(body);
   ctx.body = stream;
-  ctx.set('Content-Encoding', 'gzip');
+  ctx.set("Content-Encoding", "gzip");
 }
 ```
 
@@ -45,8 +45,8 @@ async function gzip(ctx, next) {
 
 ```js
 // app/middleware/gzip.js
-const isJSON = require('koa-is-json');
-const zlib = require('zlib');
+const isJSON = require("koa-is-json");
+const zlib = require("zlib");
 
 module.exports = (options) => {
   return async function gzip(ctx, next) {
@@ -65,10 +65,11 @@ module.exports = (options) => {
     const stream = zlib.createGzip();
     stream.end(body);
     ctx.body = stream;
-    ctx.set('Content-Encoding', 'gzip');
+    ctx.set("Content-Encoding", "gzip");
   };
 };
 ```
+
 ## 使用中间件
 
 中间件编写完成后，我们还需要手动挂载，支持以下方式：
@@ -82,12 +83,12 @@ module.exports = (options) => {
 ```js
 module.exports = {
   // 配置需要的中间件，数组顺序即为中间件的加载顺序
-  middleware: ['gzip'],
+  middleware: ["gzip"],
 
   // 配置 gzip 中间件的配置
   gzip: {
-    threshold: 1024 // 小于 1k 的响应体不压缩
-  }
+    threshold: 1024, // 小于 1k 的响应体不压缩
+  },
 };
 ```
 
@@ -99,14 +100,14 @@ module.exports = {
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   // 在中间件最前面统计请求时间
-  app.config.coreMiddleware.unshift('report');
+  app.config.coreMiddleware.unshift("report");
 };
 
 // app/middleware/report.js
 module.exports = () => {
-  return async function(ctx, next) {
+  return async function (ctx, next) {
     const startTime = Date.now();
     await next();
     // 上报请求时间
@@ -123,11 +124,12 @@ module.exports = () => {
 如果你只想针对单个路由生效，可以直接在 `app/router.js` 中实例化和挂载，如下：
 
 ```js
-module.exports = app => {
+module.exports = (app) => {
   const gzip = app.middleware.gzip({ threshold: 1024 });
-  app.router.get('/needgzip', gzip, app.controller.handler);
+  app.router.get("/needgzip", gzip, app.controller.handler);
 };
 ```
+
 ## 框架默认中间件
 
 除了应用层加载中间件之外，框架自身和其他插件也会加载许多中间件。所有这些自带中间件的配置项都可以通过修改配置文件中的同名配置项来进行更改。例如，框架自带的中间件列表中有一个名为 `bodyParser` 的中间件（框架的加载器会将文件名中的分隔符都转换为驼峰形式的变量名）。如果我们想要修改 `bodyParser` 的配置，只需要在 `config/config.default.js` 中编写如下内容：
@@ -135,12 +137,13 @@ module.exports = app => {
 ```js
 module.exports = {
   bodyParser: {
-    jsonLimit: '10mb',
+    jsonLimit: "10mb",
   },
 };
 ```
 
 **注意：框架和插件加载的中间件会在应用层配置的中间件之前被加载。框架默认中间件不能被应用层中间件覆盖。如果应用层有自定义同名中间件，启动时将会报错。**
+
 ## 使用 Koa 的中间件
 
 在框架里面可以非常容易地引入 Koa 中间件生态。
@@ -148,8 +151,8 @@ module.exports = {
 以 [`koa-compress`](https://github.com/koajs/compress) 为例，在 Koa 中使用时：
 
 ```js
-const koa = require('koa');
-const compress = require('koa-compress');
+const koa = require("koa");
+const compress = require("koa-compress");
 
 const app = new koa();
 
@@ -162,13 +165,13 @@ app.use(compress(options));
 ```js
 // app/middleware/compress.js
 // koa-compress 暴露的接口（`(options) => middleware`）和框架对中间件要求一致
-module.exports = require('koa-compress');
+module.exports = require("koa-compress");
 ```
 
 ```js
 // config/config.default.js
 module.exports = {
-  middleware: ['compress'],
+  middleware: ["compress"],
   compress: {
     threshold: 2048,
   },
@@ -187,12 +190,13 @@ module.exports = {
 };
 
 // app/middleware/webpack.js
-const webpackMiddleware = require('some-koa-middleware');
+const webpackMiddleware = require("some-koa-middleware");
 
 module.exports = (options, app) => {
   return webpackMiddleware(options.compiler, options.others);
 };
 ```
+
 ## 通用配置
 
 无论是应用层加载的中间件还是框架自带中间件，都支持几个通用的配置项：
@@ -222,7 +226,7 @@ module.exports = {
 ```js
 module.exports = {
   gzip: {
-    match: '/static',
+    match: "/static",
   },
 };
 ```
@@ -239,7 +243,7 @@ module.exports = {
     match(ctx) {
       // 只有 iOS 设备才开启
       const reg = /iphone|ipad|ipod/i;
-      return reg.test(ctx.get('user-agent'));
+      return reg.test(ctx.get("user-agent"));
     },
   },
 };

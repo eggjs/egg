@@ -1,12 +1,12 @@
-const { readFile } = require('node:fs/promises');
-const path = require('node:path');
-const assert = require('node:assert');
-const utils = require('../../utils');
+const { readFile } = require("node:fs/promises");
+const path = require("node:path");
+const assert = require("node:assert");
+const utils = require("../../utils");
 
-describe('test/lib/cluster/cluster-client-error.test.js', () => {
+describe("test/lib/cluster/cluster-client-error.test.js", () => {
   let app;
   before(async () => {
-    app = utils.app('apps/cluster-client-error');
+    app = utils.app("apps/cluster-client-error");
 
     let err;
     try {
@@ -17,13 +17,19 @@ describe('test/lib/cluster/cluster-client-error.test.js', () => {
     assert(err);
   });
 
-  it('should close even if app throw error', () => {
+  it("should close even if app throw error", () => {
     return app.close();
   });
 
-  it('should follower not throw error', async () => {
+  it("should follower not throw error", async () => {
     await utils.sleep(1000);
-    const cnt = await readFile(path.join(__dirname, '../../fixtures/apps/cluster-client-error/logs/cluster-client-error/common-error.log'), 'utf8');
-    assert(!cnt.includes('ECONNRESET'));
+    const cnt = await readFile(
+      path.join(
+        __dirname,
+        "../../fixtures/apps/cluster-client-error/logs/cluster-client-error/common-error.log",
+      ),
+      "utf8",
+    );
+    assert(!cnt.includes("ECONNRESET"));
   });
 });

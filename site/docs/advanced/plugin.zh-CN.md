@@ -59,13 +59,11 @@ $ npm test
 那区别在哪儿呢？
 
 1. 插件没有独立的 router 和 controller。这主要出于几点考虑：
-
    - 路由一般和应用强绑定的，不具备通用性。
    - 一个应用可能依赖很多个插件，如果插件支持路由可能会导致路由冲突。
    - 如果确实有统一路由的需求，可以考虑在插件里通过中间件来实现。
 
 2. 插件需要在 `package.json` 中的 `eggPlugin` 节点指定插件特有的信息：
-
    - `{String} name` - 插件名（必须配置），具有唯一性，配置依赖关系时会指定依赖插件的 name。
    - `{Array} dependencies` - 当前插件强依赖的插件列表（如果依赖的插件没找到，应用启动失败）。
    - `{Array} optionalDependencies` - 当前插件的可选依赖插件列表（如果依赖的插件未开启，只会 warning，不会影响应用启动）。
@@ -84,7 +82,6 @@ $ npm test
      ```
 
 3. 插件没有 `plugin.js`：
-
    - `eggPlugin.dependencies` 只是用于声明依赖关系，而不是引入插件或开启插件。
    - 如果期望统一管理多个插件的开启和配置，可以在 [上层框架](./framework.md) 处理。
 
@@ -128,6 +125,7 @@ $ npm test
 - 弱依赖，比如：A 依赖 B，但是如果没有 B，A 有相应的降级方案。
 
 需要特别强调的是：如果采用 `optionalDependencies`，那么框架不会校验依赖的插件是否开启，它的作用仅仅是计算加载顺序。所以，这时候依赖方需要通过“接口探测”等方式来决定相应的处理逻辑。
+
 ## 插件能做什么？
 
 上面给出了插件的定义，那插件到底能做什么？
@@ -148,24 +146,24 @@ $ npm test
 1. 首先在 `app/middleware` 目录下定义好中间件实现：
 
    ```js
-   'use strict';
+   "use strict";
 
-   const staticCache = require('koa-static-cache');
-   const assert = require('assert');
-   const mkdirp = require('mkdirp');
+   const staticCache = require("koa-static-cache");
+   const assert = require("assert");
+   const mkdirp = require("mkdirp");
 
    module.exports = (options, app) => {
      assert.strictEqual(
        typeof options.dir,
-       'string',
-       'Must set `app.config.static.dir` when static plugin enable',
+       "string",
+       "Must set `app.config.static.dir` when static plugin enable",
      );
 
      // 确保目录存在
      mkdirp.sync(options.dir);
 
      app.loggers.coreLogger.info(
-       '[egg-static] starting static serve %s -> %s',
+       "[egg-static] starting static serve %s -> %s",
        options.prefix,
        options.dir,
      );
@@ -177,14 +175,14 @@ $ npm test
 2. 在 `app.js` 中将中间件插入到合适的位置（例如：下面将 static 中间件放到 bodyParser 之前）：
 
    ```js
-   const assert = require('assert');
+   const assert = require("assert");
 
    module.exports = (app) => {
      // 将 static 中间件放到 bodyParser 之前
-     const index = app.config.coreMiddleware.indexOf('bodyParser');
-     assert(index >= 0, 'bodyParser 中间件必须存在');
+     const index = app.config.coreMiddleware.indexOf("bodyParser");
+     assert(index >= 0, "bodyParser 中间件必须存在");
 
-     app.config.coreMiddleware.splice(index, 0, 'static');
+     app.config.coreMiddleware.splice(index, 0, "static");
    };
    ```
 
@@ -194,13 +192,13 @@ $ npm test
 
   ```js
   // ${plugin_root}/app.js
-  const fs = require('fs');
-  const path = require('path');
+  const fs = require("fs");
+  const path = require("path");
 
   module.exports = (app) => {
-    app.customData = fs.readFileSync(path.join(app.config.baseDir, 'data.bin'));
+    app.customData = fs.readFileSync(path.join(app.config.baseDir, "data.bin"));
 
-    app.coreLogger.info('Data read successfully');
+    app.coreLogger.info("Data read successfully");
   };
   ```
 
@@ -208,16 +206,16 @@ $ npm test
 
   ```js
   // ${plugin_root}/app.js
-  const MyClient = require('my-client');
+  const MyClient = require("my-client");
 
   module.exports = (app) => {
     app.myClient = new MyClient();
-    app.myClient.on('error', (err) => {
+    app.myClient.on("error", (err) => {
       app.coreLogger.error(err);
     });
     app.beforeStart(async () => {
       await app.myClient.ready();
-      app.coreLogger.info('My client is ready');
+      app.coreLogger.info("My client is ready");
     });
   };
   ```
@@ -226,19 +224,20 @@ $ npm test
 
   ```js
   // ${plugin_root}/agent.js
-  const MyClient = require('my-client');
+  const MyClient = require("my-client");
 
   module.exports = (agent) => {
     agent.myClient = new MyClient();
-    agent.myClient.on('error', (err) => {
+    agent.myClient.on("error", (err) => {
       agent.coreLogger.error(err);
     });
     agent.beforeStart(async () => {
       await agent.myClient.ready();
-      agent.coreLogger.info('My client is ready');
+      agent.coreLogger.info("My client is ready");
     });
   };
   ```
+
 ### 设置定时任务
 
 1. 在 `package.json` 里设置依赖 schedule 插件
@@ -257,8 +256,8 @@ $ npm test
 
    ```js
    exports.schedule = {
-     type: 'worker',
-     cron: '0 0 3 * * *',
+     type: "worker",
+     cron: "0 0 3 * * *",
      // interval: '1h',
      // immediate: true
    };
@@ -283,8 +282,8 @@ $ npm test
 
 ```js
 // egg-mysql/app.js
-module.exports = app => {
-  app.addSingleton('mysql', createMysql);
+module.exports = (app) => {
+  app.addSingleton("mysql", createMysql);
 };
 
 /**
@@ -299,8 +298,10 @@ function createMysql(config, app) {
 
   // 应用启动前检查
   app.beforeStart(async () => {
-    const rows = await client.query('select now() as currentTime;');
-    app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
+    const rows = await client.query("select now() as currentTime;");
+    app.coreLogger.info(
+      `[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`,
+    );
   });
 
   return client;
@@ -318,7 +319,7 @@ async function createMysql(config, app) {
   const client = new Mysql(mysqlConfig);
 
   // 应用启动前检查
-  const rows = await client.query('select now() as currentTime;');
+  const rows = await client.query("select now() as currentTime;");
   app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
 
   return client;
@@ -326,6 +327,7 @@ async function createMysql(config, app) {
 ```
 
 可以看到，插件中我们只需要提供要挂载的字段和服务的初始化方法，所有配置管理、实例获取方式由框架封装并统一提供。
+
 #### 应用层使用方案
 
 ##### 单实例
@@ -337,11 +339,11 @@ async function createMysql(config, app) {
    module.exports = {
      mysql: {
        client: {
-         host: 'mysql.com',
-         port: '3306',
-         user: 'test_user',
-         password: 'test_password',
-         database: 'test',
+         host: "mysql.com",
+         port: "3306",
+         user: "test_user",
+         password: "test_password",
+         database: "test",
        },
      },
    };
@@ -368,20 +370,20 @@ async function createMysql(config, app) {
      clients: {
        // clientId，可通过 app.mysql.get('clientId') 访问客户端实例
        db1: {
-         user: 'user1',
-         password: 'upassword1',
-         database: 'db1',
+         user: "user1",
+         password: "upassword1",
+         database: "db1",
        },
        db2: {
-         user: 'user2',
-         password: 'upassword2',
-         database: 'db2',
+         user: "user2",
+         password: "upassword2",
+         database: "db2",
        },
      },
      // 所有数据库的默认配置
      default: {
-       host: 'mysql.com',
-       port: '3306',
+       host: "mysql.com",
+       port: "3306",
      },
    };
    ```
@@ -392,7 +394,7 @@ async function createMysql(config, app) {
    // app/controller/post.js
    class PostController extends Controller {
      async list() {
-       const posts = await this.app.mysql.get('db1').query(sql, values);
+       const posts = await this.app.mysql.get("db1").query(sql, values);
      }
    }
    ```
@@ -403,10 +405,10 @@ async function createMysql(config, app) {
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   app.beforeStart(async () => {
     // 从配置中心获取 MySQL 配置 { host, port, password, ... }
-    const mysqlConfig = await app.configCenter.fetch('mysql');
+    const mysqlConfig = await app.configCenter.fetch("mysql");
     // 动态创建 MySQL 实例
     app.database = await app.mysql.createInstanceAsync(mysqlConfig);
   });
@@ -435,6 +437,7 @@ class PostController extends Controller {
   1. 应用根目录下的 `node_modules`
   2. 应用依赖框架路径下的 `node_modules`
   3. 当前路径下的 `node_modules`（主要是兼容单元测试场景）
+
 ### 插件规范
 
 我们非常欢迎你贡献新的插件，同时也希望你遵守下面一些规范：
@@ -445,7 +448,6 @@ class PostController extends Controller {
   - 对于既可以加中划线也可以不加的情况，不做强制约定，例如：`userservice`（`egg-userservice`）或 `user-service`（`egg-user-service`）都可。
 
 - `package.json` 书写规范
-
   - 按照上面的文档添加 `eggPlugin` 节点。
   - 在 `keywords` 里添加 `egg`、`egg-plugin`、`eggPlugin` 等关键字，便于索引。
 
@@ -458,14 +460,7 @@ class PostController extends Controller {
     "name": "nunjucks",
     "dep": ["security"]
   },
-  "keywords": [
-    "egg",
-    "egg-plugin",
-    "eggPlugin",
-    "egg-plugin-view",
-    "egg-view",
-    "nunjucks"
-  ]
+  "keywords": ["egg", "egg-plugin", "eggPlugin", "egg-plugin-view", "egg-view", "nunjucks"]
 }
 ```
 
@@ -478,7 +473,6 @@ Egg 通过 `eggPlugin.name` 来定义插件名，只需应用或框架具备唯�
 更重要的是，Egg 通过这种特性来做适配器。例如，[模板开发规范](./view-plugin.md#插件命名规范)定义的插件名为 `view`，存在 `egg-view-nunjucks`、`egg-view-react` 等插件，使用者只需要更换插件和修改模板，无需修改 Controller，因为所有的模板插件都实现了相同的 API。
 
 **将相同功能的插件赋予相同的插件名，以及提供相同的 API，可以快速进行切换**。这种做法在模板、数据库等领域非常适用。
-
 
 [egg-boilerplate-plugin]: https://github.com/eggjs/egg-boilerplate-plugin
 [egg-mysql]: https://github.com/eggjs/egg-mysql

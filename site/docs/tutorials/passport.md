@@ -41,12 +41,12 @@ For more plugins, see [GitHub Topic - egg-passport](https://github.com/topics/eg
 // config/plugin.js
 module.exports.passport = {
   enable: true,
-  package: 'egg-passport',
+  package: "egg-passport",
 };
 
 module.exports.passportGithub = {
   enable: true,
-  package: 'egg-passport-github',
+  package: "egg-passport-github",
 };
 ```
 
@@ -57,8 +57,8 @@ Note: The [egg-passport](https://github.com/eggjs/egg-passport) standardizes the
 ```js
 // config/default.js
 config.passportGithub = {
-  key: 'your_clientID',
-  secret: 'your_clientSecret',
+  key: "your_clientID",
+  secret: "your_clientSecret",
 };
 ```
 
@@ -76,7 +76,7 @@ config.passportGithub = {
 module.exports = (app) => {
   const { router, controller } = app; // Mount the authentication route
 
-  app.passport.mount('github'); // The mount above is syntactic sugar, which is equivalent to // const github = app.passport.authenticate('github', {}); // router.get('/passport/github', github); // router.get('/passport/github/callback', github);
+  app.passport.mount("github"); // The mount above is syntactic sugar, which is equivalent to // const github = app.passport.authenticate('github', {}); // router.get('/passport/github', github); // router.get('/passport/github/callback', github);
 };
 ```
 
@@ -92,8 +92,8 @@ Then we also need:
 module.exports = (app) => {
   app.passport.verify(async (ctx, user) => {
     // Check user
-    assert(user.provider, 'user.provider should exists');
-    assert(user.id, 'user.id should exists'); // Find user information from the database // // Authorization Table // column   | desc // ---      | -- // provider | provider name, like github, twitter, facebook, weibo and so on // uid      | provider unique id // user_id  | current application user id
+    assert(user.provider, "user.provider should exists");
+    assert(user.id, "user.id should exists"); // Find user information from the database // // Authorization Table // column   | desc // ---      | -- // provider | provider name, like github, twitter, facebook, weibo and so on // uid      | provider unique id // user_id  | current application user id
 
     const auth = await ctx.model.Authorization.findOne({
       uid: user.id,
@@ -164,7 +164,7 @@ $ npm i --save passport-local
 
 ```js
 // app.js
-const LocalStrategy = require('passport-local').Strategy;
+const LocalStrategy = require("passport-local").Strategy;
 
 module.exports = (app) => {
   // Mount strategy
@@ -176,11 +176,11 @@ module.exports = (app) => {
       (req, username, password, done) => {
         // format user
         const user = {
-          provider: 'local',
+          provider: "local",
           username,
           password,
         };
-        debug('%s %s get user: %j', req.method, req.url, user);
+        debug("%s %s get user: %j", req.method, req.url, user);
         app.passport.doVerify(req, user, done);
       },
     ),
@@ -198,15 +198,12 @@ module.exports = (app) => {
 // app/router.js
 module.exports = (app) => {
   const { router, controller } = app;
-  router.get('/', controller.home.index); // Callback page after successful authentication
+  router.get("/", controller.home.index); // Callback page after successful authentication
 
-  router.get('/authCallback', controller.home.authCallback); // Render login page, user inputs account password
+  router.get("/authCallback", controller.home.authCallback); // Render login page, user inputs account password
 
-  router.get('/login', controller.home.login); // Login verification
-  router.post(
-    '/login',
-    app.passport.authenticate('local', { successRedirect: '/authCallback' }),
-  );
+  router.get("/login", controller.home.login); // Login verification
+  router.post("/login", app.passport.authenticate("local", { successRedirect: "/authCallback" }));
 };
 ```
 
@@ -250,7 +247,7 @@ Note: [egg-passport](https://github.com/eggjs/egg-passport) standardizes the con
 
 ```js
 // {plugin_root}/app.js
-const LocalStrategy = require('passport-local').Strategy;
+const LocalStrategy = require("passport-local").Strategy;
 
 module.exports = (app) => {
   const config = app.config.passportLocal;
@@ -260,7 +257,7 @@ module.exports = (app) => {
     new LocalStrategy(config, (req, username, password, done) => {
       // Cleans up the data returned by the Passport plugin and returns the User object
       const user = {
-        provider: 'local',
+        provider: "local",
         username,
         password,
       }; // This does not process application-level logic and passes it to app.passport.verify for unified processing.

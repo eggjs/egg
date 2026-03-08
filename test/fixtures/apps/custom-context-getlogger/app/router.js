@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  app.get('/', 'home');
+module.exports = (app) => {
+  app.get("/", "home");
 };

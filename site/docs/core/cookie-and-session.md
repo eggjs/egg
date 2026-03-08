@@ -20,14 +20,14 @@ By using `ctx.cookies`, we can easily and safely read/set cookies in controller.
 class HomeController extends Controller {
   async add() {
     const ctx = this.ctx;
-    let count = ctx.cookies.get('count');
+    let count = ctx.cookies.get("count");
     count = count ? Number(count) : 0;
-    ctx.cookies.set('count', ++count);
+    ctx.cookies.set("count", ++count);
     ctx.body = count;
   }
   async remove() {
     const ctx = this.ctx;
-    ctx.cookies.set('count', null);
+    ctx.cookies.set("count", null);
     ctx.status = 204;
   }
 }
@@ -95,7 +95,7 @@ the corresponding options also need to be used in `get` method.
 If you want to get the cookie set by frontend or other system, you need to specify the parameter `signed` as `false`, avoid varify the cookie and not getting the vlaue.
 
 ```js
-ctx.cookies.get('frontend-cookie', {
+ctx.cookies.get("frontend-cookie", {
   signed: false,
 });
 ```
@@ -107,7 +107,7 @@ In `config/config.default.js`:
 
 ```js
 module.exports = {
-  keys: 'key1,key2',
+  keys: "key1,key2",
 };
 ```
 
@@ -164,7 +164,7 @@ What you need to pay special attention to is that you need to avoid the followin
 ```js
 // ❌ Wrong way
 ctx.session._visited = 1; //   --> property will lost
-ctx.session.isNew = 'HeHe'; //   --> session keyword, should not write it
+ctx.session.isNew = "HeHe"; //   --> session keyword, should not write it
 
 // ✔️ Right way
 ctx.session.visited = 1; //   -->  Everything is all right
@@ -178,7 +178,7 @@ The default configuration of Session is:
 
 ```js
 exports.session = {
-  key: 'EGG_SESS',
+  key: "EGG_SESS",
   maxAge: 24 * 3600 * 1000, // 1 day
   httpOnly: true,
   encrypt: true,
@@ -227,11 +227,11 @@ To apply it, import [egg-redis] and [egg-session-redis] plugin in your applicati
 // plugin.js
 exports.redis = {
   enable: true,
-  package: 'egg-redis',
+  package: "egg-redis",
 };
 exports.sessionRedis = {
   enable: true,
-  package: 'egg-session-redis',
+  package: "egg-session-redis",
 };
 ```
 
@@ -253,7 +253,7 @@ If it's selected, Session of this logged in user can live longer.
 This kind of per-user session expiration time can be set through `ctx.session.maxAge`:
 
 ```js
-const ms = require('ms');
+const ms = require("ms");
 class UserController extends Controller {
   async login() {
     const ctx = this.ctx;
@@ -263,7 +263,7 @@ class UserController extends Controller {
     // set Session
     ctx.session.user = user;
     // if user selected `Remember Me`, set expiration time to 30 days
-    if (rememberMe) ctx.session.maxAge = ms('30d');
+    if (rememberMe) ctx.session.maxAge = ms("30d");
   }
 }
 ```

@@ -1,10 +1,8 @@
-'use strict';
+"use strict";
 
-const url = require('node:url');
-
+const url = require("node:url");
 
 module.exports = {
-
   /**
    * Generate URL path(without host) for route. Takes the route name and a map of named params.
    * @function Helper#pathFor
@@ -37,7 +35,11 @@ module.exports = {
    * @return {String} full url(with host)
    */
   urlFor(name, params) {
-    return this.ctx.protocol + '://' + this.ctx.host + url.resolve('/', this.app.router.url(name, params));
+    return (
+      this.ctx.protocol +
+      "://" +
+      this.ctx.host +
+      url.resolve("/", this.app.router.url(name, params))
+    );
   },
-
 };

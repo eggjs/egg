@@ -26,7 +26,6 @@ Web 应用中的单元测试更加重要，Web 产品快速迭代的时期，每
 
 所以，应用的 Controller、Service、Helper、Extend 等代码，都必须有对应的单元测试以保证代码质量。当然，框架和插件的每个功能改动和重构都需要有相应的单元测试，并且要求尽量做到修改的代码能被 100% 覆盖到。
 
-
 ## 测试框架
 
 从 [npm 搜索“test framework”](https://www.npmjs.com/search?q=test%20framework&page=1&ranking=popularity) 我们会发现有大量测试框架存在，每个测试框架都有它的独特之处。
@@ -67,6 +66,7 @@ Web 应用中的单元测试更加重要，Web 产品快速迭代的时期，每
 以下是其报错信息的截图，实在太美太详细，让人想一睹其容：
 
 ![](https://cloud.githubusercontent.com/assets/227713/20919940/19e83de8-bbd9-11e6-8951-bf4a332f9b5a.png)
+
 ## 测试约定
 
 为了让我们更多地关注测试用例本身如何编写，而不是耗费时间在如何运行测试脚本等辅助工作上，框架对单元测试做了一些基本约定。
@@ -117,7 +117,6 @@ npm test
   1 passing (10ms)
 ```
 
-
 ## 准备测试
 
 本文主要介绍了如何编写应用的单元测试，关于框架和插件的单元测试请查看[框架开发](https://eggjs.org/zh-cn/advanced/framework.html)和[插件开发](https://eggjs.org/zh-cn/advanced/plugin.html)相关章节。
@@ -138,10 +137,10 @@ npm test
 
 ```javascript
 // test/controller/home.test.js
-const assert = require('assert');
-const mock = require('egg-mock');
+const assert = require("assert");
+const mock = require("egg-mock");
 
-describe('test/controller/home.test.js', () => {
+describe("test/controller/home.test.js", () => {
   let app;
   before(() => {
     // 创建当前应用的 app 实例
@@ -158,9 +157,9 @@ describe('test/controller/home.test.js', () => {
 
 ```javascript
 // test/controller/home.test.js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+const { app, mock, assert } = require("egg-mock/bootstrap");
 
-describe('test/controller/home.test.js', () => {
+describe("test/controller/home.test.js", () => {
   // 测试用例
 });
 ```
@@ -171,28 +170,29 @@ describe('test/controller/home.test.js', () => {
 已经通过上述方法拿到了一个 app，结合 egg-mock 提供的 [`app.mockContext(options)`](https://github.com/eggjs/egg-mock#appmockcontextoptions) 方法可以快速创建一个 ctx 实例。
 
 ```javascript
-it('should get a ctx', () => {
+it("should get a ctx", () => {
   const ctx = app.mockContext();
-  assert(ctx.method === 'GET');
-  assert(ctx.url === '/');
+  assert(ctx.method === "GET");
+  assert(ctx.url === "/");
 });
 ```
 
 如果要模拟 `ctx.user`，也可以通过给 mockContext 传递数据参数实现：
 
 ```javascript
-it('should mock ctx.user', () => {
+it("should mock ctx.user", () => {
   const ctx = app.mockContext({
     user: {
-      name: 'fengmk2',
+      name: "fengmk2",
     },
   });
   assert(ctx.user);
-  assert(ctx.user.name === 'fengmk2');
+  assert(ctx.user.name === "fengmk2");
 });
 ```
 
 现在我们已经拿到了 app，也知道如何创建一个 ctx，可以开始进行更多的单元测试了。
+
 ## 测试执行顺序
 
 特别需要注意的是执行顺序，应确保在执行某个用例时，相关代码才被执行。
@@ -201,13 +201,13 @@ it('should mock ctx.user', () => {
 
 ```js
 // Bad
-const { app } = require('egg-mock/bootstrap');
+const { app } = require("egg-mock/bootstrap");
 
-describe('bad test', () => {
+describe("bad test", () => {
   doSomethingBefore();
 
-  it('should redirect', () => {
-    return app.httpRequest().get('/').expect(302);
+  it("should redirect", () => {
+    return app.httpRequest().get("/").expect(302);
   });
 });
 ```
@@ -218,13 +218,13 @@ Mocha 在开始运行时将载入所有的测试用例，此时 describe 方法�
 
 ```js
 // Good
-const { app } = require('egg-mock/bootstrap');
+const { app } = require("egg-mock/bootstrap");
 
-describe('good test', () => {
+describe("good test", () => {
   before(() => doSomethingBefore());
 
-  it('should redirect', () => {
-    return app.httpRequest().get('/').expect(302);
+  it("should redirect", () => {
+    return app.httpRequest().get("/").expect(302);
   });
 });
 ```
@@ -232,13 +232,13 @@ describe('good test', () => {
 Mocha 通过 before/after/beforeEach/afterEach 来处理前置和后置任务，这几个钩子基本上能处理所有的问题。每个测试用例会按照如下顺序执行：before -> beforeEach -> it -> afterEach -> after，并且可以定义多个。
 
 ```js
-describe('egg test', () => {
-  before(() => console.log('order 1'));
-  before(() => console.log('order 2'));
-  after(() => console.log('order 6'));
-  beforeEach(() => console.log('order 3'));
-  afterEach(() => console.log('order 5'));
-  it('should worker', () => console.log('order 4'));
+describe("egg test", () => {
+  before(() => console.log("order 1"));
+  before(() => console.log("order 2"));
+  after(() => console.log("order 6"));
+  beforeEach(() => console.log("order 3"));
+  afterEach(() => console.log("order 5"));
+  it("should worker", () => console.log("order 4"));
 });
 ```
 
@@ -248,18 +248,18 @@ egg-bin 支持异步测试，它提供了多种方式：
 
 ```js
 // 使用返回 Promise 的方法
-it('should redirect', () => {
-  return app.httpRequest().get('/').expect(302);
+it("should redirect", () => {
+  return app.httpRequest().get("/").expect(302);
 });
 
 // 使用回调函数的方法
-it('should redirect', (done) => {
-  app.httpRequest().get('/').expect(302, done);
+it("should redirect", (done) => {
+  app.httpRequest().get("/").expect(302, done);
 });
 
 // 使用 async
-it('should redirect', async () => {
-  await app.httpRequest().get('/').expect(302);
+it("should redirect", async () => {
+  await app.httpRequest().get("/").expect(302);
 });
 ```
 
@@ -276,13 +276,13 @@ Controller 在整个应用代码里面属于较为难测试的部分。因为它
 // app/router.js
 module.exports = (app) => {
   const { router, controller } = app;
-  router.get('homepage', '/', controller.home.index);
+  router.get("homepage", "/", controller.home.index);
 };
 
 // app/controller/home.js
 class HomeController extends Controller {
   async index() {
-    this.ctx.body = 'hello world';
+    this.ctx.body = "hello world";
   }
 }
 ```
@@ -290,33 +290,29 @@ class HomeController extends Controller {
 其对应的测试代码 `test/controller/home.test.js` 如下：
 
 ```js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+const { app, mock, assert } = require("egg-mock/bootstrap");
 
-describe('test/controller/home.test.js', () => {
-  describe('GET /', () => {
-    it('应该返回状态码为 200 并获取到内容', () => {
+describe("test/controller/home.test.js", () => {
+  describe("GET /", () => {
+    it("应该返回状态码为 200 并获取到内容", () => {
       // 对 app 发起 `GET /` 请求
       return app
         .httpRequest()
-        .get('/')
+        .get("/")
         .expect(200) // 期望返回状态码为 200
-        .expect('hello world'); // 期望响应内容为 hello world
+        .expect("hello world"); // 期望响应内容为 hello world
     });
 
-    it('应该发送多个请求', async () => {
+    it("应该发送多个请求", async () => {
       // 使用 generator function 方式编写测试用例，可以在一个用例中串行发起多次请求
       await app
         .httpRequest()
-        .get('/')
+        .get("/")
         .expect(200) // 期望返回状态码 200
-        .expect('hello world'); // 期望响应内容为 hello world
+        .expect("hello world"); // 期望响应内容为 hello world
 
       // 再次请求
-      const result = await app
-        .httpRequest()
-        .get('/')
-        .expect(200)
-        .expect('hello world');
+      const result = await app.httpRequest().get("/").expect(200).expect("hello world");
 
       // 也可以这样验证
       assert(result.status === 200);
@@ -336,19 +332,19 @@ class HomeController extends Controller {
 }
 
 // test/controller/home.test.js
-it('应该返回状态码 200 并获取到请求体', () => {
+it("应该返回状态码 200 并获取到请求体", () => {
   // 模拟 CSRF token，下文会详细说明
   app.mockCsrf();
   return app
     .httpRequest()
-    .post('/post')
-    .type('form')
+    .post("/post")
+    .type("form")
     .send({
-      foo: 'bar',
+      foo: "bar",
     })
     .expect(200)
     .expect({
-      foo: 'bar',
+      foo: "bar",
     });
 });
 ```
@@ -365,16 +361,17 @@ it('应该返回状态码 200 并获取到请求体', () => {
 app.mockCsrf();
 return app
   .httpRequest()
-  .post('/post')
-  .type('form')
+  .post("/post")
+  .type("form")
   .send({
-    foo: 'bar',
+    foo: "bar",
   })
   .expect(200)
   .expect({
-    foo: 'bar',
+    foo: "bar",
   });
 ```
+
 ## Service 层的单元测试
 
 Service 层相比于 Controller 层来说，测试起来更简单。我们只需要首先创建一个 `ctx`，然后通过 `ctx.service.${serviceName}` 取得 Service 实例，接着即可调用 Service 方法进行测试。
@@ -391,25 +388,26 @@ class UserService extends Service {
 
 // 单元测试代码如下：
 
-describe('get()', () => {
-  it('应该获取已存在的用户', async () => {
+describe("get()", () => {
+  it("应该获取已存在的用户", async () => {
     // 创建 ctx
     const ctx = app.mockContext();
     // 通过 ctx 访问 service.user
-    const user = await ctx.service.user.get('fengmk2');
+    const user = await ctx.service.user.get("fengmk2");
     assert(user);
-    assert(user.name === 'fengmk2');
+    assert(user.name === "fengmk2");
   });
 
-  it('当用户不存在时应返回 null', async () => {
+  it("当用户不存在时应返回 null", async () => {
     const ctx = app.mockContext();
-    const user = await ctx.service.user.get('fengmk1');
+    const user = await ctx.service.user.get("fengmk1");
     assert(!user);
   });
 });
 ```
 
 当然，实际中的 Service 代码不会像示例中展示的这般简单，这里只是为了演示如何测试 Service。
+
 ## Extend 测试
 
 应用可以对 Application、Request、Response、Context 和 Helper 进行扩展。我们可以对扩展的方法或者属性针对性的编写单元测试。
@@ -421,8 +419,8 @@ egg-mock 创建 app 的时候，已经将 Application 的扩展自动加载到 a
 例如 `app/extend/application.js`，我们给 app 增加了一个基于 [ylru](https://github.com/node-modules/ylru) 的缓存功能：
 
 ```js
-const LRU = Symbol('Application#lru');
-const LRUCache = require('ylru');
+const LRU = Symbol("Application#lru");
+const LRUCache = require("ylru");
 module.exports = {
   get lru() {
     if (!this[LRU]) {
@@ -436,12 +434,12 @@ module.exports = {
 对应的单元测试：
 
 ```js
-describe('get lru', () => {
-  it('should get an lru and it should work', () => {
+describe("get lru", () => {
+  it("should get an lru and it should work", () => {
     // 设置缓存
-    app.lru.set('foo', 'bar');
+    app.lru.set("foo", "bar");
     // 读取缓存
-    assert(app.lru.get('foo') === 'bar');
+    assert(app.lru.get("foo") === "bar");
   });
 });
 ```
@@ -457,7 +455,7 @@ describe('get lru', () => {
 ```js
 module.exports = {
   get isXHR() {
-    return this.get('X-Requested-With') === 'XMLHttpRequest';
+    return this.get("X-Requested-With") === "XMLHttpRequest";
   },
 };
 ```
@@ -465,20 +463,20 @@ module.exports = {
 对应的单元测试：
 
 ```js
-describe('isXHR()', () => {
-  it('should be true', () => {
+describe("isXHR()", () => {
+  it("should be true", () => {
     const ctx = app.mockContext({
       headers: {
-        'X-Requested-With': 'XMLHttpRequest',
+        "X-Requested-With": "XMLHttpRequest",
       },
     });
     assert(ctx.isXHR === true);
   });
 
-  it('should be false', () => {
+  it("should be false", () => {
     const ctx = app.mockContext({
       headers: {
-        'X-Requested-With': 'SuperAgent',
+        "X-Requested-With": "SuperAgent",
       },
     });
     assert(ctx.isXHR === false);
@@ -493,12 +491,12 @@ describe('isXHR()', () => {
 例如在 `app/extend/request.js` 中增加一个 `isChrome` 属性，用于判断请求是否由 Chrome 浏览器发起：
 
 ```js
-const IS_CHROME = Symbol('Request#isChrome');
+const IS_CHROME = Symbol("Request#isChrome");
 module.exports = {
   get isChrome() {
     if (!this[IS_CHROME]) {
-      const ua = this.get('User-Agent').toLowerCase();
-      this[IS_CHROME] = ua.includes('chrome/');
+      const ua = this.get("User-Agent").toLowerCase();
+      this[IS_CHROME] = ua.includes("chrome/");
     }
     return this[IS_CHROME];
   },
@@ -508,26 +506,27 @@ module.exports = {
 对应的单元测试：
 
 ```js
-describe('isChrome()', () => {
-  it('should be true', () => {
+describe("isChrome()", () => {
+  it("should be true", () => {
     const ctx = app.mockContext({
       headers: {
-        'User-Agent': 'Chrome/56.0.2924.51',
+        "User-Agent": "Chrome/56.0.2924.51",
       },
     });
     assert(ctx.request.isChrome === true);
   });
 
-  it('should be false', () => {
+  it("should be false", () => {
     const ctx = app.mockContext({
       headers: {
-        'User-Agent': 'FireFox/1',
+        "User-Agent": "FireFox/1",
       },
     });
     assert(ctx.request.isChrome === false);
   });
 });
 ```
+
 Response 测试与 Request 完全一致。
 通过 `ctx.response` 来访问 Response 扩展的属性和方法，直接即可进行测试。
 
@@ -544,14 +543,14 @@ module.exports = {
 对应的单元测试：
 
 ```js
-describe('isSuccess()', () => {
-  it('should return true when status is 200', () => {
+describe("isSuccess()", () => {
+  it("should return true when status is 200", () => {
     const ctx = app.mockContext();
     ctx.status = 200;
     assert(ctx.response.isSuccess === true);
   });
 
-  it('should return false when status is not 200', () => {
+  it("should return false when status is not 200", () => {
     const ctx = app.mockContext();
     ctx.status = 404;
     assert(ctx.response.isSuccess === false);
@@ -559,15 +558,14 @@ describe('isSuccess()', () => {
 });
 ```
 
-
 Helper 测试方式与 Service 类似，也是通过 ctx 来访问到 Helper，然后调用 Helper 方法进行测试。
 例如 `app/extend/helper.js`
 
 ```js
 module.exports = {
   money(val) {
-    const lang = this.ctx.get('Accept-Language');
-    if (lang.includes('zh-CN')) {
+    const lang = this.ctx.get("Accept-Language");
+    if (lang.includes("zh-CN")) {
       return `￥ ${val}`;
     }
     return `$ ${val}`;
@@ -578,23 +576,24 @@ module.exports = {
 对应的单元测试：
 
 ```js
-describe('money()', () => {
-  it('should return RMB when Accept-Language includes zh-CN', () => {
+describe("money()", () => {
+  it("should return RMB when Accept-Language includes zh-CN", () => {
     const ctx = app.mockContext({
       // 模拟 ctx 的 headers
       headers: {
-        'Accept-Language': 'zh-CN,zh;q=0.5',
+        "Accept-Language": "zh-CN,zh;q=0.5",
       },
     });
-    assert(ctx.helper.money(100) === '￥ 100');
+    assert(ctx.helper.money(100) === "￥ 100");
   });
 
-  it('should return US Dollar when Accept-Language does not include zh-CN', () => {
+  it("should return US Dollar when Accept-Language does not include zh-CN", () => {
     const ctx = app.mockContext();
-    assert(ctx.helper.money(100) === '$ 100');
+    assert(ctx.helper.money(100) === "$ 100");
   });
 });
 ```
+
 ## Mock 方法
 
 `egg-mock` 除了上面介绍过的 `app.mockContext()` 和 `app.mockCsrf()` 方法外，还提供了[非常多的 mock 方法](https://github.com/eggjs/egg-mock#api)帮助我们便捷地写单元测试。
@@ -603,18 +602,19 @@ describe('money()', () => {
 - 例如，我们想模拟一次请求的 Session 数据，可以通过 `app.mockSession(data)` 来模拟。
 
   ```js
-  describe('GET /session', () => {
-    it('should mock session work', () => {
+  describe("GET /session", () => {
+    it("should mock session work", () => {
       app.mockSession({
-        foo: 'bar',
+        foo: "bar",
         uid: 123,
       });
-      return app.httpRequest()
-        .get('/session')
+      return app
+        .httpRequest()
+        .get("/session")
         .expect(200)
         .expect({
           session: {
-            foo: 'bar',
+            foo: "bar",
             uid: 123,
           },
         });
@@ -626,7 +626,7 @@ describe('money()', () => {
 所以通常我们会在 `afterEach` 钩子里面还原掉所有 mock。
 
 ```js
-describe('some test', () => {
+describe("some test", () => {
   // before hook
 
   afterEach(mock.restore);
@@ -649,8 +649,8 @@ describe('some test', () => {
 mock `app.config.baseDir` 的值指向 `/tmp/mockapp`。
 
 ```js
-mock(app.config, 'baseDir', '/tmp/mockapp');
-assert(app.config.baseDir === '/tmp/mockapp');
+mock(app.config, "baseDir", "/tmp/mockapp");
+assert(app.config.baseDir === "/tmp/mockapp");
 ```
 
 #### Mock 一个对象的方法
@@ -658,10 +658,10 @@ assert(app.config.baseDir === '/tmp/mockapp');
 mock `fs.readFileSync` 方法，使其返回 `'hello world'`。
 
 ```js
-mock(fs, 'readFileSync', filename => {
-  return 'hello world';
+mock(fs, "readFileSync", (filename) => {
+  return "hello world";
 });
-assert(fs.readFileSync('foo.txt') === 'hello world');
+assert(fs.readFileSync("foo.txt") === "hello world");
 ```
 
 我们还有 `mock.data()`、`mock.error()` 等更多高级的 mock 方法。
@@ -674,20 +674,23 @@ Service 作为框架的标准内置对象，我们利用 `app.mockService(servic
 例如，模拟 `app/service/user` 中 `get(name)` 方法，让其返回一个本来不存在的用户数据。
 
 ```js
-it('should mock fengmk1 exists', () => {
-  app.mockService('user', 'get', () => {
+it("should mock fengmk1 exists", () => {
+  app.mockService("user", "get", () => {
     return {
-      name: 'fengmk1',
+      name: "fengmk1",
     };
   });
 
-  return app.httpRequest()
-    .get('/user?name=fengmk1')
-    .expect(200)
-    // 返回了本来不存在的用户信息
-    .expect({
-      name: 'fengmk1',
-    });
+  return (
+    app
+      .httpRequest()
+      .get("/user?name=fengmk1")
+      .expect(200)
+      // 返回了本来不存在的用户信息
+      .expect({
+        name: "fengmk1",
+      })
+  );
 });
 ```
 
@@ -696,15 +699,19 @@ it('should mock fengmk1 exists', () => {
 例如，模拟 `app/service/user` 中的 `get(name)` 方法调用时抛出异常：
 
 ```js
-it('should mock service error', () => {
-  app.mockServiceError('user', 'get', 'mock user service error');
-  return app.httpRequest()
-    .get('/user?name=fengmk2')
-    // 由于 service 异常，触发了 500 响应
-    .expect(500)
-    .expect(/mock user service error/);
+it("should mock service error", () => {
+  app.mockServiceError("user", "get", "mock user service error");
+  return (
+    app
+      .httpRequest()
+      .get("/user?name=fengmk2")
+      // 由于 service 异常，触发了 500 响应
+      .expect(500)
+      .expect(/mock user service error/)
+  );
 });
 ```
+
 ### Mock HttpClient
 
 框架内置了 HttpClient，应用发起的对外 HTTP 请求基本都是通过它来处理。我们可以通过 `app.mockHttpclient(url, method, data)` 来 mock 掉 `app.curl` 和 `ctx.curl` 方法，从而实现各种网络异常情况。
@@ -714,7 +721,7 @@ it('should mock service error', () => {
 ```js
 class HomeController extends Controller {
   async httpclient() {
-    const res = await this.ctx.curl('https://eggjs.org');
+    const res = await this.ctx.curl("https://eggjs.org");
     this.ctx.body = res.data.toString();
   }
 }
@@ -723,30 +730,24 @@ class HomeController extends Controller {
 需要 mock 它的返回值：
 
 ```js
-describe('GET /httpclient', () => {
-  it('should mock httpclient response', () => {
-    app.mockHttpclient('https://eggjs.org', {
+describe("GET /httpclient", () => {
+  it("should mock httpclient response", () => {
+    app.mockHttpclient("https://eggjs.org", {
       // 模拟的参数，可以是 buffer / string / json，
       // 都会转换成 buffer。
       // 按照请求时的 options.dataType 来做对应的转换。
-      data: 'mock eggjs.org response',
+      data: "mock eggjs.org response",
     });
-    return app
-      .httpRequest()
-      .get('/httpclient')
-      .expect('mock eggjs.org response');
+    return app.httpRequest().get("/httpclient").expect("mock eggjs.org response");
   });
 });
 ```
-
 
 ## 示例代码
 
 完整示例代码可以在 [eggjs/examples/unittest](https://github.com/eggjs/examples/blob/master/unittest) 找到。
 
-
 [mocha]: https://mochajs.org
 [co-mocha]: https://github.com/blakeembrey/co-mocha
 [nyc]: https://github.com/istanbuljs/nyc
 [power-assert]: https://github.com/power-assert-js/power-assert
-

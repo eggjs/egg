@@ -28,6 +28,7 @@ $ open http://localhost:7001
 ```
 
 **注**：请确保你使用的 npm 版本不低于 6.1.0。
+
 ## 逐步搭建
 
 通常你可以通过上一节的方式，使用 `npm init egg` 快速选择适合对应业务模型的脚手架，快速启动 Egg.js 项目的开发。
@@ -67,11 +68,11 @@ $ npm i egg-bin --save-dev
 
 ```js
 // app/controller/home.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 class HomeController extends Controller {
   async index() {
-    this.ctx.body = 'Hello world';
+    this.ctx.body = "Hello world";
   }
 }
 
@@ -82,9 +83,9 @@ module.exports = HomeController;
 
 ```js
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   const { router, controller } = app;
-  router.get('/', controller.home.index);
+  router.get("/", controller.home.index);
 };
 ```
 
@@ -92,7 +93,7 @@ module.exports = app => {
 
 ```js
 // config/config.default.js
-exports.keys = '<此处改为你自己的 Cookie 安全字符串>';
+exports.keys = "<此处改为你自己的 Cookie 安全字符串>";
 ```
 
 此时目录结构如下：
@@ -138,6 +139,7 @@ app/public
     ├── lib.js
     └── news.js
 ```
+
 ### 模板渲染
 
 绝大多数情况下，我们都需要读取数据后渲染模板，然后呈现给用户。因此，我们需要引入对应的模板引擎。
@@ -158,7 +160,7 @@ $ npm i egg-view-nunjucks --save
 // config/plugin.js
 exports.nunjucks = {
   enable: true,
-  package: 'egg-view-nunjucks',
+  package: "egg-view-nunjucks",
 };
 ```
 
@@ -189,9 +191,9 @@ exports.view = {
   <body>
     <ul class="news-view view">
       {% for item in list %}
-        <li class="item">
-          <a href="{{ item.url }}">{{ item.title }}</a>
-        </li>
+      <li class="item">
+        <a href="{{ item.url }}">{{ item.title }}</a>
+      </li>
       {% endfor %}
     </ul>
   </body>
@@ -202,33 +204,34 @@ exports.view = {
 
 ```js
 // app/controller/news.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 class NewsController extends Controller {
   async list() {
     const dataList = {
       list: [
-        { id: 1, title: 'This is news 1', url: '/news/1' },
-        { id: 2, title: 'This is news 2', url: '/news/2' }
-      ]
+        { id: 1, title: "This is news 1", url: "/news/1" },
+        { id: 2, title: "This is news 2", url: "/news/2" },
+      ],
     };
-    await this.ctx.render('news/list.tpl', dataList);
+    await this.ctx.render("news/list.tpl", dataList);
   }
 }
 
 module.exports = NewsController;
 
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   const { router, controller } = app;
-  router.get('/', controller.home.index);
-  router.get('/news', controller.news.list);
+  router.get("/", controller.home.index);
+  router.get("/news", controller.news.list);
 };
 ```
 
 在浏览器中启动并访问 [http://localhost:7001/news](http://localhost:7001/news) 即可看到渲染后的页面。
 
 **提示：** 开发期默认开启了 [development][egg-development] 插件，修改后端代码后，会自动重启 Worker 进程。
+
 ### 编写 Service
 
 在实际应用中，Controller 一般不会自己产出数据，也不会包含复杂的逻辑，复杂的过程应抽象为业务逻辑层 [Service](../basics/service.md)。
@@ -237,7 +240,7 @@ module.exports = app => {
 
 ```js
 // app/service/news.js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 
 class NewsService extends Service {
   async list(page = 1) {
@@ -245,24 +248,21 @@ class NewsService extends Service {
     const { serverUrl, pageSize } = this.config.news;
 
     // use build-in http client to GET hacker-news api
-    const { data: idList } = await this.ctx.curl(
-      `${serverUrl}/topstories.json`,
-      {
-        data: {
-          orderBy: '"$key"',
-          startAt: `"${pageSize * (page - 1)}"`,
-          endAt: `"${pageSize * page - 1}"`,
-        },
-        dataType: 'json',
-      }
-    );
+    const { data: idList } = await this.ctx.curl(`${serverUrl}/topstories.json`, {
+      data: {
+        orderBy: '"$key"',
+        startAt: `"${pageSize * (page - 1)}"`,
+        endAt: `"${pageSize * page - 1}"`,
+      },
+      dataType: "json",
+    });
 
     // parallel GET detail
     const newsList = await Promise.all(
       Object.keys(idList).map((key) => {
         const url = `${serverUrl}/item/${idList[key]}.json`;
-        return this.ctx.curl(url, { dataType: 'json' });
-      })
+        return this.ctx.curl(url, { dataType: "json" });
+      }),
     );
     return newsList.map((res) => res.data);
   }
@@ -277,14 +277,14 @@ module.exports = NewsService;
 
 ```js
 // app/controller/news.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 class NewsController extends Controller {
   async list() {
     const ctx = this.ctx;
     const page = ctx.query.page || 1;
     const newsList = await ctx.service.news.list(page);
-    await ctx.render('news/list.tpl', { list: newsList });
+    await ctx.render("news/list.tpl", { list: newsList });
   }
 }
 
@@ -298,7 +298,7 @@ module.exports = NewsController;
 // 添加 news 的配置项
 exports.news = {
   pageSize: 5,
-  serverUrl: 'https://hacker-news.firebaseio.com/v0',
+  serverUrl: "https://hacker-news.firebaseio.com/v0",
 };
 ```
 
@@ -316,8 +316,8 @@ $ npm i moment --save
 
 ```js
 // app/extend/helper.js
-const moment = require('moment');
-exports.relativeTime = time => moment(new Date(time * 1000)).fromNow();
+const moment = require("moment");
+exports.relativeTime = (time) => moment(new Date(time * 1000)).fromNow();
 ```
 
 在模板里面使用：
@@ -338,11 +338,11 @@ exports.relativeTime = time => moment(new Date(time * 1000)).fromNow();
 // options === app.config.robot
 module.exports = (options, app) => {
   return async function robotMiddleware(ctx, next) {
-    const source = ctx.get('user-agent') || '';
+    const source = ctx.get("user-agent") || "";
     const match = options.ua.some((ua) => ua.test(source));
     if (match) {
       ctx.status = 403;
-      ctx.message = 'Go away, robot.';
+      ctx.message = "Go away, robot.";
     } else {
       await next();
     }
@@ -351,20 +351,17 @@ module.exports = (options, app) => {
 
 // config/config.default.js
 // add middleware robot
-exports.middleware = [
-  'robot'
-];
+exports.middleware = ["robot"];
 // robot's configurations
 exports.robot = {
-  ua: [
-    /Baiduspider/i
-  ]
+  ua: [/Baiduspider/i],
 };
 ```
 
 现在可以使用 `curl http://localhost:7001/news -A "Baiduspider"` 看看效果。
 
 更多参见[中间件](../basics/middleware.md)文档。
+
 ### 配置文件
 
 写业务的时候，不可避免的需要有配置文件。框架提供了强大的配置合并管理功能：
@@ -376,17 +373,17 @@ exports.robot = {
 ```js
 // config/config.default.js
 exports.robot = {
-  ua: [/curl/i, /Baiduspider/i]
+  ua: [/curl/i, /Baiduspider/i],
 };
 
 // config/config.local.js
 // only read at development mode, will override default
 exports.robot = {
-  ua: [/Baiduspider/i]
+  ua: [/Baiduspider/i],
 };
 
 // app/service/some.js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 
 class SomeService extends Service {
   async list() {
@@ -405,15 +402,11 @@ module.exports = SomeService;
 
 ```js
 // test/app/middleware/robot.test.js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+const { app, mock, assert } = require("egg-mock/bootstrap");
 
-describe('test/app/middleware/robot.test.js', () => {
-  it('should block robot', () => {
-    return app
-      .httpRequest()
-      .get('/')
-      .set('User-Agent', 'Baiduspider')
-      .expect(403);
+describe("test/app/middleware/robot.test.js", () => {
+  it("should block robot", () => {
+    return app.httpRequest().get("/").set("User-Agent", "Baiduspider").expect(403);
   });
 });
 ```

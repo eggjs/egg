@@ -89,7 +89,7 @@ $ egg-scripts start --port=7001 --daemon --title=egg-server-showcase
 exports.cluster = {
   listen: {
     port: 7001,
-    hostname: '127.0.0.1', // 不建议设置为 '0.0.0.0'，可能导致外部连接风险，请了解后使用
+    hostname: "127.0.0.1", // 不建议设置为 '0.0.0.0'，可能导致外部连接风险，请了解后使用
     // path: '/var/run/egg.sock',
   },
 };
@@ -110,6 +110,7 @@ $ egg-scripts stop [--title=egg-server]
 - `--title=egg-server`：杀死指定 Egg 应用，未设置则终止所有 Egg 应用。
 
 也可通过 `ps -eo "pid,command" | grep -- "--title=egg-server"` 查找 master 进程，并 `kill` 掉，不需 `kill -9`。
+
 ## 监控
 
 我们还需要对服务进行性能监控、内存泄露分析、故障排除等。
@@ -158,7 +159,7 @@ $ npm i egg-alinode --save
 // config/plugin.js
 exports.alinode = {
   enable: true,
-  package: 'egg-alinode',
+  package: "egg-alinode",
 };
 ```
 
@@ -168,8 +169,8 @@ exports.alinode = {
 // config/config.default.js
 exports.alinode = {
   // 从 `Node.js 性能平台` 获取对应的接入参数
-  appid: '<YOUR_APPID>',
-  secret: '<YOUR_SECRET>',
+  appid: "<YOUR_APPID>",
+  secret: "<YOUR_SECRET>",
 };
 ```
 

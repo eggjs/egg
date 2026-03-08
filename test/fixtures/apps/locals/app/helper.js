@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 exports.test = () => {
-  return 'test-helper';
+  return "test-helper";
 };

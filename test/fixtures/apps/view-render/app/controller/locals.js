@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-module.exports = function*() {
-  this.state.foo = 'foo';
-  this.locals.bar = 'bar';
-  yield this.render('locals.html');
+module.exports = function* () {
+  this.state.foo = "foo";
+  this.locals.bar = "bar";
+  yield this.render("locals.html");
 };

@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 exports.index = function* () {
   const r = yield this.curl(this.query.url, {
-    dataType: 'json',
+    dataType: "json",
   });
   this.body = {
     url: this.query.url,

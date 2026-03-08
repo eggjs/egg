@@ -23,8 +23,8 @@ $ npm init egg --type=simple
 | :-------: | --------------------: |
 |  simple   | 简单 egg 应用程序骨架 |
 |   empty   | 空的 egg 应用程序骨架 |
-|  plugin   |       egg 插件骨架   |
-| framework |    egg 框架骨架      |
+|  plugin   |          egg 插件骨架 |
+| framework |          egg 框架骨架 |
 
 ## 模板引擎
 

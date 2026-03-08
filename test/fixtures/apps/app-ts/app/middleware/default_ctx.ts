@@ -1,4 +1,4 @@
-import { Context } from 'egg';
+import { Context } from "egg";
 
 export default () => {
   return async (ctx: Context, next: () => Promise<any>) => {
@@ -6,4 +6,4 @@ export default () => {
     await next();
     console.log(ctx.body.foo);
   };
-}
+};

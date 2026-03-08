@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test keys';
+exports.keys = "test keys";

@@ -49,7 +49,7 @@ For example, just open csp when path contains `/example`, you can configure with
 ```js
 exports.security = {
   csp: {
-    match: '/example',
+    match: "/example",
     policy: {
       //...
     },
@@ -64,7 +64,7 @@ For example, just disable xframe when path contains `/example` while our pages c
 ```js
 exports.security = {
   csp: {
-    ignore: '/example',
+    ignore: "/example",
     xframe: {
       //...
     },
@@ -189,7 +189,7 @@ Note shtml uses a strict whitelisting mechanism, not only filter out the XSS ris
 For example, tag `HTML` is not in the whitelist.
 
 ```js
-const html = '<html></html>';
+const html = "<html></html>";
 
 // html
 {
@@ -279,11 +279,7 @@ The framework combines these precautions to provide a configurable CSRF preventi
 In synchronous rendering the page, you should add a parameter name called `_csrf` in the form's submit url, the value is `ctx.csrf`, when user submitting this form , CSRF token will be submitted:
 
 ```html
-<form
-  method="POST"
-  action="/upload?_csrf={{ ctx.csrf | safe }}"
-  enctype="multipart/form-data"
->
+<form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
   title: <input name="title" /> file: <input name="file" type="file" />
   <button type="submit">upload</button>
 </form>
@@ -296,8 +292,8 @@ Fields that pass the CSRF token can be changed in the configuration:
 module.exports = {
   security: {
     csrf: {
-      queryName: '_csrf', // CSRF token parameter name passed through query, default is _csrf
-      bodyName: '_csrf', // CSRF token parameter name passed through body, default is _csrf
+      queryName: "_csrf", // CSRF token parameter name passed through query, default is _csrf
+      bodyName: "_csrf", // CSRF token parameter name passed through body, default is _csrf
     },
   },
 };
@@ -312,7 +308,7 @@ In the default configuration, the token is set in the Cookie, which can be fetch
 In jQuery:
 
 ```js
-var csrftoken = Cookies.get('csrfToken');
+var csrftoken = Cookies.get("csrfToken");
 
 function csrfSafeMethod(method) {
   // these HTTP methods do not require CSRF protection
@@ -321,7 +317,7 @@ function csrfSafeMethod(method) {
 $.ajaxSetup({
   beforeSend: function (xhr, settings) {
     if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-      xhr.setRequestHeader('x-csrf-token', csrftoken);
+      xhr.setRequestHeader("x-csrf-token", csrftoken);
     }
   },
 });
@@ -334,7 +330,7 @@ The fields that pass the CSRF token through the header can also be changed in th
 module.exports = {
   security: {
     csrf: {
-      headerName: 'x-csrf-token', // CSRF token passed through header, default is x-csrf-token
+      headerName: "x-csrf-token", // CSRF token passed through header, default is x-csrf-token
     },
   },
 };
@@ -350,8 +346,8 @@ module.exports = {
   security: {
     csrf: {
       useSession: true, // default is false，if set to true , it will store csrf token in Session
-      cookieName: 'csrfToken', // Field in Cookie , default is csrfToken
-      sessionName: 'csrfToken', // Filed in Session , default is csrfToken
+      cookieName: "csrfToken", // Field in Cookie , default is csrfToken
+      sessionName: "csrfToken", // Filed in Session , default is csrfToken
     },
   },
 };
@@ -400,15 +396,15 @@ exports.login = async function (ctx) {
 Below, we implement a simple TRACE support server based on Koa:
 
 ```js
-var koa = require('koa');
+var koa = require("koa");
 var app = koa();
 
 app.use(async function (ctx, next) {
-  ctx.cookies.set('a', 1, { httpOnly: true });
-  if (ctx.method === 'TRACE') {
-    var body = '';
+  ctx.cookies.set("a", 1, { httpOnly: true });
+  if (ctx.method === "TRACE") {
+    var body = "";
     for (header in ctx.headers) {
-      body += header + ': ' + ctx.headers[header] + '\r\n';
+      body += header + ": " + ctx.headers[header] + "\r\n";
     }
     ctx.body = body;
   }
@@ -493,7 +489,7 @@ You need to do the following configuration in the application configuration file
 ```js
 // config/config.default.js
 exports.security = {
-  domainWhiteList: ['.domain.com'], // security domain while list, start with .
+  domainWhiteList: [".domain.com"], // security domain while list, start with .
 };
 ```
 
@@ -635,13 +631,13 @@ Calling the `safeCurl` method directly does not have any effect. It also needs t
 exports.security = {
   ssrf: {
     ipBlackList: [
-      '10.0.0.0/8', // support CIDR subnet
-      '0.0.0.0/32',
-      '127.0.0.1', // support specific IP address
+      "10.0.0.0/8", // support CIDR subnet
+      "0.0.0.0/32",
+      "127.0.0.1", // support specific IP address
     ],
     // ipBlackList does not take effect when checkAddress is configured
     checkAddress(ip) {
-      return ip !== '127.0.0.1';
+      return ip !== "127.0.0.1";
     },
   },
 };
@@ -671,7 +667,6 @@ For sites that do not open HTTPS, this function can be limited to preventing ISP
 
 ## Revert CVE
 
-
 In the security fixes of node.js, there may be breaking changes. For example, in version 18.9.1, a security vulnerability was fixed, which caused some encryption-related code to not function properly. To address this issue, we provide a revert parameter, which is converted to the --security-revert parameter at startup, allowing the bypassing of the CVE fix.
 
 ```json
@@ -682,7 +677,7 @@ In the security fixes of node.js, there may be breaking changes. For example, in
     // One is to use a string directly, specifying a CVE
     "revert": "CVE-2023-46809",
     // The other is to use an array of strings, allowing the specification of multiple CVEs
-    "revert": [ "CVE-2023-46809" ]
+    "revert": ["CVE-2023-46809"]
   }
 }
 ```

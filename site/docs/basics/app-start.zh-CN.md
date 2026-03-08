@@ -8,6 +8,7 @@ order: 12
 框架提供了统一的入口文件（`app.js`）进行启动过程自定义。这个文件需要返回一个 Boot 类。我们可以通过定义 Boot 类中的生命周期方法来执行启动应用过程中的初始化工作。
 
 框架提供了以下 [生命周期函数](../advanced/loader.md#life-cycles) 供开发人员处理：
+
 - 配置文件即将加载，这是最后动态修改配置的时机（`configWillLoad`）；
 - 配置文件加载完成（`configDidLoad`）；
 - 文件加载完成（`didLoad`）；
@@ -33,8 +34,8 @@ class AppBootHook {
     // 例如：参数中的密码是加密的，在此处进行解密
     this.app.config.mysql.password = decrypt(this.app.config.mysql.password);
     // 例如：插入一个中间件到框架的 coreMiddleware 之间
-    const statusIdx = this.app.config.coreMiddleware.indexOf('status');
-    this.app.config.coreMiddleware.splice(statusIdx + 1, 0, 'limit');
+    const statusIdx = this.app.config.coreMiddleware.indexOf("status");
+    this.app.config.coreMiddleware.splice(statusIdx + 1, 0, "limit");
   }
 
   async didLoad() {
@@ -46,8 +47,8 @@ class AppBootHook {
     await this.app.queue.init();
 
     // 例如：加载自定义目录
-    this.app.loader.loadToContext(path.join(__dirname, 'app/tasks'), 'tasks', {
-      fieldClass: 'tasksClasses',
+    this.app.loader.loadToContext(path.join(__dirname, "app/tasks"), "tasks", {
+      fieldClass: "tasksClasses",
     });
   }
 
@@ -70,7 +71,7 @@ class AppBootHook {
     // http/https 服务器已启动，开始接收外部请求
     // 此时可以从 app.server 获取 server 实例
 
-    this.app.server.on('timeout', socket => {
+    this.app.server.on("timeout", (socket) => {
       // 处理 socket 超时
     });
   }

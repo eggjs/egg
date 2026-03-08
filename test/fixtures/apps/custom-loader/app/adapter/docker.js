@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 class DockerAdapter {
   constructor(app) {
@@ -6,9 +6,8 @@ class DockerAdapter {
   }
 
   async inspectDocker() {
-    return 'docker';
+    return "docker";
   }
-
 }
 
 module.exports = DockerAdapter;

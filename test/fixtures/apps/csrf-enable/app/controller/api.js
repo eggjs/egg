@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 exports.user = function* () {
   this.body = {

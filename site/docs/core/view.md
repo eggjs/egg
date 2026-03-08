@@ -25,7 +25,7 @@ $ npm i egg-view-nunjucks --save
 // config/plugin.js
 exports.nunjucks = {
   enable: true,
-  package: 'egg-view-nunjucks',
+  package: "egg-view-nunjucks",
 };
 ```
 
@@ -44,14 +44,14 @@ The configuration below is an example of multiple view directories:
 
 ```js
 // config/config.default.js
-const path = require('path');
+const path = require("path");
 module.exports = (appInfo) => {
   const config = {};
   config.view = {
     root: [
-      path.join(appInfo.baseDir, 'app/view'),
-      path.join(appInfo.baseDir, 'path/to/another'),
-    ].join(','),
+      path.join(appInfo.baseDir, "app/view"),
+      path.join(appInfo.baseDir, "path/to/another"),
+    ].join(","),
   };
   return config;
 };
@@ -76,7 +76,7 @@ For example, use Nunjucks engine to render `.nj` files.
 module.exports = {
   view: {
     mapping: {
-      '.nj': 'nunjucks',
+      ".nj": "nunjucks",
     },
   },
 };
@@ -85,7 +85,7 @@ module.exports = {
 [egg-view] uses the corresponding view engine according to the configuration above.
 
 ```js
-await ctx.render('home.nj');
+await ctx.render("home.nj");
 ```
 
 The mapping from file extension name to view engine must be defined.
@@ -96,7 +96,7 @@ Global configuration can be done with `defaultViewEngine`.
 // config/config.default.js
 module.exports = {
   view: {
-    defaultViewEngine: 'nunjucks',
+    defaultViewEngine: "nunjucks",
   },
 };
 ```
@@ -115,12 +115,12 @@ unless `defaultExtension` has been configured.
 // config/config.default.js
 module.exports = {
   view: {
-    defaultExtension: '.nj',
+    defaultExtension: ".nj",
   },
 };
 
 // render app/view/home.nj
-await ctx.render('home');
+await ctx.render("home");
 ```
 
 ## Rendering Page
@@ -136,17 +136,17 @@ All three returns a Promise:
 // {app_root}/app/controller/home.js
 class HomeController extends Controller {
   async index() {
-    const data = { name: 'egg' };
+    const data = { name: "egg" };
 
     // render a template, path relate to `app/view`
-    await ctx.render('home/index.tpl', data);
+    await ctx.render("home/index.tpl", data);
 
     // or manually set render result to ctx.body
-    ctx.body = await ctx.renderView('path/to/file.tpl', data);
+    ctx.body = await ctx.renderView("path/to/file.tpl", data);
 
     // or render string directly
-    ctx.body = await ctx.renderString('hi, {{ name }}', data, {
-      viewEngine: 'nunjucks',
+    ctx.body = await ctx.renderString("hi, {{ name }}", data, {
+      viewEngine: "nunjucks",
     });
   }
 }
@@ -185,17 +185,14 @@ Instead, simply call `ctx.render(name, data)`:
 - [egg-view] injects `ctx`, `request`, `helper` into locals automatically.
 
 ```js
-ctx.app.locals = { appName: 'showcase' };
-const data = { name: 'egg' };
+ctx.app.locals = { appName: "showcase" };
+const data = { name: "egg" };
 
 // will auto merge `data` to `ctx.locals`, output: egg - showcase
-await ctx.renderString('{{ name }} - {{ appName }}', data);
+await ctx.renderString("{{ name }} - {{ appName }}", data);
 
 // helper, ctx, request will auto inject
-await ctx.renderString(
-  '{{ name }} - {{ helper.lowercaseFirst(ctx.app.config.baseDir) }}',
-  data,
-);
+await ctx.renderString("{{ name }} - {{ helper.lowercaseFirst(ctx.app.config.baseDir) }}", data);
 ```
 
 Note:
@@ -213,7 +210,7 @@ See [Extend](../basics/extend.md) for more details.
 exports.lowercaseFirst = (str) => str[0].toLowerCase() + str.substring(1);
 
 // app/controller/home.js
-await ctx.renderString('{{ helper.lowercaseFirst(name) }}', data);
+await ctx.renderString("{{ helper.lowercaseFirst(name) }}", data);
 ```
 
 ## Security

@@ -1,16 +1,16 @@
-import { EggAppConfig } from 'egg';
+import { EggAppConfig } from "egg";
 
 export default () => {
   const config = {} as EggAppConfig;
 
-  config.keys = 'foo';
+  config.keys = "foo";
 
   config.serverTimeout = 2 * 60 * 1000;
 
   config.customLoader = {
     model: {
-      directory: 'app/model',
-      inject: 'ctx',
+      directory: "app/model",
+      inject: "ctx",
     },
   };
 
@@ -22,4 +22,4 @@ export default () => {
   };
 
   return config;
-}
+};

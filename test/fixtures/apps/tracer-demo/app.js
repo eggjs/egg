@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  require('./tracer')(app);
+module.exports = (app) => {
+  require("./tracer")(app);
 };

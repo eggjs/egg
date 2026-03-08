@@ -135,10 +135,10 @@ We can easily create an app instance with Mocha's `before` hook through egg-mock
 
 ```js
 // test/controller/home.test.js
-const assert = require('assert');
-const mock = require('egg-mock');
+const assert = require("assert");
+const mock = require("egg-mock");
 
-describe('test/controller/home.test.js', () => {
+describe("test/controller/home.test.js", () => {
   let app;
   before(() => {
     // create a current app instance
@@ -155,9 +155,9 @@ It's redundancy to create an instance in each test file, so we offered an bootst
 
 ```js
 // test/controller/home.test.js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+const { app, mock, assert } = require("egg-mock/bootstrap");
 
-describe('test/controller/home.test.js', () => {
+describe("test/controller/home.test.js", () => {
   // test cases
 });
 ```
@@ -167,24 +167,24 @@ describe('test/controller/home.test.js', () => {
 Except app, tests for Extend, Service and Helper are also taken into consideration. Let's create a context through [`app.mockContext(options)`](https://github.com/eggjs/egg-mock#appmockcontextoptions) offered by egg-mock.
 
 ```js
-it('should get a ctx', () => {
+it("should get a ctx", () => {
   const ctx = app.mockContext();
-  assert(ctx.method === 'GET');
-  assert(ctx.url === '/');
+  assert(ctx.method === "GET");
+  assert(ctx.url === "/");
 });
 ```
 
 If we want to mock the data for `ctx.user`, we can do that by passing the data parameter to mockContext:
 
 ```js
-it('should mock ctx.user', () => {
+it("should mock ctx.user", () => {
   const ctx = app.mockContext({
     user: {
-      name: 'fengmk2',
+      name: "fengmk2",
     },
   });
   assert(ctx.user);
-  assert(ctx.user.name === 'fengmk2');
+  assert(ctx.user.name === "fengmk2");
 });
 ```
 
@@ -198,13 +198,13 @@ Common Error:
 
 ```js
 // Bad
-const { app } = require('egg-mock/bootstrap');
+const { app } = require("egg-mock/bootstrap");
 
-describe('bad test', () => {
+describe("bad test", () => {
   doSomethingBefore();
 
-  it('should redirect', () => {
-    return app.httpRequest().get('/').expect(302);
+  it("should redirect", () => {
+    return app.httpRequest().get("/").expect(302);
   });
 });
 ```
@@ -215,13 +215,13 @@ It's supposed to locate in a `before` hook in the suite of a particular test cas
 
 ```js
 // Good
-const { app } = require('egg-mock/bootstrap');
+const { app } = require("egg-mock/bootstrap");
 
-describe('good test', () => {
+describe("good test", () => {
   before(() => doSomethingBefore());
 
-  it('should redirect', () => {
-    return app.httpRequest().get('/').expect(302);
+  it("should redirect", () => {
+    return app.httpRequest().get("/").expect(302);
   });
 });
 ```
@@ -229,13 +229,13 @@ describe('good test', () => {
 Mocha have keywords - before, after, beforeEach and afterEach - to set up preconditions and clean-up after your tests. These keywords could be multiple and execute in strict order.
 
 ```js
-describe('egg test', () => {
-  before(() => console.log('order 1'));
-  before(() => console.log('order 2'));
-  after(() => console.log('order 6'));
-  beforeEach(() => console.log('order 3'));
-  afterEach(() => console.log('order 5'));
-  it('should worker', () => console.log('order 4'));
+describe("egg test", () => {
+  before(() => console.log("order 1"));
+  before(() => console.log("order 2"));
+  after(() => console.log("order 6"));
+  beforeEach(() => console.log("order 3"));
+  afterEach(() => console.log("order 5"));
+  it("should worker", () => console.log("order 4"));
 });
 ```
 
@@ -245,18 +245,18 @@ egg-bin supports asynchronous test:
 
 ```js
 // using Promise
-it('should redirect', () => {
-  return app.httpRequest().get('/').expect(302);
+it("should redirect", () => {
+  return app.httpRequest().get("/").expect(302);
 });
 
 // using callback
-it('should redirect', (done) => {
-  app.httpRequest().get('/').expect(302, done);
+it("should redirect", (done) => {
+  app.httpRequest().get("/").expect(302, done);
 });
 
 // using async
-it('should redirect', async () => {
-  await app.httpRequest().get('/').expect(302);
+it("should redirect", async () => {
+  await app.httpRequest().get("/").expect(302);
 });
 ```
 
@@ -272,13 +272,13 @@ Here is an `app/controller/home.js` example.
 // app/router.js
 module.exports = (app) => {
   const { router, controller } = app;
-  router.get('homepage', '/', controller.home.index);
+  router.get("homepage", "/", controller.home.index);
 };
 
 // app/controller/home.js
 class HomeController extends Controller {
   async index() {
-    this.ctx.body = 'hello world';
+    this.ctx.body = "hello world";
   }
 }
 ```
@@ -329,19 +329,19 @@ class HomeController extends Controller {
 }
 
 // test/controller/home.test.js
-it('should status 200 and get the request body', () => {
+it("should status 200 and get the request body", () => {
   // mock CSRF token，explain later
   app.mockCsrf();
   return app
     .httpRequest()
-    .post('/post')
-    .type('form')
+    .post("/post")
+    .type("form")
     .send({
-      foo: 'bar',
+      foo: "bar",
     })
     .expect(200)
     .expect({
-      foo: 'bar',
+      foo: "bar",
     });
 });
 ```
@@ -356,14 +356,14 @@ The security plugin of framework would enable [CSRF prevention](./security.md#cs
 app.mockCsrf();
 return app
   .httpRequest()
-  .post('/post')
-  .type('form')
+  .post("/post")
+  .type("form")
   .send({
-    foo: 'bar',
+    foo: "bar",
   })
   .expect(200)
   .expect({
-    foo: 'bar',
+    foo: "bar",
   });
 ```
 
@@ -385,20 +385,20 @@ class UserService extends Service {
 And a test:
 
 ```js
-describe('get()', () => {
+describe("get()", () => {
   // using generator function because of asynchronous invoking
-  it('should get exists user', async () => {
+  it("should get exists user", async () => {
     // create ctx
     const ctx = app.mockContext();
     // get service.user via ctx
-    const user = await ctx.service.user.get('fengmk2');
+    const user = await ctx.service.user.get("fengmk2");
     assert(user);
-    assert(user.name === 'fengmk2');
+    assert(user.name === "fengmk2");
   });
 
-  it('should get null when user not exists', async () => {
+  it("should get null when user not exists", async () => {
     const ctx = app.mockContext();
-    const user = await ctx.service.user.get('fengmk1');
+    const user = await ctx.service.user.get("fengmk1");
     assert(!user);
   });
 });
@@ -417,8 +417,8 @@ When an app instance is created by egg-mock, the extended functions and properti
 For example, we extend the application in `app/extend/application` to support cache based on [ylru](https://github.com/node-modules/ylru).
 
 ```js
-const LRU = Symbol('Application#lru');
-const LRUCache = require('ylru');
+const LRU = Symbol("Application#lru");
+const LRUCache = require("ylru");
 module.exports = {
   get lru() {
     if (!this[LRU]) {
@@ -432,12 +432,12 @@ module.exports = {
 A corresponding test:
 
 ```js
-describe('get lru', () => {
-  it('should get a lru and it work', () => {
+describe("get lru", () => {
+  it("should get a lru and it work", () => {
     // set cache
-    app.lru.set('foo', 'bar');
+    app.lru.set("foo", "bar");
     // get cache
-    assert(app.lru.get('foo') === 'bar');
+    assert(app.lru.get("foo") === "bar");
   });
 });
 ```
@@ -453,7 +453,7 @@ Such as adding a property named `isXHR` to `app/extend/context.js` to present wh
 ```js
 module.exports = {
   get isXHR() {
-    return this.get('X-Requested-With') === 'XMLHttpRequest';
+    return this.get("X-Requested-With") === "XMLHttpRequest";
   },
 };
 ```
@@ -461,20 +461,20 @@ module.exports = {
 A corresponding test:
 
 ```js
-describe('isXHR()', () => {
-  it('should true', () => {
+describe("isXHR()", () => {
+  it("should true", () => {
     const ctx = app.mockContext({
       headers: {
-        'X-Requested-With': 'XMLHttpRequest',
+        "X-Requested-With": "XMLHttpRequest",
       },
     });
     assert(ctx.isXHR === true);
   });
 
-  it('should false', () => {
+  it("should false", () => {
     const ctx = app.mockContext({
       headers: {
-        'X-Requested-With': 'SuperAgent',
+        "X-Requested-With": "SuperAgent",
       },
     });
     assert(ctx.isXHR === false);
@@ -489,12 +489,12 @@ Extended properties and function are available on `ctx.request`, so they can be 
 For example, provide a `isChrome` property to `app/extend/request.js` to verify requests whether they are from Chrome or not.
 
 ```js
-const IS_CHROME = Symbol('Request#isChrome');
+const IS_CHROME = Symbol("Request#isChrome");
 module.exports = {
   get isChrome() {
     if (!this[IS_CHROME]) {
-      const ua = this.get('User-Agent').toLowerCase();
-      this[IS_CHROME] = ua.includes('chrome/');
+      const ua = this.get("User-Agent").toLowerCase();
+      this[IS_CHROME] = ua.includes("chrome/");
     }
     return this[IS_CHROME];
   },
@@ -504,20 +504,20 @@ module.exports = {
 A corresponding test:
 
 ```js
-describe('isChrome()', () => {
-  it('should true', () => {
+describe("isChrome()", () => {
+  it("should true", () => {
     const ctx = app.mockContext({
       headers: {
-        'User-Agent': 'Chrome/56.0.2924.51',
+        "User-Agent": "Chrome/56.0.2924.51",
       },
     });
     assert(ctx.request.isChrome === true);
   });
 
-  it('should false', () => {
+  it("should false", () => {
     const ctx = app.mockContext({
       headers: {
-        'User-Agent': 'FireFox/1',
+        "User-Agent": "FireFox/1",
       },
     });
     assert(ctx.request.isChrome === false);
@@ -542,14 +542,14 @@ module.exports = {
 The corresponding test:
 
 ```js
-describe('isSuccess()', () => {
-  it('should true', () => {
+describe("isSuccess()", () => {
+  it("should true", () => {
     const ctx = app.mockContext();
     ctx.status = 200;
     assert(ctx.response.isSuccess === true);
   });
 
-  it('should false', () => {
+  it("should false", () => {
     const ctx = app.mockContext();
     ctx.status = 404;
     assert(ctx.response.isSuccess === false);
@@ -566,8 +566,8 @@ Such as `app/extend/helper.js`:
 ```js
 module.exports = {
   money(val) {
-    const lang = this.ctx.get('Accept-Language');
-    if (lang.includes('zh-CN')) {
+    const lang = this.ctx.get("Accept-Language");
+    if (lang.includes("zh-CN")) {
       return `￥ ${val}`;
     }
     return `$ ${val}`;
@@ -578,20 +578,20 @@ module.exports = {
 A corresponding test:
 
 ```js
-describe('money()', () => {
-  it('should RMB', () => {
+describe("money()", () => {
+  it("should RMB", () => {
     const ctx = app.mockContext({
       // mock headers of ctx
       headers: {
-        'Accept-Language': 'zh-CN,zh;q=0.5',
+        "Accept-Language": "zh-CN,zh;q=0.5",
       },
     });
-    assert(ctx.helper.money(100) === '￥ 100');
+    assert(ctx.helper.money(100) === "￥ 100");
   });
 
-  it('should US Dolar', () => {
+  it("should US Dolar", () => {
     const ctx = app.mockContext();
-    assert(ctx.helper.money(100) === '$ 100');
+    assert(ctx.helper.money(100) === "$ 100");
   });
 });
 ```
@@ -604,19 +604,19 @@ Except functions mentioned above, like `app.mockContext()` and `app.mockCsrf()`,
 - To mock session data through `app.mockSession(data)`
 
 ```js
-describe('GET /session', () => {
-  it('should mock session work', () => {
+describe("GET /session", () => {
+  it("should mock session work", () => {
     app.mockSession({
-      foo: 'bar',
+      foo: "bar",
       uid: 123,
     });
     return app
       .httpRequest()
-      .get('/session')
+      .get("/session")
       .expect(200)
       .expect({
         session: {
-          foo: 'bar',
+          foo: "bar",
           uid: 123,
         },
       });
@@ -627,7 +627,7 @@ describe('GET /session', () => {
 Remember to restore mock data in an `afterEach` hook, otherwise it would take effect with all the tests that supposed to be independent to each other.
 
 ```js
-describe('some test', () => {
+describe("some test", () => {
   // before hook
 
   afterEach(mock.restore);
@@ -649,8 +649,8 @@ Egg-mock is extended from [mm](https://github.com/node-modules/mm) module which 
 Mock `app.config.baseDir` to return a given value - `/tmp/mockapp`.
 
 ```js
-mock(app.config, 'baseDir', '/tmp/mockapp');
-assert(app.config.baseDir === '/tmp/mockapp');
+mock(app.config, "baseDir", "/tmp/mockapp");
+assert(app.config.baseDir === "/tmp/mockapp");
 ```
 
 #### Mock Functions
@@ -658,10 +658,10 @@ assert(app.config.baseDir === '/tmp/mockapp');
 Mock `fs.readFileSync` to return a given function.
 
 ```js
-mock(fs, 'readFileSync', (filename) => {
-  return 'hello world';
+mock(fs, "readFileSync", (filename) => {
+  return "hello world";
 });
-assert(fs.readFileSync('foo.txt') === 'hello world');
+assert(fs.readFileSync("foo.txt") === "hello world");
 ```
 
 See more detail in [mm API](https://github.com/node-modules/mm#api), include advanced usage like `mock.data()`，`mock.error()` and so on.
@@ -673,21 +673,21 @@ Service is a standard built-in member of the framework, `app.mockService(service
 For example, mock the method `get(name)` in `app/service/user` to return a nonexistent user.
 
 ```js
-it('should mock fengmk1 exists', () => {
-  app.mockService('user', 'get', () => {
+it("should mock fengmk1 exists", () => {
+  app.mockService("user", "get", () => {
     return {
-      name: 'fengmk1',
+      name: "fengmk1",
     };
   });
 
   return (
     app
       .httpRequest()
-      .get('/user?name=fengmk1')
+      .get("/user?name=fengmk1")
       .expect(200)
       // return an originally nonexistent user
       .expect({
-        name: 'fengmk1',
+        name: "fengmk1",
       })
   );
 });
@@ -698,12 +698,12 @@ Using `app.mockServiceError(service, methodName, error)` to mock exception.
 For example, mock the method `get(name)` in `app/service/user` to throw an exception.
 
 ```js
-it('should mock service error', () => {
-  app.mockServiceError('user', 'get', 'mock user service error');
+it("should mock service error", () => {
+  app.mockServiceError("user", "get", "mock user service error");
   return (
     app
       .httpRequest()
-      .get('/user?name=fengmk2')
+      .get("/user?name=fengmk2")
       // service exception causing the 500 status code
       .expect(500)
       .expect(/mock user service error/)
@@ -720,7 +720,7 @@ For example, we submit a request in `app/controller/home.js`.
 ```js
 class HomeController extends Controller {
   async httpclient() {
-    const res = await this.ctx.curl('https://eggjs.org');
+    const res = await this.ctx.curl("https://eggjs.org");
     this.ctx.body = res.data.toString();
   }
 }
@@ -729,18 +729,15 @@ class HomeController extends Controller {
 Then mock it's response.
 
 ```js
-describe('GET /httpclient', () => {
-  it('should mock httpclient response', () => {
-    app.mockHttpclient('https://eggjs.org', {
+describe("GET /httpclient", () => {
+  it("should mock httpclient response", () => {
+    app.mockHttpclient("https://eggjs.org", {
       // parameter allowed to be a buffer / string / json,
       // will be finally converted to buffer
       // according to options.dataType
-      data: 'mock eggjs.org response',
+      data: "mock eggjs.org response",
     });
-    return app
-      .httpRequest()
-      .get('/httpclient')
-      .expect('mock eggjs.org response');
+    return app.httpRequest().get("/httpclient").expect("mock eggjs.org response");
   });
 });
 ```

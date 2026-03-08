@@ -21,7 +21,7 @@ $ npm i egg-view-nunjucks --save
 // config/plugin.js
 exports.nunjucks = {
   enable: true,
-  package: 'egg-view-nunjucks',
+  package: "egg-view-nunjucks",
 };
 ```
 
@@ -37,16 +37,16 @@ exports.nunjucks = {
 
 ```js
 // config/config.default.js
-const path = require('path');
+const path = require("path");
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   const config = {};
 
   config.view = {
     root: [
-      path.join(appInfo.baseDir, 'app/view'),
-      path.join(appInfo.baseDir, 'path/to/another'),
-    ].join(','),
+      path.join(appInfo.baseDir, "app/view"),
+      path.join(appInfo.baseDir, "path/to/another"),
+    ].join(","),
   };
 
   return config;
@@ -65,7 +65,7 @@ module.exports = appInfo => {
 module.exports = {
   view: {
     mapping: {
-      '.nj': 'nunjucks',
+      ".nj": "nunjucks",
     },
   },
 };
@@ -74,7 +74,7 @@ module.exports = {
 调用 `render` 渲染文件时，框架会根据上述配置的后缀名寻找对应的模板引擎。
 
 ```js
-await ctx.render('home.nj');
+await ctx.render("home.nj");
 ```
 
 必须配置文件后缀与模板引擎的映射；否则无法找到对应模板引擎。还可以使用 `defaultViewEngine` 进行全局配置。
@@ -83,7 +83,7 @@ await ctx.render('home.nj');
 // config/config.default.js
 module.exports = {
   view: {
-    defaultViewEngine: 'nunjucks',
+    defaultViewEngine: "nunjucks",
   },
 };
 ```
@@ -98,12 +98,12 @@ module.exports = {
 // config/config.default.js
 module.exports = {
   view: {
-    defaultExtension: '.nj',
+    defaultExtension: ".nj",
   },
 };
 
 // render app/view/home.nj
-await ctx.render('home');
+await ctx.render("home");
 ```
 
 ## 渲染页面
@@ -118,23 +118,24 @@ await ctx.render('home');
 // {app_root}/app/controller/home.js
 class HomeController extends Controller {
   async index() {
-    const data = { name: 'egg' };
+    const data = { name: "egg" };
 
     // render a template, path related to `app/view`
-    await ctx.render('home/index.tpl', data);
+    await ctx.render("home/index.tpl", data);
 
     // or manually set render result to ctx.body
-    ctx.body = await ctx.renderView('path/to/file.tpl', data);
+    ctx.body = await ctx.renderView("path/to/file.tpl", data);
 
     // or render string directly
-    ctx.body = await ctx.renderString('hi, {{ name }}', data, {
-      viewEngine: 'nunjucks',
+    ctx.body = await ctx.renderString("hi, {{ name }}", data, {
+      viewEngine: "nunjucks",
     });
   }
 }
 ```
 
 当使用 `renderString` 时需指定模板引擎。如果已定义 `defaultViewEngine`，则可省略。
+
 ## 本地变量（Locals）
 
 在渲染页面的过程中，我们通常需要一个变量来收集需要传递给模板的变量，在框架里面，我们提供了 `app.locals` 和 `ctx.locals`。
@@ -165,17 +166,14 @@ console.log(ctx.locals); // 输出：{ a: 1, b: 2, c: 3, d: 4 }
 - 框架会自动注入 `ctx`、`request`、`helper`，便于使用。
 
 ```js
-ctx.app.locals = { appName: 'showcase' };
-const data = { name: 'egg' };
+ctx.app.locals = { appName: "showcase" };
+const data = { name: "egg" };
 
 // 框架会自动合并 `data` 到 `ctx.locals`，输出：egg - showcase
-await ctx.renderString('{{ name }} - {{ appName }}', data);
+await ctx.renderString("{{ name }} - {{ appName }}", data);
 
 // `helper`、`ctx`、`request` 将被自动注入。
-await ctx.renderString(
-  '{{ name }} - {{ helper.lowercaseFirst(ctx.app.config.baseDir) }}',
-  data
-);
+await ctx.renderString("{{ name }} - {{ helper.lowercaseFirst(ctx.app.config.baseDir) }}", data);
 ```
 
 注意：
@@ -192,7 +190,7 @@ await ctx.renderString(
 exports.lowercaseFirst = (str) => str[0].toLowerCase() + str.substring(1);
 
 // app/controller/home.js
-await ctx.renderString('{{ helper.lowercaseFirst(name) }}', data);
+await ctx.renderString("{{ helper.lowercaseFirst(name) }}", data);
 ```
 
 ## 安全性（Security）

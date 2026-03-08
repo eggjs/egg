@@ -15,13 +15,13 @@ order: 5
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   app.beforeStart(async () => {
     // 示例：启动时去读取 https://registry.npmmirror.com/egg/latest 的版本信息
-    const result = await app.curl('https://registry.npmmirror.com/egg/latest', {
-      dataType: 'json',
+    const result = await app.curl("https://registry.npmmirror.com/egg/latest", {
+      dataType: "json",
     });
-    app.logger.info('Egg 最新版本：%s', result.data.version);
+    app.logger.info("Egg 最新版本：%s", result.data.version);
   });
 };
 ```
@@ -37,9 +37,9 @@ class NpmController extends Controller {
     const ctx = this.ctx;
 
     // 示例：请求一个 npm 模块信息
-    const result = await ctx.curl('https://registry.npmmirror.com/egg/latest', {
+    const result = await ctx.curl("https://registry.npmmirror.com/egg/latest", {
       // 自动解析 JSON 响应
-      dataType: 'json',
+      dataType: "json",
       // 3 秒超时
       timeout: 3000,
     });
@@ -52,6 +52,7 @@ class NpmController extends Controller {
   }
 }
 ```
+
 ## 基本 HTTP 请求
 
 HTTP 已经被广泛大量使用。尽管 HTTP 有多种请求方式，但是万变不离其宗。我们先以基本的四个请求方法为例子，逐步讲解一下更多的复杂应用场景。
@@ -67,13 +68,12 @@ HTTP 已经被广泛大量使用。尽管 HTTP 有多种请求方式，但是万
 class NpmController extends Controller {
   async get() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/get?foo=bar');
+    const result = await ctx.curl("https://httpbin.org/get?foo=bar");
     ctx.status = result.status;
     ctx.set(result.headers);
     ctx.body = result.data;
   }
 }
-
 ```
 
 - GET 请求可以不用设置 `options.method` 参数，`HttpClient` 的默认 `method` 会设置为 `GET`。
@@ -96,22 +96,21 @@ class NpmController extends Controller {
 class NpmController extends Controller {
   async post() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/post', {
+    const result = await ctx.curl("https://httpbin.org/post", {
       // 必须指定 method
-      method: 'POST',
+      method: "POST",
       // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
-      contentType: 'json',
+      contentType: "json",
       data: {
-        hello: 'world',
+        hello: "world",
         now: Date.now(),
       },
       // 明确告诉 HttpClient 以 JSON 格式处理返回的响应 body
-      dataType: 'json',
+      dataType: "json",
     });
     ctx.body = result.data;
   }
 }
-
 ```
 
 下文还会详细讲解以 POST 实现表单提交和文件上传的功能。
@@ -126,21 +125,20 @@ PUT 与 POST 类似，它更加适合更新数据和替换数据的语义。
 class NpmController extends Controller {
   async put() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/put', {
+    const result = await ctx.curl("https://httpbin.org/put", {
       // 必须指定 method
-      method: 'PUT',
+      method: "PUT",
       // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
-      contentType: 'json',
+      contentType: "json",
       data: {
-        update: 'foo bar',
+        update: "foo bar",
       },
       // 明确告诉 HttpClient 以 JSON 格式处理响应 body
-      dataType: 'json',
+      dataType: "json",
     });
     ctx.body = result.data;
   }
 }
-
 ```
 
 ### DELETE
@@ -152,17 +150,17 @@ class NpmController extends Controller {
 class NpmController extends Controller {
   async del() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/delete', {
+    const result = await ctx.curl("https://httpbin.org/delete", {
       // 必须指定 method
-      method: 'DELETE',
+      method: "DELETE",
       // 明确告诉 HttpClient 以 JSON 格式处理响应 body
-      dataType: 'json',
+      dataType: "json",
     });
     ctx.body = result.data;
   }
 }
-
 ```
+
 ## 高级 HTTP 请求
 
 在真实的应用场景下，还会包含一些较为复杂的 HTTP 请求。
@@ -176,16 +174,16 @@ class NpmController extends Controller {
 class NpmController extends Controller {
   async submit() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/post', {
+    const result = await ctx.curl("https://httpbin.org/post", {
       // 必须指定 method，支持 POST，PUT 和 DELETE
-      method: 'POST',
+      method: "POST",
       // 不需要设置 contentType，HttpClient 会默认以 application/x-www-form-urlencoded 格式发送请求
       data: {
         now: Date.now(),
-        foo: 'bar',
+        foo: "bar",
       },
       // 明确告诉 HttpClient 以 JSON 格式处理响应 body
-      dataType: 'json',
+      dataType: "json",
     });
     ctx.body = result.data.form;
     // 响应最终会是类似以下的结果：
@@ -209,16 +207,16 @@ class HttpController extends Controller {
   async upload() {
     const { ctx } = this;
 
-    const result = await ctx.curl('https://httpbin.org/post', {
-      method: 'POST',
-      dataType: 'json',
+    const result = await ctx.curl("https://httpbin.org/post", {
+      method: "POST",
+      dataType: "json",
       data: {
-        foo: 'bar',
+        foo: "bar",
       },
-      
+
       // 单文件上传
       files: __filename,
-      
+
       // 多文件上传
       // files: {
       //   file1: __filename,
@@ -242,8 +240,8 @@ class HttpController extends Controller {
 
 ```js
 // app/controller/npm.js
-const fs = require('fs');
-const FormStream = require('formstream');
+const fs = require("fs");
+const FormStream = require("formstream");
 class NpmController extends Controller {
   async uploadByStream() {
     const ctx = this.ctx;
@@ -253,7 +251,7 @@ class NpmController extends Controller {
     const url = `${ctx.protocol}://${ctx.host}/stream`;
     const result = await ctx.curl(url, {
       // 必须指定 method，支持 POST，PUT
-      method: 'POST',
+      method: "POST",
       // 以 stream 模式提交
       stream: fileStream,
     });
@@ -265,6 +263,7 @@ class NpmController extends Controller {
   }
 }
 ```
+
 ## options 参数详解
 
 由于 HTTP 请求的复杂性，导致 `httpclient.request(url, options)` 的 options 参数会非常多。
@@ -286,7 +285,7 @@ exports.httpclient = {
 
   request: {
     // 默认 request 超时时间
-    timeout: 3000
+    timeout: 3000,
   },
 
   httpAgent: {
@@ -299,7 +298,7 @@ exports.httpclient = {
     // 允许创建的最大 socket 数
     maxSockets: Number.MAX_SAFE_INTEGER,
     // 最大空闲 socket 数
-    maxFreeSockets: 256
+    maxFreeSockets: 256,
   },
 
   httpsAgent: {
@@ -312,8 +311,8 @@ exports.httpclient = {
     // 允许创建的最大 socket 数
     maxSockets: Number.MAX_SAFE_INTEGER,
     // 最大空闲 socket 数
-    maxFreeSockets: 256
-  }
+    maxFreeSockets: 256,
+  },
 };
 ```
 
@@ -331,20 +330,20 @@ exports.httpclient = {
 ```javascript
 // GET + data
 ctx.curl(url, {
-  data: { foo: 'bar' }
+  data: { foo: "bar" },
 });
 
 // POST + data
 ctx.curl(url, {
-  method: 'POST',
-  data: { foo: 'bar' }
+  method: "POST",
+  data: { foo: "bar" },
 });
 
 // POST + JSON + data
 ctx.curl(url, {
-  method: 'POST',
-  contentType: 'json',
-  data: { foo: 'bar' }
+  method: "POST",
+  contentType: "json",
+  data: { foo: "bar" },
 });
 ```
 
@@ -357,13 +356,13 @@ ctx.curl(url, {
 
 ```javascript
 ctx.curl(url, {
-  method: 'POST',
+  method: "POST",
   dataAsQueryString: true,
   data: {
     // 通常是权限验证参数，如 access token
-    accessToken: 'some access token value'
+    accessToken: "some access token value",
   },
-  stream: myFileStream
+  stream: myFileStream,
 });
 ```
 
@@ -373,24 +372,25 @@ ctx.curl(url, {
 
 ```javascript
 ctx.curl(url, {
-  method: 'POST',
+  method: "POST",
   // 直接发送原始 XML 数据，不需 HttpClient 经行特殊处理
-  content: '<xml><hello>world</hello></xml>',
+  content: "<xml><hello>world</hello></xml>",
   headers: {
-    'content-type': 'text/html'
-  }
+    "content-type": "text/html",
+  },
 });
 ```
+
 ### `files: Mixed`
 
 文件上传，支持以下格式：`String | ReadStream | Buffer | Array | Object`。
 
 ```js
 ctx.curl(url, {
-  method: 'POST',
-  files: '/path/to/read',
+  method: "POST",
+  files: "/path/to/read",
   data: {
-    foo: 'other fields',
+    foo: "other fields",
   },
 });
 ```
@@ -399,14 +399,14 @@ ctx.curl(url, {
 
 ```js
 ctx.curl(url, {
-  method: 'POST',
+  method: "POST",
   files: {
-    file1: '/path/to/read',
+    file1: "/path/to/read",
     file2: fs.createReadStream(__filename),
-    file3: Buffer.from('mock file content'),
+    file3: Buffer.from("mock file content"),
   },
   data: {
-    foo: 'other fields',
+    foo: "other fields",
   },
 });
 ```
@@ -417,8 +417,8 @@ ctx.curl(url, {
 
 ```js
 ctx.curl(url, {
-  method: 'POST',
-  stream: fs.createReadStream('/path/to/read'),
+  method: "POST",
+  stream: fs.createReadStream("/path/to/read"),
 });
 ```
 
@@ -428,7 +428,7 @@ ctx.curl(url, {
 
 ```js
 ctx.curl(url, {
-  writeStream: fs.createWriteStream('/path/to/store'),
+  writeStream: fs.createWriteStream("/path/to/store"),
 });
 ```
 
@@ -448,12 +448,12 @@ ctx.curl(url, {
 
 ```js
 ctx.curl(url, {
-  method: 'POST',
+  method: "POST",
   data: {
-    foo: 'bar',
+    foo: "bar",
     now: Date.now(),
   },
-  contentType: 'json',
+  contentType: "json",
 });
 ```
 
@@ -465,12 +465,12 @@ ctx.curl(url, {
 
 ```js
 const jsonResult = await ctx.curl(url, {
-  dataType: 'json',
+  dataType: "json",
 });
 console.log(jsonResult.data);
 
 const htmlResult = await ctx.curl(url, {
-  dataType: 'text',
+  dataType: "text",
 });
 console.log(htmlResult.data);
 ```
@@ -482,7 +482,7 @@ console.log(htmlResult.data);
 ```js
 ctx.curl(url, {
   fixJSONCtlChars: true,
-  dataType: 'json',
+  dataType: "json",
 });
 ```
 
@@ -493,10 +493,11 @@ ctx.curl(url, {
 ```js
 ctx.curl(url, {
   headers: {
-    'x-foo': 'bar',
+    "x-foo": "bar",
   },
 });
 ```
+
 ### `timeout: Number|Array`
 
 请求超时时间，默认是 `[5000, 5000]`，即创建连接超时是 5 秒，接收响应超时是 5 秒。
@@ -504,12 +505,12 @@ ctx.curl(url, {
 ```js
 ctx.curl(url, {
   // 创建连接超时 3 秒，接收响应超时 3 秒
-  timeout: 3000
+  timeout: 3000,
 });
 
 ctx.curl(url, {
   // 创建连接超时 1 秒，接收响应超时 30 秒，用于响应比较大的场景
-  timeout: [1000, 30000]
+  timeout: [1000, 30000],
 });
 ```
 
@@ -519,7 +520,7 @@ ctx.curl(url, {
 
 ```js
 ctx.curl(url, {
-  agent: false
+  agent: false,
 });
 ```
 
@@ -529,7 +530,7 @@ ctx.curl(url, {
 
 ```js
 ctx.curl(url, {
-  httpsAgent: false
+  httpsAgent: false,
 });
 ```
 
@@ -540,7 +541,7 @@ ctx.curl(url, {
 ```js
 ctx.curl(url, {
   // 参数必须按照 `user:password` 格式设置
-  auth: 'foo:bar'
+  auth: "foo:bar",
 });
 ```
 
@@ -551,7 +552,7 @@ ctx.curl(url, {
 ```js
 ctx.curl(url, {
   // 参数必须按照 `user:password` 格式设置
-  digestAuth: 'foo:bar'
+  digestAuth: "foo:bar",
 });
 ```
 
@@ -561,7 +562,7 @@ ctx.curl(url, {
 
 ```js
 ctx.curl(url, {
-  followRedirect: true
+  followRedirect: true,
 });
 ```
 
@@ -573,7 +574,7 @@ ctx.curl(url, {
 ctx.curl(url, {
   followRedirect: true,
   // 最多自动跳转 5 次
-  maxRedirects: 5
+  maxRedirects: 5,
 });
 ```
 
@@ -585,11 +586,11 @@ ctx.curl(url, {
 ctx.curl(url, {
   formatRedirectUrl: (from, to) => {
     // 比如可以在这里修正跳转不正确的 URL
-    if (to === '//foo/') {
-      to = '/foo';
+    if (to === "//foo/") {
+      to = "/foo";
     }
     return url.resolve(from, to);
-  }
+  },
 });
 ```
 
@@ -601,8 +602,8 @@ HttpClient 在请求正式发送之前，会尝试调用 `beforeRequest` 钩子�
 ctx.curl(url, {
   beforeRequest: (options) => {
     // 比如可以在这里设置全局请求 ID，便于日志跟踪
-    options.headers['x-request-id'] = uuid.v1();
-  }
+    options.headers["x-request-id"] = uuid.v1();
+  },
 });
 ```
 
@@ -612,7 +613,7 @@ ctx.curl(url, {
 
 ```js
 const result = await ctx.curl(url, {
-  streaming: true
+  streaming: true,
 });
 
 console.log(result.status, result.data);
@@ -621,6 +622,7 @@ ctx.body = result.res;
 ```
 
 **注意**：如果 res 不是直接传递给 body，那么我们必须消费这个 stream 并且做好 `error` 事件的处理。
+
 ### `gzip: Boolean`
 
 是否支持 gzip 响应格式，默认为 `false`。开启 gzip 之后，HttpClient 将自动设置 `Accept-Encoding: gzip` 请求头，并且会自动解压带有 `Content-Encoding: gzip` 响应头的数据。
@@ -636,6 +638,7 @@ ctx.curl(url, {
 是否开启请求各阶段的时间测量，默认为 `false`。开启 timing 之后，可以通过 `result.res.timing` 拿到这次 HTTP 请求各阶段的时间测量值（单位是毫秒）。通过这些测量值，我们可以非常方便地定位到这次请求最慢的环节发生在哪个阶段。效果类似于Chrome network timing。
 
 timing 各阶段测量值解析：
+
 - queuing：分配 socket 的耗时
 - dnslookup：DNS 查询耗时
 - connected：socket 三次握手连接成功耗时
@@ -697,34 +700,41 @@ $ http_proxy=http://127.0.0.1:8888 npm run dev
 ## 常见错误
 
 ### 创建连接超时
+
 - 异常名称：`ConnectionTimeoutError`
 - 出现场景：通常是 DNS 查询较慢或者客户端与服务端网络较慢导致。
 - 排查建议：适当增大 `timeout` 参数。
 
 ### 服务响应超时
+
 - 异常名称：`ResponseTimeoutError`
 - 出现场景：客户端与服务端网络较慢，响应数据较大时发生。
 - 排查建议：适当增大 `timeout` 参数。
 
 ### 服务主动断开连接
+
 - 异常名称：`ResponseError, code: ECONNRESET`
 - 出现场景：服务端主动断开 socket 连接，导致 HTTP 请求链路异常。
 - 排查建议：检查服务端是否发生网络异常。
 
 ### 服务不可达
+
 - 异常名称：`RequestError, code: ECONNREFUSED, status: -1`
 - 出现场景：请求的 URL 所属 IP 或端口无法连接。
 - 排查建议：确保 IP 或端口设置正确。
 
 ### 域名不存在
+
 - 异常名称：`RequestError, code: ENOTFOUND, status: -1`
 - 出现场景：请求的 URL 域名无法通过 DNS 解析。
 - 排查建议：确保域名存在，检查 DNS 服务配置。
 
 ### JSON 响应数据格式错误
+
 - 异常名称：`JSONResponseFormatError`
 - 出现场景：设置 `dataType=json` 但响应数据不是 JSON 格式时抛出。
 - 排查建议：确保服务端返回正确的 JSON 格式数据。
+
 ## 全局 `request` 和 `response` 事件
 
 在企业应用场景中，常常会有统一 tracer 日志的需求。
@@ -751,7 +761,7 @@ $ http_proxy=http://127.0.0.1:8888 npm run dev
 请求发送之前，会触发一个 `request` 事件，允许对请求做拦截。
 
 ```js
-app.httpclient.on('request', (req) => {
+app.httpclient.on("request", (req) => {
   req.url; // 请求 URL
   req.ctx; // 发起这次请求的当前上下文
 
@@ -764,7 +774,7 @@ app.httpclient.on('request', (req) => {
 请求结束之后会触发一个 `response` 事件，这样外部就可以订阅这个事件来打印日志。
 
 ```js
-app.httpclient.on('response', (result) => {
+app.httpclient.on("response", (result) => {
   result.res.status; // 响应状态码
   result.ctx; // 发起这次请求的当前上下文
   result.req; // 对应的 req 对象，即 request 事件里的那个 req
@@ -776,6 +786,7 @@ app.httpclient.on('response', (result) => {
 完整示例代码可以在 [eggjs/examples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
 
 其他参考链接：
+
 - [urllib](https://github.com/node-modules/urllib)
 - [httpclient](https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js)
 - [formstream](https://github.com/node-modules/formstream)

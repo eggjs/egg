@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const BaseHookClass = require('./lib/core/base_hook_class');
+const BaseHookClass = require("./lib/core/base_hook_class");
 
 class EggAgentHook extends BaseHookClass {
   configDidLoad() {

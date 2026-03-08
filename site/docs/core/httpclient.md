@@ -19,10 +19,10 @@ So you can easily use `app.curl` to complete a HTTP request.
 module.exports = (app) => {
   app.beforeStart(async () => {
     // example: read the version info on https://registry.npmmirror.com/egg/latest when it starts
-    const result = await app.curl('https://registry.npmmirror.com/egg/latest', {
-      dataType: 'json',
+    const result = await app.curl("https://registry.npmmirror.com/egg/latest", {
+      dataType: "json",
     });
-    app.logger.info('Egg latest version: %s', result.data.version);
+    app.logger.info("Egg latest version: %s", result.data.version);
   });
 };
 ```
@@ -39,9 +39,9 @@ class NpmController extends Controller {
     const ctx = this.ctx;
 
     // example: request a npm module's info
-    const result = await ctx.curl('https://registry.npmmirror.com/egg/latest', {
+    const result = await ctx.curl("https://registry.npmmirror.com/egg/latest", {
       // parse JSON response
-      dataType: 'json',
+      dataType: "json",
       // timeout of 3s
       timeout: 3000,
     });
@@ -70,7 +70,7 @@ Reading data almost uses GET request. It is the most common type and widely used
 class NpmController extends Controller {
   async get() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/get?foo=bar');
+    const result = await ctx.curl("https://httpbin.org/get?foo=bar");
     ctx.status = result.status;
     ctx.set(result.headers);
     ctx.body = result.data;
@@ -98,17 +98,17 @@ Take sending JSON boy as example:
 class NpmController extends Controller {
   async post() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/post', {
+    const result = await ctx.curl("https://httpbin.org/post", {
       // method is required
-      method: 'POST',
+      method: "POST",
       // telling HttpClient to send data as JSON by contentType
-      contentType: 'json',
+      contentType: "json",
       data: {
-        hello: 'world',
+        hello: "world",
         now: Date.now(),
       },
       // telling HttpClient to process the return body as JSON format explicitly
-      dataType: 'json',
+      dataType: "json",
     });
     ctx.body = result.data;
   }
@@ -126,16 +126,16 @@ Similar to POST, but PUT is better for data updating and replacement. Almost the
 class NpmController extends Controller {
   async put() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/put', {
+    const result = await ctx.curl("https://httpbin.org/put", {
       // method is required
-      method: 'PUT',
+      method: "PUT",
       // telling HttpClient to send data as JSON by contentType
-      contentType: 'json',
+      contentType: "json",
       data: {
-        update: 'foo bar',
+        update: "foo bar",
       },
       // telling HttpClient to process the return body as JSON format explicitly
-      dataType: 'json',
+      dataType: "json",
     });
     ctx.body = result.data;
   }
@@ -151,11 +151,11 @@ DELETE request is to delete the data, request body don't need to add request bod
 class NpmController extends Controller {
   async del() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/delete', {
+    const result = await ctx.curl("https://httpbin.org/delete", {
       // method is required
-      method: 'DELETE',
+      method: "DELETE",
       // telling HttpClient to process the return body as JSON format explicitly
-      dataType: 'json',
+      dataType: "json",
     });
     ctx.body = result.data;
   }
@@ -175,16 +175,16 @@ Interfaces of Browser-Oriented Form Submission (without files), usually require 
 class NpmController extends Controller {
   async submit() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/post', {
+    const result = await ctx.curl("https://httpbin.org/post", {
       // method is required, supports POST，PUT and DELETE
-      method: 'POST',
+      method: "POST",
       // contentType is not needed, by default HttpClient will send request in application/x-www-form-urlencoded
       data: {
         now: Date.now(),
-        foo: 'bar',
+        foo: "bar",
       },
       // telling HttpClient to process the return body as JSON format explicitly
-      dataType: 'json',
+      dataType: "json",
     });
     ctx.body = result.data.form;
     // final response will similar as below:
@@ -207,11 +207,11 @@ class HttpController extends Controller {
   async upload() {
     const { ctx } = this;
 
-    const result = await ctx.curl('https://httpbin.org/post', {
-      method: 'POST',
-      dataType: 'json',
+    const result = await ctx.curl("https://httpbin.org/post", {
+      method: "POST",
+      dataType: "json",
       data: {
-        foo: 'bar',
+        foo: "bar",
       },
 
       // one file
@@ -241,8 +241,8 @@ If the server supports streaming, the most friendly way is to send the Stream di
 
 ```js
 // app/controller/npm.js
-const fs = require('fs');
-const FormStream = require('formstream');
+const fs = require("fs");
+const FormStream = require("formstream");
 class NpmController extends Controller {
   async uploadByStream() {
     const ctx = this.ctx;
@@ -252,7 +252,7 @@ class NpmController extends Controller {
     const url = `${ctx.protocol}://${ctx.host}/stream`;
     const result = await ctx.curl(url, {
       // method is required, supports POST，PUT
-      method: 'POST',
+      method: "POST",
       // submitted by stream mode
       stream: fileStream,
     });
@@ -330,20 +330,20 @@ The request data will select the correct processing method automatically based o
 ```js
 // GET + data
 ctx.curl(url, {
-  data: { foo: 'bar' },
+  data: { foo: "bar" },
 });
 
 // POST + data
 ctx.curl(url, {
-  method: 'POST',
-  data: { foo: 'bar' },
+  method: "POST",
+  data: { foo: "bar" },
 });
 
 // POST + JSON + data
 ctx.curl(url, {
-  method: 'POST',
-  contentType: 'json',
-  data: { foo: 'bar' },
+  method: "POST",
+  contentType: "json",
+  data: { foo: "bar" },
 });
 ```
 
@@ -355,11 +355,11 @@ The application scenarios that sending data using `stream` and pass additional r
 
 ```js
 ctx.curl(url, {
-  method: 'POST',
+  method: "POST",
   dataAsQueryString: true,
   data: {
     // generally it would be some validation parameters such as access token, etc.
-    accessToken: 'some access token value',
+    accessToken: "some access token value",
   },
   stream: myFileStream,
 });
@@ -371,11 +371,11 @@ Set request Context, if the parameter is set, it will ignore the `data` paramete
 
 ```js
 ctx.curl(url, {
-  method: 'POST',
+  method: "POST",
   // Sending the raw xml data without HttpClient's to do processing
-  content: '<xml><hello>world</hello></xml>',
+  content: "<xml><hello>world</hello></xml>",
   headers: {
-    'content-type': 'text/html',
+    "content-type": "text/html",
   },
 });
 ```
@@ -386,10 +386,10 @@ File upload, support: `String | ReadStream | Buffer | Array | Object`.
 
 ```js
 ctx.curl(url, {
-  method: 'POST',
-  files: '/path/to/read',
+  method: "POST",
+  files: "/path/to/read",
   data: {
-    foo: 'other fields',
+    foo: "other fields",
   },
 });
 ```
@@ -398,14 +398,14 @@ upload multiple files:
 
 ```js
 ctx.curl(url, {
-  method: 'POST',
+  method: "POST",
   files: {
-    file1: '/path/to/read',
+    file1: "/path/to/read",
     file2: fs.createReadStream(__filename),
-    file3: Buffer.from('mock file content'),
+    file3: Buffer.from("mock file content"),
   },
   data: {
-    foo: 'other fields',
+    foo: "other fields",
   },
 });
 ```
@@ -417,8 +417,8 @@ If the parameter is set , HttpClient will ignore `data` and `content`
 
 ```js
 ctx.curl(url, {
-  method: 'POST',
-  stream: fs.createReadStream('/path/to/read'),
+  method: "POST",
+  stream: fs.createReadStream("/path/to/read"),
 });
 ```
 
@@ -429,7 +429,7 @@ Once the parameter is set, response `result.data` is set to `null` because all d
 
 ```js
 ctx.curl(url, {
-  writeStream: fs.createWriteStream('/path/to/store'),
+  writeStream: fs.createWriteStream("/path/to/store"),
 });
 ```
 
@@ -451,12 +451,12 @@ If need to send `data` by JSON
 
 ```js
 ctx.curl(url, {
-  method: 'POST',
+  method: "POST",
   data: {
-    foo: 'bar',
+    foo: "bar",
     now: Date.now(),
   },
-  contentType: 'json',
+  contentType: "json",
 });
 ```
 
@@ -468,12 +468,12 @@ Set the response data format, default return the raw buffer formatted data witho
 
 ```js
 const jsonResult = await ctx.curl(url, {
-  dataType: 'json',
+  dataType: "json",
 });
 console.log(jsonResult.data);
 
 const htmlResult = await ctx.curl(url, {
-  dataType: 'text',
+  dataType: "text",
 });
 console.log(htmlResult.data);
 ```
@@ -486,7 +486,7 @@ Typically, the JSON data returned by some CGI system might contains such special
 ```js
 ctx.curl(url, {
   fixJSONCtlChars: true,
-  dataType: 'json',
+  dataType: "json",
 });
 ```
 
@@ -497,7 +497,7 @@ Custom request headers
 ```js
 ctx.curl(url, {
   headers: {
-    'x-foo': 'bar',
+    "x-foo": "bar",
   },
 });
 ```
@@ -545,7 +545,7 @@ Parameter of Simple login authorization (Basic Authentication), will send the lo
 ```js
 ctx.curl(url, {
   // parameter must follow the format of `user:password`
-  auth: 'foo:bar',
+  auth: "foo:bar",
 });
 ```
 
@@ -556,7 +556,7 @@ Parameter of the Digest Authentication. If the parameter is set, it will attempt
 ```js
 ctx.curl(url, {
   // parameter must follow the format of `user:password`
-  digestAuth: 'foo:bar',
+  digestAuth: "foo:bar",
 });
 ```
 
@@ -591,8 +591,8 @@ ctx.curl(url, {
 ctx.curl(url, {
   formatRedirectUrl: (from, to) => {
     // for example you can correct the redirection of wrong url here
-    if (to === '//foo/') {
-      to = '/foo';
+    if (to === "//foo/") {
+      to = "/foo";
     }
     return url.resolve(from, to);
   },
@@ -607,7 +607,7 @@ HttpClient will attempt to invoke the `beforeRequest` hook before requesting off
 ctx.curl(url, {
   beforeRequest: (options) => {
     // For example, we can set the global request ID to facilitate log tracking
-    options.headers['x-request-id'] = uuid.v1();
+    options.headers["x-request-id"] = uuid.v1();
   },
 });
 ```
@@ -773,7 +773,7 @@ To facilitate monitoring HttpClient requests and responses on the app level, we 
 A `request` event is triggered before the request is sent, allowing blocking of the request.
 
 ```js
-app.httpclient.on('request', (req) => {
+app.httpclient.on("request", (req) => {
   req.url; //request url
   req.ctx; //context of the request
 
@@ -786,7 +786,7 @@ app.httpclient.on('request', (req) => {
 After the end of request, a `response` event is triggered, so that the external event can be subscribed to the log printing.
 
 ```js
-app.httpclient.on('response', (result) => {
+app.httpclient.on("response", (result) => {
   result.res.status;
   result.ctx; //context of the request
   result.req; //the corresponding req object, which the req in the request event
@@ -797,8 +797,8 @@ app.httpclient.on('response', (result) => {
 
 Full examples can be found on [eggjs/examples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) .
 
-
 Other Reference Links
+
 - [urllib](https://github.com/node-modules/urllib)
 - [httpclient](https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js)
 - [formstream](https://github.com/node-modules/formstream)

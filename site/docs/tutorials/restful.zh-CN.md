@@ -17,7 +17,8 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
 - 响应体：
 
 ```json
-[{
+[
+  {
     "id": "57ea257b3670ca3f44c5beb6",
     "author_id": "541bf9b9ad60405c1f151a03",
     "tab": "share",
@@ -28,8 +29,8 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
     "reply_count": 155,
     "visit_count": 28176,
     "create_at": "2016-09-27T07:53:31.872Z"
-},
-{
+  },
+  {
     "id": "57ea257b3670ca3f44c5beb6",
     "author_id": "541bf9b9ad60405c1f151a03",
     "tab": "share",
@@ -40,7 +41,8 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
     "top": true,
     "reply_count": 193,
     "visit_count": 47633
-}]
+  }
+]
 ```
 
 ### 获取单个主题
@@ -51,16 +53,16 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
 
 ```json
 {
-    "id": "57ea257b3670ca3f44c5beb6",
-    "author_id": "541bf9b9ad60405c1f151a03",
-    "tab": "share",
-    "content": "content",
-    "title": "《一起学 Node.js》彻底重写完毕",
-    "last_reply_at": "2017-01-11T10:20:56.496Z",
-    "good": false,
-    "top": true,
-    "reply_count": 193,
-    "visit_count": 47633
+  "id": "57ea257b3670ca3f44c5beb6",
+  "author_id": "541bf9b9ad60405c1f151a03",
+  "tab": "share",
+  "content": "content",
+  "title": "《一起学 Node.js》彻底重写完毕",
+  "last_reply_at": "2017-01-11T10:20:56.496Z",
+  "good": false,
+  "top": true,
+  "reply_count": 193,
+  "visit_count": 47633
 }
 ```
 
@@ -72,7 +74,7 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
 
 ```json
 {
-    "topic_id": "57ea257b3670ca3f44c5beb6"
+  "topic_id": "57ea257b3670ca3f44c5beb6"
 }
 ```
 
@@ -90,14 +92,17 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
 
 ```json
 {
-    "error": "Validation Failed",
-    "detail": [{
-        "message": "required",
-        "field": "title",
-        "code": "missing_field"
-    }]
+  "error": "Validation Failed",
+  "detail": [
+    {
+      "message": "required",
+      "field": "title",
+      "code": "missing_field"
+    }
+  ]
 }
 ```
+
 ## 实现
 
 在约定好接口之后，我们可以开始动手实现了。
@@ -120,7 +125,7 @@ $ npm i
 // config/plugin.js
 exports.validate = {
   enable: true,
-  package: 'egg-validate',
+  package: "egg-validate",
 };
 ```
 
@@ -130,8 +135,8 @@ exports.validate = {
 
 ```js
 // app/router.js
-module.exports = app => {
-  app.router.resources('topics', '/api/v2/topics', app.controller.topics);
+module.exports = (app) => {
+  app.router.resources("topics", "/api/v2/topics", app.controller.topics);
 };
 ```
 
@@ -143,14 +148,14 @@ module.exports = app => {
 
 ```js
 // app/controller/topics.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 // 定义创建接口的请求参数规则
 const createRule = {
-  accesstoken: 'string',
-  title: 'string',
-  tab: { type: 'enum', values: ['ask', 'share', 'job'], required: false },
-  content: 'string',
+  accesstoken: "string",
+  title: "string",
+  tab: { type: "enum", values: ["ask", "share", "job"], required: false },
+  content: "string",
 };
 
 class TopicController extends Controller {
@@ -183,21 +188,21 @@ module.exports = TopicController;
 
 ```js
 // app/service/topics.js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 
 class TopicService extends Service {
   constructor(ctx) {
     super(ctx);
-    this.root = 'https://cnodejs.org/api/v1';
+    this.root = "https://cnodejs.org/api/v1";
   }
 
   async create(params) {
     // 调用 CNode V1 版本 API
     const result = await this.ctx.curl(`${this.root}/topics`, {
-      method: 'post',
+      method: "post",
       data: params,
-      dataType: 'json',
-      contentType: 'json',
+      dataType: "json",
+      contentType: "json",
     });
     // 检查调用是否成功，如果调用失败会抛出异常
     this.checkSuccess(result);
@@ -208,12 +213,13 @@ class TopicService extends Service {
   // 封装统一的调用检查函数，可以在查询、创建和更新等 Service 中复用
   checkSuccess(result) {
     if (result.status !== 200) {
-      const errorMsg = result.data && result.data.error_msg ? result.data.error_msg : 'unknown error';
+      const errorMsg =
+        result.data && result.data.error_msg ? result.data.error_msg : "unknown error";
       this.ctx.throw(result.status, errorMsg);
     }
     if (!result.data.success) {
       // 远程调用返回格式错误
-      this.ctx.throw(500, 'remote response error', { data: result.data });
+      this.ctx.throw(500, "remote response error", { data: result.data });
     }
   }
 }
@@ -241,14 +247,12 @@ module.exports = () => {
       await next();
     } catch (err) {
       // 所有的异常都会触发 app 上的一个 error 事件，框架会记录一条错误日志
-      ctx.app.emit('error', err, ctx);
+      ctx.app.emit("error", err, ctx);
 
       const status = err.status || 500;
       // 在生产环境中，500 错误的详细内容不返回给客户端，因为可能含有敏感信息
       const error =
-        status === 500 && ctx.app.config.env === 'prod'
-          ? 'Internal Server Error'
-          : err.message;
+        status === 500 && ctx.app.config.env === "prod" ? "Internal Server Error" : err.message;
 
       // 从 error 对象读出各属性，设置到响应中
       ctx.body = { error };
@@ -267,13 +271,14 @@ module.exports = () => {
 // config/config.default.js
 module.exports = {
   // 加载 errorHandler 中间件
-  middleware: ['errorHandler'],
+  middleware: ["errorHandler"],
   // 只对以 /api 为前缀的 URL 路径生效
   errorHandler: {
-    match: '/api',
+    match: "/api",
   },
 };
 ```
+
 ## 测试
 
 代码完成只是第一步，我们还需要给代码加上[单元测试](../core/unittest.md)。
@@ -283,39 +288,39 @@ module.exports = {
 我们先来编写 Controller 代码的单元测试。在写 Controller 单测的时候，我们可以适时地模拟 Service 层的实现，因为对 Controller 的单元测试而言，最重要的部分是测试自身的逻辑，而 Service 层按照约定的接口模拟（mock）掉，Service 自身的逻辑可以让 Service 的单元测试来覆盖，这样我们开发的时候也可以分层进行开发测试。
 
 ```js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+const { app, mock, assert } = require("egg-mock/bootstrap");
 
-describe('test/app/controller/topics.test.js', () => {
+describe("test/app/controller/topics.test.js", () => {
   // 测试请求参数错误时应用的响应
-  it('should POST /api/v2/topics/ 422', () => {
+  it("should POST /api/v2/topics/ 422", () => {
     app.mockCsrf();
     return app
       .httpRequest()
-      .post('/api/v2/topics')
+      .post("/api/v2/topics")
       .send({
-        accesstoken: '123',
+        accesstoken: "123",
       })
       .expect(422)
       .expect({
-        error: 'Validation Failed',
+        error: "Validation Failed",
         detail: [
-          { message: 'required', field: 'title', code: 'missing_field' },
-          { message: 'required', field: 'content', code: 'missing_field' },
+          { message: "required", field: "title", code: "missing_field" },
+          { message: "required", field: "content", code: "missing_field" },
         ],
       });
   });
 
   // mock 掉 service 层，测试正常时的返回
-  it('should POST /api/v2/topics/ 201', () => {
+  it("should POST /api/v2/topics/ 201", () => {
     app.mockCsrf();
-    app.mockService('topics', 'create', 123);
+    app.mockService("topics", "create", 123);
     return app
       .httpRequest()
-      .post('/api/v2/topics')
+      .post("/api/v2/topics")
       .send({
-        accesstoken: '123',
-        title: 'title',
-        content: 'hello',
+        accesstoken: "123",
+        title: "title",
+        content: "hello",
       })
       .expect(201)
       .expect({
@@ -332,9 +337,9 @@ describe('test/app/controller/topics.test.js', () => {
 Service 层的测试也只需要聚焦于自身的代码逻辑，[egg-mock](https://github.com/eggjs/egg-mock) 同样提供了快速测试 Service 的方法，不再需要用 SuperTest 模拟从客户端发起请求，而是直接调用 Service 中的方法进行测试。
 
 ```js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+const { app, mock, assert } = require("egg-mock/bootstrap");
 
-describe('test/app/service/topics.test.js', () => {
+describe("test/app/service/topics.test.js", () => {
   let ctx;
 
   beforeEach(() => {
@@ -342,38 +347,38 @@ describe('test/app/service/topics.test.js', () => {
     ctx = app.mockContext();
   });
 
-  describe('create()', () => {
-    it('should create failed by accesstoken error', async () => {
+  describe("create()", () => {
+    it("should create failed by accesstoken error", async () => {
       try {
         await ctx.service.topics.create({
-          accesstoken: 'hello',
-          title: 'title',
-          content: 'content',
+          accesstoken: "hello",
+          title: "title",
+          content: "content",
         });
       } catch (err) {
         assert(err.status === 401);
-        assert(err.message === '错误的accessToken');
+        assert(err.message === "错误的accessToken");
         return;
       }
-      throw 'should not run here';
+      throw "should not run here";
     });
 
-    it('should create success', async () => {
+    it("should create success", async () => {
       // 不影响 CNode 的正常运行，我们可以将对 CNode 的调用按照接口约定模拟掉
       // app.mockHttpclient 方法可以便捷地对应用发起的 http 请求进行模拟
-      app.mockHttpclient(`${ctx.service.topics.root}/topics`, 'POST', {
+      app.mockHttpclient(`${ctx.service.topics.root}/topics`, "POST", {
         data: {
           success: true,
-          topic_id: '5433d5e4e737cbe96dcef312',
+          topic_id: "5433d5e4e737cbe96dcef312",
         },
       });
 
       const id = await ctx.service.topics.create({
-        accesstoken: 'hello',
-        title: 'title',
-        content: 'content',
+        accesstoken: "hello",
+        title: "title",
+        content: "content",
       });
-      assert(id === '5433d5e4e737cbe96dcef312');
+      assert(id === "5433d5e4e737cbe96dcef312");
     });
   });
 });

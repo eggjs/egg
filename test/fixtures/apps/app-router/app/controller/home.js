@@ -1,3 +1,3 @@
 module.exports = function* () {
-  this.body = 'hello';
+  this.body = "hello";
 };

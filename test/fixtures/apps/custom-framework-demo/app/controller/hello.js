@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-module.exports = function*() {
-  this.cookies.set('hi', 'foo');
-  this.body = 'hello';
+module.exports = function* () {
+  this.cookies.set("hi", "foo");
+  this.body = "hello";
 };

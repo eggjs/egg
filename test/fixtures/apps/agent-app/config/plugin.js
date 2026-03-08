@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 module.exports = {
   mock: {
     enable: true,
-    path: path.join(__dirname, '../plugins/mock-client'),
+    path: path.join(__dirname, "../plugins/mock-client"),
   },
 };

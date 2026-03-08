@@ -1,9 +1,9 @@
-const assert = require('node:assert');
-const mm = require('egg-mock');
-const utils = require('../../../utils');
-const Messenger = require('../../../../lib/core/messenger/ipc');
+const assert = require("node:assert");
+const mm = require("egg-mock");
+const utils = require("../../../utils");
+const Messenger = require("../../../../lib/core/messenger/ipc");
 
-describe('test/lib/core/messenger/ipc.test.js', () => {
+describe("test/lib/core/messenger/ipc.test.js", () => {
   let messenger;
 
   before(() => {
@@ -12,19 +12,19 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
 
   afterEach(mm.restore);
 
-  describe('on(action, data)', () => {
-    it('should listen an action event', done => {
-      messenger.on('messenger-test-on-event', data => {
+  describe("on(action, data)", () => {
+    it("should listen an action event", (done) => {
+      messenger.on("messenger-test-on-event", (data) => {
         assert.deepEqual(data, {
           success: true,
         });
         done();
       });
 
-      process.emit('message', {});
-      process.emit('message', null);
-      process.emit('message', {
-        action: 'messenger-test-on-event',
+      process.emit("message", {});
+      process.emit("message", null);
+      process.emit("message", {
+        action: "messenger-test-on-event",
         data: {
           success: true,
         },
@@ -32,17 +32,17 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
     });
   });
 
-  describe('close()', () => {
-    it('should remove all listeners', () => {
+  describe("close()", () => {
+    it("should remove all listeners", () => {
       const messenger = new Messenger();
-      messenger.on('messenger-test-on-event-2', () => {
-        throw new Error('should never emitted');
+      messenger.on("messenger-test-on-event-2", () => {
+        throw new Error("should never emitted");
       });
 
       messenger.close();
 
-      process.emit('message', {
-        action: 'messenger-test-on-event-2',
+      process.emit("message", {
+        action: "messenger-test-on-event-2",
         data: {
           success: true,
         },
@@ -50,51 +50,51 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
     });
   });
 
-  describe('cluster messenger', () => {
+  describe("cluster messenger", () => {
     let app;
     after(() => app.close());
 
     // use it to record create coverage codes time
-    it('before: should start cluster app', async () => {
-      app = utils.cluster('apps/messenger');
+    it("before: should start cluster app", async () => {
+      app = utils.cluster("apps/messenger");
       app.coverage(true);
       await app.ready();
       await utils.sleep(1000);
     });
 
-    it('app should accept agent message', () => {
-      app.expect('stdout', /\[app] agent-to-app agent msg/);
+    it("app should accept agent message", () => {
+      app.expect("stdout", /\[app] agent-to-app agent msg/);
     });
 
-    it('app should accept agent assgin pid message', () => {
-      app.expect('stdout', /\[app] agent-to-app agent msg \d+/);
+    it("app should accept agent assgin pid message", () => {
+      app.expect("stdout", /\[app] agent-to-app agent msg \d+/);
     });
 
-    it('agent should accept app message', () => {
-      app.expect('stdout', /\[agent] app-to-agent app msg/);
+    it("agent should accept app message", () => {
+      app.expect("stdout", /\[agent] app-to-agent app msg/);
     });
 
-    it('agent should not send message before started', () => {
-      app.expect('stdout', /agent can't call sendTo before server started/);
-      app.expect('stdout', /agent can't call sendToApp before server started/);
-      app.expect('stdout', /agent can't call sendToAgent before server started/);
-      app.expect('stdout', /agent can't call sendRandom before server started/);
-      app.expect('stdout', /agent can't call broadcast before server started/);
+    it("agent should not send message before started", () => {
+      app.expect("stdout", /agent can't call sendTo before server started/);
+      app.expect("stdout", /agent can't call sendToApp before server started/);
+      app.expect("stdout", /agent can't call sendToAgent before server started/);
+      app.expect("stdout", /agent can't call sendRandom before server started/);
+      app.expect("stdout", /agent can't call broadcast before server started/);
     });
   });
 
-  describe('broadcast()', () => {
+  describe("broadcast()", () => {
     let app;
     before(() => {
-      mm.env('default');
-      app = utils.cluster('apps/messenger-broadcast', { workers: 2 });
+      mm.env("default");
+      app = utils.cluster("apps/messenger-broadcast", { workers: 2 });
       app.coverage(false);
       return app.ready();
     });
     before(() => utils.sleep(1000));
     after(() => app.close());
 
-    it('should broadcast each other', () => {
+    it("should broadcast each other", () => {
       // app 26496 receive message from app pid 26495
       // app 26496 receive message from app pid 26496
       // app 26495 receive message from app pid 26495
@@ -109,23 +109,23 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
     });
   });
 
-  describe('sendRandom', () => {
+  describe("sendRandom", () => {
     let app;
     before(() => {
-      mm.env('default');
-      app = utils.cluster('apps/messenger-random', { workers: 4 });
+      mm.env("default");
+      app = utils.cluster("apps/messenger-random", { workers: 4 });
       app.coverage(false);
       return app.ready();
     });
     after(() => app.close());
 
-    it('app should accept agent message', async () => {
+    it("app should accept agent message", async () => {
       await utils.sleep(10000);
 
       const m = app.stdout.match(/\d+=\d+/g);
       const map = new Map();
       for (const item of m) {
-        const a = item.split('=');
+        const a = item.split("=");
         map.set(a[0], a[1]);
       }
       // for (const [ pid, count ] of map) {
@@ -136,54 +136,54 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
     });
   });
 
-  describe('sendToApp and sentToAgent', () => {
+  describe("sendToApp and sentToAgent", () => {
     let app;
     before(() => {
-      mm.env('default');
-      app = utils.cluster('apps/messenger-app-agent', { workers: 2 });
+      mm.env("default");
+      app = utils.cluster("apps/messenger-app-agent", { workers: 2 });
       app.coverage(false);
       return app.ready();
     });
     after(() => app.close());
 
-    it('app should accept agent message', done => {
+    it("app should accept agent message", (done) => {
       setTimeout(() => {
-        assert(count(app.stdout, 'agent2app') === 2);
-        assert(count(app.stdout, 'app2app') === 4);
-        assert(count(app.stdout, 'agent2agent') === 1);
-        assert(count(app.stdout, 'app2agent') === 2);
+        assert(count(app.stdout, "agent2app") === 2);
+        assert(count(app.stdout, "app2app") === 4);
+        assert(count(app.stdout, "agent2agent") === 1);
+        assert(count(app.stdout, "app2agent") === 2);
         done();
       }, 500);
 
       function count(data, key) {
-        return data.split('\n').filter(line => {
+        return data.split("\n").filter((line) => {
           return line.indexOf(key) >= 0;
         }).length;
       }
     });
   });
 
-  describe('worker_threads mode', () => {
+  describe("worker_threads mode", () => {
     let app;
     before(() => {
-      mm.env('default');
-      app = utils.cluster('apps/messenger-app-agent', { workers: 1, startMode: 'worker_threads' });
+      mm.env("default");
+      app = utils.cluster("apps/messenger-app-agent", { workers: 1, startMode: "worker_threads" });
       app.coverage(false);
       return app.ready();
     });
     after(() => app.close());
 
-    it('app should accept agent message', done => {
+    it("app should accept agent message", (done) => {
       setTimeout(() => {
-        assert(count(app.stdout, 'agent2app') === 1);
-        assert(count(app.stdout, 'app2app') === 1);
-        assert(count(app.stdout, 'agent2agent') === 1);
-        assert(count(app.stdout, 'app2agent') === 1);
+        assert(count(app.stdout, "agent2app") === 1);
+        assert(count(app.stdout, "app2app") === 1);
+        assert(count(app.stdout, "agent2agent") === 1);
+        assert(count(app.stdout, "app2agent") === 1);
         done();
       }, 500);
 
       function count(data, key) {
-        return data.split('\n').filter(line => {
+        return data.split("\n").filter((line) => {
           return line.indexOf(key) >= 0;
         }).length;
       }

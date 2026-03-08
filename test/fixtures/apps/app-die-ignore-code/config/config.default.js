@@ -1,3 +1,3 @@
-exports.keys = 'foo';
+exports.keys = "foo";
 
-exports.serverGracefulIgnoreCode = ['EMOCKERROR'];
+exports.serverGracefulIgnoreCode = ["EMOCKERROR"];

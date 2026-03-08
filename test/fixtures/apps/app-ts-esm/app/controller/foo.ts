@@ -1,7 +1,7 @@
-import { Controller } from 'egg';
+import { Controller } from "egg";
 
 // add user controller and service
-declare module 'egg' {
+declare module "egg" {
   interface IController {
     foo: FooController;
   }
@@ -10,6 +10,6 @@ declare module 'egg' {
 // controller
 export default class FooController extends Controller {
   async index() {
-    this.ctx.body = 'ok';
+    this.ctx.body = "ok";
   }
 }

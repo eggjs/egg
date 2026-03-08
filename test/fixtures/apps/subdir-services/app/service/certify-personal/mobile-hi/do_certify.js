@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = function (app) {
   class Certify extends app.Service {
@@ -6,7 +6,7 @@ module.exports = function (app) {
       super(ctx);
     }
 
-    * exec(cmd) {
+    *exec(cmd) {
       return {
         cmd: cmd,
         method: this.ctx.method,

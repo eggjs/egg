@@ -6,6 +6,7 @@ order: 6
 Router 主要用来描述请求 URL 和具体承担执行动作的 Controller 的对应关系，框架约定了 `app/router.js` 文件用于统一所有路由规则。
 
 通过统一的配置，我们可以避免路由规则逻辑散落在多个地方，从而出现未知的冲突。集中在一起，我们可以更方便地来查看全局的路由规则。
+
 ## 如何定义 Router
 
 - `app/router.js` 里面定义 URL 路由规则
@@ -14,7 +15,7 @@ Router 主要用来描述请求 URL 和具体承担执行动作的 Controller �
 // app/router.js
 module.exports = (app) => {
   const { router, controller } = app;
-  router.get('/user/:id', controller.user.info);
+  router.get("/user/:id", controller.user.info);
 };
 ```
 
@@ -33,6 +34,7 @@ class UserController extends Controller {
 ```
 
 这样就完成了一个最简单的 Router 定义，当用户执行 `GET /user/123`，`user.js` 这个里面的 info 方法就会执行。
+
 ## Router 详细定义说明
 
 下面是路由的完整定义，参数可以根据场景的不同，自由选择：
@@ -74,13 +76,13 @@ router.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.cont
 
 ```js
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   const { router, controller } = app;
-  router.get('/home', controller.home);
-  router.get('/user/:id', controller.user.page);
-  router.post('/admin', isAdmin, controller.admin);
-  router.post('/user', isLoginUser, hasAdminPermission, controller.user.create);
-  router.post('/api/v1/comments', controller.v1.comments.create); // app/controller/v1/comments.js
+  router.get("/home", controller.home);
+  router.get("/user/:id", controller.user.page);
+  router.post("/admin", isAdmin, controller.admin);
+  router.post("/user", isLoginUser, hasAdminPermission, controller.user.create);
+  router.post("/api/v1/comments", controller.v1.comments.create); // app/controller/v1/comments.js
 };
 ```
 
@@ -90,10 +92,10 @@ module.exports = app => {
 
 ```js
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   const { router, controller } = app;
-  router.resources('posts', '/api/posts', controller.posts);
-  router.resources('users', '/api/v1/users', controller.v1.users); // app/controller/v1/users.js
+  router.resources("posts", "/api/posts", controller.posts);
+  router.resources("users", "/api/v1/users", controller.v1.users); // app/controller/v1/users.js
 };
 ```
 
@@ -127,6 +129,7 @@ exports.destroy = async () => {};
 ```
 
 如果我们不需要其中的某些方法，可以省略在 `posts.js` 里面的实现，这样对应的 URL 路径也不会注册到 Router 中。
+
 ## router 实战
 
 下面通过更多实际的例子，来说明 `router` 的用法。
@@ -138,7 +141,7 @@ exports.destroy = async () => {};
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get('/search', app.controller.search.index);
+  app.router.get("/search", app.controller.search.index);
 };
 
 // app/controller/search.js
@@ -154,7 +157,7 @@ exports.index = async (ctx) => {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get('/user/:id/:name', app.controller.user.info);
+  app.router.get("/user/:id/:name", app.controller.user.info);
 };
 
 // app/controller/user.js
@@ -172,10 +175,7 @@ exports.info = async (ctx) => {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get(
-    /^\/package\/([\w-.]+\/[\w-.]+)$/,
-    app.controller.package.detail,
-  );
+  app.router.get(/^\/package\/([\w-.]+\/[\w-.]+)$/, app.controller.package.detail);
 };
 
 // app/controller/package.js
@@ -193,7 +193,7 @@ exports.detail = async (ctx) => {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.post('/form', app.controller.form.post);
+  app.router.post("/form", app.controller.form.post);
 };
 
 // app/controller/form.js
@@ -217,7 +217,7 @@ exports.post = async (ctx) => {
 
 ```javascript
 exports.security = {
-  csrf: false
+  csrf: false,
 };
 ```
 
@@ -226,17 +226,17 @@ exports.security = {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.post('/user', app.controller.user);
+  app.router.post("/user", app.controller.user);
 };
 
 // app/controller/user.js
 const createRule = {
   username: {
-    type: 'email',
+    type: "email",
   },
   password: {
-    type: 'password',
-    compare: 're-password',
+    type: "password",
+    compare: "re-password",
   },
 };
 
@@ -256,13 +256,13 @@ exports.create = async (ctx) => {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get('index', '/home/index', app.controller.home.index);
-  app.router.redirect('/', '/home/index', 302);
+  app.router.get("index", "/home/index", app.controller.home.index);
+  app.router.redirect("/", "/home/index", 302);
 };
 
 // app/controller/home.js
 exports.index = async (ctx) => {
-  ctx.body = 'hello controller';
+  ctx.body = "hello controller";
 };
 
 // curl -L http://localhost:7001
@@ -273,15 +273,15 @@ exports.index = async (ctx) => {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get('/search', app.controller.search.index);
+  app.router.get("/search", app.controller.search.index);
 };
 
 // app/controller/search.js
 exports.index = async (ctx) => {
   const type = ctx.query.type;
-  const q = ctx.query.q || 'nodejs';
+  const q = ctx.query.q || "nodejs";
 
-  if (type === 'bing') {
+  if (type === "bing") {
     ctx.redirect(`http://cn.bing.com/search?q=${q}`);
   } else {
     ctx.redirect(`https://www.google.co.kr/search?q=${q}`);
@@ -313,12 +313,7 @@ module.exports = () => {
 
 // app/router.js
 module.exports = (app) => {
-  app.router.get(
-    's',
-    '/search',
-    app.middleware.uppercase(),
-    app.controller.search.index,
-  );
+  app.router.get("s", "/search", app.middleware.uppercase(), app.controller.search.index);
 };
 
 // curl http://localhost:7001/search?name=egg
@@ -333,20 +328,20 @@ module.exports = (app) => {
 ```js
 // app/router.js
 module.exports = (app) => {
-  require('./router/news')(app);
-  require('./router/admin')(app);
+  require("./router/news")(app);
+  require("./router/admin")(app);
 };
 
 // app/router/news.js
 module.exports = (app) => {
-  app.router.get('/news/list', app.controller.news.list);
-  app.router.get('/news/detail', app.controller.news.detail);
+  app.router.get("/news/list", app.controller.news.list);
+  app.router.get("/news/detail", app.controller.news.detail);
 };
 
 // app/router/admin.js
 module.exports = (app) => {
-  app.router.get('/admin/user', app.controller.admin.user);
-  app.router.get('/admin/log', app.controller.admin.log);
+  app.router.get("/admin/user", app.controller.admin.user);
+  app.router.get("/admin/log", app.controller.admin.log);
 };
 ```
 

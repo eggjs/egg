@@ -41,6 +41,7 @@ EggCore 可以看做是 Koa `Application` 的升级版，默认内置了 [Loader
       ^               ^
  agent worker     app worker
 ```
+
 ## 如何定制一个框架
 
 你可以直接通过 [egg-boilerplate-framework](https://github.com/eggjs/egg-boilerplate-framework) 脚手架快速上手。
@@ -63,15 +64,18 @@ Egg 框架提供了一些 API，所有继承的框架都需要提供，只增不
 Egg 的多进程启动器，通过这个方法来启动 Master，主要的功能实现在 [egg-cluster](https://github.com/eggjs/egg-cluster) 上。因此，直接使用 EggCore 是单进程方式启动的，而 Egg 实现了多进程模式。
 
 ```js
-const startCluster = require('egg').startCluster;
-startCluster({
+const startCluster = require("egg").startCluster;
+startCluster(
+  {
     // 应用的代码目录
-    baseDir: '/path/to/app',
+    baseDir: "/path/to/app",
     // 需要通过这个参数来指定框架目录
-    framework: '/path/to/framework',
-}, () => {
-    console.log('app started');
-});
+    framework: "/path/to/framework",
+  },
+  () => {
+    console.log("app started");
+  },
+);
 ```
 
 所有参数可以查看 [egg-cluster](https://github.com/eggjs/egg-cluster#options)。
@@ -145,26 +149,26 @@ module.exports = Object.assign(egg, {
 
 ```js
 // enterprise
-const Application = require('egg').Application;
+const Application = require("egg").Application;
 class EnterpriseApplication extends Application {
   get [EGG_PATH]() {
-    return '/path/to/enterprise';
+    return "/path/to/enterprise";
   }
 }
 // 自定义模块的 Application
 exports.Application = EnterpriseApplication;
 
 // department
-const EnterpriseApplication = require('enterprise').Application;
+const EnterpriseApplication = require("enterprise").Application;
 // 继承自 enterprise 的 Application
 class DepartmentApplication extends EnterpriseApplication {
   get [EGG_PATH]() {
-    return '/path/to/department';
+    return "/path/to/department";
   }
 }
 
 // 启动时需要传入 department 的框架路径
-const DepartmentApplication = require('department').Application;
+const DepartmentApplication = require("department").Application;
 const app = new DepartmentApplication();
 app.ready();
 ```
@@ -178,9 +182,9 @@ app.ready();
 
 ```js
 // lib/framework.js
-const path = require('path');
-const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
+const path = require("path");
+const egg = require("egg");
+const EGG_PATH = Symbol.for("egg#eggPath");
 
 class Application extends egg.Application {
   get [EGG_PATH]() {
@@ -212,9 +216,9 @@ Loader 是应用启动的核心。利用它，我们不仅能规范应用代码�
 
 ```js
 // lib/framework.js
-const path = require('path');
-const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
+const path = require("path");
+const egg = require("egg");
+const EGG_PATH = Symbol.for("egg#eggPath");
 
 class YadanAppWorkerLoader extends egg.AppWorkerLoader {
   load() {
@@ -259,6 +263,7 @@ AgentWorkerLoader 的扩展也类似，这里不再赘述。AgentWorkerLoader �
    - 单个 App Worker 通过 framework 找到框架目录，实例化该框架的 Application 类。
    - Application 根据 AppWorkerLoader 开始加载，加载顺序类似，会异步等待完成后通知 Master 启动完成。
 4. Master 在等到所有 App Worker 发来的启动成功消息后，完成启动，开始对外提供服务。
+
 ## 框架测试
 
 在看下文之前，请先查看[单元测试章节](../core/unittest.md)。框架测试的大部分使用场景和应用类似。
@@ -268,15 +273,15 @@ AgentWorkerLoader 的扩展也类似，这里不再赘述。AgentWorkerLoader �
 框架的初始化方式有一定差异。
 
 ```js
-const mock = require('egg-mock');
-describe('test/index.test.js', () => {
+const mock = require("egg-mock");
+describe("test/index.test.js", () => {
   let app;
   before(() => {
     app = mock.app({
       // 转换成 test/fixtures/apps/example
-      baseDir: 'apps/example',
+      baseDir: "apps/example",
       // 重要：配置 framework
-      framework: true
+      framework: true,
     });
     return app.ready();
   });
@@ -284,8 +289,8 @@ describe('test/index.test.js', () => {
   after(() => app.close());
   afterEach(mock.restore);
 
-  it('should success', () => {
-    return app.httpRequest().get('/').expect(200);
+  it("should success", () => {
+    return app.httpRequest().get("/").expect(200);
   });
 });
 ```
@@ -301,26 +306,26 @@ describe('test/index.test.js', () => {
 在测试多环境场景需要使用到 cache 参数，因为 `mock.app` 默认有缓存，当第一次加载后再次加载会直接读取缓存，那么设置的环境也不会生效。
 
 ```js
-const mock = require('egg-mock');
-describe('/test/index.test.js', () => {
+const mock = require("egg-mock");
+describe("/test/index.test.js", () => {
   let app;
   afterEach(() => app.close());
 
-  it('should test on local', () => {
-    mock.env('local');
+  it("should test on local", () => {
+    mock.env("local");
     app = mock.app({
-      baseDir: 'apps/example',
+      baseDir: "apps/example",
       framework: true,
-      cache: false
+      cache: false,
     });
     return app.ready();
   });
-  it('should test on prod', () => {
-    mock.env('prod');
+  it("should test on prod", () => {
+    mock.env("prod");
     app = mock.app({
-      baseDir: 'apps/example',
+      baseDir: "apps/example",
       framework: true,
-      cache: false
+      cache: false,
     });
     return app.ready();
   });
@@ -334,20 +339,20 @@ describe('/test/index.test.js', () => {
 多进程测试和 `mock.app` 参数一致，但 app 的 API 完全不同。不过，SuperTest 依然可用。
 
 ```js
-const mock = require('egg-mock');
-describe('/test/index.test.js', () => {
+const mock = require("egg-mock");
+describe("/test/index.test.js", () => {
   let app;
   before(() => {
     app = mock.cluster({
-      baseDir: 'apps/example',
-      framework: true
+      baseDir: "apps/example",
+      framework: true,
     });
     return app.ready();
   });
   after(() => app.close());
   afterEach(mock.restore);
-  it('should success', () => {
-    return app.httpRequest().get('/').expect(200);
+  it("should success", () => {
+    return app.httpRequest().get("/").expect(200);
   });
 });
 ```
@@ -355,20 +360,20 @@ describe('/test/index.test.js', () => {
 多进程测试还可以测试 stdout/stderr，因为 `mock.cluster` 是基于 [coffee](https://github.com/popomore/coffee) 扩展的，可进行进程测试。
 
 ```js
-const mock = require('egg-mock');
-describe('/test/index.test.js', () => {
+const mock = require("egg-mock");
+describe("/test/index.test.js", () => {
   let app;
   before(() => {
     app = mock.cluster({
-      baseDir: 'apps/example',
-      framework: true
+      baseDir: "apps/example",
+      framework: true,
     });
     return app.ready();
   });
   after(() => app.close());
-  it('should get `started`', () => {
+  it("should get `started`", () => {
     // 判断终端输出
-    app.expect('stdout', /started/);
+    app.expect("stdout", /started/);
   });
 });
 ```

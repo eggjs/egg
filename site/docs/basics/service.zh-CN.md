@@ -8,22 +8,21 @@ order: 8
 - 保持 Controller 中的逻辑更简洁。
 - 保持业务逻辑的独立性，抽象出的 Service 可以被多个 Controller 重复使用。
 - 分离逻辑和展示，这样更便于编写测试用例。具体的测试用例编写方法，可以参见[这里](../core/unittest.md)。
+
 ## 使用场景
 
 - 数据处理：当需要展示的信息须从数据库获取，并经规则计算后才能显示给用户，或计算后需更新数据库时。
 - 第三方服务调用：例如获取 GitHub 信息等。
+
 ## 定义 Service
 
 ```js
 // app/service/user.js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 
 class UserService extends Service {
   async find(uid) {
-    const user = await this.ctx.db.query(
-      'select * from user where uid = ?',
-      uid
-    );
+    const user = await this.ctx.db.query("select * from user where uid = ?", uid);
     return user;
   }
 }
@@ -65,14 +64,15 @@ module.exports = UserService;
 - 一个 Service 文件仅包含一个类，该类需通过 `module.exports` 导出。
 - Service 应通过 Class 形式定义，且继承自 `egg.Service`。
 - Service 不是单例，它是请求级别的对象。框架在每次请求中初次访问 `ctx.service.xx` 时才进行实例化。因此，Service 中可以通过 `this.ctx` 获取当前请求的上下文。
+
 ```js
 // app/router.js
-module.exports = app => {
-  app.router.get('/user/:id', app.controller.user.info);
+module.exports = (app) => {
+  app.router.get("/user/:id", app.controller.user.info);
 };
 
 // app/controller/user.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 class UserController extends Controller {
   async info() {
     const { ctx } = this;
@@ -84,7 +84,7 @@ class UserController extends Controller {
 module.exports = UserController;
 
 // app/service/user.js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 class UserService extends Service {
   // 默认不需要提供构造函数。
   /* constructor(ctx) {
@@ -94,10 +94,7 @@ class UserService extends Service {
      } */
   async find(uid) {
     // 假如我们拿到用户 id，从数据库获取用户详细信息
-    const user = await this.ctx.db.query(
-      'select * from user where uid = ?',
-      uid
-    );
+    const user = await this.ctx.db.query("select * from user where uid = ?", uid);
 
     // 假定这里还有一些复杂的计算，然后返回需要的信息
     const picture = await this.getPicture(uid);
@@ -105,13 +102,13 @@ class UserService extends Service {
     return {
       name: user.user_name,
       age: user.age,
-      picture
+      picture,
     };
   }
 
   async getPicture(uid) {
     const result = await this.ctx.curl(`http://photoserver/uid=${uid}`, {
-      dataType: 'json'
+      dataType: "json",
     });
     return result.data;
   }

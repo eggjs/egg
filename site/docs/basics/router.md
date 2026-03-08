@@ -15,7 +15,7 @@ By unifying routing rules, we can avoid the routing logics scattered in many pla
 // app/router.js
 module.exports = (app) => {
   const { router, controller } = app;
-  router.get('/user/:id', controller.user.info);
+  router.get("/user/:id", controller.user.info);
 };
 ```
 
@@ -78,11 +78,11 @@ Here are some examples of writing routing rules:
 // app/router.js
 module.exports = (app) => {
   const { router, controller } = app;
-  router.get('/home', controller.home);
-  router.get('/user/:id', controller.user.page);
-  router.post('/admin', isAdmin, controller.admin);
-  router.post('/user', isLoginUser, hasAdminPermission, controller.user.create);
-  router.post('/api/v1/comments', controller.v1.comments.create); // app/controller/v1/comments.js
+  router.get("/home", controller.home);
+  router.get("/user/:id", controller.user.page);
+  router.post("/admin", isAdmin, controller.admin);
+  router.post("/user", isLoginUser, hasAdminPermission, controller.user.create);
+  router.post("/api/v1/comments", controller.v1.comments.create); // app/controller/v1/comments.js
 };
 ```
 
@@ -94,8 +94,8 @@ We provide `app.router.resources('routerName', 'pathMatch', 'controller')` to ge
 // app/router.js
 module.exports = (app) => {
   const { router, controller } = app;
-  router.resources('posts', '/posts', controller.posts);
-  router.resources('users', '/api/v1/users', controller.v1.users); // app/controller/v1/users.js
+  router.resources("posts", "/posts", controller.posts);
+  router.resources("users", "/api/v1/users", controller.v1.users); // app/controller/v1/users.js
 };
 ```
 
@@ -141,7 +141,7 @@ More practical examples will be shown below to demonstrate how to use the router
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get('/search', app.controller.search.index);
+  app.router.get("/search", app.controller.search.index);
 };
 
 // app/controller/search.js
@@ -157,7 +157,7 @@ exports.index = async (ctx) => {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get('/user/:id/:name', app.controller.user.info);
+  app.router.get("/user/:id/:name", app.controller.user.info);
 };
 
 // app/controller/user.js
@@ -175,10 +175,7 @@ Regular expressions, as well, can be used in routing rules to acquire parameters
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get(
-    /^\/package\/([\w-.]+\/[\w-.]+)$/,
-    app.controller.package.detail,
-  );
+  app.router.get(/^\/package\/([\w-.]+\/[\w-.]+)$/, app.controller.package.detail);
 };
 
 // app/controller/package.js
@@ -196,7 +193,7 @@ exports.detail = async (ctx) => {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.post('/form', app.controller.form.post);
+  app.router.post("/form", app.controller.form.post);
 };
 
 // app/controller/form.js
@@ -231,17 +228,17 @@ exports.security = {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.post('/user', app.controller.user);
+  app.router.post("/user", app.controller.user);
 };
 
 // app/controller/user.js
 const createRule = {
   username: {
-    type: 'email',
+    type: "email",
   },
   password: {
-    type: 'password',
-    compare: 're-password',
+    type: "password",
+    compare: "re-password",
   },
 };
 
@@ -261,13 +258,13 @@ exports.create = async (ctx) => {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get('index', '/home/index', app.controller.home.index);
-  app.redirect('/', '/home/index', 302);
+  app.router.get("index", "/home/index", app.controller.home.index);
+  app.redirect("/", "/home/index", 302);
 };
 
 // app/controller/home.js
 exports.index = async (ctx) => {
-  ctx.body = 'hello controller';
+  ctx.body = "hello controller";
 };
 
 // curl -L http://localhost:7001
@@ -278,15 +275,15 @@ exports.index = async (ctx) => {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get('/search', app.controller.search.index);
+  app.router.get("/search", app.controller.search.index);
 };
 
 // app/controller/search.js
 exports.index = async (ctx) => {
   const type = ctx.query.type;
-  const q = ctx.query.q || 'nodejs';
+  const q = ctx.query.q || "nodejs";
 
-  if (type === 'bing') {
+  if (type === "bing") {
     ctx.redirect(`http://cn.bing.com/search?q=${q}`);
   } else {
     ctx.redirect(`https://www.google.co.kr/search?q=${q}`);
@@ -318,12 +315,7 @@ module.exports = () => {
 
 // app/router.js
 module.exports = (app) => {
-  app.router.get(
-    's',
-    '/search',
-    app.middleware.uppercase(),
-    app.controller.search,
-  );
+  app.router.get("s", "/search", app.middleware.uppercase(), app.controller.search);
 };
 
 // curl http://localhost:7001/search?name=egg
@@ -338,20 +330,20 @@ If there is a need for some reasons, you can split routing rules like below:
 ```js
 // app/router.js
 module.exports = (app) => {
-  require('./router/news')(app);
-  require('./router/admin')(app);
+  require("./router/news")(app);
+  require("./router/admin")(app);
 };
 
 // app/router/news.js
 module.exports = (app) => {
-  app.router.get('/news/list', app.controller.news.list);
-  app.router.get('/news/detail', app.controller.news.detail);
+  app.router.get("/news/list", app.controller.news.list);
+  app.router.get("/news/detail", app.controller.news.detail);
 };
 
 // app/router/admin.js
 module.exports = (app) => {
-  app.router.get('/admin/user', app.controller.admin.user);
-  app.router.get('/admin/log', app.controller.admin.log);
+  app.router.get("/admin/user", app.controller.admin.user);
+  app.router.get("/admin/log", app.controller.admin.log);
 };
 ```
 

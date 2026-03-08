@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
-exports.keys = 'key';
-exports.middleware = [ 'async' ];
+exports.keys = "key";
+exports.middleware = ["async"];

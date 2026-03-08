@@ -1,3 +1,3 @@
-module.exports = app => {
-  app.get('home', '/', 'home');
+module.exports = (app) => {
+  app.get("home", "/", "home");
 };

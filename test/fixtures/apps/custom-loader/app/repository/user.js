@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 class UserRepository {
   constructor(ctx) {
@@ -10,9 +10,8 @@ class UserRepository {
   }
 
   async beforeLoad() {
-    return 'beforeLoad';
+    return "beforeLoad";
   }
-
 }
 
 module.exports = UserRepository;

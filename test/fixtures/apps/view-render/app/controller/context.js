@@ -1,7 +1,7 @@
 module.exports = function* () {
-  yield this.render('js.html', {
+  yield this.render("js.html", {
     context: {
-      a: this.request.body.a
-    }
+      a: this.request.body.a,
+    },
   });
 };
