@@ -130,15 +130,16 @@ export class AgentRuntime {
 
       const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, run.id);
 
-      // TODO: updateRun + appendMessages are not atomic — if updateRun succeeds but
-      // appendMessages fails, the run shows completed but thread history is incomplete.
-      // Consider reordering (append first, then complete) or adding an aggregate store method.
-      await this.store.updateRun(run.id, rb.complete(output, usage));
-
+      // Append messages first so that if updateRun fails the run stays in_progress
+      // and can be retried, rather than showing completed with missing thread history.
+      // TODO(atomicity): for full consistency, add an aggregate store method
+      // (e.g. completeRunWithMessages) that wraps both writes in a single transaction.
       await this.store.appendMessages(threadId, [
         ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
         ...output,
       ]);
+
+      await this.store.updateRun(run.id, rb.complete(output, usage));
 
       return rb.snapshot();
     } catch (err: unknown) {
@@ -191,13 +192,14 @@ export class AgentRuntime {
 
         const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, run.id);
 
-        // TODO: same atomicity concern as syncRun — see comment there
-        await this.store.updateRun(run.id, rb.complete(output, usage));
-
+        // Append messages before marking run as completed — see syncRun comment.
+        // TODO(atomicity): add aggregate store method for full transactional guarantee.
         await this.store.appendMessages(threadId, [
           ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
           ...output,
         ]);
+
+        await this.store.updateRun(run.id, rb.complete(output, usage));
       } catch (err: unknown) {
         if (!abortController.signal.aborted) {
           // Check store before writing failed state — another worker may have cancelled
@@ -278,14 +280,15 @@ export class AgentRuntime {
       msgObj.content = content;
       writer.writeEvent(AgentSSEEvent.ThreadMessageCompleted, msgObj);
 
-      // Persist and emit completion
-      // TODO: same atomicity concern as syncRun — see comment there
+      // Persist and emit completion — append messages before marking run as completed
+      // so a failure leaves the run in_progress (retryable) instead of completed-but-incomplete.
+      // TODO(atomicity): add aggregate store method for full transactional guarantee.
       const output: MessageObject[] = content.length > 0 ? [msgObj] : [];
-      await this.store.updateRun(run.id, rb.complete(output, usage));
       await this.store.appendMessages(threadId, [
         ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
         ...output,
       ]);
+      await this.store.updateRun(run.id, rb.complete(output, usage));
 
       // event: thread.run.completed
       writer.writeEvent(AgentSSEEvent.ThreadRunCompleted, rb.snapshot());
