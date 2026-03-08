@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-const path = require('path');
-const fs = require('fs');
+const path = require("path");
+const fs = require("fs");
 
 module.exports = function* () {
   var parts = this.multipart();
   var part;
   var fields = {};
-  while (part = yield parts) {
+  while ((part = yield parts)) {
     if (Array.isArray(part)) {
       fields[part[0]] = part[1];
       continue;
@@ -18,12 +18,12 @@ module.exports = function* () {
 
   if (!part || !part.filename) {
     this.body = {
-      message: 'no file',
+      message: "no file",
     };
     return;
   }
 
-  const ws = fs.createWriteStream(path.join(this.app.config.logger.dir, 'multipart-test-file'));
+  const ws = fs.createWriteStream(path.join(this.app.config.logger.dir, "multipart-test-file"));
   part.pipe(ws);
   this.body = {
     filename: part.filename,

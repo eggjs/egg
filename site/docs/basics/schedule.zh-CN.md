@@ -10,6 +10,7 @@ order: 10
 3. 定时进行文件切割、临时文件删除。
 
 框架提供了一套机制来让定时任务的编写和维护更加优雅。
+
 ## 编写定时任务
 
 所有的定时任务都统一存放在 `app/schedule` 目录下，每一个文件都是一个独立的定时任务，可以配置定时任务的属性和要执行的方法。
@@ -17,21 +18,21 @@ order: 10
 一个简单的例子，我们定义一个更新远程数据到内存缓存的定时任务，就可以在 `app/schedule` 目录下创建一个 `update_cache.js` 文件。
 
 ```js
-const Subscription = require('egg').Subscription;
+const Subscription = require("egg").Subscription;
 
 class UpdateCache extends Subscription {
   // 通过 schedule 属性来设置定时任务的执行间隔等配置
   static get schedule() {
     return {
-      interval: '1m', // 1 分钟间隔
-      type: 'all', // 指定所有的 worker 都需要执行
+      interval: "1m", // 1 分钟间隔
+      type: "all", // 指定所有的 worker 都需要执行
     };
   }
 
   // subscribe 是真正定时任务执行时被运行的函数
   async subscribe() {
-    const res = await this.ctx.curl('http://www.api.com/cache', {
-      dataType: 'json',
+    const res = await this.ctx.curl("http://www.api.com/cache", {
+      dataType: "json",
     });
     this.ctx.app.cache = res.data;
   }
@@ -45,12 +46,12 @@ module.exports = UpdateCache;
 ```js
 module.exports = {
   schedule: {
-    interval: '1m', // 1 分钟间隔
-    type: 'all', // 指定所有的 worker 都需要执行
+    interval: "1m", // 1 分钟间隔
+    type: "all", // 指定所有的 worker 都需要执行
   },
   async task(ctx) {
-    const res = await ctx.curl('http://www.api.com/cache', {
-      dataType: 'json',
+    const res = await ctx.curl("http://www.api.com/cache", {
+      dataType: "json",
     });
     ctx.app.cache = res.data;
   },
@@ -79,7 +80,7 @@ module.exports = {
 module.exports = {
   schedule: {
     // 每 10 秒执行一次
-    interval: '10s',
+    interval: "10s",
   },
 };
 ```
@@ -106,7 +107,7 @@ module.exports = {
 module.exports = {
   schedule: {
     // 每三小时准点执行一次
-    cron: '0 0 */3 * * *',
+    cron: "0 0 */3 * * *",
   },
 };
 ```
@@ -140,6 +141,7 @@ config.customLogger = {
   },
 };
 ```
+
 ### 动态配置定时任务
 
 有时候，我们需要配置定时任务的参数。定时任务还可以支持另一种写法：
@@ -149,11 +151,11 @@ module.exports = (app) => {
   return {
     schedule: {
       interval: app.config.cacheTick,
-      type: 'all',
+      type: "all",
     },
     async task(ctx) {
-      const res = await ctx.curl('http://www.api.com/cache', {
-        contentType: 'json',
+      const res = await ctx.curl("http://www.api.com/cache", {
+        contentType: "json",
       });
       ctx.app.cache = res.data;
     },
@@ -170,13 +172,13 @@ module.exports = (app) => {
 - 手动执行定时任务可以更优雅地编写定时任务的单元测试。
 
 ```js
-const mm = require('egg-mock');
-const assert = require('assert');
+const mm = require("egg-mock");
+const assert = require("assert");
 
-it('should schedule work fine', async () => {
+it("should schedule work fine", async () => {
   const app = mm.app();
   await app.ready();
-  await app.runSchedule('update_cache');
+  await app.runSchedule("update_cache");
   assert(app.cache);
 });
 ```
@@ -188,7 +190,7 @@ module.exports = (app) => {
   app.beforeStart(async () => {
     // 保证应用启动监听端口前，数据已经准备好
     // 后续数据的更新由定时任务自动触发
-    await app.runSchedule('update_cache');
+    await app.runSchedule("update_cache");
   });
 };
 ```
@@ -210,7 +212,7 @@ module.exports = (agent) => {
       agent.mq.subscribe(this.schedule.scene, () => this.sendOne());
     }
   }
-  agent.schedule.use('cluster', ClusterStrategy);
+  agent.schedule.use("cluster", ClusterStrategy);
 };
 ```
 

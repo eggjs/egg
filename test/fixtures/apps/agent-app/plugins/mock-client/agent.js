@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const MockClient = require('./mock_client');
+const MockClient = require("./mock_client");
 
-module.exports = agent => {
-  const done = agent.readyCallback('agent_configclient');
+module.exports = (agent) => {
+  const done = agent.readyCallback("agent_configclient");
   const options = agent.config.mock;
 
   agent.mockClient = new MockClient();
@@ -12,19 +12,19 @@ module.exports = agent => {
   // 启动 agent 任务
   agent.startAgent({
     client: agent.mockClient,
-    name: 'mock',
+    name: "mock",
     subscribe(info, listener) {
       agent.mockClient.on(info.id, listener);
-      if (info.id === 'foo') {
+      if (info.id === "foo") {
         setInterval(() => {
-          agent.mockClient.emit('foo', ++count);
+          agent.mockClient.emit("foo", ++count);
         }, 100);
       }
     },
   });
 
   agent.mockClient.ready(() => {
-    agent.logger.info('[agent] %s started mockClient', agent.config.name);
+    agent.logger.info("[agent] %s started mockClient", agent.config.name);
     done();
   });
 };

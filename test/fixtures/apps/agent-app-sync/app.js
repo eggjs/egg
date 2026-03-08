@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   const done = app.readyCallback();
-  const test = app.createAppWorkerClient('test', {
+  const test = app.createAppWorkerClient("test", {
     listen(cb) {
-      this._subscribe('listening', cb);
+      this._subscribe("listening", cb);
     },
   });
-  test.listen(arg => {
+  test.listen((arg) => {
     app.arg = arg;
     done();
-  })
+  });
 };

@@ -1,15 +1,15 @@
-'use strict';
+"use strict";
 
-const querystring = require('node:querystring');
-const accepts = require('accepts');
+const querystring = require("node:querystring");
+const accepts = require("accepts");
 
-const _querycache = Symbol('_querycache');
-const _queriesCache = Symbol('_queriesCache');
-const PROTOCOL = Symbol('PROTOCOL');
-const HOST = Symbol('HOST');
-const ACCEPTS = Symbol('ACCEPTS');
-const IPS = Symbol('IPS');
-const RE_ARRAY_KEY = /[^\[\]]+\[\]$/;
+const _querycache = Symbol("_querycache");
+const _queriesCache = Symbol("_queriesCache");
+const PROTOCOL = Symbol("PROTOCOL");
+const HOST = Symbol("HOST");
+const ACCEPTS = Symbol("ACCEPTS");
+const IPS = Symbol("IPS");
+const RE_ARRAY_KEY = /[^[\]]+\[\]$/;
 
 module.exports = {
   /**
@@ -36,7 +36,7 @@ module.exports = {
     if (this.app.config.proxy) {
       host = getFromHeaders(this, this.app.config.hostHeaders);
     }
-    host = host || this.get('host') || '';
+    host = host || this.get("host") || "";
     this[HOST] = host.split(/\s*,\s*/)[0];
     return this[HOST];
   },
@@ -53,7 +53,7 @@ module.exports = {
     if (this[PROTOCOL]) return this[PROTOCOL];
     // detect encrypted socket
     if (this.socket && this.socket.encrypted) {
-      this[PROTOCOL] = 'https';
+      this[PROTOCOL] = "https";
       return this[PROTOCOL];
     }
     // get from headers specified in `app.config.protocolHeaders`
@@ -65,7 +65,7 @@ module.exports = {
       }
     }
     // use protocol specified in `app.conig.protocol`
-    this[PROTOCOL] = this.app.config.protocol || 'http';
+    this[PROTOCOL] = this.app.config.protocol || "http";
     return this[PROTOCOL];
   },
 
@@ -89,12 +89,14 @@ module.exports = {
       return this[IPS];
     }
 
-    const val = getFromHeaders(this, this.app.config.ipHeaders) || '';
+    const val = getFromHeaders(this, this.app.config.ipHeaders) || "";
     this[IPS] = val ? val.split(/\s*,\s*/) : [];
 
     let maxIpsCount = this.app.config.maxIpsCount;
     // Compatible with maxProxyCount logic (previous logic is wrong, only for compatibility with legacy logic)
-    if (!maxIpsCount && this.app.config.maxProxyCount) maxIpsCount = this.app.config.maxProxyCount + 1;
+    if (!maxIpsCount && this.app.config.maxProxyCount) {
+      maxIpsCount = this.app.config.maxProxyCount + 1;
+    }
 
     if (maxIpsCount > 0) {
       // if maxIpsCount present, only keep `maxIpsCount` ips
@@ -122,7 +124,7 @@ module.exports = {
     const ip = this.ips[0] || this.socket.remoteAddress;
     // will be '::ffff:x.x.x.x', should convert to standard IPv4 format
     // https://zh.wikipedia.org/wiki/IPv6
-    this._ip = ip && ip.indexOf('::ffff:') > -1 ? ip.substring(7) : ip;
+    this._ip = ip && ip.indexOf("::ffff:") > -1 ? ip.substring(7) : ip;
     return this._ip;
   },
 
@@ -151,16 +153,16 @@ module.exports = {
    * @since 1.0.0
    */
   get acceptJSON() {
-    if (this.path.endsWith('.json')) return true;
-    if (this.response.type && this.response.type.indexOf('json') >= 0) return true;
-    if (this.accepts('html', 'text', 'json') === 'json') return true;
+    if (this.path.endsWith(".json")) return true;
+    if (this.response.type && this.response.type.indexOf("json") >= 0) return true;
+    if (this.accepts("html", "text", "json") === "json") return true;
     return false;
   },
 
   // How to read query safely
   // https://github.com/koajs/qs/issues/5
   _customQuery(cacheName, filter) {
-    const str = this.querystring || '';
+    const str = this.querystring || "";
     let c = this[cacheName];
     if (!c) {
       c = this[cacheName] = {};
@@ -256,7 +258,6 @@ module.exports = {
   },
 };
 
-
 function firstValue(value) {
   if (Array.isArray(value)) {
     value = value[0];
@@ -266,17 +267,17 @@ function firstValue(value) {
 
 function arrayValue(value) {
   if (!Array.isArray(value)) {
-    value = [ value ];
+    value = [value];
   }
   return value;
 }
 
 function getFromHeaders(ctx, names) {
-  if (!names) return '';
+  if (!names) return "";
   names = names.split(/\s*,\s*/);
   for (const name of names) {
     const value = ctx.get(name);
     if (value) return value;
   }
-  return '';
+  return "";
 }

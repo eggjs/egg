@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = {
   // enable plugins
@@ -10,7 +10,7 @@ module.exports = {
    */
   onerror: {
     enable: true,
-    package: 'egg-onerror',
+    package: "egg-onerror",
   },
 
   /**
@@ -21,7 +21,7 @@ module.exports = {
    */
   session: {
     enable: true,
-    package: 'egg-session',
+    package: "egg-session",
   },
 
   /**
@@ -32,7 +32,7 @@ module.exports = {
    */
   i18n: {
     enable: true,
-    package: 'egg-i18n',
+    package: "egg-i18n",
   },
 
   /**
@@ -43,7 +43,7 @@ module.exports = {
    */
   watcher: {
     enable: true,
-    package: 'egg-watcher',
+    package: "egg-watcher",
   },
 
   /**
@@ -54,7 +54,7 @@ module.exports = {
    */
   multipart: {
     enable: true,
-    package: 'egg-multipart',
+    package: "egg-multipart",
   },
 
   /**
@@ -65,7 +65,7 @@ module.exports = {
    */
   security: {
     enable: true,
-    package: 'egg-security',
+    package: "egg-security",
   },
 
   /**
@@ -76,7 +76,7 @@ module.exports = {
    */
   development: {
     enable: true,
-    package: 'egg-development',
+    package: "egg-development",
   },
 
   /**
@@ -87,7 +87,7 @@ module.exports = {
    */
   logrotator: {
     enable: true,
-    package: 'egg-logrotator',
+    package: "egg-logrotator",
   },
 
   /**
@@ -98,7 +98,7 @@ module.exports = {
    */
   schedule: {
     enable: true,
-    package: 'egg-schedule',
+    package: "egg-schedule",
   },
 
   /**
@@ -109,7 +109,7 @@ module.exports = {
    */
   static: {
     enable: true,
-    package: 'egg-static',
+    package: "egg-static",
   },
 
   /**
@@ -120,7 +120,7 @@ module.exports = {
    */
   jsonp: {
     enable: true,
-    package: 'egg-jsonp',
+    package: "egg-jsonp",
   },
 
   /**
@@ -131,6 +131,6 @@ module.exports = {
    */
   view: {
     enable: true,
-    package: 'egg-view',
+    package: "egg-view",
   },
 };

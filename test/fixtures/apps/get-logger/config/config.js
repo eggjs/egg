@@ -1,15 +1,15 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   return {
     customLogger: {
       aLogger: {
-        file: path.join(appInfo.baseDir, 'logs', appInfo.name, 'a.log'),
+        file: path.join(appInfo.baseDir, "logs", appInfo.name, "a.log"),
       },
     },
 
-    keys: 'secret key',
+    keys: "secret key",
   };
 };

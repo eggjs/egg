@@ -64,16 +64,16 @@ Each of those APIs is required to be implemented almost twice - one for Agent an
 This is the entry function of Egg's multiprocess launcher, based on [egg-cluster](https://github.com/eggjs/egg-cluster), to start Master, but EggCore running in a single process doesn't invoke this function while Egg does.
 
 ```js
-const startCluster = require('egg').startCluster;
+const startCluster = require("egg").startCluster;
 startCluster(
   {
     // directory of code
-    baseDir: '/path/to/app',
+    baseDir: "/path/to/app",
     // directory of framework
-    framework: '/path/to/framework',
+    framework: "/path/to/framework",
   },
   () => {
-    console.log('app started');
+    console.log("app started");
   },
 );
 ```
@@ -145,26 +145,26 @@ Given a triple-layer framework: department level > enterprise level > Egg
 
 ```js
 // enterprise
-const Application = require('egg').Application;
+const Application = require("egg").Application;
 class Enterprise extends Application {
   get [EGG_PATH]() {
-    return '/path/to/enterprise';
+    return "/path/to/enterprise";
   }
 }
 // Customize Application
 exports.Application = Enterprise;
 
 // department
-const Application = require('enterprise').Application;
+const Application = require("enterprise").Application;
 // extend enterprise's Application
 class department extends Application {
   get [EGG_PATH]() {
-    return '/path/to/department';
+    return "/path/to/department";
   }
 }
 
 // the path of `department` have to be designated as described above
-const Application = require('department').Application;
+const Application = require("department").Application;
 const app = new Application();
 app.ready();
 ```
@@ -177,9 +177,9 @@ Egg's mutilprocess model is composed of Application and Agent. Therefore Agent, 
 
 ```js
 // lib/framework.js
-const path = require('path');
-const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
+const path = require("path");
+const egg = require("egg");
+const EGG_PATH = Symbol.for("egg#eggPath");
 
 class Application extends egg.Application {
   get [EGG_PATH]() {
@@ -211,9 +211,9 @@ As the same as Egg-Path, Loader exposes itself at `Symbol.for('egg#loader')` to 
 
 ```js
 // lib/framework.js
-const path = require('path');
-const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
+const path = require("path");
+const egg = require("egg");
+const EGG_PATH = Symbol.for("egg#eggPath");
 
 class YadanAppWorkerLoader extends egg.AppWorkerLoader {
   load() {
@@ -268,13 +268,13 @@ You'd better read [unittest](../core/unittest.md) first, which is similiar to fr
 Here are some differences between initiation of frameworks.
 
 ```js
-const mock = require('egg-mock');
-describe('test/index.test.js', () => {
+const mock = require("egg-mock");
+describe("test/index.test.js", () => {
   let app;
   before(() => {
     app = mock.app({
       // test/fixtures/apps/example
-      baseDir: 'apps/example',
+      baseDir: "apps/example",
       // importent !! Do not miss
       framework: true,
     });
@@ -284,8 +284,8 @@ describe('test/index.test.js', () => {
   after(() => app.close());
   afterEach(mock.restore);
 
-  it('should success', () => {
-    return app.httpRequest().get('/').expect(200);
+  it("should success", () => {
+    return app.httpRequest().get("/").expect(200);
   });
 });
 ```
@@ -301,24 +301,24 @@ describe('test/index.test.js', () => {
 `mm.app` enables cache as default, which means new envoriment setting would not work once loaded.
 
 ```js
-const mock = require('egg-mock');
-describe('/test/index.test.js', () => {
+const mock = require("egg-mock");
+describe("/test/index.test.js", () => {
   let app;
   afterEach(() => app.close());
 
-  it('should test on local', () => {
-    mock.env('local');
+  it("should test on local", () => {
+    mock.env("local");
     app = mock.app({
-      baseDir: 'apps/example',
+      baseDir: "apps/example",
       framework: true,
       cache: false,
     });
     return app.ready();
   });
-  it('should test on prod', () => {
-    mock.env('prod');
+  it("should test on prod", () => {
+    mock.env("prod");
     app = mock.app({
-      baseDir: 'apps/example',
+      baseDir: "apps/example",
       framework: true,
       cache: false,
     });
@@ -334,20 +334,20 @@ Mutilprocess is rarely tested because of the high cost and the unavailability of
 The option of `mock.cluster` have no difference with `mm.app` while their APIs are totally distinct, however, SuperTest still works.
 
 ```js
-const mock = require('egg-mock');
-describe('/test/index.test.js', () => {
+const mock = require("egg-mock");
+describe("/test/index.test.js", () => {
   let app;
   before(() => {
     app = mock.cluster({
-      baseDir: 'apps/example',
+      baseDir: "apps/example",
       framework: true,
     });
     return app.ready();
   });
   after(() => app.close());
   afterEach(mock.restore);
-  it('should success', () => {
-    return app.httpRequest().get('/').expect(200);
+  it("should success", () => {
+    return app.httpRequest().get("/").expect(200);
   });
 });
 ```
@@ -355,20 +355,20 @@ describe('/test/index.test.js', () => {
 Tests of `stdout/stderr` are also avaiable, since `mm.cluster` is based on [coffee](https://github.com/popomore/coffee) in which multiprocess testing is supported.
 
 ```js
-const mock = require('egg-mock');
-describe('/test/index.test.js', () => {
+const mock = require("egg-mock");
+describe("/test/index.test.js", () => {
   let app;
   before(() => {
     app = mock.cluster({
-      baseDir: 'apps/example',
+      baseDir: "apps/example",
       framework: true,
     });
     return app.ready();
   });
   after(() => app.close());
-  it('should get `started`', () => {
+  it("should get `started`", () => {
     // set the expectation of console
-    app.expect('stdout', /started/);
+    app.expect("stdout", /started/);
   });
 });
 ```

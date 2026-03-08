@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-exports.env = 'local';
+exports.env = "local";
 
 exports.watcher = {
-  type: 'development',
+  type: "development",
 };
 
-exports.keys = 'test key';
+exports.keys = "test key";

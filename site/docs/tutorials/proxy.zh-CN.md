@@ -25,7 +25,7 @@ exports.proxy = true;
 ```js
 // config/config.default.js
 
-exports.ipHeaders = 'X-Real-Ip, X-Forwarded-For';
+exports.ipHeaders = "X-Real-Ip, X-Forwarded-For";
 ```
 
 ### `config.maxIpsCount`
@@ -59,7 +59,7 @@ exports.maxIpsCount = 1;
 ```js
 // config/config.default.js
 
-exports.protocolHeaders = 'X-Real-Proto, X-Forwarded-Proto';
+exports.protocolHeaders = "X-Real-Proto, X-Forwarded-Proto";
 ```
 
 ### `config.hostHeaders`
@@ -69,5 +69,5 @@ exports.protocolHeaders = 'X-Real-Proto, X-Forwarded-Proto';
 ```js
 // config/config.default.js
 
-exports.hostHeaders = 'X-Forwarded-Host';
+exports.hostHeaders = "X-Forwarded-Host";
 ```

@@ -57,7 +57,7 @@ For example, if we would like to add a Getter property `app.bar`:
 
 ```js
 // app/extend/application.js
-const BAR = Symbol('Application#bar');
+const BAR = Symbol("Application#bar");
 
 module.exports = {
   get bar() {
@@ -108,14 +108,14 @@ For example, if we would like to add a Getter property `ctx.bar`:
 
 ```js
 // app/extend/context.js
-const BAR = Symbol('Context#bar');
+const BAR = Symbol("Context#bar");
 
 module.exports = {
   get bar() {
     // `this` points to the ctx object, you can access other methods or property of ctx
     if (!this[BAR]) {
       // For example, we can get from header, but it should be more complex in real situation.
-      this[BAR] = this.get('x-bar');
+      this[BAR] = this.get("x-bar");
     }
     return this[BAR];
   },
@@ -146,7 +146,7 @@ For instance, we could add a property `request.foo` in the following way:
 // app/extend/request.js
 module.exports = {
   get foo() {
-    return this.get('x-request-foo');
+    return this.get("x-request-foo");
   },
 };
 ```
@@ -175,7 +175,7 @@ For instance, we could add a setter `request.foo` in the following way:
 // app/extend/response.js
 module.exports = {
   set foo(value) {
-    this.set('x-response-foo', value);
+    this.set("x-response-foo", value);
   },
 };
 ```
@@ -196,10 +196,10 @@ Access helper object with `ctx.helper`, for example:
 
 ```js
 // Assume that home router has already defined in app/router.js
-app.get('home', '/', 'home.index');
+app.get("home", "/", "home.index");
 
 // Use helper to calculate the specific url path
-ctx.helper.pathFor('home', { by: 'recent', limit: 20 });
+ctx.helper.pathFor("home", { by: "recent", limit: 20 });
 // => /?by=recent&limit=20
 ```
 

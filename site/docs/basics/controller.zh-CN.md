@@ -19,6 +19,7 @@ order: 7
 2. 校验、组装参数。
 3. 调用 Service 进行业务处理，必要时处理转换 Service 的返回结果，让它适应用户的需求。
 4. 通过 HTTP 将结果响应给用户。
+
 ## 如何编写 Controller
 
 所有的 Controller 文件都必须放在 `app/controller` 目录下，可以支持多级目录，访问的时候可以通过目录名级联访问。Controller 支持多种形式进行编写，可以根据不同的项目场景和开发习惯来选择。
@@ -29,13 +30,13 @@ order: 7
 
 ```javascript
 // app/controller/post.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 class PostController extends Controller {
   async create() {
     const { ctx, service } = this;
     const createRule = {
-      title: { type: 'string' },
-      content: { type: 'string' },
+      title: { type: "string" },
+      content: { type: "string" },
     };
     // 校验参数
     ctx.validate(createRule);
@@ -58,7 +59,7 @@ module.exports = PostController;
 // app/router.js
 module.exports = (app) => {
   const { router, controller } = app;
-  router.post('createPost', '/api/posts', controller.post.create);
+  router.post("createPost", "/api/posts", controller.post.create);
 };
 ```
 
@@ -66,8 +67,8 @@ Controller 支持多级目录。例如，如果我们将上面的 Controller 代
 
 ```javascript
 // app/router.js
-module.exports = app => {
-  app.router.post('createPost', '/api/posts', app.controller.sub.post.create);
+module.exports = (app) => {
+  app.router.post("createPost", "/api/posts", app.controller.sub.post.create);
 };
 ```
 
@@ -85,7 +86,7 @@ module.exports = app => {
 
 ```javascript
 // app/core/base_controller.js
-const { Controller } = require('egg');
+const { Controller } = require("egg");
 class BaseController extends Controller {
   get user() {
     return this.ctx.session.user;
@@ -99,7 +100,7 @@ class BaseController extends Controller {
   }
 
   notFound(msg) {
-    msg = msg || 'not found';
+    msg = msg || "not found";
     this.ctx.throw(404, msg);
   }
 }
@@ -110,7 +111,7 @@ module.exports = BaseController;
 
 ```javascript
 // app/controller/post.js
-const Controller = require('../core/base_controller');
+const Controller = require("../core/base_controller");
 class PostController extends Controller {
   async list() {
     const posts = await this.service.listByUser(this.user);
@@ -127,10 +128,10 @@ class PostController extends Controller {
 
 ```javascript
 // app/controller/post.js
-exports.create = async ctx => {
+exports.create = async (ctx) => {
   const createRule = {
-    title: { type: 'string' },
-    content: { type: 'string' },
+    title: { type: "string" },
+    content: { type: "string" },
   };
   // 校验参数
   ctx.validate(createRule);
@@ -146,6 +147,7 @@ exports.create = async ctx => {
 ```
 
 以上是一个简单直观的例子，我们引入了一些新的概念，但它们都是易于理解的。我们将在后面对它们进行更详细的介绍。
+
 ## HTTP 基础
 
 由于控制器（Controller）基本上是业务开发中唯一与 HTTP 协议打交道的地方，在继续深入了解之前，我们首先要简单了解一下 HTTP 协议本身。
@@ -195,6 +197,7 @@ Connection: keep-alive
 响应头从第二行至下一个空行，这里的 Content-Type 和 Content-Length 表明响应格式为 JSON，长度 8 字节。
 
 最后部分即响应实际内容。
+
 ## 获取 HTTP 请求参数
 
 从上述 HTTP 请求示例中, 我们可以看到, 多个位置可以放置用户的请求数据。框架通过在 Controller 上绑定的 Context 实例, 提供了多种便捷方法和属性, 以获取用户通过 HTTP 请求发送过来的参数。
@@ -221,8 +224,8 @@ class PostController extends Controller {
 之所以这样处理是为了保持一致性。一般我们不会设计让用户传递相同 key 的 Query String，所以经常编写如下代码：
 
 ```js
-const key = ctx.query.key || '';
-if (key.startsWith('egg')) {
+const key = ctx.query.key || "";
+if (key.startsWith("egg")) {
   // 执行相应操作
 }
 ```
@@ -258,8 +261,8 @@ class PostController extends Controller {
 // GET /projects/1/app/2
 class AppController extends Controller {
   async listApp() {
-    assert.equal(this.ctx.params.projectId, '1');
-    assert.equal(this.ctx.params.appId, '2');
+    assert.equal(this.ctx.params.projectId, "1");
+    assert.equal(this.ctx.params.appId, "2");
   }
 }
 ```
@@ -283,8 +286,8 @@ class AppController extends Controller {
 // {"title": "controller", "content": "what is controller"}
 class PostController extends Controller {
   async listPosts() {
-    assert.equal(this.ctx.request.body.title, 'controller');
-    assert.equal(this.ctx.request.body.content, 'what is controller');
+    assert.equal(this.ctx.request.body.title, "controller");
+    assert.equal(this.ctx.request.body.content, "what is controller");
   }
 }
 ```
@@ -300,8 +303,8 @@ class PostController extends Controller {
 ```js
 module.exports = {
   bodyParser: {
-    jsonLimit: '1mb',
-    formLimit: '1mb',
+    jsonLimit: "1mb",
+    formLimit: "1mb",
   },
 };
 ```
@@ -311,6 +314,7 @@ module.exports = {
 **注意：调整 bodyParser 支持的 body 长度时，如果应用之前有一层反向代理（如 Nginx），同样需要调整配置确保支持相等长度的请求 body。**
 
 **常见错误：将 `ctx.request.body` 与 `ctx.body` 混淆，后者实际上是 `ctx.response.body` 的简写。**
+
 ### 获取上传的文件
 
 请求体除了可以带参数之外，还可以发送文件。通常情况下，浏览器会通过 `Multipart/form-data` 格式发送文件。通过内置的 [Multipart](https://github.com/eggjs/egg-multipart) 插件，框架支持获取用户上传的文件。我们为你提供了两种方式：
@@ -324,7 +328,7 @@ module.exports = {
 ```javascript
 // config/config.default.js
 exports.multipart = {
-  mode: 'file',
+  mode: "file",
 };
 ```
 
@@ -336,8 +340,7 @@ exports.multipart = {
 
 ```html
 <form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
-  title: <input name="title" />
-  file: <input name="file" type="file" />
+  title: <input name="title" /> file: <input name="file" type="file" />
   <button type="submit">上传</button>
 </form>
 ```
@@ -346,15 +349,15 @@ exports.multipart = {
 
 ```javascript
 // app/controller/upload.js
-const Controller = require('egg').Controller;
-const fs = require('fs/promises');
-const path = require('path'); // 补上缺失的 path 模块
+const Controller = require("egg").Controller;
+const fs = require("fs/promises");
+const path = require("path"); // 补上缺失的 path 模块
 
 class UploadController extends Controller {
   async upload() {
     const { ctx } = this;
     const file = ctx.request.files[0];
-    const name = 'egg-multipart-test/' + path.basename(file.filename);
+    const name = "egg-multipart-test/" + path.basename(file.filename);
     let result;
     try {
       // 处理文件，例如上传到云采存储
@@ -381,9 +384,8 @@ module.exports = UploadController;
 
 ```html
 <form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
-  title: <input name="title" />
-  file1: <input name="file1" type="file" />
-  file2: <input name="file2" type="file" />
+  title: <input name="title" /> file1: <input name="file1" type="file" /> file2:
+  <input name="file2" type="file" />
   <button type="submit">上传</button>
 </form>
 ```
@@ -392,9 +394,9 @@ module.exports = UploadController;
 
 ```javascript
 // app/controller/upload.js
-const Controller = require('egg').Controller;
-const fs = require('fs/promises');
-const path = require('path'); // 补上缺失的 path 模块
+const Controller = require("egg").Controller;
+const fs = require("fs/promises");
+const path = require("path"); // 补上缺失的 path 模块
 
 class UploadController extends Controller {
   async upload() {
@@ -410,10 +412,7 @@ class UploadController extends Controller {
       let result;
       try {
         // 处理文件，例如上传到云采存储
-        result = await ctx.oss.put(
-          'egg-multipart-test/' + file.filename,
-          file.filepath,
-        );
+        result = await ctx.oss.put("egg-multipart-test/" + file.filename, file.filepath);
       } finally {
         // 注意删除临时文件
         await fs.unlink(file.filepath);
@@ -427,6 +426,7 @@ module.exports = UploadController;
 ```
 
 以上代码包涵了前端的表单代码以及后端处理上传文件的代码。在服务器端，我们首先获取上传文件的信息，然后将文件上传到指定的储存系统，例如云储存。随后，我们确保了临时文件被删除，防止占用服务器空间。
+
 #### Stream 模式
 
 如果你对 Node 中的 Stream 模式非常熟悉，那么你可以选择此模式。在 Controller 中，我们可以通过 `ctx.getFileStream()` 接口获取到上传的文件流。
@@ -435,7 +435,7 @@ module.exports = UploadController;
 
 ```html
 <form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
-  title：<input name="title"/> file：<input name="file" type="file"/>
+  title：<input name="title" /> file：<input name="file" type="file" />
   <button type="submit">Upload</button>
 </form>
 ```
@@ -481,8 +481,8 @@ module.exports = UploaderController;
 如果要获取同时上传的多个文件，不能通过 `ctx.getFileStream()` 来获取，只能通过下面这种方式：
 
 ```js
-const sendToWormhole = require('stream-wormhole');
-const Controller = require('egg').Controller;
+const sendToWormhole = require("stream-wormhole");
+const Controller = require("egg").Controller;
 
 class UploaderController extends Controller {
   async upload() {
@@ -493,10 +493,10 @@ class UploaderController extends Controller {
     while ((part = await parts()) != null) {
       if (part.length) {
         // 这是 busboy 的字段
-        console.log('field：' + part[0]);
-        console.log('value：' + part[1]);
-        console.log('valueTruncated：' + part[2]);
-        console.log('fieldnameTruncated：' + part[3]);
+        console.log("field：" + part[0]);
+        console.log("value：" + part[1]);
+        console.log("valueTruncated：" + part[2]);
+        console.log("fieldnameTruncated：" + part[3]);
       } else {
         if (!part.filename) {
           // 这时是用户没有选择文件就点击了上传（part 是 file stream，但是 part.filename 为空）
@@ -504,14 +504,14 @@ class UploaderController extends Controller {
           return;
         }
         // part 是上传的文件流
-        console.log('field：' + part.fieldname);
-        console.log('filename：' + part.filename);
-        console.log('encoding：' + part.encoding);
-        console.log('mime：' + part.mime);
+        console.log("field：" + part.fieldname);
+        console.log("filename：" + part.filename);
+        console.log("encoding：" + part.encoding);
+        console.log("mime：" + part.mime);
         // 文件处理，上传到云存储等等
         let result;
         try {
-          result = await ctx.oss.put('egg-multipart-test/' + part.filename, part);
+          result = await ctx.oss.put("egg-multipart-test/" + part.filename, part);
         } catch (err) {
           // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
           await sendToWormhole(part);
@@ -520,7 +520,7 @@ class UploaderController extends Controller {
         console.log(result);
       }
     }
-    console.log('and we are done parsing the form!');
+    console.log("and we are done parsing the form!");
   }
 }
 
@@ -531,28 +531,34 @@ module.exports = UploaderController;
 
 ```js
 // images
-'.jpg', '.jpeg', // image/jpeg
-'.png', // image/png，image/x-png
-'.gif', // image/gif
-'.bmp', // image/bmp
-'.wbmp', // image/vnd.wap.wbmp
-'.webp',
-'.tif',
-'.psd',
-// text
-'.svg',
-'.js', '.jsx',
-'.json',
-'.css', '.less',
-'.html', '.htm',
-'.xml',
-// tar
-'.zip',
-'.gz', '.tgz', '.gzip',
-// video
-'.mp3',
-'.mp4',
-'.avi'
+(".jpg",
+  ".jpeg", // image/jpeg
+  ".png", // image/png，image/x-png
+  ".gif", // image/gif
+  ".bmp", // image/bmp
+  ".wbmp", // image/vnd.wap.wbmp
+  ".webp",
+  ".tif",
+  ".psd",
+  // text
+  ".svg",
+  ".js",
+  ".jsx",
+  ".json",
+  ".css",
+  ".less",
+  ".html",
+  ".htm",
+  ".xml",
+  // tar
+  ".zip",
+  ".gz",
+  ".tgz",
+  ".gzip",
+  // video
+  ".mp3",
+  ".mp4",
+  ".avi");
 ```
 
 用户可以通过在 `config/config.default.js` 中的配置来新增支持的文件扩展名，或者重写整个白名单。
@@ -562,8 +568,8 @@ module.exports = UploaderController;
 ```js
 module.exports = {
   multipart: {
-    fileExtensions: ['.apk'] // 增加对 '.apk' 扩展名的文件支持
-  }
+    fileExtensions: [".apk"], // 增加对 '.apk' 扩展名的文件支持
+  },
 };
 ```
 
@@ -572,14 +578,15 @@ module.exports = {
 ```js
 module.exports = {
   multipart: {
-    whitelist: ['.png'] // 覆盖整个白名单，只允许上传 '.png' 格式
-  }
+    whitelist: [".png"], // 覆盖整个白名单，只允许上传 '.png' 格式
+  },
 };
 ```
 
 **注意：当重写了 whitelist 时，fileExtensions 不生效。**
 
 欲了解更多有关的技术细节和信息，请参阅 [Egg-Multipart](https://github.com/eggjs/egg-multipart)。
+
 ### Header
 
 除了从 URL 和请求 body 上获取参数之外，还有许多参数是通过请求 header 传递的。框架提供了一些辅助属性和方法来获取：
@@ -629,15 +636,15 @@ HTTP 请求本质上是无状态的，但 Web 应用通常需要知道请求者�
 class CookieController extends Controller {
   async add() {
     const ctx = this.ctx;
-    let count = ctx.cookies.get('count');
+    let count = ctx.cookies.get("count");
     count = count ? Number(count) : 0;
-    ctx.cookies.set('count', ++count);
+    ctx.cookies.set("count", ++count);
     ctx.body = count;
   }
 
   async remove() {
     const ctx = this.ctx;
-    ctx.cookies.set('count', null);
+    ctx.cookies.set("count", null);
     ctx.status = 204;
   }
 }
@@ -663,7 +670,7 @@ module.exports = {
 ```js
 module.exports = {
   cookies: {
-    sameSite: 'lax',
+    sameSite: "lax",
   },
 };
 ```
@@ -709,10 +716,11 @@ Session 相关配置也位于 `config.default.js`：
 
 ```js
 module.exports = {
-  key: 'EGG_SESS', // Session Cookie 名称
+  key: "EGG_SESS", // Session Cookie 名称
   maxAge: 86400000, // Session 最长有效期
 };
 ```
+
 ## 参数校验
 
 在获取用户请求的参数后，不可避免要进行一些校验。
@@ -723,7 +731,7 @@ module.exports = {
 // config/plugin.js
 exports.validate = {
   enable: true,
-  package: 'egg-validate',
+  package: "egg-validate",
 };
 ```
 
@@ -735,8 +743,8 @@ class PostController extends Controller {
     // 校验参数
     // 如果不传第二个参数，会自动校验 `ctx.request.body`
     this.ctx.validate({
-      title: { type: 'string' },
-      content: { type: 'string' }
+      title: { type: "string" },
+      content: { type: "string" },
     });
   }
 }
@@ -769,11 +777,11 @@ class PostController extends Controller {
 
 ```js
 // app.js
-app.validator.addRule('json', (rule, value) => {
+app.validator.addRule("json", (rule, value) => {
   try {
     JSON.parse(value);
   } catch (err) {
-    return '必须是 JSON 字符串';
+    return "必须是 JSON 字符串";
   }
 });
 ```
@@ -785,7 +793,7 @@ class PostController extends Controller {
   async handler() {
     const ctx = this.ctx;
     // query.test 字段必须是 JSON 字符串
-    const rule = { test: 'json' };
+    const rule = { test: "json" };
     ctx.validate(rule, ctx.query);
   }
 }
@@ -812,6 +820,7 @@ class PostController extends Controller {
 ```
 
 Service 具体写法，查看 [Service](./service.md) 章节。
+
 ## 发送 HTTP 响应
 
 当业务逻辑完成之后，Controller 的最后一个职责就是将业务逻辑的处理结果通过 HTTP 响应发送给用户。
@@ -846,14 +855,14 @@ class PostController extends Controller {
 class ViewController extends Controller {
   async show() {
     this.ctx.body = {
-      name: 'egg',
-      category: 'framework',
-      language: 'Node.js'
+      name: "egg",
+      category: "framework",
+      language: "Node.js",
     };
   }
 
   async page() {
-    this.ctx.body = '<html><h1>Hello</h1></html>';
+    this.ctx.body = "<html><h1>Hello</h1></html>";
   }
 }
 ```
@@ -865,7 +874,7 @@ class ProxyController extends Controller {
   async proxy() {
     const ctx = this.ctx;
     const result = await ctx.curl(url, {
-      streaming: true
+      streaming: true,
     });
     ctx.set(result.header);
     // result.res 是一个 stream
@@ -882,7 +891,7 @@ class ProxyController extends Controller {
 class HomeController extends Controller {
   async index() {
     const ctx = this.ctx;
-    await ctx.render('home.tpl', { name: 'egg' });
+    await ctx.render("home.tpl", { name: "egg" });
     // ctx.body = await ctx.renderString('hi, {{ name }}', { name: 'egg' });
   }
 }
@@ -900,10 +909,10 @@ class HomeController extends Controller {
 
 ```js
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   const jsonp = app.jsonp();
-  app.router.get('/api/posts/:id', jsonp, app.controller.posts.show);
-  app.router.get('/api/posts', jsonp, app.controller.posts.list);
+  app.router.get("/api/posts/:id", jsonp, app.controller.posts.show);
+  app.router.get("/api/posts", jsonp, app.controller.posts.list);
 };
 ```
 
@@ -914,9 +923,9 @@ module.exports = app => {
 class PostController extends Controller {
   async show() {
     this.ctx.body = {
-      name: 'egg',
-      category: 'framework',
-      language: 'Node.js'
+      name: "egg",
+      category: "framework",
+      language: "Node.js",
     };
   }
 }
@@ -931,8 +940,8 @@ class PostController extends Controller {
 ```js
 // config/config.default.js
 exports.jsonp = {
-  callback: 'callback', // 识别 query 中的 `callback` 参数
-  limit: 100 // 函数名最长为 100 个字符
+  callback: "callback", // 识别 query 中的 `callback` 参数
+  limit: 100, // 函数名最长为 100 个字符
 };
 ```
 
@@ -942,14 +951,10 @@ exports.jsonp = {
 
 ```js
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   const { router, controller, jsonp } = app;
-  router.get(
-    '/api/posts/:id',
-    jsonp({ callback: 'callback' }),
-    controller.posts.show
-  );
-  router.get('/api/posts', jsonp({ callback: 'cb' }), controller.posts.list);
+  router.get("/api/posts/:id", jsonp({ callback: "callback" }), controller.posts.show);
+  router.get("/api/posts", jsonp({ callback: "cb" }), controller.posts.list);
 };
 ```
 
@@ -971,8 +976,8 @@ module.exports = app => {
 // config/config.default.js
 module.exports = {
   jsonp: {
-    csrf: true
-  }
+    csrf: true,
+  },
 };
 ```
 
@@ -987,7 +992,7 @@ module.exports = {
 ```javascript
 // config/config.default.js
 exports.jsonp = {
-  whiteList: /^https?:\/\/test.com\//
+  whiteList: /^https?:\/\/test.com\//,
   // whiteList: '.test.com'
   // whiteList: 'sub.test.com'
   // whiteList: ['sub.test.com', 'sub2.test.com']
@@ -1000,7 +1005,7 @@ exports.jsonp = {
 
 ```javascript
 exports.jsonp = {
-  whiteList: /^https?:\/\/test.com\//
+  whiteList: /^https?:\/\/test.com\//,
 };
 // Matches referrer:
 // https://test.com/hello
@@ -1011,7 +1016,7 @@ exports.jsonp = {
 
 ```javascript
 exports.jsonp = {
-  whiteList: '.test.com'
+  whiteList: ".test.com",
 };
 // Matches domain test.com:
 // https://test.com/hello
@@ -1022,7 +1027,7 @@ exports.jsonp = {
 // http://sub.sub.test.com/
 
 exports.jsonp = {
-  whiteList: 'sub.test.com'
+  whiteList: "sub.test.com",
 };
 // Only matches domain sub.test.com:
 // https://sub.test.com/hello
@@ -1033,7 +1038,7 @@ exports.jsonp = {
 
 ```javascript
 exports.jsonp = {
-  whiteList: ['sub.test.com', 'sub2.test.com']
+  whiteList: ["sub.test.com", "sub2.test.com"],
 };
 // Matches domain sub.test.com and sub2.test.com:
 // https://sub.test.com/hello
@@ -1057,7 +1062,7 @@ class ProxyController extends Controller {
     ctx.body = await ctx.service.post.get();
     const used = Date.now() - start;
     // 设置一个响应头
-    ctx.set('show-response-time', used.toString());
+    ctx.set("show-response-time", used.toString());
   }
 }
 ```
@@ -1074,7 +1079,7 @@ class ProxyController extends Controller {
 ```javascript
 // config/config.default.js
 exports.security = {
-  domainWhiteList: ['.domain.com'] // 安全白名单，以 "." 开头
+  domainWhiteList: [".domain.com"], // 安全白名单，以 "." 开头
 };
 ```
 

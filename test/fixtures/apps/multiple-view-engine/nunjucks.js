@@ -1,4 +1,4 @@
-const { sleep } = require('../../../utils');
+const { sleep } = require("../../../utils");
 
 class NunjucksView {
   async render(filename, locals, options) {
@@ -7,7 +7,7 @@ class NunjucksView {
       filename,
       locals,
       options,
-      type: 'nunjucks',
+      type: "nunjucks",
     };
   }
 

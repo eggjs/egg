@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-module.exports = require('koa-bodyparser');
+module.exports = require("koa-bodyparser");

@@ -1,3 +1,3 @@
 module.exports = function* () {
-  yield this.render('index.html');
+  yield this.render("index.html");
 };

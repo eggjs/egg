@@ -1,5 +1,5 @@
-const EventEmitter = require('events').EventEmitter;
-const { sleep } = require('../../../../../utils');
+const EventEmitter = require("events").EventEmitter;
+const { sleep } = require("../../../../../utils");
 
 class MockClient extends EventEmitter {
   constructor(options) {
@@ -7,23 +7,25 @@ class MockClient extends EventEmitter {
 
     this.cache = new Map();
 
-    setImmediate(function() {
-      this.ready(true);
-    }.bind(this));
+    setImmediate(
+      function () {
+        this.ready(true);
+      }.bind(this),
+    );
   }
 
   ready(flagOrFunction) {
     this._ready = !!this._ready;
     this._readyCallbacks = this._readyCallbacks || [];
 
-    if (typeof flagOrFunction === 'function') {
+    if (typeof flagOrFunction === "function") {
       this._readyCallbacks.push(flagOrFunction);
     } else {
       this._ready = !!flagOrFunction;
     }
 
     if (this._ready) {
-      this._readyCallbacks.splice(0, Infinity).forEach(function(callback) {
+      this._readyCallbacks.splice(0, Infinity).forEach(function (callback) {
         process.nextTick(callback);
       });
     }
@@ -31,9 +33,9 @@ class MockClient extends EventEmitter {
   }
 
   getCallback(key, callback) {
-    setTimeout(function() {
-      if (id === 'error') {
-        callback(new Error('mock error'));
+    setTimeout(function () {
+      if (id === "error") {
+        callback(new Error("mock error"));
       } else {
         callback(null, this.cache.get(key));
       }
@@ -48,17 +50,17 @@ class MockClient extends EventEmitter {
     });
   }
 
-  * getTimeout() {
+  *getTimeout() {
     yield sleep(6000);
-    return 'timeout';
+    return "timeout";
   }
 
-  * getDataGenerator(key) {
+  *getDataGenerator(key) {
     yield sleep(100);
     return this.cache.get(key);
   }
 
-  * save(key, value) {
+  *save(key, value) {
     yield sleep(100);
     this.cache.set(key, value);
   }
@@ -66,7 +68,7 @@ class MockClient extends EventEmitter {
   getError() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        reject(new Error('mock error'));
+        reject(new Error("mock error"));
       }, 100);
     });
   }

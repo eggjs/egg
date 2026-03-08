@@ -27,7 +27,7 @@ $ npm i egg-socket.io --save
 // {app_root} /config/plugin.js
 exports.io = {
   enable: true,
-  package: 'egg-socket.io',
+  package: "egg-socket.io",
 };
 ```
 
@@ -38,11 +38,11 @@ exports.io = {
 exports.io = {
   init: {}, // passed to engine.io
   namespace: {
-    '/': {
+    "/": {
       connectionMiddleware: [],
       packetMiddleware: [],
     },
-    '/ example': {
+    "/ example": {
       connectionMiddleware: [],
       packetMiddleware: [],
     },
@@ -60,7 +60,7 @@ If you insist using [uws](https://www.npmjs.com/package/uws) instead of the defa
 ```js
 // {app_root} / config / config. $ {env} .js
 exports.io = {
-  init: { wsEngine: 'uws' }, // default: ws
+  init: { wsEngine: "uws" }, // default: ws
 };
 ```
 
@@ -168,9 +168,9 @@ Fires when each client connects or quits. Therefore, we usually perform authoriz
 // {app_root} /app/io/middleware/connection.js
 module.exports = (app) => {
   return async (ctx, next) => {
-    ctx.socket.emit('res', 'connected!');
+    ctx.socket.emit("res", "connected!");
     await next(); // execute when disconnect.
-    console.log('disconnection!');
+    console.log("disconnection!");
   };
 };
 ```
@@ -179,9 +179,9 @@ Kick out the user example:
 
 ```js
 const tick = (id, msg) => {
-  logger.debug('# tick', id, msg);
+  logger.debug("# tick", id, msg);
   socket.emit(id, msg);
-  app.io.of('/').adapter.remoteDisconnect(id, true, (err) => {
+  app.io.of("/").adapter.remoteDisconnect(id, true, (err) => {
     logger.error(err);
   });
 };
@@ -198,7 +198,7 @@ module.exports = (app) => {
       return;
     }
     await next();
-    console.log('disconnection!');
+    console.log("disconnection!");
   };
 };
 ```
@@ -211,8 +211,8 @@ Acts on each data packet (each message). In the production environment, it is us
 // {app_root} /app/io/middleware/packet.js
 module.exports = (app) => {
   return async (ctx, next) => {
-    ctx.socket.emit('res', 'packet received!');
-    console.log('packet:', ctx.packet);
+    ctx.socket.emit("res", "packet received!");
+    console.log("packet:", ctx.packet);
     await next();
   };
 };
@@ -232,15 +232,15 @@ A controller deals with the events sent by the client. Since it inherits the `eg
 
 ```js
 // {app_root} /app/io/controller/default.js
-'use strict';
+"use strict";
 
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 class DefaultController extends Controller {
   async ping() {
     const { ctx, app } = this;
     const message = ctx.args[0];
-    await ctx.socket.emit('res', `Hi! I've got your message: $ {message}`);
+    await ctx.socket.emit("res", `Hi! I've got your message: $ {message}`);
   }
 }
 
@@ -250,7 +250,7 @@ module.exports = DefaultController;
 
 exports.ping = async function () {
   const message = this.args[0];
-  await this.socket.emit('res', `Hi! I've got your message: $ {message}`);
+  await this.socket.emit("res", `Hi! I've got your message: $ {message}`);
 };
 ```
 
@@ -263,8 +263,8 @@ Routing is responsible for passing various events received by the socket to the 
 
 module.exports = (app) => {
   const { router, controller, io } = app; // default
-  router.get('/', controller.home.index); // socket.io
-  io.of('/').route('server', io.controller.home.server);
+  router.get("/", controller.home.index); // socket.io
+  io.of("/").route("server", io.controller.home.server);
 };
 ```
 
@@ -286,16 +286,16 @@ In socket.io we use the `of` to divide the namespace; given that nsp is usually 
 
 ```js
 // socket.io
-var nsp = io.of('/my-namespace');
-nsp.on('connection', function (socket) {
-  console.log('someone connected');
+var nsp = io.of("/my-namespace");
+nsp.on("connection", function (socket) {
+  console.log("someone connected");
 });
-nsp.emit('hi', 'everyone!');
+nsp.emit("hi", "everyone!");
 
 // egg
 exports.io = {
   namespace: {
-    '/': {
+    "/": {
       connectionMiddleware: [],
       packetMiddleware: [],
     },
@@ -336,42 +336,42 @@ const log = console.log;
 
 window.onload = function () {
   // init
-  const socket = io('/', {
+  const socket = io("/", {
     // Actual use can pass parameters here
     query: {
-      room: 'demo',
+      room: "demo",
       userId: `client_${Math.random()}`,
     },
 
-    transports: ['websocket'],
+    transports: ["websocket"],
   });
 
-  socket.on('connect', () => {
+  socket.on("connect", () => {
     const id = socket.id;
 
-    log('#connect,', id, socket); // receive online user information
+    log("#connect,", id, socket); // receive online user information
 
     // listen for its own id to implement p2p communication
     socket.on(id, (msg) => {
-      log('#receive,', msg);
+      log("#receive,", msg);
     });
   });
 
-  socket.on('online', (msg) => {
-    log('#online,', msg);
+  socket.on("online", (msg) => {
+    log("#online,", msg);
   });
 
   // system events
-  socket.on('disconnect', (msg) => {
-    log('#disconnect', msg);
+  socket.on("disconnect", (msg) => {
+    log("#disconnect", msg);
   });
 
-  socket.on('disconnecting', () => {
-    log('#disconnecting');
+  socket.on("disconnecting", () => {
+    log("#disconnecting");
   });
 
-  socket.on('error', () => {
-    log('#error');
+  socket.on("error", () => {
+    log("#error");
   });
 
   window.socket = socket;
@@ -386,14 +386,14 @@ The sample code is as follows:
 
 ```js
 // Small program-side sample code
-import io from 'vendor/wxapp-socket-io.js';
+import io from "vendor/wxapp-socket-io.js";
 
-const socket = io('ws://127.0.0.1:7001');
-socket.on('connect', function () {
-  socket.emit('chat', 'hello world!');
+const socket = io("ws://127.0.0.1:7001");
+socket.on("connect", function () {
+  socket.emit("chat", "hello world!");
 });
-socket.on('res', (msg) => {
-  console.log('res from server: %s!', msg);
+socket.on("res", (msg) => {
+  console.log("res from server: %s!", msg);
 });
 ```
 
@@ -407,14 +407,14 @@ The following is part of the demo code and explains the role of each method:
 // {app_root}/config/config.${env}.js
 exports.io = {
   namespace: {
-    '/': {
-      connectionMiddleware: ['auth'],
+    "/": {
+      connectionMiddleware: ["auth"],
       packetMiddleware: [], // processing for message is not implemented temporarily
     },
   }, // Data sharing through redis in cluster mode
 
   redis: {
-    host: '127.0.0.1',
+    host: "127.0.0.1",
     port: 6379,
   },
 };
@@ -471,24 +471,24 @@ Format：
 ```js
 // {app_root}/app/io/middleware/auth.js
 
-const PREFIX = 'room';
+const PREFIX = "room";
 
 module.exports = () => {
   return async (ctx, next) => {
     const { app, socket, logger, helper } = ctx;
     const id = socket.id;
-    const nsp = app.io.of('/');
+    const nsp = app.io.of("/");
     const query = socket.handshake.query; // User Info
 
     const { room, userId } = query;
     const rooms = [room];
 
-    logger.debug('#user_info', id, room, userId);
+    logger.debug("#user_info", id, room, userId);
 
     const tick = (id, msg) => {
-      logger.debug('#tick', id, msg); // Send message before kicking user
+      logger.debug("#tick", id, msg); // Send message before kicking user
 
-      socket.emit(id, helper.parseMsg('deny', msg)); // Call the adapter method to kick out the user and the client triggers the disconnect event
+      socket.emit(id, helper.parseMsg("deny", msg)); // Call the adapter method to kick out the user and the client triggers the disconnect event
 
       nsp.adapter.remoteDisconnect(id, true, (err) => {
         logger.error(err);
@@ -497,12 +497,12 @@ module.exports = () => {
 
     const hasRoom = await app.redis.get(`${PREFIX}:${room}`);
 
-    logger.debug('#has_exist', hasRoom);
+    logger.debug("#has_exist", hasRoom);
 
     if (!hasRoom) {
       tick(id, {
-        type: 'deleted',
-        message: 'deleted, room has been deleted.',
+        type: "deleted",
+        message: "deleted, room has been deleted.",
       });
       return;
     } // When the user joins
@@ -513,12 +513,12 @@ module.exports = () => {
 
       socket.join(room);
 
-      logger.debug('#online_join', _clients); // Update online user list
+      logger.debug("#online_join", _clients); // Update online user list
 
-      nsp.to(room).emit('online', {
+      nsp.to(room).emit("online", {
         clients,
-        action: 'join',
-        target: 'participator',
+        action: "join",
+        target: "participator",
         message: `User(${id}) joined.`,
       });
     });
@@ -526,22 +526,22 @@ module.exports = () => {
     await next(); // When the user leaves
 
     nsp.adapter.clients(rooms, (err, clients) => {
-      logger.debug('#leave', room);
+      logger.debug("#leave", room);
 
       const _clients = {};
       clients.forEach((client) => {
-        const _id = client.split('#')[1];
+        const _id = client.split("#")[1];
         const _client = app.io.sockets.sockets[_id];
         const _query = _client.handshake.query;
         _clients[client] = _query;
       });
 
-      logger.debug('#online_leave', _clients); // Update online user list
+      logger.debug("#online_leave", _clients); // Update online user list
 
-      nsp.to(room).emit('online', {
+      nsp.to(room).emit("online", {
         clients: _clients,
-        action: 'leave',
-        target: 'participator',
+        action: "leave",
+        target: "participator",
         message: `User(${id}) leaved.`,
       });
     });
@@ -555,12 +555,12 @@ Data exchange of P2P communication is through exchange
 
 ```js
 // {app_root}/app/io/controller/nsp.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 class NspController extends controller {
   async exchange() {
     const { ctx, app } = this;
-    const nsp = app.io.of('/');
+    const nsp = app.io.of("/");
     const message = ctx.args[0] || {};
     const socket = ctx.socket;
     const client = socket.id;
@@ -568,7 +568,7 @@ class NspController extends controller {
     try {
       const { target, payload } = message;
       if (!target) return;
-      const msg = ctx.helper.parseMsg('exchange', payload, { client, target });
+      const msg = ctx.helper.parseMsg("exchange", payload, { client, target });
       nsp.emit(target, msg);
     } catch (error) {
       app.logger.error(error);
@@ -585,19 +585,19 @@ module.exports = NspController;
 // {app_root}/app/router.js
 module.exports = (app) => {
   const { router, controller, io } = app;
-  router.get('/', controller.home.index); // socket.io
+  router.get("/", controller.home.index); // socket.io
 
-  io.of('/').route('exchange', io.controller.nsp.exchange);
+  io.of("/").route("exchange", io.controller.nsp.exchange);
 };
 ```
 
 Open two tab pages and call up the console:
 
 ```js
-socket.emit('exchange', {
-  target: '/webrtc#Dkn3UXSu8_jHvKBmAAHW',
+socket.emit("exchange", {
+  target: "/webrtc#Dkn3UXSu8_jHvKBmAAHW",
   payload: {
-    msg: 'test',
+    msg: "test",
   },
 });
 ```

@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = agent => {
-  require('./tracer')(agent);
+module.exports = (agent) => {
+  require("./tracer")(agent);
 };

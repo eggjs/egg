@@ -57,11 +57,10 @@ The base class of the View needs to provide `render` and `renderString` methods 
 The following is a simplified code that can be directly [view source](https://github.com/eggjs/egg-view-ejs/blob/master/lib/view.js)
 
 ```js
-const ejs = require('ejs');
+const ejs = require("ejs");
 
 Mmdule.exports = class EjsView {
   render(filename, locals, viewOptions) {
-
     const config = Object.assign({}, this.config, viewOptions, { filename });
 
     return new Promise((resolve, reject) => {
@@ -150,7 +149,7 @@ module.exports = (app) => {
 
 ```js
 // {plugin_root}/lib/view.js
-const ViewHelper = require('./helper');
+const ViewHelper = require("./helper");
 
 module.exports = class MyCustomView {
   render(filename, locals) {

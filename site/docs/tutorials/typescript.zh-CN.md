@@ -80,14 +80,14 @@ showcase
 
 ```typescript
 // app/controller/home.ts
-import { Controller } from 'egg';
+import { Controller } from "egg";
 
 export default class HomeController extends Controller {
   public async index() {
     const { ctx, service } = this;
     const page = ctx.query.page;
     const result = await service.news.list(page);
-    await ctx.render('home.tpl', result);
+    await ctx.render("home.tpl", result);
   }
 }
 ```
@@ -96,11 +96,11 @@ export default class HomeController extends Controller {
 
 ```typescript
 // app/router.ts
-import { Application } from 'egg';
+import { Application } from "egg";
 
 export default (app: Application) => {
   const { router, controller } = app;
-  router.get('/', controller.home.index);
+  router.get("/", controller.home.index);
 };
 ```
 
@@ -108,7 +108,7 @@ export default (app: Application) => {
 
 ```typescript
 // app/service/news.ts
-import { Service } from 'egg';
+import { Service } from "egg";
 
 export default class NewsService extends Service {
   public async list(page?: number): Promise<NewsItem[]> {
@@ -121,10 +121,11 @@ export interface NewsItem {
   title: string;
 }
 ```
+
 ### 中间件（Middleware）
 
 ```typescript
-import { Context } from 'egg';
+import { Context } from "egg";
 
 // 这是你自定义的中间件
 export default function fooMiddleware(): any {
@@ -182,12 +183,9 @@ export default function(appInfo: EggAppConfig) {
 ```typescript
 // app/middleware/uuid.ts
 
-import { Context, Application, EggAppConfig } from 'egg';
+import { Context, Application, EggAppConfig } from "egg";
 
-export default function uuidMiddleWare(
-  options: EggAppConfig['uuid'],
-  app: Application,
-): any {
+export default function uuidMiddleWare(options: EggAppConfig["uuid"], app: Application): any {
   return async (ctx: Context, next: () => Promise<any>) => {
     // name 就是 `config.default.js` 中 `uuid` 下的属性
     console.info(options.name);
@@ -202,21 +200,22 @@ export default function uuidMiddleWare(
 
 ```typescript
 // app/extend/context.ts
-import { Context } from 'egg';
+import { Context } from "egg";
 
 export default {
   isAjax(this: Context) {
-    return this.get('X-Requested-With') === 'XMLHttpRequest';
+    return this.get("X-Requested-With") === "XMLHttpRequest";
   },
 };
 
 // app.ts
 export default (app) => {
   app.beforeStart(async () => {
-    await Promise.resolve('egg + ts');
+    await Promise.resolve("egg + ts");
   });
 };
 ```
+
 ### 配置（Config）
 
 `Config` 这部分稍微有点复杂，因为要支持：
@@ -227,32 +226,32 @@ export default (app) => {
 
 ```typescript
 // app/config/config.default.ts
-import { EggAppInfo, EggAppConfig, PowerPartial } from 'egg';
+import { EggAppInfo, EggAppConfig, PowerPartial } from "egg";
 
 export default (appInfo: EggAppInfo) => {
   const config = {} as PowerPartial<EggAppConfig>;
 
   // 覆盖框架，插件的配置
-  config.keys = appInfo.name + '123456';
+  config.keys = appInfo.name + "123456";
   config.view = {
-    defaultViewEngine: 'nunjucks',
+    defaultViewEngine: "nunjucks",
     mapping: {
-      '.tpl': 'nunjucks',
-    }
+      ".tpl": "nunjucks",
+    },
   };
 
   // 应用本身的配置
   const bizConfig = {};
   bizConfig.news = {
     pageSize: 30,
-    serverUrl: 'https://hacker-news.firebaseio.com/v0',
+    serverUrl: "https://hacker-news.firebaseio.com/v0",
   };
-  
+
   // 目的是将业务配置属性合并到 EggAppConfig 中返回
   return {
     // 如果直接返回 config ，则将该类型合并到 EggAppConfig 的时候可能会出现 circulate type 错误。
     ...(config as {}),
-    ...bizConfig
+    ...bizConfig,
   };
 };
 ```
@@ -263,7 +262,7 @@ export default (appInfo: EggAppInfo) => {
 
 ```typescript
 // app/config/config.local.ts
-import { EggAppConfig } from 'egg';
+import { EggAppConfig } from "egg";
 
 export default () => {
   const config = {} as PowerPartial<EggAppConfig>;
@@ -308,7 +307,7 @@ export default plugin;
 
 ```typescript
 // app.ts
-import { Application, IBoot } from 'egg';
+import { Application, IBoot } from "egg";
 
 export default class FooBoot implements IBoot {
   private readonly app: Application;
@@ -348,6 +347,7 @@ export default class FooBoot implements IBoot {
   }
 }
 ```
+
 ### TS 类型定义（Typings）
 
 该目录为 TS 的规范，在里面的 `**/*.d.ts` 文件将被自动识别。
@@ -384,9 +384,9 @@ export default class FooBoot implements IBoot {
 
 ```typescript
 // typings/app/service/index.d.ts
-import News from '../../../app/service/News';
+import News from "../../../app/service/News";
 
-declare module 'egg' {
+declare module "egg" {
   interface IService {
     news: News;
   }
@@ -420,18 +420,18 @@ declare module 'egg' {
 
 ```typescript
 // test/app/service/news.test.ts
-import assert from 'assert';
-import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
+import assert from "assert";
+import { Context } from "egg";
+import { app } from "egg-mock/bootstrap";
 
-describe('test/app/service/news.test.js', () => {
+describe("test/app/service/news.test.js", () => {
   let ctx: Context;
 
   before(async () => {
     ctx = app.mockContext();
   });
 
-  it('list()', async () => {
+  it("list()", async () => {
     const list = await ctx.service.news.list();
     assert(list.length === 30);
   });
@@ -478,6 +478,7 @@ describe('test/app/service/news.test.js', () => {
 - [VSCode 调试 Egg 完美版 - 进化史](https://github.com/atian25/blog/issues/25)
 
 ---
+
 ## 部署（Deploy）
 
 ### 构建（Build）
@@ -525,6 +526,7 @@ describe('test/app/service/news.test.js', () => {
 - 在 `egg-scripts` 内建了处理，会自动纠正为正确的错误堆栈，应用开发者无需担心。
 
 具体内幕参见以下链接：
+
 - [知乎专栏](https://zhuanlan.zhihu.com/p/26267678)
 - [GitHub PR](https://github.com/eggjs/egg-scripts/pull/19)
 
@@ -546,10 +548,10 @@ describe('test/app/service/news.test.js', () => {
 ```typescript
 // {plugin_root}/index.d.ts
 
-import 'egg';
-import News from '../../../app/service/News';
+import "egg";
+import News from "../../../app/service/News";
 
-declare module 'egg' {
+declare module "egg" {
   // 扩展 service
   interface IService {
     news: News;
@@ -565,7 +567,7 @@ declare module 'egg' {
   interface EggAppConfig {}
 
   // 扩展自定义环境
-  type EggEnvType = 'local' | 'unittest' | 'prod' | 'sit';
+  type EggEnvType = "local" | "unittest" | "prod" | "sit";
 }
 ```
 
@@ -576,12 +578,12 @@ declare module 'egg' {
 ```typescript
 // {framework_root}/index.d.ts
 
-import * as Egg from 'egg';
+import * as Egg from "egg";
 
 // 将该上层框架用到的插件 import 进来
-import 'my-plugin';
+import "my-plugin";
 
-declare module 'egg' {
+declare module "egg" {
   // 跟插件一样扩展 egg ...
 }
 
@@ -595,7 +597,7 @@ export = Egg;
 // app/service/news.ts
 
 // 开发者引入你的框架，也可以使用到提示到所有 `Egg` 的提示
-import { Service } from 'duck-egg';
+import { Service } from "duck-egg";
 
 export default class NewsService extends Service {
   public async list(page?: number): Promise<NewsItem[]> {
@@ -603,6 +605,7 @@ export default class NewsService extends Service {
   }
 }
 ```
+
 ## 常见问题
 
 汇集了一些人们频繁提问的 `issue` 问题，并给出了统一的解答。
@@ -630,9 +633,9 @@ export default class NewsService extends Service {
 ```typescript
 // typings/index.d.ts
 
-import 'egg';
+import "egg";
 
-declare module 'egg' {
+declare module "egg" {
   interface Application {
     dashboard: any;
   }
@@ -650,7 +653,7 @@ declare module 'egg' {
 ```typescript
 // typings/index.d.ts
 
-import 'egg-dashboard';
+import "egg-dashboard";
 ```
 
 **注意：** 必须在 `d.ts` 中 `import`。由于 `egg` 插件大部分没有入口文件，如果在 `ts` 文件中 `import`，运行时可能出现问题。
@@ -666,7 +669,7 @@ import 'egg-dashboard';
 ```typescript
 // config/plugin.ts
 
-import 'tsconfig-paths/register';
+import "tsconfig-paths/register";
 
 // 其他代码
 ```
@@ -688,17 +691,19 @@ import 'tsconfig-paths/register';
 接着添加用例验证插件声明的正确性，参考 `egg-view`：
 
 ```js
-describe('typescript', () => {
-  it('should compile ts without error', () => {
-    return coffee
-      .fork(require.resolve('typescript/bin/tsc'), [
-        '-p',
-        path.resolve(__dirname, './fixtures/apps/ts/tsconfig.json'),
-        '--noEmit',
-      ])
-      // .debug()
-      .expect('code', 0)
-      .end();
+describe("typescript", () => {
+  it("should compile ts without error", () => {
+    return (
+      coffee
+        .fork(require.resolve("typescript/bin/tsc"), [
+          "-p",
+          path.resolve(__dirname, "./fixtures/apps/ts/tsconfig.json"),
+          "--noEmit",
+        ])
+        // .debug()
+        .expect("code", 0)
+        .end()
+    );
   });
 });
 ```
@@ -708,6 +713,7 @@ describe('typescript', () => {
 - [https://github.com/eggjs/egg](https://github.com/eggjs/egg)
 - [https://github.com/eggjs/egg-view](https://github.com/eggjs/egg-view)
 - [https://github.com/eggjs/egg-logger](https://github.com/eggjs/egg-logger)
+
 ### 编译速度慢？
 
 根据我们的实践，`ts-node` 是目前相对较优的解决方案，既不用另起终端执行 `tsc`，也能获得还能接受的启动速度（仅限于 `ts-node@7`，新的版本由于把文件缓存去掉了，导致特别慢（[#754](https://github.com/TypeStrong/ts-node/issues/754)），因此未升级）。

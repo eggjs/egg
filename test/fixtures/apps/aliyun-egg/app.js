@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  app['aliyun-egg'] = {};
+module.exports = (app) => {
+  app["aliyun-egg"] = {};
 };

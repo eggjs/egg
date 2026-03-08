@@ -3,13 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "egg": [
-        "../../../../index"
-      ]
+      "egg": ["../../../../index"]
     },
     "esModuleInterop": false
   },
-  "exclude": [
-    "./error.ts"
-  ]
+  "exclude": ["./error.ts"]
 }

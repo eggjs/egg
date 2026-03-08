@@ -47,7 +47,7 @@ exports.security = {
 ```js
 exports.security = {
   csp: {
-    match: '/example',
+    match: "/example",
     policy: {
       // ...
     },
@@ -60,7 +60,7 @@ exports.security = {
 ```js
 exports.security = {
   csp: {
-    ignore: '/example',
+    ignore: "/example",
     xframe: {
       // ...
     },
@@ -82,9 +82,10 @@ exports.security = {
 下面将针对具体的场景，来讲解如何使用框架提供的安全方案进行 Web 安全防范。
 
 ---
+
 ## 安全威胁 XSS 的防范
 
-[XSS](https://www.owasp.org/index.php/Cross-site_Scripting_(XSS))（Cross-Site Scripting，跨站脚本攻击）攻击是最常见的 Web 攻击，其重点是“跨域”和“客户端执行”。
+[XSS](<https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)>)（Cross-Site Scripting，跨站脚本攻击）攻击是最常见的 Web 攻击，其重点是“跨域”和“客户端执行”。
 
 XSS 攻击一般分为两类：
 
@@ -174,7 +175,7 @@ const value = `<a href="http://www.domain.com">google</a><script>evilcode…</sc
 例如，HTML 标签就不在白名单中，所以输出为空：
 
 ```js
-const html = '<html></html>';
+const html = "<html></html>";
 
 // html
 {
@@ -188,6 +189,7 @@ const html = '<html></html>';
 
 常见的 `data-xx` 属性由于不在白名单中，所以都会被过滤。因此，在使用 shtml 时需要注意其适用场景，一般是针对来自用户的富文本输入。切不可以滥用 shtml，否则可能既受到功能限制，又会影响服务端性能。
 此类场景一般存在于论坛、评论系统等。即便是这样的系统，如果不支持 HTML 内容输入，也不要使用此 Helper，直接使用 `escape` 即可。
+
 ### JSONP XSS
 
 JSONP 的 callback 参数非常危险，它有两种风险可能导致 XSS：
@@ -267,8 +269,8 @@ IE 提供的一些 XSS 检测与防范机制，默认开启。
 module.exports = {
   security: {
     csrf: {
-      queryName: '_csrf', // 通过 query 传递 CSRF token 的默认字段为 _csrf
-      bodyName: '_csrf', // 通过 body 传递 CSRF token 的默认字段为 _csrf
+      queryName: "_csrf", // 通过 query 传递 CSRF token 的默认字段为 _csrf
+      bodyName: "_csrf", // 通过 body 传递 CSRF token 的默认字段为 _csrf
     },
   },
 };
@@ -283,7 +285,7 @@ module.exports = {
 在 jQuery 中：
 
 ```js
-var csrftoken = Cookies.get('csrfToken');
+var csrftoken = Cookies.get("csrfToken");
 
 function csrfSafeMethod(method) {
   // 以下 HTTP 方法不需要 CSRF 保护
@@ -292,7 +294,7 @@ function csrfSafeMethod(method) {
 $.ajaxSetup({
   beforeSend: function (xhr, settings) {
     if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-      xhr.setRequestHeader('x-csrf-token', csrftoken);
+      xhr.setRequestHeader("x-csrf-token", csrftoken);
     }
   },
 });
@@ -305,7 +307,7 @@ $.ajaxSetup({
 module.exports = {
   security: {
     csrf: {
-      headerName: 'x-csrf-token', // 通过 header 传递 CSRF token 的默认字段为 x-csrf-token
+      headerName: "x-csrf-token", // 通过 header 传递 CSRF token 的默认字段为 x-csrf-token
     },
   },
 };
@@ -321,8 +323,8 @@ module.exports = {
   security: {
     csrf: {
       useSession: true, // 默认为 false，当设置为 true 时，将把 csrf token 保存到 Session 中
-      cookieName: 'csrfToken', // Cookie 中的字段名，默认为 csrfToken
-      sessionName: 'csrfToken', // Session 中的字段名，默认为 csrfToken
+      cookieName: "csrfToken", // Cookie 中的字段名，默认为 csrfToken
+      sessionName: "csrfToken", // Session 中的字段名，默认为 csrfToken
     },
   },
 };
@@ -371,15 +373,15 @@ exports.login = function* (ctx) {
 下面我们基于 Koa 来实现一个简单的支持 TRACE 方法的服务器：
 
 ```javascript
-var koa = require('koa');
+var koa = require("koa");
 var app = koa();
 
 app.use(function* (next) {
-  this.cookies.set('a', 1, { httpOnly: true });
-  if (this.method === 'TRACE') {
-    var body = '';
+  this.cookies.set("a", 1, { httpOnly: true });
+  if (this.method === "TRACE") {
+    var body = "";
     for (var header in this.headers) {
-      body += header + ': ' + this.headers[header] + '\r\n';
+      body += header + ": " + this.headers[header] + "\r\n";
     }
     this.body = body;
   }
@@ -432,6 +434,7 @@ cookie: a=1
 ### 防范方式
 
 框架已经禁止了 TRACE、TRACK、OPTIONS 三种危险类型的请求。
+
 ## 安全威胁 `钓鱼攻击` 的防范
 
 钓鱼有多种方式，这里介绍 url 钓鱼、图片钓鱼和 iframe 钓鱼。
@@ -460,7 +463,7 @@ cookie: a=1
 ```js
 // config/config.default.js
 exports.security = {
-  domainWhiteList: ['.domain.com'], // 安全白名单，以 . 开头
+  domainWhiteList: [".domain.com"], // 安全白名单，以 . 开头
 };
 ```
 
@@ -526,7 +529,6 @@ output:
 <a href="http://www.safe.com&lt;script&gt;" />
 ```
 
-
 ### iframe 钓鱼
 
 [iframe 钓鱼](https://www.owasp.org/index.php/Cross_Frame_Scripting)，通过内嵌 iframe 到被攻击的网页中，攻击者可以引导用户去点击 iframe 指向的危险网站，甚至遮盖，影响网站的正常功能，劫持用户的点击操作。
@@ -534,7 +536,6 @@ output:
 框架提供了 `X-Frame-Options` 这个安全头来防止 iframe 钓鱼。默认值为 SAMEORIGIN，只允许同域把本页面当作 iframe 嵌入。
 
 当需要嵌入一些可信的第三方网页时，可以关闭这个配置。
-
 
 ## 安全威胁 HPP 的防范
 
@@ -547,7 +548,7 @@ HPP 可能导致的安全威胁有：
 
 ### 拓展阅读
 
-- [Testing for HTTP Parameter pollution (OTG-INPVAL-004)](https://www.owasp.org/index.php/Testing_for_HTTP_Parameter_pollution_(OTG-INPVAL-004))
+- [Testing for HTTP Parameter pollution (OTG-INPVAL-004)](<https://www.owasp.org/index.php/Testing_for_HTTP_Parameter_pollution_(OTG-INPVAL-004)>)
 - [HTTP 参数污染的危害](http://blog.csdn.net/eatmilkboy/article/details/6761407)
 - [详细介绍 HPP 攻击](https://media.blackhat.com/bh-us-11/Balduzzi/BH_US_11_Balduzzi_HPP_WP.pdf)
 - [ebay 因参数污染存在 RCE（远程命令执行）漏洞案例](http://secalert.net/2013/12/13/ebay-remote-code-execution/)
@@ -555,6 +556,7 @@ HPP 可能导致的安全威胁有：
 ### 如何防范
 
 框架本身会在客户端传输 key 相同而 value 不同的参数时，强制使用第一个参数，因此不会导致 HPP 攻击。
+
 ## 中间人攻击与 HTTP/HTTPS
 
 HTTP 是网络应用广泛使用的协议，负责 Web 内容的请求和获取。然而，内容请求和获取时会经过许多中间人，主要是网络环节，充当内容入口的浏览器、路由器厂商、WIFI 提供商、通信运营商，如果使用了代理、翻墙软件则会引入更多中间人。由于 HTTP 请求的路径、参数默认情况下均是明文的，因此这些中间人可以对 HTTP 请求进行监控、劫持、阻挡。
@@ -604,13 +606,13 @@ HTTP 是网络应用广泛使用的协议，负责 Web 内容的请求和获取�
 exports.security = {
   ssrf: {
     ipBlackList: [
-      '10.0.0.0/8', // 支持 IP 网段
-      '0.0.0.0/32',
-      '127.0.0.1', // 支持指定 IP 地址
+      "10.0.0.0/8", // 支持 IP 网段
+      "0.0.0.0/32",
+      "127.0.0.1", // 支持指定 IP 地址
     ],
     // 配置了 checkAddress 时，ipBlackList 不会生效
     checkAddress(ip) {
-      return ip !== '127.0.0.1';
+      return ip !== "127.0.0.1";
     },
   },
 };
@@ -650,7 +652,7 @@ exports.security = {
     // 一种是直接使用字符串，指定一个 CVE
     "revert": "CVE-2023-46809",
     // 另一种是使用字符串数组，可以指定多个 CVE
-    "revert": [ "CVE-2023-46809" ]
+    "revert": ["CVE-2023-46809"]
   }
 }
 ```

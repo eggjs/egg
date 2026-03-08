@@ -27,7 +27,7 @@ order: 4
 ```js
 // config/config.${env}.js
 exports.logger = {
-  dir: '/path/to/your/custom/log/dir',
+  dir: "/path/to/your/custom/log/dir",
 };
 ```
 
@@ -44,13 +44,13 @@ exports.logger = {
 
 ```js
 // config/config.${env}.js
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   return {
     logger: {
       appLogName: `${appInfo.name}-web.log`,
-      coreLogName: 'egg-web.log',
-      agentLogName: 'egg-agent.log',
-      errorLogName: 'common-error.log',
+      coreLogName: "egg-web.log",
+      agentLogName: "egg-agent.log",
+      errorLogName: "common-error.log",
     },
   };
 };
@@ -65,13 +65,13 @@ module.exports = appInfo => {
 每行日志会自动记录当前请求的一些基本信息，如 `[$userId/$ip/$traceId/${cost}ms $method $url]`。
 
 ```js
-ctx.logger.debug('debug info');
-ctx.logger.info('some request data: %j', ctx.request.body);
-ctx.logger.warn('警告！');
+ctx.logger.debug("debug info");
+ctx.logger.info("some request data: %j", ctx.request.body);
+ctx.logger.warn("警告！");
 
 // 错误日志记录，直接会将错误日志的完整堆栈信息记录下来，并且输出到 errorLog 中
 // 为了保证异常可追踪，必须保证所有抛出的异常都是 Error 类型，因为只有 Error 类型才会带上堆栈信息，定位到问题。
-ctx.logger.error(new Error('whoops'));
+ctx.logger.error(new Error("whoops"));
 ```
 
 对于框架开发者和插件开发者，还可以使用 `ctx.coreLogger`。
@@ -79,7 +79,7 @@ ctx.logger.error(new Error('whoops'));
 例如：
 
 ```js
-ctx.coreLogger.info('info');
+ctx.coreLogger.info("info");
 ```
 
 ### App Logger
@@ -88,10 +88,10 @@ ctx.coreLogger.info('info');
 
 ```js
 // app.js
-module.exports = app => {
-  app.logger.debug('debug info');
-  app.logger.info('启动耗时 %d ms', Date.now() - start);
-  app.logger.warn('警告！');
+module.exports = (app) => {
+  app.logger.debug("debug info");
+  app.logger.info("启动耗时 %d ms", Date.now() - start);
+  app.logger.warn("警告！");
 
   app.logger.error(someErrorObj);
 };
@@ -101,8 +101,8 @@ module.exports = app => {
 
 ```js
 // app.js
-module.exports = app => {
-  app.coreLogger.info('启动耗时 %d ms', Date.now() - start);
+module.exports = (app) => {
+  app.coreLogger.info("启动耗时 %d ms", Date.now() - start);
 };
 ```
 
@@ -112,16 +112,17 @@ module.exports = app => {
 
 ```js
 // agent.js
-module.exports = agent => {
-  agent.logger.debug('debug info');
-  agent.logger.info('启动耗时 %d ms', Date.now() - start);
-  agent.logger.warn('警告！');
+module.exports = (agent) => {
+  agent.logger.debug("debug info");
+  agent.logger.info("启动耗时 %d ms", Date.now() - start);
+  agent.logger.warn("警告！");
 
   agent.logger.error(someErrorObj);
 };
 ```
 
 如需详细了解 Agent 进程，请参考[多进程模型](./cluster-and-ipc.md)。
+
 ## 日志文件编码
 
 默认编码为 `utf-8`，可通过下面的方式进行覆盖：
@@ -129,7 +130,7 @@ module.exports = agent => {
 ```js
 // config/config.${env}.js
 exports.logger = {
-  encoding: 'gbk',
+  encoding: "gbk",
 };
 ```
 
@@ -161,7 +162,7 @@ exports.logger = {
 ```js
 // config/config.${env}.js
 exports.logger = {
-  level: 'DEBUG',
+  level: "DEBUG",
 };
 ```
 
@@ -170,7 +171,7 @@ exports.logger = {
 ```js
 // config/config.${env}.js
 exports.logger = {
-  level: 'NONE',
+  level: "NONE",
 };
 ```
 
@@ -181,7 +182,7 @@ exports.logger = {
 ```js
 // config/config.prod.js
 exports.logger = {
-  level: 'DEBUG',
+  level: "DEBUG",
   allowDebugAtProd: true,
 };
 ```
@@ -197,7 +198,7 @@ exports.logger = {
 ```js
 // config/config.${env}.js
 exports.logger = {
-  consoleLevel: 'DEBUG',
+  consoleLevel: "DEBUG",
 };
 ```
 
@@ -206,7 +207,7 @@ exports.logger = {
 ```js
 // config/config.${env}.js
 exports.logger = {
-  consoleLevel: 'NONE',
+  consoleLevel: "NONE",
 };
 ```
 
@@ -218,6 +219,7 @@ exports.logger = {
   disableConsoleAfterReady: false,
 };
 ```
+
 ## 自定义日志
 
 ### 增加自定义日志
@@ -228,15 +230,15 @@ exports.logger = {
 
 ```js
 // config/config.${env}.js
-const path = require('path');
+const path = require("path");
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   return {
     customLogger: {
       xxLogger: {
-        file: path.join(appInfo.root, 'logs/xx.log')
-      }
-    }
+        file: path.join(appInfo.root, "logs/xx.log"),
+      },
+    },
   };
 };
 ```
@@ -247,21 +249,21 @@ module.exports = appInfo => {
 
 ```js
 // config/config.${env}.js
-const path = require('path');
+const path = require("path");
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   return {
     customLogger: {
       xxLogger: {
-        file: path.join(appInfo.root, 'logs/xx.log'),
+        file: path.join(appInfo.root, "logs/xx.log"),
         formatter(meta) {
           return `[${meta.date}] ${meta.message}`;
         },
         contextFormatter(meta) {
           return `[${meta.date}] [${meta.ctx.method} ${meta.ctx.url}] ${meta.message}`;
-        }
-      }
-    }
+        },
+      },
+    },
   };
 };
 ```
@@ -273,8 +275,8 @@ module.exports = appInfo => {
 首先，我们定义一个日志的传输通道（transport），该通道代表第三方日志服务。
 
 ```js
-const util = require('util');
-const Transport = require('egg-logger').Transport;
+const util = require("util");
+const Transport = require("egg-logger").Transport;
 
 class RemoteErrorTransport extends Transport {
   // 定义 log 方法。在此方法中，将日志上报给远端服务。
@@ -282,30 +284,26 @@ class RemoteErrorTransport extends Transport {
     let log;
     if (args[0] instanceof Error) {
       const err = args[0];
-      log = util.format(
-        '%s: %s\n%s\npid: %s\n',
-        err.name,
-        err.message,
-        err.stack,
-        process.pid
-      );
+      log = util.format("%s: %s\n%s\npid: %s\n", err.name, err.message, err.stack, process.pid);
     } else {
       log = util.format(...args);
     }
 
-    this.options.app.curl('http://url/to/remote/error/log/service/logs', {
-      data: log,
-      method: 'POST'
-    })
-    .catch(console.error);
+    this.options.app
+      .curl("http://url/to/remote/error/log/service/logs", {
+        data: log,
+        method: "POST",
+      })
+      .catch(console.error);
   }
 }
 
 // 在 app.js 中给 errorLogger 添加 transport，这样每条日志就会同时打印到这个 transport。
-app.getLogger('errorLogger').set('remote', new RemoteErrorTransport({ level: 'ERROR', app }));
+app.getLogger("errorLogger").set("remote", new RemoteErrorTransport({ level: "ERROR", app }));
 ```
 
 上述代码示例中，虽然比较简单，但是在实际使用时需要考虑性能问题。通常采取先暂存至内存，再定时上传的策略，以此优化性能。
+
 ## 日志切割
 
 企业级日志一个最常见的需求之一是对日志进行自动切割，以方便管理。框架对日志切割的支持由 [egg-logrotator](https://github.com/eggjs/egg-logrotator) 插件提供。
@@ -324,14 +322,12 @@ app.getLogger('errorLogger').set('remote', new RemoteErrorTransport({ level: 'ER
 
 ```js
 // config/config.${env}.js
-const path = require('path');
+const path = require("path");
 
 module.exports = (appInfo) => {
   return {
     logrotator: {
-      filesRotateBySize: [
-        path.join(appInfo.root, 'logs', appInfo.name, 'egg-web.log'),
-      ],
+      filesRotateBySize: [path.join(appInfo.root, "logs", appInfo.name, "egg-web.log")],
       maxFileSize: 2 * 1024 * 1024 * 1024,
     },
   };
@@ -348,14 +344,12 @@ module.exports = (appInfo) => {
 
 ```js
 // config/config.${env}.js
-const path = require('path');
+const path = require("path");
 
 module.exports = (appInfo) => {
   return {
     logrotator: {
-      filesRotateByHour: [
-        path.join(appInfo.root, 'logs', appInfo.name, 'common-error.log'),
-      ],
+      filesRotateByHour: [path.join(appInfo.root, "logs", appInfo.name, "common-error.log")],
     },
   };
 };

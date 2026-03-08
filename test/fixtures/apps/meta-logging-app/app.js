@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   app.ready(() => {
-    app.config.tips = 'hello egg started';
+    app.config.tips = "hello egg started";
     // dynamic router
-    app.all('/all', app.controller.home);
+    app.all("/all", app.controller.home);
   });
 };

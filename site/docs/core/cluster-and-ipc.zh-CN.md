@@ -28,9 +28,9 @@ Node.js 官方提供的解决方案是 [Cluster 模块](https://nodejs.org/api/c
 - Worker 进程的数量一般根据服务器的 CPU 核数来定，这样可以完美利用多核资源。
 
 ```js
-const cluster = require('cluster');
-const http = require('http');
-const numCPUs = require('os').cpus().length;
+const cluster = require("cluster");
+const http = require("http");
+const numCPUs = require("os").cpus().length;
 
 if (cluster.isMaster) {
   // Fork workers.
@@ -38,7 +38,7 @@ if (cluster.isMaster) {
     cluster.fork();
   }
 
-  cluster.on('exit', (worker, code, signal) => {
+  cluster.on("exit", (worker, code, signal) => {
     console.log(`worker ${worker.process.pid} died`);
   });
 } else {
@@ -47,11 +47,12 @@ if (cluster.isMaster) {
   http
     .createServer((req, res) => {
       res.writeHead(200);
-      res.end('hello world\n');
+      res.end("hello world\n");
     })
     .listen(8000);
 }
 ```
+
 ## 框架的多进程模型
 
 上面的示例是否很简单呢？但作为企业级应用解决方案，我们需要考虑的问题还有很多。
@@ -177,23 +178,24 @@ module.exports = agent => {
 
 ```js
 // app.js
-module.exports = app => {
-  app.messenger.on('xxx_action', data => {
+module.exports = (app) => {
+  app.messenger.on("xxx_action", (data) => {
     // ...
   });
 };
 ```
 
 这个例子中，`agent.js` 的代码将在 Agent 进程上执行，`app.js` 的代码则在 Worker 进程上执行。它们通过框架封装的 `messenger` 对象进行进程间通信（IPC）。后续章节会对框架的 IPC 进行详细讲解。
+
 ### Master VS Agent VS Worker
 
 应用启动时，会同时创建三类进程。下表概述了每种进程的数量、作用、稳定性以及是否运行业务代码：
 
-| 类型   | 进程数量           | 作用                       | 稳定性 | 是否运行业务代码 |
-| ------ | ------------------ | -------------------------- | ------ | ---------------- |
-| Master | 1                   | 进程管理，进程间消息转发   | 非常高 | 否               |
+| 类型   | 进程数量            | 作用                         | 稳定性 | 是否运行业务代码 |
+| ------ | ------------------- | ---------------------------- | ------ | ---------------- |
+| Master | 1                   | 进程管理，进程间消息转发     | 非常高 | 否               |
 | Agent  | 1                   | 后台运行工作（长连接客户端） | 高     | 少量             |
-| Worker | 通常设置为 CPU 核数  | 执行业务代码                | 一般   | 是               |
+| Worker | 通常设置为 CPU 核数 | 执行业务代码                 | 一般   | 是               |
 
 #### Master
 
@@ -222,17 +224,17 @@ Worker 进程因运行复杂的业务代码，稳定性相对较低。一旦 Wor
 尽管 Worker 进程相对独立，它们间仍需通讯。以下是 Node.js 官方的 IPC 示例代码：
 
 ```js
-'use strict';
-const cluster = require('cluster');
+"use strict";
+const cluster = require("cluster");
 
 if (cluster.isMaster) {
   const worker = cluster.fork();
-  worker.send('hi there');
-  worker.on('message', (msg) => {
+  worker.send("hi there");
+  worker.on("message", (msg) => {
     console.log(`msg: ${msg} from worker#${worker.id}`);
   });
 } else if (cluster.isWorker) {
-  process.on('message', (msg) => {
+  process.on("message", (msg) => {
     process.send(msg);
   });
 }
@@ -273,12 +275,12 @@ if (cluster.isMaster) {
 
 - `app.messenger.broadcast(action, data)`: 向所有的 agent / app 进程发送消息（包括自己）。
 - `app.messenger.sendToApp(action, data)`: 发送至所有的 app 进程。
-  - app 上调用即发送至自己与其他 app 
+  - app 上调用即发送至自己与其他 app
   - agent 上调用则发送至所有 app 进程。
 - `app.messenger.sendToAgent(action, data)`: 发送消息至 agent 进程。
   - app 上调用即发送至 agent
   - agent 上调用即发送至自己。
-- `agent.messenger.sendRandom(action, data)`: 
+- `agent.messenger.sendRandom(action, data)`:
   - app 上无此方法（Egg 实现与 sentToAgent 类似）
   - agent 随机向某 app 进程发送消息（由 master 控制）。
 - `app.messenger.sendTo(pid, action, data)`: 向指定进程发送消息。
@@ -287,9 +289,9 @@ if (cluster.isMaster) {
 // app.js
 module.exports = (app) => {
   // 只有在 egg-ready 事件后才能发送消息
-  app.messenger.once('egg-ready', () => {
-    app.messenger.sendToAgent('agent-event', { foo: 'bar' });
-    app.messenger.sendToApp('app-event', { foo: 'bar' });
+  app.messenger.once("egg-ready", () => {
+    app.messenger.sendToAgent("agent-event", { foo: "bar" });
+    app.messenger.sendToApp("app-event", { foo: "bar" });
   });
 };
 ```
@@ -348,14 +350,14 @@ class SourceService extends Service {
   async checkUpdate() {
     // check if remote data source has changed
     const updated = await mockCheck();
-    this.ctx.logger.info('check update response %s', updated);
+    this.ctx.logger.info("check update response %s", updated);
     return updated;
   }
 
   async update() {
     // update memory cache from remote
     memoryCache = await mockFetch();
-    this.ctx.logger.info('update memory cache from remote: %j', memoryCache);
+    this.ctx.logger.info("update memory cache from remote: %j", memoryCache);
   }
 }
 ```
@@ -365,13 +367,13 @@ class SourceService extends Service {
 ```js
 // app/schedule/force_refresh.js
 exports.schedule = {
-  interval: '10m',
-  type: 'all' // 在所有的 workers 中运行
+  interval: "10m",
+  type: "all", // 在所有的 workers 中运行
 };
 
 exports.task = async (ctx) => {
   await ctx.service.source.update();
-  ctx.app.lastUpdateBy = 'force';
+  ctx.app.lastUpdateBy = "force";
 };
 ```
 
@@ -380,8 +382,8 @@ exports.task = async (ctx) => {
 ```js
 // app/schedule/pull_refresh.js
 exports.schedule = {
-  interval: '10s',
-  type: 'worker' // 只在一个 worker 中运行
+  interval: "10s",
+  type: "worker", // 只在一个 worker 中运行
 };
 
 exports.task = async (ctx) => {
@@ -389,7 +391,7 @@ exports.task = async (ctx) => {
   if (!needRefresh) return;
 
   // notify all workers to update memory cache from `file`
-  ctx.app.messenger.sendToApp('refresh', 'pull');
+  ctx.app.messenger.sendToApp("refresh", "pull");
 };
 ```
 
@@ -398,8 +400,8 @@ exports.task = async (ctx) => {
 ```js
 // app.js
 module.exports = (app) => {
-  app.messenger.on('refresh', (by) => {
-    app.logger.info('start update by %s', by);
+  app.messenger.on("refresh", (by) => {
+    app.logger.info("start update by %s", by);
     // 创建一个匿名 context 来访问 service
     const ctx = app.createAnonymousContext();
     ctx.runInBackground(async () => {
@@ -415,12 +417,12 @@ module.exports = (app) => {
 ```js
 // agent.js
 
-const Subscriber = require('./lib/subscriber');
+const Subscriber = require("./lib/subscriber");
 
 module.exports = (agent) => {
   const subscriber = new Subscriber();
   // 监听变更事件，广播到所有 workers
-  subscriber.on('changed', () => agent.messenger.sendToApp('refresh', 'push'));
+  subscriber.on("changed", () => agent.messenger.sendToApp("refresh", "push"));
 };
 ```
 

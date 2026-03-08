@@ -1,22 +1,22 @@
-'use strict';
+"use strict";
 
-const assert = require('node:assert');
-const egg = require('..');
+const assert = require("node:assert");
+const egg = require("..");
 
-describe('test/index.test.js', () => {
-  it('should expose properties', () => {
+describe("test/index.test.js", () => {
+  it("should expose properties", () => {
     assert.deepEqual(Object.keys(egg).sort(), [
-      'Agent',
-      'AgentWorkerLoader',
-      'AppWorkerLoader',
-      'Application',
-      'BaseContextClass',
-      'Boot',
-      'Controller',
-      'Service',
-      'Subscription',
-      'start',
-      'startCluster',
+      "Agent",
+      "AgentWorkerLoader",
+      "AppWorkerLoader",
+      "Application",
+      "BaseContextClass",
+      "Boot",
+      "Controller",
+      "Service",
+      "Subscription",
+      "start",
+      "startCluster",
     ]);
   });
 });

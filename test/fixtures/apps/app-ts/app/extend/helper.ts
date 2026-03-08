@@ -1,4 +1,4 @@
-import { IHelper } from 'egg';
+import { IHelper } from "egg";
 
 export default {
   test(this: IHelper) {
@@ -7,5 +7,5 @@ export default {
 
   test2(this: IHelper) {
     this.ctx.logger.info(this.ctx.test());
-  }
-}
+  },
+};

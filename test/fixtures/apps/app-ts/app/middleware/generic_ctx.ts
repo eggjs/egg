@@ -1,4 +1,4 @@
-import { Context } from 'egg';
+import { Context } from "egg";
 
 export interface CustomBody {
   bar: string;
@@ -10,4 +10,4 @@ export default () => {
     await next();
     console.log(ctx.body.bar);
   };
-}
+};

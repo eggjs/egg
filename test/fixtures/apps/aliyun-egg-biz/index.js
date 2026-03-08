@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-module.exports = require('../aliyun-egg');
+module.exports = require("../aliyun-egg");

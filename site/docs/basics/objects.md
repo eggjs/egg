@@ -21,16 +21,16 @@ Framework will emits some events when server running, application developers or 
 // app.js
 
 module.exports = (app) => {
-  app.once('server', (server) => {
+  app.once("server", (server) => {
     // websocket
   });
-  app.on('error', (err, ctx) => {
+  app.on("error", (err, ctx) => {
     // report error
   });
-  app.on('request', (ctx) => {
+  app.on("request", (ctx) => {
     // log receive request
   });
-  app.on('response', (ctx) => {
+  app.on("response", (ctx) => {
     // ctx.starttime is set by framework
     const used = Date.now() - ctx.starttime;
     // log total cost
@@ -174,7 +174,7 @@ In the Controller file, there are two ways to use the Controller base class:
 // app/controller/user.js
 
 // get from egg (recommend)
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 class UserController extends Controller {
   // implement
 }
@@ -198,7 +198,7 @@ The properties of the Service base class are the same as those of the [Controlle
 // app/service/user.js
 
 // get from egg (recommend)
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 class UserService extends Service {
   // implement
 }
@@ -249,7 +249,7 @@ In application development, we may often customize some helper methods, such as 
 // app/extend/helper.js
 module.exports = {
   formatUser(user) {
-    return only(user, ['name', 'phone']);
+    return only(user, ["name", "phone"]);
   },
 };
 ```
@@ -300,7 +300,7 @@ Subscription is a common model for subscribing, for example, the consumer in mes
 The base class of Subscription can be exported in the following way.
 
 ```js
-const Subscription = require('egg').Subscription;
+const Subscription = require("egg").Subscription;
 
 class Schedule extends Subscription {
   // This method should be implemented

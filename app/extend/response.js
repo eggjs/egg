@@ -1,12 +1,11 @@
-'use strict';
+"use strict";
 
-const getType = require('cache-content-type');
-const isJSON = require('koa-is-json');
+const getType = require("cache-content-type");
+const isJSON = require("koa-is-json");
 
-const REAL_STATUS = Symbol('Context#realStatus');
+const REAL_STATUS = Symbol("Context#realStatus");
 
 module.exports = {
-
   /**
    * Get or set the length of content.
    *
@@ -19,17 +18,17 @@ module.exports = {
   set length(len) {
     // copy from koa
     // change header name to lower case
-    this.set('content-length', len);
+    this.set("content-length", len);
   },
 
   get length() {
     // copy from koa
-    const len = this.header['content-length'];
+    const len = this.header["content-length"];
     const body = this.body;
 
     if (len == null) {
       if (!body) return;
-      if (typeof body === 'string') return Buffer.byteLength(body);
+      if (typeof body === "string") return Buffer.byteLength(body);
       if (Buffer.isBuffer(body)) return body.length;
       if (isJSON(body)) return Buffer.byteLength(JSON.stringify(body));
       return;
@@ -55,17 +54,17 @@ module.exports = {
     //  - change header name to lower case
     type = getType(type);
     if (type) {
-      this.set('content-type', type);
+      this.set("content-type", type);
     } else {
-      this.remove('content-type');
+      this.remove("content-type");
     }
   },
 
   get type() {
     // copy from koa
-    const type = this.get('content-type');
-    if (!type) return '';
-    return type.split(';')[0];
+    const type = this.get("content-type");
+    if (!type) return "";
+    return type.split(";")[0];
   },
 
   /**

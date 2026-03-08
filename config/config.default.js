@@ -1,18 +1,17 @@
-'use strict';
+"use strict";
 
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require("node:fs");
+const path = require("node:path");
 
 /**
  * The configuration of egg application, can be access by `app.config`
  * @class Config
+ * @param {Object} appInfo - app info
  * @since 1.0.0
  */
 
-module.exports = appInfo => {
-
+module.exports = (appInfo) => {
   const config = {
-
     /**
      * The environment of egg
      * @member {String} Config#env
@@ -36,7 +35,7 @@ module.exports = appInfo => {
      * @default
      * @since 1.0.0
      */
-    keys: '',
+    keys: "",
 
     /**
      * default cookie options
@@ -86,7 +85,7 @@ module.exports = appInfo => {
      * @default
      * @since 1.0.0
      */
-    protocolHeaders: 'x-forwarded-proto',
+    protocolHeaders: "x-forwarded-proto",
 
     /**
      * Detect request' ip from specified headers, not case-sensitive.
@@ -95,7 +94,7 @@ module.exports = appInfo => {
      * @default
      * @since 1.0.0
      */
-    ipHeaders: 'x-forwarded-for',
+    ipHeaders: "x-forwarded-for",
 
     /**
      * Detect request' host from specified headers, not case-sensitive.
@@ -104,7 +103,7 @@ module.exports = appInfo => {
      * @default
      * @since 1.0.0
      */
-    hostHeaders: '',
+    hostHeaders: "",
 
     /**
      * package.json
@@ -136,7 +135,7 @@ module.exports = appInfo => {
      * @default
      * @since 1.0.0
      */
-    rundir: path.join(appInfo.baseDir, 'run'),
+    rundir: path.join(appInfo.baseDir, "run"),
 
     /**
      * dump config
@@ -148,7 +147,14 @@ module.exports = appInfo => {
      */
     dump: {
       ignore: new Set([
-        'pass', 'pwd', 'passd', 'passwd', 'password', 'keys', 'masterKey', 'accessKey',
+        "pass",
+        "pwd",
+        "passd",
+        "passwd",
+        "password",
+        "keys",
+        "masterKey",
+        "accessKey",
         // ignore any key contains "secret" keyword
         /secret/i,
       ]),
@@ -167,11 +173,11 @@ module.exports = appInfo => {
      * @type {Object}
      */
     confusedConfigurations: {
-      bodyparser: 'bodyParser',
-      notFound: 'notfound',
-      sitefile: 'siteFile',
-      middlewares: 'middleware',
-      httpClient: 'httpclient',
+      bodyparser: "bodyParser",
+      notFound: "notfound",
+      sitefile: "siteFile",
+      middlewares: "middleware",
+      httpClient: "httpclient",
     },
   };
 
@@ -185,7 +191,7 @@ module.exports = appInfo => {
    * @property {String} pageUrl - the 404 page url
    */
   config.notfound = {
-    pageUrl: '',
+    pageUrl: "",
   };
 
   /**
@@ -202,9 +208,9 @@ module.exports = appInfo => {
    * };
    */
   config.siteFile = {
-    '/favicon.ico': fs.readFileSync(path.join(__dirname, 'favicon.png')),
+    "/favicon.ico": fs.readFileSync(path.join(__dirname, "favicon.png")),
     // default cache in 30 days
-    cacheControl: 'public, max-age=2592000',
+    cacheControl: "public, max-age=2592000",
   };
 
   /**
@@ -225,10 +231,10 @@ module.exports = appInfo => {
    */
   config.bodyParser = {
     enable: true,
-    encoding: 'utf8',
-    formLimit: '1mb',
-    jsonLimit: '1mb',
-    textLimit: '1mb',
+    encoding: "utf8",
+    formLimit: "1mb",
+    jsonLimit: "1mb",
+    textLimit: "1mb",
     strict: true,
     // @see https://github.com/hapijs/qs/blob/master/lib/parse.js#L8 for more options
     queryString: {
@@ -237,7 +243,7 @@ module.exports = appInfo => {
       parameterLimit: 1000,
     },
     onerror(err, ctx) {
-      err.message += ', check bodyParser config';
+      err.message += ", check bodyParser config";
       if (ctx.status === 404) {
         // set default status to 400, meaning client bad request
         ctx.status = 400;
@@ -268,18 +274,18 @@ module.exports = appInfo => {
    * @property {Boolean} enableFastContextLogger - using the app logger instead of EggContextLogger, defaults to false
    */
   config.logger = {
-    dir: path.join(appInfo.root, 'logs', appInfo.name),
-    encoding: 'utf8',
+    dir: path.join(appInfo.root, "logs", appInfo.name),
+    encoding: "utf8",
     env: appInfo.env,
-    level: 'INFO',
-    consoleLevel: 'INFO',
-    disableConsoleAfterReady: appInfo.env !== 'local' && appInfo.env !== 'unittest',
+    level: "INFO",
+    consoleLevel: "INFO",
+    disableConsoleAfterReady: appInfo.env !== "local" && appInfo.env !== "unittest",
     outputJSON: false,
     buffer: true,
     appLogName: `${appInfo.name}-web.log`,
-    coreLogName: 'egg-web.log',
-    agentLogName: 'egg-agent.log',
-    errorLogName: 'common-error.log',
+    coreLogName: "egg-web.log",
+    agentLogName: "egg-agent.log",
+    errorLogName: "common-error.log",
     coreLogger: {},
     allowDebugAtProd: false,
     enablePerformanceTimer: false,
@@ -346,13 +352,7 @@ module.exports = appInfo => {
    * core enable middlewares
    * @member {Array} Config#middleware
    */
-  config.coreMiddleware = [
-    'meta',
-    'siteFile',
-    'notfound',
-    'bodyParser',
-    'overrideMethod',
-  ];
+  config.coreMiddleware = ["meta", "siteFile", "notfound", "bodyParser", "overrideMethod"];
 
   /**
    * emit `startTimeout` if worker don't ready after `workerStartTimeout` ms
@@ -380,9 +380,9 @@ module.exports = appInfo => {
    */
   config.cluster = {
     listen: {
-      path: '',
+      path: "",
       port: 7001,
-      hostname: '',
+      hostname: "",
     },
   };
 
@@ -403,9 +403,9 @@ module.exports = appInfo => {
    * The response to be returned should include properties below:
    *
    * @member {Function} Config#onClientError
-   * @property [body] {String|Buffer} - the response body
-   * @property [status] {Number} - the response status code
-   * @property [headers] {Object} - the response header key-value pairs
+   * @property {String|Buffer} [body] - the response body
+   * @property {Number} [status] - the response status code
+   * @property {Object} [headers] - the response header key-value pairs
    *
    * @example
    * exports.onClientError = async (err, socket, app) => {

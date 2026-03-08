@@ -1,5 +1,5 @@
 exports.siteFile = {
-  cacheControl: 'no-store',
+  cacheControl: "no-store",
 };
 
-exports.keys = 'foo';
+exports.keys = "foo";

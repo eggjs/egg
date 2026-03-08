@@ -1,14 +1,14 @@
-'use strict';
+"use strict";
 
-const assert = require('node:assert');
-const mm = require('egg-mock');
-const utils = require('./utils');
+const assert = require("node:assert");
+const mm = require("egg-mock");
+const utils = require("./utils");
 
-describe('test/asyncSupport.test.js', () => {
+describe("test/asyncSupport.test.js", () => {
   afterEach(mm.restore);
   let app;
   before(async () => {
-    app = utils.app('apps/async-app');
+    app = utils.app("apps/async-app");
     await app.ready();
     assert(app.beforeStartExectuted);
     assert(app.scheduleExecuted);
@@ -18,10 +18,11 @@ describe('test/asyncSupport.test.js', () => {
     assert(app.beforeCloseExecuted);
   });
 
-  it('middleware, controller and service should support async functions', async () => {
-    await app.httpRequest()
-      .get('/api')
+  it("middleware, controller and service should support async functions", async () => {
+    await app
+      .httpRequest()
+      .get("/api")
       .expect(200)
-      .expect([ 'service', 'controller', 'router', 'middleware' ]);
+      .expect(["service", "controller", "router", "middleware"]);
   });
 });

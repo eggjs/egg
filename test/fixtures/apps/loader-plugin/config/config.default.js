@@ -1,5 +1,5 @@
-exports.plugin = 'override plugin';
+exports.plugin = "override plugin";
 
 exports.middleware = [];
 
-exports.keys = 'test key';
+exports.keys = "test key";

@@ -14,6 +14,7 @@ title: 静态资源
 - [`roadhog` 工具示例](https://github.com/eggjs/examples/tree/master/assets-with-roadhog)
 - [`umi` 工具示例](https://github.com/eggjs/examples/tree/master/assets-with-umi)
 - [Ant Design Pro 示例](https://github.com/eggjs/egg-ant-design-pro)
+
 ## 页面渲染
 
 可通过自动或手动方式添加静态资源，以下有两种方法：
@@ -28,7 +29,7 @@ assets 模板引擎并非服务端渲染，而是以一个静态资源文件作�
 // config/plugin.js
 exports.assets = {
   enable: true,
-  package: 'egg-view-assets',
+  package: "egg-view-assets",
 };
 ```
 
@@ -38,7 +39,7 @@ exports.assets = {
 // config/config.default.js
 exports.view = {
   mapping: {
-    '.js': 'assets',
+    ".js": "assets",
   },
 };
 ```
@@ -49,7 +50,7 @@ exports.view = {
 // app/controller/home.js
 module.exports = class HomeController extends Controller {
   async render() {
-    await this.ctx.render('index.js');
+    await this.ctx.render("index.js");
   }
 };
 ```
@@ -77,10 +78,10 @@ module.exports = class HomeController extends Controller {
 
 ```js
 // config/config.default.js
-module.exports = appInfo => ({
+module.exports = (appInfo) => ({
   assets: {
-    templatePath: path.join(appInfo.baseDir, 'app/view/template.html'),
-    templateViewEngine: 'nunjucks',
+    templatePath: path.join(appInfo.baseDir, "app/view/template.html"),
+    templateViewEngine: "nunjucks",
   },
 });
 ```
@@ -111,15 +112,12 @@ module.exports = appInfo => ({
 module.exports = class HomeController extends Controller {
   async render() {
     await this.ctx.render(
-      'index.js',
+      "index.js",
       {},
       {
-        templatePath: path.join(
-          this.app.config.baseDir,
-          'app/view/template.html'
-        ),
-        templateViewEngine: 'nunjucks',
-      }
+        templatePath: path.join(this.app.config.baseDir, "app/view/template.html"),
+        templateViewEngine: "nunjucks",
+      },
     );
   }
 };
@@ -131,13 +129,14 @@ module.exports = class HomeController extends Controller {
 
 ```js
 // config/config.default.js
-module.exports = appInfo => ({
+module.exports = (appInfo) => ({
   view: {
     // 如果还有其他模板引擎，需要合并多个目录
-    root: path.join(appInfo.baseDir, 'app/assets'),
+    root: path.join(appInfo.baseDir, "app/assets"),
   },
 });
 ```
+
 ### 使用其他模板引擎
 
 如果默认的 assets 模板引擎无法满足需求，你可以考虑结合其他模板引擎使用。这种情况下不需要配置 assets 模板引擎，你可以参考 [使用 umi 的例子](https://github.com/eggjs/examples/tree/master/assets-with-umi)。
@@ -146,7 +145,7 @@ module.exports = appInfo => ({
 // config/config.default.js
 exports.view = {
   mapping: {
-    '.html': 'nunjucks',
+    ".html": "nunjucks",
   },
 };
 ```
@@ -157,7 +156,7 @@ exports.view = {
 // app/controller/home.js
 module.exports = class HomeController extends Controller {
   async render() {
-    await this.ctx.render('index.html');
+    await this.ctx.render("index.html");
   }
 };
 ```
@@ -189,7 +188,7 @@ module.exports = class HomeController extends Controller {
 // app/controller/home.js
 module.exports = class HomeController extends Controller {
   async render() {
-    await this.ctx.render('index.js', { data: 1 });
+    await this.ctx.render("index.js", { data: 1 });
   }
 };
 ```
@@ -200,7 +199,7 @@ module.exports = class HomeController extends Controller {
 // app/controller/home.js
 module.exports = class HomeController extends Controller {
   async render() {
-    await this.ctx.render('index.html', {
+    await this.ctx.render("index.html", {
       __context__: { data: 1 },
     });
   }
@@ -211,9 +210,10 @@ module.exports = class HomeController extends Controller {
 
 ```js
 exports.assets = {
-  contextKey: '__context__',
+  contextKey: "__context__",
 };
 ```
+
 ## 构建工具
 
 这种模式最重要的是和构建工具整合，保证本地开发体验及自动部署，所以构建工具和框架需要有一层约定。
@@ -245,9 +245,9 @@ roadhog 完全满足这个映射关系，可使用 [assets 模板引擎](#使用
 ```js
 exports.assets = {
   devServer: {
-    command: 'roadhog dev',
-    port: 8000
-  }
+    command: "roadhog dev",
+    port: 8000,
+  },
 };
 ```
 
@@ -276,7 +276,7 @@ exports.assets = {
 ```js
 // config/config.prod.js
 exports.assets = {
-  publicPath: '/public/'
+  publicPath: "/public/",
 };
 ```
 
@@ -289,8 +289,8 @@ exports.assets = {
 ```js
 // config/config.prod.js
 exports.assets = {
-  url: 'https://cdn',
-  publicPath: '/myapp/'
+  url: "https://cdn",
+  publicPath: "/myapp/",
 };
 ```
 

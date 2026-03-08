@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 exports.view = {
-  defaultViewEngine: 'nunjucks',
+  defaultViewEngine: "nunjucks",
 };
 
-exports.keys = 'test key';
+exports.keys = "test key";

@@ -1,3 +1,3 @@
-module.exports = function*() {
-  yield this.render('nonce.html');
+module.exports = function* () {
+  yield this.render("nonce.html");
 };

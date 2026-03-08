@@ -20,7 +20,7 @@ order: 11
 ### 访问方式
 
 - `ctx.app`
-  
+
   `ctx.app` 提供了一种访问全局 `app` 对象的方式。
 
 - Controller，Middleware，Helper，Service 中都可以通过 `this.app` 访问到 Application 对象。例如，通过 `this.app.config` 可以访问配置对象。
@@ -29,7 +29,7 @@ order: 11
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   // 使用 app 对象
 };
 ```
@@ -61,7 +61,7 @@ module.exports = {
 
 ```js
 // app/extend/application.js
-const BAR = Symbol('Application#bar');
+const BAR = Symbol("Application#bar");
 
 module.exports = {
   get bar() {
@@ -74,6 +74,7 @@ module.exports = {
   },
 };
 ```
+
 ## Context
 
 Context 指的是 Koa 的请求上下文，这是请求级别的对象，每次请求生成一个 Context 实例，通常我们也简写成 `ctx`。在所有的文档中，Context 和 `ctx` 都是指 Koa 的上下文对象。
@@ -97,7 +98,7 @@ Context 指的是 Koa 的请求上下文，这是请求级别的对象，每次�
 module.exports = {
   foo(param) {
     // this 就是 ctx 对象，在其中可以调用 ctx 上的其他方法，或访问属性
-  }
+  },
 };
 ```
 
@@ -111,19 +112,20 @@ module.exports = {
 
 ```js
 // app/extend/context.js
-const BAR = Symbol('Context#bar');
+const BAR = Symbol("Context#bar");
 
 module.exports = {
   get bar() {
     // this 就是 ctx 对象，在其中可以调用 ctx 上的其他方法，或访问属性
     if (!this[BAR]) {
       // 例如，从 header 中获取，实际情况肯定更复杂
-      this[BAR] = this.get('x-bar');
+      this[BAR] = this.get("x-bar");
     }
     return this[BAR];
-  }
+  },
 };
 ```
+
 ## Request 对象
 
 Request 对象和 Koa 的 Request 对象相同，是 **请求级别** 的对象，它提供了大量请求相关的属性和方法供使用。
@@ -148,7 +150,7 @@ Koa 内置的代理 `request` 的属性和方法列表可参阅：[Koa - Request
 // app/extend/request.js
 module.exports = {
   get foo() {
-    return this.get('x-request-foo');
+    return this.get("x-request-foo");
   },
 };
 ```
@@ -177,7 +179,7 @@ ctx.response;
 // app/extend/response.js
 module.exports = {
   set foo(value) {
-    this.set('x-response-foo', value);
+    this.set("x-response-foo", value);
   },
 };
 ```
@@ -198,10 +200,10 @@ Helper 函数用来提供一些实用的 utility 函数。
 
 ```js
 // 假设在 app/router.js 中定义了 home router
-app.get('home', '/', 'home.index');
+app.get("home", "/", "home.index");
 
 // 使用 helper 计算指定 url path
-ctx.helper.pathFor('home', { by: 'recent', limit: 20 });
+ctx.helper.pathFor("home", { by: "recent", limit: 20 });
 // => /?by=recent&limit=20
 ```
 

@@ -69,7 +69,7 @@ The `Context` has changed from `this` to the first argument `ctx`, the original 
 
 ```js
 // old
-app.role.use('user', function () {
+app.role.use("user", function () {
   return !!this.user;
 });
 
@@ -78,7 +78,7 @@ app.role.use((ctx, scope) => {
   return !!ctx.user;
 });
 
-app.role.use('user', (ctx) => {
+app.role.use("user", (ctx) => {
   return !!ctx.user;
 });
 ```
@@ -113,7 +113,7 @@ module.exports = () => {
     const start = Date.now();
     yield next;
     const delta = Math.ceil(Date.now() - start);
-    this.set('X-Response-Time', delta + 'ms');
+    this.set("X-Response-Time", delta + "ms");
   };
 };
 
@@ -124,7 +124,7 @@ module.exports = () => {
     // Note, differ from the generator function middleware, next is a function, we're executing it here
     await next();
     const delta = Math.ceil(Date.now() - start);
-    ctx.set('X-Response-Time', delta + 'ms');
+    ctx.set("X-Response-Time", delta + "ms");
   };
 };
 ```
@@ -172,10 +172,7 @@ const [ news, user ] = yield [
 In this case, use `Promise.all()` to wrap it:
 
 ```js
-const [news, user] = await Promise.all([
-  ctx.service.news.list(topic),
-  ctx.service.user.get(uid),
-]);
+const [news, user] = await Promise.all([ctx.service.news.list(topic), ctx.service.user.get(uid)]);
 ```
 
 #### object - yield {}
@@ -203,10 +200,7 @@ It's recommended to use `await Promise.all([])`:
 // app/service/biz.js
 class BizService extends Service {
   list(topic, uid) {
-    return Promise.all([
-      ctx.service.news.list(topic),
-      ctx.service.user.get(uid),
-    ]);
+    return Promise.all([ctx.service.news.list(topic), ctx.service.user.get(uid)]);
   }
 }
 

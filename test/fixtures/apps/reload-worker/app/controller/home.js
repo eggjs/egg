@@ -1,1 +1,3 @@
-module.exports = function*() { this.body = 'change'; };
+module.exports = function* () {
+  this.body = "change";
+};

@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-const mm = require('egg-mock');
-const assert = require('node:assert');
-const innerClient = require('cluster-client/lib/symbol').innerClient;
-const utils = require('../../utils');
+const mm = require("egg-mock");
+const assert = require("node:assert");
+const innerClient = require("cluster-client/lib/symbol").innerClient;
+const utils = require("../../utils");
 
 let app;
-describe('test/lib/cluster/cluster-client.test.js', () => {
-  describe('common mode', () => {
+describe("test/lib/cluster/cluster-client.test.js", () => {
+  describe("common mode", () => {
     before(async () => {
-      mm.consoleLevel('NONE');
-      app = utils.app('apps/cluster_mod_app');
+      mm.consoleLevel("NONE");
+      app = utils.app("apps/cluster_mod_app");
       await app.ready();
     });
     after(async () => {
@@ -20,48 +20,48 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
       mm.restore();
     });
 
-    it('should publish & subscribe', () => {
-      return app.httpRequest()
-        .post('/publish')
-        .send({ value: 'www.testme.com' })
-        .expect('ok')
+    it("should publish & subscribe", () => {
+      return app
+        .httpRequest()
+        .post("/publish")
+        .send({ value: "www.testme.com" })
+        .expect("ok")
         .expect(200)
         .then(() => {
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             setTimeout(resolve, 500);
           });
         })
         .then(() => {
-          return app.httpRequest()
-            .get('/getHosts')
-            .expect('www.testme.com:20880')
-            .expect(200);
+          return app.httpRequest().get("/getHosts").expect("www.testme.com:20880").expect(200);
         });
     });
 
-    it('should get default cluster response timeout', () => {
-      return app.httpRequest()
-        .get('/getDefaultTimeout')
+    it("should get default cluster response timeout", () => {
+      return app
+        .httpRequest()
+        .get("/getDefaultTimeout")
         .expect(200)
-        .then(res => {
-          assert(res.text === '60000');
+        .then((res) => {
+          assert(res.text === "60000");
         });
     });
 
-    it('should get overwrite cluster response timeout', () => {
-      return app.httpRequest()
-        .get('/getOverwriteTimeout')
+    it("should get overwrite cluster response timeout", () => {
+      return app
+        .httpRequest()
+        .get("/getOverwriteTimeout")
         .expect(200)
-        .then(res => {
-          assert(res.text === '1000');
+        .then((res) => {
+          assert(res.text === "1000");
         });
     });
   });
 
-  describe('single process mode', () => {
+  describe("single process mode", () => {
     before(async () => {
-      mm.consoleLevel('NONE');
-      app = await utils.singleProcessApp('apps/cluster_mod_app');
+      mm.consoleLevel("NONE");
+      app = await utils.singleProcessApp("apps/cluster_mod_app");
     });
     after(async () => {
       await app.close();
@@ -70,40 +70,40 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
       mm.restore();
     });
 
-    it('should publish & subscribe', () => {
-      return app.httpRequest()
-        .post('/publish')
-        .send({ value: 'www.testme.com' })
-        .expect('ok')
+    it("should publish & subscribe", () => {
+      return app
+        .httpRequest()
+        .post("/publish")
+        .send({ value: "www.testme.com" })
+        .expect("ok")
         .expect(200)
         .then(() => {
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             setTimeout(resolve, 500);
           });
         })
         .then(() => {
-          return app.httpRequest()
-            .get('/getHosts')
-            .expect('www.testme.com:20880')
-            .expect(200);
+          return app.httpRequest().get("/getHosts").expect("www.testme.com:20880").expect(200);
         });
     });
 
-    it('should get default cluster response timeout', () => {
-      return app.httpRequest()
-        .get('/getDefaultTimeout')
+    it("should get default cluster response timeout", () => {
+      return app
+        .httpRequest()
+        .get("/getDefaultTimeout")
         .expect(200)
-        .then(res => {
-          assert(res.text === '60000');
+        .then((res) => {
+          assert(res.text === "60000");
         });
     });
 
-    it('should get overwrite cluster response timeout', () => {
-      return app.httpRequest()
-        .get('/getOverwriteTimeout')
+    it("should get overwrite cluster response timeout", () => {
+      return app
+        .httpRequest()
+        .get("/getOverwriteTimeout")
         .expect(200)
-        .then(res => {
-          assert(res.text === '1000');
+        .then((res) => {
+          assert(res.text === "1000");
         });
     });
   });

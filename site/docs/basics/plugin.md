@@ -61,7 +61,7 @@ Then you need to declare it in the `config / plugin.js` application or framework
 // Use mysql plugin
 exports.mysql = {
   enable: true,
-  package: 'egg-mysql',
+  package: "egg-mysql",
 };
 ```
 
@@ -111,7 +111,7 @@ Then declare in `plugin.local.js`:
 // config / plugin.local.js
 exports.dev = {
   enable: true,
-  package: 'egg-dev',
+  package: "egg-dev",
 };
 ```
 
@@ -131,10 +131,10 @@ In this way, `npm i --production` in the production environment does not need to
 
 ```js
 // config / plugin.js
-const path = require('path');
+const path = require("path");
 exports.mysql = {
   enable: true,
-  path: path.join(__dirname, '../lib/plugin/egg-mysql'),
+  path: path.join(__dirname, "../lib/plugin/egg-mysql"),
 };
 ```
 
@@ -146,11 +146,11 @@ The plugin will usually contain its own default configuration, you can overwrite
 // config / config.default.js
 exports.mysql = {
   client: {
-    host: 'mysql.com',
-    port: '3306',
-    user: 'test_user',
-    password: 'test_password',
-    database: 'test',
+    host: "mysql.com",
+    port: "3306",
+    user: "test_user",
+    password: "test_password",
+    database: "test",
   },
 };
 ```

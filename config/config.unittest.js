@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 module.exports = {
   logger: {
-    consoleLevel: 'WARN',
+    consoleLevel: "WARN",
     buffer: false,
   },
 };

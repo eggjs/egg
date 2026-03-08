@@ -1,7 +1,7 @@
 name: Release 3.x
 on:
   push:
-    branches: [ 3.x ]
+    branches: [3.x]
 
 permissions:
   contents: write

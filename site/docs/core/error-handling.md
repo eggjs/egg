@@ -12,10 +12,10 @@ With those features, you can take following implementation as reference:
 ```js
 // app/service/test.js
 try {
-  const res = await this.ctx.curl('http://eggjs.com/api/echo', {
-    dataType: 'json',
+  const res = await this.ctx.curl("http://eggjs.com/api/echo", {
+    dataType: "json",
   });
-  if (res.status !== 200) throw new Error('response status is not 200');
+  if (res.status !== 200) throw new Error("response status is not 200");
   return res.data;
 } catch (err) {
   this.logger.error(err);
@@ -80,7 +80,7 @@ Redirecting to your customized error page by setting `errorPageUrl` in `onerror`
 ```js
 module.exports = {
   onerror: {
-    errorPageUrl: '/50x.html',
+    errorPageUrl: "/50x.html",
   },
 };
 ```
@@ -140,7 +140,7 @@ Overriding default 404 page to the one you want:
 // config/config.default.js
 module.exports = {
   notfound: {
-    pageUrl: '/404.html',
+    pageUrl: "/404.html",
   },
 };
 ```
@@ -156,9 +156,9 @@ module.exports = () => {
     await next();
     if (ctx.status === 404 && !ctx.body) {
       if (ctx.acceptJSON) {
-        ctx.body = { error: 'Not Found' };
+        ctx.body = { error: "Not Found" };
       } else {
-        ctx.body = '<h1>Page Not Found</h1>';
+        ctx.body = "<h1>Page Not Found</h1>";
       }
     }
   };
@@ -170,6 +170,6 @@ Adding yours to `middleware` in config:
 ```js
 // config/config.default.js
 module.exports = {
-  middleware: ['notfoundHandler'],
+  middleware: ["notfoundHandler"],
 };
 ```

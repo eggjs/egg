@@ -28,9 +28,9 @@ of which:
 - usually the number of Worker processes depends on the CPU core number, only in this way can we take full advantage of multi-core resources.
 
 ```js
-const cluster = require('cluster');
-const http = require('http');
-const numCPUs = require('os').cpus().length;
+const cluster = require("cluster");
+const http = require("http");
+const numCPUs = require("os").cpus().length;
 
 if (cluster.isMaster) {
   // Fork workers.
@@ -38,8 +38,8 @@ if (cluster.isMaster) {
     cluster.fork();
   }
 
-  cluster.on('exit', function (worker, code, signal) {
-    console.log('worker ' + worker.process.pid + ' died');
+  cluster.on("exit", function (worker, code, signal) {
+    console.log("worker " + worker.process.pid + " died");
   });
 } else {
   // Workers can share any TCP connection
@@ -47,7 +47,7 @@ if (cluster.isMaster) {
   http
     .createServer(function (req, res) {
       res.writeHead(200);
-      res.end('hello world\n');
+      res.end("hello world\n");
     })
     .listen(8000);
 }
@@ -179,7 +179,7 @@ module.exports = agent => {
 ```js
 // app.js
 module.exports = (app) => {
-  app.messenger.on('xxx_action', (data) => {
+  app.messenger.on("xxx_action", (data) => {
     // ...
   });
 };
@@ -224,17 +224,17 @@ Worker runs business codes, which are more complicated than those of Agent and M
 Although every Worker process runs individually, it's necessary for them to communicate with each other which is called inter-process communication(IPC). Below is an example code provided by Node.js officially.
 
 ```js
-'use strict';
-const cluster = require('cluster');
+"use strict";
+const cluster = require("cluster");
 
 if (cluster.isMaster) {
   const worker = cluster.fork();
-  worker.send('hi there');
-  worker.on('message', (msg) => {
+  worker.send("hi there");
+  worker.on("message", (msg) => {
     console.log(`msg: ${msg} from worker#${worker.id}`);
   });
 } else if (cluster.isWorker) {
-  process.on('message', (msg) => {
+  process.on("message", (msg) => {
     process.send(msg);
   });
 }
@@ -290,9 +290,9 @@ To simplify the invocation, we have encapsulated a messenger object and attached
 // app.js
 module.exports = (app) => {
   // Note, only after egg-ready event occurs can the message be sent
-  app.messenger.once('egg-ready', () => {
-    app.messenger.sendToAgent('agent-event', { foo: 'bar' });
-    app.messenger.sendToApp('app-event', { foo: 'bar' });
+  app.messenger.once("egg-ready", () => {
+    app.messenger.sendToAgent("agent-event", { foo: "bar" });
+    app.messenger.sendToApp("app-event", { foo: "bar" });
   });
 };
 ```
@@ -348,14 +348,14 @@ class SourceService extends Service {
   async checkUpdate() {
     // check if remote data source has changed
     const updated = await mockCheck();
-    this.ctx.logger.info('check update response %s', updated);
+    this.ctx.logger.info("check update response %s", updated);
     return updated;
   }
 
   async update() {
     // update memory cache from remote
     memoryCache = await mockFetch();
-    this.ctx.logger.info('update memory cache from remote: %j', memoryCache);
+    this.ctx.logger.info("update memory cache from remote: %j", memoryCache);
   }
 }
 ```
@@ -365,13 +365,13 @@ Write the scheduled task to implement solution one: gets data changes from the r
 ```js
 // app/schedule/force_refresh.js
 exports.schedule = {
-  interval: '10m',
-  type: 'all', // run in all workers
+  interval: "10m",
+  type: "all", // run in all workers
 };
 
 exports.task = async (ctx) => {
   await ctx.service.source.update();
-  ctx.app.lastUpdateBy = 'force';
+  ctx.app.lastUpdateBy = "force";
 };
 ```
 
@@ -380,8 +380,8 @@ Write a scheduled task again to implement check logics of solution two: make a w
 ```js
 // app/schedule/pull_refresh.js
 exports.schedule = {
-  interval: '10s',
-  type: 'worker', // only run in one worker
+  interval: "10s",
+  type: "worker", // only run in one worker
 };
 
 exports.task = async (ctx) => {
@@ -389,7 +389,7 @@ exports.task = async (ctx) => {
   if (!needRefresh) return;
 
   // notify all workers to update memory cache from `file`
-  ctx.app.messenger.sendToApp('refresh', 'pull');
+  ctx.app.messenger.sendToApp("refresh", "pull");
 };
 ```
 
@@ -398,8 +398,8 @@ Listen on the `pullRefresh` event in the customized start-up file and update dat
 ```js
 // app.js
 module.exports = (app) => {
-  app.messenger.on('refresh', (by) => {
-    app.logger.info('start update by %s', by);
+  app.messenger.on("refresh", (by) => {
+    app.logger.info("start update by %s", by);
     // create an anonymous context to access service
     const ctx = app.createAnonymousContext();
     ctx.runInBackground(async () => {
@@ -415,12 +415,12 @@ Now let's consider how to implement solution three. We need a message-oriented m
 ```js
 // agent.js
 
-const Subscriber = require('./lib/subscriber');
+const Subscriber = require("./lib/subscriber");
 
 module.exports = (agent) => {
   const subscriber = new Subscriber();
   // listen changed event, broadcast to all workers
-  subscriber.on('changed', () => agent.messenger.sendToApp('refresh', 'push'));
+  subscriber.on("changed", () => agent.messenger.sendToApp("refresh", "push"));
 };
 ```
 

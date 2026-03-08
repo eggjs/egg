@@ -1,5 +1,5 @@
 exports.notfound = {
-  pageUrl: '/404',
+  pageUrl: "/404",
 };
 
-exports.keys = 'foo';
+exports.keys = "foo";

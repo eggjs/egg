@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  noexist: true
+  noexist: true,
 };

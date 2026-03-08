@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-exports.keys = 'tracer-demo keys';
+exports.keys = "tracer-demo keys";

@@ -13,14 +13,14 @@ HTTP 请求都是无状态的，但是我们的 Web 应用通常都需要知道�
 class HomeController extends Controller {
   async add() {
     const ctx = this.ctx;
-    let count = ctx.cookies.get('count');
+    let count = ctx.cookies.get("count");
     count = count ? Number(count) : 0;
-    ctx.cookies.set('count', ++count);
+    ctx.cookies.set("count", ++count);
     ctx.body = count;
   }
   async remove() {
     const ctx = this.ctx;
-    ctx.cookies.set('count', null);
+    ctx.cookies.set("count", null);
     ctx.status = 204;
   }
 }
@@ -52,7 +52,7 @@ class HomeController extends Controller {
 ```js
 ctx.cookies.set(key, value, {
   httpOnly: false,
-  signed: false
+  signed: false,
 });
 ```
 
@@ -61,7 +61,7 @@ ctx.cookies.set(key, value, {
 ```js
 ctx.cookies.set(key, value, {
   httpOnly: true, // 默认就是 true
-  encrypt: true  // 加密传输
+  encrypt: true, // 加密传输
 });
 ```
 
@@ -80,8 +80,8 @@ ctx.cookies.set(key, value, {
 如果要获取前端或者其他系统设置的 cookie，需要指定参数 `signed` 为 `false`，避免验签导致获取不到 cookie 的值。
 
 ```js
-ctx.cookies.get('frontend-cookie', {
-  signed: false
+ctx.cookies.get("frontend-cookie", {
+  signed: false,
 });
 ```
 
@@ -91,7 +91,7 @@ ctx.cookies.get('frontend-cookie', {
 
 ```js
 module.exports = {
-  keys: 'key1,key2'
+  keys: "key1,key2",
 };
 ```
 
@@ -101,6 +101,7 @@ keys 配置成一个字符串，可以按照逗号分隔配置多个 key。Cooki
 - 解密和验签时会遍历 keys 进行解密。
 
 如果我们想要更新 Cookie 的秘钥，但是又不希望之前设置到用户浏览器上的 Cookie 失效，可以将新的秘钥配置到 keys 最前面，等过一段时间之后再删除不需要的秘钥即可。
+
 ## Session
 
 Cookie 通常用作 Web 应用中标识请求方身份的功能，基于此，Web 应用封装了 Session 概念，专用于用户身份识别。
@@ -138,7 +139,7 @@ ctx.session = null;
 ```js
 // ❌ 错误的用法
 ctx.session._visited = 1; // 该字段会在下一次请求时丢失
-ctx.session.isNew = 'HeHe'; // 为内部关键字，不应更改
+ctx.session.isNew = "HeHe"; // 为内部关键字，不应更改
 
 // ✔️ 正确的用法
 ctx.session.visited = 1; // 无问题
@@ -148,7 +149,7 @@ Session 默认基于 Cookie 实现，内容加密后直接存储在 Cookie 的�
 
 ```js
 exports.session = {
-  key: 'EGG_SESS',
+  key: "EGG_SESS",
   maxAge: 24 * 3600 * 1000, // 1 天
   httpOnly: true,
   encrypt: true,
@@ -165,7 +166,7 @@ Session 默认存放在 Cookie 中可能出现问题：浏览器有最大 Cookie
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   app.sessionStore = {
     async get(key) {
       // 返回值
@@ -186,11 +187,11 @@ module.exports = app => {
 // plugin.js
 exports.redis = {
   enable: true,
-  package: 'egg-redis',
+  package: "egg-redis",
 };
 exports.sessionRedis = {
   enable: true,
-  package: 'egg-session-redis',
+  package: "egg-session-redis",
 };
 ```
 
@@ -203,7 +204,7 @@ exports.sessionRedis = {
 Session 配置中的 `maxAge` 可全局设置有效期。**记住我** 功能中，可针对特定用户的 Session 设置不同有效时间，通过 `ctx.session.maxAge=` 实现：
 
 ```js
-const ms = require('ms');
+const ms = require("ms");
 class UserController extends Controller {
   async login() {
     const ctx = this.ctx;
@@ -213,7 +214,7 @@ class UserController extends Controller {
     // 设置 Session
     ctx.session.user = user;
     // 勾选 `记住我` 时，设置 30 天过期时间
-    if (rememberMe) ctx.session.maxAge = ms('30d');
+    if (rememberMe) ctx.session.maxAge = ms("30d");
   }
 }
 ```

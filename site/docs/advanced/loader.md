@@ -123,16 +123,16 @@ However, there are still some differences:
 
 | File                   | Application | Framework | Plugin |
 | ---------------------- | ----------- | --------- | ------ |
-| app/router.js          | ✔︎          |           |
-| app/controller         | ✔︎          |           |
-| app/middleware         | ✔︎          | ✔︎        | ✔︎     |
-| app/service            | ✔︎          | ✔︎        | ✔︎     |
-| app/extend             | ✔︎          | ✔︎        | ✔︎     |
-| app.js                 | ✔︎          | ✔︎        | ✔︎     |
-| agent.js               | ✔︎          | ✔︎        | ✔︎     |
-| config/config.{env}.js | ✔︎          | ✔︎        | ✔︎     |
-| config/plugin.js       | ✔︎          | ✔︎        |
-| package.json           | ✔︎          | ✔︎        | ✔︎     |
+| app/router.js          | ✔︎           |           |
+| app/controller         | ✔︎           |           |
+| app/middleware         | ✔︎           | ✔︎         | ✔︎      |
+| app/service            | ✔︎           | ✔︎         | ✔︎      |
+| app/extend             | ✔︎           | ✔︎         | ✔︎      |
+| app.js                 | ✔︎           | ✔︎         | ✔︎      |
+| agent.js               | ✔︎           | ✔︎         | ✔︎      |
+| config/config.{env}.js | ✔︎           | ✔︎         | ✔︎      |
+| config/plugin.js       | ✔︎           | ✔︎         |
+| package.json           | ✔︎           | ✔︎         | ✔︎      |
 
 During the loading process, Egg will traverse all loadUnits to load the files above(application, framework and plugin are different), the loading process has priority.
 
@@ -303,9 +303,9 @@ Egg implements [AppWorkerLoader] and [AgentWorkerLoader] based on the Loader, in
 ```js
 // custom AppWorkerLoader
 // lib/framework.js
-const path = require('path');
-const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
+const path = require("path");
+const egg = require("egg");
+const EGG_PATH = Symbol.for("egg#eggPath");
 
 class YadanAppWorkerLoader extends egg.AppWorkerLoader {
   constructor(opt) {
@@ -362,9 +362,9 @@ module.exports = (app) => {
 
 // app.js
 // app/xx.js, as an example, we could load this file in app.js
-const path = require('path');
+const path = require("path");
 module.exports = (app) => {
-  app.loader.loadFile(path.join(app.config.baseDir, 'app/xx.js'));
+  app.loader.loadFile(path.join(app.config.baseDir, "app/xx.js"));
 };
 ```
 
@@ -378,8 +378,8 @@ Used to load files from a directory into the app, such as `app/controller/home.j
 // app.js
 // The following is just an example, using loadController to load controller in practice
 module.exports = (app) => {
-  const directory = path.join(app.config.baseDir, 'app/controller');
-  app.loader.loadToApp(directory, 'controller');
+  const directory = path.join(app.config.baseDir, "app/controller");
+  app.loader.loadToApp(directory, "controller");
 };
 ```
 
@@ -398,22 +398,20 @@ We load service in this mode as an example:
 ```js
 // The following is just an example, using loadService in practice
 // app/service/user.js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 class UserService extends Service {}
 module.exports = UserService;
 
 // app.js
 // get all loadUnit
-const servicePaths = app.loader
-  .getLoadUnits()
-  .map((unit) => path.join(unit.path, 'app/service'));
+const servicePaths = app.loader.getLoadUnits().map((unit) => path.join(unit.path, "app/service"));
 
-app.loader.loadToContext(servicePaths, 'service', {
+app.loader.loadToContext(servicePaths, "service", {
   // service needs to inherit app.Service, so needs app as parameter
   // enable call will return UserService when loading
   call: true,
   // loading file into app.serviceClasses
-  fieldClass: 'serviceClasses',
+  fieldClass: "serviceClasses",
 });
 ```
 
@@ -427,9 +425,9 @@ So this class will only be instantiated when first calling, and will be cached a
 `ignore` could ignore some files, supports glob, the default is empty.
 
 ```js
-app.loader.loadToApp(directory, 'controller', {
+app.loader.loadToApp(directory, "controller", {
   // ignore files in app/controller/util
-  ignore: 'util/**',
+  ignore: "util/**",
 });
 ```
 
@@ -444,8 +442,8 @@ module.exports = class User {
 };
 
 // Loading from app/model, could do some initializations when loading.
-const directory = path.join(app.config.baseDir, 'app/model');
-app.loader.loadToApp(directory, 'model', {
+const directory = path.join(app.config.baseDir, "app/model");
+app.loader.loadToApp(directory, "model", {
   initializer(model, opt) {
     // The first parameter is export's object
     // The second parameter is an object that only contains current file path.
@@ -507,8 +505,8 @@ When you define a loader with `loadToApp`
 ```js
 // app.js
 module.exports = (app) => {
-  const directory = path.join(app.config.baseDir, 'app/adapter');
-  app.loader.loadToApp(directory, 'adapter');
+  const directory = path.join(app.config.baseDir, "app/adapter");
+  app.loader.loadToApp(directory, "adapter");
 };
 ```
 
@@ -521,18 +519,19 @@ module.exports = {
     // the property name when load to application, E.X. app.adapter
     adapter: {
       // relative to app.config.baseDir
-      directory: 'app/adapter',
+      directory: "app/adapter",
       // if inject is ctx, it will use loadToContext
-      inject: 'app',
+      inject: "app",
       // whether load the directory of the framework and plugin
       loadunit: false,
       // you can also use other LoaderOptions
-   }
+    },
   },
 };
 ```
+
 ## Reference Links
+
 - [Loader](https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js)
 - [AppWorkerLoader](https://github.com/eggjs/egg/blob/master/lib/loader/app_worker_loader.js)
 - [AgentWorkerLoader](https://github.com/eggjs/egg/blob/master/lib/loader/agent_worker_loader.js)
-

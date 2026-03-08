@@ -1,2 +1,2 @@
-exports.keys = 'foo';
+exports.keys = "foo";
 exports.proxy = true;

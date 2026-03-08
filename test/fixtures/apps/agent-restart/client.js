@@ -1,3 +1,3 @@
 module.exports = {
-  ready: cb => cb(),
+  ready: (cb) => cb(),
 };

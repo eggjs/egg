@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   app.beforeStart(async () => {
     await Promise.resolve();
-    await app.runSchedule('async');
+    await app.runSchedule("async");
     app.beforeStartExectuted = true;
   });
 

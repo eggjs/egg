@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 exports.router = function* () {
-  yield this.render('locals/router.html');
+  yield this.render("locals/router.html");
 };

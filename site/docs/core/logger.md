@@ -27,7 +27,7 @@ Change `dir` in logger:
 ```js
 // config/config.${env}.js
 exports.logger = {
-  dir: '/path/to/your/custom/log/dir',
+  dir: "/path/to/your/custom/log/dir",
 };
 ```
 
@@ -48,9 +48,9 @@ module.exports = (appInfo) => {
   return {
     logger: {
       appLogName: `${appInfo.name}-web.log`,
-      coreLogName: 'egg-web.log',
-      agentLogName: 'egg-agent.log',
-      errorLogName: 'common-error.log',
+      coreLogName: "egg-web.log",
+      agentLogName: "egg-agent.log",
+      errorLogName: "common-error.log",
     },
   };
 };
@@ -63,19 +63,19 @@ module.exports = (appInfo) => {
 It's proper to log details in requests with context logger. The logger will append basics about requests to each log. For example, `[$userId/$ip/$traceId/${cost}ms $method $url]`.
 
 ```js
-ctx.logger.debug('debug info');
-ctx.logger.info('some request data: %j', ctx.request.body);
-ctx.logger.warn('WARNING!!!!');
+ctx.logger.debug("debug info");
+ctx.logger.info("some request data: %j", ctx.request.body);
+ctx.logger.warn("WARNING!!!!");
 
 // .error will save information in call stack into errorLog file.
 // Exceptions must be guaranteed to be Error or object extended from Error, which offers a trace of what functions were called.
-ctx.logger.error(new Error('whoops'));
+ctx.logger.error(new Error("whoops"));
 ```
 
 For developers who create frameworks or plugins, `ctx.coreLogger` is another option in Context Logger.
 
 ```js
-ctx.coreLogger.info('info');
+ctx.coreLogger.info("info");
 ```
 
 ### App Logger
@@ -85,9 +85,9 @@ For developers who want to know more details about dispatch in Egg, they can eas
 ```js
 // app.js
 module.exports = (app) => {
-  app.logger.debug('debug info');
-  app.logger.info('Latency: %d ms', Date.now() - start);
-  app.logger.warn('warning!');
+  app.logger.debug("debug info");
+  app.logger.info("Latency: %d ms", Date.now() - start);
+  app.logger.warn("warning!");
 
   app.logger.error(someErrorObj);
 };
@@ -98,7 +98,7 @@ module.exports = (app) => {
 ```js
 // app.js
 module.exports = (app) => {
-  app.coreLogger.info('Latency: %d ms', Date.now() - start);
+  app.coreLogger.info("Latency: %d ms", Date.now() - start);
 };
 ```
 
@@ -109,9 +109,9 @@ Agent also supports `agent.coreLogger` as the same feature to context and app ab
 ```js
 // agent.js
 module.exports = (agent) => {
-  agent.logger.debug('debug info');
-  agent.logger.info('Latency: %d ms', Date.now() - start);
-  agent.logger.warn('warning!');
+  agent.logger.debug("debug info");
+  agent.logger.info("Latency: %d ms", Date.now() - start);
+  agent.logger.warn("warning!");
 
   agent.logger.error(someErrorObj);
 };
@@ -126,7 +126,7 @@ The default encoding setting(`utf-8`) can be changed via `encoding` in config:
 ```js
 // config/config.${env}.js
 exports.logger = {
-  encoding: 'gbk',
+  encoding: "gbk",
 };
 ```
 
@@ -154,7 +154,7 @@ If you want to change logger's default output level, modify in the config as fol
 ```js
 // config/config.${env}.js
 exports.logger = {
-  level: 'DEBUG', // logs in all level will be written into files
+  level: "DEBUG", // logs in all level will be written into files
 };
 ```
 
@@ -163,7 +163,7 @@ Stop writing logs in all levels:
 ```js
 // config/config.${env}.js
 exports.logger = {
-  level: 'NONE',
+  level: "NONE",
 };
 ```
 
@@ -174,7 +174,7 @@ To avoid some plugin's DEBUG logs printing in the production environment causing
 ```js
 // config/config.prod.js
 exports.logger = {
-  level: 'DEBUG',
+  level: "DEBUG",
   allowDebugAtProd: true,
 };
 ```
@@ -192,7 +192,7 @@ Print logs in all levels:
 ```js
 // config/config.${env}.js
 exports.logger = {
-  consoleLevel: 'DEBUG',
+  consoleLevel: "DEBUG",
 };
 ```
 
@@ -201,7 +201,7 @@ Stop printing logs in all levels:
 ```js
 // config/config.${env}.js
 exports.logger = {
-  consoleLevel: 'NONE',
+  consoleLevel: "NONE",
 };
 ```
 
@@ -224,13 +224,13 @@ The logger you create can be declared in config:
 
 ```js
 // config/config.${env}.js
-const path = require('path');
+const path = require("path");
 
 module.exports = (appInfo) => {
   return {
     customLogger: {
       xxLogger: {
-        file: path.join(appInfo.root, 'logs/xx.log'),
+        file: path.join(appInfo.root, "logs/xx.log"),
       },
     },
   };
@@ -243,13 +243,13 @@ Now, you can get loggers via `app.getLogger('xxLogger')` or `ctx.getLogger('xxLo
 
 ```js
 // config/config.${env}.js
-const path = require('path');
+const path = require("path");
 
 module.exports = (appInfo) => {
   return {
     customLogger: {
       xxLogger: {
-        file: path.join(appInfo.root, 'logs/xx.log'),
+        file: path.join(appInfo.root, "logs/xx.log"),
         formatter(meta) {
           return `[${meta.date}] ${meta.message}`;
         },
@@ -272,9 +272,9 @@ Transport can be considered as a tunnel to transfer data in Egg. A logger contai
 For concrete scenario, we take `common-error.log` as an example, which not only printed into files, but also sent to another remote service. At first, we can create a new transport for sending logs to remote:
 
 ```js
-const co = require('co');
-const util = require('util');
-const Transport = require('egg-logger').Transport;
+const co = require("co");
+const util = require("util");
+const Transport = require("egg-logger").Transport;
 
 class RemoteErrorTransport extends Transport {
   // Create log() to upload logs
@@ -282,30 +282,22 @@ class RemoteErrorTransport extends Transport {
     let log;
     if (args[0] instanceof Error) {
       const err = args[0];
-      log = util.format(
-        '%s: %s\n%s\npid: %s\n',
-        err.name,
-        err.message,
-        err.stack,
-        process.pid,
-      );
+      log = util.format("%s: %s\n%s\npid: %s\n", err.name, err.message, err.stack, process.pid);
     } else {
       log = util.format(...args);
     }
 
     this.options.app
-      .curl('http://url/to/remote/error/log/service/logs', {
+      .curl("http://url/to/remote/error/log/service/logs", {
         data: log,
-        method: 'POST',
+        method: "POST",
       })
       .catch(console.error);
   }
 }
 
 // Transport attached to errorLogger in app.js, makes logs sync to it once those are created.
-app
-  .getLogger('errorLogger')
-  .set('remote', new RemoteErrorTransport({ level: 'ERROR', app }));
+app.getLogger("errorLogger").set("remote", new RemoteErrorTransport({ level: "ERROR", app }));
 ```
 
 Performance is what we always consider as important part in our services so that logs will firstly be written into memory and transferred to remote later.
@@ -324,14 +316,12 @@ The log file also can be cut into ones by size. For example, Egg will process `e
 
 ```js
 // config/config.${env}.js
-const path = require('path');
+const path = require("path");
 
 module.exports = (appInfo) => {
   return {
     logrotator: {
-      filesRotateBySize: [
-        path.join(appInfo.root, 'logs', appInfo.name, 'egg-web.log'),
-      ],
+      filesRotateBySize: [path.join(appInfo.root, "logs", appInfo.name, "egg-web.log")],
       maxFileSize: 2 * 1024 * 1024 * 1024,
     },
   };
@@ -348,14 +338,12 @@ For example, we need to cut `common-error.log` by hour just like following imple
 
 ```js
 // config/config.${env}.js
-const path = require('path');
+const path = require("path");
 
 module.exports = (appInfo) => {
   return {
     logrotator: {
-      filesRotateByHour: [
-        path.join(appInfo.root, 'logs', appInfo.name, 'common-error.log'),
-      ],
+      filesRotateByHour: [path.join(appInfo.root, "logs", appInfo.name, "common-error.log")],
     },
   };
 };

@@ -1,42 +1,40 @@
-'use strict';
-const assert = require('assert');
-const utils = require('../../../utils');
+"use strict";
+const assert = require("assert");
+const utils = require("../../../utils");
 
-module.exports = app => {
-
+module.exports = (app) => {
   app.beforeStart(async () => {
-
     const urlAwaiter = utils.startLocalServer();
     const httpclient = app.httpclient;
 
     const reqTracers = [];
     const resTracers = [];
 
-    httpclient.on('request', function (options) {
+    httpclient.on("request", function (options) {
       reqTracers.push(options.args.tracer);
     });
 
-    httpclient.on('response', function (options) {
+    httpclient.on("response", function (options) {
       resTracers.push(options.req.args.tracer);
     });
 
     const url = await urlAwaiter;
 
     let res = await httpclient.request(url, {
-      method: 'GET',
+      method: "GET",
       timeout: 20000,
     });
     assert(res.status === 200);
 
-    res = await httpclient.request('https://registry.npmmirror.com', {
-      method: 'GET',
+    res = await httpclient.request("https://registry.npmmirror.com", {
+      method: "GET",
       timeout: 20000,
     });
 
     assert(res.status === 200);
 
-    res = await httpclient.request('https://npmmirror.com', {
-      method: 'GET',
+    res = await httpclient.request("https://npmmirror.com", {
+      method: "GET",
       timeout: 20000,
     });
     assert(res.status === 200);
@@ -54,6 +52,6 @@ module.exports = app => {
     assert(reqTracers[0].traceId);
   });
 
-  const done = app.readyCallback('ready');
+  const done = app.readyCallback("ready");
   setTimeout(done, 5000);
 };

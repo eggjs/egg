@@ -1,6 +1,6 @@
-const { sleep } = require('../../../../utils');
+const { sleep } = require("../../../../utils");
 
-exports.keys = 'my keys';
+exports.keys = "my keys";
 
 let times = 0;
 exports.onClientError = async (err, socket, app) => {
@@ -9,11 +9,11 @@ exports.onClientError = async (err, socket, app) => {
 
   times++;
   if (times === 2) times = 0;
-  if (!times) throw new Error('test throw');
+  if (!times) throw new Error("test throw");
 
   return {
     body: err.rawPacket,
-    headers: { foo: 'bar', 'Content-Length': 100 },
+    headers: { foo: "bar", "Content-Length": 100 },
     status: 418,
   };
 };

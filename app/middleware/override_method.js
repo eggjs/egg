@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-module.exports = require('koa-override');
+module.exports = require("koa-override");

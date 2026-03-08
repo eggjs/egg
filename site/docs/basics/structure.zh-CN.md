@@ -58,7 +58,6 @@ egg-project
 - `test/**` 用于单元测试，具体参见 [单元测试](../core/unittest.md)。
 - `app.js` 和 `agent.js` 用于自定义启动时的初始化工作，具体参见 [启动自定义](./app-start.md)。关于 `agent.js` 的作用，参见 [Agent 机制](../core/cluster-and-ipc.md#agent-机制)。
 
-
 由内置插件约定的目录：
 
 - `app/public/**` 用于放置静态资源，具体参见内置插件 [egg-static](https://github.com/eggjs/egg-static)。

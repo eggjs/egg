@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 module.exports = async function () {
-  this.body = 'home';
+  this.body = "home";
 };

@@ -3,9 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "egg": [
-        "../../../../index"
-      ]
+      "egg": ["../../../../index"]
     }
   }
 }

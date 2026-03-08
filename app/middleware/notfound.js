@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-module.exports = options => {
+module.exports = (options) => {
   return async function notfound(ctx, next) {
     await next();
 
@@ -13,12 +13,12 @@ module.exports = options => {
 
     if (ctx.acceptJSON) {
       ctx.body = {
-        message: 'Not Found',
+        message: "Not Found",
       };
       return;
     }
 
-    const notFoundHtml = '<h1>404 Not Found</h1>';
+    const notFoundHtml = "<h1>404 Not Found</h1>";
 
     // notfound handler is unimplemented
     if (options.pageUrl && ctx.path === options.pageUrl) {

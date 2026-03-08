@@ -37,7 +37,7 @@ The configuration file returns an object which could overwrite some configuratio
 // configure the catalog of logger，the default configuration of logger is provided by framework
 module.exports = {
   logger: {
-    dir: '/home/admin/logs/demoapp',
+    dir: "/home/admin/logs/demoapp",
   },
 };
 ```
@@ -45,9 +45,9 @@ module.exports = {
 The configuration file can simplify to `exports.key = value` format
 
 ```js
-exports.keys = 'my-cookie-secret-key';
+exports.keys = "my-cookie-secret-key";
 exports.logger = {
-  level: 'DEBUG',
+  level: "DEBUG",
 };
 ```
 
@@ -55,11 +55,11 @@ The configuration file can also return a function which could receive a paramete
 
 ```js
 // put the catalog of logger to the catalog of codes
-const path = require('path');
+const path = require("path");
 module.exports = (appInfo) => {
   return {
     logger: {
-      dir: path.join(appInfo.baseDir, 'logs'),
+      dir: path.join(appInfo.baseDir, "logs"),
     },
   };
 };
@@ -81,10 +81,10 @@ Choose the appropriate style according to the specific situation, but please mak
 
 ```js
 // config/config.default.js
-exports.someKeys = 'abc';
+exports.someKeys = "abc";
 module.exports = (appInfo) => {
   const config = {};
-  config.keys = '123456';
+  config.keys = "123456";
   return config;
 };
 ```

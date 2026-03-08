@@ -1,10 +1,9 @@
-'use strict';
-const mm = require('egg-mock');
-const assert = require('assert');
-const utils = require('../../../utils');
+"use strict";
+const mm = require("egg-mock");
+const assert = require("assert");
+const utils = require("../../../utils");
 
 class DemoAppTest {
-
   constructor(app) {
     this.app = app;
 
@@ -13,18 +12,18 @@ class DemoAppTest {
 
     // Mock "lifecycle" function with a counter
     // Before calling "ready()"
-    mm(this.app.lifecycle, 'triggerServerDidReady', () => {
+    mm(this.app.lifecycle, "triggerServerDidReady", () => {
       this.app.triggerCount++;
     });
   }
 
   configWillLoad() {
-    this.app.config.tips = 'hello egg started';
+    this.app.config.tips = "hello egg started";
   }
 
   async didReady() {
     // dynamic router
-    this.app.all('/all', this.app.controller.home);
+    this.app.all("/all", this.app.controller.home);
   }
 }
 

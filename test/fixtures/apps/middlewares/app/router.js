@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  app.get('/', app.controller.home);
-  app.get('/error', app.controller.error);
+module.exports = (app) => {
+  app.get("/", app.controller.home);
+  app.get("/error", app.controller.error);
 };

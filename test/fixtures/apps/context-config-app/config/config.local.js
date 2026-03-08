@@ -1,5 +1,5 @@
-'use stirct';
+"use stirct";
 
 exports.logger = {
-  stdoutLevel: 'NONE',
+  stdoutLevel: "NONE",
 };

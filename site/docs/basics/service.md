@@ -18,14 +18,11 @@ Simply speaking, Service is an abstract layer which is used to encapsulate busin
 
 ```js
 // app/service/user.js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 
 class UserService extends Service {
   async find(uid) {
-    const user = await this.ctx.db.query(
-      'select * from user where uid = ?',
-      uid,
-    );
+    const user = await this.ctx.db.query("select * from user where uid = ?", uid);
     return user;
   }
 }
@@ -73,11 +70,11 @@ We begin to see how to use Service from a complete example below.
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get('/user/:id', app.controller.user.info);
+  app.router.get("/user/:id", app.controller.user.info);
 };
 
 // app/controller/user.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 class UserController extends Controller {
   async info() {
     const { ctx } = this;
@@ -89,7 +86,7 @@ class UserController extends Controller {
 module.exports = UserController;
 
 // app/service/user.js
-const Service = require('egg').Service;
+const Service = require("egg").Service;
 class UserService extends Service {
   // the constructor is not a must by default
   // constructor(ctx) {
@@ -99,10 +96,7 @@ class UserService extends Service {
   // }
   async find(uid) {
     // suppose we've got user's id and are going to get detailed user information from databases
-    const user = await this.ctx.db.query(
-      'select * from user where uid = ?',
-      uid,
-    );
+    const user = await this.ctx.db.query("select * from user where uid = ?", uid);
 
     // suppose some complex processes should be made here, and demanded informations are returned then.
     const picture = await this.getPicture(uid);
@@ -116,7 +110,7 @@ class UserService extends Service {
 
   async getPicture(uid) {
     const result = await this.ctx.curl(`http://photoserver/uid=${uid}`, {
-      dataType: 'json',
+      dataType: "json",
     });
     return result.data;
   }

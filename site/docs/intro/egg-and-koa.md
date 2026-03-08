@@ -70,8 +70,8 @@ async function onerror(ctx, next) {
   try {
     await next();
   } catch (err) {
-    ctx.app.emit('error', err);
-    ctx.body = 'server error';
+    ctx.app.emit("error", err);
+    ctx.body = "server error";
     ctx.status = err.status || 500;
   }
 }
@@ -94,7 +94,7 @@ In the framework or application based on Egg, we can extend the prototype of 4 K
 module.exports = {
   get isIOS() {
     const iosReg = /iphone|ipad|ipod/i;
-    return iosReg.test(this.get('user-agent'));
+    return iosReg.test(this.get("user-agent"));
   },
 };
 ```
@@ -104,9 +104,7 @@ It can be used in controller then:
 ```js
 // app/controller/home.js
 exports.handler = (ctx) => {
-  ctx.body = ctx.isIOS
-    ? 'Your operating system is iOS.'
-    : 'Your operating system is not iOS.';
+  ctx.body = ctx.isIOS ? "Your operating system is iOS." : "Your operating system is not iOS.";
 };
 ```
 

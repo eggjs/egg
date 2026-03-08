@@ -80,14 +80,14 @@ showcase
 
 ```typescript
 // app/controller/home.ts
-import { Controller } from 'egg';
+import { Controller } from "egg";
 
 export default class HomeController extends Controller {
   public async index() {
     const { ctx, service } = this;
     const page = ctx.query.page;
     const result = await service.news.list(page);
-    await ctx.render('home.tpl', result);
+    await ctx.render("home.tpl", result);
   }
 }
 ```
@@ -96,11 +96,11 @@ export default class HomeController extends Controller {
 
 ```typescript
 // app/router.ts
-import { Application } from 'egg';
+import { Application } from "egg";
 
 export default (app: Application) => {
   const { router, controller } = app;
-  router.get('/', controller.home.index);
+  router.get("/", controller.home.index);
 };
 ```
 
@@ -108,7 +108,7 @@ export default (app: Application) => {
 
 ```typescript
 // app/service/news.ts
-import { Service } from 'egg';
+import { Service } from "egg";
 
 export default class NewsService extends Service {
   public async list(page?: number): Promise<NewsItem[]> {
@@ -127,7 +127,7 @@ export interface NewsItem {
 ```typescript
 // app/middleware/robot.ts
 
-import { Context } from 'egg';
+import { Context } from "egg";
 
 // Your own middleware here
 export default function fooMiddleware() {
@@ -185,12 +185,9 @@ In `uuid` middleware:
 ```typescript
 // app/middleware/uuid.ts
 
-import { Context, Application, EggAppConfig } from 'egg';
+import { Context, Application, EggAppConfig } from "egg";
 
-export default function uuid(
-  options: EggAppConfig['uuid'],
-  app: Application,
-): any {
+export default function uuid(options: EggAppConfig["uuid"], app: Application): any {
   return async (ctx: Context, next: () => Promise<any>) => {
     // The 'name' is just the sub prop in uuid in the config.default.js
     console.info(options.name);
@@ -205,18 +202,18 @@ export default function uuid(
 
 ```typescript
 // app/extend/context.ts
-import { Context } from 'egg';
+import { Context } from "egg";
 
 export default {
   isAjax(this: Context) {
-    return this.get('X-Requested-With') === 'XMLHttpRequest';
+    return this.get("X-Requested-With") === "XMLHttpRequest";
   },
 };
 
 // app.ts
 export default (app) => {
   app.beforeStart(async () => {
-    await Promise.resolve('egg + ts');
+    await Promise.resolve("egg + ts");
   });
 };
 ```
@@ -231,17 +228,17 @@ Config is a little complicated, because it supports:
 
 ```typescript
 // app/config/config.default.ts
-import { EggAppInfo, EggAppConfig, PowerPartial } from 'egg';
+import { EggAppInfo, EggAppConfig, PowerPartial } from "egg";
 
 export default (appInfo: EggAppInfo) => {
   const config = {} as PowerPartial<EggAppConfig>;
 
   // Override the configs of framework and plugins
-  config.keys = appInfo.name + '123456';
+  config.keys = appInfo.name + "123456";
   config.view = {
-    defaultViewEngine: 'nunjucks',
+    defaultViewEngine: "nunjucks",
     mapping: {
-      '.tpl': 'nunjucks',
+      ".tpl": "nunjucks",
     },
   };
 
@@ -249,7 +246,7 @@ export default (appInfo: EggAppInfo) => {
   const bizConfig = {};
   bizConfig.news = {
     pageSize: 30,
-    serverUrl: 'https://hacker-news.firebaseio.com/v0',
+    serverUrl: "https://hacker-news.firebaseio.com/v0",
   };
 
   // We merge the business logic's configs into AppConfig as the return value
@@ -267,7 +264,7 @@ When `EggAppConfig` is merged with the returned type of `config.default.ts`, we 
 
 ```typescript
 // app/config/config.local.ts
-import { EggAppConfig } from 'egg';
+import { EggAppConfig } from "egg";
 
 export default () => {
   const config = {} as PowerPartial<EggAppConfig>;
@@ -312,7 +309,7 @@ export default plugin;
 
 ```typescript
 // app.ts
-import { Application, IBoot } from 'egg';
+import { Application, IBoot } from "egg";
 
 export default class FooBoot implements IBoot {
   private readonly app: Application;
@@ -392,9 +389,9 @@ E.g: `app/service/news.ts` will automatically load `ctx.service.news` and recogn
 
 ```typescript
 // typings/app/service/index.d.ts
-import News from '../../../app/service/News';
+import News from "../../../app/service/News";
 
-declare module 'egg' {
+declare module "egg" {
   interface IService {
     news: News;
   }
@@ -428,18 +425,18 @@ Unit Test is a MUST in development:
 
 ```typescript
 // test/app/service/news.test.ts
-import assert from 'assert';
-import { Context } from 'egg';
-import { app } from 'egg-mock/bootstrap';
+import assert from "assert";
+import { Context } from "egg";
+import { app } from "egg-mock/bootstrap";
 
-describe('test/app/service/news.test.js', () => {
+describe("test/app/service/news.test.js", () => {
   let ctx: Context;
 
   before(async () => {
     ctx = app.mockContext();
   });
 
-  it('list()', async () => {
+  it("list()", async () => {
     const list = await ctx.service.news.list();
     assert(list.length === 30);
   });
@@ -553,10 +550,10 @@ Styles can be referred from the automatically generated `egg-ts-helper`:
 ```typescript
 // {plugin_root}/index.d.ts
 
-import 'egg';
-import News from '../../../app/service/News';
+import "egg";
+import News from "../../../app/service/News";
 
-declare module 'egg' {
+declare module "egg" {
   // extended service
   interface IService {
     news: News;
@@ -572,7 +569,7 @@ declare module 'egg' {
   interface EggAppConfig {}
 
   // extend customize env
-  type EggEnvType = 'local' | 'unittest' | 'prod' | 'sit';
+  type EggEnvType = "local" | "unittest" | "prod" | "sit";
 }
 ```
 
@@ -583,12 +580,12 @@ Definitions:
 ```typescript
 // {framework_root}/index.d.ts
 
-import * as Egg from 'egg';
+import * as Egg from "egg";
 
 // With 'import' to include the outer framework's plugin.
-import 'my-plugin';
+import "my-plugin";
 
-declare module 'egg' {
+declare module "egg" {
   // Extend egg like plugin...
 }
 
@@ -602,7 +599,7 @@ For developers, they can directly import your framework:
 // app/service/news.ts
 
 // Developers can get all intellisense after they import your framework
-import { Service } from 'duck-egg';
+import { Service } from "duck-egg";
 
 export default class NewsService extends Service {
   public async list(page?: number): Promise<NewsItem[]> {
@@ -638,9 +635,9 @@ You can also create a new declaration file to solve this problem when you are ea
 ```typescript
 // typings/index.d.ts
 
-import 'egg';
+import "egg";
 
-declare module 'egg' {
+declare module "egg" {
   interface Application {
     dashboard: any;
   }
@@ -658,7 +655,7 @@ If you use `egg-ts-helper`, it will automatically generate the exclipit importin
 ```typescript
 // typings/index.d.ts
 
-import 'egg-dashboard';
+import "egg-dashboard";
 ```
 
 **Notice: You MUST use 'import' in `d.ts`, because most of egg's plugins are without main entry points. There'll be errors occuring if you import directly in ts.**
@@ -696,17 +693,17 @@ Do remember DO NOT CONFIG `"skipLibCheck": true` in the `tsconfig.json`, and if 
 In the end, add a test case to check whether your declaration works properly or not. See `egg-view` example below:
 
 ```js
-describe('typescript', () => {
-  it('should compile ts without error', () => {
+describe("typescript", () => {
+  it("should compile ts without error", () => {
     return (
       coffee
-        .fork(require.resolve('typescript/bin/tsc'), [
-          '-p',
-          path.resolve(__dirname, './fixtures/apps/ts/tsconfig.json'),
-          '--noEmit',
+        .fork(require.resolve("typescript/bin/tsc"), [
+          "-p",
+          path.resolve(__dirname, "./fixtures/apps/ts/tsconfig.json"),
+          "--noEmit",
         ])
         // .debug()
-        .expect('code', 0)
+        .expect("code", 0)
         .end()
     );
   });

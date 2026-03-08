@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = function (app) {
   class Bar111 extends app.Service {
@@ -6,9 +6,9 @@ module.exports = function (app) {
       super(ctx);
     }
 
-    * get(name) {
+    *get(name) {
       return {
-        bar: 'bar111',
+        bar: "bar111",
       };
     }
   }

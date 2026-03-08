@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   return class Home extends app.Controller {
     async index() {
       const { ctx } = this;
-      ctx.body = 'hello world';
+      ctx.body = "hello world";
     }
   };
 };

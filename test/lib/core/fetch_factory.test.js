@@ -1,11 +1,11 @@
-const assert = require('node:assert');
-const utils = require('../../utils');
+const assert = require("node:assert");
+const utils = require("../../utils");
 
 let ip;
 let family;
 let host;
 
-describe('test/lib/core/fetch_factory.test.js', () => {
+describe("test/lib/core/fetch_factory.test.js", () => {
   const version = utils.getNodeVersion();
   if (version < 20) return;
   let app;
@@ -13,7 +13,7 @@ describe('test/lib/core/fetch_factory.test.js', () => {
   let server2;
 
   before(async () => {
-    app = utils.app('apps/dns_resolver');
+    app = utils.app("apps/dns_resolver");
     await app.ready();
     app.config.security = {
       ssrf: {
@@ -26,8 +26,8 @@ describe('test/lib/core/fetch_factory.test.js', () => {
       },
     };
 
-    server1 = await utils.startNewLocalServer('127.0.0.1');
-    server2 = await utils.startNewLocalServer('127.0.0.1');
+    server1 = await utils.startNewLocalServer("127.0.0.1");
+    server2 = await utils.startNewLocalServer("127.0.0.1");
   });
 
   after(() => {
@@ -39,22 +39,21 @@ describe('test/lib/core/fetch_factory.test.js', () => {
     }
   });
 
-  it('should fetch ok', async () => {
+  it("should fetch ok", async () => {
     const { status } = await app.fetch(server1.url);
     assert(status === 200);
   });
 
-  it('should support safeFetch', async () => {
+  it("should support safeFetch", async () => {
     await app.safeFetch(server1.url);
-    assert(ip, 'checkAddress should be called');
+    assert(ip, "checkAddress should be called");
     assert(family);
     assert(host);
-
   });
 
-  it('should support safeFetch for second time', async () => {
+  it("should support safeFetch for second time", async () => {
     await app.safeFetch(server2.url);
-    assert(ip, 'checkAddress should be called');
+    assert(ip, "checkAddress should be called");
     assert(family);
     assert(host);
   });

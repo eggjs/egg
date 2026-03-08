@@ -1,7 +1,5 @@
 ---
-
 title: 代码贡献规范
-
 ---
 
 有任何疑问，欢迎提交 [issue](https://github.com/eggjs/egg/issues)，或者直接修改提交 [PR](https://github.com/eggjs/egg/pulls)！
@@ -54,6 +52,7 @@ $ git checkout -b branch-name
 # 开发完成后跑下测试是否通过，必要时需要新增或修改测试用例
 $ npm test
 ```
+
 # 测试通过后，提交代码，message 见下面的规范
 
 ```
@@ -63,6 +62,7 @@ $ git push origin branch-name
 ```
 
 由于谁也无法保证过了多久之后还记得多少，为了后期回溯历史的方便，请在提交 MR 时确保提供了以下信息。
+
 1. 需求点（一般关联 issue 或者注释都算）
 2. 升级原因（不同于 issue，可以简要描述下为什么要处理）
 3. 框架测试点（可以关联到测试文件，不用详细描述，关键点即可）
@@ -115,7 +115,7 @@ $ git push origin branch-name
 
 - **当有非兼容修改（Breaking Change）时必须在这里描述清楚**
 - 关联相关 issue，如 `Closes #1, Closes #2, #3`
-- 如果功能点有新增或修改的，还需要关联文档 `doc`  和 `egg-core` 的 PR，如 `eggjs/egg-core#123`
+- 如果功能点有新增或修改的，还需要关联文档 `doc` 和 `egg-core` 的 PR，如 `eggjs/egg-core#123`
 
 示例
 
@@ -149,6 +149,7 @@ BREAKING CHANGE:
 - 如果标题被当做一个完整的英语句子，请按照英语句子的语法格式大小写（例如：常见问题 FAQ 中每一个标题都是一个英语句子）。
 
 有关详情，可以参考[英语标题大小写]。
+
 ## 发布管理
 
 Egg 基于 [semver]（语义化版本号）进行发布。
@@ -163,7 +164,7 @@ Egg 基于 [semver]（语义化版本号）进行发布。
 - `next` 分支设置 tag 为 `next`。上层框架可以通过 `egg@next` 引用开发中的版本进行测试。
 - Egg 持续维护的版本以 Milestone 为准。只要是开着的版本，都会进行修复。
 
-### 发布策略 
+### 发布策略
 
 每个大版本都有一个发布经理（PM）负责管理。他/她的工作内容包括：
 
@@ -196,10 +197,10 @@ Egg 基于 [semver]（语义化版本号）进行发布。
 }
 ```
 
-[semver]: https://semver.org/lang/zh-CN/  
-[Release Proposal MR]: https://github.com/nodejs/node/pull/4181  
-[Node CHANGELOG]: https://github.com/nodejs/node/blob/master/CHANGELOG.md  
-[1.x Milestone]: https://github.com/eggjs/egg/milestone/1  
-[npm]: http://npmjs.com/  
-[我是如何发布一个 npm 包的]: https://fengmk2.com/blog/2016/how-i-publish-a-npm-package  
+[semver]: https://semver.org/lang/zh-CN/
+[Release Proposal MR]: https://github.com/nodejs/node/pull/4181
+[Node CHANGELOG]: https://github.com/nodejs/node/blob/master/CHANGELOG.md
+[1.x Milestone]: https://github.com/eggjs/egg/milestone/1
+[npm]: http://npmjs.com/
+[我是如何发布一个 npm 包的]: https://fengmk2.com/blog/2016/how-i-publish-a-npm-package
 [英语标题大小写]: https://headlinecapitalization.com/

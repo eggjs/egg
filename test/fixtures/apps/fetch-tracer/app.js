@@ -1,11 +1,11 @@
-const assert = require('assert');
+const assert = require("assert");
 
-const TRACE_ID = Symbol('TRACE_ID');
-const RPC_ID = Symbol('RPC_ID');
+const TRACE_ID = Symbol("TRACE_ID");
+const RPC_ID = Symbol("RPC_ID");
 
 // Simple Tracer implementation
 class Tracer {
-  constructor(traceId, rpcId = '0') {
+  constructor(traceId, rpcId = "0") {
     this.traceId = traceId;
     this._rpcId = rpcId;
     this._rpcIdSeq = 0;
@@ -39,7 +39,7 @@ module.exports = class TracerApp {
     const HTTP_HEADER_RPC_ID_KEY = tracerConfig.HTTP_HEADER_RPC_ID_KEY.toLowerCase();
 
     this.app.config.httpclient.interceptors = [
-      dispatch => {
+      (dispatch) => {
         const app = this.app;
         return async function tracerInterceptor(opts, handler) {
           const tracer = app.currentContext?.tracer;
@@ -52,7 +52,7 @@ module.exports = class TracerApp {
               rpcId = opts.headers[HTTP_HEADER_RPC_ID_KEY] = tracer.rpcIdPlus;
             }
           } catch (e) {
-            e.message = '[egg-tracelog] set tracer header failed: ' + e.message;
+            e.message = "[egg-tracelog] set tracer header failed: " + e.message;
             app.logger.warn(e);
           }
 
