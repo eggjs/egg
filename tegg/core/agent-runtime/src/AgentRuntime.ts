@@ -170,7 +170,15 @@ export class AgentRuntime {
     // Capture queued snapshot before background task mutates state
     const queuedSnapshot = rb.snapshot();
 
-    const promise = (async () => {
+    // Register in runningTasks before the IIFE starts executing to avoid a race
+    // where the IIFE's finally block deletes the entry before it is set.
+    let resolveTask!: () => void;
+    const taskPromise = new Promise<void>((r) => {
+      resolveTask = r;
+    });
+    this.runningTasks.set(run.id, { promise: taskPromise, abortController });
+
+    (async () => {
       try {
         await this.store.updateRun(run.id, rb.start());
 
@@ -213,11 +221,10 @@ export class AgentRuntime {
           this.logger.error('[AgentRuntime] execRun error during abort:', err);
         }
       } finally {
+        resolveTask();
         this.runningTasks.delete(run.id);
       }
     })();
-
-    this.runningTasks.set(run.id, { promise, abortController });
 
     return queuedSnapshot;
   }
@@ -232,6 +239,13 @@ export class AgentRuntime {
 
     const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
     const rb = RunBuilder.create(run, threadId);
+
+    // Register in runningTasks so cancelRun/destroy can manage streaming runs.
+    let resolveTask!: () => void;
+    const taskPromise = new Promise<void>((r) => {
+      resolveTask = r;
+    });
+    this.runningTasks.set(run.id, { promise: taskPromise, abortController });
 
     // event: thread.run.created
     writer.writeEvent(AgentSSEEvent.ThreadRunCreated, rb.snapshot());
@@ -255,11 +269,9 @@ export class AgentRuntime {
       );
 
       if (aborted) {
-        try {
-          await this.store.updateRun(run.id, rb.cancelling());
-        } catch (storeErr) {
-          this.logger.error('[AgentRuntime] failed to write cancelling status during stream abort:', storeErr);
-        }
+        // Skip intermediate cancelling store write — no external observer between the
+        // two states since the SSE client has already disconnected.
+        rb.cancelling();
         try {
           await this.store.updateRun(run.id, rb.cancel());
         } catch (storeErr) {
@@ -300,6 +312,9 @@ export class AgentRuntime {
         writer.writeEvent(AgentSSEEvent.ThreadRunFailed, rb.snapshot());
       }
     } finally {
+      resolveTask();
+      this.runningTasks.delete(run.id);
+
       // event: done
       if (!writer.closed) {
         writer.writeEvent(AgentSSEEvent.Done, '[DONE]');

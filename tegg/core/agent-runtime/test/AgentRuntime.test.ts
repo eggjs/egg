@@ -10,7 +10,6 @@ import {
   ContentBlockType,
 } from '@eggjs/tegg-types/agent-runtime';
 import type {
-  ObjectStorageClient,
   RunRecord,
   CreateRunInput,
   AgentStreamMessage,
@@ -23,23 +22,7 @@ import { AgentRuntime } from '../src/AgentRuntime.ts';
 import type { AgentExecutor, AgentRuntimeOptions } from '../src/AgentRuntime.ts';
 import { OSSAgentStore } from '../src/OSSAgentStore.ts';
 import type { SSEWriter } from '../src/SSEWriter.ts';
-
-class MapStorageClient implements ObjectStorageClient {
-  private readonly store = new Map<string, string>();
-
-  async put(key: string, value: string): Promise<void> {
-    this.store.set(key, value);
-  }
-
-  async get(key: string): Promise<string | null> {
-    return this.store.get(key) ?? null;
-  }
-
-  async append(key: string, value: string): Promise<void> {
-    const existing = this.store.get(key) ?? '';
-    this.store.set(key, existing + value);
-  }
-}
+import { MapStorageClient } from './helpers.ts';
 
 class MockSSEWriter implements SSEWriter {
   events: Array<{ event: string; data: unknown }> = [];

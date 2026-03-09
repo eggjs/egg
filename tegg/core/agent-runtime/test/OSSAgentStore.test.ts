@@ -3,41 +3,8 @@ import assert from 'node:assert';
 import { describe, it, beforeEach, vi } from 'vitest';
 
 import { AgentNotFoundError } from '../src/index.ts';
-import type { ObjectStorageClient } from '../src/index.ts';
 import { OSSAgentStore } from '../src/index.ts';
-
-class MapStorageClient implements ObjectStorageClient {
-  private readonly store = new Map<string, string>();
-  init?(): Promise<void>;
-  destroy?(): Promise<void>;
-
-  async put(key: string, value: string): Promise<void> {
-    this.store.set(key, value);
-  }
-
-  async get(key: string): Promise<string | null> {
-    return this.store.get(key) ?? null;
-  }
-
-  async append(key: string, value: string): Promise<void> {
-    const existing = this.store.get(key) ?? '';
-    this.store.set(key, existing + value);
-  }
-}
-
-class MapStorageClientWithoutAppend implements ObjectStorageClient {
-  private readonly store = new Map<string, string>();
-  init?(): Promise<void>;
-  destroy?(): Promise<void>;
-
-  async put(key: string, value: string): Promise<void> {
-    this.store.set(key, value);
-  }
-
-  async get(key: string): Promise<string | null> {
-    return this.store.get(key) ?? null;
-  }
-}
+import { MapStorageClient, MapStorageClientWithoutAppend } from './helpers.ts';
 
 describe('test/OSSAgentStore.test.ts', () => {
   let store: OSSAgentStore;
