@@ -1,4 +1,5 @@
 export * from './validator/index.ts';
+export * from './AgentInfoUtil.ts';
 export * from './ControllerInfoUtil.ts';
 export * from './ControllerMetadataUtil.ts';
 export * from './HTTPInfoUtil.ts';

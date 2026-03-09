@@ -34,6 +34,7 @@
     "./helper": "./src/helper.ts",
     "./orm": "./src/orm.ts",
     "./schedule": "./src/schedule.ts",
+    "./agent": "./src/agent.ts",
     "./standalone": "./src/standalone.ts",
     "./transaction": "./src/transaction.ts",
     "./package.json": "./package.json"
@@ -42,6 +43,7 @@
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
       "./ajv": "./dist/ajv.js",
       "./aop": "./dist/aop.js",
       "./dal": "./dist/dal.js",
@@ -57,6 +59,7 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
+    "@eggjs/agent-runtime": "workspace:*",
     "@eggjs/ajv-decorator": "workspace:*",
     "@eggjs/aop-decorator": "workspace:*",
     "@eggjs/background-task": "workspace:*",

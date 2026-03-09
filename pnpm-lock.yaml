@@ -2707,6 +2707,9 @@ importers:
 
   tegg/core/tegg:
     dependencies:
+      '@eggjs/agent-runtime':
+        specifier: workspace:*
+        version: link:../agent-runtime
       '@eggjs/ajv-decorator':
         specifier: workspace:*
         version: link:../ajv-decorator
@@ -2982,6 +2985,9 @@ importers:
 
   tegg/plugin/controller:
     dependencies:
+      '@eggjs/agent-runtime':
+        specifier: workspace:*
+        version: link:../../core/agent-runtime
       '@eggjs/controller-decorator':
         specifier: workspace:*
         version: link:../../core/controller-decorator
