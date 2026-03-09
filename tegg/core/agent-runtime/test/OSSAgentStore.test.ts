@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert';
 
 import { describe, it, beforeEach, vi } from 'vitest';
 
@@ -6,10 +6,6 @@ import { AgentNotFoundError } from '../src/index.ts';
 import type { ObjectStorageClient } from '../src/index.ts';
 import { OSSAgentStore } from '../src/index.ts';
 
-/**
- * In-memory ObjectStorageClient for testing.
- * Supports put/get/append — mirrors the contract used by OSSAgentStore.
- */
 class MapStorageClient implements ObjectStorageClient {
   private readonly store = new Map<string, string>();
   init?(): Promise<void>;
@@ -29,10 +25,6 @@ class MapStorageClient implements ObjectStorageClient {
   }
 }
 
-/**
- * MapStorageClient without append — used to test the fallback path
- * where OSSAgentStore does get-concat-put instead of native append.
- */
 class MapStorageClientWithoutAppend implements ObjectStorageClient {
   private readonly store = new Map<string, string>();
   init?(): Promise<void>;
@@ -47,7 +39,7 @@ class MapStorageClientWithoutAppend implements ObjectStorageClient {
   }
 }
 
-describe('core/agent-runtime/test/OSSAgentStore.test.ts', () => {
+describe('test/OSSAgentStore.test.ts', () => {
   let store: OSSAgentStore;
 
   beforeEach(() => {

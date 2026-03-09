@@ -1,11 +1,11 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert';
 
 import type { OSSObject } from 'oss-client';
 import { describe, it, vi, beforeEach } from 'vitest';
 
 import { OSSObjectStorageClient } from '../src/OSSObjectStorageClient.ts';
 
-describe('core/agent-runtime/test/OSSObjectStorageClient.test.ts', () => {
+describe('test/OSSObjectStorageClient.test.ts', () => {
   let client: OSSObjectStorageClient;
   let mockOSS: {
     put: ReturnType<typeof vi.fn>;

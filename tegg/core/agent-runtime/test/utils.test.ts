@@ -1,10 +1,10 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert';
 
 import { describe, it } from 'vitest';
 
 import { newMsgId, nowUnix } from '../src/AgentStoreUtils.ts';
 
-describe('core/agent-runtime/test/utils.test.ts', () => {
+describe('test/utils.test.ts', () => {
   it('nowUnix should return current unix timestamp in seconds', () => {
     const before = Math.floor(Date.now() / 1000);
     const result = nowUnix();

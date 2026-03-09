@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict';
+import assert from 'node:assert';
 
 import type { RunRecord, MessageObject } from '@eggjs/tegg-types/agent-runtime';
 import { RunStatus, AgentObjectType, AgentErrorCode } from '@eggjs/tegg-types/agent-runtime';
@@ -20,9 +20,7 @@ function makeRunRecord(overrides?: Partial<RunRecord>): RunRecord {
   };
 }
 
-describe('RunBuilder', () => {
-  // ─── create + snapshot ───
-
+describe('test/RunBuilder.test.ts', () => {
   describe('create and snapshot', () => {
     it('should create from a queued RunRecord and produce a valid snapshot', () => {
       const record = makeRunRecord();
@@ -78,8 +76,6 @@ describe('RunBuilder', () => {
     });
   });
 
-  // ─── start ───
-
   describe('start', () => {
     it('should transition queued → in_progress', () => {
       const rb = RunBuilder.create(makeRunRecord(), 'thread_1');
@@ -95,8 +91,6 @@ describe('RunBuilder', () => {
       assert.throws(() => rb.start(), InvalidRunStateTransitionError);
     });
   });
-
-  // ─── complete ───
 
   describe('complete', () => {
     it('should transition in_progress → completed with output and usage', () => {
@@ -143,8 +137,6 @@ describe('RunBuilder', () => {
     });
   });
 
-  // ─── fail ───
-
   describe('fail', () => {
     it('should transition in_progress → failed with error', () => {
       const rb = RunBuilder.create(makeRunRecord(), 'thread_1');
@@ -173,8 +165,6 @@ describe('RunBuilder', () => {
       assert.throws(() => rb.fail(new Error('nope')), InvalidRunStateTransitionError);
     });
   });
-
-  // ─── cancelling ───
 
   describe('cancelling', () => {
     it('should transition in_progress → cancelling', () => {
@@ -206,8 +196,6 @@ describe('RunBuilder', () => {
     });
   });
 
-  // ─── cancel ───
-
   describe('cancel', () => {
     it('should transition cancelling → cancelled', () => {
       const rb = RunBuilder.create(makeRunRecord(), 'thread_1');
@@ -229,8 +217,6 @@ describe('RunBuilder', () => {
       assert.throws(() => rb.cancel(), InvalidRunStateTransitionError);
     });
   });
-
-  // ─── full lifecycle ───
 
   describe('full lifecycle', () => {
     it('should support queued → in_progress → completed', () => {

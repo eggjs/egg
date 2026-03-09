@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict';
+import assert from 'node:assert';
 
 import type {
   AgentStreamMessage,
@@ -10,9 +10,7 @@ import { describe, it } from 'vitest';
 
 import { MessageConverter } from '../src/MessageConverter.ts';
 
-describe('MessageConverter', () => {
-  // ─── toContentBlocks ───
-
+describe('test/MessageConverter.test.ts', () => {
   describe('toContentBlocks', () => {
     it('should return empty array for falsy payload', () => {
       const result = MessageConverter.toContentBlocks(undefined as unknown as AgentStreamMessagePayload);
@@ -60,8 +58,6 @@ describe('MessageConverter', () => {
     });
   });
 
-  // ─── toMessageObject ───
-
   describe('toMessageObject', () => {
     it('should create a completed assistant message', () => {
       const payload: AgentStreamMessagePayload = { content: 'reply' };
@@ -85,8 +81,6 @@ describe('MessageConverter', () => {
     });
   });
 
-  // ─── createStreamMessage ───
-
   describe('createStreamMessage', () => {
     it('should create an in-progress message with empty content', () => {
       const msg = MessageConverter.createStreamMessage('msg_abc', 'run_1');
@@ -100,8 +94,6 @@ describe('MessageConverter', () => {
       assert.equal(typeof msg.created_at, 'number');
     });
   });
-
-  // ─── extractFromStreamMessages ───
 
   describe('extractFromStreamMessages', () => {
     it('should extract messages and accumulate usage', () => {
@@ -141,8 +133,6 @@ describe('MessageConverter', () => {
       assert.equal(usage, undefined);
     });
   });
-
-  // ─── toInputMessageObjects ───
 
   describe('toInputMessageObjects', () => {
     it('should convert user and assistant messages', () => {

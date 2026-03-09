@@ -1,10 +1,10 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert';
 
 import { describe, it } from 'vitest';
 
 import { AgentConflictError, AgentNotFoundError } from '../src/index.ts';
 
-describe('core/agent-runtime/test/errors.test.ts', () => {
+describe('test/errors.test.ts', () => {
   it('AgentNotFoundError should have status 404', () => {
     const err = new AgentNotFoundError('Thread t1 not found');
     assert(err instanceof Error);
