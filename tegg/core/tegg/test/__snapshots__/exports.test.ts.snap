@@ -2,15 +2,21 @@
 
 exports[`should export stable 1`] = `
 {
+  "AGENT_CONTROLLER_PROTO_IMPL_TYPE": "AGENT_CONTROLLER_PROTO",
   "AccessLevel": {
     "PRIVATE": "PRIVATE",
     "PUBLIC": "PUBLIC",
   },
   "Acl": [Function],
+  "AgentController": [Function],
+  "AgentInfoUtil": [Function],
   "BackgroundTaskHelper": [Function],
   "BodyParamMeta": [Function],
   "CONSTRUCTOR_QUALIFIER_META_DATA": Symbol(EggPrototype#constructorQualifier),
   "CONTROLLER_ACL": Symbol(EggPrototype#controller#acl),
+  "CONTROLLER_AGENT_CONTROLLER": Symbol(EggPrototype#controller#agent#isAgent),
+  "CONTROLLER_AGENT_ENHANCED": Symbol(EggPrototype#controller#agent#enhanced),
+  "CONTROLLER_AGENT_NOT_IMPLEMENTED": Symbol(EggPrototype#controller#agent#notImplemented),
   "CONTROLLER_AOP_MIDDLEWARES": Symbol(EggPrototype#controller#aopMiddlewares),
   "CONTROLLER_HOST": Symbol(EggPrototype#controllerHost),
   "CONTROLLER_HTTP_PATH": Symbol(EggPrototype#controller#http#path),

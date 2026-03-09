@@ -14,7 +14,7 @@ import type {
 } from '@eggjs/tegg-types';
 import { EggObjectStatus, ObjectInitType } from '@eggjs/tegg-types';
 import type { AgentStore, CreateRunInput } from '@eggjs/tegg-types/agent-runtime';
-import type { EggLogger } from 'egg-logger';
+import type { EggLogger } from 'egg';
 
 import { AgentControllerProto } from './AgentControllerProto.ts';
 
