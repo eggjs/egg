@@ -1,6 +1,10 @@
 import type { ObjectStorageClient } from '@eggjs/tegg-types/agent-runtime';
 import type { OSSObject } from 'oss-client';
 
+function isOSSError(err: unknown, code: string): boolean {
+  return err != null && typeof err === 'object' && 'code' in err && (err as { code: unknown }).code === code;
+}
+
 /**
  * ObjectStorageClient backed by Alibaba Cloud OSS (via oss-client).
  *
@@ -42,7 +46,7 @@ export class OSSObjectStorageClient implements ObjectStorageClient {
       }
       return null;
     } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'code' in err && err.code === 'NoSuchKey') {
+      if (isOSSError(err, 'NoSuchKey')) {
         return null;
       }
       throw err;
@@ -75,7 +79,7 @@ export class OSSObjectStorageClient implements ObjectStorageClient {
     } catch (err: unknown) {
       // Position mismatch — the object grew since our last cached position.
       // Fall back to HEAD to learn the actual size, then retry.
-      if (err && typeof err === 'object' && 'code' in err && err.code === 'PositionNotEqualToLength') {
+      if (isOSSError(err, 'PositionNotEqualToLength')) {
         const head = await this.client.head(key);
         const currentPos = Number(head.res.headers['content-length'] ?? 0);
         const result = await this.client.append(key, buf, { position: currentPos });

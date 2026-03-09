@@ -1,5 +1,3 @@
-import crypto from 'node:crypto';
-
 import type {
   AgentRunConfig,
   AgentStore,
@@ -12,7 +10,7 @@ import { AgentObjectType, RunStatus } from '@eggjs/tegg-types/agent-runtime';
 import { AgentNotFoundError } from '@eggjs/tegg-types/agent-runtime';
 import type { ObjectStorageClient } from '@eggjs/tegg-types/agent-runtime';
 
-import { nowUnix } from './AgentStoreUtils.ts';
+import { nowUnix, newThreadId, newRunId } from './AgentStoreUtils.ts';
 
 export interface OSSAgentStoreOptions {
   client: ObjectStorageClient;
@@ -97,7 +95,7 @@ export class OSSAgentStore implements AgentStore {
   // ── Thread operations ────────────────────────────────────────────────
 
   async createThread(metadata?: Record<string, unknown>): Promise<ThreadRecord> {
-    const threadId = `thread_${crypto.randomUUID()}`;
+    const threadId = newThreadId();
     const meta: ThreadMetadata = {
       id: threadId,
       object: AgentObjectType.Thread,
@@ -110,14 +108,16 @@ export class OSSAgentStore implements AgentStore {
   }
 
   async getThread(threadId: string): Promise<ThreadRecord> {
-    const metaData = await this.client.get(this.threadMetaKey(threadId));
+    const [metaData, messagesData] = await Promise.all([
+      this.client.get(this.threadMetaKey(threadId)),
+      this.client.get(this.threadMessagesKey(threadId)),
+    ]);
     if (!metaData) {
       throw new AgentNotFoundError(`Thread ${threadId} not found`);
     }
     const meta = JSON.parse(metaData) as ThreadMetadata;
 
-    // Read messages JSONL — may not exist yet if no messages were appended.
-    const messagesData = await this.client.get(this.threadMessagesKey(threadId));
+    // Parse messages JSONL — may not exist yet if no messages were appended.
     const messages: MessageObject[] = messagesData
       ? messagesData
           .trim()
@@ -167,7 +167,7 @@ export class OSSAgentStore implements AgentStore {
     config?: AgentRunConfig,
     metadata?: Record<string, unknown>,
   ): Promise<RunRecord> {
-    const runId = `run_${crypto.randomUUID()}`;
+    const runId = newRunId();
     const record: RunRecord = {
       id: runId,
       object: AgentObjectType.ThreadRun,

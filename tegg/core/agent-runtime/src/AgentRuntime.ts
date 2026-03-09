@@ -121,7 +121,7 @@ export class AgentRuntime {
         if (abortController.signal.aborted) {
           // Run was cancelled externally — re-read store for the latest state
           const latest = await this.store.getRun(run.id);
-          return RunBuilder.create(latest, latest.threadId ?? '').snapshot();
+          return RunBuilder.fromRecord(latest).snapshot();
         }
         streamMessages.push(msg);
       }
@@ -144,7 +144,7 @@ export class AgentRuntime {
       if (abortController.signal.aborted) {
         // Cancelled — re-read store for the latest state
         const latest = await this.store.getRun(run.id);
-        return RunBuilder.create(latest, latest.threadId ?? '').snapshot();
+        return RunBuilder.fromRecord(latest).snapshot();
       }
       try {
         await this.store.updateRun(run.id, rb.fail(err as Error));
@@ -355,7 +355,7 @@ export class AgentRuntime {
 
   async getRun(runId: string): Promise<RunObject> {
     const run = await this.store.getRun(runId);
-    return RunBuilder.create(run, run.threadId ?? '').snapshot();
+    return RunBuilder.fromRecord(run).snapshot();
   }
 
   async cancelRun(runId: string): Promise<RunObject> {
@@ -365,7 +365,7 @@ export class AgentRuntime {
       throw new AgentConflictError(`Cannot cancel run with status '${run.status}'`);
     }
 
-    const rb = RunBuilder.create(run, run.threadId ?? '');
+    const rb = RunBuilder.fromRecord(run);
 
     // 2. Write "cancelling" to store first — visible to all workers
     await this.store.updateRun(runId, rb.cancelling());
@@ -385,7 +385,7 @@ export class AgentRuntime {
     const freshRun = await this.store.getRun(runId);
     if (AgentRuntime.TERMINAL_RUN_STATUSES.has(freshRun.status)) {
       // Run reached a terminal state while we were cancelling — return as-is
-      return RunBuilder.create(freshRun, freshRun.threadId ?? '').snapshot();
+      return RunBuilder.fromRecord(freshRun).snapshot();
     }
 
     // 5. Transition to final "cancelled" state
@@ -395,7 +395,7 @@ export class AgentRuntime {
       this.logger.error('[AgentRuntime] failed to write cancelled state after cancelling:', err);
       // Return best-effort snapshot from store
       const fallback = await this.store.getRun(runId);
-      return RunBuilder.create(fallback, fallback.threadId ?? '').snapshot();
+      return RunBuilder.fromRecord(fallback).snapshot();
     }
 
     return rb.snapshot();

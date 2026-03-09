@@ -47,6 +47,11 @@ export class RunBuilder {
     this.config = config;
   }
 
+  /** Create a RunBuilder from a store RunRecord, using its own threadId. */
+  static fromRecord(run: RunRecord): RunBuilder {
+    return RunBuilder.create(run, run.threadId ?? '');
+  }
+
   /** Create a RunBuilder from a store RunRecord, restoring all mutable state. */
   static create(run: RunRecord, threadId: string): RunBuilder {
     const rb = new RunBuilder(run.id, threadId, run.createdAt, run.status, run.metadata, run.config);
