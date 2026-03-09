@@ -141,6 +141,6 @@ export function AgentController(): (constructor: EggProtoImplClass) => void {
     }
 
     // Mark the class as an AgentController for precise detection
-    AgentInfoUtil.setIsAgentController(constructor);
+    AgentInfoUtil.setAgentController(constructor);
   };
 }

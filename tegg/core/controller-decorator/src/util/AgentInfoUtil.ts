@@ -7,7 +7,7 @@ import {
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
 export class AgentInfoUtil {
-  static setIsAgentController(clazz: EggProtoImplClass): void {
+  static setAgentController(clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(CONTROLLER_AGENT_CONTROLLER, true, clazz);
   }
 
