@@ -284,14 +284,13 @@ export class AgentRuntime {
       }
 
       // event: thread.message.completed
-      msgObj.status = MessageStatus.Completed;
-      msgObj.content = content;
-      writer.writeEvent(AgentSSEEvent.ThreadMessageCompleted, msgObj);
+      const completedMsg: MessageObject = { ...msgObj, status: MessageStatus.Completed, content };
+      writer.writeEvent(AgentSSEEvent.ThreadMessageCompleted, completedMsg);
 
       // Persist and emit completion — append messages before marking run as completed
       // so a failure leaves the run in_progress (retryable) instead of completed-but-incomplete.
       // TODO(atomicity): add aggregate store method for full transactional guarantee.
-      const output: MessageObject[] = content.length > 0 ? [msgObj] : [];
+      const output: MessageObject[] = content.length > 0 ? [completedMsg] : [];
       await this.store.appendMessages(threadId, [
         ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
         ...output,
@@ -301,15 +300,28 @@ export class AgentRuntime {
       // event: thread.run.completed
       writer.writeEvent(AgentSSEEvent.ThreadRunCompleted, rb.snapshot());
     } catch (err: unknown) {
-      try {
-        await this.store.updateRun(run.id, rb.fail(err as Error));
-      } catch (storeErr) {
-        this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
-      }
+      if (abortController.signal.aborted) {
+        // Client disconnected or cancelRun fired — mark as cancelled, not failed
+        rb.cancelling();
+        try {
+          await this.store.updateRun(run.id, rb.cancel());
+        } catch (storeErr) {
+          this.logger.error('[AgentRuntime] failed to write cancelled status during stream error:', storeErr);
+        }
+        if (!writer.closed) {
+          writer.writeEvent(AgentSSEEvent.ThreadRunCancelled, rb.snapshot());
+        }
+      } else {
+        try {
+          await this.store.updateRun(run.id, rb.fail(err as Error));
+        } catch (storeErr) {
+          this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
+        }
 
-      // event: thread.run.failed
-      if (!writer.closed) {
-        writer.writeEvent(AgentSSEEvent.ThreadRunFailed, rb.snapshot());
+        // event: thread.run.failed
+        if (!writer.closed) {
+          writer.writeEvent(AgentSSEEvent.ThreadRunFailed, rb.snapshot());
+        }
       }
     } finally {
       resolveTask();

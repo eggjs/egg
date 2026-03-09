@@ -11,6 +11,7 @@ import {
 } from '@eggjs/tegg-types/agent-runtime';
 import type {
   RunRecord,
+  RunObject,
   CreateRunInput,
   AgentStreamMessage,
   MessageContentBlock,
@@ -352,6 +353,14 @@ describe('test/AgentRuntime.test.ts', () => {
       assert(deltaIdx < msgCompletedIdx);
       assert(msgCompletedIdx < runCompletedIdx);
       assert(runCompletedIdx < doneIdx);
+
+      // Verify messages persisted to thread (consistent with syncRun/asyncRun tests)
+      const runCreatedEvent = writer.events.find((e) => e.event === AgentSSEEvent.ThreadRunCreated);
+      const threadId = (runCreatedEvent!.data as RunObject).threadId;
+      const thread = await runtime.getThread(threadId);
+      assert.equal(thread.messages.length, 2);
+      assert.equal(thread.messages[0]['role'], MessageRole.User);
+      assert.equal(thread.messages[1]['role'], MessageRole.Assistant);
     });
 
     it('should emit cancelled event on client disconnect', async () => {
