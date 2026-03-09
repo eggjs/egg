@@ -118,14 +118,12 @@ export class AgentRuntime {
 
       const streamMessages: AgentStreamMessage[] = [];
       for await (const msg of this.host.execRun(input, abortController.signal)) {
-        if (abortController.signal.aborted) break;
+        if (abortController.signal.aborted) {
+          // Run was cancelled externally — re-read store for the latest state
+          const latest = await this.store.getRun(run.id);
+          return RunBuilder.create(latest, latest.threadId ?? '').snapshot();
+        }
         streamMessages.push(msg);
-      }
-
-      if (abortController.signal.aborted) {
-        // Run was cancelled externally — re-read store for the latest state
-        const latest = await this.store.getRun(run.id);
-        return RunBuilder.create(latest, latest.threadId ?? '').snapshot();
       }
 
       const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, run.id);
@@ -178,11 +176,9 @@ export class AgentRuntime {
 
         const streamMessages: AgentStreamMessage[] = [];
         for await (const msg of this.host.execRun(input, abortController.signal)) {
-          if (abortController.signal.aborted) break;
+          if (abortController.signal.aborted) return;
           streamMessages.push(msg);
         }
-
-        if (abortController.signal.aborted) return;
 
         // Check if another worker has cancelled this run before writing final state
         const currentRun = await this.store.getRun(run.id);
@@ -328,7 +324,9 @@ export class AgentRuntime {
     let hasUsage = false;
 
     for await (const msg of this.host.execRun(input, signal)) {
-      if (signal.aborted) break;
+      if (signal.aborted) {
+        return { content, usage: undefined, aborted: true as const };
+      }
       if (msg.message) {
         const contentBlocks = MessageConverter.toContentBlocks(msg.message);
         content.push(...contentBlocks);
@@ -351,7 +349,7 @@ export class AgentRuntime {
     return {
       content,
       usage: hasUsage ? { promptTokens, completionTokens, totalTokens: promptTokens + completionTokens } : undefined,
-      aborted: signal.aborted,
+      aborted: false as const,
     };
   }
 
