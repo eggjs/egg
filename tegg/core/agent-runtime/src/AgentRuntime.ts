@@ -30,7 +30,7 @@ export interface AgentExecutor {
 }
 
 export interface AgentRuntimeOptions {
-  host: AgentExecutor;
+  executor: AgentExecutor;
   store: AgentStore;
   logger: EggLogger;
 }
@@ -45,11 +45,11 @@ export class AgentRuntime {
 
   private store: AgentStore;
   private runningTasks: Map<string, { promise: Promise<void>; abortController: AbortController }>;
-  private host: AgentExecutor;
+  private executor: AgentExecutor;
   private logger: EggLogger;
 
   constructor(options: AgentRuntimeOptions) {
-    this.host = options.host;
+    this.executor = options.executor;
     this.store = options.store;
     if (!options.logger) {
       throw new Error('AgentRuntimeOptions.logger is required');
@@ -117,7 +117,7 @@ export class AgentRuntime {
       await this.store.updateRun(run.id, rb.start());
 
       const streamMessages: AgentStreamMessage[] = [];
-      for await (const msg of this.host.execRun(input, abortController.signal)) {
+      for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
           // Run was cancelled externally — re-read store for the latest state
           const latest = await this.store.getRun(run.id);
@@ -183,7 +183,7 @@ export class AgentRuntime {
         await this.store.updateRun(run.id, rb.start());
 
         const streamMessages: AgentStreamMessage[] = [];
-        for await (const msg of this.host.execRun(input, abortController.signal)) {
+        for await (const msg of this.executor.execRun(input, abortController.signal)) {
           if (abortController.signal.aborted) return;
           streamMessages.push(msg);
         }
@@ -338,7 +338,7 @@ export class AgentRuntime {
     let completionTokens = 0;
     let hasUsage = false;
 
-    for await (const msg of this.host.execRun(input, signal)) {
+    for await (const msg of this.executor.execRun(input, signal)) {
       if (signal.aborted) {
         return { content, usage: undefined, aborted: true as const };
       }

@@ -104,11 +104,11 @@ function createBlockingExecRun(
 describe('test/AgentRuntime.test.ts', () => {
   let runtime: AgentRuntime;
   let store: OSSAgentStore;
-  let host: AgentExecutor;
+  let executor: AgentExecutor;
 
   beforeEach(() => {
     store = new OSSAgentStore({ client: new MapStorageClient() });
-    host = {
+    executor = {
       async *execRun(input: CreateRunInput): AsyncGenerator<AgentStreamMessage> {
         const messages = input.input.messages;
         yield {
@@ -123,7 +123,7 @@ describe('test/AgentRuntime.test.ts', () => {
       },
     };
     runtime = new AgentRuntime({
-      host,
+      executor,
       store,
       logger: {
         error() {
@@ -244,7 +244,7 @@ describe('test/AgentRuntime.test.ts', () => {
     });
 
     it('should not throw when store.updateRun fails in catch block', async () => {
-      host.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
+      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
         throw new Error('exec failed');
       };
 
@@ -360,7 +360,7 @@ describe('test/AgentRuntime.test.ts', () => {
         resolveYielded = r;
       });
 
-      host.execRun = async function* (
+      executor.execRun = async function* (
         _input: CreateRunInput,
         signal?: AbortSignal,
       ): AsyncGenerator<AgentStreamMessage> {
@@ -396,7 +396,7 @@ describe('test/AgentRuntime.test.ts', () => {
     });
 
     it('should emit failed event when execRun throws', async () => {
-      host.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
+      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
         throw new Error('model unavailable');
       };
 
@@ -437,7 +437,7 @@ describe('test/AgentRuntime.test.ts', () => {
 
   describe('cancelRun', () => {
     it('should cancel a run', async () => {
-      host.execRun = createSlowExecRun([
+      executor.execRun = createSlowExecRun([
         {
           message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'start' }] },
         },
@@ -460,7 +460,7 @@ describe('test/AgentRuntime.test.ts', () => {
     });
 
     it('should write cancelling then cancelled to store', async () => {
-      host.execRun = createSlowExecRun([
+      executor.execRun = createSlowExecRun([
         {
           message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'start' }] },
         },
@@ -507,7 +507,7 @@ describe('test/AgentRuntime.test.ts', () => {
 
     it('should not overwrite cancelling status with completed (cross-worker scenario)', async () => {
       const resolveRef: { resolve?: () => void } = {};
-      host.execRun = createBlockingExecRun(resolveRef, [
+      executor.execRun = createBlockingExecRun(resolveRef, [
         {
           message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'done' }] },
         },
@@ -533,7 +533,7 @@ describe('test/AgentRuntime.test.ts', () => {
 
     it('should not overwrite terminal state when run completes during cancellation (TOCTOU)', async () => {
       const resolveRef: { resolve?: () => void } = {};
-      host.execRun = createBlockingExecRun(resolveRef, [
+      executor.execRun = createBlockingExecRun(resolveRef, [
         {
           message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'done' }] },
         },
