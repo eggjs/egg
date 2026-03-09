@@ -137,13 +137,13 @@ export class OSSAgentStore implements AgentStore {
    * O(1) write — no need to read the existing messages first.
    */
   async appendMessages(threadId: string, messages: MessageObject[]): Promise<void> {
-    if (messages.length === 0) return;
-
-    // Verify the thread exists before writing messages.
+    // Verify the thread exists before writing messages (or returning early),
+    // so callers always get AgentNotFoundError for invalid threadIds.
     const metaData = await this.client.get(this.threadMetaKey(threadId));
     if (!metaData) {
       throw new AgentNotFoundError(`Thread ${threadId} not found`);
     }
+    if (messages.length === 0) return;
 
     const lines = messages.map((m) => JSON.stringify(m)).join('\n') + '\n';
     const messagesKey = this.threadMessagesKey(threadId);
