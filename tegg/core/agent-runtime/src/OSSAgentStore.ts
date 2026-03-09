@@ -1,5 +1,3 @@
-import crypto from 'node:crypto';
-
 import type {
   AgentRunConfig,
   AgentStore,
@@ -12,7 +10,7 @@ import { AgentObjectType, RunStatus } from '@eggjs/tegg-types/agent-runtime';
 import { AgentNotFoundError } from '@eggjs/tegg-types/agent-runtime';
 import type { ObjectStorageClient } from '@eggjs/tegg-types/agent-runtime';
 
-import { nowUnix } from './AgentStoreUtils.ts';
+import { nowUnix, newThreadId, newRunId } from './AgentStoreUtils.ts';
 
 export interface OSSAgentStoreOptions {
   client: ObjectStorageClient;
@@ -97,12 +95,12 @@ export class OSSAgentStore implements AgentStore {
   // ── Thread operations ────────────────────────────────────────────────
 
   async createThread(metadata?: Record<string, unknown>): Promise<ThreadRecord> {
-    const threadId = `thread_${crypto.randomUUID()}`;
+    const threadId = newThreadId();
     const meta: ThreadMetadata = {
       id: threadId,
       object: AgentObjectType.Thread,
       metadata: metadata ?? {},
-      created_at: nowUnix(),
+      createdAt: nowUnix(),
     };
     await this.client.put(this.threadMetaKey(threadId), JSON.stringify(meta));
     // Messages file is created lazily on first appendMessages call.
@@ -110,18 +108,21 @@ export class OSSAgentStore implements AgentStore {
   }
 
   async getThread(threadId: string): Promise<ThreadRecord> {
-    const metaData = await this.client.get(this.threadMetaKey(threadId));
+    const [metaData, messagesData] = await Promise.all([
+      this.client.get(this.threadMetaKey(threadId)),
+      this.client.get(this.threadMessagesKey(threadId)),
+    ]);
     if (!metaData) {
       throw new AgentNotFoundError(`Thread ${threadId} not found`);
     }
     const meta = JSON.parse(metaData) as ThreadMetadata;
 
-    // Read messages JSONL — may not exist yet if no messages were appended.
-    const messagesData = await this.client.get(this.threadMessagesKey(threadId));
+    // Parse messages JSONL — may not exist yet if no messages were appended.
     const messages: MessageObject[] = messagesData
       ? messagesData
           .trim()
           .split('\n')
+          .filter((line) => line.length > 0)
           .map((line) => JSON.parse(line) as MessageObject)
       : [];
 
@@ -136,11 +137,13 @@ export class OSSAgentStore implements AgentStore {
    * O(1) write — no need to read the existing messages first.
    */
   async appendMessages(threadId: string, messages: MessageObject[]): Promise<void> {
-    // Verify the thread exists before writing messages.
+    // Verify the thread exists before writing messages (or returning early),
+    // so callers always get AgentNotFoundError for invalid threadIds.
     const metaData = await this.client.get(this.threadMetaKey(threadId));
     if (!metaData) {
       throw new AgentNotFoundError(`Thread ${threadId} not found`);
     }
+    if (messages.length === 0) return;
 
     const lines = messages.map((m) => JSON.stringify(m)).join('\n') + '\n';
     const messagesKey = this.threadMessagesKey(threadId);
@@ -164,16 +167,16 @@ export class OSSAgentStore implements AgentStore {
     config?: AgentRunConfig,
     metadata?: Record<string, unknown>,
   ): Promise<RunRecord> {
-    const runId = `run_${crypto.randomUUID()}`;
+    const runId = newRunId();
     const record: RunRecord = {
       id: runId,
       object: AgentObjectType.ThreadRun,
-      thread_id: threadId,
+      threadId,
       status: RunStatus.Queued,
       input,
       config,
       metadata,
-      created_at: nowUnix(),
+      createdAt: nowUnix(),
     };
     await this.client.put(this.runKey(runId), JSON.stringify(record));
     return record;

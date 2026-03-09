@@ -4,3 +4,8 @@ export * from '@eggjs/tegg-types/agent-runtime';
 export * from './OSSObjectStorageClient.ts';
 export * from './OSSAgentStore.ts';
 export * from './AgentStoreUtils.ts';
+export * from './MessageConverter.ts';
+export * from './RunBuilder.ts';
+export * from './SSEWriter.ts';
+export { AgentRuntime, AGENT_RUNTIME } from './AgentRuntime.ts';
+export type { AgentExecutor, AgentRuntimeOptions } from './AgentRuntime.ts';

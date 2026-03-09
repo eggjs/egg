@@ -3,6 +3,8 @@
 export const AgentObjectType = {
   Thread: 'thread',
   ThreadRun: 'thread.run',
+  ThreadMessage: 'thread.message',
+  ThreadMessageDelta: 'thread.message.delta',
 } as const;
 export type AgentObjectType = (typeof AgentObjectType)[keyof typeof AgentObjectType];
 
@@ -30,15 +32,15 @@ export interface InputMessage {
 export interface MessageObject {
   id: string;
   object: string;
-  created_at: number;
+  createdAt: number;
   [key: string]: unknown;
 }
 
 // ===== Run configuration =====
 
 export interface AgentRunConfig {
-  max_iterations?: number;
-  timeout_ms?: number;
+  maxIterations?: number;
+  timeoutMs?: number;
 }
 
 // ===== Store records =====
@@ -53,25 +55,25 @@ export interface ThreadRecord {
    */
   messages: MessageObject[];
   metadata: Record<string, unknown>;
-  created_at: number; // Unix seconds
+  createdAt: number; // Unix seconds
 }
 
 export interface RunRecord {
   id: string;
   object: typeof AgentObjectType.ThreadRun;
-  thread_id?: string;
+  threadId?: string;
   status: RunStatus;
   input: InputMessage[];
   output?: MessageObject[];
-  last_error?: { code: string; message: string } | null;
-  usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number } | null;
+  lastError?: { code: string; message: string } | null;
+  usage?: { promptTokens: number; completionTokens: number; totalTokens: number } | null;
   config?: AgentRunConfig;
   metadata?: Record<string, unknown>;
-  created_at: number;
-  started_at?: number | null;
-  completed_at?: number | null;
-  cancelled_at?: number | null;
-  failed_at?: number | null;
+  createdAt: number;
+  startedAt?: number | null;
+  completedAt?: number | null;
+  cancelledAt?: number | null;
+  failedAt?: number | null;
 }
 
 // ===== Store interface =====

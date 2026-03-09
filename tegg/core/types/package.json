@@ -122,6 +122,7 @@
     "./agent-runtime": "./src/agent-runtime/index.ts",
     "./agent-runtime/AgentStore": "./src/agent-runtime/AgentStore.ts",
     "./agent-runtime/ObjectStorageClient": "./src/agent-runtime/ObjectStorageClient.ts",
+    "./agent-runtime/AgentRuntime": "./src/agent-runtime/AgentRuntime.ts",
     "./agent-runtime/errors": "./src/agent-runtime/errors.ts",
     "./package.json": "./package.json"
   },
@@ -223,6 +224,7 @@
       "./agent-runtime": "./dist/agent-runtime/index.js",
       "./agent-runtime/AgentStore": "./dist/agent-runtime/AgentStore.js",
       "./agent-runtime/ObjectStorageClient": "./dist/agent-runtime/ObjectStorageClient.js",
+      "./agent-runtime/AgentRuntime": "./dist/agent-runtime/AgentRuntime.js",
       "./agent-runtime/errors": "./dist/agent-runtime/errors.js",
       "./package.json": "./package.json"
     }

@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@eggjs/tegg-types": "workspace:*",
+    "egg-logger": "catalog:",
     "oss-client": "catalog:"
   },
   "devDependencies": {
