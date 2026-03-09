@@ -35,8 +35,8 @@ export class MessageConverter {
     return {
       id: newMsgId(),
       object: AgentObjectType.ThreadMessage,
-      created_at: nowUnix(),
-      run_id: runId,
+      createdAt: nowUnix(),
+      runId,
       role: MessageRole.Assistant,
       status: MessageStatus.Completed,
       content: MessageConverter.toContentBlocks(msg),
@@ -45,7 +45,6 @@ export class MessageConverter {
 
   /**
    * Extract MessageObjects and accumulated usage from AgentStreamMessage objects.
-   * Returns camelCase `RunUsage` for internal use; callers convert to snake_case at boundaries.
    */
   static extractFromStreamMessages(
     messages: AgentStreamMessage[],
@@ -65,8 +64,8 @@ export class MessageConverter {
       }
       if (msg.usage) {
         hasUsage = true;
-        promptTokens += msg.usage.prompt_tokens ?? 0;
-        completionTokens += msg.usage.completion_tokens ?? 0;
+        promptTokens += msg.usage.promptTokens ?? 0;
+        completionTokens += msg.usage.completionTokens ?? 0;
       }
     }
 
@@ -89,8 +88,8 @@ export class MessageConverter {
     return {
       id: msgId,
       object: AgentObjectType.ThreadMessage,
-      created_at: nowUnix(),
-      run_id: runId,
+      createdAt: nowUnix(),
+      runId,
       role: MessageRole.Assistant,
       status: MessageStatus.InProgress,
       content: [],
@@ -110,8 +109,8 @@ export class MessageConverter {
       .map((m) => ({
         id: newMsgId(),
         object: AgentObjectType.ThreadMessage,
-        created_at: nowUnix(),
-        thread_id: threadId,
+        createdAt: nowUnix(),
+        threadId,
         role: m.role,
         status: MessageStatus.Completed,
         content:

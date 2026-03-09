@@ -4,24 +4,16 @@ import { InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime'
 
 import { nowUnix } from './AgentStoreUtils.ts';
 
-/**
- * Accumulated token usage in camelCase for internal use.
- * Converted to snake_case at output boundaries (store / API / SSE).
- */
-export interface RunUsage {
-  promptTokens: number;
-  completionTokens: number;
-  totalTokens: number;
-}
+/** Accumulated token usage — same shape as non-null RunRecord['usage']. */
+export type RunUsage = NonNullable<RunRecord['usage']>;
 
 /**
- * Encapsulates run state transitions using camelCase internally.
+ * Encapsulates run state transitions.
  *
  * Mutation methods (`start`, `complete`, `fail`, `cancel`) update internal
- * state and return `Partial<RunRecord>` (snake_case) for the store.
+ * state and return `Partial<RunRecord>` for the store.
  *
- * `snapshot()` converts the full internal state to a snake_case `RunObject`
- * suitable for API responses and SSE events.
+ * `snapshot()` produces a `RunObject` suitable for API responses and SSE events.
  */
 export class RunBuilder {
   private readonly id: string;
@@ -57,34 +49,30 @@ export class RunBuilder {
 
   /** Create a RunBuilder from a store RunRecord, restoring all mutable state. */
   static create(run: RunRecord, threadId: string): RunBuilder {
-    const rb = new RunBuilder(run.id, threadId, run.created_at, run.status, run.metadata, run.config);
-    rb.startedAt = run.started_at ?? undefined;
-    rb.completedAt = run.completed_at ?? undefined;
-    rb.cancelledAt = run.cancelled_at ?? undefined;
-    rb.failedAt = run.failed_at ?? undefined;
-    rb.lastError = run.last_error ?? undefined;
+    const rb = new RunBuilder(run.id, threadId, run.createdAt, run.status, run.metadata, run.config);
+    rb.startedAt = run.startedAt ?? undefined;
+    rb.completedAt = run.completedAt ?? undefined;
+    rb.cancelledAt = run.cancelledAt ?? undefined;
+    rb.failedAt = run.failedAt ?? undefined;
+    rb.lastError = run.lastError ?? undefined;
     rb.output = run.output;
     if (run.usage) {
-      rb.usage = {
-        promptTokens: run.usage.prompt_tokens,
-        completionTokens: run.usage.completion_tokens,
-        totalTokens: run.usage.total_tokens,
-      };
+      rb.usage = { ...run.usage };
     }
     return rb;
   }
 
-  /** queued → in_progress. Returns store update (snake_case). */
+  /** queued -> in_progress. Returns store update. */
   start(): Partial<RunRecord> {
     if (this.status !== RunStatus.Queued) {
       throw new InvalidRunStateTransitionError(this.status, RunStatus.InProgress);
     }
     this.status = RunStatus.InProgress;
     this.startedAt = nowUnix();
-    return { status: this.status, started_at: this.startedAt };
+    return { status: this.status, startedAt: this.startedAt };
   }
 
-  /** in_progress → completed. Returns store update (snake_case). */
+  /** in_progress -> completed. Returns store update. */
   complete(output: MessageObject[], usage?: RunUsage): Partial<RunRecord> {
     if (this.status !== RunStatus.InProgress) {
       throw new InvalidRunStateTransitionError(this.status, RunStatus.Completed);
@@ -96,18 +84,12 @@ export class RunBuilder {
     return {
       status: this.status,
       output,
-      usage: usage
-        ? {
-            prompt_tokens: usage.promptTokens,
-            completion_tokens: usage.completionTokens,
-            total_tokens: usage.totalTokens,
-          }
-        : undefined,
-      completed_at: this.completedAt,
+      usage,
+      completedAt: this.completedAt,
     };
   }
 
-  /** queued/in_progress → failed. Returns store update (snake_case). */
+  /** queued/in_progress -> failed. Returns store update. */
   fail(error: Error): Partial<RunRecord> {
     if (this.status !== RunStatus.InProgress && this.status !== RunStatus.Queued) {
       throw new InvalidRunStateTransitionError(this.status, RunStatus.Failed);
@@ -117,12 +99,12 @@ export class RunBuilder {
     this.lastError = { code: AgentErrorCode.ExecError, message: error.message };
     return {
       status: this.status,
-      last_error: this.lastError,
-      failed_at: this.failedAt,
+      lastError: this.lastError,
+      failedAt: this.failedAt,
     };
   }
 
-  /** in_progress/queued → cancelling (idempotent if already cancelling). Returns store update (snake_case). */
+  /** in_progress/queued -> cancelling (idempotent if already cancelling). Returns store update. */
   cancelling(): Partial<RunRecord> {
     if (this.status === RunStatus.Cancelling) {
       return { status: this.status };
@@ -134,7 +116,7 @@ export class RunBuilder {
     return { status: this.status };
   }
 
-  /** cancelling → cancelled. Returns store update (snake_case). */
+  /** cancelling -> cancelled. Returns store update. */
   cancel(): Partial<RunRecord> {
     if (this.status !== RunStatus.Cancelling) {
       throw new InvalidRunStateTransitionError(this.status, RunStatus.Cancelled);
@@ -143,30 +125,24 @@ export class RunBuilder {
     this.cancelledAt = nowUnix();
     return {
       status: this.status,
-      cancelled_at: this.cancelledAt,
+      cancelledAt: this.cancelledAt,
     };
   }
 
-  /** Convert internal camelCase state to snake_case RunObject for API / SSE. */
+  /** Produce a RunObject snapshot for API / SSE. */
   snapshot(): RunObject {
     return {
       id: this.id,
       object: AgentObjectType.ThreadRun,
-      created_at: this.createdAt,
-      thread_id: this.threadId,
+      createdAt: this.createdAt,
+      threadId: this.threadId,
       status: this.status,
-      last_error: this.lastError,
-      started_at: this.startedAt ?? null,
-      completed_at: this.completedAt ?? null,
-      cancelled_at: this.cancelledAt ?? null,
-      failed_at: this.failedAt ?? null,
-      usage: this.usage
-        ? {
-            prompt_tokens: this.usage.promptTokens,
-            completion_tokens: this.usage.completionTokens,
-            total_tokens: this.usage.totalTokens,
-          }
-        : null,
+      lastError: this.lastError,
+      startedAt: this.startedAt ?? null,
+      completedAt: this.completedAt ?? null,
+      cancelledAt: this.cancelledAt ?? null,
+      failedAt: this.failedAt ?? null,
+      usage: this.usage ?? null,
       metadata: this.metadata,
       output: this.output,
       config: this.config,

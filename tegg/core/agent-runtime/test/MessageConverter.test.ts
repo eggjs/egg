@@ -65,10 +65,10 @@ describe('test/MessageConverter.test.ts', () => {
 
       assert.ok(msg.id.startsWith('msg_'));
       assert.equal(msg.object, AgentObjectType.ThreadMessage);
-      assert.equal(msg['run_id'], 'run_1');
+      assert.equal(msg['runId'], 'run_1');
       assert.equal(msg['role'], MessageRole.Assistant);
       assert.equal(msg['status'], MessageStatus.Completed);
-      assert.equal(typeof msg.created_at, 'number');
+      assert.equal(typeof msg.createdAt, 'number');
       const content = msg['content'] as MessageContentBlock[];
       assert.equal(content.length, 1);
       assert.equal(content[0].text.value, 'reply');
@@ -77,7 +77,7 @@ describe('test/MessageConverter.test.ts', () => {
     it('should work without runId', () => {
       const payload: AgentStreamMessagePayload = { content: 'test' };
       const msg = MessageConverter.toMessageObject(payload);
-      assert.equal(msg['run_id'], undefined);
+      assert.equal(msg['runId'], undefined);
     });
   });
 
@@ -87,19 +87,19 @@ describe('test/MessageConverter.test.ts', () => {
 
       assert.equal(msg.id, 'msg_abc');
       assert.equal(msg.object, AgentObjectType.ThreadMessage);
-      assert.equal(msg['run_id'], 'run_1');
+      assert.equal(msg['runId'], 'run_1');
       assert.equal(msg['role'], MessageRole.Assistant);
       assert.equal(msg['status'], MessageStatus.InProgress);
       assert.deepStrictEqual(msg['content'], []);
-      assert.equal(typeof msg.created_at, 'number');
+      assert.equal(typeof msg.createdAt, 'number');
     });
   });
 
   describe('extractFromStreamMessages', () => {
     it('should extract messages and accumulate usage', () => {
       const messages: AgentStreamMessage[] = [
-        { message: { content: 'chunk1' }, usage: { prompt_tokens: 10, completion_tokens: 5 } },
-        { message: { content: 'chunk2' }, usage: { prompt_tokens: 0, completion_tokens: 8 } },
+        { message: { content: 'chunk1' }, usage: { promptTokens: 10, completionTokens: 5 } },
+        { message: { content: 'chunk2' }, usage: { promptTokens: 0, completionTokens: 8 } },
       ];
       const { output, usage } = MessageConverter.extractFromStreamMessages(messages, 'run_1');
 
@@ -120,7 +120,7 @@ describe('test/MessageConverter.test.ts', () => {
     });
 
     it('should handle messages without message payload (usage only)', () => {
-      const messages: AgentStreamMessage[] = [{ usage: { prompt_tokens: 5, completion_tokens: 3 } }];
+      const messages: AgentStreamMessage[] = [{ usage: { promptTokens: 5, completionTokens: 3 } }];
       const { output, usage } = MessageConverter.extractFromStreamMessages(messages);
       assert.equal(output.length, 0);
       assert.ok(usage);
@@ -144,7 +144,7 @@ describe('test/MessageConverter.test.ts', () => {
 
       assert.equal(result.length, 2);
       assert.equal(result[0]['role'], MessageRole.User);
-      assert.equal(result[0]['thread_id'], 'thread_1');
+      assert.equal(result[0]['threadId'], 'thread_1');
       assert.equal(result[1]['role'], MessageRole.Assistant);
 
       const content0 = result[0]['content'] as MessageContentBlock[];
@@ -181,7 +181,7 @@ describe('test/MessageConverter.test.ts', () => {
     it('should work without threadId', () => {
       const messages = [{ role: MessageRole.User as MessageRole, content: 'hi' }];
       const result = MessageConverter.toInputMessageObjects(messages);
-      assert.equal(result[0]['thread_id'], undefined);
+      assert.equal(result[0]['threadId'], undefined);
     });
   });
 });

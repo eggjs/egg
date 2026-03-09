@@ -53,7 +53,7 @@ export class FileAgentStore implements AgentStore {
       object: AgentObjectType.Thread,
       messages: [],
       metadata: metadata ?? {},
-      created_at: nowUnix(),
+      createdAt: nowUnix(),
     };
     await this.writeFile(this.safePath(this.threadsDir, threadId), record);
     return record;
@@ -86,12 +86,12 @@ export class FileAgentStore implements AgentStore {
     const record: RunRecord = {
       id: runId,
       object: AgentObjectType.ThreadRun,
-      thread_id: threadId,
+      threadId,
       status: RunStatus.Queued,
       input,
       config,
       metadata,
-      created_at: nowUnix(),
+      createdAt: nowUnix(),
     };
     await this.writeFile(this.safePath(this.runsDir, runId), record);
     return record;

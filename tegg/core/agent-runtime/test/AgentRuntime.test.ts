@@ -135,7 +135,7 @@ describe('test/AgentRuntime.test.ts', () => {
           },
         };
         yield {
-          usage: { prompt_tokens: 10, completion_tokens: 5 },
+          usage: { promptTokens: 10, completionTokens: 5 },
         };
       },
     };
@@ -159,9 +159,9 @@ describe('test/AgentRuntime.test.ts', () => {
       const result = await runtime.createThread();
       assert(result.id.startsWith('thread_'));
       assert.equal(result.object, AgentObjectType.Thread);
-      assert(typeof result.created_at === 'number');
+      assert(typeof result.createdAt === 'number');
       // Unix seconds
-      assert(result.created_at <= Math.floor(Date.now() / 1000));
+      assert(result.createdAt <= Math.floor(Date.now() / 1000));
       assert(typeof result.metadata === 'object');
     });
   });
@@ -196,8 +196,8 @@ describe('test/AgentRuntime.test.ts', () => {
       assert(result.id.startsWith('run_'));
       assert.equal(result.object, AgentObjectType.ThreadRun);
       assert.equal(result.status, RunStatus.Completed);
-      assert(result.thread_id);
-      assert(result.thread_id.startsWith('thread_'));
+      assert(result.threadId);
+      assert(result.threadId.startsWith('thread_'));
       assert.equal(result.output!.length, 1);
       assert.equal(result.output![0].object, AgentObjectType.ThreadMessage);
       assert.equal(result.output![0]['role'], MessageRole.Assistant);
@@ -206,10 +206,10 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(content[0].type, ContentBlockType.Text);
       assert.equal(content[0].text.value, 'Hello 1 messages');
       assert(Array.isArray(content[0].text.annotations));
-      assert.equal(result.usage!.prompt_tokens, 10);
-      assert.equal(result.usage!.completion_tokens, 5);
-      assert.equal(result.usage!.total_tokens, 15);
-      assert(result.started_at! >= result.created_at, 'started_at should be >= created_at');
+      assert.equal(result.usage!.promptTokens, 10);
+      assert.equal(result.usage!.completionTokens, 5);
+      assert.equal(result.usage!.totalTokens, 15);
+      assert(result.startedAt! >= result.createdAt, 'startedAt should be >= createdAt');
     });
 
     it('should pass metadata through to store and return it', async () => {
@@ -230,14 +230,14 @@ describe('test/AgentRuntime.test.ts', () => {
       });
       const run = await store.getRun(result.id);
       assert.equal(run.status, RunStatus.Completed);
-      assert(run.completed_at);
+      assert(run.completedAt);
     });
 
-    it('should append messages to thread when thread_id provided', async () => {
+    it('should append messages to thread when threadId provided', async () => {
       const thread = await runtime.createThread();
 
       await runtime.syncRun({
-        thread_id: thread.id,
+        threadId: thread.id,
         input: { messages: [{ role: 'user', content: 'Hi' }] },
       });
 
@@ -247,14 +247,14 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(updated.messages[1]['role'], MessageRole.Assistant);
     });
 
-    it('should auto-create thread and append messages when thread_id not provided', async () => {
+    it('should auto-create thread and append messages when threadId not provided', async () => {
       const result = await runtime.syncRun({
         input: { messages: [{ role: 'user', content: 'Hi' }] },
       });
-      assert(result.thread_id);
-      assert(result.thread_id.startsWith('thread_'));
+      assert(result.threadId);
+      assert(result.threadId.startsWith('thread_'));
 
-      const thread = await runtime.getThread(result.thread_id);
+      const thread = await runtime.getThread(result.threadId);
       assert.equal(thread.messages.length, 2);
       assert.equal(thread.messages[0]['role'], MessageRole.User);
       assert.equal(thread.messages[1]['role'], MessageRole.Assistant);
@@ -287,15 +287,15 @@ describe('test/AgentRuntime.test.ts', () => {
   });
 
   describe('asyncRun', () => {
-    it('should return queued status immediately with auto-created thread_id', async () => {
+    it('should return queued status immediately with auto-created threadId', async () => {
       const result = await runtime.asyncRun({
         input: { messages: [{ role: 'user', content: 'Hi' }] },
       });
       assert(result.id.startsWith('run_'));
       assert.equal(result.object, AgentObjectType.ThreadRun);
       assert.equal(result.status, RunStatus.Queued);
-      assert(result.thread_id);
-      assert(result.thread_id.startsWith('thread_'));
+      assert(result.threadId);
+      assert(result.threadId.startsWith('thread_'));
     });
 
     it('should complete the run in the background', async () => {
@@ -311,15 +311,15 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(outputContent[0].text.value, 'Hello 1 messages');
     });
 
-    it('should auto-create thread and append messages when thread_id not provided', async () => {
+    it('should auto-create thread and append messages when threadId not provided', async () => {
       const result = await runtime.asyncRun({
         input: { messages: [{ role: 'user', content: 'Hi' }] },
       });
-      assert(result.thread_id);
+      assert(result.threadId);
 
       await runtime.waitForPendingTasks();
 
-      const thread = await store.getThread(result.thread_id);
+      const thread = await store.getThread(result.threadId);
       assert.equal(thread.messages.length, 2);
       assert.equal(thread.messages[0]['role'], MessageRole.User);
       assert.equal(thread.messages[1]['role'], MessageRole.Assistant);
@@ -437,7 +437,7 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(result.id, syncResult.id);
       assert.equal(result.object, AgentObjectType.ThreadRun);
       assert.equal(result.status, RunStatus.Completed);
-      assert(typeof result.created_at === 'number');
+      assert(typeof result.createdAt === 'number');
     });
 
     it('should return metadata from getRun', async () => {
@@ -473,7 +473,7 @@ describe('test/AgentRuntime.test.ts', () => {
 
       const run = await store.getRun(result.id);
       assert.equal(run.status, RunStatus.Cancelled);
-      assert(run.cancelled_at);
+      assert(run.cancelledAt);
     });
 
     it('should write cancelling then cancelled to store', async () => {
@@ -529,7 +529,7 @@ describe('test/AgentRuntime.test.ts', () => {
           message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'done' }] },
         },
         {
-          usage: { prompt_tokens: 1, completion_tokens: 1 },
+          usage: { promptTokens: 1, completionTokens: 1 },
         },
       ]);
 
@@ -554,7 +554,7 @@ describe('test/AgentRuntime.test.ts', () => {
         {
           message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'done' }] },
         },
-        { usage: { prompt_tokens: 1, completion_tokens: 1 } },
+        { usage: { promptTokens: 1, completionTokens: 1 } },
       ]);
 
       const result = await runtime.asyncRun({
@@ -566,7 +566,7 @@ describe('test/AgentRuntime.test.ts', () => {
       store.updateRun = async (runId: string, updates: Partial<RunRecord>) => {
         await origUpdateRun(runId, updates);
         if (updates.status === RunStatus.Cancelling) {
-          await origUpdateRun(runId, { status: RunStatus.Completed, completed_at: Math.floor(Date.now() / 1000) });
+          await origUpdateRun(runId, { status: RunStatus.Completed, completedAt: Math.floor(Date.now() / 1000) });
           store.updateRun = origUpdateRun;
         }
       };

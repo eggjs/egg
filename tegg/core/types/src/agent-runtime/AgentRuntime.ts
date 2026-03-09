@@ -64,7 +64,7 @@ export type MessageContentBlock = TextContentBlock;
 export interface ThreadObject {
   id: string;
   object: 'thread';
-  created_at: number;
+  createdAt: number;
   metadata: Record<string, unknown>;
 }
 
@@ -77,15 +77,15 @@ export interface ThreadObjectWithMessages extends ThreadObject {
 export interface RunObject {
   id: string;
   object: 'thread.run';
-  created_at: number;
-  thread_id: string;
+  createdAt: number;
+  threadId: string;
   status: import('./AgentStore.ts').RunStatus;
-  last_error?: { code: string; message: string } | null;
-  started_at?: number | null;
-  completed_at?: number | null;
-  cancelled_at?: number | null;
-  failed_at?: number | null;
-  usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number } | null;
+  lastError?: { code: string; message: string } | null;
+  startedAt?: number | null;
+  completedAt?: number | null;
+  cancelledAt?: number | null;
+  failedAt?: number | null;
+  usage?: { promptTokens: number; completionTokens: number; totalTokens: number } | null;
   metadata?: Record<string, unknown>;
   output?: import('./AgentStore.ts').MessageObject[];
   config?: import('./AgentStore.ts').AgentRunConfig;
@@ -94,7 +94,7 @@ export interface RunObject {
 // ===== Run input =====
 
 export interface CreateRunInput {
-  thread_id?: string;
+  threadId?: string;
   input: {
     messages: Array<{
       role: MessageRole;
@@ -123,8 +123,8 @@ export interface AgentStreamMessagePayload {
 }
 
 export interface AgentRunUsage {
-  prompt_tokens?: number;
-  completion_tokens?: number;
+  promptTokens?: number;
+  completionTokens?: number;
 }
 
 export interface AgentStreamMessage {

@@ -12,10 +12,10 @@ function makeRunRecord(overrides?: Partial<RunRecord>): RunRecord {
   return {
     id: 'run_1',
     object: AgentObjectType.ThreadRun,
-    thread_id: 'thread_1',
+    threadId: 'thread_1',
     status: RunStatus.Queued,
     input: [{ role: 'user', content: 'hello' }],
-    created_at: 1000,
+    createdAt: 1000,
     ...overrides,
   };
 }
@@ -29,50 +29,50 @@ describe('test/RunBuilder.test.ts', () => {
 
       assert.equal(snap.id, 'run_1');
       assert.equal(snap.object, AgentObjectType.ThreadRun);
-      assert.equal(snap.created_at, 1000);
-      assert.equal(snap.thread_id, 'thread_1');
+      assert.equal(snap.createdAt, 1000);
+      assert.equal(snap.threadId, 'thread_1');
       assert.equal(snap.status, RunStatus.Queued);
-      assert.equal(snap.started_at, null);
-      assert.equal(snap.completed_at, null);
-      assert.equal(snap.cancelled_at, null);
-      assert.equal(snap.failed_at, null);
+      assert.equal(snap.startedAt, null);
+      assert.equal(snap.completedAt, null);
+      assert.equal(snap.cancelledAt, null);
+      assert.equal(snap.failedAt, null);
       assert.equal(snap.usage, null);
-      assert.equal(snap.last_error, undefined);
+      assert.equal(snap.lastError, undefined);
     });
 
     it('should restore all mutable fields from a completed RunRecord', () => {
       const record = makeRunRecord({
         status: RunStatus.Completed,
-        started_at: 1001,
-        completed_at: 1002,
-        output: [{ id: 'msg_1', object: 'thread.message', created_at: 1001 }],
-        usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+        startedAt: 1001,
+        completedAt: 1002,
+        output: [{ id: 'msg_1', object: 'thread.message', createdAt: 1001 }],
+        usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
         metadata: { key: 'value' },
-        config: { max_iterations: 10 },
+        config: { maxIterations: 10 },
       });
       const snap = RunBuilder.create(record, 'thread_1').snapshot();
 
       assert.equal(snap.status, RunStatus.Completed);
-      assert.equal(snap.started_at, 1001);
-      assert.equal(snap.completed_at, 1002);
+      assert.equal(snap.startedAt, 1001);
+      assert.equal(snap.completedAt, 1002);
       assert.equal(snap.output?.length, 1);
-      assert.deepStrictEqual(snap.usage, { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 });
+      assert.deepStrictEqual(snap.usage, { promptTokens: 10, completionTokens: 5, totalTokens: 15 });
       assert.deepStrictEqual(snap.metadata, { key: 'value' });
-      assert.deepStrictEqual(snap.config, { max_iterations: 10 });
+      assert.deepStrictEqual(snap.config, { maxIterations: 10 });
     });
 
-    it('should restore failed state with last_error', () => {
+    it('should restore failed state with lastError', () => {
       const record = makeRunRecord({
         status: RunStatus.Failed,
-        started_at: 1001,
-        failed_at: 1003,
-        last_error: { code: 'EXEC_ERROR', message: 'boom' },
+        startedAt: 1001,
+        failedAt: 1003,
+        lastError: { code: 'EXEC_ERROR', message: 'boom' },
       });
       const snap = RunBuilder.create(record, 'thread_1').snapshot();
 
       assert.equal(snap.status, RunStatus.Failed);
-      assert.equal(snap.failed_at, 1003);
-      assert.deepStrictEqual(snap.last_error, { code: 'EXEC_ERROR', message: 'boom' });
+      assert.equal(snap.failedAt, 1003);
+      assert.deepStrictEqual(snap.lastError, { code: 'EXEC_ERROR', message: 'boom' });
     });
   });
 
@@ -82,7 +82,7 @@ describe('test/RunBuilder.test.ts', () => {
       const update = rb.start();
 
       assert.equal(update.status, RunStatus.InProgress);
-      assert.equal(typeof update.started_at, 'number');
+      assert.equal(typeof update.startedAt, 'number');
       assert.equal(rb.snapshot().status, RunStatus.InProgress);
     });
 
@@ -97,25 +97,25 @@ describe('test/RunBuilder.test.ts', () => {
       const rb = RunBuilder.create(makeRunRecord(), 'thread_1');
       rb.start();
 
-      const output: MessageObject[] = [{ id: 'msg_1', object: 'thread.message', created_at: 1001 }];
+      const output: MessageObject[] = [{ id: 'msg_1', object: 'thread.message', createdAt: 1001 }];
       const usage: RunUsage = { promptTokens: 10, completionTokens: 5, totalTokens: 15 };
       const update = rb.complete(output, usage);
 
       assert.equal(update.status, RunStatus.Completed);
-      assert.equal(typeof update.completed_at, 'number');
+      assert.equal(typeof update.completedAt, 'number');
       assert.deepStrictEqual(update.usage, {
-        prompt_tokens: 10,
-        completion_tokens: 5,
-        total_tokens: 15,
+        promptTokens: 10,
+        completionTokens: 5,
+        totalTokens: 15,
       });
       assert.equal(update.output, output);
 
       const snap = rb.snapshot();
       assert.equal(snap.status, RunStatus.Completed);
       assert.deepStrictEqual(snap.usage, {
-        prompt_tokens: 10,
-        completion_tokens: 5,
-        total_tokens: 15,
+        promptTokens: 10,
+        completionTokens: 5,
+        totalTokens: 15,
       });
     });
 
@@ -144,8 +144,8 @@ describe('test/RunBuilder.test.ts', () => {
 
       const update = rb.fail(new Error('something broke'));
       assert.equal(update.status, RunStatus.Failed);
-      assert.equal(typeof update.failed_at, 'number');
-      assert.deepStrictEqual(update.last_error, {
+      assert.equal(typeof update.failedAt, 'number');
+      assert.deepStrictEqual(update.lastError, {
         code: AgentErrorCode.ExecError,
         message: 'something broke',
       });
@@ -204,11 +204,11 @@ describe('test/RunBuilder.test.ts', () => {
 
       const update = rb.cancel();
       assert.equal(update.status, RunStatus.Cancelled);
-      assert.equal(typeof update.cancelled_at, 'number');
+      assert.equal(typeof update.cancelledAt, 'number');
 
       const snap = rb.snapshot();
       assert.equal(snap.status, RunStatus.Cancelled);
-      assert.equal(typeof snap.cancelled_at, 'number');
+      assert.equal(typeof snap.cancelledAt, 'number');
     });
 
     it('should throw when not in cancelling status', () => {
@@ -229,8 +229,8 @@ describe('test/RunBuilder.test.ts', () => {
       rb.complete([], { promptTokens: 1, completionTokens: 2, totalTokens: 3 });
       const snap = rb.snapshot();
       assert.equal(snap.status, RunStatus.Completed);
-      assert.ok(snap.started_at);
-      assert.ok(snap.completed_at);
+      assert.ok(snap.startedAt);
+      assert.ok(snap.completedAt);
     });
 
     it('should support queued → in_progress → cancelling → cancelled', () => {

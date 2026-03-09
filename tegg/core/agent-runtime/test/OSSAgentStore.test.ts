@@ -53,8 +53,8 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.equal(thread.object, 'thread');
       assert(Array.isArray(thread.messages));
       assert.equal(thread.messages.length, 0);
-      assert(typeof thread.created_at === 'number');
-      assert(thread.created_at <= Math.floor(Date.now() / 1000));
+      assert(typeof thread.createdAt === 'number');
+      assert(thread.createdAt <= Math.floor(Date.now() / 1000));
     });
 
     it('should create a thread with metadata', async () => {
@@ -72,7 +72,7 @@ describe('test/OSSAgentStore.test.ts', () => {
       const fetched = await store.getThread(created.id);
       assert.equal(fetched.id, created.id);
       assert.equal(fetched.object, 'thread');
-      assert.equal(fetched.created_at, created.created_at);
+      assert.equal(fetched.createdAt, created.createdAt);
     });
 
     it('should return empty messages for a new thread', async () => {
@@ -99,7 +99,7 @@ describe('test/OSSAgentStore.test.ts', () => {
         {
           id: 'msg_1',
           object: 'thread.message',
-          created_at: Math.floor(Date.now() / 1000),
+          createdAt: Math.floor(Date.now() / 1000),
           role: 'user',
           status: 'completed',
           content: [{ type: 'text', text: { value: 'Hello', annotations: [] } }],
@@ -107,7 +107,7 @@ describe('test/OSSAgentStore.test.ts', () => {
         {
           id: 'msg_2',
           object: 'thread.message',
-          created_at: Math.floor(Date.now() / 1000),
+          createdAt: Math.floor(Date.now() / 1000),
           role: 'assistant',
           status: 'completed',
           content: [{ type: 'text', text: { value: 'Hi!', annotations: [] } }],
@@ -125,7 +125,7 @@ describe('test/OSSAgentStore.test.ts', () => {
         {
           id: 'msg_1',
           object: 'thread.message',
-          created_at: Math.floor(Date.now() / 1000),
+          createdAt: Math.floor(Date.now() / 1000),
           role: 'user',
           status: 'completed',
           content: [{ type: 'text', text: { value: 'First', annotations: [] } }],
@@ -135,7 +135,7 @@ describe('test/OSSAgentStore.test.ts', () => {
         {
           id: 'msg_2',
           object: 'thread.message',
-          created_at: Math.floor(Date.now() / 1000),
+          createdAt: Math.floor(Date.now() / 1000),
           role: 'assistant',
           status: 'completed',
           content: [{ type: 'text', text: { value: 'Second', annotations: [] } }],
@@ -154,7 +154,7 @@ describe('test/OSSAgentStore.test.ts', () => {
             {
               id: 'msg_1',
               object: 'thread.message',
-              created_at: Math.floor(Date.now() / 1000),
+              createdAt: Math.floor(Date.now() / 1000),
               role: 'user',
               status: 'completed',
               content: [{ type: 'text', text: { value: 'Hello', annotations: [] } }],
@@ -176,7 +176,7 @@ describe('test/OSSAgentStore.test.ts', () => {
         {
           id: 'msg_1',
           object: 'thread.message',
-          created_at: Math.floor(Date.now() / 1000),
+          createdAt: Math.floor(Date.now() / 1000),
           role: 'user',
           status: 'completed',
           content: [{ type: 'text', text: { value: 'Hello', annotations: [] } }],
@@ -186,7 +186,7 @@ describe('test/OSSAgentStore.test.ts', () => {
         {
           id: 'msg_2',
           object: 'thread.message',
-          created_at: Math.floor(Date.now() / 1000),
+          createdAt: Math.floor(Date.now() / 1000),
           role: 'assistant',
           status: 'completed',
           content: [{ type: 'text', text: { value: 'Hi!', annotations: [] } }],
@@ -206,14 +206,14 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.equal(run.object, 'thread.run');
       assert.equal(run.status, 'queued');
       assert.equal(run.input.length, 1);
-      assert(typeof run.created_at === 'number');
-      assert(run.created_at <= Math.floor(Date.now() / 1000));
+      assert(typeof run.createdAt === 'number');
+      assert(run.createdAt <= Math.floor(Date.now() / 1000));
     });
 
-    it('should create a run with thread_id and config', async () => {
-      const run = await store.createRun([{ role: 'user', content: 'Hello' }], 'thread_123', { timeout_ms: 5000 });
-      assert.equal(run.thread_id, 'thread_123');
-      assert.deepEqual(run.config, { timeout_ms: 5000 });
+    it('should create a run with threadId and config', async () => {
+      const run = await store.createRun([{ role: 'user', content: 'Hello' }], 'thread_123', { timeoutMs: 5000 });
+      assert.equal(run.threadId, 'thread_123');
+      assert.deepEqual(run.config, { timeoutMs: 5000 });
     });
 
     it('should create a run with metadata', async () => {
@@ -228,7 +228,7 @@ describe('test/OSSAgentStore.test.ts', () => {
     it('should preserve metadata across updateRun', async () => {
       const meta = { tag: 'test' };
       const run = await store.createRun([{ role: 'user', content: 'Hello' }], undefined, undefined, meta);
-      await store.updateRun(run.id, { status: 'in_progress', started_at: Math.floor(Date.now() / 1000) });
+      await store.updateRun(run.id, { status: 'in_progress', startedAt: Math.floor(Date.now() / 1000) });
       const fetched = await store.getRun(run.id);
       assert.equal(fetched.status, 'in_progress');
       assert.deepEqual(fetched.metadata, meta);
@@ -261,19 +261,19 @@ describe('test/OSSAgentStore.test.ts', () => {
           {
             id: 'msg_1',
             object: 'thread.message',
-            created_at: Math.floor(Date.now() / 1000),
+            createdAt: Math.floor(Date.now() / 1000),
             role: 'assistant',
             status: 'completed',
             content: [{ type: 'text', text: { value: 'World', annotations: [] } }],
           },
         ],
-        completed_at: Math.floor(Date.now() / 1000),
+        completedAt: Math.floor(Date.now() / 1000),
       });
       const fetched = await store.getRun(run.id);
       assert.equal(fetched.status, 'completed');
       assert(fetched.output);
       assert.equal(fetched.output.length, 1);
-      assert(typeof fetched.completed_at === 'number');
+      assert(typeof fetched.completedAt === 'number');
     });
 
     it('should not allow overwriting id or object via updateRun', async () => {

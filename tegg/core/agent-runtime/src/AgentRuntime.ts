@@ -63,7 +63,7 @@ export class AgentRuntime {
     return {
       id: thread.id,
       object: AgentObjectType.Thread,
-      created_at: thread.created_at,
+      createdAt: thread.createdAt,
       metadata: thread.metadata ?? {},
     };
   }
@@ -73,18 +73,18 @@ export class AgentRuntime {
     return {
       id: thread.id,
       object: AgentObjectType.Thread,
-      created_at: thread.created_at,
+      createdAt: thread.createdAt,
       metadata: thread.metadata ?? {},
       messages: thread.messages,
     };
   }
 
   private async ensureThread(input: CreateRunInput): Promise<{ threadId: string; input: CreateRunInput }> {
-    if (input.thread_id) {
-      return { threadId: input.thread_id, input };
+    if (input.threadId) {
+      return { threadId: input.threadId, input };
     }
     const thread = await this.store.createThread();
-    return { threadId: thread.id, input: { ...input, thread_id: thread.id } };
+    return { threadId: thread.id, input: { ...input, threadId: thread.id } };
   }
 
   async syncRun(input: CreateRunInput, signal?: AbortSignal): Promise<RunObject> {
@@ -125,7 +125,7 @@ export class AgentRuntime {
       if (abortController.signal.aborted) {
         // Run was cancelled externally — re-read store for the latest state
         const latest = await this.store.getRun(run.id);
-        return RunBuilder.create(latest, latest.thread_id ?? '').snapshot();
+        return RunBuilder.create(latest, latest.threadId ?? '').snapshot();
       }
 
       const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, run.id);
@@ -146,7 +146,7 @@ export class AgentRuntime {
       if (abortController.signal.aborted) {
         // Cancelled — re-read store for the latest state
         const latest = await this.store.getRun(run.id);
-        return RunBuilder.create(latest, latest.thread_id ?? '').snapshot();
+        return RunBuilder.create(latest, latest.threadId ?? '').snapshot();
       }
       try {
         await this.store.updateRun(run.id, rb.fail(err as Error));
@@ -343,8 +343,8 @@ export class AgentRuntime {
       }
       if (msg.usage) {
         hasUsage = true;
-        promptTokens += msg.usage.prompt_tokens ?? 0;
-        completionTokens += msg.usage.completion_tokens ?? 0;
+        promptTokens += msg.usage.promptTokens ?? 0;
+        completionTokens += msg.usage.completionTokens ?? 0;
       }
     }
 
@@ -357,7 +357,7 @@ export class AgentRuntime {
 
   async getRun(runId: string): Promise<RunObject> {
     const run = await this.store.getRun(runId);
-    return RunBuilder.create(run, run.thread_id ?? '').snapshot();
+    return RunBuilder.create(run, run.threadId ?? '').snapshot();
   }
 
   async cancelRun(runId: string): Promise<RunObject> {
@@ -367,7 +367,7 @@ export class AgentRuntime {
       throw new AgentConflictError(`Cannot cancel run with status '${run.status}'`);
     }
 
-    const rb = RunBuilder.create(run, run.thread_id ?? '');
+    const rb = RunBuilder.create(run, run.threadId ?? '');
 
     // 2. Write "cancelling" to store first — visible to all workers
     await this.store.updateRun(runId, rb.cancelling());
@@ -387,7 +387,7 @@ export class AgentRuntime {
     const freshRun = await this.store.getRun(runId);
     if (AgentRuntime.TERMINAL_RUN_STATUSES.has(freshRun.status)) {
       // Run reached a terminal state while we were cancelling — return as-is
-      return RunBuilder.create(freshRun, freshRun.thread_id ?? '').snapshot();
+      return RunBuilder.create(freshRun, freshRun.threadId ?? '').snapshot();
     }
 
     // 5. Transition to final "cancelled" state
@@ -397,7 +397,7 @@ export class AgentRuntime {
       this.logger.error('[AgentRuntime] failed to write cancelled state after cancelling:', err);
       // Return best-effort snapshot from store
       const fallback = await this.store.getRun(runId);
-      return RunBuilder.create(fallback, fallback.thread_id ?? '').snapshot();
+      return RunBuilder.create(fallback, fallback.threadId ?? '').snapshot();
     }
 
     return rb.snapshot();

@@ -102,7 +102,7 @@ export class OSSAgentStore implements AgentStore {
       id: threadId,
       object: AgentObjectType.Thread,
       metadata: metadata ?? {},
-      created_at: nowUnix(),
+      createdAt: nowUnix(),
     };
     await this.client.put(this.threadMetaKey(threadId), JSON.stringify(meta));
     // Messages file is created lazily on first appendMessages call.
@@ -171,12 +171,12 @@ export class OSSAgentStore implements AgentStore {
     const record: RunRecord = {
       id: runId,
       object: AgentObjectType.ThreadRun,
-      thread_id: threadId,
+      threadId,
       status: RunStatus.Queued,
       input,
       config,
       metadata,
-      created_at: nowUnix(),
+      createdAt: nowUnix(),
     };
     await this.client.put(this.runKey(runId), JSON.stringify(record));
     return record;
