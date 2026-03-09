@@ -7,13 +7,16 @@ export class NodeSSEWriter implements SSEWriter {
   private _closed = false;
   private closeCallbacks: Array<() => void> = [];
   private headersSent = false;
+  private readonly onResClose: () => void;
 
   constructor(res: ServerResponse) {
     this.res = res;
-    res.on('close', () => {
+    this.onResClose = () => {
       this._closed = true;
       for (const cb of this.closeCallbacks) cb();
-    });
+      this.closeCallbacks.length = 0;
+    };
+    res.on('close', this.onResClose);
   }
 
   /** Lazily write headers on first event — avoids sending corrupt headers if constructor throws. */
@@ -40,6 +43,8 @@ export class NodeSSEWriter implements SSEWriter {
   end(): void {
     if (!this._closed) {
       this._closed = true;
+      this.res.off('close', this.onResClose);
+      this.closeCallbacks.length = 0;
       this.res.end();
     }
   }
