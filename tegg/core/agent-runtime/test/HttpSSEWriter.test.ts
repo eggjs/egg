@@ -3,10 +3,10 @@ import { EventEmitter } from 'node:events';
 
 import { describe, it, beforeEach } from 'vitest';
 
-import { NodeSSEWriter } from '../src/NodeSSEWriter.ts';
+import { HttpSSEWriter } from '../src/HttpSSEWriter.ts';
 
 /**
- * Minimal mock of Node.js ServerResponse for testing NodeSSEWriter.
+ * Minimal mock of Node.js ServerResponse for testing HttpSSEWriter.
  * Captures writeHead/write/end calls and emits 'close' on demand.
  */
 class MockServerResponse extends EventEmitter {
@@ -28,7 +28,7 @@ class MockServerResponse extends EventEmitter {
   }
 }
 
-describe('test/NodeSSEWriter.test.ts', () => {
+describe('test/HttpSSEWriter.test.ts', () => {
   let res: MockServerResponse;
 
   beforeEach(() => {
@@ -37,7 +37,7 @@ describe('test/NodeSSEWriter.test.ts', () => {
 
   it('should delay headers until first writeEvent', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const writer = new NodeSSEWriter(res as any);
+    const writer = new HttpSSEWriter(res as any);
 
     // Headers not sent yet after construction
     assert.equal(res.writtenHead, null);
@@ -52,7 +52,7 @@ describe('test/NodeSSEWriter.test.ts', () => {
 
   it('should use lowercase header keys', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const writer = new NodeSSEWriter(res as any);
+    const writer = new HttpSSEWriter(res as any);
     writer.writeEvent('ping', {});
 
     assert.ok(res.writtenHead);
@@ -63,7 +63,7 @@ describe('test/NodeSSEWriter.test.ts', () => {
 
   it('should format SSE events correctly', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const writer = new NodeSSEWriter(res as any);
+    const writer = new HttpSSEWriter(res as any);
     writer.writeEvent('message', { text: 'hello' });
 
     assert.equal(res.chunks.length, 1);
@@ -72,7 +72,7 @@ describe('test/NodeSSEWriter.test.ts', () => {
 
   it('should not write after connection closes', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const writer = new NodeSSEWriter(res as any);
+    const writer = new HttpSSEWriter(res as any);
 
     // Simulate client disconnect
     res.emit('close');
@@ -87,7 +87,7 @@ describe('test/NodeSSEWriter.test.ts', () => {
 
   it('should trigger onClose callbacks when connection closes', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const writer = new NodeSSEWriter(res as any);
+    const writer = new HttpSSEWriter(res as any);
     const calls: number[] = [];
 
     writer.onClose(() => calls.push(1));
@@ -100,7 +100,7 @@ describe('test/NodeSSEWriter.test.ts', () => {
 
   it('should handle end() idempotently', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const writer = new NodeSSEWriter(res as any);
+    const writer = new HttpSSEWriter(res as any);
 
     assert.equal(writer.closed, false);
 
@@ -116,7 +116,7 @@ describe('test/NodeSSEWriter.test.ts', () => {
 
   it('should write multiple events sequentially', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const writer = new NodeSSEWriter(res as any);
+    const writer = new HttpSSEWriter(res as any);
 
     writer.writeEvent('event1', { n: 1 });
     writer.writeEvent('event2', { n: 2 });
@@ -133,7 +133,7 @@ describe('test/NodeSSEWriter.test.ts', () => {
 
   it('should start with closed=false', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const writer = new NodeSSEWriter(res as any);
+    const writer = new HttpSSEWriter(res as any);
     assert.equal(writer.closed, false);
   });
 });

@@ -2,7 +2,7 @@ import type { ServerResponse } from 'node:http';
 
 import type { SSEWriter } from './SSEWriter.ts';
 
-export class NodeSSEWriter implements SSEWriter {
+export class HttpSSEWriter implements SSEWriter {
   private res: ServerResponse;
   private _closed = false;
   private closeCallbacks: Array<() => void> = [];

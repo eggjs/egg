@@ -1,4 +1,4 @@
-import { AgentRuntime, type AgentExecutor, AGENT_RUNTIME, NodeSSEWriter } from '@eggjs/agent-runtime';
+import { AgentRuntime, type AgentExecutor, AGENT_RUNTIME, HttpSSEWriter } from '@eggjs/agent-runtime';
 import { AgentInfoUtil } from '@eggjs/controller-decorator';
 import { IdenticalUtil } from '@eggjs/lifecycle';
 import { LoadUnitFactory } from '@eggjs/metadata';
@@ -232,7 +232,7 @@ export class AgentControllerObject implements EggObject {
       instance[methodName] = runtimeMethod;
     }
 
-    // streamRun needs special handling: create NodeSSEWriter from request context
+    // streamRun needs special handling: create HttpSSEWriter from request context
     if (streamRunIsStub) {
       instance['streamRun'] = async (input: CreateRunInput): Promise<void> => {
         const runtimeCtx = ContextHandler.getContext();
@@ -241,7 +241,7 @@ export class AgentControllerObject implements EggObject {
         }
         const eggCtx = runtimeCtx.get(EGG_CONTEXT);
         eggCtx.respond = false;
-        const writer = new NodeSSEWriter(eggCtx.res);
+        const writer = new HttpSSEWriter(eggCtx.res);
         return runtime.streamRun(input, writer);
       };
     }
