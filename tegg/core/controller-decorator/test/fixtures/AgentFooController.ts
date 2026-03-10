@@ -6,6 +6,10 @@ import type { AgentHandler } from '../../src/decorator/agent/AgentHandler.ts';
 // AgentController that only implements execRun (smart defaults pattern)
 @AgentController()
 export class AgentFooController implements AgentHandler {
+  async createStore(): Promise<unknown> {
+    return new Map();
+  }
+
   async *execRun(input: CreateRunInput): AsyncGenerator<AgentStreamMessage> {
     const messages = input.input.messages;
     yield {
