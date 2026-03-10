@@ -150,10 +150,7 @@ export interface TracerConfig {
 }
 
 /** Apply user-facing TracerConfig to a tracer instance. */
-export function applyTracerConfig(
-  tracer: { agentName: string },
-  config: TracerConfig,
-): void {
+export function applyTracerConfig(tracer: { agentName: string }, config: TracerConfig): void {
   if (config.agentName !== undefined) {
     tracer.agentName = config.agentName;
   }
