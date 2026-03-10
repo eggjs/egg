@@ -363,7 +363,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       const messages: SDKMessage[] = [
         createMockInit(),
         createMockAssistantWithTool(), // creates a pending tool run (tu_1)
-        createMockResult(),            // result arrives before tool_result
+        createMockResult(), // result arrives before tool_result
       ];
 
       for (const msg of messages) {
