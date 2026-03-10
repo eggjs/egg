@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import type { SDKMessage } from '@anthropic-ai/claude-agent-sdk';
-import { describe, it } from 'vitest';
+import { afterEach, beforeEach, describe, it } from 'vitest';
 
 import { ClaudeAgentTracer } from '../src/ClaudeAgentTracer.ts';
 import { RunStatus } from '../src/types.ts';
@@ -10,8 +10,6 @@ import { createMockLogger, createCapturingTracingService } from './TestUtils.ts'
 // ---------- Shared setup ----------
 
 function createTestEnv() {
-  process.env.FAAS_ENV = 'dev';
-
   const { tracingService, capturedRuns } = createCapturingTracingService();
   const mockLogger = createMockLogger();
 
@@ -158,6 +156,21 @@ function createMockStreamEvent(): SDKMessage {
 // ---------- Tests ----------
 
 describe('test/ClaudeAgentTracer.test.ts', () => {
+  let originalFaasEnv: string | undefined;
+
+  beforeEach(() => {
+    originalFaasEnv = process.env.FAAS_ENV;
+    process.env.FAAS_ENV = 'dev';
+  });
+
+  afterEach(() => {
+    if (originalFaasEnv === undefined) {
+      delete process.env.FAAS_ENV;
+    } else {
+      process.env.FAAS_ENV = originalFaasEnv;
+    }
+  });
+
   describe('Streaming mode + tool use', () => {
     it('should trace tool execution with session.processMessage', async () => {
       const { claudeTracer, capturedRuns } = createTestEnv();
@@ -314,6 +327,106 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       const rootError = capturedRuns.find((e) => !e.run.parent_run_id && e.status === RunStatus.ERROR);
       assert(rootError, 'Should have root_run with error status');
       assert(rootError.run, 'Root error run should exist');
+    });
+  });
+
+  describe('Guard clauses — messages before init', () => {
+    it('should warn and ignore assistant message received before init', async () => {
+      const { claudeTracer, capturedRuns } = createTestEnv();
+      const session = claudeTracer.createSession();
+
+      // Send assistant message without a preceding init
+      await session.processMessage(createMockAssistantWithTool());
+
+      // Nothing should have been traced
+      assert.strictEqual(capturedRuns.length, 0, 'No runs should be captured before init');
+    });
+
+    it('should warn and ignore result message received before init', async () => {
+      const { claudeTracer, capturedRuns } = createTestEnv();
+      const session = claudeTracer.createSession();
+
+      // Send result message without a preceding init
+      await session.processMessage(createMockResult());
+
+      // Nothing should have been traced
+      assert.strictEqual(capturedRuns.length, 0, 'No runs should be captured before init');
+    });
+  });
+
+  describe('Pending tool runs cleanup on result', () => {
+    it('should log ERROR for pending tool runs that never received a result', async () => {
+      const { claudeTracer, capturedRuns } = createTestEnv();
+      const session = claudeTracer.createSession();
+
+      // Init → assistant calls a tool → result arrives WITHOUT the tool_result
+      const messages: SDKMessage[] = [
+        createMockInit(),
+        createMockAssistantWithTool(), // creates a pending tool run (tu_1)
+        createMockResult(),            // result arrives before tool_result
+      ];
+
+      for (const msg of messages) {
+        await session.processMessage(msg);
+      }
+
+      // The pending tool run should have been force-closed with ERROR status
+      const toolErrors = capturedRuns.filter((e) => e.run.run_type === 'tool' && e.status === RunStatus.ERROR);
+      assert(toolErrors.length >= 1, `Should have at least one tool ERROR entry, got ${toolErrors.length}`);
+    });
+  });
+
+  describe('processMessages edge cases', () => {
+    it('should warn and return early for empty message array', async () => {
+      const { claudeTracer, capturedRuns } = createTestEnv();
+
+      await claudeTracer.processMessages([]);
+
+      assert.strictEqual(capturedRuns.length, 0, 'No runs should be captured for empty input');
+    });
+
+    it('should warn and return early when no init message is present', async () => {
+      const { claudeTracer, capturedRuns } = createTestEnv();
+
+      // Only assistant and result, no system/init
+      const messages: SDKMessage[] = [createMockAssistantTextOnly(), createMockResult()];
+
+      await claudeTracer.processMessages(messages);
+
+      assert.strictEqual(capturedRuns.length, 0, 'No runs should be captured without an init message');
+    });
+  });
+
+  describe('Internal error handling', () => {
+    it('should catch errors thrown inside processMessage without propagating', async () => {
+      const { claudeTracer } = createTestEnv();
+      const session = claudeTracer.createSession();
+
+      // Force an error by replacing logTrace with a throwing stub
+      (claudeTracer as any).tracingService = {
+        logTrace: () => {
+          throw new Error('unexpected logTrace error');
+        },
+      };
+
+      // Should NOT throw — error is swallowed by the catch block
+      await assert.doesNotReject(async () => {
+        await session.processMessage(createMockInit());
+      });
+    });
+
+    it('should catch errors thrown inside processMessages without propagating', async () => {
+      const { claudeTracer } = createTestEnv();
+
+      // Replace createSession with a throwing stub to trigger the outer catch
+      (claudeTracer as any).createSession = () => {
+        throw new Error('unexpected createSession error');
+      };
+
+      // Should NOT throw — error is swallowed by the catch block
+      await assert.doesNotReject(async () => {
+        await claudeTracer.processMessages([createMockInit()]);
+      });
     });
   });
 });

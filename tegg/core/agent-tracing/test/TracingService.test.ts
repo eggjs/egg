@@ -296,5 +296,60 @@ describe('test/TracingService.test.ts', () => {
       const parsed = JSON.parse(runJson!);
       assert.deepStrictEqual(parsed.child_run_ids, ['child-001']);
     });
+
+    it('should warn when OSS upload fails inside backgroundTask', async () => {
+      process.env.FAAS_ENV = 'dev';
+      const { service, warnLogs } = makeTracingService({ withOss: false });
+
+      // Make the OSS client throw on put
+      (service as any).ossClient = {
+        put: async () => {
+          throw new Error('oss upload failed');
+        },
+      };
+
+      // Track background tasks so we can await them
+      const pendingTasks: Array<Promise<void>> = [];
+      (service as any).backgroundTaskHelper = {
+        run: (fn: () => Promise<void>) => {
+          pendingTasks.push(fn());
+        },
+      };
+
+      const run = makeRun({ outputs: { result: 'data' } });
+      service.logTrace(run, RunStatus.END, 'LangGraphTracer', 'MyAgent');
+
+      // Wait for all background tasks (the catch block inside fn() calls logger.warn)
+      await Promise.allSettled(pendingTasks);
+
+      assert(
+        warnLogs.some((log) => log.includes('Failed to upload run data to OSS')),
+        'Should warn about OSS upload failure',
+      );
+    });
+
+    it('should catch and warn when logTrace itself throws', () => {
+      process.env.FAAS_ENV = 'dev';
+      const { service, warnLogs } = makeTracingService();
+
+      // Make backgroundTaskHelper.run throw synchronously to trigger the outer catch
+      (service as any).backgroundTaskHelper = {
+        run: () => {
+          throw new Error('backgroundTask error');
+        },
+      };
+
+      const run = makeRun({ outputs: { result: 'data' } });
+
+      // Should NOT throw — the outer catch block in logTrace swallows the error
+      assert.doesNotThrow(() => {
+        service.logTrace(run, RunStatus.END, 'LangGraphTracer', 'MyAgent');
+      });
+
+      assert(
+        warnLogs.some((log) => log.includes('logTrace error')),
+        'Should warn about logTrace error',
+      );
+    });
   });
 });
