@@ -21,7 +21,7 @@ export class LangGraphTracer extends BaseTracer {
    * Configure the tracer with agent name and service credentials.
    */
   configure(config: TracerConfig): void {
-    applyTracerConfig(this, this.tracingService, config);
+    applyTracerConfig(this, config);
   }
 
   protected persistRun(_: Run): Promise<void> {

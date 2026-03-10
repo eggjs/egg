@@ -9,11 +9,11 @@
  * ```typescript
  * import { SingletonProto } from '@eggjs/core-decorator';
  * import { AccessLevel } from '@eggjs/tegg-types';
- * import { ILogServiceClient } from '@eggjs/agent-tracing';
+ * import { AbstractLogServiceClient } from '@eggjs/agent-tracing';
  *
  * // Class name must be LogServiceClient (registers as 'logServiceClient' in the IoC container)
  * @SingletonProto({ accessLevel: AccessLevel.PUBLIC })
- * export class LogServiceClient extends ILogServiceClient {
+ * export class LogServiceClient extends AbstractLogServiceClient {
  *   async send(log: string): Promise<void> {
  *     await fetch('https://log.example.com/api', {
  *       method: 'POST',
@@ -26,6 +26,6 @@
  *
  * If no implementation is registered, log service syncing is silently skipped.
  */
-export abstract class ILogServiceClient {
+export abstract class AbstractLogServiceClient {
   abstract send(log: string): Promise<void>;
 }

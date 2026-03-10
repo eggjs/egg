@@ -144,26 +144,19 @@ export const RunStatus = {
 } as const;
 export type RunStatus = (typeof RunStatus)[keyof typeof RunStatus];
 
-/** Internal config used by TracingService */
-export interface AgentTracingConfig {
-  // Reserved for future configuration options
-}
-
 /** User-facing config passed to tracer.configure() */
 export interface TracerConfig {
   agentName?: string;
 }
 
-/** Apply user-facing TracerConfig to a tracer instance and its TracingService. */
+/** Apply user-facing TracerConfig to a tracer instance. */
 export function applyTracerConfig(
   tracer: { agentName: string },
-  tracingService: { configure(config: AgentTracingConfig): void },
   config: TracerConfig,
 ): void {
   if (config.agentName !== undefined) {
     tracer.agentName = config.agentName;
   }
-  tracingService.configure({});
 }
 
 export { FIELDS_TO_OSS };

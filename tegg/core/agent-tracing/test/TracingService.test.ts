@@ -167,10 +167,19 @@ describe('test/TracingService.test.ts', () => {
       const prefix = service.getLogInfoPrefix(run, RunStatus.START, 'MyAgent');
       assert(prefix.includes('[agent_run][MyAgent]'));
       assert(prefix.includes('traceId=trace-xyz'));
+      assert(prefix.includes('threadId=unknown'));
       assert(prefix.includes('type=root_run'));
       assert(prefix.includes('status=start'));
       assert(prefix.includes('run_id=run-123'));
       assert(prefix.includes('parent_run_id='));
+    });
+
+    it('should include threadId from run.extra.metadata when available', () => {
+      process.env.FAAS_ENV = 'dev';
+      const { service } = makeTracingService();
+      const run = makeRun({ extra: { metadata: { thread_id: 'thread-abc' } } });
+      const prefix = service.getLogInfoPrefix(run, RunStatus.START, 'MyAgent');
+      assert(prefix.includes('threadId=thread-abc'));
     });
 
     it('should mark child run when parent_run_id is set', () => {

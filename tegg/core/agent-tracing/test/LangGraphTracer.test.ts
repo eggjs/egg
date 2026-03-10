@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import type { Run } from '@langchain/core/tracers/base';
 import { FakeLLM } from '@langchain/core/utils/testing';
 import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
-import { describe, it, beforeEach } from 'vitest';
+import { afterEach, beforeEach, describe, it } from 'vitest';
 
 import { LangGraphTracer } from '../src/LangGraphTracer.ts';
 import { RunStatus } from '../src/types.ts';
@@ -42,8 +42,10 @@ const GraphState = Annotation.Root({
 describe('test/LangGraphTracer.test.ts', () => {
   let tracer: LangGraphTracer;
   let capturedRuns: CapturedEntry[];
+  let originalFaasEnv: string | undefined;
 
   beforeEach(() => {
+    originalFaasEnv = process.env.FAAS_ENV;
     process.env.FAAS_ENV = 'dev';
 
     const capturing = createCapturingTracingService();
@@ -51,6 +53,14 @@ describe('test/LangGraphTracer.test.ts', () => {
 
     tracer = new LangGraphTracer();
     (tracer as any).tracingService = capturing.tracingService;
+  });
+
+  afterEach(() => {
+    if (originalFaasEnv === undefined) {
+      delete process.env.FAAS_ENV;
+    } else {
+      process.env.FAAS_ENV = originalFaasEnv;
+    }
   });
 
   describe('Single-node StateGraph triggers chain lifecycle hooks', () => {

@@ -5,9 +5,9 @@ import type { Logger } from '@eggjs/tegg-types';
 import type { Run } from '@langchain/core/tracers/base';
 import { getCustomLogger } from 'onelogger';
 
-import { ILogServiceClient } from './ILogServiceClient.ts';
-import { IOssClient } from './IOssClient.ts';
-import { type AgentTracingConfig, FIELDS_TO_OSS, type IResource, RunStatus } from './types.ts';
+import { AbstractLogServiceClient } from './AbstractLogServiceClient.ts';
+import { AbstractOssClient } from './AbstractOssClient.ts';
+import { FIELDS_TO_OSS, type IResource, RunStatus } from './types.ts';
 
 /**
  * TracingService - Shared service for common tracing operations.
@@ -24,14 +24,10 @@ export class TracingService {
   private backgroundTaskHelper: BackgroundTaskHelper;
 
   @InjectOptional()
-  private readonly ossClient: IOssClient;
+  private readonly ossClient: AbstractOssClient;
 
   @InjectOptional()
-  private readonly logServiceClient: ILogServiceClient;
-
-  configure(_config: AgentTracingConfig): void {
-    // Reserved for future configuration options
-  }
+  private readonly logServiceClient: AbstractLogServiceClient;
 
   /**
    * Get the current environment (local, pre, prod, gray)
@@ -58,9 +54,11 @@ export class TracingService {
   getLogInfoPrefix(run: Run, status: RunStatus, name: string): string {
     const env = this.getEnv();
     const envSegment = process.env.FAAS_ENV || env === 'local' ? '' : `env=${env},`;
+    const threadId = (run.extra as Record<string, any>)?.metadata?.thread_id ?? 'unknown';
     return (
       `[agent_run][${name}]:` +
       `traceId=${run.trace_id},` +
+      `threadId=${threadId},` +
       `type=${run.parent_run_id ? 'child_run' : 'root_run'},` +
       `status=${status},` +
       `${envSegment}` +
@@ -70,12 +68,12 @@ export class TracingService {
   }
 
   /**
-   * Upload content to OSS using the injected IOssClient implementation.
-   * Gracefully skips if no IOssClient is provided.
+   * Upload content to OSS using the injected AbstractOssClient implementation.
+   * Gracefully skips if no AbstractOssClient is provided.
    */
   async uploadToOss(key: string, fileContent: string): Promise<void> {
     if (!this.ossClient) {
-      this.logger.warn('[TracingService] OSS client not configured. Provide an IOssClient implementation.');
+      this.logger.warn('[TracingService] OSS client not configured. Provide an AbstractOssClient implementation.');
       return;
     }
     this.logger.info(`Uploading to OSS with key: ${key}`);
@@ -84,8 +82,8 @@ export class TracingService {
   }
 
   /**
-   * Sync local tracing logs to the injected ILogServiceClient implementation.
-   * Silently skips if no ILogServiceClient is registered.
+   * Sync local tracing logs to the injected AbstractLogServiceClient implementation.
+   * Silently skips if no AbstractLogServiceClient is registered.
    */
   async syncLocalToLogService(log: string, agentName: string): Promise<void> {
     if (!this.logServiceClient) {

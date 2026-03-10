@@ -34,7 +34,6 @@ export function createCapturingTracingService(): {
 } {
   const capturedRuns: CapturedEntry[] = [];
   const tracingService = {
-    configure: () => {},
     logTrace: (run: Run, status: string, name: string, agentName: string) => {
       capturedRuns.push({ run, status, name, agentName });
     },
