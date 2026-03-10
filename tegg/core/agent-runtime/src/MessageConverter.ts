@@ -82,6 +82,13 @@ export class MessageConverter {
   }
 
   /**
+   * Produce a completed copy of a streaming MessageObject with final content.
+   */
+  static completeMessage(msg: MessageObject, content: MessageContentBlock[]): MessageObject {
+    return { ...msg, status: MessageStatus.Completed, content };
+  }
+
+  /**
    * Create an in-progress MessageObject for streaming (before content is known).
    */
   static createStreamMessage(msgId: string, runId: string): MessageObject {

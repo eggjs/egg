@@ -9,7 +9,7 @@ import type {
   AgentStreamMessage,
   AgentStore,
 } from '@eggjs/tegg-types/agent-runtime';
-import { RunStatus, AgentSSEEvent, AgentObjectType, MessageStatus } from '@eggjs/tegg-types/agent-runtime';
+import { RunStatus, AgentSSEEvent, AgentObjectType } from '@eggjs/tegg-types/agent-runtime';
 import { AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
 import type { EggLogger } from 'egg-logger';
 
@@ -284,7 +284,7 @@ export class AgentRuntime {
       }
 
       // event: thread.message.completed
-      const completedMsg: MessageObject = { ...msgObj, status: MessageStatus.Completed, content };
+      const completedMsg = MessageConverter.completeMessage(msgObj, content);
       writer.writeEvent(AgentSSEEvent.ThreadMessageCompleted, completedMsg);
 
       // Persist and emit completion — append messages before marking run as completed

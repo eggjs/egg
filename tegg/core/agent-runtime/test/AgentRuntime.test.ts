@@ -9,13 +9,7 @@ import {
   MessageStatus,
   ContentBlockType,
 } from '@eggjs/tegg-types/agent-runtime';
-import type {
-  RunRecord,
-  RunObject,
-  CreateRunInput,
-  AgentStreamMessage,
-  MessageContentBlock,
-} from '@eggjs/tegg-types/agent-runtime';
+import type { RunRecord, RunObject, CreateRunInput, AgentStreamMessage } from '@eggjs/tegg-types/agent-runtime';
 import { AgentNotFoundError, AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
@@ -184,9 +178,9 @@ describe('test/AgentRuntime.test.ts', () => {
       assert(result.threadId.startsWith('thread_'));
       assert.equal(result.output!.length, 1);
       assert.equal(result.output![0].object, AgentObjectType.ThreadMessage);
-      assert.equal(result.output![0]['role'], MessageRole.Assistant);
-      assert.equal(result.output![0]['status'], MessageStatus.Completed);
-      const content = result.output![0]['content'] as MessageContentBlock[];
+      assert.equal(result.output![0].role, MessageRole.Assistant);
+      assert.equal(result.output![0].status, MessageStatus.Completed);
+      const content = result.output![0].content;
       assert.equal(content[0].type, ContentBlockType.Text);
       assert.equal(content[0].text.value, 'Hello 1 messages');
       assert(Array.isArray(content[0].text.annotations));
@@ -227,8 +221,8 @@ describe('test/AgentRuntime.test.ts', () => {
 
       const updated = await runtime.getThread(thread.id);
       assert.equal(updated.messages.length, 2);
-      assert.equal(updated.messages[0]['role'], MessageRole.User);
-      assert.equal(updated.messages[1]['role'], MessageRole.Assistant);
+      assert.equal(updated.messages[0].role, MessageRole.User);
+      assert.equal(updated.messages[1].role, MessageRole.Assistant);
     });
 
     it('should auto-create thread and append messages when threadId not provided', async () => {
@@ -240,8 +234,8 @@ describe('test/AgentRuntime.test.ts', () => {
 
       const thread = await runtime.getThread(result.threadId);
       assert.equal(thread.messages.length, 2);
-      assert.equal(thread.messages[0]['role'], MessageRole.User);
-      assert.equal(thread.messages[1]['role'], MessageRole.Assistant);
+      assert.equal(thread.messages[0].role, MessageRole.User);
+      assert.equal(thread.messages[1].role, MessageRole.Assistant);
     });
 
     it('should not throw when store.updateRun fails in catch block', async () => {
@@ -291,7 +285,7 @@ describe('test/AgentRuntime.test.ts', () => {
 
       const run = await store.getRun(result.id);
       assert.equal(run.status, RunStatus.Completed);
-      const outputContent = run.output![0]['content'] as MessageContentBlock[];
+      const outputContent = run.output![0].content;
       assert.equal(outputContent[0].text.value, 'Hello 1 messages');
     });
 
@@ -305,8 +299,8 @@ describe('test/AgentRuntime.test.ts', () => {
 
       const thread = await store.getThread(result.threadId);
       assert.equal(thread.messages.length, 2);
-      assert.equal(thread.messages[0]['role'], MessageRole.User);
-      assert.equal(thread.messages[1]['role'], MessageRole.Assistant);
+      assert.equal(thread.messages[0].role, MessageRole.User);
+      assert.equal(thread.messages[1].role, MessageRole.Assistant);
     });
 
     it('should pass metadata through to store and return it', async () => {

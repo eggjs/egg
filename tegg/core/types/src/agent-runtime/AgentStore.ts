@@ -33,7 +33,11 @@ export interface MessageObject {
   id: string;
   object: string;
   createdAt: number;
-  [key: string]: unknown;
+  role: string;
+  status: string;
+  content: import('./AgentRuntime.ts').MessageContentBlock[];
+  runId?: string;
+  threadId?: string;
 }
 
 // ===== Run configuration =====
