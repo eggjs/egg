@@ -1,4 +1,8 @@
 import type { AgentRunConfig, InputMessage, MessageObject, RunStatus } from './AgentStore.ts';
+import type { InputContentPart, MessageContentBlock } from './AgentMessage.ts';
+
+export { ContentBlockType } from './AgentMessage.ts';
+export type { InputContentPart, MessageContentBlock, TextContentBlock } from './AgentMessage.ts';
 
 // ===== Message roles =====
 
@@ -17,13 +21,6 @@ export const MessageStatus = {
   Completed: 'completed',
 } as const;
 export type MessageStatus = (typeof MessageStatus)[keyof typeof MessageStatus];
-
-// ===== Content block types =====
-
-export const ContentBlockType = {
-  Text: 'text',
-} as const;
-export type ContentBlockType = (typeof ContentBlockType)[keyof typeof ContentBlockType];
 
 // ===== SSE events =====
 
@@ -46,20 +43,6 @@ export const AgentErrorCode = {
   ExecError: 'EXEC_ERROR',
 } as const;
 export type AgentErrorCode = (typeof AgentErrorCode)[keyof typeof AgentErrorCode];
-
-// ===== Content types =====
-
-export interface InputContentPart {
-  type: typeof ContentBlockType.Text;
-  text: string;
-}
-
-export interface TextContentBlock {
-  type: typeof ContentBlockType.Text;
-  text: { value: string; annotations: unknown[] };
-}
-
-export type MessageContentBlock = TextContentBlock;
 
 // ===== Thread objects =====
 
