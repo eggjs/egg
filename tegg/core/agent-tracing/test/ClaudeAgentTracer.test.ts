@@ -218,6 +218,10 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       assert.strictEqual(traceIds.size, 1, `All runs should share one trace_id, got ${traceIds.size}`);
       assert.strictEqual([...traceIds][0], 'test-session-001', 'trace_id should match session_id');
 
+      // Root run should carry session_id as thread_id in extra.metadata
+      const rootExtra = rootStart.run.extra as Record<string, any>;
+      assert.strictEqual(rootExtra?.metadata?.thread_id, 'test-session-001', 'thread_id should match session_id');
+
       // Child runs reference root run as parent
       const childEntries = capturedRuns.filter((e) => !!e.run.parent_run_id);
       for (const child of childEntries) {

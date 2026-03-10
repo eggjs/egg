@@ -341,6 +341,9 @@ export class ClaudeAgentTracer {
       parent_run_id: undefined,
       tags: [],
       extra: {
+        metadata: {
+          thread_id: initMsg.session_id,
+        },
         apiKeySource: initMsg.apiKeySource,
         claude_code_version: initMsg.claude_code_version,
         output_style: initMsg.output_style,
