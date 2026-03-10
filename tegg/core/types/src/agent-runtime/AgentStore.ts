@@ -1,3 +1,7 @@
+import type { InputMessage, MessageObject } from './AgentMessage.ts';
+
+export type { InputMessage, MessageObject } from './AgentMessage.ts';
+
 // ===== Object types =====
 
 export const AgentObjectType = {
@@ -20,25 +24,6 @@ export const RunStatus = {
   Expired: 'expired',
 } as const;
 export type RunStatus = (typeof RunStatus)[keyof typeof RunStatus];
-
-// ===== Input / Output message types =====
-
-export interface InputMessage {
-  role: string;
-  content: string | { type: string; text: string }[];
-  metadata?: Record<string, unknown>;
-}
-
-export interface MessageObject {
-  id: string;
-  object: string;
-  createdAt: number;
-  role: string;
-  status: string;
-  content: import('./AgentRuntime.ts').MessageContentBlock[];
-  runId?: string;
-  threadId?: string;
-}
 
 // ===== Run configuration =====
 
