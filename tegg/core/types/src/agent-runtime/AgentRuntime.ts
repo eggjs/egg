@@ -1,5 +1,5 @@
-import type { AgentRunConfig, InputMessage, MessageObject, RunStatus } from './AgentStore.ts';
 import type { InputContentPart, MessageContentBlock } from './AgentMessage.ts';
+import type { AgentRunConfig, InputMessage, MessageObject, RunStatus } from './AgentStore.ts';
 
 export { ContentBlockType } from './AgentMessage.ts';
 export type { InputContentPart, MessageContentBlock, TextContentBlock } from './AgentMessage.ts';
