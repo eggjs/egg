@@ -114,6 +114,19 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
     });
   });
 
+  describe('AgentInfoUtil.setEnhanced / isEnhanced', () => {
+    it('should return false before setEnhanced is called', () => {
+      class NotEnhanced {}
+      assert.strictEqual(AgentInfoUtil.isEnhanced(NotEnhanced), false);
+    });
+
+    it('should return true after setEnhanced is called', () => {
+      class ToBeEnhanced {}
+      AgentInfoUtil.setEnhanced(ToBeEnhanced);
+      assert.strictEqual(AgentInfoUtil.isEnhanced(ToBeEnhanced), true);
+    });
+  });
+
   describe('default implementations', () => {
     it('should inject default stubs for all 7 route methods', () => {
       // AgentFooController only implements execRun (smart defaults pattern)
