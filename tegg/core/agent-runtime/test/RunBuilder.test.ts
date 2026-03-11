@@ -45,7 +45,16 @@ describe('test/RunBuilder.test.ts', () => {
         status: RunStatus.Completed,
         startedAt: 1001,
         completedAt: 1002,
-        output: [{ id: 'msg_1', object: 'thread.message', createdAt: 1001 }],
+        output: [
+          {
+            id: 'msg_1',
+            object: 'thread.message',
+            createdAt: 1001,
+            role: 'assistant',
+            status: 'completed',
+            content: [],
+          },
+        ],
         usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
         metadata: { key: 'value' },
         config: { maxIterations: 10 },
@@ -97,7 +106,9 @@ describe('test/RunBuilder.test.ts', () => {
       const rb = RunBuilder.create(makeRunRecord(), 'thread_1');
       rb.start();
 
-      const output: MessageObject[] = [{ id: 'msg_1', object: 'thread.message', createdAt: 1001 }];
+      const output: MessageObject[] = [
+        { id: 'msg_1', object: 'thread.message', createdAt: 1001, role: 'assistant', status: 'completed', content: [] },
+      ];
       const usage: RunUsage = { promptTokens: 10, completionTokens: 5, totalTokens: 15 };
       const update = rb.complete(output, usage);
 

@@ -1,5 +1,6 @@
 export * from './http/index.ts';
 export * from './mcp/index.ts';
+export * from './agent/index.ts';
 export * from './Acl.ts';
 export * from './Context.ts';
 export * from './Middleware.ts';

@@ -3,8 +3,11 @@ import assert from 'node:assert';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/controller-decorator';
 import { GlobalGraph, type LoadUnitLifecycleContext } from '@eggjs/metadata';
 import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
+import { AGENT_CONTROLLER_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
+import { AgentControllerObject } from './lib/AgentControllerObject.ts';
+import { AgentControllerProto } from './lib/AgentControllerProto.ts';
 import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook.ts';
 import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.ts';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.ts';
@@ -37,11 +40,17 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     this.app.controllerMetaBuilderFactory = ControllerMetaBuilderFactory;
     this.loadUnitHook = new AppLoadUnitControllerHook(this.controllerRegisterFactory, this.app.rootProtoManager);
     this.controllerPrototypeHook = new EggControllerPrototypeHook();
+    this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
+      AGENT_CONTROLLER_PROTO_IMPL_TYPE,
+      AgentControllerProto.createProto,
+    );
+    AgentControllerObject.setLogger(this.app.logger);
   }
 
   configWillLoad(): void {
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitHook);
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.controllerPrototypeHook);
+    this.app.eggObjectFactory.registerEggObjectCreateMethod(AgentControllerProto, AgentControllerObject.createObject);
     this.app.loaderFactory.registerLoader(CONTROLLER_LOAD_UNIT, (unitPath) => {
       return new EggControllerLoader(unitPath);
     });

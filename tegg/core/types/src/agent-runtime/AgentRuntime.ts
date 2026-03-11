@@ -1,3 +1,9 @@
+import type { InputContentPart, MessageContentBlock } from './AgentMessage.ts';
+import type { AgentRunConfig, InputMessage, MessageObject, RunStatus } from './AgentStore.ts';
+
+export { ContentBlockType } from './AgentMessage.ts';
+export type { InputContentPart, MessageContentBlock, TextContentBlock } from './AgentMessage.ts';
+
 // ===== Message roles =====
 
 export const MessageRole = {
@@ -15,13 +21,6 @@ export const MessageStatus = {
   Completed: 'completed',
 } as const;
 export type MessageStatus = (typeof MessageStatus)[keyof typeof MessageStatus];
-
-// ===== Content block types =====
-
-export const ContentBlockType = {
-  Text: 'text',
-} as const;
-export type ContentBlockType = (typeof ContentBlockType)[keyof typeof ContentBlockType];
 
 // ===== SSE events =====
 
@@ -45,20 +44,6 @@ export const AgentErrorCode = {
 } as const;
 export type AgentErrorCode = (typeof AgentErrorCode)[keyof typeof AgentErrorCode];
 
-// ===== Content types =====
-
-export interface InputContentPart {
-  type: typeof ContentBlockType.Text;
-  text: string;
-}
-
-export interface TextContentBlock {
-  type: typeof ContentBlockType.Text;
-  text: { value: string; annotations: unknown[] };
-}
-
-export type MessageContentBlock = TextContentBlock;
-
 // ===== Thread objects =====
 
 export interface ThreadObject {
@@ -69,7 +54,7 @@ export interface ThreadObject {
 }
 
 export interface ThreadObjectWithMessages extends ThreadObject {
-  messages: import('./AgentStore.ts').MessageObject[];
+  messages: MessageObject[];
 }
 
 // ===== Run objects =====
@@ -79,7 +64,7 @@ export interface RunObject {
   object: 'thread.run';
   createdAt: number;
   threadId: string;
-  status: import('./AgentStore.ts').RunStatus;
+  status: RunStatus;
   lastError?: { code: string; message: string } | null;
   startedAt?: number | null;
   completedAt?: number | null;
@@ -87,8 +72,8 @@ export interface RunObject {
   failedAt?: number | null;
   usage?: { promptTokens: number; completionTokens: number; totalTokens: number } | null;
   metadata?: Record<string, unknown>;
-  output?: import('./AgentStore.ts').MessageObject[];
-  config?: import('./AgentStore.ts').AgentRunConfig;
+  output?: MessageObject[];
+  config?: AgentRunConfig;
 }
 
 // ===== Run input =====
@@ -96,12 +81,9 @@ export interface RunObject {
 export interface CreateRunInput {
   threadId?: string;
   input: {
-    messages: Array<{
-      role: MessageRole;
-      content: string | InputContentPart[];
-    }>;
+    messages: InputMessage[];
   };
-  config?: import('./AgentStore.ts').AgentRunConfig;
+  config?: AgentRunConfig;
   metadata?: Record<string, unknown>;
 }
 

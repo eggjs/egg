@@ -88,6 +88,7 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
+    "@eggjs/agent-runtime": "workspace:*",
     "@eggjs/controller-decorator": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/lifecycle": "workspace:*",

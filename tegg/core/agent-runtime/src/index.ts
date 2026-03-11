@@ -7,5 +7,6 @@ export * from './AgentStoreUtils.ts';
 export * from './MessageConverter.ts';
 export * from './RunBuilder.ts';
 export * from './SSEWriter.ts';
+export * from './HttpSSEWriter.ts';
 export { AgentRuntime, AGENT_RUNTIME } from './AgentRuntime.ts';
 export type { AgentExecutor, AgentRuntimeOptions } from './AgentRuntime.ts';

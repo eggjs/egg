@@ -1,10 +1,6 @@
 import assert from 'node:assert';
 
-import type {
-  AgentStreamMessage,
-  AgentStreamMessagePayload,
-  MessageContentBlock,
-} from '@eggjs/tegg-types/agent-runtime';
+import type { AgentStreamMessage, AgentStreamMessagePayload } from '@eggjs/tegg-types/agent-runtime';
 import { MessageRole, MessageStatus, AgentObjectType, ContentBlockType } from '@eggjs/tegg-types/agent-runtime';
 import { describe, it } from 'vitest';
 
@@ -65,11 +61,11 @@ describe('test/MessageConverter.test.ts', () => {
 
       assert.ok(msg.id.startsWith('msg_'));
       assert.equal(msg.object, AgentObjectType.ThreadMessage);
-      assert.equal(msg['runId'], 'run_1');
-      assert.equal(msg['role'], MessageRole.Assistant);
-      assert.equal(msg['status'], MessageStatus.Completed);
+      assert.equal(msg.runId, 'run_1');
+      assert.equal(msg.role, MessageRole.Assistant);
+      assert.equal(msg.status, MessageStatus.Completed);
       assert.equal(typeof msg.createdAt, 'number');
-      const content = msg['content'] as MessageContentBlock[];
+      const content = msg.content;
       assert.equal(content.length, 1);
       assert.equal(content[0].text.value, 'reply');
     });
@@ -77,7 +73,7 @@ describe('test/MessageConverter.test.ts', () => {
     it('should work without runId', () => {
       const payload: AgentStreamMessagePayload = { content: 'test' };
       const msg = MessageConverter.toMessageObject(payload);
-      assert.equal(msg['runId'], undefined);
+      assert.equal(msg.runId, undefined);
     });
   });
 
@@ -87,10 +83,10 @@ describe('test/MessageConverter.test.ts', () => {
 
       assert.equal(msg.id, 'msg_abc');
       assert.equal(msg.object, AgentObjectType.ThreadMessage);
-      assert.equal(msg['runId'], 'run_1');
-      assert.equal(msg['role'], MessageRole.Assistant);
-      assert.equal(msg['status'], MessageStatus.InProgress);
-      assert.deepStrictEqual(msg['content'], []);
+      assert.equal(msg.runId, 'run_1');
+      assert.equal(msg.role, MessageRole.Assistant);
+      assert.equal(msg.status, MessageStatus.InProgress);
+      assert.deepStrictEqual(msg.content, []);
       assert.equal(typeof msg.createdAt, 'number');
     });
   });
@@ -104,8 +100,8 @@ describe('test/MessageConverter.test.ts', () => {
       const { output, usage } = MessageConverter.extractFromStreamMessages(messages, 'run_1');
 
       assert.equal(output.length, 2);
-      assert.equal((output[0]['content'] as MessageContentBlock[])[0].text.value, 'chunk1');
-      assert.equal((output[1]['content'] as MessageContentBlock[])[0].text.value, 'chunk2');
+      assert.equal(output[0].content[0].text.value, 'chunk1');
+      assert.equal(output[1].content[0].text.value, 'chunk2');
       assert.ok(usage);
       assert.equal(usage.promptTokens, 10);
       assert.equal(usage.completionTokens, 13);
@@ -143,11 +139,11 @@ describe('test/MessageConverter.test.ts', () => {
       const result = MessageConverter.toInputMessageObjects(messages, 'thread_1');
 
       assert.equal(result.length, 2);
-      assert.equal(result[0]['role'], MessageRole.User);
-      assert.equal(result[0]['threadId'], 'thread_1');
-      assert.equal(result[1]['role'], MessageRole.Assistant);
+      assert.equal(result[0].role, MessageRole.User);
+      assert.equal(result[0].threadId, 'thread_1');
+      assert.equal(result[1].role, MessageRole.Assistant);
 
-      const content0 = result[0]['content'] as MessageContentBlock[];
+      const content0 = result[0].content;
       assert.equal(content0[0].text.value, 'hi');
     });
 
@@ -158,7 +154,7 @@ describe('test/MessageConverter.test.ts', () => {
       ];
       const result = MessageConverter.toInputMessageObjects(messages);
       assert.equal(result.length, 1);
-      assert.equal(result[0]['role'], MessageRole.User);
+      assert.equal(result[0].role, MessageRole.User);
     });
 
     it('should handle array content parts', () => {
@@ -172,7 +168,7 @@ describe('test/MessageConverter.test.ts', () => {
         },
       ];
       const result = MessageConverter.toInputMessageObjects(messages);
-      const content = result[0]['content'] as MessageContentBlock[];
+      const content = result[0].content;
       assert.equal(content.length, 2);
       assert.equal(content[0].text.value, 'part1');
       assert.equal(content[1].text.value, 'part2');
@@ -181,7 +177,7 @@ describe('test/MessageConverter.test.ts', () => {
     it('should work without threadId', () => {
       const messages = [{ role: MessageRole.User as MessageRole, content: 'hi' }];
       const result = MessageConverter.toInputMessageObjects(messages);
-      assert.equal(result[0]['threadId'], undefined);
+      assert.equal(result[0].threadId, undefined);
     });
   });
 });
