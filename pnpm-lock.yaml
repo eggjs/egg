@@ -462,6 +462,9 @@ catalogs:
     onelogger:
       specifier: ^1.0.1
       version: 1.0.1
+    oss-client:
+      specifier: ^2.5.1
+      version: 2.5.1
     oxc-minify:
       specifier: ^0.105.0
       version: 0.105.0
@@ -2056,6 +2059,25 @@ importers:
         specifier: 'catalog:'
         version: 0.105.0
 
+  tegg/core/agent-runtime:
+    dependencies:
+      '@eggjs/tegg-types':
+        specifier: workspace:*
+        version: link:../types
+      egg-logger:
+        specifier: 'catalog:'
+        version: 3.6.1
+      oss-client:
+        specifier: 'catalog:'
+        version: 2.5.1
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.10.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
   tegg/core/agent-tracing:
     dependencies:
       '@eggjs/background-task':
@@ -2722,6 +2744,9 @@ importers:
 
   tegg/core/tegg:
     dependencies:
+      '@eggjs/agent-runtime':
+        specifier: workspace:*
+        version: link:../agent-runtime
       '@eggjs/ajv-decorator':
         specifier: workspace:*
         version: link:../ajv-decorator
@@ -2997,6 +3022,9 @@ importers:
 
   tegg/plugin/controller:
     dependencies:
+      '@eggjs/agent-runtime':
+        specifier: workspace:*
+        version: link:../../core/agent-runtime
       '@eggjs/controller-decorator':
         specifier: workspace:*
         version: link:../../core/controller-decorator
@@ -8078,6 +8106,11 @@ packages:
     engines: {node: '>=4.0.0'}
     hasBin: true
 
+  mime@3.0.0:
+    resolution: {integrity: sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==}
+    engines: {node: '>=10.0.0'}
+    hasBin: true
+
   mimic-fn@2.1.0:
     resolution: {integrity: sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==}
     engines: {node: '>=6'}
@@ -8445,6 +8478,13 @@ packages:
     resolution: {integrity: sha512-f5estLO2KN8vgtTRaILIgEGBoBrMnZ3JQ7W9TMZCnOIGwHe8TRGSpcagnWDo+Dfhd/z08k9Xe75hvciJJ8Qaew==}
     engines: {node: '>=0.10.0'}
     hasBin: true
+
+  oss-client@2.5.1:
+    resolution: {integrity: sha512-LSm191DdZm7E/jKhaGLBf/EjrA+6E+RjTjHjq8dvEtMb9hi4O1FWe6IwSncPHCwHXgmVOk3iHll87WqbNN4NXw==}
+    engines: {node: '>= 16.0.0'}
+
+  oss-interface@1.5.0:
+    resolution: {integrity: sha512-NqVR42QclE/EosbfzKfrJ8OUPHsHt1T6dMoXnLz7lOtHcefMGgtaN70yRMMdhL0/bt1VF59jh+4lwdP3PrhHqg==}
 
   osx-release@1.1.0:
     resolution: {integrity: sha512-ixCMMwnVxyHFQLQnINhmIpWqXIfS2YOXchwQrk+OFzmo6nDjQ0E4KXAyyUh0T0MZgV4bUhkRrAbVqlE4yLVq4A==}
@@ -8964,6 +9004,7 @@ packages:
   rolldown-vite@7.3.0:
     resolution: {integrity: sha512-5hI5NCJwKBGtzWtdKB3c2fOEpI77Iaa0z4mSzZPU1cJ/OqrGbFafm90edVCd7T9Snz+Sh09TMAv4EQqyVLzuEg==}
     engines: {node: ^20.19.0 || >=22.12.0}
+    deprecated: Use 7.3.1 for migration purposes. For the most recent updates, migrate to Vite 8 once you're ready.
     hasBin: true
     peerDependencies:
       '@types/node': ^20.19.0 || >=22.12.0
@@ -9919,6 +9960,14 @@ packages:
   write-file-atomic@5.0.1:
     resolution: {integrity: sha512-+QU2zd6OTD8XWIJCbffaiQeH9U73qIqafo1x6V1snCWYGJf6cVE0cDR4D8xRzcEnfI21IFrUPzPGtcPf8AC+Rw==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
+  xml2js@0.6.2:
+    resolution: {integrity: sha512-T4rieHaC1EXcES0Kxxj4JWgaUQHDk+qwHcYOCFHfiwKz7tOVPLq7Hjq9dM1WCMhylqMEfP7hMcOIChvotiZegA==}
+    engines: {node: '>=4.0.0'}
+
+  xmlbuilder@11.0.1:
+    resolution: {integrity: sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==}
+    engines: {node: '>=4.0'}
 
   xss@1.0.15:
     resolution: {integrity: sha512-FVdlVVC67WOIPvfOwhoMETV72f6GbW7aOabBC3WxN/oUdoEMDyLz4OgRv5/gck2ZeNqEQu+Tb0kloovXOfpYVg==}
@@ -14402,6 +14451,8 @@ snapshots:
 
   mime@2.6.0: {}
 
+  mime@3.0.0: {}
+
   mimic-fn@2.1.0: {}
 
   mimic-function@5.0.1: {}
@@ -14834,6 +14885,21 @@ snapshots:
     dependencies:
       osx-release: 1.1.0
       win-release: 1.1.1
+
+  oss-client@2.5.1:
+    dependencies:
+      is-type-of: 2.2.0
+      mime: 3.0.0
+      ms: 2.1.3
+      oss-interface: 1.5.0
+      stream-wormhole: 2.0.1
+      urllib: 4.8.2
+      utility: 2.5.0
+      xml2js: 0.6.2
+
+  oss-interface@1.5.0:
+    dependencies:
+      type-fest: 4.41.0
 
   osx-release@1.1.0:
     dependencies:
@@ -15478,8 +15544,7 @@ snapshots:
       '@parcel/watcher': 2.5.1
     optional: true
 
-  sax@1.4.3:
-    optional: true
+  sax@1.4.3: {}
 
   sdk-base@3.6.0:
     dependencies:
@@ -16507,6 +16572,13 @@ snapshots:
     dependencies:
       imurmurhash: 0.1.4
       signal-exit: 4.1.0
+
+  xml2js@0.6.2:
+    dependencies:
+      sax: 1.4.3
+      xmlbuilder: 11.0.1
+
+  xmlbuilder@11.0.1: {}
 
   xss@1.0.15:
     dependencies:
