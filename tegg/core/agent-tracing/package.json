@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/agent-tracing",
-  "version": "4.0.2-beta.1",
+  "version": "4.0.2-beta.3",
   "description": "Tracing support for AI agents (LangGraph, Claude Agent SDK)",
   "keywords": [
     "agent",
