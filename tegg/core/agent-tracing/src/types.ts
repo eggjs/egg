@@ -1,5 +1,3 @@
-import type { Run } from '@langchain/core/tracers/base';
-
 // Claude SDK Message Types
 
 export interface ClaudeTextContent {
@@ -126,16 +124,6 @@ export interface IRunCost {
 }
 
 const FIELDS_TO_OSS = ['inputs', 'outputs', 'attachments', 'serialized', 'events'] as const;
-
-export interface ILogRun extends Omit<Run, 'child_runs' | (typeof FIELDS_TO_OSS)[number]> {
-  child_run_ids?: string[];
-  outputs?: IResource;
-  inputs?: IResource;
-  attachments?: IResource;
-  serialized?: IResource;
-  events?: IResource;
-  cost?: IRunCost;
-}
 
 export const RunStatus = {
   START: 'start',

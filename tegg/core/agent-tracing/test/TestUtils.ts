@@ -10,6 +10,28 @@ export interface CapturedEntry {
   agentName: string;
 }
 
+export function createMockRun(overrides?: Partial<Run>): Run {
+  return {
+    id: 'run-001',
+    name: 'TestRun',
+    run_type: 'chain',
+    inputs: {},
+    outputs: {},
+    start_time: Date.now(),
+    end_time: Date.now() + 100,
+    execution_order: 1,
+    child_execution_order: 1,
+    child_runs: [],
+    events: [],
+    trace_id: 'trace-001',
+    parent_run_id: undefined,
+    tags: [],
+    extra: {},
+    error: undefined,
+    ...overrides,
+  } as Run;
+}
+
 export function createMockLogger(logs?: string[]): Logger {
   return {
     info: (msg: string) => {

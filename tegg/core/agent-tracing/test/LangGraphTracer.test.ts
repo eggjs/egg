@@ -7,29 +7,7 @@ import { afterEach, beforeEach, describe, it } from 'vitest';
 
 import { LangGraphTracer } from '../src/LangGraphTracer.ts';
 import { RunStatus } from '../src/types.ts';
-import { type CapturedEntry, createCapturingTracingService } from './TestUtils.ts';
-
-function makeMockRun(overrides?: Partial<Run>): Run {
-  return {
-    id: 'run-001',
-    name: 'TestRun',
-    run_type: 'chain',
-    inputs: {},
-    outputs: {},
-    start_time: Date.now(),
-    end_time: Date.now() + 100,
-    execution_order: 1,
-    child_execution_order: 1,
-    child_runs: [],
-    events: [],
-    trace_id: 'trace-001',
-    parent_run_id: undefined,
-    tags: [],
-    extra: {},
-    error: undefined,
-    ...overrides,
-  } as Run;
-}
+import { type CapturedEntry, createCapturingTracingService, createMockRun } from './TestUtils.ts';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -237,7 +215,7 @@ describe('test/LangGraphTracer.test.ts', () => {
 
   describe('Direct hook invocation (unit coverage)', () => {
     it('should log tool hooks: onToolStart, onToolEnd, onToolError', () => {
-      const run = makeMockRun({ run_type: 'tool', name: 'BashTool' });
+      const run = createMockRun({ run_type: 'tool', name: 'BashTool' });
       tracer.onToolStart(run);
       tracer.onToolEnd(run);
       tracer.onToolError({ ...run, error: 'tool failed' } as Run);
@@ -250,7 +228,7 @@ describe('test/LangGraphTracer.test.ts', () => {
     });
 
     it('should log LLM hooks: onLLMStart, onLLMEnd, onLLMError', () => {
-      const run = makeMockRun({ run_type: 'llm', name: 'claude-3' });
+      const run = createMockRun({ run_type: 'llm', name: 'claude-3' });
       tracer.onLLMStart(run);
       tracer.onLLMEnd(run);
       tracer.onLLMError({ ...run, error: 'llm error' } as Run);
@@ -263,7 +241,7 @@ describe('test/LangGraphTracer.test.ts', () => {
     });
 
     it('should log retriever hooks: onRetrieverStart, onRetrieverEnd, onRetrieverError', () => {
-      const run = makeMockRun({ run_type: 'retriever', name: 'VectorRetriever' });
+      const run = createMockRun({ run_type: 'retriever', name: 'VectorRetriever' });
       tracer.onRetrieverStart(run);
       tracer.onRetrieverEnd(run);
       tracer.onRetrieverError({ ...run, error: 'retriever error' } as Run);
@@ -276,7 +254,7 @@ describe('test/LangGraphTracer.test.ts', () => {
     });
 
     it('should log agent hooks: onAgentAction, onAgentEnd', () => {
-      const run = makeMockRun({ run_type: 'chain', name: 'AgentExecutor' });
+      const run = createMockRun({ run_type: 'chain', name: 'AgentExecutor' });
       tracer.onAgentAction(run);
       tracer.onAgentEnd(run);
 

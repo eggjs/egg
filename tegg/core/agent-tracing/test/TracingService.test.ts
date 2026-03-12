@@ -1,33 +1,12 @@
 import assert from 'node:assert/strict';
 
-import type { Run } from '@langchain/core/tracers/base';
 import { afterEach, beforeEach, describe, it } from 'vitest';
 
 import { TracingService } from '../src/TracingService.ts';
 import { RunStatus } from '../src/types.ts';
+import { createMockRun } from './TestUtils.ts';
 
 // ---------- Helpers ----------
-
-function makeRun(overrides?: Partial<Run>): Run {
-  return {
-    id: 'run-001',
-    name: 'TestRun',
-    run_type: 'chain',
-    inputs: { query: 'hello' },
-    outputs: { result: 'ok' },
-    start_time: 1000,
-    end_time: 2000,
-    execution_order: 1,
-    child_execution_order: 1,
-    child_runs: [],
-    events: [],
-    trace_id: 'trace-abc',
-    parent_run_id: undefined,
-    tags: [],
-    extra: {},
-    ...overrides,
-  } as Run;
-}
 
 function makeTracingService({
   withOss = true,
@@ -163,7 +142,7 @@ describe('test/TracingService.test.ts', () => {
     it('should format prefix for root run with FAAS_ENV set', () => {
       process.env.FAAS_ENV = 'prod';
       const { service } = makeTracingService();
-      const run = makeRun({ trace_id: 'trace-xyz', id: 'run-123', parent_run_id: undefined });
+      const run = createMockRun({ trace_id: 'trace-xyz', id: 'run-123', parent_run_id: undefined });
       const prefix = service.getLogInfoPrefix(run, RunStatus.START, 'MyAgent');
       assert(prefix.includes('[agent_run][MyAgent]'));
       assert(prefix.includes('traceId=trace-xyz'));
@@ -177,7 +156,7 @@ describe('test/TracingService.test.ts', () => {
     it('should include threadId from run.extra.metadata when available', () => {
       process.env.FAAS_ENV = 'dev';
       const { service } = makeTracingService();
-      const run = makeRun({ extra: { metadata: { thread_id: 'thread-abc' } } });
+      const run = createMockRun({ extra: { metadata: { thread_id: 'thread-abc' } } });
       const prefix = service.getLogInfoPrefix(run, RunStatus.START, 'MyAgent');
       assert(prefix.includes('threadId=thread-abc'));
     });
@@ -185,7 +164,7 @@ describe('test/TracingService.test.ts', () => {
     it('should mark child run when parent_run_id is set', () => {
       process.env.FAAS_ENV = 'dev';
       const { service } = makeTracingService();
-      const run = makeRun({ parent_run_id: 'parent-001' });
+      const run = createMockRun({ parent_run_id: 'parent-001' });
       const prefix = service.getLogInfoPrefix(run, RunStatus.END, 'MyAgent');
       assert(prefix.includes('type=child_run'));
       assert(prefix.includes('parent_run_id=parent-001'));
@@ -195,7 +174,7 @@ describe('test/TracingService.test.ts', () => {
       delete process.env.FAAS_ENV;
       process.env.SERVER_ENV = 'pre';
       const { service } = makeTracingService();
-      const run = makeRun();
+      const run = createMockRun();
       const prefix = service.getLogInfoPrefix(run, RunStatus.END, 'MyAgent');
       assert(prefix.includes('env=pre'));
     });
@@ -255,7 +234,7 @@ describe('test/TracingService.test.ts', () => {
     it('should log trace via logger.info when FAAS_ENV is set', () => {
       process.env.FAAS_ENV = 'dev';
       const { service, infoLogs } = makeTracingService();
-      const run = makeRun({ outputs: undefined });
+      const run = createMockRun({ outputs: undefined });
       service.logTrace(run, RunStatus.END, 'LangGraphTracer', 'MyAgent');
       assert(infoLogs.some((log) => log.includes('[agent_run]')));
     });
@@ -263,7 +242,7 @@ describe('test/TracingService.test.ts', () => {
     it('should skip runs tagged with langsmith:hidden', () => {
       process.env.FAAS_ENV = 'dev';
       const { service, infoLogs } = makeTracingService();
-      const run = makeRun({ tags: ['langsmith:hidden'] });
+      const run = createMockRun({ tags: ['langsmith:hidden'] });
       service.logTrace(run, RunStatus.END, 'LangGraphTracer', 'MyAgent');
       assert.strictEqual(infoLogs.length, 0);
     });
@@ -271,7 +250,7 @@ describe('test/TracingService.test.ts', () => {
     it('should upload outputs field to OSS and replace with IResource', async () => {
       process.env.FAAS_ENV = 'dev';
       const { service, ossPuts, infoLogs } = makeTracingService({ withOss: true });
-      const run = makeRun({ outputs: { result: 'data', llmOutput: { promptTokens: 10 } } });
+      const run = createMockRun({ outputs: { result: 'data', llmOutput: { promptTokens: 10 } } });
       service.logTrace(run, RunStatus.END, 'LangGraphTracer', 'MyAgent');
       // backgroundTaskHelper runs synchronously in mock, so OSS put should be done
       assert(ossPuts.length >= 1, 'Should have uploaded to OSS');
@@ -289,7 +268,7 @@ describe('test/TracingService.test.ts', () => {
       delete process.env.FAAS_ENV;
       delete process.env.SERVER_ENV;
       const { service, logServiceSends } = makeTracingService({ withLogService: true });
-      const run = makeRun({ outputs: undefined });
+      const run = createMockRun({ outputs: undefined });
       service.logTrace(run, RunStatus.END, 'LangGraphTracer', 'MyAgent');
       assert(logServiceSends.length >= 1, 'Should have synced to log service in local env');
     });
@@ -297,8 +276,8 @@ describe('test/TracingService.test.ts', () => {
     it('should include child run ids in logged json', () => {
       process.env.FAAS_ENV = 'dev';
       const { service, infoLogs } = makeTracingService();
-      const childRun = makeRun({ id: 'child-001' });
-      const run = makeRun({ child_runs: [childRun], outputs: undefined });
+      const childRun = createMockRun({ id: 'child-001' });
+      const run = createMockRun({ child_runs: [childRun], outputs: undefined });
       service.logTrace(run, RunStatus.END, 'LangGraphTracer', 'MyAgent');
       const logLine = infoLogs.find((log) => log.includes('[agent_run]'));
       const runJson = logLine?.match(/,run=({.*})$/)?.[1];
@@ -325,7 +304,7 @@ describe('test/TracingService.test.ts', () => {
         },
       };
 
-      const run = makeRun({ outputs: { result: 'data' } });
+      const run = createMockRun({ outputs: { result: 'data' } });
       service.logTrace(run, RunStatus.END, 'LangGraphTracer', 'MyAgent');
 
       // Wait for all background tasks (the catch block inside fn() calls logger.warn)
@@ -348,7 +327,7 @@ describe('test/TracingService.test.ts', () => {
         },
       };
 
-      const run = makeRun({ outputs: { result: 'data' } });
+      const run = createMockRun({ outputs: { result: 'data' } });
 
       // Should NOT throw — the outer catch block in logTrace swallows the error
       assert.doesNotThrow(() => {
