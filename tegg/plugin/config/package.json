@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-config",
-  "version": "4.0.2-beta.3",
+  "version": "4.0.2-beta.4",
   "description": "module config plugin for egg",
   "keywords": [
     "config",

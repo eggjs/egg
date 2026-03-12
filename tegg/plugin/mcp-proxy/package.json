@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mcp-proxy-plugin",
-  "version": "4.0.2-beta.3",
+  "version": "4.0.2-beta.4",
   "description": "tegg mcp proxy plugin",
   "keywords": [
     "egg",

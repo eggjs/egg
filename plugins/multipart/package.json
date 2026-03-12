@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/multipart",
-  "version": "5.0.2-beta.3",
+  "version": "5.0.2-beta.4",
   "description": "Multipart plugin for egg",
   "keywords": [
     "egg",
