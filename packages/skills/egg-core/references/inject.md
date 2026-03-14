@@ -156,7 +156,7 @@ class Foo {
 
 ## 注入模块配置
 
-在模块根目录创建 `module.yml`，通过 `moduleConfig` 名称注入：
+在模块根目录创建 `module.yml`，通过 `moduleConfig` 名称注入，框架自动注入当前模块的配置：
 
 ```yaml
 # module.yml
@@ -180,6 +180,19 @@ export class ApiService {
   async call(): Promise<void> {
     // this.moduleConfig.apiEndpoint → "https://api.example.com"
   }
+}
+```
+
+如需注入其他模块的配置，使用 `@ConfigSourceQualifier` 指定模块名：
+
+```typescript
+import { SingletonProto, Inject, ConfigSourceQualifier } from 'egg';
+
+@SingletonProto()
+export class MyService {
+  @Inject()
+  @ConfigSourceQualifier('otherModule')
+  moduleConfig: OtherModuleConfig; // 注入 otherModule 的配置
 }
 ```
 

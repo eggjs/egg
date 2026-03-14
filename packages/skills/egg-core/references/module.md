@@ -76,6 +76,85 @@ app/
 ]
 ```
 
+## module 配置
+
+在模块根目录创建 `module.yml` 存放模块专属配置：
+
+```
+app/
+└── userModule/
+    ├── package.json
+    ├── module.yml          # 基础配置
+    ├── module.unittest.yml # 环境特定配置（可选）
+    └── UserService.ts
+```
+
+### 配置文件格式
+
+支持 YAML 和 JSON 两种格式，优先加载 YAML：
+
+```yaml
+# module.yml
+features:
+  dynamic:
+    foo: bar
+```
+
+### 环境配置合并
+
+框架会按 `module.yml` → `module.{env}.yml` 的顺序深度合并：
+
+```yaml
+# module.yml
+features:
+  dynamic:
+    foo: bar
+
+# module.unittest.yml
+features:
+  dynamic:
+    testMode: true
+```
+
+unittest 环境下合并结果：
+
+```json
+{
+  "features": {
+    "dynamic": {
+      "foo": "bar",
+      "testMode": true
+    }
+  }
+}
+```
+
+### 注入配置
+
+通过 `@Inject()` 注入 `moduleConfig`，框架自动注入当前模块的配置：
+
+```typescript
+import { SingletonProto, Inject } from 'egg';
+
+interface ModuleConfig {
+  features: {
+    dynamic: {
+      foo: string;
+    };
+  };
+}
+
+@SingletonProto()
+export class UserService {
+  @Inject()
+  moduleConfig: ModuleConfig;
+
+  async getFeatureFlag(): Promise<string> {
+    return this.moduleConfig.features.dynamic.foo; // 'bar'
+  }
+}
+```
+
 ## module 目录组织
 
 ### 新应用
