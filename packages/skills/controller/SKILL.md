@@ -28,7 +28,7 @@ allowed-tools: Read
 
 - **装饰器**：`@HTTPController`、`@HTTPMethod`
 - **参数**：`@HTTPParam`、`@HTTPQuery`、`@HTTPBody`、`@HTTPHeaders`、`@Cookies`、`@Request`、`@Context`
-- **详细文档**：`references/httpcontroller.md`
+- **详细文档**：`references/http-controller.md`
 
 ### MCPController
 

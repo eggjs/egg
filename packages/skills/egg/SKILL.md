@@ -138,7 +138,7 @@ allowed-tools: Read
 | 用户意图 | 关键词 | 使用技能 |
 |---------|--------|---------|
 | Module architecture | module、workspace、organization | @eggjs/skills-core |
-| Object lifecycle | singleton、context、lifecycle | @eggjs/skills--core |
+| Object lifecycle | singleton、context、lifecycle | @eggjs/skills-core |
 | Dependency injection | inject、@Inject、dependency | @eggjs/skills-core |
 | Access control | private、public、cross-module | @eggjs/skills-core |
 | HTTP endpoints | HTTP、API、REST | @eggjs/skills-controller |
