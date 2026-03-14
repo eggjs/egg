@@ -17,7 +17,7 @@ allowed-tools: Read
 
 2. 定时任务，可以使用 Schedule，参考 `references/schedule.md`
 
-3. AI集成 MCP，可以使用 MCPController，参考 `references/mcp-controller.md`
+3. MCP 接口，可以使用 MCPController，参考 `references/mcp-controller.md`
 ```
 
 ---
@@ -34,6 +34,7 @@ allowed-tools: Read
 
 - **装饰器**：`@MCPController`、`@MCPTool`、`@MCPPrompt`、`@MCPResource`
 - **特点**：集成 LLM、Zod 验证、登录态支持
+- **详细文档**：`references/mcp-controller.md`
 
 ### Schedule
 
@@ -57,7 +58,7 @@ allowed-tools: Read
 详细的控制器开发文档：
 
 - `references/http-controller.md` - HTTP 接口完整指南
-- `references/mcp-controller.md` - MCP/LLM 集成
+- `references/mcp-controller.md` - MCP 接口开发
 - `references/schedule.md` - 定时任务
 
-核心概念（@eggjs/skills-core）：模块、依赖注入、对象生命周期
+核心概念（`egg-core` skill）：模块、依赖注入、对象生命周期

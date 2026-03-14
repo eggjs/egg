@@ -7,7 +7,7 @@
 使用 `@HTTPController` 和 `@HTTPMethod` 装饰器创建 HTTP 接口：
 
 ```typescript
-import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg/tegg';
+import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
 
 @HTTPController()
 export class DemoController {
@@ -150,7 +150,7 @@ export class SSRController {
 
 ---
 
-## Server-Sent Events（SSE）
+## 流式响应（Streaming）
 
 ```typescript
 import { Readable } from 'node:stream';
@@ -183,11 +183,11 @@ export class StreamController {
 
 | Path                            | RegExp Index | Priority | 说明             |
 | ------------------------------- | ------------ | -------- | ---------------- |
-| `/*`                            | `[0  `       | 0        | 通配符，最低     |
-| `/hello/:name`                  | `[1  `       | 1000     | 单参数           |
-| `/hello/world/message/:message` | `[3  `       | 3000     | 三参数           |
-| `/hello/:name/message/:message` | `[1, 3  `    | 4000     | 多参数，索引更大 |
-| `/hello/world`                  | `[  `        | 100000   | 静态路径，最高   |
+| `/*`                            | `[0]`        | 0        | 通配符，最低     |
+| `/hello/:name`                  | `[1]`        | 1000     | 单参数           |
+| `/hello/world/message/:message` | `[3]`        | 3000     | 三参数           |
+| `/hello/:name/message/:message` | `[1, 3]`     | 4000     | 多参数，索引更大 |
+| `/hello/world`                  | `[]`         | 100000   | 静态路径，最高   |
 
 ### 手动设置优先级
 

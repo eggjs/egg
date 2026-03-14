@@ -15,7 +15,7 @@
 按固定间隔执行。`interval` 支持毫秒数或 [ms](https://github.com/vercel/ms) 格式字符串（如 `'5s'`、`'1m'`）。
 
 ```typescript
-// app/port/schedule/Demo.ts
+// app/{moduleName}/schedule/Demo.ts
 import { Inject, Logger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from 'egg/schedule';
 
@@ -51,7 +51,7 @@ export class DemoScheduler {
 ```
 
 ```typescript
-// app/port/schedule/CronDemo.ts
+// app/{moduleName}/schedule/CronDemo.ts
 import { Inject, Logger } from 'egg';
 import { CronParams, Schedule, ScheduleType } from 'egg/schedule';
 
