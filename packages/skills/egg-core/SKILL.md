@@ -1,6 +1,6 @@
 ---
 name: egg-core
-description: 本技能用于处理 EGG 基础核心概念，包括模块架构、@SingletonProto、@ContextProto 和 @Inject 装饰器。用于理解 EGG 的基础构建块、依赖注入和对象生命周期管理。
+description: 本技能用于处理 EGG 基础核心概念，包括模块架构、@SingletonProto、@ContextProto、@Inject 装饰器和动态注入。用于理解 EGG 的基础构建块、依赖注入、对象生命周期管理和运行时多实现动态选择。
 allowed-tools: Read
 ---
 
@@ -87,7 +87,7 @@ export class ConfigService {
 
 ### SingletonProto
 
-在整个应用生命周期内只实例化一次，性能更好，应该作为默认选择。
+应用启动时立即创建，整个应用生命周期内只有一个实例，性能更好，应该作为默认选择。
 
 ```typescript
 import { SingletonProto } from 'egg';
@@ -102,7 +102,7 @@ export class HelloService {
 
 ### ContextProto
 
-每个请求都会创建一个新实例，一般仅在需要隔离不同请求的上下文信息时使用。
+请求到达时按需创建，每个请求一个实例，请求结束自动销毁。仅在需要隔离不同请求的上下文信息时使用。
 
 ```typescript
 import { ContextProto } from 'egg';
@@ -136,8 +136,8 @@ export class SharedContextService {}
 使用 `@Inject()` 注入其他 Proto 或 Egg 对象：
 
 ```typescript
-import { EggLogger, Inject, SingletonProto } from 'egg';
-import { FooService } from './FooService';
+import { Inject, Logger, SingletonProto } from 'egg';
+import { FooService } from './FooService.ts';
 
 @SingletonProto()
 export class HelloService {
@@ -145,13 +145,17 @@ export class HelloService {
   fooService: FooService;  // 注入另一个 Proto
 
   @Inject()
-  logger: EggLogger;  // 注入 Egg 对象
+  logger: Logger;  // 注入 Egg 对象
 
   async hello(): Promise<string> {
     this.logger.info(`[HelloService] ${this.fooService.hello()}`);
   }
 }
 ```
+
+### 动态注入
+
+当同一个抽象有多种实现，需要在运行时动态选择时，通过 `EggObjectFactory` 按类型获取实现，无需 if/else。详见 `references/dynamic-inject.md`。
 
 ### 重要约束
 
@@ -161,16 +165,18 @@ export class HelloService {
 
 ## 快速决策指南
 
-| 场景                   | 使用装饰器                                             |
-| ---------------------- | ------------------------------------------------------ |
-| 无状态服务             | `@SingletonProto()`                                    |
-| 跨服务共享的请求级状态 | `@ContextProto()`                                      |
-| 需要跨模块访问         | `@SingletonProto({ accessLevel: AccessLevel.PUBLIC })` |
-| 注入依赖               | `@Inject()`                                            |
-| 使用自定义名称注入     | `@Inject({ name: 'customName' })`                      |
+| 场景                             | 使用装饰器                                             |
+| -------------------------------- | ------------------------------------------------------ |
+| 无状态服务                       | `@SingletonProto()`                                    |
+| 跨服务共享的请求级状态           | `@ContextProto()`                                      |
+| 需要跨模块访问                   | `@SingletonProto({ accessLevel: AccessLevel.PUBLIC })` |
+| 注入依赖                         | `@Inject()`                                            |
+| 使用自定义名称注入               | `@Inject({ name: 'customName' })`                      |
+| 同一抽象多种实现，运行时动态选择 | `QualifierImplDecoratorUtil` + `EggObjectFactory`      |
 
 ## 参考资料
 
 - 详细的 module 文档，请参阅：`references/module.md`
 - Inject 装饰器使用，请参阅：`references/inject.md`
 - SingletonProto 和 ContextProto 详情，请参阅：`references/proto.md`
+- 动态注入（Qualifier 动态注入），请参阅：`references/dynamic-inject.md`
