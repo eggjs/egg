@@ -73,16 +73,16 @@ export class PathController {
 
 ### 参考对照表（参数装饰器）
 
-| 装饰器 | 获取内容 | 类型 | 默认值 | 支持选项 |
-|--------|---------|------|--------|----------|
-| `@HTTPParam()` | URL 路径参数 | `string` | 变量名 | `{ name?: string }` |
-| `@HTTPQuery()` | 查询参数（单个） | `string` | 变量名 | `{ name?: string }` |
-| `@HTTPQueries()` | 查询参数（多个） | `string[]` | 变量名 | `{ name?: string }` |
-| `@HTTPBody()` | 请求体 | `object \| string` | - | - |
-| `@HTTPHeaders()` | 请求头 | `IncomingHttpHeaders` | - | - |
-| `@Cookies()` | Cookie | `HTTPCookies` | - | - |
-| `@Request()` | HTTP 请求对象 | `HTTPRequest` | - | - |
-| `@Context()` | Egg Context | `EggContext` | - | - |
+| 装饰器           | 获取内容         | 类型                  | 默认值 | 支持选项            |
+| ---------------- | ---------------- | --------------------- | ------ | ------------------- |
+| `@HTTPParam()`   | URL 路径参数     | `string`              | 变量名 | `{ name?: string }` |
+| `@HTTPQuery()`   | 查询参数（单个） | `string`              | 变量名 | `{ name?: string }` |
+| `@HTTPQueries()` | 查询参数（多个） | `string[]`            | 变量名 | `{ name?: string }` |
+| `@HTTPBody()`    | 请求体           | `object \| string`    | -      | -                   |
+| `@HTTPHeaders()` | 请求头           | `IncomingHttpHeaders` | -      | -                   |
+| `@Cookies()`     | Cookie           | `HTTPCookies`         | -      | -                   |
+| `@Request()`     | HTTP 请求对象    | `HTTPRequest`         | -      | -                   |
+| `@Context()`     | Egg Context      | `EggContext`          | -      | -                   |
 
 ### 快速选择指南
 
@@ -181,13 +181,13 @@ export class StreamController {
 
 ### 默认优先级规则
 
-| Path | RegExp Index | Priority | 说明 |
-|------|-------------|----------|------|
-| `/*` | `[0  ` | 0 | 通配符，最低 |
-| `/hello/:name` | `[1  ` | 1000 | 单参数 |
-| `/hello/world/message/:message` | `[3  ` | 3000 | 三参数 |
-| `/hello/:name/message/:message` | `[1, 3  ` | 4000 | 多参数，索引更大 |
-| `/hello/world` | `[  ` | 100000 | 静态路径，最高 |
+| Path                            | RegExp Index | Priority | 说明             |
+| ------------------------------- | ------------ | -------- | ---------------- |
+| `/*`                            | `[0  `       | 0        | 通配符，最低     |
+| `/hello/:name`                  | `[1  `       | 1000     | 单参数           |
+| `/hello/world/message/:message` | `[3  `       | 3000     | 三参数           |
+| `/hello/:name/message/:message` | `[1, 3  `    | 4000     | 多参数，索引更大 |
+| `/hello/world`                  | `[  `        | 100000   | 静态路径，最高   |
 
 ### 手动设置优先级
 
@@ -279,6 +279,7 @@ export class UserController {
 **使用场景**：从 URL 查询字符串提取参数（`?key=value`）
 
 **语法**：
+
 - `@HTTPQuery(param?: HTTPQueryParams)` - 返回首个匹配的值（`string`）
 - `@HTTPQueries(param?: HTTPQueriesParams)` - 返回全部值的数组（`string[]`）
 
@@ -334,11 +335,11 @@ export class UserController {
 
 #### Content-Type 解析
 
-| Content-Type | 解析结果         |
-|-------------|--------------|
-| `application/json` | 对象 `object`  |
-| `text/plain` | 字符串 `string` |
-| `application/x-www-form-urlencoded` | 对象 `object` |
+| Content-Type                        | 解析结果        |
+| ----------------------------------- | --------------- |
+| `application/json`                  | 对象 `object`   |
+| `text/plain`                        | 字符串 `string` |
+| `application/x-www-form-urlencoded` | 对象 `object`   |
 
 **注意**：其他类型注入空值，需用 `@Request` 手动处理
 
