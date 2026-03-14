@@ -86,8 +86,11 @@ export default () => {
 │  ├─ 资源地址固定 → @MCPResource({ uri: '...' })
 │  └─ 资源地址动态 → @MCPResource({ template: [...] })
 │
-└─ "Tool 执行中要推送进度"
-   └─ → @MCPTool + @Extra() 获取 sendNotification
+├─ "Tool 执行中要推送进度"
+│  └─ → @MCPTool + @Extra() 获取 sendNotification（见下方 @Extra 章节）
+│
+└─ "Tool 中需要读取自定义请求头"
+   └─ → @MCPTool + @Extra() 获取 requestInfo.headers
 ```
 
 ---

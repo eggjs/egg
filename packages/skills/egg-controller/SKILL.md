@@ -38,8 +38,19 @@ allowed-tools: Read
 
 ### Schedule
 
-- **装饰器**：`@Schedule<T>`、配置
+- **装饰器**：`@Schedule<T>`
 - **模式**：Worker/All
+- **详细文档**：`references/schedule.md`
+
+---
+
+## 常见问题排查
+
+| 现象                   | 原因                     | 解决方案                                                           |
+| ---------------------- | ------------------------ | ------------------------------------------------------------------ |
+| MCP 装饰器 import 报错 | 从 `'egg'` 导入          | MCP 装饰器从 `'@eggjs/tegg'` 导入，zod 从 `'@eggjs/tegg/zod'` 导入 |
+| MCP Schema 报错        | 用了 `z.object()` 包装   | 直接用普通对象 `{ name: z.string() }`                              |
+| 定时任务不生效         | 放在 `app/schedule` 目录 | 放在模块目录中，避免和 egg 默认扫描冲突                            |
 
 ---
 

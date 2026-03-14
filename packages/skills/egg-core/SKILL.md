@@ -174,6 +174,16 @@ export class HelloService {
 | 使用自定义名称注入               | `@Inject({ name: 'customName' })`                      |
 | 同一抽象多种实现，运行时动态选择 | `QualifierImplDecoratorUtil` + `EggObjectFactory`      |
 
+## 常见问题排查
+
+| 现象                   | 原因                                       | 解决方案                                     |
+| ---------------------- | ------------------------------------------ | -------------------------------------------- |
+| 模块没被加载           | `eggModule.name` 包含 `-` 等特殊字符       | 改为驼峰命名                                 |
+| `EggPrototypeNotFound` | 跨模块注入但 accessLevel 为 PRIVATE        | 改为 `AccessLevel.PUBLIC`                    |
+| 注入对象不对           | 类型为 `interface`/`any`，回退到属性名匹配 | 改用 class 类型或 `@Inject({ name: 'xxx' })` |
+| 混用注入方式报错       | 属性注入和构造函数注入不能混用             | 统一使用一种方式                             |
+| 可选依赖启动报错       | 缺少 optional 标记                         | `@Inject({ optional: true })`                |
+
 ## 参考资料
 
 - 详细的 module 文档，请参阅：`references/module.md`
