@@ -173,5 +173,4 @@ export class HelloService {
 
 - 详细的 module 文档，请参阅：`references/module.md`
 - Inject 装饰器使用，请参阅：`references/inject.md`
-- SingletonProto 详情，请参阅：`references/singleton-proto.md`
-- ContextProto 详情，请参阅：`references/context-proto.md`
+- SingletonProto 和 ContextProto 详情，请参阅：`references/proto.md`
