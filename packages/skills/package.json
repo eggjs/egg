@@ -20,31 +20,8 @@
   "files": [
     "**/*.md"
   ],
-  "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
   "publishConfig": {
-    "access": "public",
-    "exports": {
-      ".": "./dist/index.js",
-      "./package.json": "./package.json"
-    }
-  },
-  "scripts": {
-    "test": "vitest run eval/static/",
-    "eval": "vitest run eval/dynamic/",
-    "eval:routing": "vitest run eval/dynamic/routing.eval.ts",
-    "eval:quality": "vitest run eval/dynamic/quality.eval.ts"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "gray-matter": "^4.0.3",
-    "vitest": "catalog:"
+    "access": "public"
   },
   "engines": {
     "node": ">=22.18.0"
