@@ -113,8 +113,6 @@ describe('test/loader/egg_loader.test.ts', () => {
     afterEach(mm.restore);
 
     it('should resolve from outDir configured in package.json egg.outDir', () => {
-      // Simulate production: TS resolution disabled, only compiled .js in dist/
-      mm(process.env, 'EGG_TS_ENABLE', 'false');
       const baseDir = getFilepath('app-outdir-pkg');
       const loader = new EggLoader({
         baseDir,
@@ -122,6 +120,7 @@ describe('test/loader/egg_loader.test.ts', () => {
         logger: console,
       } as any);
       assert.equal(loader.outDir, 'dist');
+      // config/config.default does not exist as source, only as compiled output in dist/
       const configPath = path.join(baseDir, 'config', 'config.default');
       const resolved = loader.resolveModule(configPath);
       assert(resolved);
@@ -129,7 +128,6 @@ describe('test/loader/egg_loader.test.ts', () => {
     });
 
     it('should resolve from outDir auto-detected from tsconfig.json', () => {
-      mm(process.env, 'EGG_TS_ENABLE', 'false');
       const baseDir = getFilepath('app-outdir-tsconfig');
       const loader = new EggLoader({
         baseDir,
@@ -144,7 +142,6 @@ describe('test/loader/egg_loader.test.ts', () => {
     });
 
     it('should prefer package.json egg.outDir over tsconfig.json', () => {
-      mm(process.env, 'EGG_TS_ENABLE', 'false');
       const baseDir = getFilepath('app-outdir-precedence');
       const loader = new EggLoader({
         baseDir,
