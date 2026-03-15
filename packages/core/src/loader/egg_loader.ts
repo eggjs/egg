@@ -65,6 +65,7 @@ export class EggLoader {
   readonly serverEnv: string;
   readonly serverScope: string;
   readonly appInfo: EggAppInfo;
+  readonly outDir?: string;
   dirs?: EggDirInfo[];
 
   /**
@@ -90,6 +91,7 @@ export class EggLoader {
      * @since 1.0.0
      */
     this.pkg = readJSONSync(path.join(this.options.baseDir, 'package.json'));
+    this.outDir = this.#resolveOutDir();
 
     // auto require('tsconfig-paths/register') on typescript app
     // support env.EGG_TYPESCRIPT = true or { "egg": { "typescript": true } } on package.json
@@ -1691,12 +1693,46 @@ export class EggLoader {
       fullPath = utils.resolvePath(filepath);
     } catch {
       // debug('[resolveModule] Module %o resolve error: %s', filepath, err.stack);
-      return undefined;
     }
-    // if (process.env.EGG_TYPESCRIPT !== 'true' && fullPath.endsWith('.ts')) {
-    //   return undefined;
-    // }
+    if (!fullPath) {
+      fullPath = this.#resolveFromOutDir(filepath);
+    }
     return fullPath;
+  }
+
+  #resolveOutDir(): string | undefined {
+    // 1. Explicit override from package.json egg.outDir
+    if (this.pkg.egg?.outDir) {
+      debug('[resolveOutDir] use pkg.egg.outDir: %o', this.pkg.egg.outDir);
+      return this.pkg.egg.outDir;
+    }
+    // 2. Auto-detect from tsconfig.json compilerOptions.outDir
+    const tsConfigFile = path.join(this.options.baseDir, 'tsconfig.json');
+    if (fs.existsSync(tsConfigFile)) {
+      try {
+        const tsConfig = JSON.parse(fs.readFileSync(tsConfigFile, 'utf-8'));
+        if (tsConfig.compilerOptions?.outDir) {
+          debug('[resolveOutDir] use tsconfig.json compilerOptions.outDir: %o', tsConfig.compilerOptions.outDir);
+          return tsConfig.compilerOptions.outDir;
+        }
+      } catch {
+        // ignore parse errors
+      }
+    }
+  }
+
+  #resolveFromOutDir(filepath: string): string | undefined {
+    if (!this.outDir) return;
+    const baseDir = this.options.baseDir;
+    if (!filepath.startsWith(baseDir + path.sep)) return;
+    const relativePath = path.relative(baseDir, filepath);
+    for (const ext of ['.js', '.mjs']) {
+      const outDirPath = path.join(baseDir, this.outDir, relativePath + ext);
+      if (fs.existsSync(outDirPath)) {
+        debug('[resolveModule:outDir] %o => %o', filepath, outDirPath);
+        return outDirPath;
+      }
+    }
   }
 }
 
