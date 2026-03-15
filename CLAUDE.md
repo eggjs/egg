@@ -144,8 +144,8 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
   - Pure markdown documentation package (no source code)
   - Provides structured guidance for AI assistants working with Egg
   - `egg/` - Entry point skill that routes to specialized skills
-  - `controller/` - Controller implementation skill (HTTP, MCP, Schedule)
-  - `tegg-core/` - Core framework concepts skill (modules, DI, lifecycle)
+  - `egg-controller/` - Controller implementation skill (HTTP, MCP, Schedule)
+  - `egg-core/` - Core framework concepts skill (modules, DI, lifecycle)
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example
@@ -461,7 +461,7 @@ Skills 采用分层路由模式：
 
 - **入口 skill** (`egg/`) — 分析用户意图，通过关键词匹配和决策逻辑路由到专业 skill
 - **专业 skills** — 提供特定领域的深度指导：
-  - `tegg-core/` — 核心概念：模块、依赖注入、生命周期、AccessLevel
+  - `egg-core/` — 核心概念：模块、依赖注入、生命周期、AccessLevel
   - `controller/` — 实现指导：HTTPController、MCPController、Schedule
 
 #### Egg Skill Frontmatter 约定
@@ -489,7 +489,7 @@ Skills 采用分层路由模式：
 
 | 模式                           | ant-skill-creator 对应 | 适用场景           | SKILL.md 内容           | references/ 用途   |
 | ------------------------------ | ---------------------- | ------------------ | ----------------------- | ------------------ |
-| **概念型**（如 `tegg-core/`）  | Reference-Based        | 概念解释、架构理解 | 自包含的深度内容        | 更深入的专题文档   |
+| **概念型**（如 `egg-core/`）   | Reference-Based        | 概念解释、架构理解 | 自包含的深度内容        | 更深入的专题文档   |
 | **索引型**（如 `controller/`） | Workflow-Based         | 多种实现方式的选择 | 精简的决策树 + 快速参考 | 每种实现的详细指南 |
 
 **概念型 Skill 内容结构：**

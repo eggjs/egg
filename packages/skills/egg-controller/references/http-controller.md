@@ -7,7 +7,7 @@
 使用 `@HTTPController` 和 `@HTTPMethod` 装饰器创建 HTTP 接口：
 
 ```typescript
-import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
+import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam } from 'egg';
 
 @HTTPController()
 export class DemoController {

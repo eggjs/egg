@@ -173,7 +173,7 @@ export class PackageMCPController {
 ### 3. Service — `app/npm/service/PackageService.ts`
 
 ```typescript
-import { SingletonProto, Inject } from 'egg';
+import { SingletonProto } from 'egg';
 
 @SingletonProto()
 export class PackageService {

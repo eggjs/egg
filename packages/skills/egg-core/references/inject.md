@@ -125,7 +125,7 @@ class FooService {
 > 强烈建议把 Egg Service 的代码通过 Proto 重新封装再注入。对于已有的 Service，可以通过以下方式引入：
 
 ```typescript
-import { EggLogger, Service, Inject, SingletonProto } from 'egg';
+import { Service, Inject, SingletonProto } from 'egg';
 
 @SingletonProto()
 class FooService {
