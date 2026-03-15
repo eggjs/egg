@@ -108,4 +108,85 @@ describe('test/loader/egg_loader.test.ts', () => {
     await loader.loadToContext(directory, prop);
     assert(Reflect.get(app.context, prop).user);
   });
+
+  describe('resolveModule with outDir', () => {
+    afterEach(mm.restore);
+
+    it('should resolve from outDir configured in package.json egg.outDir', () => {
+      const baseDir = getFilepath('app-outdir-pkg');
+      const loader = new EggLoader({
+        baseDir,
+        app: {},
+        logger: console,
+      } as any);
+      assert.equal(loader.outDir, 'dist');
+      // config/config.default does not exist as source, only as compiled output in dist/
+      const configPath = path.join(baseDir, 'config', 'config.default');
+      const resolved = loader.resolveModule(configPath);
+      assert(resolved);
+      assert(resolved.endsWith(path.join('dist', 'config', 'config.default.js')));
+    });
+
+    it('should resolve from outDir auto-detected from tsconfig.json', () => {
+      const baseDir = getFilepath('app-outdir-tsconfig');
+      const loader = new EggLoader({
+        baseDir,
+        app: {},
+        logger: console,
+      } as any);
+      assert.equal(loader.outDir, 'build');
+      const configPath = path.join(baseDir, 'config', 'config.default');
+      const resolved = loader.resolveModule(configPath);
+      assert(resolved);
+      assert(resolved.endsWith(path.join('build', 'config', 'config.default.js')));
+    });
+
+    it('should prefer package.json egg.outDir over tsconfig.json', () => {
+      const baseDir = getFilepath('app-outdir-precedence');
+      const loader = new EggLoader({
+        baseDir,
+        app: {},
+        logger: console,
+      } as any);
+      assert.equal(loader.outDir, 'dist');
+      const configPath = path.join(baseDir, 'config', 'config.default');
+      const resolved = loader.resolveModule(configPath);
+      assert(resolved);
+      assert(resolved.endsWith(path.join('dist', 'config', 'config.default.js')));
+    });
+
+    it('should not have outDir when neither egg.outDir nor tsconfig.json outDir is set', () => {
+      const baseDir = getFilepath('nothing');
+      const loader = new EggLoader({
+        baseDir,
+        app: {},
+        logger: console,
+      } as any);
+      assert.equal(loader.outDir, undefined);
+    });
+
+    it('should return undefined when file not found in outDir', () => {
+      const baseDir = getFilepath('app-outdir-pkg');
+      const loader = new EggLoader({
+        baseDir,
+        app: {},
+        logger: console,
+      } as any);
+      const nonExistent = path.join(baseDir, 'config', 'non-existent');
+      const resolved = loader.resolveModule(nonExistent);
+      assert.equal(resolved, undefined);
+    });
+
+    it('should not fallback for paths outside baseDir', () => {
+      const baseDir = getFilepath('app-outdir-pkg');
+      const loader = new EggLoader({
+        baseDir,
+        app: {},
+        logger: console,
+      } as any);
+      const outsidePath = path.join(getFilepath('nothing'), 'config', 'config.default');
+      const resolved = loader.resolveModule(outsidePath);
+      assert.equal(resolved, undefined);
+    });
+  });
 });
