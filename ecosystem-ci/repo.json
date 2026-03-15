@@ -2,7 +2,7 @@
   "cnpmcore": {
     "repository": "https://github.com/cnpm/cnpmcore.git",
     "branch": "master",
-    "hash": "6d6db575c476aa9deaf078117f9b121e1bd7ebdf"
+    "hash": "e82df3f4093c0ec9fd5354563605e60f7f613035"
   },
   "examples": {
     "repository": "https://github.com/eggjs/examples.git",

@@ -1,0 +1,10 @@
+{
+  "name": "example-ts-cluster-client",
+  "type": "module",
+  "devDependencies": {
+    "@eggjs/mock": "*"
+  },
+  "egg": {
+    "typescript": true
+  }
+}

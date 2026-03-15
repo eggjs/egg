@@ -2,6 +2,8 @@ import { defineConfig, type UserWorkspaceConfig } from 'vitest/config';
 
 const config: UserWorkspaceConfig = defineConfig({
   test: {
+    pool: 'threads',
+    isolate: false,
     projects: [
       'packages/*',
       'plugins/*',

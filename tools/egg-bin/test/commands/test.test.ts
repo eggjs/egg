@@ -117,6 +117,17 @@ describe('test/commands/test.test.ts', () => {
         .end();
     });
 
+    it('should success on ts with --pool threads and cluster-client', async () => {
+      const cwd = getFixtures('example-ts-cluster-client');
+      await coffee
+        .fork(eggBin, ['test', '--pool', 'threads'], { cwd })
+        .debug()
+        .expect('stdout', /index\.test\.ts/)
+        .expect('stdout', /Tests.*passed/)
+        .expect('code', 0)
+        .end();
+    });
+
     it('should success with --bail', async () => {
       await coffee
         .fork(eggBin, ['test', '--bail'], { cwd })

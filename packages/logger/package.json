@@ -26,12 +26,36 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./egg/console_logger": "./src/egg/console_logger.ts",
+    "./egg/custom_logger": "./src/egg/custom_logger.ts",
+    "./egg/error_logger": "./src/egg/error_logger.ts",
+    "./egg/logger": "./src/egg/logger.ts",
+    "./egg/loggers": "./src/egg/loggers.ts",
+    "./level": "./src/level.ts",
+    "./logger": "./src/logger.ts",
+    "./transports/console": "./src/transports/console.ts",
+    "./transports/file": "./src/transports/file.ts",
+    "./transports/file_buffer": "./src/transports/file_buffer.ts",
+    "./transports/transport": "./src/transports/transport.ts",
+    "./utils": "./src/utils.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./egg/console_logger": "./dist/egg/console_logger.js",
+      "./egg/custom_logger": "./dist/egg/custom_logger.js",
+      "./egg/error_logger": "./dist/egg/error_logger.js",
+      "./egg/logger": "./dist/egg/logger.js",
+      "./egg/loggers": "./dist/egg/loggers.js",
+      "./level": "./dist/level.js",
+      "./logger": "./dist/logger.js",
+      "./transports/console": "./dist/transports/console.js",
+      "./transports/file": "./dist/transports/file.js",
+      "./transports/file_buffer": "./dist/transports/file_buffer.js",
+      "./transports/transport": "./dist/transports/transport.js",
+      "./utils": "./dist/utils.js",
       "./package.json": "./package.json"
     }
   },

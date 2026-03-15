@@ -28,13 +28,13 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
     "./ajv": "./src/ajv.ts",
     "./aop": "./src/aop.ts",
     "./dal": "./src/dal.ts",
     "./helper": "./src/helper.ts",
     "./orm": "./src/orm.ts",
     "./schedule": "./src/schedule.ts",
-    "./agent": "./src/agent.ts",
     "./standalone": "./src/standalone.ts",
     "./transaction": "./src/transaction.ts",
     "./package.json": "./package.json"

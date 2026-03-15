@@ -61,41 +61,31 @@ jobs:
               mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS cnpmcore_unittest"
               CNPMCORE_DATABASE_NAME=cnpmcore_unittest bash ./prepare-database-mysql.sh
               CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
-              EGG_FILE_PARALLELISM=false npm run test:local
+              npm run test:local
 
               # Deployment test: start the app and verify it boots correctly
               npm run clean
+              npm run tsc:prod
+              # Overlay compiled .js onto source locations so both egg loader
+              # and tegg module scanner find .js files at the expected paths
+              cp -r dist/* .
+              rm -rf dist
+
               echo "Preparing database for deployment test..."
+              mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS cnpmcore_unittest"
+              CNPMCORE_DATABASE_NAME=cnpmcore_unittest bash ./prepare-database-mysql.sh
               CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
 
-              echo "Starting cnpmcore..."
-              CNPMCORE_FORCE_LOCAL_FS=true npx eggctl start &
-              SERVER_PID=$!
-
-              echo "Health checking cnpmcore..."
-              URL="http://127.0.0.1:7001"
-              PATTERN="instance_start_time"
-              TIMEOUT=60
-              TMP="$(mktemp)"
-              deadline=$((SECONDS + TIMEOUT))
-              last_status=""
-
-              while (( SECONDS < deadline )); do
-                last_status="$(curl -sS -o "$TMP" -w '%{http_code}' "$URL" || true)"
-                if [[ "$last_status" == "200" ]] && grep -q "$PATTERN" "$TMP"; then
-                  echo "cnpmcore is ready (status=$last_status)"
-                  rm -f "$TMP"
-                  npx eggctl stop || true
-                  exit 0
-                fi
-                sleep 1
-              done
-
-              echo "Health check failed: status=$last_status"
-              cat "$TMP" || true
-              rm -f "$TMP"
-              npx eggctl stop || true
-              exit 1
+              EGG_TS_ENABLE=false npx eggctl start --port=7001 --env=unittest --daemon
+              sleep 10
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:7001/)
+              echo "Health check status: $STATUS"
+              npx eggctl stop
+              if [ "$STATUS" != "200" ]; then
+                echo "Health check failed with status $STATUS"
+                cat logs/cnpmcore/common-error.log 2>/dev/null || true
+                exit 1
+              fi
           - name: examples
             node-version: 24
             command: |

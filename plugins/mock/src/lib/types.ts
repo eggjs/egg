@@ -52,6 +52,11 @@ export interface MockOptions {
   mockCtxStorage?: boolean;
 
   beforeInit?: (app: any) => Promise<void>;
+
+  /**
+   * Start mode for egg cluster-client
+   */
+  startMode?: 'process' | 'worker_threads';
 }
 
 export interface MockClusterOptions extends MockOptions {
