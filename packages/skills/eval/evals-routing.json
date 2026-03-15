@@ -1,0 +1,46 @@
+{
+  "skill_name": "egg",
+  "description": "入口 skill 路由决策评测",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我写一个接口",
+      "expected_output": "路由到 egg-controller skill"
+    },
+    {
+      "id": 2,
+      "prompt": "帮我写一个 GET /api/users/:id 的接口，返回用户信息",
+      "expected_output": "路由到 egg-controller skill"
+    },
+    {
+      "id": 3,
+      "prompt": "我想写个服务，不知道用 SingletonProto 还是 ContextProto",
+      "expected_output": "路由到 egg-core skill"
+    },
+    {
+      "id": 4,
+      "prompt": "帮我实现一个定时同步数据的功能，每 10 分钟跑一次",
+      "expected_output": "路由到 egg-controller skill"
+    },
+    {
+      "id": 5,
+      "prompt": "我的 @Inject 注入报错了，找不到对象",
+      "expected_output": "路由到 egg-core skill"
+    },
+    {
+      "id": 6,
+      "prompt": "帮我搭一个新模块，包含增删改查接口和 Service",
+      "expected_output": "路由到 egg-core skill（基础优先，先建模块再写接口）"
+    },
+    {
+      "id": 7,
+      "prompt": "我要给 AI 暴露几个 MCP Tool，查询订单和退款",
+      "expected_output": "路由到 egg-controller skill"
+    },
+    {
+      "id": 8,
+      "prompt": "不同环境的模块配置怎么管理",
+      "expected_output": "路由到 egg-core skill"
+    }
+  ]
+}

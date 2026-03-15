@@ -6,6 +6,7 @@ export default defineConfig({
     include: ['packages/*', 'plugins/*', 'tools/*', 'tegg/core/*', 'tegg/plugin/*', 'tegg/standalone/*'],
     exclude: [
       'packages/tsconfig', // Config-only package, no src to build
+      'packages/skills', // Pure markdown package, no src to build
       'dist',
     ],
   },

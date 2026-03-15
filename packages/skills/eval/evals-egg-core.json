@@ -1,0 +1,178 @@
+{
+  "skill_name": "egg-core",
+  "description": "核心概念评测：覆盖 module、proto、inject、dynamic-inject",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我新建一个 userModule，我是新项目从零开始",
+      "expected_output": "创建 package.json(eggModule.name)，驼峰命名，放在 app/ 下，给出完整目录结构"
+    },
+    {
+      "id": 2,
+      "prompt": "我们是老的 egg 项目，有大量 app/controller 和 app/service 代码，现在想引入 module 开发新功能，怎么组织目录？",
+      "expected_output": "保留原有 app/controller、app/service 不动，新增 module 放在 app/module/ 下"
+    },
+    {
+      "id": 3,
+      "prompt": "帮我写一个 module.yml 配置，本地和线上的数据库地址不同，怎么分环境管理",
+      "expected_output": "创建 module.yml 基础配置 + module.{env}.yml 环境配置，框架自动深度合并"
+    },
+    {
+      "id": 4,
+      "prompt": "我新加了一个模块，启动后发现没被加载，帮我看看什么问题",
+      "expected_output": "指出 eggModule.name 包含 - 不合法，应使用驼峰命名",
+      "files": [
+        {
+          "path": "app/user-module/package.json",
+          "content": "{\n  \"name\": \"user-module\",\n  \"eggModule\": {\n    \"name\": \"user-module\"\n  }\n}"
+        },
+        {
+          "path": "app/user-module/UserService.ts",
+          "content": "import { SingletonProto } from 'egg';\n\n@SingletonProto()\nexport class UserService {\n  async getUser() { return 'hello'; }\n}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "帮我写一个 UserService，查询用户信息，需要被其他模块调用",
+      "expected_output": "使用 @SingletonProto({ accessLevel: AccessLevel.PUBLIC })，包含完整代码"
+    },
+    {
+      "id": 6,
+      "prompt": "帮我实现一个请求级别的 TraceContext，存 traceId 和 userId，多个 Service 之间共享",
+      "expected_output": "使用 @ContextProto()，每个请求独立实例，其他 Service 通过 @Inject 共享同一个实例"
+    },
+    {
+      "id": 7,
+      "prompt": "我的 SingletonProto 需要在启动时连接 Redis，连接成功后才能对外提供服务，怎么写？",
+      "expected_output": "使用 @LifecycleInit() 做异步初始化，@LifecycleDestroy() 关闭连接，给出完整代码"
+    },
+    {
+      "id": 8,
+      "prompt": "SingletonProto 能注入 ContextProto 吗？我需要在单例服务里获取当前请求的用户信息",
+      "expected_output": "可以注入，框架通过 lazy getter/Proxy 自动处理，每次访问从当前请求上下文动态解析"
+    },
+    {
+      "id": 9,
+      "prompt": "启动报错 EggPrototypeNotFound，帮我看看代码哪里有问题",
+      "expected_output": "指出 OrderService 跨模块注入了 UserService 但 UserService 的 accessLevel 是 PRIVATE，应改为 PUBLIC",
+      "files": [
+        {
+          "path": "app/userModule/package.json",
+          "content": "{\n  \"name\": \"userModule\",\n  \"eggModule\": { \"name\": \"userModule\" }\n}"
+        },
+        {
+          "path": "app/userModule/UserService.ts",
+          "content": "import { SingletonProto } from 'egg';\n\n@SingletonProto()\nexport class UserService {\n  async findUser(id: string) {\n    return { id, name: 'test' };\n  }\n}"
+        },
+        {
+          "path": "app/orderModule/package.json",
+          "content": "{\n  \"name\": \"orderModule\",\n  \"eggModule\": { \"name\": \"orderModule\" }\n}"
+        },
+        {
+          "path": "app/orderModule/OrderService.ts",
+          "content": "import { SingletonProto, Inject } from 'egg';\nimport { UserService } from '../userModule/UserService.ts';\n\n@SingletonProto()\nexport class OrderService {\n  @Inject()\n  userService: UserService;\n\n  async createOrder(userId: string) {\n    const user = await this.userService.findUser(userId);\n    return { orderId: '1', user };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "注入的对象不对，我期望注入 FooService 但拿到的不是，帮我看看",
+      "expected_output": "指出 IFooService 是 interface 无运行时元信息，回退到属性名 fooHelper 匹配，应改用 class 类型或 @Inject({ name: 'fooService' })",
+      "files": [
+        {
+          "path": "app/bizModule/FooService.ts",
+          "content": "import { SingletonProto } from 'egg';\n\nexport interface IFooService {\n  doWork(): Promise<string>;\n}\n\n@SingletonProto()\nexport class FooService implements IFooService {\n  async doWork() { return 'done'; }\n}"
+        },
+        {
+          "path": "app/bizModule/BarService.ts",
+          "content": "import { SingletonProto, Inject } from 'egg';\nimport type { IFooService } from './FooService.ts';\n\n@SingletonProto()\nexport class BarService {\n  @Inject()\n  fooHelper: IFooService;  // 期望注入 FooService\n\n  async run() {\n    return this.fooHelper.doWork();\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "帮我写注入 config 和 logger 的代码，还要注入自定义的 bizLogger",
+      "expected_output": "@Inject() config: EggAppConfig + @Inject() logger: Logger + @Inject() bizLogger: Logger，给出完整代码"
+    },
+    {
+      "id": 12,
+      "prompt": "帮我把这个老的 egg Service 改成 module 写法",
+      "expected_output": "用 @SingletonProto 重写，@Inject() 注入依赖替代 this.ctx/this.app，去掉 extends Service",
+      "files": [
+        {
+          "path": "app/service/OrderService.ts",
+          "content": "import { Service } from 'egg';\n\nexport default class OrderService extends Service {\n  async create(data: any) {\n    const user = await this.ctx.service.user.find(data.userId);\n    this.ctx.logger.info('creating order for %s', user.name);\n    const result = await this.app.httpclient.request('https://api.example.com/orders', {\n      method: 'POST',\n      data,\n    });\n    return result.data;\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "启动报错说注入方式冲突了，帮我看看",
+      "expected_output": "指出构造函数注入和属性注入混用了，不能混用，需改为统一使用一种方式",
+      "files": [
+        {
+          "path": "app/bizModule/MixedService.ts",
+          "content": "import { SingletonProto, Inject } from 'egg';\n\n@SingletonProto()\nexport class MixedService {\n  @Inject()\n  logger: Logger;\n\n  constructor(\n    @Inject() readonly config: EggAppConfig,\n  ) {}\n\n  async run() {\n    this.logger.info('config: %j', this.config);\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "有个依赖在某些环境不一定存在，注入时不想让应用挂掉",
+      "expected_output": "使用 @Inject({ optional: true }) 或 @InjectOptional()，不存在时为 undefined"
+    },
+    {
+      "id": 15,
+      "prompt": "两个模块都有 DataService，注入时报冲突了，帮我看看怎么改",
+      "expected_output": "使用 @ModuleQualifier('moduleName') 指定从哪个模块注入",
+      "files": [
+        {
+          "path": "app/cacheModule/DataService.ts",
+          "content": "import { SingletonProto, AccessLevel } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class DataService {\n  async get(key: string) { return 'from cache'; }\n}"
+        },
+        {
+          "path": "app/dbModule/DataService.ts",
+          "content": "import { SingletonProto, AccessLevel } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class DataService {\n  async get(key: string) { return 'from db'; }\n}"
+        },
+        {
+          "path": "app/bizModule/BizService.ts",
+          "content": "import { SingletonProto, Inject } from 'egg';\n\n@SingletonProto()\nexport class BizService {\n  @Inject()\n  dataService: DataService;  // 报冲突\n}"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "帮我实现策略模式，有邮件、短信、钉钉三种通知方式，运行时根据配置选择",
+      "expected_output": "使用动态注入：抽象类 AbstractNotifier + 枚举 + QualifierImplDecoratorUtil 装饰器 + EggObjectFactory.getEggObject()，给出所有文件完整代码"
+    },
+    {
+      "id": 17,
+      "prompt": "动态注入不生效，getEggObject 报找不到实现，帮我看看代码",
+      "expected_output": "指出 EmailNotifier 缺少 @SingletonProto() 装饰器，实现类必须同时有 Proto 装饰器和自定义装饰器",
+      "files": [
+        {
+          "path": "app/notifyModule/AbstractNotifier.ts",
+          "content": "export abstract class AbstractNotifier {\n  abstract send(msg: string): Promise<void>;\n}"
+        },
+        {
+          "path": "app/notifyModule/NotifyType.ts",
+          "content": "export enum NotifyType {\n  EMAIL = 'EMAIL',\n  SMS = 'SMS',\n}"
+        },
+        {
+          "path": "app/notifyModule/decorator/Notify.ts",
+          "content": "import { ImplDecorator, QualifierImplDecoratorUtil } from 'egg';\nimport { NotifyType } from '../NotifyType.ts';\nimport { AbstractNotifier } from '../AbstractNotifier.ts';\n\nexport const NOTIFY_ATTRIBUTE = Symbol('NOTIFY_ATTRIBUTE');\n\nexport const Notify: ImplDecorator<AbstractNotifier, typeof NotifyType> =\n  QualifierImplDecoratorUtil.generatorDecorator(AbstractNotifier, NOTIFY_ATTRIBUTE);"
+        },
+        {
+          "path": "app/notifyModule/impl/EmailNotifier.ts",
+          "content": "import { Notify } from '../decorator/Notify.ts';\nimport { NotifyType } from '../NotifyType.ts';\nimport { AbstractNotifier } from '../AbstractNotifier.ts';\n\n@Notify(NotifyType.EMAIL)\nexport class EmailNotifier extends AbstractNotifier {\n  async send(msg: string) {\n    console.log('send email:', msg);\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "我想读取另一个模块的 moduleConfig，不是当前模块的",
+      "expected_output": "使用 @ConfigSourceQualifier('otherModule')，给出完整代码"
+    }
+  ]
+}

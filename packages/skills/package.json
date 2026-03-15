@@ -1,0 +1,29 @@
+{
+  "name": "@eggjs/skills",
+  "version": "4.1.2-beta.4",
+  "description": "agent skills for egg",
+  "keywords": [
+    "egg",
+    "skill"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/skills",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "eggjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "packages/skills"
+  },
+  "files": [
+    "**/*.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}
