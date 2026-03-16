@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/view",
-  "version": "4.0.2-beta.4",
+  "version": "4.0.2-beta.5",
   "description": "Base view plugin for egg",
   "keywords": [
     "egg",

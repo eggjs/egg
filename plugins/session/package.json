@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/session",
-  "version": "5.0.2-beta.4",
+  "version": "5.0.2-beta.5",
   "description": "session plugin for egg",
   "keywords": [
     "cookie",
