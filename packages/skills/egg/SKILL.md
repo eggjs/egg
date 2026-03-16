@@ -26,6 +26,7 @@ allowed-tools: Read
 - 模块之间的访问控制（`AccessLevel`）
 - 模块配置（`module.yml`、`package.json`）
 - 使用限定符解决命名冲突
+- 请求返回后执行异步任务（BackgroundTaskHelper）
 
 **触发关键词：**
 
@@ -34,6 +35,7 @@ allowed-tools: Read
 - context、request context、@ContextProto
 - inject、injection、dependency injection、@Inject
 - prototype、lifecycle、实例化
+- background task、异步任务、后台任务、BackgroundTaskHelper
 - access level、private、public、@ModuleQualifier
 - configuration、module config
 

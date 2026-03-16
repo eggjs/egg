@@ -1,6 +1,6 @@
 {
   "skill_name": "egg-core",
-  "description": "核心概念评测：覆盖 module、proto、inject、dynamic-inject",
+  "description": "核心概念评测：覆盖 module、proto、inject、dynamic-inject、background-task",
   "evals": [
     {
       "id": 1,
@@ -173,6 +173,64 @@
       "id": 18,
       "prompt": "我想读取另一个模块的 moduleConfig，不是当前模块的",
       "expected_output": "使用 @ConfigSourceQualifier('otherModule')，给出完整代码"
+    },
+    {
+      "id": 19,
+      "prompt": "请求返回后还要做一些事情，比如记日志、发通知，怎么实现",
+      "expected_output": "使用 BackgroundTaskHelper，@Inject() 注入，调用 run() 方法，从 egg 导入"
+    },
+    {
+      "id": 20,
+      "prompt": "用 BackgroundTaskHelper 在请求返回后异步上报埋点数据，帮我写个 MetricsService",
+      "expected_output": "@SingletonProto + @Inject() backgroundTaskHelper: BackgroundTaskHelper + run(async () => { ... })，从 egg 导入"
+    },
+    {
+      "id": 21,
+      "prompt": "用了 setTimeout 做后台任务，偶尔报错，帮我看看什么问题",
+      "expected_output": "指出 setTimeout 执行时上下文已释放，应改用 BackgroundTaskHelper.run()",
+      "files": [
+        {
+          "path": "app/orderModule/OrderService.ts",
+          "content": "import { SingletonProto, AccessLevel, Inject } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class OrderService {\n  @Inject()\n  private logger: any;\n\n  async createOrder(data: any) {\n    const order = { id: Date.now(), ...data };\n    // 请求返回后异步记录日志\n    setTimeout(async () => {\n      this.logger.info('Order created:', order.id);\n      await this.sendNotification(order);\n    }, 0);\n    return order;\n  }\n\n  private async sendNotification(order: any) {\n    // 发送通知\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "后台任务默认超时是多少？我有个任务比较慢，怎么改成更长的时间",
+      "expected_output": "默认 5 秒，可通过 backgroundTaskHelper.timeout 按请求设置，或在 config.default.ts 中 backgroundTask.timeout 全局配置"
+    },
+    {
+      "id": 23,
+      "prompt": "帮我写一个订单创建接口，创建成功后异步发送通知邮件，不影响接口响应速度",
+      "expected_output": "OrderService 中 @Inject() backgroundTaskHelper，在 createOrder 方法中调用 run() 异步发送邮件"
+    },
+    {
+      "id": 24,
+      "prompt": "帮我把这个用 setTimeout 的后台逻辑改成正确的写法",
+      "expected_output": "将 setTimeout 替换为 backgroundTaskHelper.run()，注入 BackgroundTaskHelper",
+      "files": [
+        {
+          "path": "app/cacheModule/CacheService.ts",
+          "content": "import { SingletonProto, AccessLevel, Inject } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class CacheService {\n  @Inject()\n  private redisService: any;\n\n  async getData(key: string) {\n    const data = await this.redisService.get(key);\n    if (!data) {\n      const fresh = await this.fetchFromDB(key);\n      // 异步回写缓存，不阻塞响应\n      setTimeout(async () => {\n        await this.redisService.set(key, fresh, 3600);\n      }, 0);\n      return fresh;\n    }\n    return data;\n  }\n\n  private async fetchFromDB(key: string) {\n    return { key, value: 'from-db' };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "后台任务里抛了异常，但接口没报错也没看到日志，怎么回事",
+      "expected_output": "BackgroundTaskHelper 内部捕获所有异常并通过 logger.error 记录，日志前缀为 [BackgroundTaskHelper]，检查日志配置是否正确",
+      "files": [
+        {
+          "path": "app/reportModule/ReportService.ts",
+          "content": "import { SingletonProto, AccessLevel, Inject, BackgroundTaskHelper } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class ReportService {\n  @Inject()\n  private backgroundTaskHelper: BackgroundTaskHelper;\n\n  async generateReport(data: any) {\n    this.backgroundTaskHelper.run(async () => {\n      // 这里可能会抛异常\n      const result = await this.callExternalAPI(data);\n      await this.saveReport(result);\n    });\n    return { status: 'processing' };\n  }\n\n  private async callExternalAPI(data: any) {\n    throw new Error('API timeout');\n  }\n\n  private async saveReport(result: any) {}\n}"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "我有个后台任务可能要跑 30 秒，怎么配置超时不被框架提前中断",
+      "expected_output": "设置 backgroundTaskHelper.timeout = 30000 或全局 config backgroundTask.timeout: 30000"
     }
   ]
 }
