@@ -79,10 +79,29 @@ function getTaskFilepath(task: Task): string | undefined {
 }
 
 export default class TeggVitestRunner extends VitestTestRunner {
+  private sharedMode: boolean;
   private fileScopeMap = new Map<string, FileScopeState>();
   private taskScopeMap = new Map<string, TaskScopeState>();
   private fileAppMap = new Map<string, FileAppState>();
   private warned = false;
+
+  constructor(config: ConstructorParameters<typeof VitestTestRunner>[0]) {
+    super(config);
+    // When isolate: false, all test files share the same worker and module cache.
+    // The app must not be closed between files — only after all files finish.
+    this.sharedMode = !config.isolate;
+    if (this.sharedMode) {
+      (globalThis as Record<string, unknown>).__eggVitestSharedMode = true;
+      debugLog('shared mode enabled (isolate: false)');
+    }
+  }
+
+  override onAfterRunFiles(): void {
+    // NOTE: vitest calls onAfterRunFiles() after each batch of files, not once
+    // after all files globally. In shared mode (isolate: false), we must NOT
+    // close the app here — the worker thread termination handles cleanup.
+    super.onAfterRunFiles();
+  }
 
   /**
    * Override importFile to capture per-file config set by configureTeggRunner()

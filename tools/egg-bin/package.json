@@ -85,6 +85,7 @@
     "npminstall": "catalog:",
     "rimraf": "catalog:",
     "runscript": "catalog:",
+    "sdk-base": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
