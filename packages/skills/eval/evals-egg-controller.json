@@ -1,6 +1,6 @@
 {
   "skill_name": "egg-controller",
-  "description": "控制器评测：覆盖 http-controller、mcp-controller、schedule",
+  "description": "控制器评测：覆盖 http-controller、mcp-controller、schedule、ajv-validate",
   "evals": [
     {
       "id": 1,
@@ -139,6 +139,63 @@
         {
           "path": "app/controller/user.ts",
           "content": "import { Controller } from 'egg';\n\nexport default class UserController extends Controller {\n  async show() {\n    const { ctx } = this;\n    const id = ctx.params.id;\n    const user = await ctx.service.user.find(id);\n    ctx.body = { success: true, data: user };\n  }\n\n  async create() {\n    const { ctx } = this;\n    const body = ctx.request.body;\n    const user = await ctx.service.user.create(body);\n    ctx.status = 201;\n    ctx.body = { success: true, data: user };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "帮我给这个 POST /api/users 接口加上参数校验，name 必填且最多50字符，email 必须是邮箱格式",
+      "expected_output": "从 egg/ajv 导入 Type/Ajv/Static，定义 TypeBox Schema（name: Type.String + maxLength, email: Type.String + format: email），@Inject() ajv: Ajv，ajv.validate()",
+      "files": [
+        {
+          "path": "app/userModule/UserController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPBody } from 'egg';\n\n@HTTPController({ path: '/api/users' })\nexport class UserController {\n  @HTTPMethod({ method: HTTPMethodEnum.POST, path: '/' })\n  async create(@HTTPBody() body: { name: string; email: string }) {\n    return { id: '1', ...body };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "参数校验跑不起来，帮我看看代码哪里有问题",
+      "expected_output": "指出三个错误：1. 导入路径应从 egg/ajv 而非 typebox/ajv 2. 不应 new Ajv() 手动创建 3. 应使用 @Inject() 注入全局单例",
+      "files": [
+        {
+          "path": "app/userModule/UserController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPBody, Inject } from 'egg';\nimport { Type, Static } from 'typebox';\nimport Ajv from 'ajv';\n\nconst CreateUserSchema = Type.Object({\n  name: Type.String({ maxLength: 50 }),\n  email: Type.String({ format: 'email' }),\n});\n\ntype CreateUserParams = Static<typeof CreateUserSchema>;\n\nconst ajv = new Ajv();\n\n@HTTPController({ path: '/api/users' })\nexport class UserController {\n  @HTTPMethod({ method: HTTPMethodEnum.POST, path: '/' })\n  async create(@HTTPBody() body: CreateUserParams) {\n    const valid = ajv.validate(CreateUserSchema, body);\n    if (!valid) throw new Error('Validation failed');\n    return { id: '1', ...body };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "帮我写一个注册接口的参数校验，要校验 email 格式、生日要是日期格式、用户ID要是 UUID 格式",
+      "expected_output": "使用 Type.String({ format: 'email' })、Type.String({ format: 'date' })、Type.String({ format: 'uuid' })，从 egg/ajv 导入"
+    },
+    {
+      "id": 22,
+      "prompt": "用户输入的名字前后经常有空格，怎么在参数校验时自动去掉空格",
+      "expected_output": "使用 TransformEnum.trim，从 egg/ajv 导入 TransformEnum，Type.String({ transform: [TransformEnum.trim] })"
+    },
+    {
+      "id": 23,
+      "prompt": "有些字段是选填的，比如用户的昵称和个人简介，校验时不传不应该报错",
+      "expected_output": "使用 Type.Optional() 包装选填字段，如 Type.Optional(Type.String())"
+    },
+    {
+      "id": 24,
+      "prompt": "帮我写一个校验 Schema，要求 tags 字段是一个元组，第一个元素是字符串类型的分类名，第二个元素是数字类型的权重",
+      "expected_output": "使用 Type.Tuple([Type.String(), Type.Number()])，AI 需要从 TypeBox 文档链接查找 Tuple 用法"
+    },
+    {
+      "id": 25,
+      "prompt": "基于这个 OrderService，帮我写一个创建订单的接口，需要做参数校验：productId 必填字符串，quantity 必填正整数，remark 选填",
+      "expected_output": "定义 Schema + @Inject() ajv: Ajv + ajv.validate() + @Inject() orderService，完整可运行代码",
+      "files": [
+        {
+          "path": "app/orderModule/package.json",
+          "content": "{\n  \"name\": \"orderModule\",\n  \"eggModule\": { \"name\": \"orderModule\" }\n}"
+        },
+        {
+          "path": "app/orderModule/OrderService.ts",
+          "content": "import { SingletonProto, AccessLevel } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class OrderService {\n  async create(data: { productId: string; quantity: number; remark?: string }) {\n    return { orderId: 'order-' + Date.now(), ...data };\n  }\n}"
         }
       ]
     }

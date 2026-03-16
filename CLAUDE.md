@@ -557,6 +557,67 @@ Skill 的价值 = 文档 + 实践经验 - 重复内容。如果内容和 `site/d
 4. 更新父级 `SKILL.md` 引用新文档
 5. 如果 `references/` 中已有文件，移除 `.gitkeep`
 
+#### Skill 评测
+
+评测用例存放在 `packages/skills/eval/` 目录下，用于验证 AI 使用 skill 后的回答质量。
+
+**评测文件结构：**
+
+```
+packages/skills/eval/
+├── evals-egg-core.json        # egg-core skill 评测用例
+├── evals-egg-controller.json  # egg-controller skill 评测用例
+├── evals-routing.json         # 入口路由评测用例
+├── .gitignore                 # 忽略 workspace/ 和 egg-workspace/
+└── egg-workspace/             # 评测输出（gitignored）
+    └── iteration-N/
+        ├── REPORT.md          # 对比评分报告
+        ├── ctrl-1-with-skill.md
+        ├── ctrl-1-site-docs.md
+        └── ...
+```
+
+**评测用例 JSON 格式：**
+
+```json
+{
+  "skill_name": "egg-controller",
+  "description": "控制器评测：覆盖 http-controller、mcp-controller、schedule、ajv-validate",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "用户的任务描述",
+      "expected_output": "期望输出的关键要素描述",
+      "files": [
+        { "path": "相对路径", "content": "文件内容（可选，用于提供上下文或有 bug 的代码）" }
+      ]
+    }
+  ]
+}
+```
+
+**评测流程（使用 skill-creator 工作流）：**
+
+1. **编写评测用例** — 在对应的 `evals-*.json` 中添加用例，覆盖：基础用法、易错场景、错误诊断（附 files）、不常用 API、集成场景
+2. **运行评测** — 为每个用例启动两个 subagent（with-skill 和 baseline/site-docs），分别提供 skill 内容或 site-docs 作为上下文
+3. **保存输出** — 结果保存到 `egg-workspace/iteration-N/` 目录，命名规则：`{prefix}-{id}-{with-skill|site-docs}.md`
+4. **生成报告** — 对比两组输出，按 Accuracy/Completeness/Code 三维度评分，生成 `REPORT.md`
+5. **改进 skill** — 根据评测发现的问题改进 skill 内容，开启新的 iteration
+
+**评测用例设计原则：**
+
+每个 reference 文档至少覆盖 5 个以上评测用例，需覆盖以下场景类型：
+
+| 场景类型             | 说明                                    | 示例                                                     |
+| -------------------- | --------------------------------------- | -------------------------------------------------------- |
+| **泛化需求描述**     | 不了解框架术语，用口语化描述需求        | "帮我加个参数校验"                                       |
+| **精确需求描述**     | 明确指定技术方案和约束                  | "用 TypeBox 定义 Schema，email 用 format: email"         |
+| **使用咨询**         | 询问用法、区别、选型                    | "Optional 和 Null 有什么区别"                            |
+| **问题排查**         | 提供有 bug 的代码（附 files），要求诊断 | "校验跑不起来，帮我看看"                                 |
+| **新项目代码生成**   | 在全新项目中从零开始生成功能代码        | "帮我写一个创建订单的接口，需要做参数校验"               |
+| **存量项目代码生成** | 在包含老 egg 代码的项目中生成或迁移代码 | "帮我把这个老的 egg controller 改成 HTTPController 写法" |
+| **不常用 API**       | 需要查外部文档链接才能回答              | "用 Tuple 定义元组校验"                                  |
+
 ### Tool Packages Structure
 
 Tool packages (like egg-bin) should be placed in the `tools/` directory:

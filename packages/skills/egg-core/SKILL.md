@@ -83,6 +83,20 @@ export class ConfigService {
 - 存量应用：保留老的 egg 代码在 `app/controller`/`app/service`，将新增的 module 代码放在 `app/module/`
 - 可以在 `dependencies` 中导入 npm 包作为额外模块
 
+### 导入路径
+
+所有装饰器和类型统一从 `egg` 导入，不要从 `@eggjs/tegg` 导入：
+
+```typescript
+// ✅ 正确
+import { SingletonProto, ContextProto, Inject, AccessLevel } from 'egg';
+
+// ❌ 错误 — 不要从 @eggjs/tegg 导入
+import { SingletonProto } from '@eggjs/tegg';
+```
+
+---
+
 ## Step 2: 用 Proto 实现 Service
 
 ### SingletonProto

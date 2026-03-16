@@ -18,6 +18,10 @@ allowed-tools: Read
 2. 定时任务，可以使用 Schedule，参考 `references/schedule.md`
 
 3. MCP 接口，可以使用 MCPController，参考 `references/mcp-controller.md`
+
+需要做参数校验？
+
+4. 使用 Ajv + TypeBox 做入参校验，参考 `references/ajv-validate.md`
 ```
 
 ---
@@ -42,15 +46,24 @@ allowed-tools: Read
 - **模式**：Worker/All
 - **详细文档**：`references/schedule.md`
 
+### Ajv 参数校验
+
+- **导入**：`import { Ajv, Type, Static } from 'egg/ajv'`
+- **方式**：`@Inject() ajv: Ajv`，调用 `ajv.validate(schema, data)`
+- **特点**：TypeBox 定义一次 Schema，同时获得校验和 TypeScript 类型
+- **详细文档**：`references/ajv-validate.md`
+
 ---
 
 ## 常见问题排查
 
-| 现象                   | 原因                     | 解决方案                                                           |
-| ---------------------- | ------------------------ | ------------------------------------------------------------------ |
-| MCP 装饰器 import 报错 | 从 `'egg'` 导入          | MCP 装饰器从 `'@eggjs/tegg'` 导入，zod 从 `'@eggjs/tegg/zod'` 导入 |
-| MCP Schema 报错        | 用了 `z.object()` 包装   | 直接用普通对象 `{ name: z.string() }`                              |
-| 定时任务不生效         | 放在 `app/schedule` 目录 | 放在模块目录中，避免和 egg 默认扫描冲突                            |
+| 现象                   | 原因                       | 解决方案                                                           |
+| ---------------------- | -------------------------- | ------------------------------------------------------------------ |
+| MCP 装饰器 import 报错 | 从 `'egg'` 导入            | MCP 装饰器从 `'@eggjs/tegg'` 导入，zod 从 `'@eggjs/tegg/zod'` 导入 |
+| MCP Schema 报错        | 用了 `z.object()` 包装     | 直接用普通对象 `{ name: z.string() }`                              |
+| 定时任务不生效         | 放在 `app/schedule` 目录   | 放在模块目录中，避免和 egg 默认扫描冲突                            |
+| Ajv 校验 import 报错   | 从 `typebox` 或 `ajv` 导入 | 统一从 `'egg/ajv'` 导入 Type、Static、Ajv 等                       |
+| type 推导不完整        | 用 `type` 定义             | 用 `interface Foo extends Static<typeof Schema> {}` 代替           |
 
 ---
 
@@ -71,5 +84,6 @@ allowed-tools: Read
 - `references/http-controller.md` - HTTP 接口完整指南
 - `references/mcp-controller.md` - MCP 接口开发
 - `references/schedule.md` - 定时任务
+- `references/ajv-validate.md` - Ajv 参数校验
 
 核心概念（`egg-core` skill）：模块、依赖注入、对象生命周期
