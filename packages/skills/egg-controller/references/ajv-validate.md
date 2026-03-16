@@ -7,8 +7,9 @@
 | `import { Type } from 'typebox'` | `import { Type } from 'egg/ajv'`  | 必须从 `egg/ajv` 导入，内部已封装 typebox      |
 | `import { Ajv } from 'ajv'`      | `import { Ajv } from 'egg/ajv'`   | Ajv 实例通过 `egg/ajv` 导出                    |
 | `new Ajv()` 手动创建实例         | `@Inject() ajv: Ajv` 注入全局单例 | 框架已配置好 formats 和 keywords，不要自行创建 |
+| 在 Service 中做参数校验          | 在 Controller 中做参数校验        | 入参校验应在 Controller 层完成                 |
 
-## | 在 Service 中做参数校验 | 在 Controller 中做参数校验 | 入参校验应在 Controller 层完成 |
+---
 
 ## 核心概念
 
