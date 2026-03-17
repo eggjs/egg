@@ -31,7 +31,7 @@ import { Ajv, Type, Static, TransformEnum } from 'egg/ajv';
 ### 完整示例
 
 ```typescript
-// app/modules/demo/FooController.ts
+// app/userModule/UserController.ts
 import {
   HTTPController,
   HTTPMethod,
@@ -66,7 +66,7 @@ export class UserController {
     path: '/api/users',
   })
   async create(@HTTPBody() body: CreateUserParams) {
-    // 校验失败自动抛出 AjvInvalidParamError（422）
+    // 校验失败自动抛出 AjvInvalidParamError
     this.ajv.validate(CreateUserSchema, body);
 
     // 校验通过，body 已经有完整类型提示
@@ -142,5 +142,5 @@ Type.String({
 
 - **Schema 与 Controller 同文件** — Schema 定义放在使用它的 Controller 文件中，保持就近原则
 - **校验在 Controller 层** — 不要在 Service 层做入参校验，Service 信任上层传入的数据
-- **善用 Optional** — 非必填字段用 `Type.Optional()` 包装，避免前端遗漏字段导致 422
+- **善用 Optional** — 非必填字段用 `Type.Optional()` 包装，避免前端遗漏字段导致校验失败
 - **善用 transform** — 对用户输入做 trim 预处理，减少脏数据

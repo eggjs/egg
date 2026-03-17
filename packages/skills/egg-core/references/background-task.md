@@ -16,7 +16,7 @@
 
 ### 基本用法
 
-通过 `@Inject()` 注入 `BackgroundTaskHelper`，调用 `run()` 方法。`run()` 接受一个异步函数，在请求返回后执行。
+通过 `@Inject()` 注入 `BackgroundTaskHelper`，调用 `run()` 方法。`run()` 接受一个异步函数，任务会立即开始执行但不阻塞当前流程。框架在请求结束（Context preDestroy）时会等待所有后台任务完成（最多等待 timeout），然后再释放上下文。
 
 ```typescript
 import { BackgroundTaskHelper, Inject, SingletonProto, AccessLevel } from 'egg';
@@ -27,10 +27,9 @@ export class MetricsService {
   private backgroundTaskHelper: BackgroundTaskHelper;
 
   async reportAfterResponse(data: Record<string, unknown>) {
-    // run() 是非阻塞的，调用后立即返回
+    // run() 是非阻塞的，任务立即开始执行但不会被 await
     this.backgroundTaskHelper.run(async () => {
-      // 这里的代码在 HTTP 响应发送后执行
-      // 可以安全访问注入的服务和上下文
+      // 框架会保持上下文存活直到任务完成或超时
       await this.sendMetrics(data);
     });
   }
@@ -86,7 +85,7 @@ BackgroundTaskHelper 内部会捕获所有错误并记录日志，**不会**抛�
 this.backgroundTaskHelper.run(async () => {
   // 即使这里抛出异常，也不会影响其他后台任务或框架
   throw new Error('something went wrong');
-  // 错误会被记录为: [BackgroundTaskHelper] background throw error: something went wrong
+  // 错误会被记录为: [BackgroundTaskHelper] background throw error:something went wrong
 });
 
 // 如果需要自定义错误处理
@@ -108,9 +107,9 @@ this.backgroundTaskHelper.run(async () => {
 
 BackgroundTaskHelper 的作用是：
 
-1. 告诉框架"先不要释放上下文"
-2. 排队执行异步任务
-3. 等待完成（或超时）
-4. 然后再释放上下文
+1. `run()` 被调用时，任务立即开始执行（不是延后到响应发送后）
+2. 任务不会被 await，因此不阻塞当前请求的返回
+3. 请求结束时（Context preDestroy），框架等待所有后台任务完成（最多等待 timeout）
+4. 等待结束后才释放上下文
 
-这就是为什么必须用 `backgroundTaskHelper.run()` 而不是 `setTimeout` — 后者绕过了框架的上下文生命周期管理。
+这就是为什么必须用 `backgroundTaskHelper.run()` 而不是 `setTimeout` — 后者绕过了框架的上下文生命周期管理，执行时上下文可能已被释放。
