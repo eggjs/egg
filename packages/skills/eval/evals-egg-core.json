@@ -1,6 +1,6 @@
 {
   "skill_name": "egg-core",
-  "description": "核心概念评测：覆盖 module、proto、inject、dynamic-inject、background-task、eventbus",
+  "description": "核心概念评测：覆盖 module、proto、inject、dynamic-inject、background-task、eventbus、aop",
   "evals": [
     {
       "id": 1,
@@ -286,6 +286,56 @@
       "id": 33,
       "prompt": "EventBus 的 cork/uncork 怎么用，我想批量操作完成后再统一触发事件",
       "expected_output": "注入 ContextEventBus，cork() 开始缓冲 → emit 多个事件 → uncork() 释放，支持嵌套调用"
+    },
+    {
+      "id": 34,
+      "prompt": "所有 Service 的方法调用都要记录耗时日志，不想在每个方法里写",
+      "expected_output": "使用 AOP @Crosscut + PointcutType.NAME 正则匹配 Service，Advice 中 beforeCall 记录开始时间，afterFinally 计算耗时并打日志"
+    },
+    {
+      "id": 35,
+      "prompt": "用 @Pointcut 给 OrderService.createOrder 加事务包裹",
+      "expected_output": "@Advice 实现 around hook 管理事务（beginTransaction/commit/rollback）+ @Pointcut(TxAdvice) 装饰目标方法，从 egg/aop 导入"
+    },
+    {
+      "id": 36,
+      "prompt": "Pointcut 和 Crosscut 有什么区别，怎么选",
+      "expected_output": "Pointcut 在目标方法上声明，精确切入单个方法；Crosscut 在 Advice 类上声明匹配规则，批量切入多个类/方法"
+    },
+    {
+      "id": 37,
+      "prompt": "AOP 的 Advice 不生效，帮我看看",
+      "expected_output": "指出缺少 @Advice() 装饰器，@Crosscut 和 @Advice() 必须同时使用",
+      "files": [
+        {
+          "path": "app/logModule/package.json",
+          "content": "{\n  \"name\": \"logModule\",\n  \"eggModule\": { \"name\": \"logModule\" }\n}"
+        },
+        {
+          "path": "app/logModule/OperationLogAdvice.ts",
+          "content": "import { Crosscut, IAdvice, AdviceContext, PointcutType } from 'egg/aop';\nimport { Inject, Logger } from 'egg';\n\n@Crosscut({\n  type: PointcutType.NAME,\n  className: /.*Service$/i,\n  methodName: /^(create|update|delete)/,\n})\nexport class OperationLogAdvice implements IAdvice {\n  @Inject()\n  private logger: Logger;\n\n  async afterFinally(ctx: AdviceContext): Promise<void> {\n    this.logger.info('called %s', String(ctx.method));\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "prompt": "帮我用 AOP 实现统一的异常捕获和错误日志",
+      "expected_output": "Advice 实现 afterThrow hook 记录异常信息，使用 @Crosscut 或 @Pointcut 应用到目标方法，从 egg/aop 导入"
+    },
+    {
+      "id": 39,
+      "prompt": "adviceParams 怎么用，同一个 Advice 不同方法需要不同参数",
+      "expected_output": "@Pointcut 第二个参数传 { adviceParams: {...} }，Advice 中通过 ctx.adviceParams 获取"
+    },
+    {
+      "id": 40,
+      "prompt": "同一个方法上有 Crosscut 和 Pointcut 两个 Advice，执行顺序是什么，能控制吗",
+      "expected_output": "Crosscut 默认 order 100 先执行，Pointcut 默认 order 1000 后执行，可通过 order 参数调整顺序"
+    },
+    {
+      "id": 41,
+      "prompt": "帮我用 Crosscut 的 CUSTOM 模式，对所有 Repository 类的非 constructor 方法加监控",
+      "expected_output": "使用 PointcutType.CUSTOM + callback 函数匹配 Repository 类并排除 constructor，从 egg/aop 导入"
     }
   ]
 }

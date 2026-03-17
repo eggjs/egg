@@ -1,6 +1,6 @@
 ---
 name: egg-core
-description: 本技能用于处理 EGG 基础核心概念，包括模块架构、@SingletonProto、@ContextProto、@Inject 装饰器、动态注入、BackgroundTaskHelper 后台任务和 EventBus 事件总线。用于理解 EGG 的基础构建块、依赖注入、对象生命周期管理、运行时多实现动态选择、请求返回后的异步任务处理和事件驱动架构。
+description: 本技能用于处理 EGG 基础核心概念，包括模块架构、@SingletonProto、@ContextProto、@Inject 装饰器、动态注入、BackgroundTaskHelper 后台任务、EventBus 事件总线和 AOP 切面编程。用于理解 EGG 的基础构建块、依赖注入、对象生命周期管理、运行时多实现动态选择、请求返回后的异步任务处理、事件驱动架构和横切关注点。
 allowed-tools: Read
 ---
 
@@ -211,6 +211,20 @@ export class HelloService {
    └─ → Schedule（参考 egg-controller skill）
 ```
 
+## AOP 切面编程
+
+AOP 用于将日志、鉴权、缓存、事务等横切关注点从业务代码中分离。AOP 装饰器从 `egg/aop` 导入（不是 `egg`）。
+
+```
+需要在方法执行前后添加通用逻辑？
+│
+├─ 针对特定方法 → @Pointcut（在目标方法上声明）
+│
+└─ 批量切入多个类/方法 → @Crosscut（在 Advice 类上声明匹配规则）
+```
+
+详细用法（Advice 生命周期、AdviceContext、Pointcut/Crosscut 选型、参数透传、执行顺序）请参阅 `references/aop.md`。
+
 ## 常见问题排查
 
 | 现象                   | 原因                                       | 解决方案                                     |
@@ -229,3 +243,4 @@ export class HelloService {
 - 动态注入（Qualifier 动态注入），请参阅：`references/dynamic-inject.md`
 - 请求后异步任务（BackgroundTaskHelper），请参阅：`references/background-task.md`
 - 事件总线（EventBus），请参阅：`references/eventbus.md`
+- AOP 切面编程（Advice、Pointcut、Crosscut），请参阅：`references/aop.md`

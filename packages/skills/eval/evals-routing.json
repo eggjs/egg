@@ -51,6 +51,11 @@
       "id": 10,
       "prompt": "EventBus 和 BackgroundTaskHelper 怎么选",
       "expected_output": "路由到 egg-core skill"
+    },
+    {
+      "id": 11,
+      "prompt": "帮我用 AOP 给所有 Service 加日志",
+      "expected_output": "路由到 egg-core skill"
     }
   ]
 }
