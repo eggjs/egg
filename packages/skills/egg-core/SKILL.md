@@ -83,6 +83,20 @@ export class ConfigService {
 - 存量应用：保留老的 egg 代码在 `app/controller`/`app/service`，将新增的 module 代码放在 `app/module/`
 - 可以在 `dependencies` 中导入 npm 包作为额外模块
 
+### 导入路径
+
+所有装饰器和类型统一从 `egg` 导入，不要从 `@eggjs/tegg` 导入：
+
+```typescript
+// ✅ 正确
+import { SingletonProto, ContextProto, Inject, AccessLevel } from 'egg';
+
+// ❌ 错误 — 不要从 @eggjs/tegg 导入
+import { SingletonProto } from '@eggjs/tegg';
+```
+
+---
+
 ## Step 2: 用 Proto 实现 Service
 
 ### SingletonProto
@@ -165,14 +179,30 @@ export class HelloService {
 
 ## 快速决策指南
 
-| 场景                             | 使用装饰器                                             |
-| -------------------------------- | ------------------------------------------------------ |
-| 无状态服务                       | `@SingletonProto()`                                    |
-| 跨服务共享的请求级状态           | `@ContextProto()`                                      |
-| 需要跨模块访问                   | `@SingletonProto({ accessLevel: AccessLevel.PUBLIC })` |
-| 注入依赖                         | `@Inject()`                                            |
-| 使用自定义名称注入               | `@Inject({ name: 'customName' })`                      |
-| 同一抽象多种实现，运行时动态选择 | `QualifierImplDecoratorUtil` + `EggObjectFactory`      |
+| 场景                             | 使用装饰器                                                         |
+| -------------------------------- | ------------------------------------------------------------------ |
+| 无状态服务                       | `@SingletonProto()`                                                |
+| 跨服务共享的请求级状态           | `@ContextProto()`                                                  |
+| 需要跨模块访问                   | `@SingletonProto({ accessLevel: AccessLevel.PUBLIC })`             |
+| 注入依赖                         | `@Inject()`                                                        |
+| 使用自定义名称注入               | `@Inject({ name: 'customName' })`                                  |
+| 同一抽象多种实现，运行时动态选择 | `QualifierImplDecoratorUtil` + `EggObjectFactory`                  |
+| 请求返回后执行异步任务           | `BackgroundTaskHelper.run()`，详见 `references/background-task.md` |
+
+### 异步任务选型
+
+```
+需要在请求之外执行任务？
+│
+├─ 请求返回后执行，依赖当前请求上下文
+│  └─ → BackgroundTaskHelper（references/background-task.md）
+│
+├─ 请求返回后执行，不依赖当前请求上下文
+│  └─ → EventBus
+│
+└─ 定时或周期执行
+   └─ → Schedule（参考 egg-controller skill）
+```
 
 ## 常见问题排查
 
@@ -190,3 +220,4 @@ export class HelloService {
 - Inject 装饰器使用，请参阅：`references/inject.md`
 - SingletonProto 和 ContextProto 详情，请参阅：`references/proto.md`
 - 动态注入（Qualifier 动态注入），请参阅：`references/dynamic-inject.md`
+- 请求后异步任务（BackgroundTaskHelper），请参阅：`references/background-task.md`
