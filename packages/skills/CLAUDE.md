@@ -2,7 +2,7 @@
 
 `packages/skills/` 目录包含 AI agent skills — 纯 markdown 文档，指导 AI 助手使用 Egg 框架。以 `@eggjs/skills` npm 包发布，仅含 `.md` 文件。
 
-> **Skill 编写基础知识**：SKILL.md 格式、frontmatter 规范、目录结构、progressive disclosure、写作风格等通用知识请使用 `/ant-skill-creator` skill 获取指导。以下仅记录 Egg 项目特有的约定。
+> **Skill 编写基础知识**：SKILL.md 格式、frontmatter 规范、目录结构、progressive disclosure、写作风格等通用知识请使用 `/skill-creator` skill 获取指导。以下仅记录 Egg 项目特有的约定。
 
 ## Egg Skills 架构
 
@@ -10,8 +10,8 @@ Skills 采用分层路由模式：
 
 - **入口 skill** (`egg/`) — 分析用户意图，通过关键词匹配和决策逻辑路由到专业 skill
 - **专业 skills** — 提供特定领域的深度指导：
-  - `egg-core/` — 核心概念：模块、依赖注入、生命周期、AccessLevel
-  - `controller/` — 实现指导：HTTPController、MCPController、Schedule
+  - `egg-core/` — 核心概念：模块、依赖注入、生命周期、AccessLevel、后台任务
+  - `egg-controller/` — 实现指导：HTTPController、MCPController、Schedule、Ajv 校验
 
 ## Egg Skill Frontmatter 约定
 
@@ -36,10 +36,10 @@ Skills 采用分层路由模式：
 
 **专业 Skill 两种组织模式：**
 
-| 模式                           | ant-skill-creator 对应 | 适用场景           | SKILL.md 内容           | references/ 用途   |
-| ------------------------------ | ---------------------- | ------------------ | ----------------------- | ------------------ |
-| **概念型**（如 `egg-core/`）   | Reference-Based        | 概念解释、架构理解 | 自包含的深度内容        | 更深入的专题文档   |
-| **索引型**（如 `controller/`） | Workflow-Based         | 多种实现方式的选择 | 精简的决策树 + 快速参考 | 每种实现的详细指南 |
+| 模式                               | ant-skill-creator 对应 | 适用场景           | SKILL.md 内容           | references/ 用途   |
+| ---------------------------------- | ---------------------- | ------------------ | ----------------------- | ------------------ |
+| **概念型**（如 `egg-core/`）       | Reference-Based        | 概念解释、架构理解 | 自包含的深度内容        | 更深入的专题文档   |
+| **索引型**（如 `egg-controller/`） | Workflow-Based         | 多种实现方式的选择 | 精简的决策树 + 快速参考 | 每种实现的详细指南 |
 
 **概念型 Skill 内容结构：**
 
@@ -92,11 +92,11 @@ Skill 的价值 = 文档 + 实践经验 - 重复内容。如果内容和 `site/d
 ## 添加新 Skill
 
 1. 在 `packages/skills/` 下创建目录：`packages/skills/<skill-name>/`
-2. 创建 `SKILL.md`（格式规范参考 `/ant-skill-creator`，frontmatter 遵循上述 Egg 约定）
+2. 创建 `SKILL.md`（格式规范参考 `/skill-creator`，frontmatter 遵循上述 Egg 约定）
 3. 创建 `references/` 目录（初始为空时放置 `.gitkeep`）
 4. 按需在 `references/*.md` 中添加详细参考文档
 5. 更新入口 skill（`egg/SKILL.md`）的路由逻辑以包含新 skill
-6. 如果 skill 涉及 controller 类型，同时更新 `controller/SKILL.md` 决策树
+6. 如果 skill 涉及 controller 类型，同时更新 `egg-controller/SKILL.md` 决策树
 
 ## 添加新 Reference 文档
 
@@ -112,7 +112,7 @@ Skill 的价值 = 文档 + 实践经验 - 重复内容。如果内容和 `site/d
 
 **评测文件结构：**
 
-```
+```text
 packages/skills/eval/
 ├── evals-egg-core.json        # egg-core skill 评测用例
 ├── evals-egg-controller.json  # egg-controller skill 评测用例
@@ -169,7 +169,7 @@ packages/skills/eval/
 
 with-skill 环境：
 
-```
+```text
 你是 EGG 框架开发专家。你只能通过 Read 工具读取 packages/skills/ 目录下的文件，不能访问 site/docs/ 或项目源码。
 
 {egg/SKILL.md 的完整内容}
@@ -180,7 +180,7 @@ with-skill 环境：
 
 site-docs 环境：
 
-```
+```text
 你是 EGG 框架开发专家。你只能通过 Read 工具读取 site/docs/ 目录下的文件，不能访问 packages/skills/ 或项目源码。项目文档目录如下：
 
 {完整的 site/docs/ 文件列表，通过 find site/docs -name '*.md' | sort 生成}
