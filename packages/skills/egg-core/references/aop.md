@@ -2,13 +2,13 @@
 
 ## 常见错误
 
-| 错误写法                                   | 正确写法                              | 说明                                                                      |
-| ------------------------------------------ | ------------------------------------- | ------------------------------------------------------------------------- |
-| `import { Advice } from 'egg'`             | `import { Advice } from 'egg/aop'`    | AOP 装饰器从 `egg/aop` 导入，不是 `egg`                                   |
-| `import { Advice } from '@eggjs/tegg/aop'` | `import { Advice } from 'egg/aop'`    | 统一从 `egg/aop` 导入                                                     |
-| Advice 类没有加 `@Advice()` 装饰器         | 必须同时有 `@Advice()`                | `@Pointcut` 和 `@Crosscut` 都要求目标是 Advice 类                         |
-| `@Crosscut` 直接切 Egg 内置对象            | 只能切 tegg Proto 对象                | Egg 中的对象（如 app、ctx）无法被 Crosscut                                |
-| Advice 中用实例属性存状态                  | 使用 `ctx.set()`/`ctx.get()` 共享状态 | Advice 默认是 ContextProto，多个 hook 之间用 AdviceContext 共享数据更安全 |
+| 错误写法                                   | 正确写法                              | 说明                                                                                   |
+| ------------------------------------------ | ------------------------------------- | -------------------------------------------------------------------------------------- |
+| `import { Advice } from 'egg'`             | `import { Advice } from 'egg/aop'`    | AOP 装饰器从 `egg/aop` 导入，不是 `egg`                                                |
+| `import { Advice } from '@eggjs/tegg/aop'` | `import { Advice } from 'egg/aop'`    | 统一从 `egg/aop` 导入                                                                  |
+| Advice 类没有加 `@Advice()` 装饰器         | 必须同时有 `@Advice()`                | `@Pointcut` 和 `@Crosscut` 都要求目标是 Advice 类                                      |
+| `@Crosscut` 直接切 Egg 内置对象            | 只能切 tegg Proto 对象                | Egg 中的对象（如 app、ctx）无法被 Crosscut                                             |
+| Advice 中用实例属性存状态                  | 使用 `ctx.set()`/`ctx.get()` 共享状态 | Advice 默认是 Singleton，实例属性会被并发请求共享，必须用 AdviceContext 传递调用级状态 |
 
 ---
 
@@ -16,7 +16,7 @@
 
 ### Advice（切面逻辑）
 
-Advice 是 AOP 的核心，定义了在目标方法执行前后要做什么。Advice 本身也是一种 Proto，默认 initType 为 Context（每个请求一个实例），可以使用 `@Inject` 注入依赖。
+Advice 是 AOP 的核心，定义了在目标方法执行前后要做什么。Advice 本身也是一种 Proto，默认 initType 为 Singleton（全局单例），可以使用 `@Inject` 注入依赖。如需每请求一个实例，显式指定 `@Advice({ initType: ObjectInitType.CONTEXT })`。
 
 ```typescript
 import { Advice, IAdvice, AdviceContext } from 'egg/aop';
