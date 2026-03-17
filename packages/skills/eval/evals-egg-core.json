@@ -1,6 +1,6 @@
 {
   "skill_name": "egg-core",
-  "description": "核心概念评测：覆盖 module、proto、inject、dynamic-inject、background-task",
+  "description": "核心概念评测：覆盖 module、proto、inject、dynamic-inject、background-task、eventbus",
   "evals": [
     {
       "id": 1,
@@ -231,6 +231,61 @@
       "id": 26,
       "prompt": "我有个后台任务可能要跑 30 秒，怎么配置超时不被框架提前中断",
       "expected_output": "设置 backgroundTaskHelper.timeout = 30000 或全局 config backgroundTask.timeout: 30000"
+    },
+    {
+      "id": 27,
+      "prompt": "订单创建后要发通知、记日志、更新统计，但不想耦合在一起，怎么做",
+      "expected_output": "使用 EventBus 解耦：声明 Events 接口 + emit 触发事件 + 多个 @Event handler 分别处理通知、日志、统计"
+    },
+    {
+      "id": 28,
+      "prompt": "用 EventBus 实现订单事件，要求类型安全，帮我写 Events 声明和 handler",
+      "expected_output": "declare module 'egg' { interface Events { ... } } + @Event handler + 从 egg 导入 EventBus/Event，事件声明文件开头有 import 'egg'"
+    },
+    {
+      "id": 29,
+      "prompt": "EventBus 和 BackgroundTaskHelper 什么区别，我该用哪个",
+      "expected_output": "对比耦合度（强耦合 vs 解耦）、上下文（共享 vs 独立）、扩展性（改触发者 vs 加 handler），给出选型建议"
+    },
+    {
+      "id": 30,
+      "prompt": "EventBus 的 handler 没有被触发，帮我看看",
+      "expected_output": "指出 handler 文件不在 module 目录中，框架无法扫描到，应移到模块目录下",
+      "files": [
+        {
+          "path": "app/orderModule/package.json",
+          "content": "{\n  \"name\": \"orderModule\",\n  \"eggModule\": { \"name\": \"orderModule\" }\n}"
+        },
+        {
+          "path": "app/orderModule/OrderService.ts",
+          "content": "import { SingletonProto, Inject, EventBus } from 'egg';\n\n@SingletonProto()\nexport class OrderService {\n  @Inject()\n  private eventBus: EventBus;\n\n  async createOrder(userId: string) {\n    this.eventBus.emit('orderCreated', '123', userId);\n    return { orderId: '123' };\n  }\n}"
+        },
+        {
+          "path": "app/handler/OrderNotificationHandler.ts",
+          "content": "import { Event } from 'egg';\n\n@Event('orderCreated')\nexport class OrderNotificationHandler {\n  async handle(orderId: string, userId: string): Promise<void> {\n    console.log('notify:', orderId, userId);\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "帮我用 EventBus 实现用户注册后异步发送欢迎邮件",
+      "expected_output": "完整代码：Events 类型声明（import 'egg' + declare module）+ 注册 Service 中 emit + @Event handler 发送邮件"
+    },
+    {
+      "id": 32,
+      "prompt": "帮我把这个 BackgroundTaskHelper 的写法改成 EventBus 解耦",
+      "expected_output": "拆分为 EventBus.emit() + 独立 @Event handler 类，去掉 BackgroundTaskHelper",
+      "files": [
+        {
+          "path": "app/orderModule/OrderService.ts",
+          "content": "import { SingletonProto, AccessLevel, Inject, BackgroundTaskHelper } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class OrderService {\n  @Inject()\n  private backgroundTaskHelper: BackgroundTaskHelper;\n\n  @Inject()\n  private notifyService: any;\n\n  @Inject()\n  private statsService: any;\n\n  async createOrder(data: any) {\n    const order = { id: Date.now(), ...data };\n    this.backgroundTaskHelper.run(async () => {\n      await this.notifyService.send(order);\n      await this.statsService.record(order);\n    });\n    return order;\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "EventBus 的 cork/uncork 怎么用，我想批量操作完成后再统一触发事件",
+      "expected_output": "注入 ContextEventBus，cork() 开始缓冲 → emit 多个事件 → uncork() 释放，支持嵌套调用"
     }
   ]
 }
