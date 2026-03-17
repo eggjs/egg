@@ -118,12 +118,14 @@ packages/skills/eval/
 ├── evals-egg-controller.json  # egg-controller skill 评测用例
 ├── evals-routing.json         # 入口路由评测用例
 ├── .gitignore                 # 忽略 workspace/ 和 egg-workspace/
-└── egg-workspace/             # 评测输出（gitignored）
+└── egg-workspace/             # 评测输出（gitignored），由 /skill-creator 管理
     └── iteration-N/
         ├── REPORT.md          # 对比评分报告
-        ├── ctrl-1-with-skill.md
-        ├── ctrl-1-site-docs.md
-        └── ...
+        ├── GRADING.md         # with-skill 通过率报告
+        └── {prefix}-{id}/     # 每个用例一个目录
+            ├── eval_metadata.json
+            ├── with_skill/outputs/
+            └── without_skill/outputs/
 ```
 
 **评测用例 JSON 格式：**
@@ -147,20 +149,21 @@ packages/skills/eval/
 
 **评测流程：**
 
-1. **编写评测用例** — 在对应的 `evals-*.json` 中添加用例，覆盖：基础用法、易错场景、错误诊断（附 files）、不常用 API、集成场景
-2. **运行评测** — 为每个用例启动两个 subagent（with-skill 和 baseline/site-docs），分别提供 skill 内容或 site-docs 作为上下文
-3. **保存输出** — 结果保存到 `egg-workspace/iteration-N/` 目录，命名规则：`{prefix}-{id}-{with-skill|site-docs}.md`
-4. **生成报告** — 对比两组输出，按 Accuracy/Completeness/Code 三维度评分，生成 `REPORT.md`
-5. **改进 skill** — 根据评测发现的问题改进 skill 内容，开启新的 iteration
+使用 `/skill-creator` skill 运行评测和生成结果展示。评测流程概述：
+
+1. **编写评测用例** — 在对应的 `evals-*.json` 中添加用例
+2. **运行评测** — 通过 `/skill-creator` 为每个用例启动两个并行 subagent（with-skill 和 site-docs），使用下方 prompt 模板
+3. **评分和展示** — `/skill-creator` 负责评分、生成对比报告、启动可视化 viewer 供人工 review
+4. **改进 skill** — 根据评分结果和人工 feedback 改进 skill 内容，开启新的 iteration
 
 **评测对比的两组环境：**
 
-每个评测用例需要在两种环境下分别运行，对比 skill 是否有效。两组环境都**不能访问项目源码**，只能访问各自的文档内容。Prompt 中不应包含任何流程指引（如"先判断使用哪个 skill"），只提供参考资料，让 AI 自然行动。
+每个评测用例需要在两种环境下分别运行，对比 skill 是否有效。Prompt 中不应包含任何流程指引（如"先判断使用哪个 skill"），只提供参考资料和访问约束，让 AI 自然行动。
 
-| 环境           | system prompt                                                                         | 可访问范围（prompt 约束）  | 输出文件命名                  |
-| -------------- | ------------------------------------------------------------------------------------- | -------------------------- | ----------------------------- |
-| **with-skill** | `egg/SKILL.md`（入口 skill）的完整内容                                                | 仅 `packages/skills/` 目录 | `{prefix}-{id}-with-skill.md` |
-| **site-docs**  | 角色声明 + `site/docs/` 的完整文件目录列表（通过 `find site/docs -name '*.md'` 生成） | 仅 `site/docs/` 目录       | `{prefix}-{id}-site-docs.md`  |
+| 环境           | system prompt                                                                         | 可访问范围（prompt 约束）  |
+| -------------- | ------------------------------------------------------------------------------------- | -------------------------- |
+| **with-skill** | `egg/SKILL.md`（入口 skill）的完整内容                                                | 仅 `packages/skills/` 目录 |
+| **site-docs**  | 角色声明 + `site/docs/` 的完整文件目录列表（通过 `find site/docs -name '*.md'` 生成） | 仅 `site/docs/` 目录       |
 
 **Prompt 模板：**
 
@@ -180,15 +183,19 @@ site-docs 环境：
 ```
 你是 EGG 框架开发专家。你只能通过 Read 工具读取 site/docs/ 目录下的文件，不能访问 packages/skills/ 或项目源码。项目文档目录如下：
 
-{完整的 site/docs/ 文件列表}
+{完整的 site/docs/ 文件列表，通过 find site/docs -name '*.md' | sort 生成}
 
 ---
 {eval prompt}
 ```
 
-两组 prompt 的差异仅在于参考资料不同，不包含额外的流程提示。subagent 均具备 Read 工具权限，在各自可访问范围内自行检索和读取文件。
+两组 prompt 的差异仅在于参考资料不同，不包含额外的流程提示。subagent 均具备 Read 工具权限。访问范围通过 prompt 约束（软限制，非技术硬限制）。
 
 两组使用相同的 eval prompt，对比输出质量差异。如果 with-skill 没有明显优于 site-docs，说明 skill 内容需要改进——要么缺少文档未覆盖的知识，要么存在与文档的不必要重复。
+
+**输出目录：**
+
+评测结果保存到 `egg-workspace/iteration-N/` 目录下，具体目录结构由 `/skill-creator` 管理。
 
 **评测用例设计原则：**
 
