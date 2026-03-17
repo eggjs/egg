@@ -1,6 +1,6 @@
 ---
 name: egg
-description: 本技能用于处理 EGG 框架。它提供基于用户意图在核心概念和控制器之间做选择的决策指导。作为所有 EGG 相关问题的入口点使用。
+description: 本技能用于处理 EGG 框架。它提供基于用户意图在核心概念和控制器之间做选择的决策指导。作为所有 EGG 相关问题的入口点使用。覆盖模块架构、依赖注入、后台任务、HTTP/MCP/Schedule 控制器、Ajv 参数校验等。
 allowed-tools: Read
 ---
 
@@ -56,6 +56,7 @@ allowed-tools: Read
 - 连接到外部系统或客户端
 - 处理传入的请求/响应
 - 控制器级别的装饰器和模式
+- 参数校验（Ajv + TypeBox）
 
 **触发关键词：**
 
@@ -64,12 +65,14 @@ allowed-tools: Read
 - MCP、LLM、AI、tool
 - schedule、timer、cron、scheduled、定时
 - SSE、streaming、server-sent events
+- validate、校验、参数校验、ajv、typebox、schema
 
 **示例查询：**
 
 - "如何创建 HTTP controller？"
 - "如何实现 MCP 接口？"
 - "怎么实现定时任务？"
+- "帮我给接口加上参数校验"
 
 ---
 
@@ -113,6 +116,8 @@ allowed-tools: Read
 | HTTP API               | `egg-controller` | -        |
 | MCP                    | `egg-controller` | -        |
 | Scheduled Tasks        | `egg-controller` | -        |
+| Parameter validation   | `egg-controller` | -        |
+| Background tasks       | `egg-core`       | -        |
 | Cross-module injection | `egg-core`       | -        |
 | Module structure       | `egg-core`       | -        |
 | Object lifecycle       | `egg-core`       | -        |
@@ -149,15 +154,17 @@ allowed-tools: Read
 
 ## 快速参考表
 
-| 用户意图             | 关键词                          | 使用技能               |
-| -------------------- | ------------------------------- | ---------------------- |
-| Module architecture  | module、workspace、organization | `egg-core` skill       |
-| Object lifecycle     | singleton、context、lifecycle   | `egg-core` skill       |
-| Dependency injection | inject、@Inject、dependency     | `egg-core` skill       |
-| Access control       | private、public、cross-module   | `egg-core` skill       |
-| HTTP endpoints       | HTTP、API、REST                 | `egg-controller` skill |
-| LLM/AI integration   | MCP、tool、prompt               | `egg-controller` skill |
-| Scheduling           | schedule、cron、timer           | `egg-controller` skill |
+| 用户意图             | 关键词                               | 使用技能               |
+| -------------------- | ------------------------------------ | ---------------------- |
+| Module architecture  | module、workspace、organization      | `egg-core` skill       |
+| Object lifecycle     | singleton、context、lifecycle        | `egg-core` skill       |
+| Dependency injection | inject、@Inject、dependency          | `egg-core` skill       |
+| Access control       | private、public、cross-module        | `egg-core` skill       |
+| Background tasks     | background task、异步任务、后台任务  | `egg-core` skill       |
+| HTTP endpoints       | HTTP、API、REST                      | `egg-controller` skill |
+| LLM/AI integration   | MCP、tool、prompt                    | `egg-controller` skill |
+| Scheduling           | schedule、cron、timer                | `egg-controller` skill |
+| Param validation     | validate、校验、ajv、typebox、schema | `egg-controller` skill |
 
 ---
 

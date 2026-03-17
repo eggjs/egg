@@ -1,6 +1,6 @@
 ---
 name: egg-core
-description: 本技能用于处理 EGG 基础核心概念，包括模块架构、@SingletonProto、@ContextProto、@Inject 装饰器和动态注入。用于理解 EGG 的基础构建块、依赖注入、对象生命周期管理和运行时多实现动态选择。
+description: 本技能用于处理 EGG 基础核心概念，包括模块架构、@SingletonProto、@ContextProto、@Inject 装饰器、动态注入和 BackgroundTaskHelper 后台任务。用于理解 EGG 的基础构建块、依赖注入、对象生命周期管理、运行时多实现动态选择和请求返回后的异步任务处理。
 allowed-tools: Read
 ---
 
