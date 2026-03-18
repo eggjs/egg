@@ -1402,6 +1402,8 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
+  packages/skills: {}
+
   packages/supertest:
     dependencies:
       '@types/superagent':
@@ -3769,6 +3771,9 @@ importers:
       runscript:
         specifier: 'catalog:'
         version: 2.0.1
+      sdk-base:
+        specifier: 'catalog:'
+        version: 5.0.1
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

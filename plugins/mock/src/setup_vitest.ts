@@ -58,5 +58,17 @@ afterEach(async () => {
 });
 
 afterAll(async () => {
+  // In threads pool, globalThis is shared across all ViteVMs in the same
+  // worker thread. The app (stored in globalThis.__eggMockAppInstance) is
+  // effectively shared even when isolate: true, because each file's
+  // setupApp() finds the existing instance on globalThis. Closing the app
+  // here would break subsequent test files that reuse the same instance.
+  // In isolate: false mode, the same sharing applies explicitly.
+  // Worker thread termination handles cleanup when the test run finishes.
+  const sharedMode =
+    (globalThis as Record<string, unknown>).__eggVitestSharedMode ||
+    process.env.EGG_VITEST_ISOLATE === 'false' ||
+    process.env.EGG_VITEST_POOL === 'threads';
+  if (sharedMode) return;
   if (app) await app.close();
 });

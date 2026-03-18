@@ -23,6 +23,11 @@ export class LoaderUtil {
     if (process.env.VITEST === 'true' && !extensions.includes('.ts')) {
       extensions.push('.ts');
     }
+    // Respect EGG_TS_ENABLE=false to disable TypeScript file loading
+    // (e.g., production deployment with compiled .js files)
+    if (process.env.EGG_TS_ENABLE === 'false') {
+      return extensions.filter((ext) => ext !== '.ts' && ext !== '.mts' && ext !== '.cts');
+    }
     return extensions;
   }
 

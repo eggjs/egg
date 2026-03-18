@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/controller-plugin",
-  "version": "4.0.2-beta.3",
+  "version": "4.0.2-beta.5",
   "description": "controller decorator plugin for egg",
   "keywords": [
     "egg",
@@ -31,6 +31,8 @@
     "./app/middleware/mcp_body_middleware": "./src/app/middleware/mcp_body_middleware.ts",
     "./app/middleware/tegg_root_proto": "./src/app/middleware/tegg_root_proto.ts",
     "./config/config.default": "./src/config/config.default.ts",
+    "./lib/AgentControllerObject": "./src/lib/AgentControllerObject.ts",
+    "./lib/AgentControllerProto": "./src/lib/AgentControllerProto.ts",
     "./lib/AppLoadUnitControllerHook": "./src/lib/AppLoadUnitControllerHook.ts",
     "./lib/ControllerLoadUnit": "./src/lib/ControllerLoadUnit.ts",
     "./lib/ControllerLoadUnitHandler": "./src/lib/ControllerLoadUnitHandler.ts",
@@ -61,6 +63,8 @@
       "./app/middleware/mcp_body_middleware": "./dist/app/middleware/mcp_body_middleware.js",
       "./app/middleware/tegg_root_proto": "./dist/app/middleware/tegg_root_proto.js",
       "./config/config.default": "./dist/config/config.default.js",
+      "./lib/AgentControllerObject": "./dist/lib/AgentControllerObject.js",
+      "./lib/AgentControllerProto": "./dist/lib/AgentControllerProto.js",
       "./lib/AppLoadUnitControllerHook": "./dist/lib/AppLoadUnitControllerHook.js",
       "./lib/ControllerLoadUnit": "./dist/lib/ControllerLoadUnit.js",
       "./lib/ControllerLoadUnitHandler": "./dist/lib/ControllerLoadUnitHandler.js",

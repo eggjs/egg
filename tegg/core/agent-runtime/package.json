@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/agent-runtime",
-  "version": "4.0.2-beta.2",
+  "version": "4.0.2-beta.5",
   "description": "Agent runtime with store abstraction for Egg.js tegg",
   "keywords": [
     "agent",
@@ -28,12 +28,28 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./AgentRuntime": "./src/AgentRuntime.ts",
+    "./AgentStoreUtils": "./src/AgentStoreUtils.ts",
+    "./HttpSSEWriter": "./src/HttpSSEWriter.ts",
+    "./MessageConverter": "./src/MessageConverter.ts",
+    "./OSSAgentStore": "./src/OSSAgentStore.ts",
+    "./OSSObjectStorageClient": "./src/OSSObjectStorageClient.ts",
+    "./RunBuilder": "./src/RunBuilder.ts",
+    "./SSEWriter": "./src/SSEWriter.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./AgentRuntime": "./dist/AgentRuntime.js",
+      "./AgentStoreUtils": "./dist/AgentStoreUtils.js",
+      "./HttpSSEWriter": "./dist/HttpSSEWriter.js",
+      "./MessageConverter": "./dist/MessageConverter.js",
+      "./OSSAgentStore": "./dist/OSSAgentStore.js",
+      "./OSSObjectStorageClient": "./dist/OSSObjectStorageClient.js",
+      "./RunBuilder": "./dist/RunBuilder.js",
+      "./SSEWriter": "./dist/SSEWriter.js",
       "./package.json": "./package.json"
     }
   },

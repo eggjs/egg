@@ -1,0 +1,6 @@
+{
+  "name": "app-outdir-precedence",
+  "egg": {
+    "outDir": "dist"
+  }
+}

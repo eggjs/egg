@@ -129,6 +129,36 @@ npm test
       Tests  1 passed (1)
 ```
 
+### 环境变量
+
+egg-bin 提供了以下环境变量来控制 vitest 的运行行为：
+
+| 环境变量               | 可选值              | 默认值    | 说明                                                                                                                                                                                                                         |
+| ---------------------- | ------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `EGG_VITEST_POOL`      | `threads` / `forks` | `threads` | Vitest 工作池类型。`threads` 使用 worker_threads，启动更快；`forks` 使用子进程，提供完全隔离。设为 `threads` 时，`@eggjs/mock` 会自动切换为 `worker_threads` 启动模式，使 cluster-client 使用基于线程的 IPC 而非进程间通信。 |
+| `EGG_VITEST_ISOLATE`   | `true` / `false`    | `false`   | 是否在独立环境中隔离测试文件。设为 `false`（共享模式）时，同一 worker 内所有测试文件共享同一个 app 实例，显著提升测试速度。设为 `true` 时，每个测试文件拥有独立的隔离环境。                                                  |
+| `EGG_FILE_PARALLELISM` | `true` / `false`    | `false`   | 是否跨 worker 并行运行测试文件。设为 `false` 时，测试文件按顺序执行。                                                                                                                                                        |
+
+可以在 `package.json` scripts 中设置，也可以通过命令行参数传入：
+
+```json
+{
+  "scripts": {
+    "test": "egg-bin test",
+    "test:forks": "EGG_VITEST_POOL=forks egg-bin test",
+    "test:isolate": "EGG_VITEST_ISOLATE=true egg-bin test"
+  }
+}
+```
+
+或使用 `--pool` 参数：
+
+```bash
+egg-bin test --pool forks
+```
+
+> **注意：** 在共享模式（`EGG_VITEST_ISOLATE=false`）下，静态变量和内存状态会在测试文件间持久化。请确保在 `afterEach` 钩子中清理共享状态，避免测试间的状态污染。
+
 ## 准备测试
 
 本文主要介绍了如何编写应用的单元测试，关于框架和插件的单元测试请查看[框架开发](https://eggjs.org/zh-cn/advanced/framework.html)和[插件开发](https://eggjs.org/zh-cn/advanced/plugin.html)相关章节。

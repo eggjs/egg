@@ -133,6 +133,36 @@ npm test
       Tests  1 passed (1)
 ```
 
+### Environment Variables
+
+egg-bin exposes several environment variables to control vitest behavior:
+
+| Environment Variable   | Values              | Default   | Description                                                                                                                                                                                                                                                                     |
+| ---------------------- | ------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `EGG_VITEST_POOL`      | `threads` / `forks` | `threads` | Vitest worker pool type. `threads` uses worker_threads for faster startup; `forks` uses child processes for full isolation. When set to `threads`, `@eggjs/mock` auto-switches to `worker_threads` start mode so cluster-client uses thread-based IPC instead of process-based. |
+| `EGG_VITEST_ISOLATE`   | `true` / `false`    | `false`   | Whether to isolate test files in separate environments. When `false` (shared mode), all test files share the same app instance within a worker, significantly improving test speed. When `true`, each test file gets its own isolated environment.                              |
+| `EGG_FILE_PARALLELISM` | `true` / `false`    | `false`   | Whether to run test files in parallel across workers. When `false`, test files run sequentially.                                                                                                                                                                                |
+
+You can set them in `package.json` scripts or pass them as command-line flags:
+
+```json
+{
+  "scripts": {
+    "test": "egg-bin test",
+    "test:forks": "EGG_VITEST_POOL=forks egg-bin test",
+    "test:isolate": "EGG_VITEST_ISOLATE=true egg-bin test"
+  }
+}
+```
+
+Or use the `--pool` flag:
+
+```bash
+egg-bin test --pool forks
+```
+
+> **Note:** In shared mode (`EGG_VITEST_ISOLATE=false`), static variables and in-memory state persist across test files. Make sure to clean up any shared state in `afterEach` hooks to avoid test pollution.
+
 ## Test Preparation
 
 This chapter introduces you how to write test, and introduction of tests for the framework and plugins are located in [framework](../advanced/framework.md) and [plugin](../advanced/plugin.md).

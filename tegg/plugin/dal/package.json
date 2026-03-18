@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/dal-plugin",
-  "version": "4.0.2-beta.3",
+  "version": "4.0.2-beta.5",
   "description": "dal plugin for egg",
   "keywords": [
     "dal",
