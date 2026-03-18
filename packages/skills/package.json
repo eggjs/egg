@@ -18,7 +18,9 @@
     "directory": "packages/skills"
   },
   "files": [
-    "**/*.md"
+    "egg-controller/**/*.md",
+    "egg-core/**/*.md",
+    "egg/**/*.md"
   ],
   "publishConfig": {
     "access": "public"
