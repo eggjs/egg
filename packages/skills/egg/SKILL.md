@@ -64,6 +64,7 @@ allowed-tools: Read
 - 处理传入的请求/响应
 - 控制器级别的装饰器和模式
 - 参数校验（Ajv + TypeBox）
+- 控制器中间件（Middleware，函数式或 AOP 写法）
 
 **触发关键词：**
 
@@ -73,6 +74,7 @@ allowed-tools: Read
 - schedule、timer、cron、scheduled、定时
 - SSE、streaming、server-sent events
 - validate、校验、参数校验、ajv、typebox、schema
+- middleware、中间件、拦截器、洋葱模型、@Middleware
 
 **示例查询：**
 
@@ -80,6 +82,8 @@ allowed-tools: Read
 - "如何实现 MCP 接口？"
 - "怎么实现定时任务？"
 - "帮我给接口加上参数校验"
+- "如何给控制器加中间件？"
+- "怎么写一个鉴权中间件？"
 
 ---
 
@@ -124,6 +128,7 @@ allowed-tools: Read
 | MCP                     | `egg-controller` | -        |
 | Scheduled Tasks         | `egg-controller` | -        |
 | Parameter validation    | `egg-controller` | -        |
+| Controller Middleware   | `egg-controller` | -        |
 | Background tasks        | `egg-core`       | -        |
 | Event-driven / EventBus | `egg-core`       | -        |
 | AOP / 切面编程          | `egg-core`       | -        |
@@ -163,19 +168,20 @@ allowed-tools: Read
 
 ## 快速参考表
 
-| 用户意图             | 关键词                                | 使用技能               |
-| -------------------- | ------------------------------------- | ---------------------- |
-| Module architecture  | module、workspace、organization       | `egg-core` skill       |
-| Object lifecycle     | singleton、context、lifecycle         | `egg-core` skill       |
-| Dependency injection | inject、@Inject、dependency           | `egg-core` skill       |
-| Access control       | private、public、cross-module         | `egg-core` skill       |
-| Background tasks     | background task、异步任务、后台任务   | `egg-core` skill       |
-| Event-driven         | eventbus、事件总线、@Event、emit      | `egg-core` skill       |
-| AOP 切面编程         | aop、切面、advice、pointcut、crosscut | `egg-core` skill       |
-| HTTP endpoints       | HTTP、API、REST                       | `egg-controller` skill |
-| LLM/AI integration   | MCP、tool、prompt                     | `egg-controller` skill |
-| Scheduling           | schedule、cron、timer                 | `egg-controller` skill |
-| Param validation     | validate、校验、ajv、typebox、schema  | `egg-controller` skill |
+| 用户意图             | 关键词                                  | 使用技能               |
+| -------------------- | --------------------------------------- | ---------------------- |
+| Module architecture  | module、workspace、organization         | `egg-core` skill       |
+| Object lifecycle     | singleton、context、lifecycle           | `egg-core` skill       |
+| Dependency injection | inject、@Inject、dependency             | `egg-core` skill       |
+| Access control       | private、public、cross-module           | `egg-core` skill       |
+| Background tasks     | background task、异步任务、后台任务     | `egg-core` skill       |
+| Event-driven         | eventbus、事件总线、@Event、emit        | `egg-core` skill       |
+| AOP 切面编程         | aop、切面、advice、pointcut、crosscut   | `egg-core` skill       |
+| HTTP endpoints       | HTTP、API、REST                         | `egg-controller` skill |
+| LLM/AI integration   | MCP、tool、prompt                       | `egg-controller` skill |
+| Scheduling           | schedule、cron、timer                   | `egg-controller` skill |
+| Param validation     | validate、校验、ajv、typebox、schema    | `egg-controller` skill |
+| Middleware 中间件    | middleware、中间件、拦截器、@Middleware | `egg-controller` skill |
 
 ---
 
