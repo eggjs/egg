@@ -1,6 +1,6 @@
 ---
 name: egg-controller
-description: Use when creating API endpoints, implementing protocol handlers, or exposing interfaces for specific clients. Covers HTTP, MCP and Schedule controllers for EGG framework applications.
+description: Use when creating API endpoints, implementing protocol handlers, exposing interfaces for specific clients, or adding parameter validation. Covers HTTP, MCP and Schedule controllers, and Ajv/TypeBox parameter validation for EGG framework applications.
 allowed-tools: Read
 ---
 

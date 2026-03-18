@@ -41,6 +41,21 @@
       "id": 8,
       "prompt": "不同环境的模块配置怎么管理",
       "expected_output": "路由到 egg-core skill"
+    },
+    {
+      "id": 9,
+      "prompt": "帮我用事件总线解耦订单通知",
+      "expected_output": "路由到 egg-core skill"
+    },
+    {
+      "id": 10,
+      "prompt": "EventBus 和 BackgroundTaskHelper 怎么选",
+      "expected_output": "路由到 egg-core skill"
+    },
+    {
+      "id": 11,
+      "prompt": "帮我用 AOP 给所有 Service 加日志",
+      "expected_output": "路由到 egg-core skill"
     }
   ]
 }
