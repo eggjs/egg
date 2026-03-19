@@ -113,3 +113,9 @@ BackgroundTaskHelper 的作用是：
 4. 等待结束后才释放上下文
 
 这就是为什么必须用 `backgroundTaskHelper.run()` 而不是 `setTimeout` — 后者绕过了框架的上下文生命周期管理，执行时上下文可能已被释放。
+
+---
+
+## 单元测试
+
+BackgroundTaskHelper 的测试方法参考 `egg-unittest` skill 的 `references/background-task-test.md`。

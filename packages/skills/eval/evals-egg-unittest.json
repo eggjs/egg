@@ -1,0 +1,184 @@
+{
+  "skill_name": "egg-unittest",
+  "description": "单元测试评测：覆盖 http-test、service-test、mock、background-task-test、eventbus-test",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我给这个 UserController 写个单元测试，要测 GET 和 POST 接口",
+      "expected_output": "import { app } from '@eggjs/mock/bootstrap'，app.httpRequest() 测 GET 和 POST，POST 前调用 app.mockCsrf()，return 或 await httpRequest",
+      "files": [
+        {
+          "path": "app/modules/user/UserController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, HTTPBody, Inject } from 'egg';\nimport { UserService } from './UserService.ts';\n\n@HTTPController({ path: '/api/users' })\nexport class UserController {\n  @Inject()\n  userService: UserService;\n\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/:id' })\n  async show(@HTTPParam() id: string) {\n    return await this.userService.getById(id);\n  }\n\n  @HTTPMethod({ method: HTTPMethodEnum.POST, path: '/' })\n  async create(@HTTPBody() body: { name: string; email: string }) {\n    return await this.userService.create(body);\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "POST 接口测试报 403 错误，帮我看看",
+      "expected_output": "指出需要调用 app.mockCsrf() 跳过 CSRF 校验",
+      "files": [
+        {
+          "path": "test/controller/user.test.ts",
+          "content": "import { app } from '@eggjs/mock/bootstrap';\n\ndescribe('UserController', () => {\n  it('should create user', () => {\n    return app.httpRequest()\n      .post('/api/users')\n      .send({ name: 'test', email: 'test@example.com' })\n      .expect(200);\n  });\n});"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "httpRequest 的 expect 有哪些用法",
+      "expected_output": "expect(status)、expect(body)、expect(status, body) 合并、expect('header', value)、expect(/regex/)、expect([200, 302]) 多状态码、expect(fn) 自定义断言"
+    },
+    {
+      "id": 4,
+      "prompt": "测试写了但永远通过，不管接口返回啥都不报错",
+      "expected_output": "httpRequest 必须 return 或 await，否则断言不会执行",
+      "files": [
+        {
+          "path": "test/controller/home.test.ts",
+          "content": "import { app } from '@eggjs/mock/bootstrap';\n\ndescribe('HomeController', () => {\n  it('should return 200', () => {\n    app.httpRequest()\n      .get('/')\n      .expect(200)\n      .expect('hello');\n  });\n});"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "帮我写一个完整的 CRUD 接口测试",
+      "expected_output": "GET/POST/PUT/DELETE 完整测试，POST/PUT/DELETE 都要 mockCsrf，import 从 @eggjs/mock/bootstrap"
+    },
+    {
+      "id": 6,
+      "prompt": "基于这个 OrderService 帮我写完整的单元测试",
+      "expected_output": "app.getEggObject(OrderService) 获取实例 + mm mock PaymentService 依赖 + 断言返回值",
+      "files": [
+        {
+          "path": "app/modules/order/OrderService.ts",
+          "content": "import { SingletonProto, Inject } from 'egg';\nimport { PaymentService } from '../payment/PaymentService.ts';\n\n@SingletonProto()\nexport class OrderService {\n  @Inject()\n  paymentService: PaymentService;\n\n  async create(data: { productId: string; amount: number }) {\n    const tx = await this.paymentService.charge(data.amount);\n    return { orderId: 'order-1', transactionId: tx.id };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "测试代码跑不起来，getEggObject 报错了",
+      "expected_output": "指出 app.getEggObject 只能获取 Singleton，ContextProto 需要用 app.mockModuleContextScope",
+      "files": [
+        {
+          "path": "app/modules/cart/CartService.ts",
+          "content": "import { ContextProto } from 'egg';\n\n@ContextProto()\nexport class CartService {\n  async addItem(productId: string) {\n    return { productId, quantity: 1 };\n  }\n}"
+        },
+        {
+          "path": "test/service/cart.test.ts",
+          "content": "import { app } from '@eggjs/mock/bootstrap';\nimport assert from 'node:assert';\nimport { CartService } from '../app/modules/cart/CartService.ts';\n\ndescribe('CartService', () => {\n  it('should add item', async () => {\n    const cartService = await app.getEggObject(CartService);\n    const item = await cartService.addItem('p1');\n    assert.equal(item.productId, 'p1');\n  });\n});"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Singleton 和 ContextProto 的测试方式有什么区别",
+      "expected_output": "Singleton 用 app.getEggObject 直接获取，ContextProto 需在 app.mockModuleContextScope 回调内用 ctx.getEggObject 获取"
+    },
+    {
+      "id": 9,
+      "prompt": "怎么测试一个依赖其他 Service 的 Service",
+      "expected_output": "mm(DependencyClass.prototype, 'method', fn) mock 依赖的原型方法，再 getEggObject 获取被测 Service"
+    },
+    {
+      "id": 10,
+      "prompt": "mockModuleContextScope 回调里的断言通过了但实际上没执行，测试直接过了",
+      "expected_output": "mockModuleContextScope 的回调必须 await，否则 scope 提前退出",
+      "files": [
+        {
+          "path": "test/service/user.test.ts",
+          "content": "import { app } from '@eggjs/mock/bootstrap';\nimport assert from 'node:assert';\nimport { UserService } from '../app/modules/user/UserService.ts';\n\ndescribe('UserService', () => {\n  it('should get user', () => {\n    app.mockModuleContextScope(async (ctx) => {\n      const userService = await ctx.getEggObject(UserService);\n      const user = await userService.getById('1');\n      assert.equal(user.name, 'test');\n    });\n  });\n});"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "怎么 mock 一个被注入的 Service 的方法",
+      "expected_output": "mm(ServiceClass.prototype, 'methodName', async () => { ... })，import mm 从 @eggjs/mock/bootstrap，mock 原型而非实例"
+    },
+    {
+      "id": 12,
+      "prompt": "mm mock 了但没生效，帮我看看",
+      "expected_output": "mock 的是实例而非原型，应该用 mm(ServiceClass.prototype, ...)",
+      "files": [
+        {
+          "path": "test/service/order.test.ts",
+          "content": "import { app, mm } from '@eggjs/mock/bootstrap';\nimport assert from 'node:assert';\nimport { PaymentService } from '../app/modules/payment/PaymentService.ts';\nimport { OrderService } from '../app/modules/order/OrderService.ts';\n\ndescribe('OrderService', () => {\n  it('should mock payment', async () => {\n    const paymentService = await app.getEggObject(PaymentService);\n    mm(paymentService, 'charge', async () => ({ id: 'tx-mock' }));\n\n    const orderService = await app.getEggObject(OrderService);\n    const order = await orderService.create({ productId: '1', amount: 100 });\n    assert.equal(order.transactionId, 'tx-mock');\n  });\n});"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "怎么验证 mock 的方法被调用了几次、传了什么参数",
+      "expected_output": "mockFn.called 调用次数，mockFn.lastCalledArguments 最后一次参数，mockFn.calledArguments 所有参数"
+    },
+    {
+      "id": 14,
+      "prompt": "怎么 mock 外部 HTTP 请求，我的 Service 里用了 httpclient 调第三方 API",
+      "expected_output": "app.mockHttpclient(url, { data: ... })，mock 通过 @Inject 注入的 HttpClient 发送的请求"
+    },
+    {
+      "id": 15,
+      "prompt": "mm 和 mm.spy 有什么区别",
+      "expected_output": "mm 替换方法实现，spy 保留原实现不替换，两者都会记录调用信息（called、lastCalledArguments）"
+    },
+    {
+      "id": 16,
+      "prompt": "怎么 mock 一个方法让它抛出异常",
+      "expected_output": "mm.error(Class.prototype, 'method', new Error('...'))"
+    },
+    {
+      "id": 17,
+      "prompt": "怎么测试后台任务是否执行完成",
+      "expected_output": "两种方式：1. mockModuleContextScope 退出时自动等待（内部触发 doPreDestroy） 2. app.backgroundTasksFinished() 手动等待。不应该用 sleep"
+    },
+    {
+      "id": 18,
+      "prompt": "用 httpRequest 触发的后台任务怎么等它完成",
+      "expected_output": "await app.backgroundTasksFinished()"
+    },
+    {
+      "id": 19,
+      "prompt": "测试里用了 TimerUtil.sleep 等后台任务，CI 上经常超时不稳定",
+      "expected_output": "用 app.backgroundTasksFinished() 替代 sleep，精确等待任务完成",
+      "files": [
+        {
+          "path": "test/service/task.test.ts",
+          "content": "import { app } from '@eggjs/mock/bootstrap';\nimport assert from 'node:assert';\nimport { TimerUtil } from '@eggjs/tegg-common-util';\nimport { CountService } from '../app/modules/count/CountService.ts';\n\nit('should complete task', async () => {\n  await app.httpRequest().get('/api/trigger-task').expect(200);\n  await TimerUtil.sleep(3000);\n  const countService = await app.getEggObject(CountService);\n  assert.equal(countService.count, 1);\n});"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "backgroundTasksFinished 调了但断言还是失败，count 一直是 0",
+      "expected_output": "检查用于验证的 Service 是否是 @SingletonProto，ContextProto 每次 getEggObject 拿到的是不同实例"
+    },
+    {
+      "id": 21,
+      "prompt": "怎么测试 EventBus 事件是否被正确处理",
+      "expected_output": "app.getEventWaiter() 获取 waiter，eventWaiter.await('eventName') 必须在 emit 之前注册，用 mm mock handler 验证调用"
+    },
+    {
+      "id": 22,
+      "prompt": "eventWaiter.await 一直挂着不返回，测试超时了",
+      "expected_output": "eventWaiter.await 必须在 emit 之前调用，先注册等待再触发业务逻辑",
+      "files": [
+        {
+          "path": "test/event/hello.test.ts",
+          "content": "import { app } from '@eggjs/mock/bootstrap';\nimport { HelloService } from '../app/modules/hello/HelloService.ts';\n\nit('should handle event', async () => {\n  await app.mockModuleContextScope(async (ctx) => {\n    const helloService = await ctx.getEggObject(HelloService);\n    helloService.hello();\n\n    const eventWaiter = await app.getEventWaiter();\n    await eventWaiter.await('helloEgg');\n  });\n});"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "怎么验证 EventBus handler 收到的参数是否正确",
+      "expected_output": "mm mock handler 原型方法 + mockFn.lastCalledArguments 断言参数"
+    },
+    {
+      "id": 24,
+      "prompt": "帮我写一个 EventBus 事件的完整测试",
+      "expected_output": "完整示例：import bootstrap + mockModuleContextScope + getEventWaiter + await 在 emit 前 + mm mock handler + 断言"
+    }
+  ]
+}

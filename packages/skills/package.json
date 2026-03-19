@@ -20,6 +20,7 @@
   "files": [
     "egg-controller/**/*.md",
     "egg-core/**/*.md",
+    "egg-unittest/**/*.md",
     "egg/**/*.md"
   ],
   "publishConfig": {

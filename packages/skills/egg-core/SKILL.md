@@ -244,3 +244,5 @@ AOP 用于将日志、鉴权、缓存、事务等横切关注点从业务代码�
 - 请求后异步任务（BackgroundTaskHelper），请参阅：`references/background-task.md`
 - 事件总线（EventBus），请参阅：`references/eventbus.md`
 - AOP 切面编程（Advice、Pointcut、Crosscut），请参阅：`references/aop.md`
+
+单元测试（`egg-unittest` skill）：Service 测试、BackgroundTask 测试、EventBus 测试

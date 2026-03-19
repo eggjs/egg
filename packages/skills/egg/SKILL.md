@@ -1,6 +1,6 @@
 ---
 name: egg
-description: 本技能用于处理 EGG 框架。它提供基于用户意图在核心概念和控制器之间做选择的决策指导。作为所有 EGG 相关问题的入口点使用。覆盖模块架构、依赖注入、后台任务、EventBus 事件总线、AOP 切面编程、HTTP/MCP/Schedule 控制器、Ajv 参数校验等。
+description: 本技能用于处理 EGG 框架。它提供基于用户意图在核心概念、控制器和单元测试之间做选择的决策指导。作为所有 EGG 相关问题的入口点使用。覆盖模块架构、依赖注入、后台任务、EventBus 事件总线、AOP 切面编程、HTTP/MCP/Schedule 控制器、Ajv 参数校验、单元测试等。
 allowed-tools: Read
 ---
 
@@ -12,6 +12,7 @@ allowed-tools: Read
 
 1. **核心概念**（`egg-core` skill）：模块架构、依赖注入、对象生命周期、EventBus 事件总线、AOP 切面编程
 2. **控制器**（`egg-controller` skill）：用于 API 端点的各种协议特定控制器
+3. **单元测试**（`egg-unittest` skill）：HTTP 接口测试、Service/DI 对象测试、Mock 模拟、BackgroundTask 和 EventBus 测试
 
 ## 技能选择逻辑
 
@@ -85,6 +86,36 @@ allowed-tools: Read
 - "如何给控制器加中间件？"
 - "怎么写一个鉴权中间件？"
 
+### 使用 `egg-unittest` skill 当用户询问：
+
+**用户询问关于：**
+
+- 编写单元测试或集成测试
+- 使用 @eggjs/mock 进行测试
+- 测试 HTTP 接口（app.httpRequest）
+- 测试 Service/DI 对象
+- Mock 数据或依赖
+- 测试 BackgroundTaskHelper 或 EventBus
+
+**触发关键词：**
+
+- test、测试、单测、单元测试、unittest、unit test
+- mock、mm、@eggjs/mock、mockCsrf、mockHttpclient、mockSession、mockContext
+- httpRequest、supertest
+- getEggObject、mockModuleContextScope
+- eventWaiter、BackgroundTaskHelper 测试
+- vitest、describe、it、beforeAll
+
+**示例查询：**
+
+- "如何写单元测试？"
+- "如何测试 HTTP 接口？"
+- "如何 mock 一个 Service？"
+- "POST 请求测试报 CSRF 错误"
+- "如何测试 ContextProto 的 Service？"
+- "怎么测试后台任务是否执行完成？"
+- "怎么测试 EventBus 事件是否被正确处理？"
+
 ---
 
 ## 决策框架
@@ -135,6 +166,8 @@ allowed-tools: Read
 | Cross-module injection  | `egg-core`       | -        |
 | Module structure        | `egg-core`       | -        |
 | Object lifecycle        | `egg-core`       | -        |
+| Unit Testing            | `egg-unittest`   | -        |
+| Mock / Test helpers     | `egg-unittest`   | -        |
 
 ## 冲突解决规则
 
@@ -182,6 +215,8 @@ allowed-tools: Read
 | Scheduling           | schedule、cron、timer                   | `egg-controller` skill |
 | Param validation     | validate、校验、ajv、typebox、schema    | `egg-controller` skill |
 | Middleware 中间件    | middleware、中间件、拦截器、@Middleware | `egg-controller` skill |
+| Unit testing         | test、mock、unittest、单测              | `egg-unittest` skill   |
+| Mock dependencies    | mock、mm、mockCsrf、mockHttpclient      | `egg-unittest` skill   |
 
 ---
 
@@ -232,6 +267,18 @@ allowed-tools: Read
 2. 简要解释 @Inject 如何工作（核心概念摘要）
 3. 注意："包含限定符的详细 @Inject 使用，请使用 `egg-core` skill"
 
+### 示例 5：测试相关
+
+**用户**："帮我写个 UserController 的单元测试"
+
+**分析**：问题关于编写测试代码
+**决策**：使用 `egg-unittest` skill
+
+**用户**："POST 请求测试报 403 错误"
+
+**分析**：测试中遇到 CSRF 问题
+**决策**：使用 `egg-unittest` skill
+
 ## 路由最佳实践
 
 1. **优先考虑显式控制器提及**：如果用户命名特定控制器（HTTP），即使涉及核心概念也使用控制器技能
@@ -252,5 +299,6 @@ allowed-tools: Read
 
 - 为框架内部概念路由到 `egg-core` skill
 - 为协议特定实现路由到 `egg-controller` skill
+- 为测试相关问题路由到 `egg-unittest` skill
 - 当意图模糊时提供决策指导
 - 当存在有用的上下文时交叉引用技能

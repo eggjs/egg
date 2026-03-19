@@ -101,3 +101,5 @@ allowed-tools: Read
 - `references/middleware.md` - Middleware 中间件（函数式 + AOP）
 
 核心概念（`egg-core` skill）：模块、依赖注入、对象生命周期
+
+单元测试（`egg-unittest` skill）：HTTP 接口测试、Service 测试、Mock
