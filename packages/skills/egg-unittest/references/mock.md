@@ -15,6 +15,7 @@
 最常用的 mock 方式，mock DI 对象的原型方法：
 
 ```typescript
+import assert from 'node:assert';
 import { app, mm } from '@eggjs/mock/bootstrap';
 import { UserService } from '../app/modules/user/UserService.ts';
 import { OrderService } from '../app/modules/order/OrderService.ts';

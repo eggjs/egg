@@ -57,6 +57,7 @@ describe('UserService', () => {
 当 Service A 依赖 Service B 时，mock B 的原型方法：
 
 ```typescript
+import assert from 'node:assert';
 import { app, mm } from '@eggjs/mock/bootstrap';
 import { OrderService } from '../app/modules/order/OrderService.ts';
 import { PaymentService } from '../app/modules/payment/PaymentService.ts';

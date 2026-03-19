@@ -77,6 +77,7 @@ app.httpRequest()
 使用 `.expect()` 链式断言：
 
 ```typescript
+import assert from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
 
 it('should validate response', () => {

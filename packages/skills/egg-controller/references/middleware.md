@@ -106,7 +106,7 @@ export class FooController {
   @Middleware(methodMw)
   async hello() {}
 
-  // 多个 @Middleware 从上到下执行
+  // 多个 @Middleware 从下往上执行（靠近方法的先注册）
   // 进：globalMw → mw3 → mw2 → mw1 → multiple()
   // 出：multiple() → mw1 → mw2 → mw3 → globalMw
   @Middleware(mw1)
@@ -129,5 +129,5 @@ export class FooController {
 
 // 实际执行顺序：
 // countMw → timeMw → LogAdvice → AuthAdvice → hello()
-// （先所有函数式，再所有 AOP，与装饰器书写顺序无关）
+// （先所有函数式，再所有 AOP；各阶段内类级别先于方法级别）
 ```
