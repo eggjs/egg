@@ -58,23 +58,13 @@
     },
     {
       "id": 7,
-      "prompt": "测试代码跑不起来，getEggObject 报错了",
-      "expected_output": "指出 app.getEggObject 只能获取 Singleton，ContextProto 需要用 app.mockModuleContextScope",
-      "files": [
-        {
-          "path": "app/modules/cart/CartService.ts",
-          "content": "import { ContextProto } from 'egg';\n\n@ContextProto()\nexport class CartService {\n  async addItem(productId: string) {\n    return { productId, quantity: 1 };\n  }\n}"
-        },
-        {
-          "path": "test/service/cart.test.ts",
-          "content": "import { app } from '@eggjs/mock/bootstrap';\nimport assert from 'node:assert';\nimport { CartService } from '../app/modules/cart/CartService.ts';\n\ndescribe('CartService', () => {\n  it('should add item', async () => {\n    const cartService = await app.getEggObject(CartService);\n    const item = await cartService.addItem('p1');\n    assert.equal(item.productId, 'p1');\n  });\n});"
-        }
-      ]
+      "prompt": "ContextProto 的 Service 怎么在测试里获取实例",
+      "expected_output": "app.getEggObject(ContextProtoClass) 可以直接获取，也可以在 app.mockModuleContextScope 回调内用 ctx.getEggObject 获取（后者提供上下文生命周期管理，退出时自动销毁）"
     },
     {
       "id": 8,
       "prompt": "Singleton 和 ContextProto 的测试方式有什么区别",
-      "expected_output": "Singleton 用 app.getEggObject 直接获取，ContextProto 需在 app.mockModuleContextScope 回调内用 ctx.getEggObject 获取"
+      "expected_output": "两者都可以用 app.getEggObject 直接获取。ContextProto 还可以在 app.mockModuleContextScope 回调内用 ctx.getEggObject 获取，提供上下文生命周期管理（退出时自动销毁、自动等待后台任务）"
     },
     {
       "id": 9,

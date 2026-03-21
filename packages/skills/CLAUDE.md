@@ -117,8 +117,8 @@ packages/skills/eval/
 ├── evals-egg-core.json        # egg-core skill 评测用例
 ├── evals-egg-controller.json  # egg-controller skill 评测用例
 ├── evals-routing.json         # 入口路由评测用例
-├── .gitignore                 # 忽略 workspace/ 和 egg-workspace/
-└── egg-workspace/             # 评测输出（gitignored），由 /skill-creator 管理
+├── .gitignore                 # 忽略 *-workspace/ 目录
+└── <skill-name>-workspace/    # 评测输出（gitignored），由 /skill-creator 管理
     └── iteration-N/
         ├── REPORT.md          # 对比评分报告
         ├── GRADING.md         # with-skill 通过率报告
@@ -195,7 +195,7 @@ site-docs 环境：
 
 **输出目录：**
 
-评测结果保存到 `egg-workspace/iteration-N/` 目录下，具体目录结构由 `/skill-creator` 管理。
+评测结果保存到 `packages/skills/eval/<skill-name>-workspace/iteration-N/` 目录下（已在 `.gitignore` 中通过 `*-workspace/` 忽略），具体目录结构由 `/skill-creator` 管理。
 
 **评测用例设计原则：**
 

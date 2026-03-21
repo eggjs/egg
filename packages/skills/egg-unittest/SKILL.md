@@ -117,30 +117,29 @@ describe('test/service/user.test.ts', () => {
 
 ## 快速参考
 
-| API                                                  | 说明                            |
-| ---------------------------------------------------- | ------------------------------- |
-| `import { app, mm } from '@eggjs/mock/bootstrap'`    | 标准测试入口                    |
-| `app.httpRequest().get('/path').expect(200)`         | HTTP 接口测试                   |
-| `app.getEggObject(Class)`                            | 获取 Singleton 实例             |
-| `app.mockModuleContextScope(async (ctx) => { ... })` | ContextProto 测试作用域         |
-| `mm(Class.prototype, 'method', fn)`                  | Mock Proto 方法                 |
-| `app.mockCsrf()`                                     | 跳过 CSRF 校验（POST 测试必备） |
-| `app.mockHttpclient(url, data)`                      | Mock 外部 HTTP 调用             |
-| `app.getEventWaiter()`                               | 获取 EventBus 事件等待器        |
+| API                                                  | 说明                                    |
+| ---------------------------------------------------- | --------------------------------------- |
+| `import { app, mm } from '@eggjs/mock/bootstrap'`    | 标准测试入口                            |
+| `app.httpRequest().get('/path').expect(200)`         | HTTP 接口测试                           |
+| `app.getEggObject(Class)`                            | 获取 SingletonProto / ContextProto 实例 |
+| `app.mockModuleContextScope(async (ctx) => { ... })` | ContextProto 测试作用域                 |
+| `mm(Class.prototype, 'method', fn)`                  | Mock Proto 方法                         |
+| `app.mockCsrf()`                                     | 跳过 CSRF 校验（POST 测试必备）         |
+| `app.mockHttpclient(url, data)`                      | Mock 外部 HTTP 调用                     |
+| `app.getEventWaiter()`                               | 获取 EventBus 事件等待器                |
 
 ---
 
 ## 常见错误
 
-| 错误写法                               | 正确写法                                                    | 说明                                  |
-| -------------------------------------- | ----------------------------------------------------------- | ------------------------------------- |
-| `import { app } from 'egg'`            | `import { app } from '@eggjs/mock/bootstrap'`               | 测试使用 mock 包                      |
-| `before()` / `after()`                 | `beforeAll()` / `afterAll()`                                | Vitest 钩子，不是 Mocha               |
-| POST 测试报 403                        | 加 `app.mockCsrf()`                                         | 安全插件默认开启 CSRF                 |
-| 手动写 `afterEach(mm.restore)`         | 不需要                                                      | egg-bin 自动注入 mock 恢复            |
-| `app.getEggObject()` 获取 ContextProto | 在 `app.mockModuleContextScope()` 内用 `ctx.getEggObject()` | `app.getEggObject` 只能获取 Singleton |
-| 代码写在 describe 内、hooks 外         | 放入 `beforeAll` / `beforeEach`                             | describe 体在加载阶段就执行           |
-| `await app.ready()` 配合 bootstrap     | 不需要                                                      | bootstrap 自动处理生命周期            |
+| 错误写法                           | 正确写法                                      | 说明                        |
+| ---------------------------------- | --------------------------------------------- | --------------------------- |
+| `import { app } from 'egg'`        | `import { app } from '@eggjs/mock/bootstrap'` | 测试使用 mock 包            |
+| `before()` / `after()`             | `beforeAll()` / `afterAll()`                  | Vitest 钩子，不是 Mocha     |
+| POST 测试报 403                    | 加 `app.mockCsrf()`                           | 安全插件默认开启 CSRF       |
+| 手动写 `afterEach(mm.restore)`     | 不需要                                        | egg-bin 自动注入 mock 恢复  |
+| 代码写在 describe 内、hooks 外     | 放入 `beforeAll` / `beforeEach`               | describe 体在加载阶段就执行 |
+| `await app.ready()` 配合 bootstrap | 不需要                                        | bootstrap 自动处理生命周期  |
 
 ---
 

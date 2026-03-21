@@ -2,11 +2,10 @@
 
 ## 常见错误
 
-| 错误写法                              | 正确写法                                                               | 说明                                  |
-| ------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------- |
-| `app.getEggObject(ContextProtoClass)` | `app.mockModuleContextScope(async (ctx) => { ctx.getEggObject(...) })` | `app.getEggObject` 只能获取 Singleton |
-| `ctx.service.user.get()`              | `ctx.getEggObject(UserService)`                                        | 旧写法，新项目用 DI                   |
-| 不 await `getEggObject`               | `const svc = await ctx.getEggObject(Svc)`                              | 返回 Promise                          |
+| 错误写法                 | 正确写法                                  | 说明                |
+| ------------------------ | ----------------------------------------- | ------------------- |
+| `ctx.service.user.get()` | `ctx.getEggObject(UserService)`           | 旧写法，新项目用 DI |
+| 不 await `getEggObject`  | `const svc = await ctx.getEggObject(Svc)` | 返回 Promise        |
 
 ---
 
@@ -32,7 +31,7 @@ describe('ConfigService', () => {
 
 ## ContextProto 测试
 
-`@ContextProto` 对象需要在 `app.mockModuleContextScope` 中通过 `ctx.getEggObject()` 获取。该方法会创建带 DI 生命周期的 ctx，退出时自动销毁：
+`@ContextProto` 对象可以直接通过 `app.getEggObject()` 获取，也可以在 `app.mockModuleContextScope` 中通过 `ctx.getEggObject()` 获取。后者会创建带 DI 生命周期的 ctx，退出时自动销毁：
 
 ```typescript
 import assert from 'node:assert';
