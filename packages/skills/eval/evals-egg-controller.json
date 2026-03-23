@@ -1,6 +1,6 @@
 {
   "skill_name": "egg-controller",
-  "description": "控制器评测：覆盖 http-controller、mcp-controller、schedule、ajv-validate",
+  "description": "控制器评测：覆盖 http-controller、mcp-controller、schedule、ajv-validate、middleware",
   "evals": [
     {
       "id": 1,
@@ -196,6 +196,76 @@
         {
           "path": "app/orderModule/OrderService.ts",
           "content": "import { SingletonProto, AccessLevel } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class OrderService {\n  async create(data: { productId: string; quantity: number; remark?: string }) {\n    return { orderId: 'order-' + Date.now(), ...data };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "帮我给这个 Controller 加个日志中间件，记录每个请求的耗时",
+      "expected_output": "使用 AOP 写法：定义 @Advice 类实现 IAdvice 的 around 方法，@Inject Logger，用 @Middleware 应用到 Controller。import Advice 从 egg/aop，Middleware 从 egg",
+      "files": [
+        {
+          "path": "app/modules/user/UserController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';\n\n@HTTPController({ path: '/api/users' })\nexport class UserController {\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/' })\n  async list() {\n    return { users: [] };\n  }\n\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/:id' })\n  async show() {\n    return { id: '1', name: 'test' };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "帮我写一个鉴权中间件，从 header 取 token 校验，校验失败抛异常，只应用到部分接口",
+      "expected_output": "AOP @Advice 类 + around 方法中校验 token + @Middleware 应用到方法级别（而非类级别），import Advice/IAdvice/AdviceContext 从 egg/aop"
+    },
+    {
+      "id": 28,
+      "prompt": "中间件代码报错 AOP and MiddlewareFunc can not be mixed，帮我看看哪里写错了",
+      "expected_output": "指出不能在同一个 @Middleware() 中混用函数和 Advice 类，需要分开写两个 @Middleware",
+      "files": [
+        {
+          "path": "app/modules/api/ApiController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum, Middleware } from 'egg';\nimport { LogAdvice } from '../common/advice/LogAdvice.ts';\nimport { countMw } from './middleware/count.ts';\n\n@HTTPController({ path: '/api' })\n@Middleware(LogAdvice, countMw)\nexport class ApiController {\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/hello' })\n  async hello() {\n    return { message: 'hello' };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "我想写一个中间件统一包装接口返回值为 { success: true, data: ... } 的格式",
+      "expected_output": "AOP @Advice 类 + around 方法中 await next() 拿到返回值后包装为 { success: true, data: result }，用 @Middleware 应用"
+    },
+    {
+      "id": 30,
+      "prompt": "AOP 中间件和函数式中间件有什么区别？什么时候用哪种",
+      "expected_output": "AOP 为推荐写法，支持 @Inject 注入依赖；函数式为旧版兼容写法，需从 ctx 手动获取依赖。新项目优先用 AOP"
+    },
+    {
+      "id": 31,
+      "prompt": "帮我把这个老的 egg 函数式中间件改成 AOP 写法",
+      "expected_output": "定义 @Advice 类 + 实现 around 方法，用 @Inject 注入 Logger 替代 ctx.logger，import 从 egg/aop",
+      "files": [
+        {
+          "path": "app/modules/api/middleware/log.ts",
+          "content": "import type { Context, Next } from 'egg';\n\nexport async function logMw(ctx: Context, next: Next): Promise<void> {\n  const start = Date.now();\n  await next();\n  ctx.logger.info('request %s %s cost %dms', ctx.method, ctx.url, Date.now() - start);\n}"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "我在 Advice 中用了一个实例属性 count 来统计请求数，但是多个请求之间数据串了，帮我看看",
+      "expected_output": "指出 Advice 默认是 Singleton，实例属性会被并发请求共享。请求级状态应使用 ctx.set()/ctx.get() 传递",
+      "files": [
+        {
+          "path": "app/modules/api/advice/RequestCountAdvice.ts",
+          "content": "import { Advice, IAdvice, AdviceContext } from 'egg/aop';\n\n@Advice()\nexport class RequestCountAdvice implements IAdvice {\n  private requestId = '';\n\n  async around(ctx: AdviceContext, next: () => Promise<any>): Promise<any> {\n    this.requestId = Math.random().toString(36).slice(2);\n    const result = await next();\n    return { ...result, requestId: this.requestId };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "帮我看看这个 Controller 上的中间件执行顺序是什么样的",
+      "expected_output": "函数式和 AOP 分属两个独立执行阶段：先执行所有函数式中间件（类级别 countMw → 方法级别 timeMw），再执行所有 AOP 中间件（类级别 LogAdvice → 方法级别 AuthAdvice），最后执行 hello()。即 countMw → timeMw → LogAdvice → AuthAdvice → hello()，与装饰器书写顺序无关",
+      "files": [
+        {
+          "path": "app/modules/api/ApiController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum, Middleware } from 'egg';\nimport { LogAdvice } from '../common/advice/LogAdvice.ts';\nimport { AuthAdvice } from '../common/advice/AuthAdvice.ts';\nimport { countMw } from './middleware/count.ts';\nimport { timeMw } from './middleware/time.ts';\n\n@HTTPController({ path: '/api' })\n@Middleware(countMw)\n@Middleware(LogAdvice)\nexport class ApiController {\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/hello' })\n  @Middleware(timeMw)\n  @Middleware(AuthAdvice)\n  async hello() {\n    return { message: 'hello' };\n  }\n}"
         }
       ]
     }

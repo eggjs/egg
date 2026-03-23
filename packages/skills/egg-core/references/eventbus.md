@@ -135,39 +135,4 @@ export class BatchService {
 
 ## 单元测试
 
-使用 `app.getEventWaiter()` 等待事件被处理完成，避免使用 `sleep`：
-
-```typescript
-import { describe, it, expect } from 'vitest';
-import { mm, type MockApplication } from '@eggjs/mock';
-import { OrderService } from './path/to/OrderService.ts';
-
-describe('order events', () => {
-  let app: MockApplication;
-
-  it('should emit orderCreated event', async () => {
-    await app.mockModuleContextScope(async (ctx) => {
-      const orderService = await ctx.getEggObject(OrderService);
-      const eventWaiter = await app.getEventWaiter();
-
-      // 准备等待事件
-      const eventPromise = eventWaiter.await('orderCreated');
-
-      // 触发业务逻辑
-      await orderService.createOrder('user1', []);
-
-      // 等待事件处理完成
-      await eventPromise;
-
-      // 断言 handler 的执行结果
-    });
-  });
-});
-```
-
-**EventWaiter API：**
-
-- `eventWaiter.await('eventName')` — 等待指定事件触发
-- `eventWaiter.awaitFirst('event1', 'event2')` — 等待多个事件中最先触发的一个
-
-**注意：** `eventWaiter.await()` 必须在 `emit()` 之前调用（先注册等待，再触发事件），否则可能错过事件。
+EventBus 的测试方法参考 `egg-unittest` skill 的 `references/eventbus-test.md`。
