@@ -30,6 +30,12 @@ export class AppWorkerLoader extends EggApplicationLoader {
 
     // app > plugin
     await this.loadCustomApp();
+
+    // In metadataOnly mode, loadCustomApp triggers loadMetadata and marks ready.
+    // Skip the remaining phases (service/middleware/controller/router) since
+    // they do real module evaluation and are not needed for manifest generation.
+    if (this.options.metadataOnly) return;
+
     // app > plugin
     await this.loadService();
     // app > plugin > core

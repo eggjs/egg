@@ -2,6 +2,7 @@ import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper }
 import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import type { LoadAppManifest } from '@eggjs/tegg-loader';
+import type { ModuleReference } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 
 import { EggAppLoader } from './EggAppLoader.ts';
@@ -62,15 +63,18 @@ export class EggModuleLoader {
   }
 
   /**
-   * Collect tegg manifest data for the egg core manifest generation.
-   * Populates loader.teggManifestCollector with moduleReferences and decoratedFiles.
+   * Build tegg manifest data from module references and descriptors.
+   * Shared by both normal startup (#collectTeggManifest) and metadataOnly mode (loadMetadata hook).
    */
-  #collectTeggManifest(moduleDescriptors: ModuleDescriptor[]): void {
-    // Skip collection if we loaded from a valid manifest (no need to regenerate)
-    if (this.app.loader.manifest) return;
-
-    this.app.loader.teggManifestCollector = {
-      moduleReferences: [...this.app.moduleReferences].map((ref) => ({
+  static buildTeggManifestData(
+    moduleReferences: readonly ModuleReference[],
+    moduleDescriptors: readonly ModuleDescriptor[],
+  ): {
+    moduleReferences: Array<{ name: string; path: string; optional?: boolean }>;
+    moduleDescriptors: Array<{ name: string; unitPath: string; optional?: boolean; decoratedFiles: string[] }>;
+  } {
+    return {
+      moduleReferences: moduleReferences.map((ref) => ({
         name: ref.name,
         path: ref.path,
         optional: ref.optional,
@@ -82,6 +86,14 @@ export class EggModuleLoader {
         decoratedFiles: ModuleDescriptorDumper.getDecoratedFiles(desc),
       })),
     };
+  }
+
+  #collectTeggManifest(moduleDescriptors: ModuleDescriptor[]): void {
+    if (this.app.loader.manifest) return;
+    this.app.loader.teggManifestCollector = EggModuleLoader.buildTeggManifestData(
+      this.app.moduleReferences,
+      moduleDescriptors,
+    );
   }
 
   private async loadModule(): Promise<void> {

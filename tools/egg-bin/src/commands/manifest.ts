@@ -6,6 +6,7 @@ import { ManifestStore } from '@eggjs/core';
 import { Args, Flags } from '@oclif/core';
 
 import { BaseCommand } from '../baseCommand.ts';
+import { getSourceFilename } from '../utils.ts';
 
 const debug = debuglog('egg/bin/commands/manifest');
 
@@ -61,20 +62,19 @@ export default class Manifest<T extends typeof Manifest> extends BaseCommand<T> 
     this.log('Generating startup manifest...');
     this.log('  baseDir: %s', baseDir);
 
-    const env = flags.env ?? 'prod';
-    const manifest = ManifestStore.generate({
-      baseDir,
-      serverEnv: env,
-      serverScope: '',
-      typescriptEnabled: true,
-      resolveCache: {},
-      fileDiscovery: {},
-    });
+    const ext = this.isESM ? 'mjs' : 'cjs';
+    const scriptFile = getSourceFilename(`../scripts/manifest-generate.${ext}`);
+    const args = [
+      JSON.stringify({
+        baseDir,
+        framework: flags.framework,
+        env: flags.env ?? 'prod',
+      }),
+    ];
 
-    await ManifestStore.write(baseDir, manifest);
+    const execArgv = await this.buildRequireExecArgv();
+    await this.forkNode(scriptFile, args, { execArgv });
     this.log('Manifest generated at: %s', path.join(baseDir, '.egg', 'manifest.json'));
-    this.log('Note: For full manifest data, start the app once with EGG_SERVER_ENV=%s', env);
-    this.log('The app will auto-generate a complete manifest on first startup.');
   }
 
   private validate(baseDir: string, flags: Record<string, any>): void {

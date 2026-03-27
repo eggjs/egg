@@ -103,10 +103,7 @@ export class ManifestStore {
       return false;
     }
 
-    if (inv.baseDir !== baseDir) {
-      debug('manifest baseDir mismatch: expected %s, got %s', baseDir, inv.baseDir);
-      return false;
-    }
+    // Note: baseDir is NOT validated — build env and runtime env may have different paths
 
     if (inv.serverEnv !== serverEnv) {
       debug('manifest serverEnv mismatch: expected %s, got %s', serverEnv, inv.serverEnv);
@@ -191,7 +188,7 @@ export class ManifestStore {
   // --- Fingerprint Utilities (stat-based, no content reads) ---
 
   /** Fingerprint a file by mtime+size — avoids reading file content. */
-  private static statFingerprint(filepath: string): string | null {
+  static #statFingerprint(filepath: string): string | null {
     try {
       const stat = fs.statSync(filepath);
       return `${stat.mtimeMs}:${stat.size}`;
@@ -203,7 +200,7 @@ export class ManifestStore {
   /** Find and fingerprint the project's lockfile. */
   static #lockfileFingerprint(baseDir: string): string {
     for (const name of LOCKFILE_NAMES) {
-      const fp = ManifestStore.statFingerprint(path.join(baseDir, name));
+      const fp = ManifestStore.#statFingerprint(path.join(baseDir, name));
       if (fp) return `${name}:${fp}`;
     }
     return '';
@@ -243,7 +240,7 @@ export class ManifestStore {
         ManifestStore.#fingerprintRecursive(fullPath, hash, visited);
       } else if (entry.isFile()) {
         // Use stat metadata instead of reading file contents
-        const fp = ManifestStore.statFingerprint(fullPath);
+        const fp = ManifestStore.#statFingerprint(fullPath);
         hash.update(`file:${entry.name}:${fp ?? 'missing'}\n`);
       }
     }

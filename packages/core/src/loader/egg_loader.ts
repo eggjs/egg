@@ -48,6 +48,8 @@ export interface EggLoaderOptions {
   serverScope?: string;
   /** custom plugins */
   plugins?: Record<string, EggPluginInfo>;
+  /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
+  metadataOnly?: boolean;
 }
 
 export type EggDirInfoType = 'app' | 'plugin' | 'framework';
@@ -1248,7 +1250,11 @@ export class EggLoader {
    */
   async loadCustomApp(): Promise<void> {
     await this.#loadBootHook('app');
-    this.lifecycle.triggerConfigWillLoad();
+    if (this.options.metadataOnly) {
+      await this.lifecycle.triggerLoadMetadata();
+    } else {
+      this.lifecycle.triggerConfigWillLoad();
+    }
   }
 
   /**
@@ -1256,7 +1262,11 @@ export class EggLoader {
    */
   async loadCustomAgent(): Promise<void> {
     await this.#loadBootHook('agent');
-    this.lifecycle.triggerConfigWillLoad();
+    if (this.options.metadataOnly) {
+      await this.lifecycle.triggerLoadMetadata();
+    } else {
+      this.lifecycle.triggerConfigWillLoad();
+    }
   }
 
   // FIXME: no logger used after egg removed

@@ -20,6 +20,16 @@ export default class App implements ILifecycleBoot {
   }
 
   configWillLoad(): void {
+    this.#scanModuleReferences();
+    this.#loadModuleConfigs();
+  }
+
+  async loadMetadata(): Promise<void> {
+    this.#scanModuleReferences();
+    this.#loadModuleConfigs();
+  }
+
+  #scanModuleReferences(): void {
     const { readModuleOptions } = this.app.config.tegg;
 
     // Try to use manifest for module references (skip expensive globby scan)
@@ -44,9 +54,6 @@ export default class App implements ILifecycleBoot {
       const moduleScanner = new ModuleScanner(this.app.baseDir, readModuleOptions);
       moduleReferences = moduleScanner.loadModuleReferences();
 
-      // When outDir is configured and compiled output exists, rewrite module paths
-      // from source (e.g. app/port/) to compiled output (e.g. dist/app/port/)
-      // so that LoaderUtil can find .js files in production mode
       if (outDir) {
         moduleReferences = this.#rewriteModulePaths(moduleReferences, outDir);
       }
@@ -54,7 +61,9 @@ export default class App implements ILifecycleBoot {
 
     this.app.moduleReferences = moduleReferences;
     debug('load moduleReferences: %o', this.app.moduleReferences);
+  }
 
+  #loadModuleConfigs(): void {
     this.app.moduleConfigs = {};
     for (const reference of this.app.moduleReferences) {
       const absoluteRef: ModuleReference = {
