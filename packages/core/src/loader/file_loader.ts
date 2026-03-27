@@ -8,6 +8,7 @@ import globby from 'globby';
 import { isClass, isGeneratorFunction, isAsyncFunction, isPrimitive } from 'is-type-of';
 
 import utils, { type Fun } from '../utils/index.ts';
+import type { ManifestStore } from './manifest.ts';
 
 const debug = debuglog('egg/core/file_loader');
 
@@ -49,6 +50,10 @@ export interface FileLoaderOptions {
   /** set property's case when converting a filepath to property list. */
   caseStyle?: CaseStyle | CaseStyleFunction;
   lowercaseFirst?: boolean;
+  /** Pre-computed startup manifest for skipping globby scans */
+  manifest?: ManifestStore | null;
+  /** Collector for file discovery results during manifest generation */
+  fileDiscoveryCollector?: Record<string, string[]>;
 }
 
 export interface FileLoaderParseItem {
@@ -193,8 +198,17 @@ export class FileLoader {
     const items: FileLoaderParseItem[] = [];
     debug('[parse] parsing directories: %j', directories);
     for (const directory of directories) {
-      const filepaths = globby.sync(files, { cwd: directory });
-      debug('[parse] globby files: %o, cwd: %o => %o', files, directory, filepaths);
+      const cachedFiles = this.options.manifest?.getFileDiscovery(directory);
+      const filepaths = cachedFiles ?? globby.sync(files, { cwd: directory });
+      if (cachedFiles) {
+        debug('[parse:manifest] using cached files for %o, count: %d', directory, cachedFiles.length);
+      } else {
+        debug('[parse] globby files: %o, cwd: %o => %o', files, directory, filepaths);
+        // Collect for manifest generation
+        if (this.options.fileDiscoveryCollector) {
+          this.options.fileDiscoveryCollector[directory] = filepaths;
+        }
+      }
       for (const filepath of filepaths) {
         const fullpath = path.join(directory, filepath);
         if (!fs.statSync(fullpath).isFile()) continue;

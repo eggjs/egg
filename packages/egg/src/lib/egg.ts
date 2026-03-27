@@ -7,7 +7,7 @@ import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 
 import { Cookies as ContextCookies } from '@eggjs/cookies';
-import { EggCore, Router } from '@eggjs/core';
+import { EggCore, Router, ManifestStore } from '@eggjs/core';
 import type { EggCoreOptions, Next, MiddlewareFunc as EggCoreMiddlewareFunc, ILifecycleBoot } from '@eggjs/core';
 import { utils as eggUtils } from '@eggjs/core';
 import { extend } from '@eggjs/extend2';
@@ -190,6 +190,7 @@ export class EggApplicationCore extends EggCore {
         const dumpStartTime = Date.now();
         this.dumpConfig();
         this.dumpTiming();
+        this.dumpManifest();
         this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
       }),
     );
@@ -530,6 +531,28 @@ export class EggApplicationCore extends EggCore {
       }
     } catch (err: any) {
       this.coreLogger.warn(`[egg] dumpTiming error: ${err.message}`);
+    }
+  }
+
+  /**
+   * Generate and save startup manifest for faster subsequent startups.
+   * Only generates when no valid manifest exists (avoids overwriting during manifest-accelerated starts).
+   * Tegg data is collected by the tegg plugin via `loader.teggManifestCollector`.
+   * @private
+   */
+  dumpManifest(): void {
+    try {
+      // Skip if we already loaded from a valid manifest
+      if (this.loader.manifest) {
+        return;
+      }
+
+      const manifest = this.loader.generateManifest(this.loader.teggManifestCollector);
+      ManifestStore.write(this.baseDir, manifest).catch((err: Error) => {
+        this.coreLogger.warn(`[egg] dumpManifest write error: ${err.message}`);
+      });
+    } catch (err: any) {
+      this.coreLogger.warn(`[egg] dumpManifest error: ${err.message}`);
     }
   }
 

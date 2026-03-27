@@ -66,4 +66,19 @@ export class ModuleDescriptorDumper {
     await fs.mkdir(path.dirname(dumpPath), { recursive: true });
     await fs.writeFile(dumpPath, ModuleDescriptorDumper.stringifyDescriptor(desc));
   }
+
+  /**
+   * Extract decorated file paths (relative to unitPath) from a ModuleDescriptor.
+   * Used for manifest generation to record which files contain egg prototypes.
+   */
+  static getDecoratedFiles(desc: ModuleDescriptor): string[] {
+    const fileSet = new Set<string>();
+    for (const clazz of [...desc.clazzList, ...desc.multiInstanceClazzList]) {
+      const filePath = PrototypeUtil.getFilePath(clazz);
+      if (filePath) {
+        fileSet.add(path.relative(desc.unitPath, filePath));
+      }
+    }
+    return Array.from(fileSet);
+  }
 }

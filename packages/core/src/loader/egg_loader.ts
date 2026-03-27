@@ -23,6 +23,7 @@ import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
+import { ManifestStore, type ManifestTegg, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
 
@@ -67,6 +68,14 @@ export class EggLoader {
   readonly appInfo: EggAppInfo;
   readonly outDir?: string;
   dirs?: EggDirInfo[];
+  /** Pre-computed startup manifest for skipping file I/O */
+  readonly manifest: ManifestStore | null;
+  /** Collected resolveModule results for manifest generation */
+  readonly resolveCacheCollector: Record<string, string | null> = {};
+  /** Collected file discovery results for manifest generation */
+  readonly fileDiscoveryCollector: Record<string, string[]> = {};
+  /** Collected tegg manifest data (populated by tegg plugin) */
+  teggManifestCollector?: ManifestTegg;
 
   /**
    * @class
@@ -154,6 +163,12 @@ export class EggLoader {
      * @since 1.0.0
      */
     this.appInfo = this.getAppInfo();
+
+    // Load pre-computed startup manifest if available
+    this.manifest = ManifestStore.load(this.options.baseDir, this.serverEnv, this.serverScope);
+    if (this.manifest) {
+      debug('startup manifest loaded, will skip redundant file I/O');
+    }
   }
 
   get app(): EggCore {
@@ -1627,6 +1642,8 @@ export class EggLoader {
       directory: options?.directory ?? directory,
       target,
       inject: this.app,
+      manifest: this.manifest,
+      fileDiscoveryCollector: this.fileDiscoveryCollector,
     };
 
     const timingKey = `Load "${String(property)}" to Application`;
@@ -1652,6 +1669,8 @@ export class EggLoader {
       directory: options?.directory || directory,
       property,
       inject: this.app,
+      manifest: this.manifest,
+      fileDiscoveryCollector: this.fileDiscoveryCollector,
     };
 
     const timingKey = `Load "${String(property)}" to Context`;
@@ -1688,6 +1707,15 @@ export class EggLoader {
   }
 
   resolveModule(filepath: string): string | undefined {
+    // Check manifest cache first
+    if (this.manifest) {
+      const cached = this.manifest.getResolveCache(filepath);
+      if (cached !== undefined) {
+        debug('[resolveModule:manifest] %o => %o', filepath, cached);
+        return cached ?? undefined;
+      }
+    }
+
     let fullPath: string | undefined;
     try {
       fullPath = utils.resolvePath(filepath);
@@ -1697,6 +1725,10 @@ export class EggLoader {
     if (!fullPath) {
       fullPath = this.#resolveFromOutDir(filepath);
     }
+
+    // Collect for manifest generation
+    this.resolveCacheCollector[filepath] = fullPath ?? null;
+
     return fullPath;
   }
 
@@ -1733,6 +1765,22 @@ export class EggLoader {
         return outDirPath;
       }
     }
+  }
+
+  /**
+   * Generate startup manifest from collected data.
+   * Should be called after all loading phases complete.
+   */
+  generateManifest(tegg?: ManifestTegg): StartupManifest {
+    return ManifestStore.generate({
+      baseDir: this.options.baseDir,
+      serverEnv: this.serverEnv,
+      serverScope: this.serverScope,
+      typescriptEnabled: isSupportTypeScript(),
+      tegg,
+      resolveCache: this.resolveCacheCollector,
+      fileDiscovery: this.fileDiscoveryCollector,
+    });
   }
 }
 

@@ -31,6 +31,7 @@
     "./commands/cov": "./src/commands/cov.ts",
     "./commands/dev": "./src/commands/dev.ts",
     "./commands/test": "./src/commands/test.ts",
+    "./commands/manifest": "./src/commands/manifest.ts",
     "./types": "./src/types.ts",
     "./utils": "./src/utils.ts",
     "./package.json": "./package.json"
@@ -43,6 +44,7 @@
       "./commands/cov": "./dist/commands/cov.js",
       "./commands/dev": "./dist/commands/dev.js",
       "./commands/test": "./dist/commands/test.js",
+      "./commands/manifest": "./dist/commands/manifest.js",
       "./types": "./dist/types.js",
       "./utils": "./dist/utils.js",
       "./package.json": "./package.json"
@@ -56,6 +58,7 @@
     "ci": "npm run cov"
   },
   "dependencies": {
+    "@eggjs/core": "workspace:*",
     "@eggjs/tegg-vitest": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "@oclif/core": "catalog:",
