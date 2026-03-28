@@ -259,23 +259,19 @@ describe('ManifestStore', () => {
       }
     });
 
-    it('should load manifest even when baseDir differs from generation', async () => {
-      const baseDir = setupBaseDir({ configFiles: { 'a.ts': 'const a = 1;' } });
+    it('should load manifest even when stored baseDir differs from actual path', async () => {
+      const baseDir = setupBaseDir();
       try {
         await generateAndWrite(baseDir);
-        const otherDir = createTmpDir();
-        try {
-          fs.copyFileSync(path.join(baseDir, 'pnpm-lock.yaml'), path.join(otherDir, 'pnpm-lock.yaml'));
-          const configDir = path.join(otherDir, 'config');
-          fs.mkdirSync(configDir, { recursive: true });
-          fs.copyFileSync(path.join(baseDir, 'config', 'a.ts'), path.join(configDir, 'a.ts'));
-          const eggDir = path.join(otherDir, '.egg');
-          fs.mkdirSync(eggDir, { recursive: true });
-          fs.copyFileSync(path.join(baseDir, '.egg', 'manifest.json'), path.join(eggDir, 'manifest.json'));
-          assert.ok(ManifestStore.load(otherDir, 'prod', ''));
-        } finally {
-          fs.rmSync(otherDir, { recursive: true, force: true });
-        }
+        // Tamper the stored baseDir to simulate build→deploy path change
+        const manifestPath = path.join(baseDir, '.egg', 'manifest.json');
+        const data = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+        data.invalidation.baseDir = '/some/build/path';
+        fs.writeFileSync(manifestPath, JSON.stringify(data));
+        // Should still load — baseDir is not validated
+        const store = ManifestStore.load(baseDir, 'prod', '');
+        assert.ok(store);
+        assert.equal(store.data.invalidation.baseDir, '/some/build/path');
       } finally {
         fs.rmSync(baseDir, { recursive: true, force: true });
       }
