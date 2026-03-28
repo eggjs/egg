@@ -315,6 +315,19 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     return `--require "${modulePath}"`;
   }
 
+  protected async buildRequireExecArgv(): Promise<string[]> {
+    const requires = await this.formatRequires();
+    const execArgv: string[] = [];
+    for (const r of requires) {
+      const module = this.formatImportModule(r);
+      const splitIndex = module.indexOf(' ');
+      if (splitIndex !== -1) {
+        execArgv.push(module.slice(0, splitIndex), module.slice(splitIndex + 2, -1));
+      }
+    }
+    return execArgv;
+  }
+
   protected addNodeOptions(options: string) {
     if (this.env.NODE_OPTIONS) {
       if (!this.env.NODE_OPTIONS.includes(options)) {

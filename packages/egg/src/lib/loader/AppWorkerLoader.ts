@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import { EggApplicationLoader } from './EggApplicationLoader.ts';
 
 /**
@@ -37,6 +39,11 @@ export class AppWorkerLoader extends EggApplicationLoader {
     // app
     await this.loadController();
     // app
-    await this.loadRouter(); // Depend on controllers
+    if (this.options.metadataOnly) {
+      // Resolve router path to collect metadata, but don't execute it
+      this.resolveModule(path.join(this.options.baseDir, 'app/router'));
+    } else {
+      await this.loadRouter(); // Depend on controllers
+    }
   }
 }

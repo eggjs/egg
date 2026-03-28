@@ -54,6 +54,13 @@ export interface ILifecycleBoot {
    * Do some thing before app close
    */
   beforeClose?(): Promise<void>;
+
+  /**
+   * Collect metadata for manifest generation (metadataOnly mode).
+   * Called instead of configWillLoad/configDidLoad/didLoad/willReady
+   * when the application is started with metadataOnly: true.
+   */
+  loadMetadata?(): Promise<void> | void;
 }
 
 export type BootImplClass<T = ILifecycleBoot> = new (...args: any[]) => T;
@@ -72,6 +79,7 @@ export class Lifecycle extends EventEmitter {
   #bootHooks: (BootImplClass | ILifecycleBoot)[];
   #boots: ILifecycleBoot[];
   #isClosed: boolean;
+  #metadataOnly: boolean;
   #closeFunctionSet: Set<FunWithFullPath>;
   loadReady: Ready;
   bootReady: Ready;
@@ -87,6 +95,7 @@ export class Lifecycle extends EventEmitter {
     this.#boots = [];
     this.#closeFunctionSet = new Set();
     this.#isClosed = false;
+    this.#metadataOnly = false;
     this.#init = false;
 
     this.timing.start(`${this.options.app.type} Start`);
@@ -110,7 +119,9 @@ export class Lifecycle extends EventEmitter {
     });
 
     this.ready((err) => {
-      this.triggerDidReady(err);
+      if (!this.#metadataOnly) {
+        void this.triggerDidReady(err);
+      }
       debug('app ready');
       this.timing.end(`${this.options.app.type} Start`);
     });
@@ -329,6 +340,24 @@ export class Lifecycle extends EventEmitter {
       }
       debug('trigger serverDidReady end');
     })();
+  }
+
+  async triggerLoadMetadata(): Promise<void> {
+    this.#metadataOnly = true;
+    debug('trigger loadMetadata start');
+    for (const boot of this.#boots) {
+      if (typeof boot.loadMetadata === 'function') {
+        debug('trigger loadMetadata at %o', boot.fullPath);
+        try {
+          await boot.loadMetadata();
+        } catch (err) {
+          debug('trigger loadMetadata error at %o, error: %s', boot.fullPath, err);
+          this.emit('error', err);
+        }
+      }
+    }
+    debug('trigger loadMetadata end');
+    this.ready(true);
   }
 
   #initReady(): void {

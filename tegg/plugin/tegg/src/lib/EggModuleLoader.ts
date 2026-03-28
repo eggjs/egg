@@ -1,6 +1,8 @@
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
-import type { GlobalGraphBuildHook } from '@eggjs/metadata';
+import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
+import type { LoadAppManifest } from '@eggjs/tegg-loader';
+import type { ModuleReference } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 
 import { EggAppLoader } from './EggAppLoader.ts';
@@ -18,13 +20,13 @@ export class EggModuleLoader {
     this.pendingBuildHooks.push(hook);
   }
 
-  private async loadApp() {
+  private async loadApp(): Promise<void> {
     const loader = new EggAppLoader(this.app);
     const loadUnit = await LoadUnitFactory.createLoadUnit(this.app.baseDir, EggLoadUnitType.APP, loader);
     this.app.moduleHandler.loadUnits.push(loadUnit);
   }
 
-  private async buildAppGraph() {
+  private async buildAppGraph(): Promise<GlobalGraph> {
     for (const plugin of Object.values(this.app.plugins)) {
       if (!plugin.enable) continue;
       const modulePlugin = this.app.moduleReferences.find((t) => t.path === plugin.path);
@@ -32,11 +34,26 @@ export class EggModuleLoader {
         modulePlugin.optional = false;
       }
     }
-    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences);
+
+    // Pass manifest data to LoaderFactory if available
+    const manifest = this.app.loader.manifest;
+    const manifestTegg = manifest?.tegg;
+    let loadAppManifest: LoadAppManifest | undefined;
+    if (manifestTegg?.moduleDescriptors?.length) {
+      loadAppManifest = {
+        moduleDescriptors: manifestTegg.moduleDescriptors,
+      };
+    }
+
+    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest);
+
+    // Dump module descriptors and collect manifest data
+    this.#collectTeggManifest(moduleDescriptors);
+
     for (const moduleDescriptor of moduleDescriptors) {
       ModuleDescriptorDumper.dump(moduleDescriptor, {
         dumpDir: this.app.baseDir,
-      }).catch((e) => {
+      }).catch((e: Error) => {
         e.message = 'dump module descriptor failed: ' + e.message;
         this.app.logger.warn(e);
       });
@@ -45,7 +62,41 @@ export class EggModuleLoader {
     return graph;
   }
 
-  private async loadModule() {
+  /**
+   * Build tegg manifest data from module references and descriptors.
+   * Shared by both normal startup (#collectTeggManifest) and metadataOnly mode (loadMetadata hook).
+   */
+  static buildTeggManifestData(
+    moduleReferences: readonly ModuleReference[],
+    moduleDescriptors: readonly ModuleDescriptor[],
+  ): {
+    moduleReferences: Array<{ name: string; path: string; optional?: boolean }>;
+    moduleDescriptors: Array<{ name: string; unitPath: string; optional?: boolean; decoratedFiles: string[] }>;
+  } {
+    return {
+      moduleReferences: moduleReferences.map((ref) => ({
+        name: ref.name,
+        path: ref.path,
+        optional: ref.optional,
+      })),
+      moduleDescriptors: moduleDescriptors.map((desc) => ({
+        name: desc.name,
+        unitPath: desc.unitPath,
+        optional: desc.optional,
+        decoratedFiles: ModuleDescriptorDumper.getDecoratedFiles(desc),
+      })),
+    };
+  }
+
+  #collectTeggManifest(moduleDescriptors: ModuleDescriptor[]): void {
+    if (this.app.loader.manifest) return;
+    this.app.loader.teggManifestCollector = EggModuleLoader.buildTeggManifestData(
+      this.app.moduleReferences,
+      moduleDescriptors,
+    );
+  }
+
+  private async loadModule(): Promise<void> {
     this.globalGraph.build();
     this.globalGraph.sort();
     const moduleConfigList = this.globalGraph.moduleConfigList;

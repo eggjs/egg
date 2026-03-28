@@ -7,7 +7,8 @@ export default defineConfig({
   unused: {
     level: 'error',
     // @vitest/coverage-v8 is loaded by vitest at runtime as a coverage provider, not directly imported
-    ignore: ['utility', '@vitest/coverage-v8'],
+    // @eggjs/core is used by manifest command and scripts/manifest-generate.mjs
+    ignore: ['utility', '@vitest/coverage-v8', '@eggjs/core'],
   },
   copy: [
     {

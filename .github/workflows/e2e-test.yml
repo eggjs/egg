@@ -76,6 +76,10 @@ jobs:
               CNPMCORE_DATABASE_NAME=cnpmcore_unittest bash ./prepare-database-mysql.sh
               CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
 
+              # Generate startup manifest for faster cold start
+              EGG_TS_ENABLE=false npx egg-bin manifest generate --env=unittest
+              EGG_TS_ENABLE=false npx egg-bin manifest validate --env=unittest
+
               EGG_TS_ENABLE=false npx eggctl start --port=7001 --env=unittest --daemon
               HEALTH_URL="http://127.0.0.1:7001/"
               START_TIME=$(date +%s)
@@ -85,7 +89,6 @@ jobs:
 
               echo "Waiting for application to become healthy at ${HEALTH_URL} (timeout: ${TIMEOUT}s)..."
               while true; do
-                # Capture response body and status code
                 STATUS=$(curl -s -o /tmp/cnpmcore-health-response -w "%{http_code}" "${HEALTH_URL}" || echo "000")
                 echo "Health check attempt at $(date): status=${STATUS}"
 
@@ -115,6 +118,10 @@ jobs:
                 cat logs/cnpmcore/common-error.log 2>/dev/null || true
                 exit 1
               fi
+
+              # Verify manifest is loaded and used (zero extra resolve I/O)
+              cp ../scripts/verify-manifest.mjs .
+              EGG_TS_ENABLE=false EGG_SERVER_ENV=unittest node verify-manifest.mjs
           - name: examples
             node-version: 24
             command: |
