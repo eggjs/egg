@@ -55,6 +55,7 @@
     "sqlstring": "catalog:"
   },
   "devDependencies": {
+    "@eggjs/module-test-util": "workspace:*",
     "@types/js-beautify": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",

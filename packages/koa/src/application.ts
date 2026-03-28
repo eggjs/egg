@@ -268,6 +268,11 @@ export class Application extends Emitter {
     if (statuses.empty[code]) {
       // strip headers
       ctx.body = null;
+      // explicitly remove content headers from the raw response
+      // to ensure they are not sent (some runtimes like Bun don't strip them automatically)
+      res.removeHeader('Content-Type');
+      res.removeHeader('Content-Length');
+      res.removeHeader('Transfer-Encoding');
       res.end();
       return;
     }

@@ -1,7 +1,7 @@
-import { mock } from 'node:test';
-
 import { IdenticalUtil } from '@eggjs/lifecycle';
 import { AbstractEggContext, ContextHandler } from '@eggjs/tegg-runtime';
+
+import { mock } from './mock_compat.ts';
 
 const EGG_CTX = Symbol('TEgg#context');
 

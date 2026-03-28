@@ -233,12 +233,12 @@ describe('test/lib/core/messenger/local.test.ts', () => {
       app.messenger.onMessage({ action: 1 });
     });
 
-    it('should emit with action', (done) => {
-      app.messenger.once(
-        'test-action', // @ts-ignore
-        done,
-      );
+    it('should emit with action', async () => {
+      const promise = new Promise<void>((resolve) => {
+        app.messenger.once('test-action', resolve);
+      });
       app.messenger.onMessage({ action: 'test-action' });
+      await promise;
     });
   });
 });

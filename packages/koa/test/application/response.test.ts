@@ -5,6 +5,8 @@ import { describe, it } from 'vitest';
 
 import Koa from '../../src/index.ts';
 
+const isBun = !!process.versions.bun;
+
 describe('app.response', () => {
   const app1 = new Koa();
   app1.response.msg = 'hello';
@@ -31,7 +33,8 @@ describe('app.response', () => {
     return request(app2.listen()).get('/').expect(204);
   });
 
-  it('should not include status message in body for http2', async () => {
+  // Bun doesn't support mutating req.httpVersionMajor
+  it.skipIf(isBun)('should not include status message in body for http2', async () => {
     app3.use((ctx) => {
       ctx.req.httpVersionMajor = 2;
       ctx.status = 404;

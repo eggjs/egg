@@ -7,6 +7,8 @@ import { describe, it, beforeEach } from 'vitest';
 import Koa from '../../src/index.ts';
 import { response } from '../test-helpers/context.ts';
 
+const isBun = !!process.versions.bun;
+
 describe('res.status=', () => {
   describe('when a status code', () => {
     describe('and valid', () => {
@@ -84,7 +86,10 @@ describe('res.status=', () => {
       const res = await request(app.callback()).get('/').expect(status);
 
       assert.equal(Object.hasOwn(res.headers, 'content-type'), false);
-      assert.equal(Object.hasOwn(res.headers, 'content-length'), false);
+      // Bun runtime bug: always adds content-length: 0 to empty status responses
+      if (!isBun) {
+        assert.equal(Object.hasOwn(res.headers, 'content-length'), false);
+      }
       assert.equal(Object.hasOwn(res.headers, 'content-encoding'), false);
       assert.equal(res.text.length, 0);
     });
@@ -103,7 +108,10 @@ describe('res.status=', () => {
       const res = await request(app.callback()).get('/').expect(status);
 
       assert.equal(Object.hasOwn(res.headers, 'content-type'), false);
-      assert.equal(Object.hasOwn(res.headers, 'content-length'), false);
+      // Bun runtime bug: always adds content-length: 0 to empty status responses
+      if (!isBun) {
+        assert.equal(Object.hasOwn(res.headers, 'content-length'), false);
+      }
       assert.equal(Object.hasOwn(res.headers, 'content-encoding'), false);
       assert.equal(res.text.length, 0);
     });

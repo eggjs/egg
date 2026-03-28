@@ -107,8 +107,8 @@ describe('test/import.test.ts', () => {
           assert.equal(err.name, 'ImportResolveError');
           assert.equal(err.filepath, 'tsconfig-paths-demo-not-exists/register');
           assert.deepEqual(err.paths, [getFilepath('cjs/node_modules/inject')]);
-          assert.match(err.stack ?? '', /Cannot find package/);
-          assert.match(err.message, /Cannot find package/);
+          assert.match(err.stack ?? '', /Cannot find (package|module)/);
+          assert.match(err.message, /Cannot find (package|module)/);
           return true;
         },
       );

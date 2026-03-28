@@ -79,6 +79,14 @@ function assertAndReturn(frameworkName: string, moduleDir: string, baseDir: stri
     // ignore
     // debug('importResolve %s on %s error: %s', frameworkName, moduleDir, err);
   }
+  // Bun's module resolution skips pnpm virtual store symlinks;
+  // check .pnpm/node_modules which pnpm uses for hoisted workspace packages
+  for (const dir of [initCwd, baseDir]) {
+    const pnpmVirtualDir = path.join(dir, 'node_modules/.pnpm/node_modules');
+    if (existsSync(pnpmVirtualDir)) {
+      moduleDirs.add(pnpmVirtualDir);
+    }
+  }
   for (const moduleDir of moduleDirs) {
     const frameworkPath = path.join(moduleDir, frameworkName);
     if (existsSync(frameworkPath)) {

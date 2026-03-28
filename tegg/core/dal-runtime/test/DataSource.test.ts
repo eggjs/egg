@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 import path from 'node:path';
-import { mock } from 'node:test';
 
 import { TableModel } from '@eggjs/dal-decorator';
+import { mock } from '@eggjs/module-test-util/mock_compat';
 import { RDSClient } from '@eggjs/rds';
 import type { DeleteResult, InsertResult, UpdateResult } from '@eggjs/rds';
 import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';

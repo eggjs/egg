@@ -29,11 +29,13 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./mock_compat": "./src/mock_compat.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
+      "./mock_compat": "./dist/mock_compat.js",
       "./package.json": "./package.json"
     }
   },

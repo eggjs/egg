@@ -7,7 +7,10 @@ import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { createApp, type MockApplication, getFilepath } from '../../utils.ts';
 
-describe('test/lib/plugins/multipart.test.ts', () => {
+const isBun = !!process.versions.bun;
+
+// Bun's undici doesn't support formstream as request body
+describe.skipIf(isBun)('test/lib/plugins/multipart.test.ts', () => {
   let app: MockApplication;
   let csrfToken: string;
   let cookies: string;

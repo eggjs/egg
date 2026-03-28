@@ -184,6 +184,61 @@ jobs:
         with:
           use_oidc: true
 
+  test-bun:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest', 'macos-latest']
+        bun: ['latest']
+        shardIndex: [1, 2, 3]
+        shardTotal: [3]
+
+    name: Test Bun (${{ matrix.os }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+      group: test-bun-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Start Redis
+        uses: shogo82148/actions-setup-redis@cff708d63a30aebc0bfaa7276fb709d173f36cb6 # v1
+        with:
+          redis-version: '7'
+          auto-start: 'true'
+
+      - name: Start MySQL
+        uses: shogo82148/actions-setup-mysql@27e74fac04c136a9f4c2dc2ed457df57331b3e0c # v1
+        with:
+          mysql-version: '8'
+          auto-start: 'true'
+      - name: Init DB
+        run: |
+          mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ matrix.bun }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests with Bun
+        run: bun ./node_modules/vitest/vitest.mjs run --bail 1 --retry 2 --testTimeout 20000 --hookTimeout 20000 --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
   test-egg-bin:
     strategy:
       fail-fast: false
@@ -278,6 +333,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - test
+      - test-bun
       - test-egg-bin
       - test-egg-scripts
       - typecheck

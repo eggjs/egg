@@ -109,7 +109,7 @@ describe('test/loader/file_loader.test.ts', () => {
     }).load();
     assert.throws(() => {
       app.services.UserProxy();
-    }, /cannot be invoked without 'new'/);
+    }, /cannot be invoked without 'new'|Cannot call a class constructor without/);
     const instance = new app.services.UserProxy();
     assert.deepEqual(instance.getUser(), { name: 'xiaochen.gaoxc' });
   });

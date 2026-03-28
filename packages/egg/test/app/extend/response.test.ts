@@ -4,6 +4,8 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { restore, type MockApplication, createApp } from '../../utils.js';
 
+const isBun = !!process.versions.bun;
+
 describe('test/app/extend/response.test.ts', () => {
   afterEach(restore);
 
@@ -15,7 +17,8 @@ describe('test/app/extend/response.test.ts', () => {
     });
     afterAll(() => app.close());
 
-    it('should get case sensitive header', () => {
+    // Bun lowercases all rawHeaders
+    it.skipIf(isBun)('should get case sensitive header', () => {
       return app
         .httpRequest()
         .get('/')

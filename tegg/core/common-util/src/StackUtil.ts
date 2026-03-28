@@ -42,7 +42,7 @@ export class StackUtil {
       for (let callSite of obj.stack) {
         stacks.push({
           scriptName: callSite.getFileName() ?? '',
-          scriptId: callSite.getScriptHash() ?? '',
+          scriptId: typeof callSite.getScriptHash === 'function' ? (callSite.getScriptHash() ?? '') : '',
           lineNumber: callSite.getLineNumber() ?? 1,
           columnNumber: callSite.getColumnNumber() ?? 1,
           functionName: callSite.getFunctionName() ?? '',

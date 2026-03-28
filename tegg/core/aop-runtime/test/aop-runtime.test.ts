@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import path from 'node:path';
-import { mock } from 'node:test';
+import { mock } from '@eggjs/module-test-util/mock_compat';
 
 import { CrosscutAdviceFactory } from '@eggjs/aop-decorator';
 import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } from '@eggjs/metadata';

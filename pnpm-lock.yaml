@@ -1402,6 +1402,8 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
+  packages/skills: {}
+
   packages/supertest:
     dependencies:
       '@types/superagent':
@@ -2332,6 +2334,9 @@ importers:
         specifier: 'catalog:'
         version: 2.3.3
     devDependencies:
+      '@eggjs/module-test-util':
+        specifier: workspace:*
+        version: link:../test-util
       '@types/js-beautify':
         specifier: 'catalog:'
         version: 1.14.3

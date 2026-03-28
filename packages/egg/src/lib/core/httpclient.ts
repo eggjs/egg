@@ -1,6 +1,7 @@
 import { ms } from 'humanize-ms';
 import {
   HttpClient as RawHttpClient,
+  HttpClientRequestTimeoutError,
   type RequestURL as HttpClientRequestURL,
   type RequestOptions,
   type ClientOptions as HttpClientOptions,
@@ -47,6 +48,29 @@ export class HttpClient extends RawHttpClient {
       options.tracer = options.ctx.tracer;
     } else {
       options.tracer = options.tracer ?? this.#app.tracer;
+    }
+    // Bun's undici doesn't honor headersTimeout/bodyTimeout,
+    // use AbortSignal.timeout as a fallback to enforce request timeout
+    if (process.versions.bun && !options.signal) {
+      const rawTimeout = options.timeout ?? this.#app.config.httpclient?.request?.timeout;
+      // urllib supports timeout as number or [connectTimeout, responseTimeout].
+      // Use the shorter (connect) timeout for AbortSignal — if headers haven't
+      // arrived within connectTimeout the request should fail, matching Node's
+      // headersTimeout semantics as closely as possible.
+      const timeoutMs = Array.isArray(rawTimeout)
+        ? Math.min(...rawTimeout.filter((t): t is number => typeof t === 'number' && t > 0))
+        : rawTimeout;
+      if (typeof timeoutMs === 'number' && timeoutMs > 0) {
+        options.signal = AbortSignal.timeout(timeoutMs);
+        try {
+          return await super.request<T>(url, options);
+        } catch (err: any) {
+          if (err?.name === 'TimeoutError' || err?.code === 'ABORT_ERR') {
+            throw new HttpClientRequestTimeoutError(timeoutMs, { cause: err });
+          }
+          throw err;
+        }
+      }
     }
     return await super.request<T>(url, options);
   }
