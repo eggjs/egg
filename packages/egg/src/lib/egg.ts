@@ -215,7 +215,7 @@ export class EggApplicationCore extends EggCore {
 
       // single process mode will close agent before app close
       if (this.type === 'application' && this.options.mode === 'single') {
-        await this.agent!.close();
+        await this.agent?.close();
       }
 
       for (const logger of this.loggers.values()) {

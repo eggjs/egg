@@ -30,8 +30,8 @@
     "./baseCommand": "./src/baseCommand.ts",
     "./commands/cov": "./src/commands/cov.ts",
     "./commands/dev": "./src/commands/dev.ts",
-    "./commands/test": "./src/commands/test.ts",
     "./commands/manifest": "./src/commands/manifest.ts",
+    "./commands/test": "./src/commands/test.ts",
     "./types": "./src/types.ts",
     "./utils": "./src/utils.ts",
     "./package.json": "./package.json"
@@ -43,8 +43,8 @@
       "./baseCommand": "./dist/baseCommand.js",
       "./commands/cov": "./dist/commands/cov.js",
       "./commands/dev": "./dist/commands/dev.js",
-      "./commands/test": "./dist/commands/test.js",
       "./commands/manifest": "./dist/commands/manifest.js",
+      "./commands/test": "./dist/commands/test.js",
       "./types": "./dist/types.js",
       "./utils": "./dist/utils.js",
       "./package.json": "./package.json"
