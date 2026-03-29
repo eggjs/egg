@@ -3655,6 +3655,9 @@ importers:
 
   tools/egg-bin:
     dependencies:
+      '@eggjs/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@eggjs/tegg-vitest':
         specifier: workspace:*
         version: link:../../tegg/core/vitest

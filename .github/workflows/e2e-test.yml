@@ -132,6 +132,10 @@ jobs:
               npm run lint
               npm run test
               npm run prepublishOnly
+
+              # Manifest E2E: generate, validate, boot with manifest, clean
+              node ../../ecosystem-ci/scripts/verify-manifest.mjs
+              cd ..
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - uses: ./.github/actions/clone
