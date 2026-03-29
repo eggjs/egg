@@ -37,6 +37,8 @@ export class AppWorkerLoader extends EggApplicationLoader {
     // app
     await this.loadController();
     // app
-    await this.loadRouter(); // Depend on controllers
+    if (!this.options.metadataOnly) {
+      await this.loadRouter(); // Depend on controllers
+    }
   }
 }
