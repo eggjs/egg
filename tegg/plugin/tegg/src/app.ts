@@ -3,12 +3,14 @@ import './lib/AppLoadUnit.ts';
 import './lib/AppLoadUnitInstance.ts';
 import './lib/EggCompatibleObject.ts';
 import { LoadUnitMultiInstanceProtoHook } from '@eggjs/metadata';
+import { LoaderFactory } from '@eggjs/tegg-loader';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { CompatibleUtil } from './lib/CompatibleUtil.ts';
 import { ConfigSourceLoadUnitHook } from './lib/ConfigSourceLoadUnitHook.ts';
 import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook.ts';
 import { EggContextHandler } from './lib/EggContextHandler.ts';
+import { EggModuleLoader } from './lib/EggModuleLoader.ts';
 import { EggQualifierProtoHook } from './lib/EggQualifierProtoHook.ts';
 import { ModuleHandler } from './lib/ModuleHandler.ts';
 import { hijackRunInBackground } from './lib/run_in_background.ts';
@@ -52,6 +54,12 @@ export default class TeggAppBoot implements ILifecycleBoot {
     await this.app.moduleHandler.init();
     this.compatibleHook = new EggContextCompatibleHook(this.app.moduleHandler);
     this.app.eggContextLifecycleUtil.registerLifecycle(this.compatibleHook);
+  }
+
+  async loadMetadata(): Promise<void> {
+    if (!this.app.moduleReferences) return;
+    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences);
+    EggModuleLoader.collectTeggManifest(this.app, moduleDescriptors);
   }
 
   async beforeClose(): Promise<void> {

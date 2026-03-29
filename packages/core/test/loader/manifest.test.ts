@@ -64,19 +64,19 @@ describe('ManifestStore', () => {
       }
     });
 
-    it('should preserve provided extensions', () => {
+    it('should preserve extensions set via setExtension', () => {
       const baseDir = setupBaseDir();
       try {
-        const extensions = { tegg: { moduleReferences: [{ name: 'mod', path: '/tmp/mod' }] } };
+        const teggData = { moduleReferences: [{ name: 'mod', path: '/tmp/mod' }] };
         const collector = ManifestStore.createCollector(baseDir);
+        collector.setExtension('tegg', teggData);
         const manifest = collector.generateManifest({
           serverEnv: 'prod',
           serverScope: '',
           typescriptEnabled: true,
-          extensions,
         });
 
-        assert.deepStrictEqual(manifest.extensions, extensions);
+        assert.deepStrictEqual(manifest.extensions, { tegg: teggData });
       } finally {
         fs.rmSync(baseDir, { recursive: true, force: true });
       }
@@ -469,6 +469,82 @@ describe('ManifestStore', () => {
         const collector = ManifestStore.createCollector(baseDir);
         const result = collector.globFiles(path.join(baseDir, 'app/controller'), () => ['home.ts']);
         assert.deepStrictEqual(result, ['home.ts']);
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+  });
+
+  describe('setExtension()', () => {
+    it('should store and retrieve extension data', () => {
+      const baseDir = setupBaseDir();
+      try {
+        const collector = ManifestStore.createCollector(baseDir);
+        const data = { modules: ['a', 'b'] };
+        collector.setExtension('tegg', data);
+        // Not accessible via getExtension until generateManifest
+        // (getExtension reads from data, not collector)
+        const manifest = collector.generateManifest({
+          serverEnv: 'prod',
+          serverScope: '',
+          typescriptEnabled: true,
+        });
+        assert.deepStrictEqual(manifest.extensions.tegg, data);
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should support multiple extension keys', () => {
+      const baseDir = setupBaseDir();
+      try {
+        const collector = ManifestStore.createCollector(baseDir);
+        collector.setExtension('tegg', { a: 1 });
+        collector.setExtension('custom', { b: 2 });
+        const manifest = collector.generateManifest({
+          serverEnv: 'prod',
+          serverScope: '',
+          typescriptEnabled: true,
+        });
+        assert.deepStrictEqual(manifest.extensions.tegg, { a: 1 });
+        assert.deepStrictEqual(manifest.extensions.custom, { b: 2 });
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should overwrite previous value for same key', () => {
+      const baseDir = setupBaseDir();
+      try {
+        const collector = ManifestStore.createCollector(baseDir);
+        collector.setExtension('tegg', { old: true });
+        collector.setExtension('tegg', { new: true });
+        const manifest = collector.generateManifest({
+          serverEnv: 'prod',
+          serverScope: '',
+          typescriptEnabled: true,
+        });
+        assert.deepStrictEqual(manifest.extensions.tegg, { new: true });
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should survive write → load roundtrip', async () => {
+      const baseDir = setupBaseDir();
+      try {
+        const collector = ManifestStore.createCollector(baseDir);
+        collector.setExtension('tegg', { roundtrip: true });
+        const manifest = collector.generateManifest({
+          serverEnv: 'prod',
+          serverScope: '',
+          typescriptEnabled: true,
+        });
+        await ManifestStore.write(baseDir, manifest);
+
+        const store = ManifestStore.load(baseDir, 'prod', '')!;
+        assert.ok(store);
+        assert.deepStrictEqual(store.getExtension('tegg'), { roundtrip: true });
       } finally {
         fs.rmSync(baseDir, { recursive: true, force: true });
       }
