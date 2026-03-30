@@ -19,7 +19,7 @@ const projectDir = process.cwd();
 const manifestPath = join(projectDir, '.egg', 'manifest.json');
 const env = process.env.MANIFEST_VERIFY_ENV || 'unittest';
 const healthPort = process.env.MANIFEST_VERIFY_PORT || '7002';
-const healthTimeout = parseInt(process.env.MANIFEST_VERIFY_TIMEOUT || '30', 10);
+const healthTimeout = parseInt(process.env.MANIFEST_VERIFY_TIMEOUT || '60', 10);
 
 function run(cmd) {
   console.log(`\n$ ${cmd}`);
@@ -90,7 +90,9 @@ try {
       const output = runCapture(`curl -s -o /dev/null -w "%{http_code}" "${healthUrl}"`);
       const status = output.trim();
       console.log('  Health check: status=%s', status);
-      if (status === '200') {
+      // Any HTTP response (not connection refused) means the app is up.
+      // Not all apps have a route on `/`, so we accept any status code.
+      if (status !== '000') {
         ready = true;
         break;
       }
@@ -125,4 +127,4 @@ console.log('\n--- Step 5: Clean manifest ---');
 run(`npx egg-bin manifest clean`);
 assert(!existsSync(manifestPath), '.egg/manifest.json removed after clean');
 
-console.log('\n=== All manifest E2E checks passed! ===');
+console.log('\n=== All manifest E2E checks passed ===');

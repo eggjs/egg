@@ -9,7 +9,7 @@ import { getSourceFilename } from '../utils.ts';
 const debug = debuglog('egg/bin/commands/manifest');
 
 export default class Manifest<T extends typeof Manifest> extends BaseCommand<T> {
-  static override description = 'Generate, validate, or clean the startup manifest for faster cold starts';
+  static override description = 'Manage the startup manifest for faster cold starts';
 
   static override examples = [
     '<%= config.bin %> <%= command.id %> generate',
