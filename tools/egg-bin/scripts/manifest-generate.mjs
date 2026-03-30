@@ -9,10 +9,20 @@ async function main() {
   const options = JSON.parse(process.argv[2]);
   debug('manifest generate options: %o', options);
 
-  // Set server env before importing framework
+  // Set server env/scope before importing framework
   if (options.env) {
     process.env.EGG_SERVER_ENV = options.env;
   }
+  if (options.scope) {
+    process.env.EGG_SERVER_SCOPE = options.scope;
+  }
+
+  // Clean any existing manifest before generation to ensure the collector
+  // captures all lookups (not just cache misses from a stale manifest).
+  const { ManifestStore } = await importModule('@eggjs/core', {
+    paths: [options.framework],
+  });
+  ManifestStore.clean(options.baseDir);
 
   const framework = await importModule(options.framework);
   const app = await framework.start({
@@ -26,11 +36,6 @@ async function main() {
   const manifest = app.loader.generateManifest();
 
   // Write manifest to .egg/manifest.json
-  // Resolve @eggjs/core from the framework path (not the project root),
-  // because pnpm strict mode may not hoist it to the project's node_modules.
-  const { ManifestStore } = await importModule('@eggjs/core', {
-    paths: [options.framework],
-  });
   await ManifestStore.write(options.baseDir, manifest);
 
   // Log stats

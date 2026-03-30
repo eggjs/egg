@@ -61,12 +61,19 @@ export default class Manifest<T extends typeof Manifest> extends BaseCommand<T> 
       framework: flags.framework,
       baseDir: flags.base,
     });
-    debug('generate manifest: baseDir=%s, framework=%s, env=%s', flags.base, framework, flags.env);
+    debug(
+      'generate manifest: baseDir=%s, framework=%s, env=%s, scope=%s',
+      flags.base,
+      framework,
+      flags.env,
+      flags.scope,
+    );
 
     const options = {
       baseDir: flags.base,
       framework,
       env: flags.env,
+      scope: flags.scope,
     };
 
     const serverBin = getSourceFilename('../scripts/manifest-generate.mjs');
@@ -93,9 +100,9 @@ export default class Manifest<T extends typeof Manifest> extends BaseCommand<T> 
       }
 
       const { data } = store;
-      const resolveCacheCount = Object.keys(data.resolveCache).length;
-      const fileDiscoveryCount = Object.keys(data.fileDiscovery).length;
-      const extensionCount = Object.keys(data.extensions).length;
+      const resolveCacheCount = Object.keys(data.resolveCache ?? {}).length;
+      const fileDiscoveryCount = Object.keys(data.fileDiscovery ?? {}).length;
+      const extensionCount = Object.keys(data.extensions ?? {}).length;
       console.log('[manifest] Manifest is valid');
       console.log('[manifest]   version: %d', data.version);
       console.log('[manifest]   generatedAt: %s', data.generatedAt);

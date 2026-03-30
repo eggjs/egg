@@ -14,6 +14,7 @@
 import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
+import { setTimeout as sleep } from 'node:timers/promises';
 
 const projectDir = process.cwd();
 const manifestPath = join(projectDir, '.egg', 'manifest.json');
@@ -106,7 +107,7 @@ try {
       break;
     }
 
-    execSync('sleep 2');
+    await sleep(2000);
   }
 
   run(`npx eggctl stop`);
