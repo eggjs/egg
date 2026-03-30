@@ -23,6 +23,7 @@ import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
+import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
 
@@ -47,6 +48,8 @@ export interface EggLoaderOptions {
   serverScope?: string;
   /** custom plugins */
   plugins?: Record<string, EggPluginInfo>;
+  /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
+  metadataOnly?: boolean;
 }
 
 export type EggDirInfoType = 'app' | 'plugin' | 'framework';
@@ -67,6 +70,8 @@ export class EggLoader {
   readonly appInfo: EggAppInfo;
   readonly outDir?: string;
   dirs?: EggDirInfo[];
+  /** Startup manifest — loaded from cache or collecting for generation */
+  readonly manifest: ManifestStore;
 
   /**
    * @class
@@ -154,6 +159,11 @@ export class EggLoader {
      * @since 1.0.0
      */
     this.appInfo = this.getAppInfo();
+
+    // Load pre-computed manifest or create a collector for future generation
+    this.manifest =
+      ManifestStore.load(this.options.baseDir, this.serverEnv, this.serverScope) ??
+      ManifestStore.createCollector(this.options.baseDir);
   }
 
   get app(): EggCore {
@@ -1233,7 +1243,11 @@ export class EggLoader {
    */
   async loadCustomApp(): Promise<void> {
     await this.#loadBootHook('app');
-    this.lifecycle.triggerConfigWillLoad();
+    if (this.options.metadataOnly) {
+      await this.lifecycle.triggerLoadMetadata();
+    } else {
+      this.lifecycle.triggerConfigWillLoad();
+    }
   }
 
   /**
@@ -1241,7 +1255,11 @@ export class EggLoader {
    */
   async loadCustomAgent(): Promise<void> {
     await this.#loadBootHook('agent');
-    this.lifecycle.triggerConfigWillLoad();
+    if (this.options.metadataOnly) {
+      await this.lifecycle.triggerLoadMetadata();
+    } else {
+      this.lifecycle.triggerConfigWillLoad();
+    }
   }
 
   // FIXME: no logger used after egg removed
@@ -1627,6 +1645,7 @@ export class EggLoader {
       directory: options?.directory ?? directory,
       target,
       inject: this.app,
+      manifest: this.manifest,
     };
 
     const timingKey = `Load "${String(property)}" to Application`;
@@ -1652,6 +1671,7 @@ export class EggLoader {
       directory: options?.directory || directory,
       property,
       inject: this.app,
+      manifest: this.manifest,
     };
 
     const timingKey = `Load "${String(property)}" to Context`;
@@ -1688,11 +1708,15 @@ export class EggLoader {
   }
 
   resolveModule(filepath: string): string | undefined {
+    return this.manifest.resolveModule(filepath, () => this.#doResolveModule(filepath));
+  }
+
+  #doResolveModule(filepath: string): string | undefined {
     let fullPath: string | undefined;
     try {
       fullPath = utils.resolvePath(filepath);
     } catch {
-      // debug('[resolveModule] Module %o resolve error: %s', filepath, err.stack);
+      // ignore resolve errors
     }
     if (!fullPath) {
       fullPath = this.#resolveFromOutDir(filepath);
@@ -1733,6 +1757,19 @@ export class EggLoader {
         return outDirPath;
       }
     }
+  }
+
+  /**
+   * Generate startup manifest from collected data.
+   * Should be called after all loading phases complete.
+   */
+  generateManifest(extensions?: Record<string, unknown>): StartupManifest {
+    return this.manifest.generateManifest({
+      serverEnv: this.serverEnv,
+      serverScope: this.serverScope,
+      typescriptEnabled: isSupportTypeScript(),
+      extensions,
+    });
   }
 }
 

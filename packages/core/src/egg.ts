@@ -31,6 +31,8 @@ export interface EggCoreOptions {
   plugins?: any;
   serverScope?: string;
   env?: string;
+  /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
+  metadataOnly?: boolean;
 }
 
 export type EggCoreInitOptions = Partial<EggCoreOptions>;
@@ -218,6 +220,7 @@ export class EggCore extends KoaApplication {
       serverScope: options.serverScope,
       env: options.env ?? '',
       EggCoreClass: EggCore,
+      metadataOnly: options.metadataOnly,
     });
   }
 

@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-28T04:00:00.000Z",
+  "invalidation": {
+    "lockfileFingerprint": "pnpm-lock.yaml:1711584000000:128",
+    "configFingerprint": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4",
+    "serverEnv": "prod",
+    "serverScope": "",
+    "typescriptEnabled": true
+  },
+  "extensions": {
+    "tegg": {
+      "moduleReferences": [
+        { "name": "app", "path": "app" },
+        { "name": "my-plugin", "path": "node_modules/my-plugin", "optional": true }
+      ],
+      "moduleDescriptors": [
+        {
+          "name": "app",
+          "unitPath": "app",
+          "decoratedFiles": ["controller/home.ts", "service/user.ts"]
+        }
+      ]
+    }
+  },
+  "resolveCache": {
+    "config/plugin.default": "config/plugin.default.ts",
+    "config/plugin": null,
+    "config/config.default": "config/config.default.ts",
+    "config/config.prod": "config/config.prod.ts",
+    "app/router": "app/router.ts",
+    "node_modules/egg-security/config/config.default": "node_modules/egg-security/config/config.default.js",
+    "node_modules/egg-security/app": "node_modules/egg-security/app.js",
+    "node_modules/egg-session/config/config.default": null,
+    "app/app": null
+  },
+  "fileDiscovery": {
+    "app/controller": ["home.ts", "user.ts", "admin/dashboard.ts"],
+    "app/service": ["user.ts", "auth.ts"],
+    "app/middleware": ["auth.ts", "error_handler.ts"],
+    "node_modules/egg-security/app/middleware": ["csrf.js", "xframe.js"]
+  }
+}
