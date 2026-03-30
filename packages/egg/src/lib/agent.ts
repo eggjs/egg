@@ -1,3 +1,5 @@
+import v8 from 'node:v8';
+
 import type { EggLogger } from 'egg-logger';
 
 import { EggApplicationCore, type EggApplicationCoreOptions } from './egg.ts';
@@ -8,7 +10,7 @@ import { AgentWorkerLoader } from './loader/index.ts';
  * @augments EggApplicationCore
  */
 export class Agent extends EggApplicationCore {
-  readonly #agentAliveHandler: NodeJS.Timeout;
+  #agentAliveHandler?: NodeJS.Timeout;
 
   /**
    * @class
@@ -20,17 +22,41 @@ export class Agent extends EggApplicationCore {
       type: 'agent',
     });
 
-    // keep agent alive even it doesn't have any io tasks
-    this.#agentAliveHandler = setInterval(
-      () => {
-        this.coreLogger.info('[]');
-      },
-      24 * 60 * 60 * 1000,
-    );
+    if (!this.options.snapshot) {
+      // keep agent alive even it doesn't have any io tasks
+      this.#agentAliveHandler = setInterval(
+        () => {
+          this.coreLogger.info('[]');
+        },
+        24 * 60 * 60 * 1000,
+      );
+    }
   }
 
   protected override customEggLoader(): typeof AgentWorkerLoader {
     return AgentWorkerLoader;
+  }
+
+  override registerSnapshotCallbacks(): void {
+    super.registerSnapshotCallbacks();
+
+    v8.startupSnapshot.addSerializeCallback(() => {
+      // Clear the keepalive interval before snapshot
+      if (this.#agentAliveHandler) {
+        clearInterval(this.#agentAliveHandler);
+        this.#agentAliveHandler = undefined;
+      }
+    });
+
+    v8.startupSnapshot.addDeserializeCallback(() => {
+      // Re-create keepalive interval after restore
+      this.#agentAliveHandler = setInterval(
+        () => {
+          this.coreLogger.info('[]');
+        },
+        24 * 60 * 60 * 1000,
+      );
+    });
   }
 
   _wrapMessenger(): void {
@@ -52,7 +78,9 @@ export class Agent extends EggApplicationCore {
   }
 
   async close(): Promise<void> {
-    clearInterval(this.#agentAliveHandler);
+    if (this.#agentAliveHandler) {
+      clearInterval(this.#agentAliveHandler);
+    }
     await super.close();
   }
 }

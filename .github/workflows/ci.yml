@@ -264,12 +264,59 @@ jobs:
         with:
           use_oidc: true
 
+  test-snapshot:
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
+
+    name: Test snapshot (ubuntu, ${{ matrix.node }})
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: test-snapshot-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.node }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Run snapshot tests
+        run: |
+          pnpm run --filter=./tools/scripts test -- snapshot.test.ts
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+
+      - name: Upload snapshot blob on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshot-blob-${{ matrix.node }}
+          path: tools/scripts/test/fixtures/snapshot-app/*.blob
+          retention-days: 3
+
   done:
     runs-on: ubuntu-latest
     needs:
       - test
       - test-egg-bin
       - test-egg-scripts
+      - test-snapshot
       - typecheck
     steps:
       - run: exit 1

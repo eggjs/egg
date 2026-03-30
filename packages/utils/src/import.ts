@@ -28,13 +28,24 @@ try {
   // If import.meta is not available, it's likely CJS
   isESM = false;
 }
+// V8 snapshot CJS bundle override: when building a snapshot, the bundle is CJS
+// and import() triggers ESM loader async hooks that corrupt the snapshot builder.
+// The snapshot-build esbuild pipeline sets __EGG_SNAPSHOT_CJS_BUNDLE__ to force
+// require() instead of import().
+if (typeof (globalThis as any).__EGG_SNAPSHOT_CJS_BUNDLE__ !== 'undefined') {
+  isESM = false;
+}
 const nodeMajorVersion = parseInt(process.versions.node.split('.', 1)[0], 10);
 const supportImportMetaResolve = nodeMajorVersion >= 18;
 
 let _customRequire: NodeRequire;
 export function getRequire(): NodeRequire {
   if (!_customRequire) {
-    if (typeof require !== 'undefined') {
+    // In V8 snapshot builder context, the built-in `require` is a restricted
+    // `requireForUserSnapshot` that lacks `.extensions` and `.resolve` for
+    // user-land modules. Prefer `createRequire` when `require.extensions` is
+    // missing, so that file resolution (isSupportTypeScript, etc.) works.
+    if (typeof require !== 'undefined' && require.extensions) {
       _customRequire = require;
     } else {
       _customRequire = createRequire(process.cwd());
@@ -368,6 +379,37 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
 
 export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
   const moduleFilePath = importResolve(filepath, options);
+
+  // Snapshot module registry: if a pre-loaded module exists in the registry,
+  // use it instead of dynamic import(). This is set by the snapshot entry
+  // generator to avoid dynamic imports that bundlers cannot trace.
+  const registry = (globalThis as any).__snapshotModuleRegistry as Map<string, any> | undefined;
+  if (registry) {
+    const cached = registry.get(moduleFilePath);
+    if (cached) {
+      debug('[importModule:snapshot] found in registry: %s', moduleFilePath);
+      let obj = cached;
+      if (obj?.default?.__esModule === true && obj.default && 'default' in obj.default) {
+        obj = obj.default;
+      }
+      if (options?.importDefaultOnly) {
+        if (obj && 'default' in obj) {
+          obj = obj.default;
+        }
+      }
+      return obj;
+    }
+    debug('[importModule:snapshot] not in registry, falling through: %s', moduleFilePath);
+    // In V8 snapshot CJS bundle: if a file is not in the registry, we must
+    // NOT call require() on ESM packages (triggers ESM loader async hooks that
+    // corrupt the snapshot builder). Return an empty module as a safe fallback.
+    // The file will be properly loaded at restore time.
+    if (typeof (globalThis as any).__EGG_SNAPSHOT_CJS_BUNDLE__ !== 'undefined') {
+      debug('[importModule:snapshot] skipping load in snapshot mode: %s', moduleFilePath);
+      return {};
+    }
+  }
+
   let obj: any;
   if (isESM) {
     // esm
@@ -381,7 +423,7 @@ export async function importModule(filepath: string, options?: ImportModuleOptio
     //   one: 1,
     //   [Symbol(Symbol.toStringTag)]: 'Module'
     // }
-    if (obj?.default?.__esModule === true && 'default' in obj?.default) {
+    if (obj?.default?.__esModule === true && obj.default && 'default' in obj.default) {
       // 兼容 cjs 模拟 esm 的导出格式
       // {
       //   __esModule: true,

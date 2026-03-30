@@ -19,6 +19,15 @@ export interface StartEggOptions {
   plugins?: EggPlugin;
 }
 
+export interface SnapshotEggOptions {
+  /** specify framework that can be absolute path or npm package */
+  framework?: string;
+  /** directory of application, default to `process.cwd()` */
+  baseDir?: string;
+  env?: string;
+  plugins?: EggPlugin;
+}
+
 export interface SingleModeApplication extends Application {
   agent: SingleModeAgent;
 }
@@ -66,5 +75,56 @@ export async function startEgg(options: StartEggOptions = {}): Promise<SingleMod
 
   // emit egg-ready message in agent and application
   application.messenger.broadcast('egg-ready');
+  return application;
+}
+
+/**
+ * Load egg application metadata for V8 startup snapshot construction.
+ *
+ * This runs the loading phases (configWillLoad, configDidLoad, didLoad) but
+ * stops before willReady/didReady/serverDidReady. No servers, timers,
+ * file watchers, or connections are created.
+ *
+ * The returned application has all metadata loaded: plugins, configs,
+ * extensions, services, controllers, router, and (if present) tegg modules.
+ */
+export async function startEggForSnapshot(options: SnapshotEggOptions = {}): Promise<SingleModeApplication> {
+  options.baseDir = options.baseDir ?? process.cwd();
+
+  // get framework from options or package.json
+  if (!options.framework) {
+    try {
+      const pkg = await readJSON(path.join(options.baseDir, 'package.json'));
+      options.framework = pkg.egg.framework;
+    } catch {
+      // ignore
+    }
+  }
+  let AgentClass = Agent;
+  let ApplicationClass = Application;
+  if (options.framework) {
+    const framework = await importModule(options.framework, {
+      paths: [options.baseDir],
+    });
+    AgentClass = framework.Agent;
+    ApplicationClass = framework.Application;
+  }
+
+  const agent = new AgentClass({
+    ...options,
+    mode: 'single',
+    snapshot: true,
+  }) as SingleModeAgent;
+  await agent.ready();
+
+  const application = new ApplicationClass({
+    ...options,
+    mode: 'single',
+    snapshot: true,
+  }) as SingleModeApplication;
+  application.agent = agent;
+  agent.application = application;
+  await application.ready();
+
   return application;
 }

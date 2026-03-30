@@ -5,6 +5,7 @@ import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import inspector from 'node:inspector';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
+import v8 from 'node:v8';
 
 import { Cookies as ContextCookies } from '@eggjs/cookies';
 import { EggCore, Router } from '@eggjs/core';
@@ -42,6 +43,12 @@ export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir
   mode?: 'cluster' | 'single';
   clusterPort?: number;
   baseDir?: string;
+  /**
+   * When true, the application loads metadata only (plugins, configs, extensions,
+   * services, controllers) without starting servers, timers, or connections.
+   * Used for V8 startup snapshot construction.
+   */
+  snapshot?: boolean;
 }
 
 export { Request, Response };
@@ -132,7 +139,7 @@ export class EggApplicationCore extends EggCore {
   #loggers?: EggLoggers;
   #clusterClients: any[] = [];
 
-  readonly messenger: IMessenger;
+  messenger: IMessenger;
   agent?: Agent;
   application?: Application;
   declare loader: EggApplicationLoader;
@@ -160,11 +167,13 @@ export class EggApplicationCore extends EggCore {
      */
     this.messenger = createMessenger(this);
 
-    // trigger `serverDidReady` hook when all the app workers
-    // and agent worker are ready
-    this.messenger.once('egg-ready', () => {
-      this.lifecycle.triggerServerDidReady();
-    });
+    if (!this.options.snapshot) {
+      // trigger `serverDidReady` hook when all the app workers
+      // and agent worker are ready
+      this.messenger.once('egg-ready', () => {
+        this.lifecycle.triggerServerDidReady();
+      });
+    }
     this.lifecycle.registerBeforeStart(async () => {
       await this.load();
     }, 'load files');
@@ -183,46 +192,51 @@ export class EggApplicationCore extends EggCore {
 
   protected async load(): Promise<void> {
     await this.loadConfig();
-    // dump config after ready, ensure all the modifications during start will be recorded
-    // make sure dumpConfig is the last ready callback
-    this.ready(() =>
-      process.nextTick(() => {
-        const dumpStartTime = Date.now();
-        this.dumpConfig();
-        this.dumpTiming();
-        this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
-      }),
-    );
-    this.#setupTimeoutTimer();
+
+    if (!this.options.snapshot) {
+      // dump config after ready, ensure all the modifications during start will be recorded
+      // make sure dumpConfig is the last ready callback
+      this.ready(() =>
+        process.nextTick(() => {
+          const dumpStartTime = Date.now();
+          this.dumpConfig();
+          this.dumpTiming();
+          this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
+        }),
+      );
+      this.#setupTimeoutTimer();
+    }
 
     this.console.info('[egg] App root: %s', this.baseDir);
     this.console.info('[egg] All *.log files save on %j', this.config.logger.dir);
     assert(this.config.logger.dir, 'logger.dir is required');
     this.console.info('[egg] Loaded enabled plugin %j', this.loader.orderPlugins);
 
-    // Listen the error that promise had not catch, then log it in common-error
-    this._unhandledRejectionHandler = this._unhandledRejectionHandler.bind(this);
-    process.on('unhandledRejection', this._unhandledRejectionHandler);
+    if (!this.options.snapshot) {
+      // Listen the error that promise had not catch, then log it in common-error
+      this._unhandledRejectionHandler = this._unhandledRejectionHandler.bind(this);
+      process.on('unhandledRejection', this._unhandledRejectionHandler);
 
-    // register close function
-    this.lifecycle.registerBeforeClose(async () => {
-      // close all cluster clients
-      for (const clusterClient of this.#clusterClients) {
-        await closeClusterClient(clusterClient);
-      }
-      this.#clusterClients = [];
+      // register close function
+      this.lifecycle.registerBeforeClose(async () => {
+        // close all cluster clients
+        for (const clusterClient of this.#clusterClients) {
+          await closeClusterClient(clusterClient);
+        }
+        this.#clusterClients = [];
 
-      // single process mode will close agent before app close
-      if (this.type === 'application' && this.options.mode === 'single') {
-        await this.agent!.close();
-      }
+        // single process mode will close agent before app close
+        if (this.type === 'application' && this.options.mode === 'single') {
+          await this.agent!.close();
+        }
 
-      for (const logger of this.loggers.values()) {
-        logger.close();
-      }
-      this.messenger.close();
-      process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
-    });
+        for (const logger of this.loggers.values()) {
+          logger.close();
+        }
+        this.messenger.close();
+        process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
+      });
+    }
 
     await this.loader.load();
   }
@@ -531,6 +545,60 @@ export class EggApplicationCore extends EggCore {
     } catch (err: any) {
       this.coreLogger.warn(`[egg] dumpTiming error: ${err.message}`);
     }
+  }
+
+  /**
+   * Register V8 startup snapshot serialize/deserialize callbacks.
+   *
+   * Serialize: close loggers (file handles), close messenger, remove process listeners.
+   * Deserialize: re-create loggers (lazy), re-create messenger, re-register listeners.
+   *
+   * Call this after the application is ready but before the snapshot is taken.
+   */
+  registerSnapshotCallbacks(): void {
+    v8.startupSnapshot.addSerializeCallback(() => {
+      // Close all loggers (they hold file handles)
+      if (this.#loggers) {
+        for (const logger of this.#loggers.values()) {
+          logger.close();
+        }
+        this.#loggers = undefined;
+      }
+      // Close messenger
+      this.messenger.close();
+      // Remove process listeners
+      process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
+    });
+
+    v8.startupSnapshot.addDeserializeCallback(() => {
+      // Re-create messenger (loggers are lazily created via get loggers())
+      this.messenger = createMessenger(this);
+      this.messenger.once('egg-ready', () => {
+        this.lifecycle.triggerServerDidReady();
+      });
+      // Re-register process listener
+      this._unhandledRejectionHandler = this._unhandledRejectionHandler.bind(this);
+      process.on('unhandledRejection', this._unhandledRejectionHandler);
+
+      // Patch HttpClient prototype chain with the real urllib.
+      // During snapshot build, urllib was replaced with a stub to avoid
+      // WebAssembly/undici initialization. Now in a normal Node.js context,
+      // load the real urllib and fix the prototype chain so that:
+      // 1. super() in egg's HttpClient calls real urllib.HttpClient constructor
+      // 2. Instance methods from urllib.HttpClient are available on instances
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { createRequire } = require('node:module');
+        const req = createRequire(path.join(this.baseDir, 'package.json'));
+        const urllib = req('urllib');
+        if (urllib.HttpClient && this.HttpClient) {
+          Object.setPrototypeOf(this.HttpClient.prototype, urllib.HttpClient.prototype);
+          Object.setPrototypeOf(this.HttpClient, urllib.HttpClient);
+        }
+      } catch (err: any) {
+        this.console.error('[egg] Failed to patch HttpClient from urllib: %s', err.message);
+      }
+    });
   }
 
   protected override customEggPaths(): string[] {

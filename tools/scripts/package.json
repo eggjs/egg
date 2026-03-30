@@ -29,6 +29,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./baseCommand": "./src/baseCommand.ts",
+    "./commands/snapshot-build": "./src/commands/snapshot-build.ts",
     "./commands/start": "./src/commands/start.ts",
     "./commands/stop": "./src/commands/stop.ts",
     "./helper": "./src/helper.ts",
@@ -40,6 +41,7 @@
     "exports": {
       ".": "./dist/index.js",
       "./baseCommand": "./dist/baseCommand.js",
+      "./commands/snapshot-build": "./dist/commands/snapshot-build.js",
       "./commands/start": "./dist/commands/start.js",
       "./commands/stop": "./dist/commands/stop.js",
       "./helper": "./dist/helper.js",
@@ -56,9 +58,11 @@
   "dependencies": {
     "@eggjs/utils": "workspace:*",
     "@oclif/core": "catalog:",
+    "esbuild": "catalog:",
     "node-homedir": "catalog:",
     "runscript": "catalog:",
     "source-map-support": "catalog:",
+    "tsx": "catalog:",
     "utility": "catalog:"
   },
   "devDependencies": {

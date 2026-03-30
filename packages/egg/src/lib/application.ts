@@ -69,7 +69,9 @@ export class Application extends EggApplicationCore {
   protected async load(): Promise<void> {
     await super.load();
     this.#warnConfusedConfig();
-    this.#bindEvents();
+    if (!this.options.snapshot) {
+      this.#bindEvents();
+    }
   }
 
   #responseRaw(socket: Socket, raw?: any): void {
