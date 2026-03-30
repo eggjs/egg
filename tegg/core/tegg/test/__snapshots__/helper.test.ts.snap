@@ -94,6 +94,7 @@ exports[`should helper exports stable 1`] = `
   "ProxyUtil": [Function],
   "StackUtil": [Function],
   "StreamUtil": [Function],
+  "TEGG_MANIFEST_KEY": "tegg",
   "TeggError": [Function],
   "TimerUtil": [Function],
 }

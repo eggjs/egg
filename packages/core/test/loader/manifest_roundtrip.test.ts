@@ -29,12 +29,12 @@ describe('ManifestStore roundtrip: generate → write → load', () => {
       collector.resolveModule(path.join(baseDir, 'missing'), () => undefined);
       collector.globFiles(path.join(baseDir, 'app/controller'), () => ['home.ts', 'user.ts']);
 
-      const extensions = { tegg: { moduleReferences: [{ name: 'foo', path: '/tmp/foo' }] } };
+      const teggData = { moduleReferences: [{ name: 'foo', path: '/tmp/foo' }] };
+      collector.setExtension('tegg', teggData);
       const original = collector.generateManifest({
         serverEnv: 'prod',
         serverScope: '',
         typescriptEnabled: true,
-        extensions,
       });
       await ManifestStore.write(baseDir, original);
 
@@ -46,7 +46,7 @@ describe('ManifestStore roundtrip: generate → write → load', () => {
       assert.equal(original.resolveCache['some/path'], 'resolved/path');
       assert.equal(original.resolveCache['missing'], null);
       assert.deepStrictEqual(original.fileDiscovery['app/controller'], ['home.ts', 'user.ts']);
-      assert.deepStrictEqual(store.data.extensions, extensions);
+      assert.deepStrictEqual(store.data.extensions, { tegg: teggData });
       assert.equal(store.data.version, original.version);
       assert.equal(store.data.generatedAt, original.generatedAt);
 

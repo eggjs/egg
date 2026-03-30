@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/utils": "workspace:*"
   },
   "devDependencies": {

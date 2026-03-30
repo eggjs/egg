@@ -61,6 +61,27 @@ export class ModuleDescriptorDumper {
     return path.join(dumpDir, '.egg', `${desc.name}_module_desc.json`);
   }
 
+  /**
+   * Extract decorated file paths (relative to unitPath) from a ModuleDescriptor.
+   * Used for manifest generation to record which files contain egg prototypes.
+   */
+  static getDecoratedFiles(desc: ModuleDescriptor): string[] {
+    const fileSet = new Set<string>();
+    const addClazz = (clazz: EggProtoImplClass): void => {
+      const filePath = PrototypeUtil.getFilePath(clazz);
+      if (filePath) {
+        const rel = path.relative(desc.unitPath, filePath).replaceAll(path.sep, '/');
+        // Only include files within the module (multiInstanceClazzList is shared)
+        if (!rel.startsWith('..')) {
+          fileSet.add(rel);
+        }
+      }
+    };
+    for (const clazz of desc.clazzList) addClazz(clazz);
+    for (const clazz of desc.multiInstanceClazzList) addClazz(clazz);
+    return Array.from(fileSet);
+  }
+
   static async dump(desc: ModuleDescriptor, options?: ModuleDumpOptions): Promise<void> {
     const dumpPath = ModuleDescriptorDumper.dumpPath(desc, options);
     await fs.mkdir(path.dirname(dumpPath), { recursive: true });

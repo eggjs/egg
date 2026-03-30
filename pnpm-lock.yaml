@@ -2968,6 +2968,9 @@ importers:
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../../core/common-util
+      '@eggjs/tegg-loader':
+        specifier: workspace:*
+        version: link:../../core/loader
       '@eggjs/utils':
         specifier: workspace:*
         version: link:../../../packages/utils

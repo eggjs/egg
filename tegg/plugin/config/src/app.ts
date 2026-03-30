@@ -4,6 +4,8 @@ import { debuglog } from 'node:util';
 
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
+import { TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
+import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { ModuleScanner } from './lib/ModuleScanner.ts';
@@ -20,30 +22,50 @@ export default class App implements ILifecycleBoot {
   }
 
   configWillLoad(): void {
-    const { readModuleOptions } = this.app.config.tegg;
-    // Auto-exclude outDir (e.g. dist/) from module scanning to avoid
-    // duplicate modules when both source and compiled output exist
-    const outDir = this.app.loader.outDir;
-    if (outDir) {
-      const extraFilePattern = readModuleOptions.extraFilePattern || [];
-      const excludePattern = `!**/${outDir}`;
-      if (!extraFilePattern.includes(excludePattern)) {
-        readModuleOptions.extraFilePattern = [...extraFilePattern, excludePattern];
-      }
-    }
-    const moduleScanner = new ModuleScanner(this.app.baseDir, readModuleOptions);
-    let moduleReferences = moduleScanner.loadModuleReferences();
+    this.#scanModuleReferences();
+    this.#loadModuleConfigs();
+  }
 
-    // When outDir is configured and compiled output exists, rewrite module paths
-    // from source (e.g. app/port/) to compiled output (e.g. dist/app/port/)
-    // so that LoaderUtil can find .js files in production mode
-    if (outDir) {
-      moduleReferences = this.#rewriteModulePaths(moduleReferences, outDir);
+  async loadMetadata(): Promise<void> {
+    this.#scanModuleReferences();
+    this.#loadModuleConfigs();
+  }
+
+  #scanModuleReferences(): void {
+    const { readModuleOptions } = this.app.config.tegg;
+
+    // Try to use manifest for module references (skip expensive globby scan)
+    const manifest = this.app.loader.manifest;
+    const manifestTegg = manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined;
+
+    let moduleReferences: readonly ModuleReference[];
+    if (manifestTegg?.moduleReferences?.length) {
+      moduleReferences = manifestTegg.moduleReferences;
+      debug('load moduleReferences from manifest: %o', moduleReferences);
+    } else {
+      // Auto-exclude outDir (e.g. dist/) from module scanning to avoid
+      // duplicate modules when both source and compiled output exist
+      const outDir = this.app.loader.outDir;
+      if (outDir) {
+        const extraFilePattern = readModuleOptions.extraFilePattern || [];
+        const excludePattern = `!**/${outDir}`;
+        if (!extraFilePattern.includes(excludePattern)) {
+          readModuleOptions.extraFilePattern = [...extraFilePattern, excludePattern];
+        }
+      }
+      const moduleScanner = new ModuleScanner(this.app.baseDir, readModuleOptions);
+      moduleReferences = moduleScanner.loadModuleReferences();
+
+      if (outDir) {
+        moduleReferences = this.#rewriteModulePaths(moduleReferences, outDir);
+      }
     }
 
     this.app.moduleReferences = moduleReferences;
     debug('load moduleReferences: %o', this.app.moduleReferences);
+  }
 
+  #loadModuleConfigs(): void {
     this.app.moduleConfigs = {};
     for (const reference of this.app.moduleReferences) {
       const absoluteRef: ModuleReference = {

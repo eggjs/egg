@@ -1763,12 +1763,11 @@ export class EggLoader {
    * Generate startup manifest from collected data.
    * Should be called after all loading phases complete.
    */
-  generateManifest(extensions?: Record<string, unknown>): StartupManifest {
+  generateManifest(): StartupManifest {
     return this.manifest.generateManifest({
       serverEnv: this.serverEnv,
       serverScope: this.serverScope,
       typescriptEnabled: isSupportTypeScript(),
-      extensions,
     });
   }
 }

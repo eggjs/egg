@@ -39,6 +39,7 @@ export class ManifestStore {
   // Collectors for manifest generation (populated during loading)
   readonly #resolveCacheCollector: Record<string, string | null> = {};
   readonly #fileDiscoveryCollector: Record<string, string[]> = {};
+  readonly #extensionCollector: Record<string, unknown> = {};
 
   private constructor(data: StartupManifest, baseDir: string) {
     this.data = data;
@@ -194,6 +195,13 @@ export class ManifestStore {
     return this.data.extensions?.[name];
   }
 
+  /**
+   * Register plugin extension data for manifest generation.
+   */
+  setExtension(name: string, data: unknown): void {
+    this.#extensionCollector[name] = data;
+  }
+
   // --- Generation APIs ---
 
   /**
@@ -210,7 +218,7 @@ export class ManifestStore {
         serverScope: options.serverScope,
         typescriptEnabled: options.typescriptEnabled,
       },
-      extensions: options.extensions ?? {},
+      extensions: this.#extensionCollector,
       resolveCache: this.#resolveCacheCollector,
       fileDiscovery: this.#fileDiscoveryCollector,
     };
@@ -309,5 +317,4 @@ export interface ManifestGenerateOptions {
   serverEnv: string;
   serverScope: string;
   typescriptEnabled: boolean;
-  extensions?: Record<string, unknown>;
 }
