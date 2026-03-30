@@ -19,7 +19,7 @@ catalog:
   '@fengmk2/ps-tree': ^2.0.1
   '@oclif/core': ^4.2.0
   '@oxc-node/core': ^0.0.35
-  typebox: ^1.0.65
+  typebox: ^1.1.0
   '@swc-node/register': ^1.11.1
   '@swc/core': ^1.15.1
   '@types/accepts': ^1.3.7
