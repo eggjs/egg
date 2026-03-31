@@ -312,6 +312,7 @@ function sidebarCore(): DefaultTheme.SidebarItem[] {
         { text: 'Internationalization', link: 'i18n' },
         { text: 'View Template', link: 'view' },
         { text: 'Security', link: 'security' },
+        { text: 'Startup Manifest', link: 'manifest' },
       ],
     },
   ];
@@ -422,6 +423,7 @@ function sidebarCoreZhCN(): DefaultTheme.SidebarItem[] {
         { text: '国际化', link: 'i18n' },
         { text: '模板渲染', link: 'view' },
         { text: '安全', link: 'security' },
+        { text: '启动清单', link: 'manifest' },
       ],
     },
   ];
