@@ -70,10 +70,12 @@ export interface LifecycleOptions {
   app: EggCore;
   logger: EggConsoleLogger;
   /**
-   * When true, the lifecycle stops after configDidLoad phase completes.
-   * didLoad, willReady, didReady, and serverDidReady hooks are NOT called.
-   * Used for V8 startup snapshot construction — didLoad and later phases
-   * typically open connections and start timers which are not serializable.
+   * When true, the lifecycle stops after configWillLoad phase completes.
+   * configDidLoad, didLoad, willReady, didReady, and serverDidReady hooks
+   * are NOT called. Used for V8 startup snapshot construction — SDKs
+   * typically execute during configDidLoad, opening connections and starting
+   * timers which are not serializable. The handling is analogous to
+   * metadataOnly mode: both short-circuit the lifecycle chain early.
    */
   snapshot?: boolean;
 }
@@ -258,6 +260,14 @@ export class Lifecycle extends EventEmitter {
       }
     }
     debug('trigger configWillLoad end');
+    if (this.options.snapshot) {
+      // Snapshot mode: stop AFTER configWillLoad, BEFORE configDidLoad.
+      // SDKs typically execute during configDidLoad hooks — these open connections
+      // and start timers which are not serializable in V8 startup snapshots.
+      debug('snapshot mode: stopping after configWillLoad, skipping configDidLoad and later phases');
+      this.ready(true);
+      return;
+    }
     this.triggerConfigDidLoad();
   }
 
@@ -275,14 +285,6 @@ export class Lifecycle extends EventEmitter {
       }
     }
     debug('trigger configDidLoad end');
-    if (this.options.snapshot) {
-      // In snapshot mode, stop after configDidLoad — skip didLoad/willReady/didReady/serverDidReady.
-      // didLoad hooks typically open connections and start timers which are not serializable
-      // in V8 startup snapshots. These deferred phases run at snapshot restore time instead.
-      debug('snapshot mode: skipping didLoad, marking ready after configDidLoad');
-      this.ready(true);
-      return;
-    }
     this.triggerDidLoad();
   }
 

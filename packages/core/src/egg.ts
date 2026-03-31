@@ -34,10 +34,11 @@ export interface EggCoreOptions {
   /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
   metadataOnly?: boolean;
   /**
-   * When true, lifecycle stops after the `configDidLoad` phase.
-   * `didLoad`, `willReady`, `didReady`, and `serverDidReady` are skipped.
-   * Used for V8 startup snapshot construction — later phases typically
-   * open connections and start timers which are not serializable.
+   * When true, lifecycle stops after the `configWillLoad` phase.
+   * `configDidLoad`, `didLoad`, `willReady`, `didReady`, and `serverDidReady`
+   * are skipped. Used for V8 startup snapshot construction — SDKs typically
+   * execute during `configDidLoad`, opening connections and starting timers
+   * which are not serializable. Analogous to `metadataOnly` mode.
    */
   snapshot?: boolean;
 }
