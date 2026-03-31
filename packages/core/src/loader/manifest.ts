@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
+import module from 'node:module';
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
@@ -240,6 +241,48 @@ export class ManifestStore {
     } catch (err: any) {
       if (err.code !== 'ENOENT') throw err;
     }
+    ManifestStore.cleanCompileCache(baseDir);
+  }
+
+  // --- Compile Cache ---
+
+  /**
+   * Enable Node.js module compile cache for the current process.
+   * Sets NODE_COMPILE_CACHE and NODE_COMPILE_CACHE_PORTABLE env vars
+   * so forked child processes also inherit compile cache.
+   */
+  static enableCompileCache(baseDir: string): void {
+    if (process.env.NODE_COMPILE_CACHE || process.env.NODE_DISABLE_COMPILE_CACHE) return;
+    const cacheDir = path.join(baseDir, '.egg', 'compile-cache');
+    process.env.NODE_COMPILE_CACHE = cacheDir;
+    process.env.NODE_COMPILE_CACHE_PORTABLE = '1';
+    try {
+      const result = module.enableCompileCache?.(cacheDir);
+      debug('compile cache enabled: %o', result);
+    } catch (err) {
+      debug('compile cache enable failed: %o', err);
+    }
+  }
+
+  /**
+   * Flush accumulated compile cache entries to disk.
+   */
+  static flushCompileCache(): void {
+    try {
+      module.flushCompileCache?.();
+      debug('compile cache flushed');
+    } catch (err) {
+      debug('compile cache flush failed: %o', err);
+    }
+  }
+
+  /**
+   * Remove the compile cache directory.
+   */
+  static cleanCompileCache(baseDir: string): void {
+    const compileCacheDir = path.join(baseDir, '.egg', 'compile-cache');
+    fs.rmSync(compileCacheDir, { recursive: true, force: true });
+    debug('compile cache removed: %s', compileCacheDir);
   }
 
   // --- Path Utilities ---

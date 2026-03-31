@@ -1,5 +1,6 @@
 import path from 'node:path';
 
+import { ManifestStore } from '@eggjs/core';
 import { importModule } from '@eggjs/utils';
 import { readJSON } from 'utility';
 
@@ -35,6 +36,7 @@ export interface SingleModeAgent extends Agent {
 export async function startEgg(options: StartEggOptions = {}): Promise<SingleModeApplication> {
   options.baseDir = options.baseDir ?? process.cwd();
   options.mode = 'single';
+  ManifestStore.enableCompileCache(options.baseDir);
 
   // get agent from options.framework and package.egg.framework
   if (!options.framework) {
