@@ -171,4 +171,275 @@ describe('test/lib/core/utils.test.js', () => {
       assert.equal(utils.safeParseURL('https://eggjs.org!.foo.com')!.hostname, 'eggjs.org!.foo.com');
     });
   });
+
+  describe('createTransparentProxy()', () => {
+    it('should throw if createReal is not a function', () => {
+      assert.throws(() => {
+        utils.createTransparentProxy({ createReal: null as any });
+      }, /createReal must be a function/);
+    });
+
+    it('should lazily create the real object', () => {
+      let created = false;
+      const proxy = utils.createTransparentProxy({
+        createReal() {
+          created = true;
+          return { foo: 'bar' };
+        },
+      });
+      assert.equal(created, false);
+      assert.equal((proxy as any).foo, 'bar');
+      assert.equal(created, true);
+    });
+
+    it('should only call createReal once', () => {
+      let callCount = 0;
+      const proxy = utils.createTransparentProxy({
+        createReal() {
+          callCount++;
+          return { value: 42 };
+        },
+      });
+      (proxy as any).value;
+      (proxy as any).value;
+      (proxy as any).value;
+      assert.equal(callCount, 1);
+    });
+
+    it('should cache createReal errors', () => {
+      let callCount = 0;
+      const proxy = utils.createTransparentProxy({
+        createReal() {
+          callCount++;
+          throw new Error('init failed');
+        },
+      });
+      assert.throws(() => (proxy as any).foo, /init failed/);
+      assert.throws(() => (proxy as any).foo, /init failed/);
+      assert.equal(callCount, 1);
+    });
+
+    it('should support get/set/has/ownKeys/delete/getPrototypeOf', () => {
+      class MyClass {
+        name = 'test';
+        count = 0;
+        greet() {
+          return `hello ${this.name}`;
+        }
+      }
+      const proxy = utils.createTransparentProxy<MyClass>({
+        createReal: () => new MyClass(),
+      });
+
+      // get
+      assert.equal(proxy.name, 'test');
+      assert.equal(proxy.greet(), 'hello test');
+
+      // set
+      proxy.count = 5;
+      assert.equal(proxy.count, 5);
+
+      // has
+      assert('name' in proxy);
+      assert('greet' in proxy);
+
+      // ownKeys
+      const keys = Object.keys(proxy);
+      assert(keys.includes('name'));
+      assert(keys.includes('count'));
+
+      // getPrototypeOf / instanceof
+      assert(Object.getPrototypeOf(proxy) === MyClass.prototype);
+      // Note: instanceof won't work with Proxy by default since the target is {},
+      // but getPrototypeOf returns the correct prototype
+
+      // delete
+      assert.equal(delete (proxy as any).count, true);
+      assert.equal(proxy.count, undefined);
+    });
+
+    it('should be transparent to defineProperty-based monkeypatch (egg-mock mm)', () => {
+      const real = {
+        request(url: string) {
+          return `real:${url}`;
+        },
+      };
+      const proxy = utils.createTransparentProxy({
+        createReal: () => real,
+      });
+
+      // Before mock
+      assert.equal((proxy as any).request('/api'), 'real:/api');
+
+      // Simulate mm() — uses Object.defineProperty to override
+      const originalDescriptor = Object.getOwnPropertyDescriptor(proxy, 'request');
+      Object.defineProperty(proxy, 'request', {
+        value: (url: string) => `mock:${url}`,
+        configurable: true,
+        writable: true,
+      });
+      assert.equal((proxy as any).request('/api'), 'mock:/api');
+
+      // Simulate mm.restore() — deletes the overlay property
+      if (originalDescriptor) {
+        Object.defineProperty(proxy, 'request', originalDescriptor);
+      } else {
+        delete (proxy as any).request;
+      }
+      assert.equal((proxy as any).request('/api'), 'real:/api');
+    });
+
+    it('should bind real methods to real instance by default', () => {
+      class Counter {
+        #count = 0;
+        increment() {
+          this.#count++;
+        }
+        getCount() {
+          return this.#count;
+        }
+      }
+      const proxy = utils.createTransparentProxy<Counter>({
+        createReal: () => new Counter(),
+      });
+
+      // Methods should be bound to the real object, so private fields work
+      const { increment, getCount } = proxy;
+      increment();
+      increment();
+      assert.equal(getCount(), 2);
+    });
+
+    it('should not bind functions when bindFunctions=false', () => {
+      const obj = {
+        getValue() {
+          return this;
+        },
+      };
+      const proxy = utils.createTransparentProxy({
+        createReal: () => obj,
+        bindFunctions: false,
+      });
+
+      // Without binding, `this` won't be the real object when destructured
+      const fn = (proxy as any).getValue;
+      assert.notEqual(fn(), obj);
+    });
+
+    it('should support Symbol properties', () => {
+      const sym = Symbol('test');
+      const obj = { [sym]: 'symbol-value', normal: 'value' };
+      const proxy = utils.createTransparentProxy({
+        createReal: () => obj,
+      });
+
+      assert.equal((proxy as any)[sym], 'symbol-value');
+      assert(sym in proxy);
+    });
+
+    it('should merge ownKeys from overlay and real object', () => {
+      const proxy = utils.createTransparentProxy({
+        createReal: () => ({ a: 1, b: 2 }),
+      });
+
+      // Add an overlay property
+      Object.defineProperty(proxy, 'c', {
+        value: 3,
+        configurable: true,
+        enumerable: true,
+      });
+
+      const keys = Object.keys(proxy);
+      assert(keys.includes('a'));
+      assert(keys.includes('b'));
+      assert(keys.includes('c'));
+    });
+
+    it('should return stable function references via boundFnCache', () => {
+      class Svc {
+        run() {
+          return 'ok';
+        }
+      }
+      const proxy = utils.createTransparentProxy<Svc>({
+        createReal: () => new Svc(),
+      });
+
+      const ref1 = proxy.run;
+      const ref2 = proxy.run;
+      assert.equal(ref1, ref2, 'bound function reference should be stable');
+      assert.equal(ref1(), 'ok');
+    });
+
+    it('should support property descriptor with getter/setter', () => {
+      let _value = 10;
+      const proxy = utils.createTransparentProxy({
+        createReal: () => ({ plain: 'hello' }),
+      });
+
+      // Define a property with getter/setter on overlay
+      Object.defineProperty(proxy, 'computed', {
+        get: () => _value * 2,
+        set: (v) => {
+          _value = v;
+        },
+        configurable: true,
+        enumerable: true,
+      });
+
+      assert.equal((proxy as any).computed, 20);
+      (proxy as any).computed = 5;
+      assert.equal((proxy as any).computed, 10);
+    });
+
+    it('should work with array as real object', () => {
+      const proxy = utils.createTransparentProxy<number[]>({
+        createReal: () => [1, 2, 3],
+      });
+
+      assert.equal(proxy.length, 3);
+      assert.equal(proxy[0], 1);
+      proxy.push(4);
+      assert.equal(proxy.length, 4);
+      assert.deepEqual(Array.from(proxy), [1, 2, 3, 4]);
+    });
+
+    it('should support complex inheritance chain', () => {
+      class Base {
+        baseMethod() {
+          return 'base';
+        }
+      }
+      class Child extends Base {
+        childMethod() {
+          return 'child';
+        }
+      }
+      const proxy = utils.createTransparentProxy<Child>({
+        createReal: () => new Child(),
+      });
+
+      assert.equal(proxy.baseMethod(), 'base');
+      assert.equal(proxy.childMethod(), 'child');
+      assert.equal(Object.getPrototypeOf(proxy), Child.prototype);
+    });
+
+    it('should delete overlay property before real property', () => {
+      const proxy = utils.createTransparentProxy({
+        createReal: () => ({ key: 'real' }),
+      });
+
+      // Define overlay
+      Object.defineProperty(proxy, 'key', {
+        value: 'overlay',
+        configurable: true,
+        writable: true,
+      });
+      assert.equal((proxy as any).key, 'overlay');
+
+      // Delete overlay — should reveal real
+      delete (proxy as any).key;
+      assert.equal((proxy as any).key, 'real');
+    });
+  });
 });

@@ -36,6 +36,13 @@ export class HttpClient extends RawHttpClient {
     };
     super(initOptions);
     this.#app = app;
+
+    // Apply custom interceptors via Dispatcher.compose() if configured.
+    // This enables tracer injection, custom headers, retry logic, etc.
+    if (config.interceptors?.length) {
+      const originalDispatcher = this.getDispatcher();
+      this.setDispatcher(originalDispatcher.compose(...config.interceptors));
+    }
   }
 
   async request<T = any>(

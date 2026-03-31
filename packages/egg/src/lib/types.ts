@@ -3,6 +3,7 @@ import type { Socket, LookupFunction } from 'node:net';
 import type { FileLoaderOptions, EggAppConfig as EggCoreAppConfig, EggAppInfo } from '@eggjs/core';
 import type { EggLoggerOptions, EggLoggersOptions } from 'egg-logger';
 import type { PartialDeep } from 'type-fest';
+import type { Dispatcher } from 'urllib';
 import type { RequestOptions as HttpClientRequestOptions } from 'urllib';
 
 import type { MetaMiddlewareOptions } from '../app/middleware/meta.ts';
@@ -67,6 +68,24 @@ export interface HttpClientConfig {
    */
   allowH2?: boolean;
   lookup?: LookupFunction;
+  /**
+   * Interceptors for request composition, applied via `Dispatcher.compose()`.
+   * Each interceptor receives a `dispatch` function and returns a new `dispatch` function.
+   *
+   * @example
+   * ```ts
+   * // config.default.ts
+   * config.httpclient = {
+   *   interceptors: [
+   *     (dispatch) => (opts, handler) => {
+   *       opts.headers = { ...opts.headers, 'x-trace-id': generateTraceId() };
+   *       return dispatch(opts, handler);
+   *     },
+   *   ],
+   * };
+   * ```
+   */
+  interceptors?: Dispatcher.DispatcherComposeInterceptor[];
 }
 
 /**

@@ -54,6 +54,9 @@ export type { LoggerLevel, EggLogger, EggLogger as Logger } from 'egg-logger';
 export * from './lib/core/httpclient.ts';
 export * from './lib/core/context_httpclient.ts';
 
+// export utils
+export { createTransparentProxy, type CreateTransparentProxyOptions } from './lib/core/utils.ts';
+
 /**
  * Start egg application with cluster mode
  * @since 1.0.0
