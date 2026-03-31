@@ -191,6 +191,7 @@ export class EggApplicationCore extends EggCore {
         this.dumpConfig();
         this.dumpTiming();
         this.dumpManifest();
+        ManifestStore.flushCompileCache();
         this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
       }),
     );
@@ -218,6 +219,7 @@ export class EggApplicationCore extends EggCore {
         await this.agent?.close();
       }
 
+      ManifestStore.flushCompileCache();
       for (const logger of this.loggers.values()) {
         logger.close();
       }
@@ -558,6 +560,7 @@ export class EggApplicationCore extends EggCore {
         return;
       }
       const manifest = this.loader.generateManifest();
+      ManifestStore.enableCompileCache(this.baseDir);
       ManifestStore.write(this.baseDir, manifest).catch((err: Error) => {
         this.coreLogger.warn('[egg] dumpManifest write error: %s', err.message);
       });

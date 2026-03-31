@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import module from 'node:module';
 import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
@@ -57,6 +58,20 @@ export class Master extends ReadyEventEmitter {
 
   async #start(options?: ClusterOptions) {
     this.options = await parseOptions(options);
+
+    // Enable compile cache — env vars propagate to forked workers automatically.
+    // Duplicated from ManifestStore.enableCompileCache (@eggjs/core is not a dependency).
+    if (!process.env.NODE_COMPILE_CACHE && !process.env.NODE_DISABLE_COMPILE_CACHE) {
+      const cacheDir = path.join(this.options.baseDir, '.egg', 'compile-cache');
+      process.env.NODE_COMPILE_CACHE = cacheDir;
+      process.env.NODE_COMPILE_CACHE_PORTABLE = '1';
+      try {
+        module.enableCompileCache?.(cacheDir);
+      } catch {
+        /* non-fatal */
+      }
+    }
+
     this.workerManager = new WorkerManager();
     this.messenger = new Messenger(this, this.workerManager);
     this.isProduction = isProduction(this.options);

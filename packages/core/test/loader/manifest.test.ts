@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import module from 'node:module';
 import path from 'node:path';
 
 import mm from 'mm';
@@ -545,6 +546,94 @@ describe('ManifestStore', () => {
         const store = ManifestStore.load(baseDir, 'prod', '')!;
         assert.ok(store);
         assert.deepStrictEqual(store.getExtension('tegg'), { roundtrip: true });
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+  });
+
+  describe('compile cache', () => {
+    const savedCompileCache = process.env.NODE_COMPILE_CACHE;
+    const savedPortable = process.env.NODE_COMPILE_CACHE_PORTABLE;
+    const savedDisable = process.env.NODE_DISABLE_COMPILE_CACHE;
+
+    afterEach(() => {
+      for (const [key, saved] of [
+        ['NODE_COMPILE_CACHE', savedCompileCache],
+        ['NODE_COMPILE_CACHE_PORTABLE', savedPortable],
+        ['NODE_DISABLE_COMPILE_CACHE', savedDisable],
+      ] as const) {
+        if (saved !== undefined) {
+          process.env[key] = saved;
+        } else {
+          delete process.env[key];
+        }
+      }
+    });
+
+    it('should enable compile cache, set env vars, and generate cache files', () => {
+      const baseDir = setupBaseDir();
+      try {
+        ManifestStore.enableCompileCache(baseDir);
+        const expectedDir = path.join(baseDir, '.egg', 'compile-cache');
+        assert.equal(process.env.NODE_COMPILE_CACHE, expectedDir);
+        assert.equal(process.env.NODE_COMPILE_CACHE_PORTABLE, '1');
+
+        // Verify compile cache is active
+        const cacheDir = module.getCompileCacheDir?.();
+        assert.ok(cacheDir, 'compile cache dir should be set');
+
+        // Load a fixture module guaranteed not to be pre-cached
+        require('../fixtures/compile-cache-target/index.cjs');
+
+        // Flush and verify cache files are generated
+        ManifestStore.flushCompileCache();
+        assert.ok(fs.existsSync(cacheDir), 'compile cache directory should exist');
+        const entries = fs.readdirSync(cacheDir);
+        assert.ok(entries.length > 0, 'compile cache should contain cache files');
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should flush compile cache without error', () => {
+      assert.doesNotThrow(() => {
+        ManifestStore.flushCompileCache();
+      });
+    });
+
+    it('should clean compile cache directory', () => {
+      const baseDir = setupBaseDir();
+      try {
+        const cacheDir = path.join(baseDir, '.egg', 'compile-cache');
+        fs.mkdirSync(cacheDir, { recursive: true });
+        fs.writeFileSync(path.join(cacheDir, 'test.bin'), 'cached data');
+        assert.ok(fs.existsSync(cacheDir));
+
+        ManifestStore.cleanCompileCache(baseDir);
+        assert.ok(!fs.existsSync(cacheDir), 'compile cache directory should be removed');
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should not throw when cleaning non-existent compile cache', () => {
+      assert.doesNotThrow(() => {
+        ManifestStore.cleanCompileCache(tmpDir);
+      });
+    });
+
+    it('clean() should also remove compile cache directory', async () => {
+      const baseDir = setupBaseDir();
+      try {
+        await generateAndWrite(baseDir);
+        const cacheDir = path.join(baseDir, '.egg', 'compile-cache');
+        fs.mkdirSync(cacheDir, { recursive: true });
+        fs.writeFileSync(path.join(cacheDir, 'test.bin'), 'data');
+
+        ManifestStore.clean(baseDir);
+        assert.ok(!fs.existsSync(path.join(baseDir, '.egg', 'manifest.json')), 'manifest.json should be removed');
+        assert.ok(!fs.existsSync(cacheDir), 'compile cache directory should be removed');
       } finally {
         fs.rmSync(baseDir, { recursive: true, force: true });
       }

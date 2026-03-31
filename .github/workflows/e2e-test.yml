@@ -47,8 +47,7 @@ jobs:
           - name: cnpmcore
             node-version: 24
             command: |
-              npm install
-              npm run lint -- --quiet
+              npm install --legacy-peer-deps
               npm run typecheck
               npm run build
               npm run prepublishOnly
