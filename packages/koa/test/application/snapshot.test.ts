@@ -29,7 +29,7 @@ describe('v8 startup snapshot', () => {
 
     // simulate snapshot deserialization
     deserializeCallback.cb(deserializeCallback.data);
-    assert.ok(app.ctxStorage instanceof AsyncLocalStorage);
+    assert.ok(app.ctxStorage! instanceof AsyncLocalStorage);
   });
 
   it('should return undefined for currentContext when ctxStorage is null', () => {
@@ -72,7 +72,7 @@ describe('v8 startup snapshot', () => {
     };
 
     const app = new Koa();
-    assert.ok(app.ctxStorage instanceof AsyncLocalStorage);
+    assert.ok(app.ctxStorage! instanceof AsyncLocalStorage);
   });
 
   it('should handle callback without ctxStorage during snapshot build', async () => {
