@@ -16,7 +16,7 @@ describe('test/snapshot.test.ts', () => {
   });
 
   describe('Lifecycle snapshot mode', () => {
-    it('should stop after didLoad and skip willReady/didReady/serverDidReady', async () => {
+    it('should stop after configDidLoad and skip didLoad/willReady/didReady/serverDidReady', async () => {
       const callOrder: string[] = [];
 
       const lifecycle = new Lifecycle({
@@ -57,12 +57,12 @@ describe('test/snapshot.test.ts', () => {
       lifecycle.triggerConfigWillLoad();
       await lifecycle.ready();
 
-      // configWillLoad, configDidLoad, didLoad should be called
+      // configWillLoad and configDidLoad should be called
       assert.ok(callOrder.includes('configWillLoad'), 'configWillLoad should be called');
       assert.ok(callOrder.includes('configDidLoad'), 'configDidLoad should be called');
-      assert.ok(callOrder.includes('didLoad'), 'didLoad should be called');
 
-      // willReady, didReady, serverDidReady should NOT be called
+      // didLoad, willReady, didReady, serverDidReady should NOT be called
+      assert.ok(!callOrder.includes('didLoad'), 'didLoad should NOT be called in snapshot mode');
       assert.ok(!callOrder.includes('willReady'), 'willReady should NOT be called in snapshot mode');
       assert.ok(!callOrder.includes('didReady'), 'didReady should NOT be called in snapshot mode');
       assert.ok(!callOrder.includes('serverDidReady'), 'serverDidReady should NOT be called in snapshot mode');
@@ -70,7 +70,7 @@ describe('test/snapshot.test.ts', () => {
       await lifecycle.close();
     });
 
-    it('should call willReady/didReady when snapshot is not set', async () => {
+    it('should call all lifecycle hooks when snapshot is not set', async () => {
       const callOrder: string[] = [];
 
       const lifecycle = new Lifecycle({
@@ -117,8 +117,9 @@ describe('test/snapshot.test.ts', () => {
       await lifecycle.close();
     });
 
-    it('should mark ready immediately after didLoad completes in snapshot mode', async () => {
-      let didLoadCompleted = false;
+    it('should mark ready immediately after configDidLoad in snapshot mode', async () => {
+      let configDidLoadCompleted = false;
+      let didLoadCalled = false;
 
       const lifecycle = new Lifecycle({
         baseDir: '.',
@@ -128,8 +129,12 @@ describe('test/snapshot.test.ts', () => {
 
       lifecycle.addBootHook(
         class Boot {
+          configDidLoad(): void {
+            configDidLoadCompleted = true;
+          }
+
           async didLoad(): Promise<void> {
-            didLoadCompleted = true;
+            didLoadCalled = true;
           }
         },
       );
@@ -138,9 +143,39 @@ describe('test/snapshot.test.ts', () => {
       lifecycle.triggerConfigWillLoad();
       await lifecycle.ready();
 
-      assert.ok(didLoadCompleted, 'didLoad should have completed');
+      assert.ok(configDidLoadCompleted, 'configDidLoad should have completed');
+      assert.ok(!didLoadCalled, 'didLoad should NOT be called in snapshot mode');
 
       await lifecycle.close();
+    });
+
+    it('should still register beforeClose hooks in snapshot mode', async () => {
+      let beforeCloseCalled = false;
+
+      const lifecycle = new Lifecycle({
+        baseDir: '.',
+        app: new EggCore(),
+        snapshot: true,
+      });
+
+      lifecycle.addBootHook(
+        class Boot {
+          configDidLoad(): void {
+            // configDidLoad runs in snapshot mode
+          }
+
+          async beforeClose(): Promise<void> {
+            beforeCloseCalled = true;
+          }
+        },
+      );
+
+      lifecycle.init();
+      lifecycle.triggerConfigWillLoad();
+      await lifecycle.ready();
+      await lifecycle.close();
+
+      assert.ok(beforeCloseCalled, 'beforeClose should be called even in snapshot mode');
     });
   });
 
@@ -157,7 +192,7 @@ describe('test/snapshot.test.ts', () => {
       assert.equal(app.lifecycle.options.snapshot, undefined);
     });
 
-    it('should become ready after didLoad in snapshot mode (EggCore level)', async () => {
+    it('should become ready after configDidLoad in snapshot mode (EggCore level)', async () => {
       const callOrder: string[] = [];
 
       app = new EggCore({ snapshot: true });
@@ -190,7 +225,8 @@ describe('test/snapshot.test.ts', () => {
       app.lifecycle.triggerConfigWillLoad();
       await app.ready();
 
-      assert.ok(callOrder.includes('didLoad'), 'didLoad should be called');
+      assert.ok(callOrder.includes('configDidLoad'), 'configDidLoad should be called');
+      assert.ok(!callOrder.includes('didLoad'), 'didLoad should NOT be called');
       assert.ok(!callOrder.includes('willReady'), 'willReady should NOT be called');
       assert.ok(!callOrder.includes('didReady'), 'didReady should NOT be called');
     });
