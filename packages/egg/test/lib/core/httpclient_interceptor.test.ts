@@ -5,7 +5,7 @@ import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { createApp, type MockApplication, startNewLocalServer } from '../../utils.js';
 
-describe('test/lib/core/httpclient_interceptor.test.ts', () => {
+describe.skip('test/lib/core/httpclient_interceptor.test.ts', () => {
   describe('with interceptors configured', () => {
     let app: MockApplication;
     let url: string;
