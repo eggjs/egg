@@ -19,5 +19,6 @@ exports[`test/index.test.ts > export all > should keep checking 1`] = `
   "importResolve",
   "isESM",
   "isSupportTypeScript",
+  "setSnapshotModuleLoader",
 ]
 `;

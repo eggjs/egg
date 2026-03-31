@@ -34,7 +34,11 @@ const supportImportMetaResolve = nodeMajorVersion >= 18;
 let _customRequire: NodeRequire;
 export function getRequire(): NodeRequire {
   if (!_customRequire) {
-    if (typeof require !== 'undefined') {
+    // In V8 snapshot builder context, the built-in `require` is a restricted
+    // `requireForUserSnapshot` that lacks `.extensions` and `.resolve` for
+    // user-land modules. Prefer `createRequire` when `require.extensions` is
+    // missing, so that file resolution (isSupportTypeScript, etc.) works.
+    if (typeof require !== 'undefined' && require.extensions) {
       _customRequire = require;
     } else {
       _customRequire = createRequire(process.cwd());
@@ -366,8 +370,46 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
   return moduleFilePath;
 }
 
+/**
+ * Module loader function type for V8 snapshot support.
+ * Called with the resolved absolute file path, returns the module exports.
+ */
+export type SnapshotModuleLoader = (resolvedPath: string) => any;
+
+let _snapshotModuleLoader: SnapshotModuleLoader | undefined;
+
+/**
+ * Register a snapshot module loader that intercepts `importModule()` calls.
+ *
+ * When set, `importModule()` delegates to this loader instead of calling
+ * `import()` or `require()`. This is used by the V8 snapshot entry generator
+ * to provide pre-bundled modules — the bundler generates a static module map
+ * from the egg manifest and registers it via this API.
+ *
+ * Also sets `isESM = false` because the snapshot bundle is CJS and
+ * esbuild's `import.meta` polyfill causes incorrect ESM detection.
+ */
+export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
+  _snapshotModuleLoader = loader;
+  isESM = false;
+}
+
 export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
   const moduleFilePath = importResolve(filepath, options);
+
+  if (_snapshotModuleLoader) {
+    let obj = _snapshotModuleLoader(moduleFilePath);
+    if (obj && typeof obj === 'object' && obj.default?.__esModule === true && obj.default && 'default' in obj.default) {
+      obj = obj.default;
+    }
+    if (options?.importDefaultOnly) {
+      if (obj && typeof obj === 'object' && 'default' in obj) {
+        obj = obj.default;
+      }
+    }
+    return obj;
+  }
+
   let obj: any;
   if (isESM) {
     // esm
@@ -381,7 +423,7 @@ export async function importModule(filepath: string, options?: ImportModuleOptio
     //   one: 1,
     //   [Symbol(Symbol.toStringTag)]: 'Module'
     // }
-    if (obj?.default?.__esModule === true && 'default' in obj?.default) {
+    if (obj?.default?.__esModule === true && obj.default && 'default' in obj.default) {
       // 兼容 cjs 模拟 esm 的导出格式
       // {
       //   __esModule: true,
