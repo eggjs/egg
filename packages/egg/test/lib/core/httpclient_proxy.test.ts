@@ -6,7 +6,7 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { createApp, type MockApplication, startNewLocalServer } from '../../utils.js';
 
-describe.skip('test/lib/core/httpclient_proxy.test.ts', () => {
+describe('test/lib/core/httpclient_proxy.test.ts', () => {
   let app: MockApplication;
   let url: string;
   let serverInfo: { url: string; server: http.Server };

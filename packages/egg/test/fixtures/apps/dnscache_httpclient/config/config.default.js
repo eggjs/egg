@@ -1,5 +1,12 @@
 'use strict';
 
+const os = require('os');
+const path = require('path');
+
+// Use unique log directory per vitest worker to avoid Windows file locking issues
+const workerId = process.env.VITEST_WORKER_ID || '0';
+const tempBase = path.join(os.tmpdir(), `egg-httpclient-test-${workerId}`);
+
 exports.httpclient = {
   lookup: function (hostname, options, callback) {
     const IP_REGEX = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
@@ -20,5 +27,11 @@ exports.httpclient = {
     }
   },
 };
+
+exports.logger = {
+  dir: path.join(tempBase, 'logs', 'dnscache_httpclient'),
+};
+
+exports.rundir = path.join(tempBase, 'run');
 
 exports.keys = 'test key';
