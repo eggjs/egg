@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-plugin",
-  "version": "4.0.0-beta.36",
+  "version": "4.0.2-beta.7",
   "description": "module plugin for egg",
   "keywords": [
     "egg",
@@ -96,6 +96,7 @@
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
+    "await-first": "catalog:",
     "extend2": "catalog:",
     "sdk-base": "catalog:"
   },

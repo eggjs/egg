@@ -46,6 +46,7 @@ Official maintained ORM model is [egg-orm] base on [Leoric], and the following d
 - [egg-sequelize]
 - [egg-mongoose]
 - [egg-mysql]，refer to [MySQL tutorials](./mysql.md)
+- [@eggjs/redis]，refer to [Redis tutorials](./redis.md)
 - [egg-graphql]
 
 [egg-sequelize]: https://github.com/eggjs/egg-sequelize
@@ -59,3 +60,4 @@ Official maintained ORM model is [egg-orm] base on [Leoric], and the following d
 [egg-view-xtpl]: https://github.com/eggjs/egg-view-xtpl
 [egg-orm]: https://github.com/eggjs/egg-orm/blob/master/Readme.md
 [Leoric]: https://leoric.js.org
+[@eggjs/redis]: https://github.com/eggjs/egg/tree/next/plugins/redis

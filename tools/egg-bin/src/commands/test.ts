@@ -1,16 +1,17 @@
 import fs from 'node:fs/promises';
-import os from 'node:os';
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
-import { importResolve, detectType, EggType } from '@eggjs/utils';
+import { importResolve, detectType, EggType, ImportResolveError } from '@eggjs/utils';
 import { Args, Flags } from '@oclif/core';
 // @ts-expect-error no types
 import ciParallelVars from 'ci-parallel-vars';
 import globby from 'globby';
 import { getChangedFilesForRoots } from 'jest-changed-files';
+import { startVitest } from 'vitest/node';
+import type { InlineConfig as VitestConfig } from 'vitest/node';
 
-import { BaseCommand } from '../baseCommand.ts';
+import { BaseCommand, ForkError } from '../baseCommand.ts';
 
 const debug = debuglog('egg/bin/commands/test');
 
@@ -33,7 +34,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
 
   static override flags = {
     bail: Flags.boolean({
-      description: 'bbort ("bail") after first test failure',
+      description: 'abort ("bail") after first test failure',
       default: false,
       char: 'b',
     }),
@@ -53,20 +54,15 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       description: 'only test with changed files and match test/**/*.test.(js|ts)',
       char: 'c',
     }),
-    parallel: Flags.boolean({
-      description: 'mocha parallel mode',
+    watch: Flags.boolean({
+      description: 'run tests in watch mode',
       default: false,
-      char: 'p',
+      char: 'w',
     }),
-    jobs: Flags.integer({
-      char: 't',
-      description: 'number of jobs to run in parallel',
-      default: os.cpus().length - 1,
-    }),
-    'auto-agent': Flags.boolean({
-      description: '[default: true] auto bootstrap agent in mocha master process',
-      default: true,
-      allowNo: true,
+    pool: Flags.string({
+      description: 'vitest worker pool type',
+      options: ['forks', 'threads'],
+      default: process.env.EGG_VITEST_POOL ?? 'threads',
     }),
   };
 
@@ -80,58 +76,17 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       throw err;
     }
 
-    const mochaFile = process.env.MOCHA_FILE || importResolve('mocha/bin/_mocha');
-    if (flags.parallel) {
-      this.env.ENABLE_MOCHA_PARALLEL = 'true';
-      if (flags['auto-agent']) {
-        this.env.AUTO_AGENT = 'true';
-      }
-    }
     // set NODE_ENV=test, let egg application load unittest logic
     // https://eggjs.org/basics/env#difference-from-node_env
-    this.env.NODE_ENV = 'test';
+    process.env.NODE_ENV = 'test';
 
     if (flags['no-timeout']) {
       flags.timeout = 0;
     }
-    debug('run test: %s %o flags: %o', mochaFile, this.args, flags);
-
-    const mochaArgs = await this.formatMochaArgs();
-    if (!mochaArgs) return;
-    await this.runMocha(mochaFile, mochaArgs);
-  }
-
-  protected async runMocha(mochaFile: string, mochaArgs: string[]): Promise<void> {
-    await this.forkNode(mochaFile, mochaArgs, {
-      execArgv: [
-        ...process.execArgv,
-        // https://github.com/mochajs/mocha/issues/2640#issuecomment-1663388547
-        '--unhandled-rejections=strict',
-      ],
-    });
-  }
-
-  protected async formatMochaArgs(): Promise<string[] | undefined> {
-    const { args, flags } = this;
-    // collect require
-    const requires = await this.formatRequires();
-    const eggType = await detectType(flags.base);
-    debug('eggType: %s', eggType);
-    if (eggType === EggType.application) {
-      try {
-        const eggMockRegister = importResolve('@eggjs/mock/register', {
-          paths: [flags.base],
-        });
-        requires.push(eggMockRegister);
-        debug('auto register @eggjs/mock/register: %o', eggMockRegister);
-      } catch (err: any) {
-        // ignore @eggjs/mock not exists
-        debug('auto register @eggjs/mock fail, can not require @eggjs/mock on %o, error: %s', flags.base, err.message);
-      }
-    }
 
     const ext = flags.typescript ? 'ts' : 'js';
-    let pattern = args.file ? args.file.split(',') : [];
+    let pattern = this.args.file ? this.args.file.split(',') : [];
+
     // changed
     if (flags.changed) {
       pattern = await this.getChangedTestFiles(flags.base, ext);
@@ -150,7 +105,6 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     if (!pattern.length) {
       pattern = [`test/**/*.test.${ext}`];
     }
-    pattern = pattern.concat(['!test/fixtures', '!test/node_modules']);
 
     // expand glob and skip node_modules and fixtures
     let files = globby.sync(pattern, { cwd: flags.base });
@@ -182,30 +136,146 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       );
     }
 
-    // auto add setup file as the first test file
+    // convert to absolute paths relative to base
+    // vitest include patterns require forward slashes, even on Windows
+    files = files.map((f) => {
+      const abs = path.isAbsolute(f) ? f : path.join(flags.base, f);
+      return abs.replace(/\\/g, '/');
+    });
+
+    // expose timeout to test fixtures (e.g. for testing timeout behavior)
+    process.env.EGG_BIN_TIMEOUT = String(flags.timeout);
+
+    // propagate pool mode so downstream code (e.g. @eggjs/mock) can detect it
+    process.env.EGG_VITEST_POOL = flags.pool;
+
+    // propagate isolate mode so downstream code can detect shared mode
+    process.env.EGG_VITEST_ISOLATE = process.env.EGG_VITEST_ISOLATE ?? 'false';
+
+    debug('run test with vitest, files: %o, flags: %o', files, flags);
+    const config = await this.buildVitestConfig(files);
+
+    if (flags['dry-run']) {
+      console.log('vitest config: %o', config);
+      return;
+    }
+
+    // Propagate NODE_OPTIONS from this.env to process.env so vitest fork
+    // workers inherit them (e.g. ts-node/esm loader for TypeScript support).
+    // Also disable Node.js native type stripping when TypeScript loader is active,
+    // because native type stripping can't handle decorators and runs before
+    // custom ESM loaders like ts-node/esm.
+    if (this.env.NODE_OPTIONS) {
+      let nodeOptions = this.env.NODE_OPTIONS;
+      if (flags.typescript && !nodeOptions.includes('--no-experimental-strip-types')) {
+        nodeOptions = `--no-experimental-strip-types ${nodeOptions}`;
+      }
+      process.env.NODE_OPTIONS = nodeOptions;
+    }
+
+    // pass configFile:false as vite override to prevent vitest from walking up
+    // the directory tree and picking up a parent vitest.config.ts
+    const vitest = await startVitest('test', [], config, { configFile: false } as Record<string, unknown>);
+    if (!vitest) {
+      throw new ForkError('vitest failed to start', 1);
+    }
+
+    if (flags.watch) {
+      // In watch mode, vitest keeps running until user terminates
+      return;
+    }
+
+    const failed = vitest.state.getCountOfFailedTests() ?? 0;
+    await vitest.close();
+    if (failed > 0) {
+      throw new ForkError('tests failed', 1);
+    }
+  }
+
+  protected async buildVitestConfig(files: string[]): Promise<VitestConfig> {
+    const { flags } = this;
+    const ext = flags.typescript ? 'ts' : 'js';
+    const setupFiles: string[] = [];
+
+    // auto add setup file as first setup file
     const setupFile = path.join(flags.base, `test/.setup.${ext}`);
     try {
       await fs.access(setupFile);
-      files.unshift(setupFile);
+      setupFiles.push(setupFile.replace(/\\/g, '/'));
     } catch {
       // ignore
     }
 
-    const grep = flags.grep ? flags.grep.split(',') : [];
+    // add user-defined requires/imports
+    const requires = await this.formatRequires();
+    setupFiles.push(...requires);
 
-    return [
-      // force exit
-      '--exit',
-      flags.bail ? '--bail' : '',
-      grep.map((pattern) => `--grep='${pattern}'`).join(' '),
-      flags.timeout ? `--timeout=${flags.timeout}` : '--no-timeout',
-      flags.parallel ? '--parallel' : '',
-      flags.parallel && flags.jobs ? `--jobs=${flags.jobs}` : '',
-      this.env.TEST_REPORTER ? `--reporter=${this.env.TEST_REPORTER}` : '',
-      ...requires.map((r) => `--require=${r}`),
-      ...files,
-      flags['dry-run'] ? '--dry-run' : '',
-    ].filter((a) => a.trim());
+    // auto add @eggjs/mock/setup_vitest for egg applications
+    const eggType = await detectType(flags.base);
+    debug('eggType: %s', eggType);
+    if (eggType === EggType.application) {
+      try {
+        const mockSetup = importResolve('@eggjs/mock/setup_vitest', {
+          paths: [flags.base],
+        });
+        setupFiles.push(mockSetup);
+        debug('auto add @eggjs/mock/setup_vitest: %o', mockSetup);
+      } catch (err) {
+        if (!(err instanceof ImportResolveError)) throw err;
+        debug('skip @eggjs/mock/setup_vitest: @eggjs/mock not installed');
+      }
+    }
+
+    // auto detect @eggjs/tegg-vitest/runner
+    // Try resolving from the project first, then from egg-bin's own dependencies.
+    // This ensures tegg context injection works even when the project doesn't
+    // explicitly depend on @eggjs/tegg-vitest (e.g. cnpmcore).
+    let runner: string | undefined;
+    for (const resolveFrom of [flags.base, import.meta.dirname]) {
+      try {
+        runner = importResolve('@eggjs/tegg-vitest/runner', {
+          paths: [resolveFrom],
+        });
+        debug('auto use @eggjs/tegg-vitest/runner from %s: %o', resolveFrom, runner);
+        break;
+      } catch (err) {
+        if (!(err instanceof ImportResolveError)) throw err;
+      }
+    }
+    if (!runner) {
+      debug('skip @eggjs/tegg-vitest/runner: not resolvable');
+    }
+
+    return {
+      root: flags.base,
+      include: files,
+      exclude: ['**/test/fixtures/**', '**/test/node_modules/**', '**/node_modules/**'],
+      testTimeout: flags.timeout,
+      testNamePattern: flags.grep,
+      bail: flags.bail ? 1 : 0,
+      setupFiles,
+      runner,
+      reporters: [process.env.TEST_REPORTER ?? 'default'],
+      pool: flags.pool as 'forks' | 'threads',
+      isolate: process.env.EGG_VITEST_ISOLATE !== 'false',
+      fileParallelism: process.env.EGG_FILE_PARALLELISM === 'true',
+      // vitest 4 moved poolOptions to top-level
+      execArgv: [...this.globalExecArgv],
+      watch: flags.watch,
+      // inject vitest globals (describe, it, expect, beforeAll, etc.) so plain JS test files work without imports
+      globals: true,
+      // Inline all non-vitest node_modules so dynamic import() calls within
+      // dependencies go through vitest's module system. Without this, packages like
+      // @eggjs/tegg-loader use native import() which creates separate module instances,
+      // breaking class identity checks (e.g. tegg's getEggObject(MyClass) won't find
+      // the prototype). @vitest/* packages are excluded to avoid breaking the V8
+      // coverage inspector session.
+      server: {
+        deps: {
+          inline: [/^(?!.*@vitest)/],
+        },
+      },
+    };
   }
 
   protected async getChangedTestFiles(dir: string, ext: string): Promise<string[]> {

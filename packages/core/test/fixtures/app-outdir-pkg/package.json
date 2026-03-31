@@ -1,0 +1,6 @@
+{
+  "name": "app-outdir-pkg",
+  "egg": {
+    "outDir": "dist"
+  }
+}

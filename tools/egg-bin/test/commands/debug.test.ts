@@ -1,11 +1,13 @@
 import path from 'node:path';
 
+import { describe, it } from 'vitest';
+
 import coffee from '../coffee.ts';
 import { getFixtures, getRootDirname } from '../helper.ts';
 
 describe('test/commands/debug.test.ts', () => {
   const eggBin = path.join(getRootDirname(), 'bin/run.js');
-  const cwd = getFixtures('demo-app');
+  const cwd = getFixtures('demo-app-debug');
 
   it('should startCluster success', () => {
     return (
@@ -13,7 +15,7 @@ describe('test/commands/debug.test.ts', () => {
         .fork(eggBin, ['dev', '--inspect'], { cwd })
         // .debug()
         .expect('stdout', /"workers":1/)
-        .expect('stdout', /"baseDir":".*?demo-app"/)
+        .expect('stdout', /"baseDir":".*?demo-app-debug"/)
         .expect('stdout', /"framework":".*?aliyun-egg"/)
         .expect('stdout', /NODE_ENV: development/)
         .expect('stderr', /Debugger listening/)

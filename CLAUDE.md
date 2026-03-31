@@ -140,6 +140,12 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Multi-client support with singleton pattern
     - Weak dependency mode for optional Redis connections
     - Extends Application and Agent with redis property
+- **`packages/skills/`** - AI agent skills for Egg framework (@eggjs/skills)
+  - Pure markdown documentation package (no source code)
+  - Provides structured guidance for AI assistants working with Egg
+  - `egg/` - Entry point skill that routes to specialized skills
+  - `egg-controller/` - Controller implementation skill (HTTP, MCP, Schedule)
+  - `egg-core/` - Core framework concepts skill (modules, DI, lifecycle)
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example
@@ -289,7 +295,8 @@ The framework extends Koa's context with Egg-specific features:
    - `tsconfig.json` → `{"extends": "../../tsconfig.json"}`
 4. Add package reference to root tsconfig.json `references` array
 5. Update root pnpm-workspace.yaml if needed (plugins/\* is already included)
-6. Use `pnpm --filter=<package>` for package-specific commands
+6. **CRITICAL: Run `pnpm install` and commit the updated `pnpm-lock.yaml`** — CI uses `--frozen-lockfile` and will fail immediately if the lockfile is out of sync with any package.json
+7. Use `pnpm --filter=<package>` for package-specific commands
 
 ### Plugin Packages Structure
 
@@ -441,6 +448,16 @@ Key points:
 - Published packages use compiled JavaScript (`./dist/*.js`)
 - The `publishConfig.exports` overrides `exports` during npm publish
 - All plugins must include `build`, `clean`, and `prepublishOnly` scripts
+
+### Skills Package Structure
+
+- **`packages/skills/`** - AI agent skills for Egg framework (@eggjs/skills)
+  - 纯 markdown 文档包，指导 AI 助手使用 Egg 框架
+  - `egg/` — 入口 skill，路由到专业 skill
+  - `egg-core/` — 核心概念：模块、依赖注入、生命周期
+  - `egg-controller/` — 控制器：HTTPController、MCPController、Schedule、Ajv 校验
+  - `eval/` — 评测用例和输出
+  - Skill 编写规范、评测流程等详见 `packages/skills/CLAUDE.md`
 
 ### Tool Packages Structure
 
@@ -692,6 +709,41 @@ NODE_OPTIONS='--inspect-brk' pnpm --filter=egg run test test/app/extend/context.
 - `NODE_ENV` - Node environment (development/production)
 - `EGG_TYPESCRIPT` - Enable TypeScript support (true/false)
 - `DEBUG` - Enable debug output (egg:\*)
+
+### Debugging E2E Tests Locally
+
+The `ecosystem-ci/` directory contains E2E test infrastructure for downstream projects (e.g., cnpmcore). To reproduce and debug E2E failures locally:
+
+```bash
+# 1. Build all monorepo packages
+pnpm run build
+
+# 2. Pack all packages as tgz files (placed at workspace root)
+pnpm -r pack
+
+# 3. Clone the downstream project into ecosystem-ci/
+git clone https://github.com/cnpmjs/cnpmcore.git ecosystem-ci/cnpmcore
+
+# 4. Patch the project's package.json with local tgz overrides
+npx tsx ecosystem-ci/patch-project.ts cnpmcore
+
+# 5. Install (clean cache to avoid stale tgz)
+cd ecosystem-ci/cnpmcore
+npm cache clean --force
+npm install
+
+# 6. Run tests
+npm run clean
+npx egg-bin test test/path/to/specific.test.ts
+```
+
+After making changes to monorepo packages, repeat steps 1-5 (build → pack → patch → clean install).
+
+**Key files:**
+
+- `ecosystem-ci/patch-project.ts` - Generates `overrides` field in target project's package.json pointing to local tgz files
+- `ecosystem-ci/repo.json` - Defines which downstream projects can be tested
+- `.github/workflows/e2e-test.yml` - CI workflow that runs E2E tests with MySQL/Redis services
 
 ### Common Development Patterns
 

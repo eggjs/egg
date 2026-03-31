@@ -14,6 +14,7 @@ export const ControllerType = {
   MESSAGE: 'MESSAGE',
   SCHEDULE: 'SCHEDULE',
   HEADERS: 'HEADERS',
+  MCP: 'MCP',
 } as const;
 export type ControllerType = (typeof ControllerType)[keyof typeof ControllerType];
 
@@ -55,3 +56,10 @@ export const HTTPParamType = {
   COOKIES: 'COOKIES',
 } as const;
 export type HTTPParamType = (typeof HTTPParamType)[keyof typeof HTTPParamType];
+
+export const MCPProtocols = {
+  STDIO: 'STDIO',
+  SSE: 'SSE',
+  STREAM: 'STREAM',
+} as const;
+export type MCPProtocols = (typeof MCPProtocols)[keyof typeof MCPProtocols];

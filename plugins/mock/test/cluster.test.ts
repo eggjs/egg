@@ -39,7 +39,7 @@ describe
       });
 
       it('should listen on port', () => {
-        app.expect('stdout', /egg started on http:\/\/127.0.0.1:17\d{3}/);
+        app.expect('stdout', /egg started on http:\/\/127.0.0.1:\d{4,5}/);
       });
     });
 

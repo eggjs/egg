@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/controller-plugin",
-  "version": "4.0.0-beta.36",
+  "version": "4.0.2-beta.7",
   "description": "controller decorator plugin for egg",
   "keywords": [
     "egg",
@@ -28,7 +28,11 @@
   "exports": {
     ".": "./src/index.ts",
     "./app": "./src/app.ts",
+    "./app/middleware/mcp_body_middleware": "./src/app/middleware/mcp_body_middleware.ts",
     "./app/middleware/tegg_root_proto": "./src/app/middleware/tegg_root_proto.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./lib/AgentControllerObject": "./src/lib/AgentControllerObject.ts",
+    "./lib/AgentControllerProto": "./src/lib/AgentControllerProto.ts",
     "./lib/AppLoadUnitControllerHook": "./src/lib/AppLoadUnitControllerHook.ts",
     "./lib/ControllerLoadUnit": "./src/lib/ControllerLoadUnit.ts",
     "./lib/ControllerLoadUnitHandler": "./src/lib/ControllerLoadUnitHandler.ts",
@@ -43,6 +47,10 @@
     "./lib/impl/http/HTTPControllerRegister": "./src/lib/impl/http/HTTPControllerRegister.ts",
     "./lib/impl/http/HTTPMethodRegister": "./src/lib/impl/http/HTTPMethodRegister.ts",
     "./lib/impl/http/Req": "./src/lib/impl/http/Req.ts",
+    "./lib/impl/mcp/MCPConfig": "./src/lib/impl/mcp/MCPConfig.ts",
+    "./lib/impl/mcp/MCPControllerRegister": "./src/lib/impl/mcp/MCPControllerRegister.ts",
+    "./lib/impl/mcp/MCPServerHelper": "./src/lib/impl/mcp/MCPServerHelper.ts",
+    "./lib/MiddlewareGraphHook": "./src/lib/MiddlewareGraphHook.ts",
     "./lib/RootProtoManager": "./src/lib/RootProtoManager.ts",
     "./types": "./src/types.ts",
     "./package.json": "./package.json"
@@ -52,7 +60,11 @@
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
+      "./app/middleware/mcp_body_middleware": "./dist/app/middleware/mcp_body_middleware.js",
       "./app/middleware/tegg_root_proto": "./dist/app/middleware/tegg_root_proto.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/AgentControllerObject": "./dist/lib/AgentControllerObject.js",
+      "./lib/AgentControllerProto": "./dist/lib/AgentControllerProto.js",
       "./lib/AppLoadUnitControllerHook": "./dist/lib/AppLoadUnitControllerHook.js",
       "./lib/ControllerLoadUnit": "./dist/lib/ControllerLoadUnit.js",
       "./lib/ControllerLoadUnitHandler": "./dist/lib/ControllerLoadUnitHandler.js",
@@ -67,6 +79,10 @@
       "./lib/impl/http/HTTPControllerRegister": "./dist/lib/impl/http/HTTPControllerRegister.js",
       "./lib/impl/http/HTTPMethodRegister": "./dist/lib/impl/http/HTTPMethodRegister.js",
       "./lib/impl/http/Req": "./dist/lib/impl/http/Req.js",
+      "./lib/impl/mcp/MCPConfig": "./dist/lib/impl/mcp/MCPConfig.js",
+      "./lib/impl/mcp/MCPControllerRegister": "./dist/lib/impl/mcp/MCPControllerRegister.js",
+      "./lib/impl/mcp/MCPServerHelper": "./dist/lib/impl/mcp/MCPServerHelper.js",
+      "./lib/MiddlewareGraphHook": "./dist/lib/MiddlewareGraphHook.js",
       "./lib/RootProtoManager": "./dist/lib/RootProtoManager.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
@@ -76,6 +92,7 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
+    "@eggjs/agent-runtime": "workspace:*",
     "@eggjs/controller-decorator": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/lifecycle": "workspace:*",
@@ -86,9 +103,14 @@
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "await-event": "catalog:",
+    "content-type": "catalog:",
     "egg-errors": "catalog:",
     "globby": "catalog:",
+    "koa-compose": "catalog:",
     "path-to-regexp": "catalog:path-to-regexp1",
+    "raw-body": "^2.5.2",
     "sdk-base": "catalog:"
   },
   "devDependencies": {
@@ -98,6 +120,7 @@
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@eggjs/tracer": "workspace:*",
+    "@types/koa-compose": "catalog:",
     "@types/node": "catalog:",
     "egg": "workspace:*",
     "typescript": "catalog:"

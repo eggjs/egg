@@ -31,7 +31,7 @@ jobs:
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
           node-version: '24'
           cache: 'pnpm'
@@ -62,16 +62,13 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
-        node: ['20', '22', '24']
-        # 1-based index
-        shardIndex: [1, 2, 3]
-        shardTotal: [3]
+        node: ['22', '24']
 
-    name: Test (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    name: Test (${{ matrix.os }}, ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+      group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
       cancel-in-progress: true
 
     steps:
@@ -89,7 +86,18 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         shell: pwsh
         run: |
-          choco install -y memurai-developer.install
+          # retry up to 3 times to handle Chocolatey feed flakiness
+          for ($i = 1; $i -le 3; $i++) {
+            choco install -y memurai-developer.install
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($i -lt 3) {
+              Write-Host "choco install failed (attempt $i/3), retrying in 15s..."
+              Start-Sleep -Seconds 15
+            } else {
+              Write-Error "choco install failed after 3 attempts"
+              exit 1
+            }
+          }
 
           # ensure service exists and running (avoid non-zero return code of net start)
           $svc = Get-Service -Name Memurai -ErrorAction SilentlyContinue
@@ -150,7 +158,7 @@ jobs:
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
           node-version: ${{ matrix.node }}
           cache: 'pnpm'
@@ -159,10 +167,10 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm run ci --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: pnpm run ci
 
       - name: Run example tests
-        if: ${{ matrix.node != '20' && matrix.os != 'windows-latest' }}
+        if: ${{ matrix.os != 'windows-latest' }}
         run: |
           pnpm run example:test:all
 
@@ -179,15 +187,12 @@ jobs:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
         node: ['24']
-        # 0-based index
-        shardIndex: [0, 1, 2]
-        shardTotal: [3]
 
-    name: Test bin (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    name: Test bin (${{ matrix.os }}, ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: test-egg-bin-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+      group: test-egg-bin-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
       cancel-in-progress: true
 
     steps:
@@ -198,7 +203,7 @@ jobs:
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
           node-version: ${{ matrix.node }}
           cache: 'pnpm'
@@ -210,10 +215,6 @@ jobs:
         run: |
           pnpm build --workspace ./tools/egg-bin
           pnpm run --filter ./tools/egg-bin ci
-        env:
-          # https://github.com/jamiebuilds/ci-parallel-vars
-          CI_NODE_INDEX: ${{ matrix.shardIndex }}
-          CI_NODE_TOTAL: ${{ matrix.shardTotal }}
 
       - name: Code Coverage
         # skip on windows, it will hangup on codecov https://github.com/codecov/codecov-action/issues/1787
@@ -244,7 +245,7 @@ jobs:
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
           node-version: ${{ matrix.node }}
           cache: 'pnpm'

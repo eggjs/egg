@@ -25,44 +25,53 @@ Web 应用中的单元测试更加重要，Web 产品快速迭代的时期，每
 
 ## 测试框架
 
-从 [npm 搜索“test framework”](https://www.npmjs.com/search?q=test%20framework&page=1&ranking=popularity) 我们会发现有大量测试框架存在，每个测试框架都有它的独特之处。
+从 [npm 搜索”test framework”](https://www.npmjs.com/search?q=test%20framework&page=1&ranking=popularity) 我们会发现有大量测试框架存在，每个测试框架都有它的独特之处。
 
-### Mocha
+### Vitest
 
-我们选择并推荐大家使用 [Mocha](http://mochajs.org)，功能非常丰富，支持运行在 Node.js 和浏览器中，对异步测试支持非常友好。
+从 `@eggjs/bin` v8 开始，Egg 使用 [Vitest](https://vitest.dev) 作为默认的测试运行器。Vitest 是基于 Vite 的下一代测试框架，提供原生 TypeScript 支持、快速执行和现代化的测试体验。
 
-> Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser, making asynchronous testing simple and fun. Mocha tests run serially, allowing for flexible and accurate reporting, while mapping uncaught exceptions to the correct test cases.
+> Vitest 是一个基于 Vite 的极速单元测试框架，提供原生 ESM 支持，开箱即用的 TypeScript 支持，以及 Vite 驱动的转换管道。
 
-### AVA
+主要优势：
 
-为什么没有选择最近比较火的 [AVA](https://github.com/avajs/ava)？它看起来会运行得很快。经过我们几个真实项目的实践，我们发现 AVA 真的只是看起来美。实际上，它会让测试代码变得越来越难写，成本越来越高。
+- **原生 TypeScript 支持** — 无需 ts-node 或额外的 loader
+- **快速执行** — 利用 Vite 的转换管道
+- **内置 watch 模式** — 开发时即时反馈
+- **兼容的 API** — 支持 `describe`、`it`、`beforeAll`、`afterAll` 等
+- **内置覆盖率** — 通过 `@vitest/coverage-v8`，无需外部工具
 
-[@dead-horse](https://github.com/dead-horse) 的评价：
+### Mocha（旧版）
 
-> - AVA 自身不够稳定，运行文件多时会占用过高 CPU；若设置控制并发参数，则只模式无效。
-> - 并发执行对测试用例要求高，测试间不能有依赖，尤其是在需要 mock 的场景下，写起来非常困难。
-> - app 初始化时是有耗时的。如果串行运行，只需要初始化一个 app。然而，AVA 每个文件都在独立进程中运行，因此需要初始化多少个 app 就有多少个文件。
+`@eggjs/bin` 之前的版本（v7 及更早）使用 [Mocha](http://mochajs.org) 作为测试运行器。如果你从 Mocha 迁移，请注意以下钩子名称变更：
 
-[@fool2fish](https://github.com/fool2fish) 的评价：
-
-> 如果是简单程序，则 AVA 会略快一些（不过本来简单可能无感）；如果复杂，则不推荐。最大问题是，可能无法提供准确的错误堆栈。并发可能导致依赖的测试环境服务不稳定，降低测试成功率。此外，带流程的测试（如数据库的增删改查功能）用 AVA 真不合适。
+| Mocha          | Vitest                 |
+| -------------- | ---------------------- |
+| `before()`     | `beforeAll()`          |
+| `after()`      | `afterAll()`           |
+| `beforeEach()` | `beforeEach()`（相同） |
+| `afterEach()`  | `afterEach()`（相同）  |
 
 ## 断言库
 
-同样，测试断言库也是[百花齐放时代](https://www.npmjs.com/search?q=assert&page=1&ranking=popularity)。我们经历了 [assert](https://nodejs.org/api/assert.html)、[should](https://github.com/shouldjs/should.js) 和 [expect](https://github.com/Automattic/expect.js)，还在不断尝试寻找更好的断言库。
+我们推荐使用 Node.js 内置的 [assert](https://nodejs.org/api/assert.html) 模块进行断言。它遵循『无 API 是最好的 API』的原则——简单、熟悉，且无需额外依赖。
 
-直到我们发现 [power-assert]，我们找到了答案。因为[『无 API 是最好的 API』](https://github.com/atian25/blog/issues/16)，最终我们回归到原始的 assert 作为默认断言库。
+```js
+import assert from 'node:assert';
 
-简单地说，它的优点是：
+assert(result.status === 200);
+assert.equal(user.name, 'fengmk2');
+assert.deepStrictEqual(data, { foo: 'bar' });
+```
 
-- 无 API 是最好的 API，无需记忆，只需 assert。
-- 强大的错误信息反馈
-- 强大的错误信息反馈
-- 强大的错误信息反馈
+Vitest 也提供了内置的 `expect` API，如果你偏好 BDD 风格的断言：
 
-以下是其报错信息的截图，实在太美太详细，让人想一睹其容：
+```js
+import { expect } from 'vitest';
 
-![](https://cloud.githubusercontent.com/assets/227713/20919940/19e83de8-bbd9-11e6-8951-bf4a332f9b5a.png)
+expect(result.status).toBe(200);
+expect(user.name).toBe('fengmk2');
+```
 
 ## 测试约定
 
@@ -87,8 +96,14 @@ test
 
 ### 测试运行工具
 
-统一使用 [egg-bin 运行测试脚本](https://github.com/eggjs/egg-bin#test)，
-自动将内置的 [Mocha](https://mochajs.org/)、[co-mocha](https://github.com/blakeembrey/co-mocha)、[power-assert](https://github.com/power-assert-js/power-assert) 和 [nyc](https://github.com/istanbuljs/nyc) 等模块组合引入到测试脚本中，让我们**聚焦精力在编写测试代码**上，而不是纠结选择哪些测试周边工具和模块。
+统一使用 [egg-bin 运行测试脚本](https://github.com/eggjs/egg-bin#test)，内部使用 [Vitest](https://vitest.dev) 运行测试。egg-bin 自动配置 vitest 的合理默认值，让我们**聚焦精力在编写测试代码**上，而不是纠结选择哪些测试周边工具和模块。
+
+egg-bin 提供的主要功能：
+
+- 自动检测 TypeScript 并配置 vitest
+- 自动加载 `test/.setup.ts`（或 `.setup.js`）作为 setup 文件
+- 对于 egg 应用，自动注入 `@eggjs/mock/setup_vitest`（处理 app 生命周期）
+- 注入 vitest 全局变量（`describe`、`it`、`beforeAll` 等），纯 JS 测试文件无需导入
 
 只需在 `package.json` 上配置好 `scripts.test` 即可。
 
@@ -108,11 +123,41 @@ npm test
 > unittest-example@ test /Users/mk2/git/github.com/eggjs/examples/unittest
 > egg-bin test
 
-  test/hello.test.js
-    ✓ should work
+ ✓ test/hello.test.js (1 test) 10ms
 
-  1 passing (10ms)
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
 ```
+
+### 环境变量
+
+egg-bin 提供了以下环境变量来控制 vitest 的运行行为：
+
+| 环境变量               | 可选值              | 默认值    | 说明                                                                                                                                                                                                                         |
+| ---------------------- | ------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `EGG_VITEST_POOL`      | `threads` / `forks` | `threads` | Vitest 工作池类型。`threads` 使用 worker_threads，启动更快；`forks` 使用子进程，提供完全隔离。设为 `threads` 时，`@eggjs/mock` 会自动切换为 `worker_threads` 启动模式，使 cluster-client 使用基于线程的 IPC 而非进程间通信。 |
+| `EGG_VITEST_ISOLATE`   | `true` / `false`    | `false`   | 是否在独立环境中隔离测试文件。设为 `false`（共享模式）时，同一 worker 内所有测试文件共享同一个 app 实例，显著提升测试速度。设为 `true` 时，每个测试文件拥有独立的隔离环境。                                                  |
+| `EGG_FILE_PARALLELISM` | `true` / `false`    | `false`   | 是否跨 worker 并行运行测试文件。设为 `false` 时，测试文件按顺序执行。                                                                                                                                                        |
+
+可以在 `package.json` scripts 中设置，也可以通过命令行参数传入：
+
+```json
+{
+  "scripts": {
+    "test": "egg-bin test",
+    "test:forks": "EGG_VITEST_POOL=forks egg-bin test",
+    "test:isolate": "EGG_VITEST_ISOLATE=true egg-bin test"
+  }
+}
+```
+
+或使用 `--pool` 参数：
+
+```bash
+egg-bin test --pool forks
+```
+
+> **注意：** 在共享模式（`EGG_VITEST_ISOLATE=false`）下，静态变量和内存状态会在测试文件间持久化。请确保在 `afterEach` 钩子中清理共享状态，避免测试间的状态污染。
 
 ## 准备测试
 
@@ -124,49 +169,56 @@ npm test
 
 我们可能还需要模拟各种网络异常、服务访问异常等特殊情况。
 
-因此我们单独为框架抽取了一个测试 mock 辅助模块：[egg-mock](https://github.com/eggjs/egg-mock)，有了它我们就可以非常快速地编写一个 app 的单元测试，并且还能快速创建一个 ctx 来测试它的属性、方法和 Service 等。
+因此我们单独为框架抽取了一个测试 mock 辅助模块：**`@eggjs/mock`**（历史上也常被称为 egg-mock）。有了它我们就可以非常快速地编写应用单元测试，并且还能快速创建 ctx 来测试属性、方法和 Service 等。
+
+- 仓库（Egg 3.x）：https://github.com/eggjs/mock/tree/4.x
+- 也可以参考：[测试 Mock 工具（@eggjs/mock / mm）](./mock.md)
 
 ### app
 
 在测试运行之前，我们首先要创建应用的一个 app 实例，通过它来访问需要被测试的 Controller、Middleware、Service 等应用层代码。
 
-通过 egg-mock，结合 Mocha 的 `before` 钩子，可以便捷地创建出一个 app 实例。
+通过 `@eggjs/mock`，结合 `beforeAll` 钩子，可以便捷地创建出一个 app 实例。
 
-```javascript
-// test/controller/home.test.js
-const assert = require('assert');
-const mock = require('@eggjs/mock');
+```typescript
+// test/controller/home.test.ts
+import assert from 'node:assert';
+import { mock } from '@eggjs/mock';
+import { beforeAll, describe } from 'vitest';
 
-describe('test/controller/home.test.js', () => {
+describe('test/controller/home.test.ts', () => {
   let app;
-  before(() => {
+  beforeAll(async () => {
     // 创建当前应用的 app 实例
     app = mock.app();
     // 等待 app 启动成功，才能执行测试用例
-    return app.ready();
+    await app.ready();
   });
 });
 ```
 
 这样我们就拿到了一个 app 的引用，接下来所有测试用例都会基于这个 app 进行。更多关于创建 app 的信息请查看 [`mock.app(options)`](https://github.com/eggjs/egg-mock#appoptions) 文档。
 
-考虑到每个测试文件都需要这样创建 app 实例会非常冗余，因此 egg-mock 提供了一个 bootstrap 文件，直接从其上面获取常用的实例：
+考虑到每个测试文件都需要这样创建 app 实例会非常冗余，因此 `@eggjs/mock` 提供了一个 bootstrap 文件，直接从其上面获取常用的实例：
 
-```javascript
-// test/controller/home.test.js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+```typescript
+// test/controller/home.test.ts
+import { app, mock } from '@eggjs/mock/bootstrap';
+import assert from 'node:assert';
 
-describe('test/controller/home.test.js', () => {
+describe('test/controller/home.test.ts', () => {
   // 测试用例
 });
 ```
+
+> **提示：** 使用 egg-bin 时，`@eggjs/mock/setup_vitest` 会被自动注入为 vitest 的 setup 文件。它会自动处理 `beforeAll`（启动 app）、`afterEach`（恢复 mock）和 `afterAll`（关闭 app）。
 
 ### ctx
 
 除了 app，我们还需要一种便捷的方式来获得 ctx，以便进行 Extend、Service、Helper 等测试。
 已经通过上述方法拿到了一个 app，结合 egg-mock 提供的 [`app.mockContext(options)`](https://github.com/eggjs/egg-mock#appmockcontextoptions) 方法可以快速创建一个 ctx 实例。
 
-```javascript
+```typescript
 it('should get a ctx', () => {
   const ctx = app.mockContext();
   assert(ctx.method === 'GET');
@@ -176,7 +228,7 @@ it('should get a ctx', () => {
 
 如果要模拟 `ctx.user`，也可以通过给 mockContext 传递数据参数实现：
 
-```javascript
+```typescript
 it('should mock ctx.user', () => {
   const ctx = app.mockContext({
     user: {
@@ -196,9 +248,9 @@ it('should mock ctx.user', () => {
 
 一些常见的错误写法如下：
 
-```js
+```ts
 // Bad
-const { app } = require('egg-mock/bootstrap');
+import { app } from '@eggjs/mock/bootstrap';
 
 describe('bad test', () => {
   doSomethingBefore();
@@ -209,16 +261,16 @@ describe('bad test', () => {
 });
 ```
 
-Mocha 在开始运行时将载入所有的测试用例，此时 describe 方法会被调用，那么 `doSomethingBefore` 也就提前被触发了。如果期望通过 only 方式执行某个特定测试用例，那段代码依然会被执行，这是不符合预期的。
+测试框架在开始运行时将载入所有的测试用例，此时 describe 方法会被调用，那么 `doSomethingBefore` 也就提前被触发了。如果期望通过 only 方式执行某个特定测试用例，那段代码依然会被执行，这是不符合预期的。
 
-一个正确的做法是将其放入 before 中，只有在运行这个测试套件中的某个用例时，相关代码才会执行。
+一个正确的做法是将其放入 `beforeAll` 中，只有在运行这个测试套件中的某个用例时，相关代码才会执行。
 
-```js
+```ts
 // Good
-const { app } = require('egg-mock/bootstrap');
+import { app } from '@eggjs/mock/bootstrap';
 
 describe('good test', () => {
-  before(() => doSomethingBefore());
+  beforeAll(() => doSomethingBefore());
 
   it('should redirect', () => {
     return app.httpRequest().get('/').expect(302);
@@ -226,13 +278,13 @@ describe('good test', () => {
 });
 ```
 
-Mocha 通过 before/after/beforeEach/afterEach 来处理前置和后置任务，这几个钩子基本上能处理所有的问题。每个测试用例会按照如下顺序执行：before -> beforeEach -> it -> afterEach -> after，并且可以定义多个。
+Vitest 通过 `beforeAll`/`afterAll`/`beforeEach`/`afterEach` 来处理前置和后置任务，这几个钩子基本上能处理所有的问题。每个测试用例会按照如下顺序执行：`beforeAll` -> `beforeEach` -> `it` -> `afterEach` -> `afterAll`，并且可以定义多个。
 
-```js
+```ts
 describe('egg test', () => {
-  before(() => console.log('order 1'));
-  before(() => console.log('order 2'));
-  after(() => console.log('order 6'));
+  beforeAll(() => console.log('order 1'));
+  beforeAll(() => console.log('order 2'));
+  afterAll(() => console.log('order 6'));
   beforeEach(() => console.log('order 3'));
   afterEach(() => console.log('order 5'));
   it('should worker', () => console.log('order 4'));
@@ -286,10 +338,11 @@ class HomeController extends Controller {
 
 其对应的测试代码 `test/controller/home.test.js` 如下：
 
-```js
-const { app, mock, assert } = require('egg-mock/bootstrap');
+```ts
+import { app } from '@eggjs/mock/bootstrap';
+import assert from 'node:assert';
 
-describe('test/controller/home.test.js', () => {
+describe('test/controller/home.test.ts', () => {
   describe('GET /', () => {
     it('应该返回状态码为 200 并获取到内容', () => {
       // 对 app 发起 `GET /` 请求
@@ -301,7 +354,7 @@ describe('test/controller/home.test.js', () => {
     });
 
     it('应该发送多个请求', async () => {
-      // 使用 generator function 方式编写测试用例，可以在一个用例中串行发起多次请求
+      // 使用 async 方式编写测试用例，可以在一个用例中串行发起多次请求
       await app
         .httpRequest()
         .get('/')
@@ -626,17 +679,17 @@ describe('money()', () => {
 因为 mock 之后会一直生效，我们需要避免每个单元测试用例之间不能相互 mock 污染，
 所以通常我们会在 `afterEach` 钩子里面还原掉所有 mock。
 
-```js
+```ts
 describe('some test', () => {
-  // before hook
+  // beforeAll hook
 
-  afterEach(mock.restore);
+  afterEach(() => mock.restore());
 
   // it tests
 });
 ```
 
-**在引入 `egg-mock/bootstrap` 后，会自动在 `afterEach` 钩子中还原所有的 mock，所以不需要再次编写这部分内容。**
+**使用 egg-bin 时，`@eggjs/mock/setup_vitest` 会被自动注入，它会在 `afterEach` 钩子中自动还原所有的 mock，所以不需要再次编写这部分内容。**
 
 接下来会详细解释 `egg-mock` 的常见使用场景。
 
@@ -750,8 +803,3 @@ describe('GET /httpclient', () => {
 ## 示例代码
 
 完整示例代码可以在 [eggjs/examples/unittest](https://github.com/eggjs/examples/blob/master/unittest) 找到。
-
-[mocha]: https://mochajs.org
-[co-mocha]: https://github.com/blakeembrey/co-mocha
-[nyc]: https://github.com/istanbuljs/nyc
-[power-assert]: https://github.com/power-assert-js/power-assert

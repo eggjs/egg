@@ -93,6 +93,8 @@ exports[`should helper exports stable 1`] = `
   "ProtoNode": [Function],
   "ProxyUtil": [Function],
   "StackUtil": [Function],
+  "StreamUtil": [Function],
+  "TEGG_MANIFEST_KEY": "tegg",
   "TeggError": [Function],
   "TimerUtil": [Function],
 }

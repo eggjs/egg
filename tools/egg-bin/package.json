@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/bin",
-  "version": "8.0.0-beta.36",
+  "version": "8.0.2-beta.7",
   "description": "egg developer tool",
   "homepage": "https://github.com/eggjs/egg/tree/next/tools/egg-bin",
   "bugs": {
@@ -30,6 +30,7 @@
     "./baseCommand": "./src/baseCommand.ts",
     "./commands/cov": "./src/commands/cov.ts",
     "./commands/dev": "./src/commands/dev.ts",
+    "./commands/manifest": "./src/commands/manifest.ts",
     "./commands/test": "./src/commands/test.ts",
     "./types": "./src/types.ts",
     "./utils": "./src/utils.ts",
@@ -42,6 +43,7 @@
       "./baseCommand": "./dist/baseCommand.js",
       "./commands/cov": "./dist/commands/cov.js",
       "./commands/dev": "./dist/commands/dev.js",
+      "./commands/manifest": "./dist/commands/manifest.js",
       "./commands/test": "./dist/commands/test.js",
       "./types": "./dist/types.js",
       "./utils": "./dist/utils.js",
@@ -50,22 +52,25 @@
   },
   "scripts": {
     "typecheck": "tsgo --noEmit",
-    "test": "node bin/run.js test",
-    "cov": "c8 node bin/run.js test",
+    "pretest": "tsdown",
+    "test": "vitest run",
+    "cov": "vitest run --coverage",
     "ci": "npm run cov"
   },
   "dependencies": {
+    "@eggjs/core": "workspace:*",
+    "@eggjs/tegg-vitest": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "@oclif/core": "catalog:",
-    "c8": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "ci-parallel-vars": "catalog:",
     "detect-port": "catalog:",
     "globby": "catalog:",
     "jest-changed-files": "catalog:",
-    "mocha": "catalog:",
     "ts-node": "catalog:",
     "tsconfig-paths": "catalog:",
-    "utility": "catalog:"
+    "utility": "catalog:",
+    "vitest": "catalog:"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -73,7 +78,6 @@
     "@eggjs/tsconfig": "workspace:*",
     "@swc-node/register": "catalog:",
     "@swc/core": "catalog:",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
     "assert-file": "catalog:",
     "coffee": "catalog:",
@@ -84,6 +88,7 @@
     "npminstall": "catalog:",
     "rimraf": "catalog:",
     "runscript": "catalog:",
+    "sdk-base": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

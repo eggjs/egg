@@ -1,4 +1,5 @@
 import { EggLoadUnitType, type LoadUnit, LoadUnitFactory } from '@eggjs/metadata';
+import type { GlobalGraphBuildHook } from '@eggjs/metadata';
 import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import type { Application } from 'egg';
 import { Base } from 'sdk-base';
@@ -18,6 +19,10 @@ export class ModuleHandler extends Base {
     super();
     this.app = app;
     this.loadUnitLoader = new EggModuleLoader(this.app);
+  }
+
+  registerGlobalGraphBuildHook(hook: GlobalGraphBuildHook): void {
+    this.loadUnitLoader.registerBuildHook(hook);
   }
 
   async init(): Promise<void> {

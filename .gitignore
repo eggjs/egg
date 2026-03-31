@@ -28,6 +28,9 @@ test/fixtures/apps/app-ts-esm/**/*.d.ts
 
 # site
 site/dist
+
+# Claude Code local settings (machine-personal, never commit)
+.claude/settings.local.json
 !site/public
 
 .umi
@@ -63,13 +66,19 @@ site/.dumi/
 # egg-bin
 tools/egg-bin/test/fixtures/**/node_modules/
 !tools/egg-bin/test/fixtures/demo-app/node_modules/
+!tools/egg-bin/test/fixtures/demo-app-debug/node_modules/
+!tools/egg-bin/test/fixtures/demo-app-commonjs/node_modules/
+!tools/egg-bin/test/fixtures/demo-app-detect-port/node_modules/
 !tools/egg-bin/test/fixtures/demo-app-esm/node_modules/
+!tools/egg-bin/test/fixtures/demo-app-esm-dev/node_modules/
 
 !tools/egg-bin/test/fixtures/ts/node_modules/aliyun-egg/node_modules/
 
 !tools/egg-bin/test/fixtures/example/node_modules/
 !tools/egg-bin/test/fixtures/example-ts-cluster/node_modules/
 !tools/egg-bin/test/fixtures/egg-revert/node_modules/
+!tools/egg-bin/test/fixtures/egg-revert-dev/node_modules/
+!tools/egg-bin/test/fixtures/egg-revert-cov/node_modules/
 !tools/egg-bin/test/fixtures/egg-require/node_modules/
 !tools/egg-bin/test/fixtures/example-ts-simple/node_modules/
 !tools/egg-bin/test/fixtures/test-demo-app/node_modules/
@@ -79,6 +88,7 @@ tools/egg-bin/test/fixtures/**/node_modules/
 
 !tools/egg-bin/test/fixtures/example-declarations/node_modules/
 !tools/egg-bin/test/fixtures/custom-framework-app/node_modules/
+!tools/egg-bin/test/fixtures/custom-framework-app-my-egg-bin/node_modules/
 
 tegg/plugin/oneapi/test/fixtures/modules/*/oneapi
 tegg/plugin/dal/test/fixtures/modules/*/dal/

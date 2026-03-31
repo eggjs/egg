@@ -27,6 +27,19 @@ jobs:
       contents: read
       packages: read
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_DATABASE: cnpmcore
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
     strategy:
       fail-fast: false
       matrix:
@@ -39,6 +52,69 @@ jobs:
               npm run typecheck
               npm run build
               npm run prepublishOnly
+
+              # Clean build artifacts to avoid double-loading (src + dist)
+              npm run clean
+
+              # Run the full test suite
+              echo "Preparing databases..."
+              mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS cnpmcore_unittest"
+              CNPMCORE_DATABASE_NAME=cnpmcore_unittest bash ./prepare-database-mysql.sh
+              CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
+              npm run test:local
+
+              # Deployment test: start the app and verify it boots correctly
+              npm run clean
+              npm run tsc:prod
+              # Overlay compiled .js onto source locations so both egg loader
+              # and tegg module scanner find .js files at the expected paths
+              cp -r dist/* .
+              rm -rf dist
+
+              echo "Preparing database for deployment test..."
+              mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS cnpmcore_unittest"
+              CNPMCORE_DATABASE_NAME=cnpmcore_unittest bash ./prepare-database-mysql.sh
+              CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
+
+              EGG_TS_ENABLE=false npx eggctl start --port=7001 --env=unittest --daemon
+              HEALTH_URL="http://127.0.0.1:7001/"
+              START_TIME=$(date +%s)
+              TIMEOUT=120
+              STATUS=""
+              READY=0
+
+              echo "Waiting for application to become healthy at ${HEALTH_URL} (timeout: ${TIMEOUT}s)..."
+              while true; do
+                # Capture response body and status code
+                STATUS=$(curl -s -o /tmp/cnpmcore-health-response -w "%{http_code}" "${HEALTH_URL}" || echo "000")
+                echo "Health check attempt at $(date): status=${STATUS}"
+
+                if [ "${STATUS}" = "200" ]; then
+                  echo "Health check succeeded with status 200"
+                  READY=1
+                  break
+                fi
+
+                NOW=$(date +%s)
+                ELAPSED=$((NOW - START_TIME))
+                if [ "${ELAPSED}" -ge "${TIMEOUT}" ]; then
+                  echo "Health check timed out after ${ELAPSED}s with last status ${STATUS}"
+                  break
+                fi
+
+                sleep 5
+              done
+
+              npx eggctl stop
+
+              if [ "${READY}" != "1" ]; then
+                echo "Health check failed; last HTTP status: ${STATUS}"
+                echo "Last health endpoint response body (if any):"
+                cat /tmp/cnpmcore-health-response 2>/dev/null || echo "<no response body captured>"
+                echo "Recent error logs (if any):"
+                cat logs/cnpmcore/common-error.log 2>/dev/null || true
+                exit 1
+              fi
           - name: examples
             node-version: 24
             command: |
@@ -56,6 +132,10 @@ jobs:
               npm run lint
               npm run test
               npm run prepublishOnly
+
+              # Manifest E2E: generate, validate, boot with manifest, clean
+              node ../../scripts/verify-manifest.mjs
+              cd ..
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - uses: ./.github/actions/clone
@@ -66,7 +146,7 @@ jobs:
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
           node-version: ${{ matrix.project.node-version }}
           cache: 'pnpm'

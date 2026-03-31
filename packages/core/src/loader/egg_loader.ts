@@ -23,6 +23,7 @@ import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
+import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
 
@@ -47,6 +48,8 @@ export interface EggLoaderOptions {
   serverScope?: string;
   /** custom plugins */
   plugins?: Record<string, EggPluginInfo>;
+  /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
+  metadataOnly?: boolean;
 }
 
 export type EggDirInfoType = 'app' | 'plugin' | 'framework';
@@ -65,7 +68,10 @@ export class EggLoader {
   readonly serverEnv: string;
   readonly serverScope: string;
   readonly appInfo: EggAppInfo;
+  readonly outDir?: string;
   dirs?: EggDirInfo[];
+  /** Startup manifest — loaded from cache or collecting for generation */
+  readonly manifest: ManifestStore;
 
   /**
    * @class
@@ -90,6 +96,7 @@ export class EggLoader {
      * @since 1.0.0
      */
     this.pkg = readJSONSync(path.join(this.options.baseDir, 'package.json'));
+    this.outDir = this.#resolveOutDir();
 
     // auto require('tsconfig-paths/register') on typescript app
     // support env.EGG_TYPESCRIPT = true or { "egg": { "typescript": true } } on package.json
@@ -152,6 +159,11 @@ export class EggLoader {
      * @since 1.0.0
      */
     this.appInfo = this.getAppInfo();
+
+    // Load pre-computed manifest or create a collector for future generation
+    this.manifest =
+      ManifestStore.load(this.options.baseDir, this.serverEnv, this.serverScope) ??
+      ManifestStore.createCollector(this.options.baseDir);
   }
 
   get app(): EggCore {
@@ -630,12 +642,13 @@ export class EggLoader {
       plugin.path = await this.#formatPluginPathFromPackageJSON(plugin.path as string, pkg);
     }
 
-    const logger = this.options.logger;
     if (!eggPluginConfig) {
-      logger.warn('[@eggjs/core/egg_loader] pkg.eggPlugin is missing in %s, plugin: %j', pluginPackage, plugin);
+      // eggPlugin in package.json is no longer required since plugins
+      // now use definePluginFactory() to declare their config
       return;
     }
 
+    const logger = this.options.logger;
     if (eggPluginConfig.name && eggPluginConfig.strict !== false && eggPluginConfig.name !== plugin.name) {
       // pluginName is configured in config/plugin.js
       // pluginConfigName is pkg.eggPlugin.name
@@ -1230,7 +1243,11 @@ export class EggLoader {
    */
   async loadCustomApp(): Promise<void> {
     await this.#loadBootHook('app');
-    this.lifecycle.triggerConfigWillLoad();
+    if (this.options.metadataOnly) {
+      await this.lifecycle.triggerLoadMetadata();
+    } else {
+      this.lifecycle.triggerConfigWillLoad();
+    }
   }
 
   /**
@@ -1238,7 +1255,11 @@ export class EggLoader {
    */
   async loadCustomAgent(): Promise<void> {
     await this.#loadBootHook('agent');
-    this.lifecycle.triggerConfigWillLoad();
+    if (this.options.metadataOnly) {
+      await this.lifecycle.triggerLoadMetadata();
+    } else {
+      this.lifecycle.triggerConfigWillLoad();
+    }
   }
 
   // FIXME: no logger used after egg removed
@@ -1624,6 +1645,7 @@ export class EggLoader {
       directory: options?.directory ?? directory,
       target,
       inject: this.app,
+      manifest: this.manifest,
     };
 
     const timingKey = `Load "${String(property)}" to Application`;
@@ -1649,6 +1671,7 @@ export class EggLoader {
       directory: options?.directory || directory,
       property,
       inject: this.app,
+      manifest: this.manifest,
     };
 
     const timingKey = `Load "${String(property)}" to Context`;
@@ -1685,17 +1708,67 @@ export class EggLoader {
   }
 
   resolveModule(filepath: string): string | undefined {
+    return this.manifest.resolveModule(filepath, () => this.#doResolveModule(filepath));
+  }
+
+  #doResolveModule(filepath: string): string | undefined {
     let fullPath: string | undefined;
     try {
       fullPath = utils.resolvePath(filepath);
     } catch {
-      // debug('[resolveModule] Module %o resolve error: %s', filepath, err.stack);
-      return undefined;
+      // ignore resolve errors
     }
-    // if (process.env.EGG_TYPESCRIPT !== 'true' && fullPath.endsWith('.ts')) {
-    //   return undefined;
-    // }
+    if (!fullPath) {
+      fullPath = this.#resolveFromOutDir(filepath);
+    }
     return fullPath;
+  }
+
+  #resolveOutDir(): string | undefined {
+    // 1. Explicit override from package.json egg.outDir
+    if (this.pkg.egg?.outDir) {
+      debug('[resolveOutDir] use pkg.egg.outDir: %o', this.pkg.egg.outDir);
+      return this.pkg.egg.outDir;
+    }
+    // 2. Auto-detect from tsconfig.json compilerOptions.outDir
+    const tsConfigFile = path.join(this.options.baseDir, 'tsconfig.json');
+    if (fs.existsSync(tsConfigFile)) {
+      try {
+        const tsConfig = JSON.parse(fs.readFileSync(tsConfigFile, 'utf-8'));
+        if (tsConfig.compilerOptions?.outDir) {
+          debug('[resolveOutDir] use tsconfig.json compilerOptions.outDir: %o', tsConfig.compilerOptions.outDir);
+          return tsConfig.compilerOptions.outDir;
+        }
+      } catch {
+        // ignore parse errors
+      }
+    }
+  }
+
+  #resolveFromOutDir(filepath: string): string | undefined {
+    if (!this.outDir) return;
+    const baseDir = this.options.baseDir;
+    if (!filepath.startsWith(baseDir + path.sep)) return;
+    const relativePath = path.relative(baseDir, filepath);
+    for (const ext of ['.js', '.mjs']) {
+      const outDirPath = path.join(baseDir, this.outDir, relativePath + ext);
+      if (fs.existsSync(outDirPath)) {
+        debug('[resolveModule:outDir] %o => %o', filepath, outDirPath);
+        return outDirPath;
+      }
+    }
+  }
+
+  /**
+   * Generate startup manifest from collected data.
+   * Should be called after all loading phases complete.
+   */
+  generateManifest(): StartupManifest {
+    return this.manifest.generateManifest({
+      serverEnv: this.serverEnv,
+      serverScope: this.serverScope,
+      typescriptEnabled: isSupportTypeScript(),
+    });
   }
 }
 

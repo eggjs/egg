@@ -7,7 +7,7 @@ import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 
 import { Cookies as ContextCookies } from '@eggjs/cookies';
-import { EggCore, Router } from '@eggjs/core';
+import { EggCore, Router, ManifestStore } from '@eggjs/core';
 import type { EggCoreOptions, Next, MiddlewareFunc as EggCoreMiddlewareFunc, ILifecycleBoot } from '@eggjs/core';
 import { utils as eggUtils } from '@eggjs/core';
 import { extend } from '@eggjs/extend2';
@@ -190,6 +190,7 @@ export class EggApplicationCore extends EggCore {
         const dumpStartTime = Date.now();
         this.dumpConfig();
         this.dumpTiming();
+        this.dumpManifest();
         this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
       }),
     );
@@ -214,7 +215,7 @@ export class EggApplicationCore extends EggCore {
 
       // single process mode will close agent before app close
       if (this.type === 'application' && this.options.mode === 'single') {
-        await this.agent!.close();
+        await this.agent?.close();
       }
 
       for (const logger of this.loggers.values()) {
@@ -539,6 +540,29 @@ export class EggApplicationCore extends EggCore {
       }
     } catch (err: any) {
       this.coreLogger.warn(`[egg] dumpTiming error: ${err.message}`);
+    }
+  }
+
+  /**
+   * Generate and save startup manifest for faster subsequent startups.
+   * Only generates when no valid manifest was loaded (avoids overwriting during manifest-accelerated starts).
+   */
+  dumpManifest(): void {
+    try {
+      // Skip in local env (manifest is not loaded there unless EGG_MANIFEST=true)
+      if (this.loader.serverEnv === 'local' && process.env.EGG_MANIFEST !== 'true') {
+        return;
+      }
+      // Skip if we loaded from a valid manifest (generatedAt is truthy)
+      if (this.loader.manifest.data.generatedAt) {
+        return;
+      }
+      const manifest = this.loader.generateManifest();
+      ManifestStore.write(this.baseDir, manifest).catch((err: Error) => {
+        this.coreLogger.warn('[egg] dumpManifest write error: %s', err.message);
+      });
+    } catch (err: any) {
+      this.coreLogger.warn('[egg] dumpManifest error: %s', err.message);
     }
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/controller-decorator",
-  "version": "4.0.0-beta.36",
+  "version": "4.0.2-beta.7",
   "description": "tegg controller decorator",
   "keywords": [
     "controller",
@@ -48,6 +48,7 @@
     "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.23.0",
     "is-type-of": "catalog:",
     "path-to-regexp": "catalog:path-to-regexp1"
   },

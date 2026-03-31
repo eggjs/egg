@@ -41,21 +41,25 @@ export function setupApp(): ApplicationUnittest {
     debug('mockParallelApp app: %s', !!app);
   } else {
     app = createApp(options) as unknown as ApplicationUnittest;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (typeof beforeAll === 'function') {
+    // Skip hook registration when vitest setup_vitest.ts is handling the lifecycle
+    const vitestSetup = (globalThis as Record<string, unknown>).__eggMockVitestSetup;
+    if (!vitestSetup) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      // jest
-      beforeAll(() => app.ready());
-    }
-    // @ts-ignore mocha tsd
-    if (typeof afterEach === 'function') {
-      // mocha and jest
+      if (typeof beforeAll === 'function') {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        // jest
+        beforeAll(() => app.ready());
+      }
       // @ts-ignore mocha tsd
-      afterEach(() => app.backgroundTasksFinished());
-      // @ts-ignore mocha tsd
-      afterEach(restore);
+      if (typeof afterEach === 'function') {
+        // mocha and jest
+        // @ts-ignore mocha tsd
+        afterEach(() => app.backgroundTasksFinished());
+        // @ts-ignore mocha tsd
+        afterEach(restore);
+      }
     }
   }
   globalThis.__eggMockAppInstance = app;

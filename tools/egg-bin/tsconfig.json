@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "types": ["mocha", "node"],
+    "types": ["node", "vitest/globals"],
     // Disable isolatedDeclarations for @oclif/core compatibility
     // The @oclif Flags API doesn't work well with isolatedDeclarations
     "isolatedDeclarations": false

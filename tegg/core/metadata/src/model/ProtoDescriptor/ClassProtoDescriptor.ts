@@ -1,4 +1,5 @@
 import { QualifierUtil } from '@eggjs/core-decorator';
+import { NameUtil } from '@eggjs/tegg-common-util';
 import { type EggProtoImplClass, type ProtoDescriptor, ProtoDescriptorType } from '@eggjs/tegg-types';
 
 import { AbstractProtoDescriptor, type AbstractProtoDescriptorOptions } from './AbstractProtoDescriptor.ts';
@@ -21,7 +22,7 @@ export class ClassProtoDescriptor extends AbstractProtoDescriptor {
       ...options,
     });
     this.clazz = options.clazz;
-    this.className = this.clazz.name;
+    this.className = NameUtil.cleanName(this.clazz.name);
   }
 
   equal(protoDescriptor: ProtoDescriptor): boolean {

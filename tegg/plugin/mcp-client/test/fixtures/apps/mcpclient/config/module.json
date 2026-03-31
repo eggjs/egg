@@ -1,0 +1,8 @@
+[
+  {
+    "path": "../app/modules/bar"
+  },
+  {
+    "package": "../../../../"
+  }
+]

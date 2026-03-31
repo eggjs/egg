@@ -1,18 +1,21 @@
 import type { Application, ILifecycleBoot } from 'egg';
 
+import { ScheduleManager } from './lib/ScheduleManager.ts';
 import { SchedulePrototypeHook } from './lib/SchedulePrototypeHook.ts';
 import { ScheduleWorkerLoadUnitHook } from './lib/ScheduleWorkerLoadUnitHook.ts';
 import { ScheduleWorkerRegister } from './lib/ScheduleWorkerRegister.ts';
 
 export default class ScheduleAppBootHook implements ILifecycleBoot {
   private readonly app: Application;
+  private readonly scheduleManager: ScheduleManager;
   private readonly scheduleWorkerRegister: ScheduleWorkerRegister;
   private readonly scheduleWorkerLoadUnitHook: ScheduleWorkerLoadUnitHook;
   private readonly schedulePrototypeHook: SchedulePrototypeHook;
 
   constructor(app: Application) {
     this.app = app;
-    this.scheduleWorkerRegister = new ScheduleWorkerRegister(this.app);
+    this.scheduleManager = new ScheduleManager(this.app);
+    this.scheduleWorkerRegister = new ScheduleWorkerRegister(this.scheduleManager);
     this.scheduleWorkerLoadUnitHook = new ScheduleWorkerLoadUnitHook(this.scheduleWorkerRegister);
     this.schedulePrototypeHook = new SchedulePrototypeHook();
   }
@@ -23,6 +26,9 @@ export default class ScheduleAppBootHook implements ILifecycleBoot {
   }
 
   async beforeClose(): Promise<void> {
+    // Unregister all schedules before deleting lifecycle hooks
+    this.scheduleManager.unregisterAll();
+
     this.app.loadUnitLifecycleUtil.deleteLifecycle(this.scheduleWorkerLoadUnitHook);
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.schedulePrototypeHook);
   }

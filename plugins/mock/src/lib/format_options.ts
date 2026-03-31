@@ -88,6 +88,12 @@ export function formatOptions(initOptions?: MockOptions): MockApplicationOptions
     options.cache = false;
   }
 
+  // when running under vitest threads pool, use worker_threads start mode
+  // so egg cluster-client uses thread-based IPC instead of process-based
+  if (!options.startMode && process.env.EGG_VITEST_POOL === 'threads') {
+    options.startMode = 'worker_threads';
+  }
+
   debug('[formatOptions] options: %j', options);
   return options;
 }

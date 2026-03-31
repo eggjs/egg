@@ -1,11 +1,13 @@
 import path from 'node:path';
 
+import { describe, it } from 'vitest';
+
 import coffee from './coffee.js';
 import { getRootDirname, getFixtures } from './helper.js';
 
 describe('test/egg-bin.test.ts', () => {
   const eggBin = path.join(getRootDirname(), 'bin/run.js');
-  const cwd = getFixtures('test-files');
+  const cwd = getFixtures('test-files-egg-bin');
 
   describe('global options', () => {
     it('should show version', () => {

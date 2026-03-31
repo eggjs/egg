@@ -1,7 +1,11 @@
 import { RDSClient } from '@eggjs/rds';
-import type { RDSClientOptions } from '@eggjs/rds';
+import type { QueryOptions, RDSClientOptions } from '@eggjs/rds';
 import type { Logger } from '@eggjs/tegg-types';
 import { Base } from 'sdk-base';
+
+export interface EggQueryOptions extends QueryOptions {
+  executeType?: 'execute' | 'query';
+}
 
 export interface DataSourceOptions extends RDSClientOptions {
   name: string;
@@ -10,6 +14,7 @@ export interface DataSourceOptions extends RDSClientOptions {
   forkDb?: boolean;
   initRetryTimes?: number;
   logger?: Logger;
+  executeType?: 'execute' | 'query';
 }
 
 const DEFAULT_OPTIONS: RDSClientOptions = {
@@ -18,23 +23,27 @@ const DEFAULT_OPTIONS: RDSClientOptions = {
   trace: true,
 };
 
+const DEFAULT_RETRY_TIMES = 3;
+
 export class MysqlDataSource extends Base {
   private client: RDSClient;
   private readonly initSql: string;
+  private readonly executeType?: 'execute' | 'query';
   readonly name: string;
   readonly timezone?: string;
   readonly rdsOptions: RDSClientOptions;
   readonly forkDb?: boolean;
-  readonly #initRetryTimes?: number;
+  readonly #initRetryTimes: number;
   readonly #logger?: Logger;
 
   constructor(options: DataSourceOptions) {
     super({ initMethod: '_init' });
-    const { name, initSql, forkDb, initRetryTimes, logger, ...mysqlOptions } = options;
+    const { name, initSql, forkDb, initRetryTimes, logger, executeType, ...mysqlOptions } = options;
     this.#logger = logger;
     this.forkDb = forkDb;
     this.initSql = initSql ?? 'SELECT 1 + 1';
-    this.#initRetryTimes = initRetryTimes;
+    this.#initRetryTimes = initRetryTimes ?? DEFAULT_RETRY_TIMES;
+    this.executeType = executeType;
     this.name = name;
     this.timezone = options.timezone;
     this.rdsOptions = Object.assign({}, DEFAULT_OPTIONS, mysqlOptions);
@@ -62,8 +71,12 @@ export class MysqlDataSource extends Base {
     }
   }
 
-  async query<T = any>(sql: string): Promise<T> {
-    return this.client.query(sql);
+  async query<T = any>(sql: string, params?: any[], options?: EggQueryOptions): Promise<T> {
+    const executeType = options?.executeType || this.executeType;
+    if (executeType === 'execute') {
+      return (this.client as any).execute(sql, params, options);
+    }
+    return this.client.query(sql, params, options);
   }
 
   async beginTransactionScope<T>(scope: () => Promise<T>): Promise<T> {

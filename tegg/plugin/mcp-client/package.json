@@ -1,0 +1,84 @@
+{
+  "name": "@eggjs/mcp-client-plugin",
+  "version": "4.0.2-beta.7",
+  "description": "mcp client for egg",
+  "keywords": [
+    "egg",
+    "mcp",
+    "module",
+    "plugin",
+    "tegg",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/mcp-client",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/plugin/mcp-client"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./lib/constants": "./src/lib/constants.ts",
+    "./lib/EggHttpMCPClient": "./src/lib/EggHttpMCPClient.ts",
+    "./lib/EggHttpStaticMCPClient": "./src/lib/EggHttpStaticMCPClient.ts",
+    "./lib/HttpMCPClientFactory": "./src/lib/HttpMCPClientFactory.ts",
+    "./lib/QualifierUtil": "./src/lib/QualifierUtil.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./lib/constants": "./dist/lib/constants.js",
+      "./lib/EggHttpMCPClient": "./dist/lib/EggHttpMCPClient.js",
+      "./lib/EggHttpStaticMCPClient": "./dist/lib/EggHttpStaticMCPClient.js",
+      "./lib/HttpMCPClientFactory": "./dist/lib/HttpMCPClientFactory.js",
+      "./lib/QualifierUtil": "./dist/lib/QualifierUtil.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/mcp-client": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "urllib": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/controller-plugin": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "teggMcpClient"
+  },
+  "eggPlugin": {
+    "name": "teggMcpClient",
+    "dependencies": [
+      "tegg"
+    ]
+  }
+}

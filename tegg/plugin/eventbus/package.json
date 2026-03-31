@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/eventbus-plugin",
-  "version": "4.0.0-beta.36",
+  "version": "4.0.2-beta.7",
   "description": "tegg event plugin",
   "keywords": [
     "decorator",

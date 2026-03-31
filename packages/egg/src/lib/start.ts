@@ -17,6 +17,8 @@ export interface StartEggOptions {
   mode?: 'single';
   env?: string;
   plugins?: EggPlugin;
+  /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
+  metadataOnly?: boolean;
 }
 
 export interface SingleModeApplication extends Application {
@@ -53,18 +55,27 @@ export async function startEgg(options: StartEggOptions = {}): Promise<SingleMod
     ApplicationClass = framework.Application;
   }
 
-  const agent = new AgentClass({
-    ...options,
-  }) as SingleModeAgent;
-  await agent.ready();
+  // In metadataOnly mode, skip agent entirely — only app metadata is needed
+  let agent: SingleModeAgent | undefined;
+  if (!options.metadataOnly) {
+    agent = new AgentClass({
+      ...options,
+    }) as SingleModeAgent;
+    await agent.ready();
+  }
+
   const application = new ApplicationClass({
     ...options,
   }) as SingleModeApplication;
-  application.agent = agent;
-  agent.application = application;
+  if (agent) {
+    application.agent = agent;
+    agent.application = application;
+  }
   await application.ready();
 
-  // emit egg-ready message in agent and application
-  application.messenger.broadcast('egg-ready');
+  if (!options.metadataOnly) {
+    // emit egg-ready message in agent and application
+    application.messenger.broadcast('egg-ready');
+  }
   return application;
 }

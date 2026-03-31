@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-config",
-  "version": "4.0.0-beta.36",
+  "version": "4.0.2-beta.7",
   "description": "module config plugin for egg",
   "keywords": [
     "config",
@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/utils": "workspace:*"
   },
   "devDependencies": {

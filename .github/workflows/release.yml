@@ -1,7 +1,8 @@
 name: Manual Release
 
-# Fixed: Now properly uses prerelease_tag input for npm publish
-# when version_type starts with 'pre'
+# Retry-safe: if a previous release failed after version bump, re-running
+# with the same parameters will detect the existing version bump and skip it.
+# The publish script handles already-published packages gracefully.
 
 on:
   workflow_dispatch:
@@ -45,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
 
     concurrency:
-      group: release-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+      group: release-${{ github.event.inputs.branch }}
       cancel-in-progress: false
 
     permissions:
@@ -59,14 +60,13 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
-          # Use git token for checkout and pushing
           token: ${{ secrets.GIT_TOKEN }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
           node-version: '24'
           cache: 'pnpm'
@@ -75,67 +75,103 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run build
-        run: pnpm build
-
       - name: Configure Git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
+      # Detect if this is a retry of a previously failed release.
+      # Skips version bump if the commit/tag already exist on HEAD.
+      - name: Detect existing release
+        id: detect
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          # Case 1: HEAD already has a version tag (version bump + push fully succeeded)
+          EXISTING_TAG=$(git describe --tags --exact-match HEAD 2>/dev/null || true)
+          if [[ -n "$EXISTING_TAG" && "$EXISTING_TAG" == v* ]]; then
+            echo "🔄 Retry detected: found tag $EXISTING_TAG on HEAD"
+            echo "skip_version_bump=true" >> $GITHUB_OUTPUT
+            echo "need_push=false" >> $GITHUB_OUTPUT
+            echo "NEW_TAG=$EXISTING_TAG" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          # Case 2: HEAD is a version bump commit but tag may be missing (partial push)
+          HEAD_MSG=$(git log -1 --format=%s HEAD)
+          if [[ "$HEAD_MSG" == chore\(release\):*version\ bump ]]; then
+            EGG_VERSION=$(node -e "process.stdout.write(JSON.parse(require('fs').readFileSync('./packages/egg/package.json','utf8')).version)")
+            EXPECTED_TAG="v${EGG_VERSION}"
+            echo "🔄 Retry detected: version bump commit found (tag: $EXPECTED_TAG)"
+
+            # Create the tag locally if it doesn't exist
+            if ! git rev-parse "$EXPECTED_TAG" >/dev/null 2>&1; then
+              echo "  Creating missing tag: $EXPECTED_TAG"
+              git tag "$EXPECTED_TAG"
+            fi
+
+            echo "skip_version_bump=true" >> $GITHUB_OUTPUT
+            echo "need_push=true" >> $GITHUB_OUTPUT
+            echo "NEW_TAG=$EXPECTED_TAG" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          # Case 3: Fresh release
+          echo "Fresh release: will perform version bump"
+          echo "skip_version_bump=false" >> $GITHUB_OUTPUT
+          echo "need_push=true" >> $GITHUB_OUTPUT
+
       - name: Version bump (dry run)
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
           echo "🧪 Running version bump in dry-run mode..."
-          if [[ "${{ github.event.inputs.version_type }}" == prerelease* ]]; then
+          if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
             node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }} --dry-run
           else
             node scripts/version.js ${{ github.event.inputs.version_type }} --dry-run
           fi
 
       - name: Version bump
-        if: ${{ github.event.inputs.dry_run != 'true' }}
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.detect.outputs.skip_version_bump != 'true' }}
         run: |
           echo "🚀 Running version bump..."
-          if [[ "${{ github.event.inputs.version_type }}" == prerelease* ]]; then
+          if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
             node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }}
           else
             node scripts/version.js ${{ github.event.inputs.version_type }}
           fi
 
-          # Get the new version tag
           NEW_TAG=$(git describe --tags --abbrev=0)
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
 
-          # Push changes and tags
+      - name: Push version commit and tags
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.detect.outputs.need_push != 'false' }}
+        run: |
+          echo "📤 Pushing to origin/${{ github.event.inputs.branch }} with tags..."
           git push origin ${{ github.event.inputs.branch }} --tags
+
+      - name: Run build
+        run: pnpm build
 
       - name: Publish packages (dry run)
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
-          echo "🧪 Running publish in dry-run mode..."
           if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-            echo "Setting npm tag to: ${{ github.event.inputs.prerelease_tag }}"
-            pnpm -r publish --dry-run --no-git-checks --tag=${{ github.event.inputs.prerelease_tag }}
+            node scripts/publish.js --tag=${{ github.event.inputs.prerelease_tag }} --dry-run
           else
-            echo "Setting npm tag to: latest"
-            pnpm -r publish --dry-run --no-git-checks --tag=latest
+            node scripts/publish.js --tag=latest --dry-run
           fi
 
       - name: Publish packages
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
-          echo "📦 Publishing packages..."
           if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-            echo "Setting npm tag to: ${{ github.event.inputs.prerelease_tag }}"
-            pnpm -r publish --no-git-checks --tag=${{ github.event.inputs.prerelease_tag }}
+            node scripts/publish.js --tag=${{ github.event.inputs.prerelease_tag }} --provenance
           else
-            echo "Setting npm tag to: latest"
-            pnpm -r publish --no-git-checks --tag=latest
+            node scripts/publish.js --tag=latest --provenance
           fi
 
       - name: Create GitHub Release (draft)
-        if: ${{ github.event.inputs.dry_run != 'true' }}
+        if: ${{ !cancelled() && github.event.inputs.dry_run != 'true' && env.NEW_TAG != '' }}
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           github-token: ${{ secrets.GIT_TOKEN }}
@@ -143,22 +179,35 @@ jobs:
             const tag = process.env.NEW_TAG;
             const versionType = '${{ github.event.inputs.version_type }}';
 
+            // Idempotent: check if release already exists (safe for retry)
+            try {
+              const existing = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: tag,
+              });
+              core.info(`Release already exists: ${existing.data.html_url}`);
+              core.exportVariable('DRAFT_RELEASE_URL', existing.data.html_url);
+              return;
+            } catch (e) {
+              if (e.status !== 404) throw e;
+              // 404 = no release exists, proceed to create
+            }
+
             let releaseBody = `## 🎉 ${versionType.charAt(0).toUpperCase() + versionType.slice(1)} Release\n\n`;
             releaseBody += `This release includes ${versionType} version updates for all packages.\n\n`;
             releaseBody += `### 📦 Published Packages\n\n`;
 
-            // Get package versions from the tag
             const fs = require('fs');
             const packagesDirs = ['./packages', './tools', './plugins', './tegg/core', './tegg/plugin', './tegg/standalone'];
             for (const packagesDir of packagesDirs) {
+              if (!fs.existsSync(packagesDir)) continue;
               const packageFolders = fs.readdirSync(packagesDir);
               for (const folder of packageFolders) {
                 const packageJsonPath = `${packagesDir}/${folder}/package.json`;
                 if (fs.existsSync(packageJsonPath)) {
                   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-                  if (packageJson.private) {
-                    continue;
-                  }
+                  if (packageJson.private) continue;
                   releaseBody += `- [${packageJson.name}@${packageJson.version}](https://npmjs.com/package/${packageJson.name}/v/${packageJson.version})\n`;
                 }
               }
@@ -180,15 +229,14 @@ jobs:
             });
 
             core.info(`Created draft release: ${release.data.html_url}`);
-
-            // Set the release URL as an environment variable for use in summary
             core.exportVariable('DRAFT_RELEASE_URL', release.data.html_url);
 
       - name: Sync to cnpm
-        run: |
-          node scripts/sync-cnpm.js
+        if: ${{ !cancelled() && github.event.inputs.dry_run != 'true' }}
+        run: node scripts/sync-cnpm.js
 
       - name: Summary
+        if: ${{ !cancelled() }}
         run: |
           echo "## 🎉 Release Summary" >> $GITHUB_STEP_SUMMARY
 
@@ -203,15 +251,21 @@ jobs:
             fi
             echo "- Status: **Dry run - no changes made**" >> $GITHUB_STEP_SUMMARY
           else
-            echo "### ✅ Release Completed" >> $GITHUB_STEP_SUMMARY
+            if [ "${{ steps.detect.outputs.skip_version_bump }}" == "true" ]; then
+              echo "### 🔄 Retry Release Completed" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "### ✅ Release Completed" >> $GITHUB_STEP_SUMMARY
+            fi
             echo "- Version bump: **${{ github.event.inputs.version_type }}**" >> $GITHUB_STEP_SUMMARY
             echo "- Branch: **${{ github.event.inputs.branch }}**" >> $GITHUB_STEP_SUMMARY
-            echo "- New tag: **$NEW_TAG**" >> $GITHUB_STEP_SUMMARY
+            echo "- Tag: **$NEW_TAG**" >> $GITHUB_STEP_SUMMARY
             if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
               echo "- npm tag: **${{ github.event.inputs.prerelease_tag }}**" >> $GITHUB_STEP_SUMMARY
             else
               echo "- npm tag: **latest**" >> $GITHUB_STEP_SUMMARY
             fi
             echo "- Packages published to npm" >> $GITHUB_STEP_SUMMARY
-            echo "- Draft GitHub release created: [View Draft Release]($DRAFT_RELEASE_URL)" >> $GITHUB_STEP_SUMMARY
+            if [ -n "$DRAFT_RELEASE_URL" ]; then
+              echo "- GitHub Release: [View Draft]($DRAFT_RELEASE_URL)" >> $GITHUB_STEP_SUMMARY
+            fi
           fi

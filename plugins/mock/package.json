@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mock",
-  "version": "7.0.0-beta.36",
+  "version": "7.0.2-beta.7",
   "description": "mock server plugin for egg",
   "keywords": [
     "egg",
@@ -55,6 +55,7 @@
     "./lib/types": "./src/lib/types.ts",
     "./lib/utils": "./src/lib/utils.ts",
     "./register": "./src/register.ts",
+    "./setup_vitest": "./src/setup_vitest.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -90,6 +91,7 @@
       "./lib/types": "./dist/lib/types.js",
       "./lib/utils": "./dist/lib/utils.js",
       "./register": "./dist/register.js",
+      "./setup_vitest": "./dist/setup_vitest.js",
       "./package.json": "./package.json"
     }
   },
@@ -119,7 +121,13 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "egg": "workspace:*"
+    "egg": "workspace:*",
+    "vitest": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "vitest": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=22.18.0"

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "4.0.0-beta.36",
+  "version": "4.0.2-beta.7",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -28,6 +28,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
     "./ajv": "./src/ajv.ts",
     "./aop": "./src/aop.ts",
     "./dal": "./src/dal.ts",
@@ -42,6 +43,7 @@
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
       "./ajv": "./dist/ajv.js",
       "./aop": "./dist/aop.js",
       "./dal": "./dist/dal.js",
@@ -57,12 +59,14 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
+    "@eggjs/agent-runtime": "workspace:*",
     "@eggjs/ajv-decorator": "workspace:*",
     "@eggjs/aop-decorator": "workspace:*",
     "@eggjs/background-task": "workspace:*",
     "@eggjs/controller-decorator": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/dal-decorator": "workspace:*",
+    "@eggjs/dal-plugin": "workspace:*",
     "@eggjs/dynamic-inject": "workspace:*",
     "@eggjs/eventbus-decorator": "workspace:*",
     "@eggjs/lifecycle": "workspace:*",

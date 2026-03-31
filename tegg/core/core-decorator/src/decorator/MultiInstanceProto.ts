@@ -1,4 +1,4 @@
-import { StackUtil } from '@eggjs/tegg-common-util';
+import { NameUtil, StackUtil } from '@eggjs/tegg-common-util';
 import { ObjectInitType, AccessLevel, DEFAULT_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
 import type {
   EggMultiInstanceCallbackPrototypeInfo,
@@ -24,14 +24,14 @@ export function MultiInstanceProto(param: MultiInstancePrototypeParams) {
       const property: EggMultiInstancePrototypeInfo = {
         ...DEFAULT_PARAMS,
         ...(param as MultiInstancePrototypeStaticParams),
-        className: clazz.name,
+        className: NameUtil.cleanName(clazz.name),
       };
       PrototypeUtil.setMultiInstanceStaticProperty(clazz, property);
     } else if ((param as MultiInstancePrototypeCallbackParams).getObjects) {
       const property: EggMultiInstanceCallbackPrototypeInfo = {
         ...DEFAULT_PARAMS,
         ...(param as MultiInstancePrototypeCallbackParams),
-        className: clazz.name,
+        className: NameUtil.cleanName(clazz.name),
       };
       PrototypeUtil.setMultiInstanceCallbackProperty(clazz, property);
     }

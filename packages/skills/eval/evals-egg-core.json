@@ -1,0 +1,341 @@
+{
+  "skill_name": "egg-core",
+  "description": "核心概念评测：覆盖 module、proto、inject、dynamic-inject、background-task、eventbus、aop",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我新建一个 userModule，我是新项目从零开始",
+      "expected_output": "创建 package.json(eggModule.name)，驼峰命名，放在 app/ 下，给出完整目录结构"
+    },
+    {
+      "id": 2,
+      "prompt": "我们是老的 egg 项目，有大量 app/controller 和 app/service 代码，现在想引入 module 开发新功能，怎么组织目录？",
+      "expected_output": "保留原有 app/controller、app/service 不动，新增 module 放在 app/module/ 下"
+    },
+    {
+      "id": 3,
+      "prompt": "帮我写一个 module.yml 配置，本地和线上的数据库地址不同，怎么分环境管理",
+      "expected_output": "创建 module.yml 基础配置 + module.{env}.yml 环境配置，框架自动深度合并"
+    },
+    {
+      "id": 4,
+      "prompt": "我新加了一个模块，启动后发现没被加载，帮我看看什么问题",
+      "expected_output": "指出 eggModule.name 包含 - 不合法，应使用驼峰命名",
+      "files": [
+        {
+          "path": "app/user-module/package.json",
+          "content": "{\n  \"name\": \"user-module\",\n  \"eggModule\": {\n    \"name\": \"user-module\"\n  }\n}"
+        },
+        {
+          "path": "app/user-module/UserService.ts",
+          "content": "import { SingletonProto } from 'egg';\n\n@SingletonProto()\nexport class UserService {\n  async getUser() { return 'hello'; }\n}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "帮我写一个 UserService，查询用户信息，需要被其他模块调用",
+      "expected_output": "使用 @SingletonProto({ accessLevel: AccessLevel.PUBLIC })，包含完整代码"
+    },
+    {
+      "id": 6,
+      "prompt": "帮我实现一个请求级别的 TraceContext，存 traceId 和 userId，多个 Service 之间共享",
+      "expected_output": "使用 @ContextProto()，每个请求独立实例，其他 Service 通过 @Inject 共享同一个实例"
+    },
+    {
+      "id": 7,
+      "prompt": "我的 SingletonProto 需要在启动时连接 Redis，连接成功后才能对外提供服务，怎么写？",
+      "expected_output": "使用 @LifecycleInit() 做异步初始化，@LifecycleDestroy() 关闭连接，给出完整代码"
+    },
+    {
+      "id": 8,
+      "prompt": "SingletonProto 能注入 ContextProto 吗？我需要在单例服务里获取当前请求的用户信息",
+      "expected_output": "可以注入，框架通过 lazy getter/Proxy 自动处理，每次访问从当前请求上下文动态解析"
+    },
+    {
+      "id": 9,
+      "prompt": "启动报错 EggPrototypeNotFound，帮我看看代码哪里有问题",
+      "expected_output": "指出 OrderService 跨模块注入了 UserService 但 UserService 的 accessLevel 是 PRIVATE，应改为 PUBLIC",
+      "files": [
+        {
+          "path": "app/userModule/package.json",
+          "content": "{\n  \"name\": \"userModule\",\n  \"eggModule\": { \"name\": \"userModule\" }\n}"
+        },
+        {
+          "path": "app/userModule/UserService.ts",
+          "content": "import { SingletonProto } from 'egg';\n\n@SingletonProto()\nexport class UserService {\n  async findUser(id: string) {\n    return { id, name: 'test' };\n  }\n}"
+        },
+        {
+          "path": "app/orderModule/package.json",
+          "content": "{\n  \"name\": \"orderModule\",\n  \"eggModule\": { \"name\": \"orderModule\" }\n}"
+        },
+        {
+          "path": "app/orderModule/OrderService.ts",
+          "content": "import { SingletonProto, Inject } from 'egg';\nimport { UserService } from '../userModule/UserService.ts';\n\n@SingletonProto()\nexport class OrderService {\n  @Inject()\n  userService: UserService;\n\n  async createOrder(userId: string) {\n    const user = await this.userService.findUser(userId);\n    return { orderId: '1', user };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "注入的对象不对，我期望注入 FooService 但拿到的不是，帮我看看",
+      "expected_output": "指出 IFooService 是 interface 无运行时元信息，回退到属性名 fooHelper 匹配，应改用 class 类型或 @Inject({ name: 'fooService' })",
+      "files": [
+        {
+          "path": "app/bizModule/FooService.ts",
+          "content": "import { SingletonProto } from 'egg';\n\nexport interface IFooService {\n  doWork(): Promise<string>;\n}\n\n@SingletonProto()\nexport class FooService implements IFooService {\n  async doWork() { return 'done'; }\n}"
+        },
+        {
+          "path": "app/bizModule/BarService.ts",
+          "content": "import { SingletonProto, Inject } from 'egg';\nimport type { IFooService } from './FooService.ts';\n\n@SingletonProto()\nexport class BarService {\n  @Inject()\n  fooHelper: IFooService;  // 期望注入 FooService\n\n  async run() {\n    return this.fooHelper.doWork();\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "帮我写注入 config 和 logger 的代码，还要注入自定义的 bizLogger",
+      "expected_output": "@Inject() config: EggAppConfig + @Inject() logger: Logger + @Inject() bizLogger: Logger，给出完整代码"
+    },
+    {
+      "id": 12,
+      "prompt": "帮我把这个老的 egg Service 改成 module 写法",
+      "expected_output": "用 @SingletonProto 重写，@Inject() 注入依赖替代 this.ctx/this.app，去掉 extends Service",
+      "files": [
+        {
+          "path": "app/service/OrderService.ts",
+          "content": "import { Service } from 'egg';\n\nexport default class OrderService extends Service {\n  async create(data: any) {\n    const user = await this.ctx.service.user.find(data.userId);\n    this.ctx.logger.info('creating order for %s', user.name);\n    const result = await this.app.httpclient.request('https://api.example.com/orders', {\n      method: 'POST',\n      data,\n    });\n    return result.data;\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "启动报错说注入方式冲突了，帮我看看",
+      "expected_output": "指出构造函数注入和属性注入混用了，不能混用，需改为统一使用一种方式",
+      "files": [
+        {
+          "path": "app/bizModule/MixedService.ts",
+          "content": "import { SingletonProto, Inject } from 'egg';\n\n@SingletonProto()\nexport class MixedService {\n  @Inject()\n  logger: Logger;\n\n  constructor(\n    @Inject() readonly config: EggAppConfig,\n  ) {}\n\n  async run() {\n    this.logger.info('config: %j', this.config);\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "有个依赖在某些环境不一定存在，注入时不想让应用挂掉",
+      "expected_output": "使用 @Inject({ optional: true }) 或 @InjectOptional()，不存在时为 undefined"
+    },
+    {
+      "id": 15,
+      "prompt": "两个模块都有 DataService，注入时报冲突了，帮我看看怎么改",
+      "expected_output": "使用 @ModuleQualifier('moduleName') 指定从哪个模块注入",
+      "files": [
+        {
+          "path": "app/cacheModule/DataService.ts",
+          "content": "import { SingletonProto, AccessLevel } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class DataService {\n  async get(key: string) { return 'from cache'; }\n}"
+        },
+        {
+          "path": "app/dbModule/DataService.ts",
+          "content": "import { SingletonProto, AccessLevel } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class DataService {\n  async get(key: string) { return 'from db'; }\n}"
+        },
+        {
+          "path": "app/bizModule/BizService.ts",
+          "content": "import { SingletonProto, Inject } from 'egg';\n\n@SingletonProto()\nexport class BizService {\n  @Inject()\n  dataService: DataService;  // 报冲突\n}"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "帮我实现策略模式，有邮件、短信、钉钉三种通知方式，运行时根据配置选择",
+      "expected_output": "使用动态注入：抽象类 AbstractNotifier + 枚举 + QualifierImplDecoratorUtil 装饰器 + EggObjectFactory.getEggObject()，给出所有文件完整代码"
+    },
+    {
+      "id": 17,
+      "prompt": "动态注入不生效，getEggObject 报找不到实现，帮我看看代码",
+      "expected_output": "指出 EmailNotifier 缺少 @SingletonProto() 装饰器，实现类必须同时有 Proto 装饰器和自定义装饰器",
+      "files": [
+        {
+          "path": "app/notifyModule/AbstractNotifier.ts",
+          "content": "export abstract class AbstractNotifier {\n  abstract send(msg: string): Promise<void>;\n}"
+        },
+        {
+          "path": "app/notifyModule/NotifyType.ts",
+          "content": "export enum NotifyType {\n  EMAIL = 'EMAIL',\n  SMS = 'SMS',\n}"
+        },
+        {
+          "path": "app/notifyModule/decorator/Notify.ts",
+          "content": "import { ImplDecorator, QualifierImplDecoratorUtil } from 'egg';\nimport { NotifyType } from '../NotifyType.ts';\nimport { AbstractNotifier } from '../AbstractNotifier.ts';\n\nexport const NOTIFY_ATTRIBUTE = Symbol('NOTIFY_ATTRIBUTE');\n\nexport const Notify: ImplDecorator<AbstractNotifier, typeof NotifyType> =\n  QualifierImplDecoratorUtil.generatorDecorator(AbstractNotifier, NOTIFY_ATTRIBUTE);"
+        },
+        {
+          "path": "app/notifyModule/impl/EmailNotifier.ts",
+          "content": "import { Notify } from '../decorator/Notify.ts';\nimport { NotifyType } from '../NotifyType.ts';\nimport { AbstractNotifier } from '../AbstractNotifier.ts';\n\n@Notify(NotifyType.EMAIL)\nexport class EmailNotifier extends AbstractNotifier {\n  async send(msg: string) {\n    console.log('send email:', msg);\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "我想读取另一个模块的 moduleConfig，不是当前模块的",
+      "expected_output": "使用 @ConfigSourceQualifier('otherModule')，给出完整代码"
+    },
+    {
+      "id": 19,
+      "prompt": "请求返回后还要做一些事情，比如记日志、发通知，怎么实现",
+      "expected_output": "使用 BackgroundTaskHelper，@Inject() 注入，调用 run() 方法，从 egg 导入"
+    },
+    {
+      "id": 20,
+      "prompt": "用 BackgroundTaskHelper 在请求返回后异步上报埋点数据，帮我写个 MetricsService",
+      "expected_output": "@SingletonProto + @Inject() backgroundTaskHelper: BackgroundTaskHelper + run(async () => { ... })，从 egg 导入"
+    },
+    {
+      "id": 21,
+      "prompt": "用了 setTimeout 做后台任务，偶尔报错，帮我看看什么问题",
+      "expected_output": "指出 setTimeout 执行时上下文已释放，应改用 BackgroundTaskHelper.run()",
+      "files": [
+        {
+          "path": "app/orderModule/OrderService.ts",
+          "content": "import { SingletonProto, AccessLevel, Inject } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class OrderService {\n  @Inject()\n  private logger: any;\n\n  async createOrder(data: any) {\n    const order = { id: Date.now(), ...data };\n    // 请求返回后异步记录日志\n    setTimeout(async () => {\n      this.logger.info('Order created:', order.id);\n      await this.sendNotification(order);\n    }, 0);\n    return order;\n  }\n\n  private async sendNotification(order: any) {\n    // 发送通知\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "后台任务默认超时是多少？我有个任务比较慢，怎么改成更长的时间",
+      "expected_output": "默认 5 秒，可通过 backgroundTaskHelper.timeout 按请求设置，或在 config.default.ts 中 backgroundTask.timeout 全局配置"
+    },
+    {
+      "id": 23,
+      "prompt": "帮我写一个订单创建接口，创建成功后异步发送通知邮件，不影响接口响应速度",
+      "expected_output": "OrderService 中 @Inject() backgroundTaskHelper，在 createOrder 方法中调用 run() 异步发送邮件"
+    },
+    {
+      "id": 24,
+      "prompt": "帮我把这个用 setTimeout 的后台逻辑改成正确的写法",
+      "expected_output": "将 setTimeout 替换为 backgroundTaskHelper.run()，注入 BackgroundTaskHelper",
+      "files": [
+        {
+          "path": "app/cacheModule/CacheService.ts",
+          "content": "import { SingletonProto, AccessLevel, Inject } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class CacheService {\n  @Inject()\n  private redisService: any;\n\n  async getData(key: string) {\n    const data = await this.redisService.get(key);\n    if (!data) {\n      const fresh = await this.fetchFromDB(key);\n      // 异步回写缓存，不阻塞响应\n      setTimeout(async () => {\n        await this.redisService.set(key, fresh, 3600);\n      }, 0);\n      return fresh;\n    }\n    return data;\n  }\n\n  private async fetchFromDB(key: string) {\n    return { key, value: 'from-db' };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "后台任务里抛了异常，但接口没报错也没看到日志，怎么回事",
+      "expected_output": "BackgroundTaskHelper 内部捕获所有异常并通过 logger.error 记录，日志前缀为 [BackgroundTaskHelper]，检查日志配置是否正确",
+      "files": [
+        {
+          "path": "app/reportModule/ReportService.ts",
+          "content": "import { SingletonProto, AccessLevel, Inject, BackgroundTaskHelper } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class ReportService {\n  @Inject()\n  private backgroundTaskHelper: BackgroundTaskHelper;\n\n  async generateReport(data: any) {\n    this.backgroundTaskHelper.run(async () => {\n      // 这里可能会抛异常\n      const result = await this.callExternalAPI(data);\n      await this.saveReport(result);\n    });\n    return { status: 'processing' };\n  }\n\n  private async callExternalAPI(data: any) {\n    throw new Error('API timeout');\n  }\n\n  private async saveReport(result: any) {}\n}"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "我有个后台任务可能要跑 30 秒，怎么配置超时不被框架提前中断",
+      "expected_output": "设置 backgroundTaskHelper.timeout = 30000 或全局 config backgroundTask.timeout: 30000"
+    },
+    {
+      "id": 27,
+      "prompt": "订单创建后要发通知、记日志、更新统计，但不想耦合在一起，怎么做",
+      "expected_output": "使用 EventBus 解耦：声明 Events 接口 + emit 触发事件 + 多个 @Event handler 分别处理通知、日志、统计"
+    },
+    {
+      "id": 28,
+      "prompt": "用 EventBus 实现订单事件，要求类型安全，帮我写 Events 声明和 handler",
+      "expected_output": "declare module 'egg' { interface Events { ... } } + @Event handler + 从 egg 导入 EventBus/Event，事件声明文件开头有 import 'egg'"
+    },
+    {
+      "id": 29,
+      "prompt": "EventBus 和 BackgroundTaskHelper 什么区别，我该用哪个",
+      "expected_output": "对比耦合度（强耦合 vs 解耦）、上下文（共享 vs 独立）、扩展性（改触发者 vs 加 handler），给出选型建议"
+    },
+    {
+      "id": 30,
+      "prompt": "EventBus 的 handler 没有被触发，帮我看看",
+      "expected_output": "指出 handler 文件不在 module 目录中，框架无法扫描到，应移到模块目录下",
+      "files": [
+        {
+          "path": "app/orderModule/package.json",
+          "content": "{\n  \"name\": \"orderModule\",\n  \"eggModule\": { \"name\": \"orderModule\" }\n}"
+        },
+        {
+          "path": "app/orderModule/OrderService.ts",
+          "content": "import { SingletonProto, Inject, EventBus } from 'egg';\n\n@SingletonProto()\nexport class OrderService {\n  @Inject()\n  private eventBus: EventBus;\n\n  async createOrder(userId: string) {\n    this.eventBus.emit('orderCreated', '123', userId);\n    return { orderId: '123' };\n  }\n}"
+        },
+        {
+          "path": "app/handler/OrderNotificationHandler.ts",
+          "content": "import { Event } from 'egg';\n\n@Event('orderCreated')\nexport class OrderNotificationHandler {\n  async handle(orderId: string, userId: string): Promise<void> {\n    console.log('notify:', orderId, userId);\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "帮我用 EventBus 实现用户注册后异步发送欢迎邮件",
+      "expected_output": "完整代码：Events 类型声明（import 'egg' + declare module）+ 注册 Service 中 emit + @Event handler 发送邮件"
+    },
+    {
+      "id": 32,
+      "prompt": "帮我把这个 BackgroundTaskHelper 的写法改成 EventBus 解耦",
+      "expected_output": "拆分为 EventBus.emit() + 独立 @Event handler 类，去掉 BackgroundTaskHelper",
+      "files": [
+        {
+          "path": "app/orderModule/OrderService.ts",
+          "content": "import { SingletonProto, AccessLevel, Inject, BackgroundTaskHelper } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class OrderService {\n  @Inject()\n  private backgroundTaskHelper: BackgroundTaskHelper;\n\n  @Inject()\n  private notifyService: any;\n\n  @Inject()\n  private statsService: any;\n\n  async createOrder(data: any) {\n    const order = { id: Date.now(), ...data };\n    this.backgroundTaskHelper.run(async () => {\n      await this.notifyService.send(order);\n      await this.statsService.record(order);\n    });\n    return order;\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "EventBus 的 cork/uncork 怎么用，我想批量操作完成后再统一触发事件",
+      "expected_output": "注入 ContextEventBus，cork() 开始缓冲 → emit 多个事件 → uncork() 释放，支持嵌套调用"
+    },
+    {
+      "id": 34,
+      "prompt": "所有 Service 的方法调用都要记录耗时日志，不想在每个方法里写",
+      "expected_output": "使用 AOP @Crosscut + PointcutType.NAME 正则匹配 Service，Advice 中 beforeCall 记录开始时间，afterFinally 计算耗时并打日志"
+    },
+    {
+      "id": 35,
+      "prompt": "用 @Pointcut 给 OrderService.createOrder 加事务包裹",
+      "expected_output": "@Advice 实现 around hook 管理事务（beginTransaction/commit/rollback）+ @Pointcut(TxAdvice) 装饰目标方法，从 egg/aop 导入"
+    },
+    {
+      "id": 36,
+      "prompt": "Pointcut 和 Crosscut 有什么区别，怎么选",
+      "expected_output": "Pointcut 在目标方法上声明，精确切入单个方法；Crosscut 在 Advice 类上声明匹配规则，批量切入多个类/方法"
+    },
+    {
+      "id": 37,
+      "prompt": "AOP 的 Advice 不生效，帮我看看",
+      "expected_output": "指出缺少 @Advice() 装饰器，@Crosscut 和 @Advice() 必须同时使用",
+      "files": [
+        {
+          "path": "app/logModule/package.json",
+          "content": "{\n  \"name\": \"logModule\",\n  \"eggModule\": { \"name\": \"logModule\" }\n}"
+        },
+        {
+          "path": "app/logModule/OperationLogAdvice.ts",
+          "content": "import { Crosscut, IAdvice, AdviceContext, PointcutType } from 'egg/aop';\nimport { Inject, Logger } from 'egg';\n\n@Crosscut({\n  type: PointcutType.NAME,\n  className: /.*Service$/i,\n  methodName: /^(create|update|delete)/,\n})\nexport class OperationLogAdvice implements IAdvice {\n  @Inject()\n  private logger: Logger;\n\n  async afterFinally(ctx: AdviceContext): Promise<void> {\n    this.logger.info('called %s', String(ctx.method));\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "prompt": "帮我用 AOP 实现统一的异常捕获和错误日志",
+      "expected_output": "Advice 实现 afterThrow hook 记录异常信息，使用 @Crosscut 或 @Pointcut 应用到目标方法，从 egg/aop 导入"
+    },
+    {
+      "id": 39,
+      "prompt": "adviceParams 怎么用，同一个 Advice 不同方法需要不同参数",
+      "expected_output": "@Pointcut 第二个参数传 { adviceParams: {...} }，Advice 中通过 ctx.adviceParams 获取"
+    },
+    {
+      "id": 40,
+      "prompt": "同一个方法上有 Crosscut 和 Pointcut 两个 Advice，执行顺序是什么，能控制吗",
+      "expected_output": "Crosscut 默认 order 100 先执行，Pointcut 默认 order 1000 后执行，可通过 order 参数调整顺序"
+    },
+    {
+      "id": 41,
+      "prompt": "帮我用 Crosscut 的 CUSTOM 模式，对所有 Repository 类的非 constructor 方法加监控",
+      "expected_output": "使用 PointcutType.CUSTOM + callback 函数匹配 Repository 类并排除 constructor，从 egg/aop 导入"
+    }
+  ]
+}

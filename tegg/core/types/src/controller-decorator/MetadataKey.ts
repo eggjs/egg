@@ -21,3 +21,26 @@ export const METHOD_MIDDLEWARES: symbol = Symbol.for('EggPrototype#method#middle
 export const METHOD_AOP_MIDDLEWARES: symbol = Symbol.for('EggPrototype#method#aopMiddlewares');
 export const METHOD_AOP_REGISTER_MAP: symbol = Symbol.for('EggPrototype#method#aopMiddlewaresRegister');
 export const METHOD_ACL: symbol = Symbol.for('EggPrototype#method#acl');
+
+export const CONTROLLER_TIMEOUT_METADATA: symbol = Symbol.for('EggPrototype#controller#timeout');
+
+export const CONTROLLER_MCP_NAME: symbol = Symbol.for('EggPrototype#controller#mcp#name');
+export const CONTROLLER_MCP_VERSION: symbol = Symbol.for('EggPrototype#controller#mcp#version');
+export const CONTROLLER_MCP_CONTROLLER_PARAMS_MAP: symbol = Symbol.for('EggPrototype#controller#mcp#params');
+export const CONTROLLER_MCP_RESOURCE_MAP: symbol = Symbol.for('EggPrototype#controller#mcp#resource');
+export const CONTROLLER_MCP_RESOURCE_PARAMS_MAP: symbol = Symbol.for('EggPrototype#controller#mcp#resource#params');
+export const CONTROLLER_MCP_TOOL_MAP: symbol = Symbol.for('EggPrototype#controller#mcp#tool');
+export const CONTROLLER_MCP_TOOL_PARAMS_MAP: symbol = Symbol.for('EggPrototype#controller#mcp#tool#params');
+export const CONTROLLER_MCP_TOOL_ARGS_INDEX: symbol = Symbol.for('EggPrototype#controller#mcp#tool#args');
+export const CONTROLLER_MCP_EXTRA_INDEX: symbol = Symbol.for('EggPrototype#controller#mcp#extra');
+export const CONTROLLER_MCP_PROMPT_MAP: symbol = Symbol.for('EggPrototype#controller#mcp#prompt');
+export const CONTROLLER_MCP_PROMPT_PARAMS_MAP: symbol = Symbol.for('EggPrototype#controller#mcp#prompt#params');
+export const CONTROLLER_MCP_PROMPT_ARGS_INDEX: symbol = Symbol.for('EggPrototype#controller#mcp#prompt#args');
+
+export const METHOD_TIMEOUT_METADATA: symbol = Symbol.for('EggPrototype#method#timeout');
+
+export const CONTROLLER_AGENT_CONTROLLER: symbol = Symbol.for('EggPrototype#controller#agent#isAgent');
+export const CONTROLLER_AGENT_NOT_IMPLEMENTED: symbol = Symbol.for('EggPrototype#controller#agent#notImplemented');
+export const CONTROLLER_AGENT_ENHANCED: symbol = Symbol.for('EggPrototype#controller#agent#enhanced');
+
+export const AGENT_CONTROLLER_PROTO_IMPL_TYPE = 'AGENT_CONTROLLER_PROTO';

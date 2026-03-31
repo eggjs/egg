@@ -3,4 +3,8 @@ export * from './builder.ts';
 export * from './HTTPController.ts';
 export * from './HTTPMethod.ts';
 export * from './HTTPParam.ts';
+export * from './MCPController.ts';
+export * from './MCPPromptParams.ts';
+export * from './MCPResourceParams.ts';
+export * from './MCPToolParams.ts';
 export * from './MetadataKey.ts';

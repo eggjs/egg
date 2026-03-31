@@ -41,8 +41,9 @@ describe('test/DAO.test.ts', () => {
   });
 
   it('execute should work', async () => {
+    const uniqueId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     const foo = new Foo();
-    foo.name = 'name';
+    foo.name = `name_${uniqueId}`;
     foo.col1 = 'col1';
     foo.bitColumn = Buffer.from([0, 0]);
     foo.boolColumn = 0;
@@ -149,12 +150,12 @@ describe('test/DAO.test.ts', () => {
     foo.id = insertResult.insertId;
 
     const updateResult = await fooDao.update(foo.id, {
-      name: 'update_name_2',
+      name: `update_name_${uniqueId}`,
     });
     assert(updateResult);
     assert.equal(updateResult.affectedRows, 1);
 
-    foo.name = 'update_name_2';
+    foo.name = `update_name_${uniqueId}`;
 
     const fooRow = await fooDao.findByPrimary(foo.id);
     assert.deepStrictEqual(fooRow, foo);

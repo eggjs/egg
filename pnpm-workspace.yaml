@@ -13,7 +13,7 @@ catalog:
   '@eggjs/compressible': ^3.0.0
   '@eggjs/cookies': ^3.1.0
   '@eggjs/ip': ^2.1.0
-  '@eggjs/rds': ^1.3.0
+  '@eggjs/rds': ^1.5.0
   '@eggjs/redis': ^3.0.0
   '@eggjs/scripts': ^4.0.0
   '@fengmk2/ps-tree': ^2.0.1
@@ -64,7 +64,7 @@ catalog:
   '@types/type-is': ^1.6.6
   '@types/urijs': ^1.19.25
   '@types/vary': ^1.1.3
-  '@typescript/native-preview': 7.0.0-dev.20251223.1
+  '@typescript/native-preview': 7.0.0-dev.20260117.1
   '@vitest/coverage-v8': ^4.0.15
   '@vitest/ui': ^4.0.15
   accepts: ^1.3.8
@@ -83,6 +83,7 @@ catalog:
   cache-content-type: ^2.0.0
   camelcase: ^9.0.0
   cfork: ^2.0.0
+  chalk: ^5.4.1
   cheerio: ^1.0.0
   ci-parallel-vars: ^1.0.1
   circular-json-for-egg: ^1.0.0
@@ -132,7 +133,9 @@ catalog:
   husky: ^9.1.7
   inflection: ^3.0.0
   ini: ^6.0.0
+  iconv-lite: ^0.6.3
   ioredis: ^5.4.2
+  ioredis-mock: ^8.13.1
   is-type-of: ^2.2.0
   jest-changed-files: ^30.0.0
   js-beautify: ^1.15.3
@@ -171,10 +174,11 @@ catalog:
   nunjucks-markdown: ^2.0.1
   on-finished: ^2.4.1
   onelogger: ^1.0.1
+  oss-client: ^2.5.1
   oxc-minify: ^0.105.0
   oxfmt: ^0.20.0
   oxlint: ^1.32.0
-  oxlint-tsgolint: ^0.10.0
+  oxlint-tsgolint: ^0.11.0
   parseurl: ^1.3.3
   path-to-regexp: ^6.3.0
   performance-ms: ^1.1.0

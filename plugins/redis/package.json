@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/redis",
-  "version": "4.0.0-beta.36",
+  "version": "4.0.2-beta.7",
   "description": "Valkey / Redis plugin for egg",
   "keywords": [
     "Valkey",
@@ -61,6 +61,7 @@
     "@types/node": "catalog:",
     "detect-port": "^2.1.0",
     "egg": "workspace:*",
+    "ioredis-mock": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

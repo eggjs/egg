@@ -1,0 +1,273 @@
+{
+  "skill_name": "egg-controller",
+  "description": "控制器评测：覆盖 http-controller、mcp-controller、schedule、ajv-validate、middleware",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我写一个 POST /api/users 接口，接收 JSON body 创建用户，返回 201",
+      "expected_output": "@HTTPController + @HTTPMethod POST + @HTTPBody + ctx.status = 201，完整可运行代码"
+    },
+    {
+      "id": 2,
+      "prompt": "帮我实现 GET /api/users/:userId/posts/:postId，获取用户的某篇文章",
+      "expected_output": "@HTTPParam() userId + @HTTPParam() postId，路径参数定义和获取的完整代码"
+    },
+    {
+      "id": 3,
+      "prompt": "我有个搜索接口 /api/search?tag=tech&tag=dev，需要获取 tag 的全部值",
+      "expected_output": "使用 @HTTPQueries({ name: 'tag' }) 获取 string[] 数组，不是 @HTTPQuery"
+    },
+    {
+      "id": 4,
+      "prompt": "帮我写个 SSR 页面，GET / 返回完整的 HTML",
+      "expected_output": "@HTTPController + ctx.type = 'html' + return HTML 字符串"
+    },
+    {
+      "id": 5,
+      "prompt": "帮我实现流式输出，一段一段返回 HTML 内容",
+      "expected_output": "async generator + Readable.from()，设置 ctx.type，完整代码"
+    },
+    {
+      "id": 6,
+      "prompt": "我有两个路由 /api/:name 和 /api/health，请求 /api/health 匹配到了 :name，帮我看看代码",
+      "expected_output": "静态路径优先级高于参数路径应该自动匹配，如果冲突可用 priority 参数调整",
+      "files": [
+        {
+          "path": "app/apiModule/ApiController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam } from 'egg';\n\n@HTTPController({ path: '/api' })\nexport class ApiController {\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/:name' })\n  async getByName(@HTTPParam() name: string) {\n    return { name };\n  }\n\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/health' })\n  async health() {\n    return { status: 'ok' };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "帮我给这个 Controller 加一个认证中间件的逻辑，从 header 里取 Authorization 做校验",
+      "expected_output": "使用 @HTTPHeaders() 获取 headers，key 用小写 headers['authorization']",
+      "files": [
+        {
+          "path": "app/apiModule/UserController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';\n\n@HTTPController({ path: '/api/users' })\nexport class UserController {\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/' })\n  async list() {\n    return { users: [] };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "帮我写一个完整的 CRUD 模块：userModule，包含 UserService 和 UserController，支持 GET/POST/PUT/DELETE",
+      "expected_output": "完整文件结构：package.json + UserService(@SingletonProto + PUBLIC) + UserController(@HTTPController)，四个 HTTP 方法的完整代码"
+    },
+    {
+      "id": 9,
+      "prompt": "基于这个 Service，帮我写一个 HTTPController 暴露查询和创建接口",
+      "expected_output": "@HTTPController + 两个 @HTTPMethod（GET 用 @HTTPParam，POST 用 @HTTPBody）+ @Inject 注入 ProductService",
+      "files": [
+        {
+          "path": "app/productModule/package.json",
+          "content": "{\n  \"name\": \"productModule\",\n  \"eggModule\": { \"name\": \"productModule\" }\n}"
+        },
+        {
+          "path": "app/productModule/ProductService.ts",
+          "content": "import { SingletonProto, AccessLevel } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class ProductService {\n  async findById(id: string) {\n    return { id, name: 'Product ' + id, price: 99 };\n  }\n\n  async create(data: { name: string; price: number }) {\n    return { id: 'new-id', ...data };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "帮我实现一个 MCP Tool，让 AI 能搜索我们的内部文档",
+      "expected_output": "@MCPController() + @MCPTool() + @ToolArgsSchema + Service 注入，import 从 @eggjs/tegg，zod 从 @eggjs/tegg/zod"
+    },
+    {
+      "id": 11,
+      "prompt": "MCP Tool 的参数 Schema 写法有问题，帮我看看",
+      "expected_output": "指出不应该用 z.object() 包装，直接用普通对象 { name: z.string() }",
+      "files": [
+        {
+          "path": "app/docModule/DocMCPController.ts",
+          "content": "import { MCPController, MCPTool, MCPToolResponse, ToolArgs, ToolArgsSchema, Inject } from '@eggjs/tegg';\nimport { z } from '@eggjs/tegg/zod';\n\nconst SearchSchema = z.object({\n  keyword: z.string({ description: 'search keyword' }),\n  limit: z.number().optional(),\n});\n\n@MCPController()\nexport class DocMCPController {\n  @MCPTool({ description: 'Search internal docs' })\n  async search(\n    @ToolArgsSchema(SearchSchema) args: ToolArgs<typeof SearchSchema>,\n  ): Promise<MCPToolResponse> {\n    return { content: [{ type: 'text', text: 'results' }] };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "我的 MCP Tool 要处理一个大数据导出，可能要跑几分钟，怎么给客户端推送进度",
+      "expected_output": "@Extra() 获取 ToolExtra，用 sendNotification 推送进度，给出完整代码"
+    },
+    {
+      "id": 13,
+      "prompt": "帮我写一个 MCP Resource，让 AI 能读取指定用户的 profile",
+      "expected_output": "@MCPResource({ template: [...] }) + uri 参数解析，完整代码"
+    },
+    {
+      "id": 14,
+      "prompt": "帮我写个定时任务，每天凌晨 3 点清理过期数据",
+      "expected_output": "@Schedule<CronParams> + cron: '0 0 3 * * *' + ScheduleType.WORKER，import 从 egg/schedule"
+    },
+    {
+      "id": 15,
+      "prompt": "定时任务放在 app/schedule 目录下不生效，帮我看看",
+      "expected_output": "指出不能放在 app/schedule 下（和 egg 默认扫描冲突），应放在模块目录中",
+      "files": [
+        {
+          "path": "app/schedule/CleanTask.ts",
+          "content": "import { Inject, Logger } from 'egg';\nimport { IntervalParams, Schedule, ScheduleType } from 'egg/schedule';\n\n@Schedule<IntervalParams>({\n  type: ScheduleType.WORKER,\n  scheduleData: { interval: '1h' },\n})\nexport class CleanTask {\n  @Inject()\n  private logger: Logger;\n\n  async subscribe() {\n    this.logger.info('cleaning...');\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "帮我写一个每 30 秒刷新缓存的定时任务，要求每个 worker 都执行",
+      "expected_output": "@Schedule<IntervalParams> + interval: '30s' + ScheduleType.ALL"
+    },
+    {
+      "id": 17,
+      "prompt": "基于这个 CacheService，帮我写一个定时任务每 5 分钟刷新一次缓存",
+      "expected_output": "@Schedule<IntervalParams> + interval: '5m' + @Inject() cacheService，import 从 egg/schedule",
+      "files": [
+        {
+          "path": "app/cacheModule/package.json",
+          "content": "{\n  \"name\": \"cacheModule\",\n  \"eggModule\": { \"name\": \"cacheModule\" }\n}"
+        },
+        {
+          "path": "app/cacheModule/CacheService.ts",
+          "content": "import { SingletonProto, AccessLevel } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class CacheService {\n  private cache = new Map<string, any>();\n\n  async refresh() {\n    this.cache.clear();\n    // reload from db\n  }\n\n  get(key: string) {\n    return this.cache.get(key);\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "帮我把这个老的 egg controller 改成 HTTPController 写法",
+      "expected_output": "用 @HTTPController + @HTTPMethod 重写，参数用装饰器获取，注入 Service 替代 ctx.service",
+      "files": [
+        {
+          "path": "app/controller/user.ts",
+          "content": "import { Controller } from 'egg';\n\nexport default class UserController extends Controller {\n  async show() {\n    const { ctx } = this;\n    const id = ctx.params.id;\n    const user = await ctx.service.user.find(id);\n    ctx.body = { success: true, data: user };\n  }\n\n  async create() {\n    const { ctx } = this;\n    const body = ctx.request.body;\n    const user = await ctx.service.user.create(body);\n    ctx.status = 201;\n    ctx.body = { success: true, data: user };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "帮我给这个 POST /api/users 接口加上参数校验，name 必填且最多50字符，email 必须是邮箱格式",
+      "expected_output": "从 egg/ajv 导入 Type/Ajv/Static，定义 TypeBox Schema（name: Type.String + maxLength, email: Type.String + format: email），@Inject() ajv: Ajv，ajv.validate()",
+      "files": [
+        {
+          "path": "app/userModule/UserController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPBody } from 'egg';\n\n@HTTPController({ path: '/api/users' })\nexport class UserController {\n  @HTTPMethod({ method: HTTPMethodEnum.POST, path: '/' })\n  async create(@HTTPBody() body: { name: string; email: string }) {\n    return { id: '1', ...body };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "参数校验跑不起来，帮我看看代码哪里有问题",
+      "expected_output": "指出三个错误：1. 导入路径应从 egg/ajv 而非 typebox/ajv 2. 不应 new Ajv() 手动创建 3. 应使用 @Inject() 注入全局单例",
+      "files": [
+        {
+          "path": "app/userModule/UserController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPBody, Inject } from 'egg';\nimport { Type, Static } from 'typebox';\nimport Ajv from 'ajv';\n\nconst CreateUserSchema = Type.Object({\n  name: Type.String({ maxLength: 50 }),\n  email: Type.String({ format: 'email' }),\n});\n\ntype CreateUserParams = Static<typeof CreateUserSchema>;\n\nconst ajv = new Ajv();\n\n@HTTPController({ path: '/api/users' })\nexport class UserController {\n  @HTTPMethod({ method: HTTPMethodEnum.POST, path: '/' })\n  async create(@HTTPBody() body: CreateUserParams) {\n    const valid = ajv.validate(CreateUserSchema, body);\n    if (!valid) throw new Error('Validation failed');\n    return { id: '1', ...body };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "帮我写一个注册接口的参数校验，要校验 email 格式、生日要是日期格式、用户ID要是 UUID 格式",
+      "expected_output": "使用 Type.String({ format: 'email' })、Type.String({ format: 'date' })、Type.String({ format: 'uuid' })，从 egg/ajv 导入"
+    },
+    {
+      "id": 22,
+      "prompt": "用户输入的名字前后经常有空格，怎么在参数校验时自动去掉空格",
+      "expected_output": "使用 TransformEnum.trim，从 egg/ajv 导入 TransformEnum，Type.String({ transform: [TransformEnum.trim] })"
+    },
+    {
+      "id": 23,
+      "prompt": "有些字段是选填的，比如用户的昵称和个人简介，校验时不传不应该报错",
+      "expected_output": "使用 Type.Optional() 包装选填字段，如 Type.Optional(Type.String())"
+    },
+    {
+      "id": 24,
+      "prompt": "帮我写一个校验 Schema，要求 tags 字段是一个元组，第一个元素是字符串类型的分类名，第二个元素是数字类型的权重",
+      "expected_output": "使用 Type.Tuple([Type.String(), Type.Number()])，AI 需要从 TypeBox 文档链接查找 Tuple 用法"
+    },
+    {
+      "id": 25,
+      "prompt": "基于这个 OrderService，帮我写一个创建订单的接口，需要做参数校验：productId 必填字符串，quantity 必填正整数，remark 选填",
+      "expected_output": "定义 Schema + @Inject() ajv: Ajv + ajv.validate() + @Inject() orderService，完整可运行代码",
+      "files": [
+        {
+          "path": "app/orderModule/package.json",
+          "content": "{\n  \"name\": \"orderModule\",\n  \"eggModule\": { \"name\": \"orderModule\" }\n}"
+        },
+        {
+          "path": "app/orderModule/OrderService.ts",
+          "content": "import { SingletonProto, AccessLevel } from 'egg';\n\n@SingletonProto({ accessLevel: AccessLevel.PUBLIC })\nexport class OrderService {\n  async create(data: { productId: string; quantity: number; remark?: string }) {\n    return { orderId: 'order-' + Date.now(), ...data };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "帮我给这个 Controller 加个日志中间件，记录每个请求的耗时",
+      "expected_output": "使用 AOP 写法：定义 @Advice 类实现 IAdvice 的 around 方法，@Inject Logger，用 @Middleware 应用到 Controller。import Advice 从 egg/aop，Middleware 从 egg",
+      "files": [
+        {
+          "path": "app/modules/user/UserController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';\n\n@HTTPController({ path: '/api/users' })\nexport class UserController {\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/' })\n  async list() {\n    return { users: [] };\n  }\n\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/:id' })\n  async show() {\n    return { id: '1', name: 'test' };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "帮我写一个鉴权中间件，从 header 取 token 校验，校验失败抛异常，只应用到部分接口",
+      "expected_output": "AOP @Advice 类 + around 方法中校验 token + @Middleware 应用到方法级别（而非类级别），import Advice/IAdvice/AdviceContext 从 egg/aop"
+    },
+    {
+      "id": 28,
+      "prompt": "中间件代码报错 AOP and MiddlewareFunc can not be mixed，帮我看看哪里写错了",
+      "expected_output": "指出不能在同一个 @Middleware() 中混用函数和 Advice 类，需要分开写两个 @Middleware",
+      "files": [
+        {
+          "path": "app/modules/api/ApiController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum, Middleware } from 'egg';\nimport { LogAdvice } from '../common/advice/LogAdvice.ts';\nimport { countMw } from './middleware/count.ts';\n\n@HTTPController({ path: '/api' })\n@Middleware(LogAdvice, countMw)\nexport class ApiController {\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/hello' })\n  async hello() {\n    return { message: 'hello' };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "我想写一个中间件统一包装接口返回值为 { success: true, data: ... } 的格式",
+      "expected_output": "AOP @Advice 类 + around 方法中 await next() 拿到返回值后包装为 { success: true, data: result }，用 @Middleware 应用"
+    },
+    {
+      "id": 30,
+      "prompt": "AOP 中间件和函数式中间件有什么区别？什么时候用哪种",
+      "expected_output": "AOP 为推荐写法，支持 @Inject 注入依赖；函数式为旧版兼容写法，需从 ctx 手动获取依赖。新项目优先用 AOP"
+    },
+    {
+      "id": 31,
+      "prompt": "帮我把这个老的 egg 函数式中间件改成 AOP 写法",
+      "expected_output": "定义 @Advice 类 + 实现 around 方法，用 @Inject 注入 Logger 替代 ctx.logger，import 从 egg/aop",
+      "files": [
+        {
+          "path": "app/modules/api/middleware/log.ts",
+          "content": "import type { Context, Next } from 'egg';\n\nexport async function logMw(ctx: Context, next: Next): Promise<void> {\n  const start = Date.now();\n  await next();\n  ctx.logger.info('request %s %s cost %dms', ctx.method, ctx.url, Date.now() - start);\n}"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "我在 Advice 中用了一个实例属性 count 来统计请求数，但是多个请求之间数据串了，帮我看看",
+      "expected_output": "指出 Advice 默认是 Singleton，实例属性会被并发请求共享。请求级状态应使用 ctx.set()/ctx.get() 传递",
+      "files": [
+        {
+          "path": "app/modules/api/advice/RequestCountAdvice.ts",
+          "content": "import { Advice, IAdvice, AdviceContext } from 'egg/aop';\n\n@Advice()\nexport class RequestCountAdvice implements IAdvice {\n  private requestId = '';\n\n  async around(ctx: AdviceContext, next: () => Promise<any>): Promise<any> {\n    this.requestId = Math.random().toString(36).slice(2);\n    const result = await next();\n    return { ...result, requestId: this.requestId };\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "帮我看看这个 Controller 上的中间件执行顺序是什么样的",
+      "expected_output": "函数式和 AOP 分属两个独立执行阶段：先执行所有函数式中间件（类级别 countMw → 方法级别 timeMw），再执行所有 AOP 中间件（类级别 LogAdvice → 方法级别 AuthAdvice），最后执行 hello()。即 countMw → timeMw → LogAdvice → AuthAdvice → hello()，与装饰器书写顺序无关",
+      "files": [
+        {
+          "path": "app/modules/api/ApiController.ts",
+          "content": "import { HTTPController, HTTPMethod, HTTPMethodEnum, Middleware } from 'egg';\nimport { LogAdvice } from '../common/advice/LogAdvice.ts';\nimport { AuthAdvice } from '../common/advice/AuthAdvice.ts';\nimport { countMw } from './middleware/count.ts';\nimport { timeMw } from './middleware/time.ts';\n\n@HTTPController({ path: '/api' })\n@Middleware(countMw)\n@Middleware(LogAdvice)\nexport class ApiController {\n  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/hello' })\n  @Middleware(timeMw)\n  @Middleware(AuthAdvice)\n  async hello() {\n    return { message: 'hello' };\n  }\n}"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "name": "@eggjs/langchain-plugin",
+  "version": "4.0.2-beta.7",
+  "description": "langchain for egg",
+  "keywords": [
+    "egg",
+    "langchain",
+    "module",
+    "plugin",
+    "tegg",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/langchain",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/plugin/langchain"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./lib/boundModel/BoundModelObjectHook": "./src/lib/boundModel/BoundModelObjectHook.ts",
+    "./lib/ChatModelHelper": "./src/lib/ChatModelHelper.ts",
+    "./lib/ChatOpenAI": "./src/lib/ChatOpenAI.ts",
+    "./lib/config/QualifierUtil": "./src/lib/config/QualifierUtil.ts",
+    "./lib/graph/CompiledStateGraphObject": "./src/lib/graph/CompiledStateGraphObject.ts",
+    "./lib/graph/CompiledStateGraphProto": "./src/lib/graph/CompiledStateGraphProto.ts",
+    "./lib/graph/GraphBuildHook": "./src/lib/graph/GraphBuildHook.ts",
+    "./lib/graph/GraphLoadUnitHook": "./src/lib/graph/GraphLoadUnitHook.ts",
+    "./lib/graph/GraphObjectHook": "./src/lib/graph/GraphObjectHook.ts",
+    "./lib/graph/GraphPrototypeHook": "./src/lib/graph/GraphPrototypeHook.ts",
+    "./lib/tracing/LangGraphTracer": "./src/lib/tracing/LangGraphTracer.ts",
+    "./lib/util": "./src/lib/util.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./lib/boundModel/BoundModelObjectHook": "./dist/lib/boundModel/BoundModelObjectHook.js",
+      "./lib/ChatModelHelper": "./dist/lib/ChatModelHelper.js",
+      "./lib/ChatOpenAI": "./dist/lib/ChatOpenAI.js",
+      "./lib/config/QualifierUtil": "./dist/lib/config/QualifierUtil.js",
+      "./lib/graph/CompiledStateGraphObject": "./dist/lib/graph/CompiledStateGraphObject.js",
+      "./lib/graph/CompiledStateGraphProto": "./dist/lib/graph/CompiledStateGraphProto.js",
+      "./lib/graph/GraphBuildHook": "./dist/lib/graph/GraphBuildHook.js",
+      "./lib/graph/GraphLoadUnitHook": "./dist/lib/graph/GraphLoadUnitHook.js",
+      "./lib/graph/GraphObjectHook": "./dist/lib/graph/GraphObjectHook.js",
+      "./lib/graph/GraphPrototypeHook": "./dist/lib/graph/GraphPrototypeHook.js",
+      "./lib/tracing/LangGraphTracer": "./dist/lib/tracing/LangGraphTracer.js",
+      "./lib/util": "./dist/lib/util.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/langchain-decorator": "workspace:*",
+    "@eggjs/mcp-client": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
+    "@eggjs/module-common": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "@langchain/core": "^1.1.1",
+    "@langchain/langgraph": "^1.0.2",
+    "@langchain/mcp-adapters": "^1.0.0",
+    "@langchain/openai": "^1.0.0",
+    "langchain": "^1.1.2",
+    "urllib": "catalog:",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@eggjs/controller-plugin": "workspace:*",
+    "@eggjs/mcp-client-plugin": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/module-test-util": "workspace:*",
+    "@eggjs/router": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@eggjs/tracer": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "teggLangChain"
+  },
+  "eggPlugin": {
+    "name": "teggLangChain",
+    "dependencies": [
+      "tegg"
+    ]
+  }
+}

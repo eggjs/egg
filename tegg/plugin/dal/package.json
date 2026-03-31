@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/dal-plugin",
-  "version": "4.0.0-beta.36",
+  "version": "4.0.2-beta.7",
   "description": "dal plugin for egg",
   "keywords": [
     "dal",
@@ -29,6 +29,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./app": "./src/app.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
     "./lib/DalModuleLoadUnitHook": "./src/lib/DalModuleLoadUnitHook.ts",
     "./lib/DalTableEggPrototypeHook": "./src/lib/DalTableEggPrototypeHook.ts",
     "./lib/DataSource": "./src/lib/DataSource.ts",
@@ -45,6 +46,7 @@
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
       "./lib/DalModuleLoadUnitHook": "./dist/lib/DalModuleLoadUnitHook.js",
       "./lib/DalTableEggPrototypeHook": "./dist/lib/DalTableEggPrototypeHook.js",
       "./lib/DataSource": "./dist/lib/DataSource.js",
