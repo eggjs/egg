@@ -11,6 +11,7 @@ run
 .DS_Store
 .tmp
 .egg
+.husky/_
 
 *-lock.json
 *-lock.yaml
