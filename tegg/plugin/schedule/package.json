@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/schedule-plugin",
-  "version": "4.0.2-beta.7",
+  "version": "4.0.2-beta.8",
   "description": "schedule decorator plugin for egg",
   "keywords": [
     "egg",

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/jsonp",
-  "version": "4.0.2-beta.7",
+  "version": "4.0.2-beta.8",
   "description": "jsonp support for egg",
   "keywords": [
     "egg",

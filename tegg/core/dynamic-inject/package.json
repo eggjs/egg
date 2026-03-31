@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/dynamic-inject",
-  "version": "4.0.2-beta.7",
+  "version": "4.0.2-beta.8",
   "description": "tegg dynamic inject decorator",
   "keywords": [
     "egg",
