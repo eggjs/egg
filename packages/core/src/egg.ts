@@ -33,6 +33,12 @@ export interface EggCoreOptions {
   env?: string;
   /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
   metadataOnly?: boolean;
+  /**
+   * When true, the application loads metadata only (plugins, configs, extensions,
+   * services, controllers) without starting servers, timers, or connections.
+   * Used for V8 startup snapshot construction.
+   */
+  snapshot?: boolean;
 }
 
 export type EggCoreInitOptions = Partial<EggCoreOptions>;
@@ -191,6 +197,7 @@ export class EggCore extends KoaApplication {
       baseDir: options.baseDir,
       app: this,
       logger: this.console,
+      snapshot: options.snapshot,
     });
     this.lifecycle.on('error', (err) => this.emit('error', err));
     this.lifecycle.on('ready_timeout', (id) => this.emit('ready_timeout', id));

@@ -69,6 +69,12 @@ export interface LifecycleOptions {
   baseDir: string;
   app: EggCore;
   logger: EggConsoleLogger;
+  /**
+   * When true, the lifecycle stops after didLoad phase completes.
+   * willReady, didReady, and serverDidReady hooks are NOT called.
+   * Used for V8 startup snapshot construction.
+   */
+  snapshot?: boolean;
 }
 
 export type FunWithFullPath = Fun & { fullPath?: string };
@@ -119,7 +125,7 @@ export class Lifecycle extends EventEmitter {
     });
 
     this.ready((err) => {
-      if (!this.#metadataOnly) {
+      if (!this.#metadataOnly && !this.options.snapshot) {
         void this.triggerDidReady(err);
       }
       debug('app ready');
@@ -372,6 +378,10 @@ export class Lifecycle extends EventEmitter {
       debug('trigger didLoad end');
       if (err) {
         this.ready(err);
+      } else if (this.options.snapshot) {
+        // In snapshot mode, stop after didLoad — skip willReady/didReady/serverDidReady
+        debug('snapshot mode: skipping willReady, marking ready after didLoad');
+        this.ready(true);
       } else {
         this.triggerWillReady();
       }
