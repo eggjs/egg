@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/koa",
-  "version": "3.1.2-beta.6",
+  "version": "3.1.2-beta.7",
   "description": "Koa web app framework for https://eggjs.org",
   "keywords": [
     "app",

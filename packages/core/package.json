@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/core",
-  "version": "7.0.2-beta.6",
+  "version": "7.0.2-beta.7",
   "description": "A core plugin framework based on @eggjs/koa",
   "keywords": [
     "egg",

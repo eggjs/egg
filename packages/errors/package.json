@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/errors",
-  "version": "3.0.2-beta.6",
+  "version": "3.0.2-beta.7",
   "description": "@eggjs/errors provide two kinds of errors that is Error and Exception.",
   "homepage": "https://github.com/eggjs/egg/tree/next/packages/errors",
   "bugs": {

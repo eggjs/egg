@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/monorepo",
-  "version": "4.1.2-beta.6",
+  "version": "4.1.2-beta.7",
   "private": true,
   "description": "Eggjs framework monorepo",
   "license": "MIT",

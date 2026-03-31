@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/extend2",
-  "version": "5.0.2-beta.6",
+  "version": "5.0.2-beta.7",
   "description": "Port of jQuery.extend for Node.js",
   "keywords": [
     "clone",

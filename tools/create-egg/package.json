@@ -1,6 +1,6 @@
 {
   "name": "create-egg",
-  "version": "4.1.2-beta.6",
+  "version": "4.1.2-beta.7",
   "description": "Scaffolding Your First Egg.js Project",
   "homepage": "https://github.com/eggjs/egg/tree/next/tools/create-egg",
   "bugs": {

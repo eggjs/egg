@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/cookies",
-  "version": "4.0.2-beta.6",
+  "version": "4.0.2-beta.7",
   "description": "cookies module for egg",
   "homepage": "https://github.com/eggjs/egg/tree/next/packages/cookies",
   "license": "MIT",

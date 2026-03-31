@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/supertest",
-  "version": "9.0.2-beta.6",
+  "version": "9.0.2-beta.7",
   "description": "SuperAgent driven library for testing HTTP servers",
   "keywords": [
     "bdd",

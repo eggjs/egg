@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/router",
-  "version": "4.0.2-beta.6",
+  "version": "4.0.2-beta.7",
   "description": "Router middleware for egg/koa. Provides RESTful resource routing.",
   "keywords": [
     "koa",
