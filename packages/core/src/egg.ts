@@ -34,8 +34,8 @@ export interface EggCoreOptions {
   /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
   metadataOnly?: boolean;
   /**
-   * When true, the application loads metadata only (plugins, configs, extensions,
-   * services, controllers) without starting servers, timers, or connections.
+   * When true, lifecycle stops after the `didLoad` phase.
+   * `willReady`, `didReady`, and `serverDidReady` are skipped.
    * Used for V8 startup snapshot construction.
    */
   snapshot?: boolean;
