@@ -16,7 +16,7 @@ export async function cleanup(baseDir: string) {
   const processList = await findNodeProcess((x) => {
     const dir = isWindows ? baseDir.replace(/\\/g, '\\\\') : baseDir;
     const prefix = isWindows ? '\\"baseDir\\":\\"' : '"baseDir":"';
-    return x.cmd.includes(`${prefix}${dir}`);
+    return x.cmd.includes(`${prefix}${dir}`) || x.cmd.includes('--snapshot-blob');
   });
 
   if (processList.length) {
@@ -27,6 +27,10 @@ export async function cleanup(baseDir: string) {
       let type = 'unknown: ' + cmd;
       if (cmd.includes('start-cluster')) {
         type = 'master';
+      } else if (cmd.includes('start-single')) {
+        type = 'single';
+      } else if (cmd.includes('--snapshot-blob')) {
+        type = 'snapshot';
       } else if (cmd.includes('app_worker.js')) {
         type = 'worker';
       } else if (cmd.includes('agent_worker.js')) {

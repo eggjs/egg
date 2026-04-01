@@ -81,6 +81,17 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       summary: 'whether enable sourcemap support, will load `source-map-support` etc',
       aliases: ['ts', 'typescript'],
     }),
+    single: Flags.boolean({
+      description: 'start as single process mode (no cluster), required for snapshot support',
+      default: false,
+    }),
+    snapshot: Flags.boolean({
+      description: 'start from a pre-built V8 snapshot blob (implies --single)',
+      default: false,
+    }),
+    'snapshot-blob': Flags.string({
+      description: 'path to snapshot blob file (resolved relative to baseDir). When provided, implies --snapshot',
+    }),
   };
 
   isReady = false;
@@ -104,8 +115,9 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     return name;
   }
 
-  protected async getServerBin(): Promise<string> {
-    const serverBinName = this.isESM ? 'start-cluster.mjs' : 'start-cluster.cjs';
+  protected async getServerBin(single?: boolean): Promise<string> {
+    const prefix = single ? 'start-single' : 'start-cluster';
+    const serverBinName = this.isESM ? `${prefix}.mjs` : `${prefix}.cjs`;
     return path.join(import.meta.dirname, '../../scripts', serverBinName);
   }
 
@@ -126,12 +138,18 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     }
     await this.initBaseInfo(baseDir);
 
-    flags.framework = await this.getFrameworkPath({
-      framework: flags.framework,
-      baseDir,
-    });
+    // Snapshot mode: explicit --snapshot flag OR --snapshot-blob provided
+    const isSnapshot = flags.snapshot || !!flags['snapshot-blob'];
 
-    const frameworkName = await this.getFrameworkName(flags.framework);
+    // Framework resolution (skip for snapshot mode — framework is baked into the blob)
+    let frameworkName = 'egg';
+    if (!isSnapshot) {
+      flags.framework = await this.getFrameworkPath({
+        framework: flags.framework,
+        baseDir,
+      });
+      frameworkName = await this.getFrameworkName(flags.framework);
+    }
 
     flags.title = flags.title || `egg-server-${this.pkg.name}`;
 
@@ -145,8 +163,12 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     // normalize env
     this.env.HOME = HOME;
     this.env.NODE_ENV = 'production';
-    // disable ts file loader
-    this.env.EGG_TS_ENABLE = 'false';
+    // Disable ts file loader in cluster mode.
+    // In single/snapshot mode, Node.js 22.18+ native type stripping handles .ts files.
+    const isSingle = flags.single || isSnapshot;
+    if (!isSingle) {
+      this.env.EGG_TS_ENABLE = 'false';
+    }
 
     // it makes env big but more robust
     this.env.PATH = this.env.Path = [
@@ -173,6 +195,11 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
 
     // additional execArgv
     const execArgv: string[] = ['--no-deprecation', '--trace-warnings'];
+    // Single mode loads framework .ts source directly; use tsx for full TypeScript
+    // support including decorators (Node.js native type stripping can't handle them).
+    if (isSingle && !isSnapshot) {
+      execArgv.push('--import=tsx/esm');
+    }
     if (this.pkgEgg.revert) {
       const reverts = Array.isArray(this.pkgEgg.revert) ? this.pkgEgg.revert : [this.pkgEgg.revert];
       for (const revert of reverts) {
@@ -242,20 +269,54 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       cwd: baseDir,
     };
 
-    this.log('Starting %s application at %s', frameworkName, baseDir);
+    // Build spawn arguments — snapshot mode vs normal mode
+    let eggArgs: string[];
+    if (isSnapshot) {
+      // Snapshot mode: restore from pre-built V8 snapshot blob.
+      // No server script needed — the deserialize main function baked into the
+      // snapshot handles server startup.
+      // Resolve snapshot-blob path relative to baseDir
+      const blobPath = flags['snapshot-blob'] ?? 'snapshot.blob';
+      const snapshotPath = path.isAbsolute(blobPath) ? blobPath : path.join(baseDir, blobPath);
+      eggArgs = [...execArgv, `--snapshot-blob=${snapshotPath}`];
+      // Pass runtime config via environment variables (read by the deserialize function)
+      if (flags.port !== undefined) {
+        this.env.PORT = String(flags.port);
+      }
+      this.env.EGG_SERVER_TITLE = flags.title;
+      this.log('Starting application from snapshot at %s', snapshotPath);
+    } else {
+      // Normal mode: cluster or single process
+      this.log('Starting %s application at %s%s', frameworkName, baseDir, isSingle ? ' (single process mode)' : '');
 
-    // remove unused properties from stringify, alias had been remove by `removeAlias`
-    const ignoreKeys = ['env', 'daemon', 'stdout', 'stderr', 'timeout', 'ignore-stderr', 'node'];
-    const clusterOptions = stringify(
-      {
-        ...flags,
-        baseDir,
-      },
-      ignoreKeys,
-    );
-    // Note: `spawn` is not like `fork`, had to pass `execArgv` yourself
-    const serverBin = await this.getServerBin();
-    const eggArgs = [...execArgv, serverBin, clusterOptions, `--title=${flags.title}`];
+      // remove unused properties from stringify, alias had been remove by `removeAlias`
+      const ignoreKeys = [
+        'env',
+        'daemon',
+        'stdout',
+        'stderr',
+        'timeout',
+        'ignore-stderr',
+        'node',
+        'single',
+        'snapshot-blob',
+      ];
+      if (isSingle) {
+        // workers is not used in single mode
+        ignoreKeys.push('workers');
+      }
+      const clusterOptions = stringify(
+        {
+          ...flags,
+          baseDir,
+        },
+        ignoreKeys,
+      );
+      // Note: `spawn` is not like `fork`, had to pass `execArgv` yourself
+      const serverBin = await this.getServerBin(isSingle);
+      eggArgs = [...execArgv, serverBin, clusterOptions, `--title=${flags.title}`];
+    }
+
     const spawnScript = `${command} ${eggArgs.map((a) => `'${a}'`).join(' ')}`;
     this.log('Spawn %o', spawnScript);
 
@@ -266,19 +327,10 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       options.stdio = ['ignore', stdout, stderr, 'ipc'];
       options.detached = true;
       const child = (this.#child = spawn(command, eggArgs, options));
-      this.isReady = false;
-      child.on('message', (msg: any) => {
-        // https://github.com/eggjs/cluster/blob/master/src/master.ts#L119
-        if (msg && msg.action === 'egg-ready') {
-          this.isReady = true;
-          this.log('%s started on %s', frameworkName, msg.data.address);
-          child.unref();
-          child.disconnect();
-        }
-      });
+      const readyLabel = isSnapshot ? 'snapshot' : frameworkName;
 
-      // check start status
-      await this.checkStatus();
+      // Wait for egg-ready IPC message instead of polling with sleep
+      await this.waitForReady(child, readyLabel);
     } else {
       options.stdio = ['inherit', 'inherit', 'inherit', 'ipc'];
       const child = (this.#child = spawn(command, eggArgs, options));
@@ -299,52 +351,69 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     }
   }
 
-  protected async checkStatus(): Promise<void> {
-    let count = 0;
-    let hasError = false;
-    let isSuccess = true;
-    const timeout = this.flags.timeout / 1000;
+  protected async waitForReady(child: ChildProcess, readyLabel: string): Promise<void> {
+    const timeoutMs = this.flags.timeout;
     const stderrFile = this.flags.stderr!;
-    while (!this.isReady) {
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(() => {
+          reject(new Error(`Start failed, ${timeoutMs / 1000}s timeout`));
+        }, timeoutMs);
+
+        child.on('message', (msg: any) => {
+          // https://github.com/eggjs/cluster/blob/master/src/master.ts#L119
+          if (msg && msg.action === 'egg-ready') {
+            clearTimeout(timer);
+            this.isReady = true;
+            this.log('%s started on %s', readyLabel, msg.data.address);
+            child.unref();
+            child.disconnect();
+            resolve();
+          }
+        });
+
+        child.on('exit', (code) => {
+          if (code) {
+            clearTimeout(timer);
+            reject(new Error(`Child process exited with code ${code}`));
+          }
+        });
+      });
+    } catch (err: any) {
+      // Check stderr for error details
+      let hasStderrContent = false;
       try {
         const stats = await stat(stderrFile);
         if (stats && stats.size > 0) {
-          hasError = true;
-          break;
+          hasStderrContent = true;
         }
       } catch {
-        // nothing
+        // stderr file may not exist
       }
 
-      if (count >= timeout) {
-        this.logToStderr('Start failed, %ds timeout', timeout);
-        isSuccess = false;
-        break;
+      if (hasStderrContent) {
+        try {
+          const args = ['-n', '100', stderrFile];
+          this.logToStderr('tail %s', args.join(' '));
+          const { stdout: headStdout } = await execFile('head', args);
+          const { stdout: tailStdout } = await execFile('tail', args);
+          this.logToStderr('Got error when startup: ');
+          this.logToStderr(headStdout);
+          this.logToStderr('...');
+          this.logToStderr(tailStdout);
+        } catch (tailErr) {
+          this.logToStderr('ignore tail error: %s', tailErr);
+        }
+        if (this.flags['ignore-stderr']) {
+          return; // User opted to ignore stderr errors
+        }
+        this.logToStderr('Start got error, see %o', stderrFile);
+        this.logToStderr('Or use `--ignore-stderr` to ignore stderr at startup.');
+      } else {
+        this.logToStderr('%s', err.message);
       }
 
-      await scheduler.wait(1000);
-      this.log('Wait Start: %d...', ++count);
-    }
-
-    if (hasError) {
-      try {
-        const args = ['-n', '100', stderrFile];
-        this.logToStderr('tail %s', args.join(' '));
-        const { stdout: headStdout } = await execFile('head', args);
-        const { stdout: tailStdout } = await execFile('tail', args);
-        this.logToStderr('Got error when startup: ');
-        this.logToStderr(headStdout);
-        this.logToStderr('...');
-        this.logToStderr(tailStdout);
-      } catch (err) {
-        this.logToStderr('ignore tail error: %s', err);
-      }
-      isSuccess = this.flags['ignore-stderr'];
-      this.logToStderr('Start got error, see %o', stderrFile);
-      this.logToStderr('Or use `--ignore-stderr` to ignore stderr at startup.');
-    }
-
-    if (!isSuccess) {
       this.#child.kill('SIGTERM');
       await scheduler.wait(1000);
       this.exit(1);

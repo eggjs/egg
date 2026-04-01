@@ -44,11 +44,18 @@ export default class Stop<T extends typeof Stop> extends BaseCommand<T> {
     this.log(`stopping egg application${flags.title ? ` with --title=${flags.title}` : ''}`);
 
     // node ~/eggjs/scripts/scripts/start-cluster.cjs {"title":"egg-server","workers":4,"port":7001,"baseDir":"~/eggjs/test/showcase","framework":"~/eggjs/test/showcase/node_modules/egg"}
+    // node ~/eggjs/scripts/scripts/start-single.mjs {"title":"egg-server","port":7001,"baseDir":"~/eggjs/test/showcase","framework":"~/eggjs/test/showcase/node_modules/egg"}
+    // node --snapshot-blob=./snapshot.blob (snapshot mode — title set via process.title, not in args)
     let processList = await this.findNodeProcesses((item) => {
       const cmd = item.cmd;
+      const isEggProcess =
+        cmd.includes('start-cluster') ||
+        cmd.includes('start-single') ||
+        cmd.includes('--snapshot-blob') ||
+        cmd.startsWith('egg-server');
       const matched = flags.title
-        ? cmd.includes('start-cluster') && cmd.includes(format(osRelated.titleTemplate, flags.title))
-        : cmd.includes('start-cluster');
+        ? isEggProcess && cmd.includes(format(osRelated.titleTemplate, flags.title))
+        : isEggProcess;
       if (matched) {
         debug('find master process: %o', item);
       }
