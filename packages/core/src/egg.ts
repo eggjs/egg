@@ -413,6 +413,24 @@ export class EggCore extends KoaApplication {
   }
 
   /**
+   * Trigger snapshotWillSerialize lifecycle hooks on all boots in reverse order.
+   * Called by the build script before V8 serializes the heap.
+   * Cleans up non-serializable resources: file handles, timers, listeners, connections.
+   */
+  async triggerSnapshotWillSerialize(): Promise<void> {
+    return this.lifecycle.triggerSnapshotWillSerialize();
+  }
+
+  /**
+   * Trigger snapshotDidDeserialize lifecycle hooks on all boots in forward order.
+   * Called by the restore entry after V8 deserializes the heap.
+   * Restores non-serializable resources and resumes the lifecycle from configDidLoad.
+   */
+  async triggerSnapshotDidDeserialize(): Promise<void> {
+    return this.lifecycle.triggerSnapshotDidDeserialize();
+  }
+
+  /**
    * Close all, it will close
    * - callbacks registered by beforeClose
    * - emit `close` event
