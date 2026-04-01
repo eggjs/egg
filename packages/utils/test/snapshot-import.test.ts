@@ -7,8 +7,6 @@ import { getFilepath } from './helper.ts';
 
 describe('test/snapshot-import.test.ts', () => {
   describe('setSnapshotModuleLoader', () => {
-    let _originalIsESM: boolean;
-
     // We need to capture and restore isESM since setSnapshotModuleLoader mutates it.
     // Use dynamic import to read the current value.
     afterEach(async () => {
