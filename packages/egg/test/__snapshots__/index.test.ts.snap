@@ -89,12 +89,15 @@ exports[`should expose properties 1`] = `
   "Singleton": [Function],
   "SingletonProto": [Function],
   "Subscription": [Function],
+  "buildSnapshot": [Function],
   "createTransparentProxy": [Function],
   "defineConfig": [Function],
   "defineConfigFactory": [Function],
   "definePluginFactory": [Function],
+  "restoreSnapshot": [Function],
   "start": [Function],
   "startCluster": [Function],
   "startEgg": [Function],
+  "startEggForSnapshot": [Function],
 }
 `;

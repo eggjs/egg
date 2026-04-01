@@ -8,7 +8,7 @@ import { AgentWorkerLoader } from './loader/index.ts';
  * @augments EggApplicationCore
  */
 export class Agent extends EggApplicationCore {
-  readonly #agentAliveHandler: NodeJS.Timeout;
+  #agentAliveHandler?: NodeJS.Timeout;
 
   /**
    * @class
@@ -20,7 +20,20 @@ export class Agent extends EggApplicationCore {
       type: 'agent',
     });
 
-    // keep agent alive even it doesn't have any io tasks
+    // Register keepalive timer in configDidLoad so it is naturally skipped
+    // in snapshot mode (configDidLoad is not called during snapshot build).
+    this.lifecycle.addBootHook({
+      configDidLoad: () => this.startKeepAlive(),
+    });
+  }
+
+  /**
+   * Start the keepalive timer that prevents the agent process from exiting
+   * when it has no pending I/O. Called from configDidLoad so that the timer
+   * is not created during snapshot build (configDidLoad is skipped in snapshot mode).
+   */
+  startKeepAlive(): void {
+    if (this.#agentAliveHandler) return;
     this.#agentAliveHandler = setInterval(
       () => {
         this.coreLogger.info('[]');
@@ -52,7 +65,10 @@ export class Agent extends EggApplicationCore {
   }
 
   async close(): Promise<void> {
-    clearInterval(this.#agentAliveHandler);
+    if (this.#agentAliveHandler) {
+      clearInterval(this.#agentAliveHandler);
+      this.#agentAliveHandler = undefined;
+    }
     await super.close();
   }
 }

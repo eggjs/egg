@@ -20,7 +20,16 @@ export interface StartEggOptions {
   plugins?: EggPlugin;
   /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
   metadataOnly?: boolean;
+  /**
+   * When true, load application metadata for V8 startup snapshot construction.
+   * The lifecycle stops after configWillLoad (no servers, timers, or connections)
+   * and skips `egg-ready` broadcast. `ready()` resolves when loading completes.
+   */
+  snapshot?: boolean;
 }
+
+/** @deprecated Use `StartEggOptions` with `snapshot: true` instead. */
+export type SnapshotEggOptions = Pick<StartEggOptions, 'framework' | 'baseDir' | 'env' | 'plugins'>;
 
 export interface SingleModeApplication extends Application {
   agent: SingleModeAgent;
@@ -30,15 +39,12 @@ export interface SingleModeAgent extends Agent {
   app: SingleModeApplication;
 }
 
-/**
- * Start egg with single process
- */
-export async function startEgg(options: StartEggOptions = {}): Promise<SingleModeApplication> {
-  options.baseDir = options.baseDir ?? process.cwd();
-  options.mode = 'single';
-  ManifestStore.enableCompileCache(options.baseDir);
+interface FrameworkClasses {
+  AgentClass: typeof Agent;
+  ApplicationClass: typeof Application;
+}
 
-  // get agent from options.framework and package.egg.framework
+async function resolveFrameworkClasses(options: { framework?: string; baseDir: string }): Promise<FrameworkClasses> {
   if (!options.framework) {
     try {
       const pkg = await readJSON(path.join(options.baseDir, 'package.json'));
@@ -47,8 +53,8 @@ export async function startEgg(options: StartEggOptions = {}): Promise<SingleMod
       // ignore
     }
   }
-  let AgentClass = Agent;
-  let ApplicationClass = Application;
+  let AgentClass: typeof Agent = Agent;
+  let ApplicationClass: typeof Application = Application;
   if (options.framework) {
     const framework = await importModule(options.framework, {
       paths: [options.baseDir],
@@ -56,6 +62,27 @@ export async function startEgg(options: StartEggOptions = {}): Promise<SingleMod
     AgentClass = framework.Agent;
     ApplicationClass = framework.Application;
   }
+  return { AgentClass, ApplicationClass };
+}
+
+/**
+ * Start egg with single process.
+ *
+ * When `options.snapshot` is true, loads application metadata for V8 startup
+ * snapshot construction. The lifecycle stops after `configWillLoad` (no servers,
+ * timers, or connections) and skips `egg-ready` broadcast.
+ */
+export async function startEgg(options: StartEggOptions = {}): Promise<SingleModeApplication> {
+  options.baseDir = options.baseDir ?? process.cwd();
+  options.mode = 'single';
+
+  if (!options.snapshot) {
+    ManifestStore.enableCompileCache(options.baseDir);
+  }
+
+  const { AgentClass, ApplicationClass } = await resolveFrameworkClasses(
+    options as { framework?: string; baseDir: string },
+  );
 
   // In metadataOnly mode, skip agent entirely — only app metadata is needed
   let agent: SingleModeAgent | undefined;
@@ -73,11 +100,21 @@ export async function startEgg(options: StartEggOptions = {}): Promise<SingleMod
     application.agent = agent;
     agent.application = application;
   }
+
   await application.ready();
 
-  if (!options.metadataOnly) {
+  if (!options.metadataOnly && !options.snapshot) {
     // emit egg-ready message in agent and application
     application.messenger.broadcast('egg-ready');
   }
   return application;
+}
+
+/**
+ * Load egg application metadata for V8 startup snapshot construction.
+ *
+ * @deprecated Use `startEgg({ ...options, snapshot: true })` instead.
+ */
+export async function startEggForSnapshot(options: SnapshotEggOptions = {}): Promise<SingleModeApplication> {
+  return startEgg({ ...options, snapshot: true });
 }
