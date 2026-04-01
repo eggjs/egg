@@ -132,7 +132,7 @@ export class EggApplicationCore extends EggCore {
   #loggers?: EggLoggers;
   #clusterClients: any[] = [];
 
-  readonly messenger: IMessenger;
+  messenger: IMessenger;
   agent?: Agent;
   application?: Application;
   declare loader: EggApplicationLoader;
@@ -165,6 +165,27 @@ export class EggApplicationCore extends EggCore {
     this.messenger.once('egg-ready', () => {
       this.lifecycle.triggerServerDidReady();
     });
+
+    // Register snapshot lifecycle hooks for the messenger.
+    // The messenger is created in the constructor (before any lifecycle hooks)
+    // because it is fundamental infrastructure. Its process listeners are
+    // non-serializable, so we clean up during serialize and re-create during
+    // deserialize. This avoids scattered `if (snapshot)` guards.
+    const app = this;
+    this.lifecycle.addBootHook(
+      class EggMessengerSnapshotBoot {
+        snapshotWillSerialize(): void {
+          app.messenger.close();
+        }
+        snapshotDidDeserialize(): void {
+          app.messenger = createMessenger(app);
+          app.messenger.once('egg-ready', () => {
+            app.lifecycle.triggerServerDidReady();
+          });
+        }
+      },
+    );
+
     this.lifecycle.registerBeforeStart(async () => {
       await this.load();
     }, 'load files');
