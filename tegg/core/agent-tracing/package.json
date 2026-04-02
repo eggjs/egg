@@ -1,0 +1,85 @@
+{
+  "name": "@eggjs/agent-tracing",
+  "version": "4.0.2-beta.3",
+  "description": "Tracing support for AI agents (LangGraph, Claude Agent SDK)",
+  "keywords": [
+    "agent",
+    "claude",
+    "egg",
+    "langchain",
+    "langgraph",
+    "tegg",
+    "tracing",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/agent-tracing",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "killagu <killa123@126.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/core/agent-tracing"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./claude": "./src/claude.ts",
+    "./langgraph": "./src/langgraph.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./claude": "./dist/claude.js",
+      "./langgraph": "./dist/langgraph.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@eggjs/background-task": "workspace:*",
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "onelogger": "catalog:"
+  },
+  "devDependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.52",
+    "@anthropic-ai/sdk": "^0.78.0",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@langchain/core": "^1.1.29",
+    "@langchain/langgraph": "^0.2.74",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/claude-agent-sdk": ">=0.2.52",
+    "@langchain/core": "^1.1.29"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/claude-agent-sdk": {
+      "optional": true
+    },
+    "@langchain/core": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "teggAgentTracing"
+  }
+}

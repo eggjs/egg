@@ -75,7 +75,7 @@
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
-    "@langchain/core": "^1.1.1",
+    "@langchain/core": "^1.1.29",
     "@langchain/langgraph": "^1.0.2",
     "@langchain/mcp-adapters": "^1.0.0",
     "@langchain/openai": "^1.0.0",
