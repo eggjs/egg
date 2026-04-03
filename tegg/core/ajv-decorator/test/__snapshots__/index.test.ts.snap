@@ -70,6 +70,8 @@ exports[`should export stable 1`] = `
     "IsExtendsTrue": [Function],
     "IsExtendsTrueLike": [Function],
     "IsExtendsUnion": [Function],
+    "Match": [Function],
+    "TakeLeft": [Function],
   },
   "Extract": [Function],
   "ExtractDeferred": [Function],
