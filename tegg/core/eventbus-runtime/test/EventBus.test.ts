@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { mock } from 'node:test';
 
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import { EventInfoUtil, CORK_ID } from '@eggjs/eventbus-decorator';
 import { type EggPrototype, LoadUnitFactory } from '@eggjs/metadata';
 import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
+import { mock } from '@eggjs/module-test-util/mock_compat';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import { describe, it, beforeEach, afterEach } from 'vitest';

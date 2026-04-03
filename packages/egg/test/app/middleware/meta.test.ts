@@ -6,6 +6,8 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { createApp, type MockApplication, restore, cluster } from '../../utils.js';
 
+const isBun = !!process.versions.bun;
+
 describe('test/app/middleware/meta.test.ts', () => {
   afterEach(restore);
 
@@ -79,7 +81,8 @@ describe('test/app/middleware/meta.test.ts', () => {
         .expect(200);
     });
 
-    it('should return keep-alive header when request is keep-alive', () => {
+    // Bun doesn't send keep-alive header in responses
+    it.skipIf(isBun)('should return keep-alive header when request is keep-alive', () => {
       return app
         .httpRequest()
         .get('/')

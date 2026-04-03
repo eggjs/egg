@@ -7,9 +7,11 @@ import { describe, it, afterEach } from 'vitest';
 
 import { getFilepath, cluster } from './utils.ts';
 
+const isBun = !!process.versions.bun;
 const httpclient = new HttpClient({ connect: { rejectUnauthorized: false } });
 
-describe('test/https.test.ts', () => {
+// Bun rejects expired self-signed certificates even with rejectUnauthorized: false
+describe.skipIf(isBun)('test/https.test.ts', () => {
   let app: MockApplication;
   afterEach(mm.restore);
 

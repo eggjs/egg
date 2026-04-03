@@ -1,7 +1,7 @@
 import assert from 'node:assert';
-import { mock } from 'node:test';
 
 import { EggPrototypeFactory } from '@eggjs/metadata';
+import { mock } from '@eggjs/module-test-util/mock_compat';
 import { describe, beforeEach, afterEach, it } from 'vitest';
 
 import { EggContainerFactory, ContextHandler } from '../src/index.js';

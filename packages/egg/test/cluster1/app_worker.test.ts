@@ -8,6 +8,8 @@ import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest
 
 import { cluster, type MockApplication } from '../utils.ts';
 
+const isBun = !!process.versions.bun;
+
 const DEFAULT_BAD_REQUEST_HTML = `<html>
   <head><title>400 Bad Request</title></head>
   <body bgcolor="white">
@@ -29,7 +31,8 @@ describe('test/cluster1/app_worker.test.ts', () => {
     await app.httpRequest().get('/').expect('true');
   });
 
-  it('should response 400 bad request when HTTP request packet broken', async () => {
+  // Bun's superagent request().path is readonly
+  it.skipIf(isBun)('should response 400 bad request when HTTP request packet broken', async () => {
     const test1 = app
       .httpRequest()
       // Node.js (http-parser) will occur an error while the raw URI in HTTP

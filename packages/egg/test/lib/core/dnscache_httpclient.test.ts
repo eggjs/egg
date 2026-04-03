@@ -5,7 +5,10 @@ import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { createApp, type MockApplication, startNewLocalServer } from '../../utils.js';
 
-describe('test/lib/core/dnscache_httpclient.test.ts', () => {
+const isBun = !!process.versions.bun;
+
+// Bun's DNS resolution doesn't support custom hostname lookup for dnscache
+describe.skipIf(isBun)('test/lib/core/dnscache_httpclient.test.ts', () => {
   let app: MockApplication;
   let url: string;
   let serverInfo: { url: string; server: http.Server };

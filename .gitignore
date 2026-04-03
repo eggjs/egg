@@ -118,3 +118,6 @@ tegg/plugin/tegg/test/fixtures/apps/**/*.js
 
 ecosystem-ci/cnpmcore
 ecosystem-ci/examples
+
+# Bun runtime cache
+**/Library/Caches/bun

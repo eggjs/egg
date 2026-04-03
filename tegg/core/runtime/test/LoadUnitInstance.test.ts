@@ -1,9 +1,9 @@
 import assert from 'node:assert';
 import path from 'node:path';
-import { mock } from 'node:test';
 
 import { EggPrototypeFactory } from '@eggjs/metadata';
 import { LoaderUtil } from '@eggjs/module-test-util';
+import { mock } from '@eggjs/module-test-util/mock_compat';
 import { type LoadUnitInstance } from '@eggjs/tegg-types';
 import { describe, beforeEach, afterEach, beforeAll, afterAll, it } from 'vitest';
 

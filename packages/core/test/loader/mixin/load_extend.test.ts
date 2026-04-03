@@ -85,7 +85,7 @@ describe('test/loader/mixin/load_extend.test.ts', () => {
     await assert.rejects(async () => {
       const app = createApp('load_context_error');
       await app.loader.loadContextExtend();
-    }, /Cannot find module 'this is a pen'/);
+    }, /Cannot find (module|package) 'this is a pen'/);
   });
 
   it('should throw when syntax error', async () => {
