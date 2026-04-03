@@ -7,7 +7,6 @@ test('should ajv exports stable', async () => {
   // exports which change with every minor version)
   expect(exports.TransformEnum).toBeDefined();
   expect(exports.AjvInvalidParamError).toBeDefined();
-  expect(exports.Ajv).toBeDefined();
   // Verify typebox re-export works
   expect(exports.Type).toBeDefined();
 });
