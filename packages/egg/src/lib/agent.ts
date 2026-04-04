@@ -32,7 +32,7 @@ export class Agent extends EggApplicationCore {
    * when it has no pending I/O. Called from configDidLoad so that the timer
    * is not created during snapshot build (configDidLoad is skipped in snapshot mode).
    */
-  startKeepAlive(): void {
+  protected startKeepAlive(): void {
     if (this.#agentAliveHandler) return;
     this.#agentAliveHandler = setInterval(
       () => {

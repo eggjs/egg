@@ -28,9 +28,6 @@ export interface StartEggOptions {
   snapshot?: boolean;
 }
 
-/** @deprecated Use `StartEggOptions` with `snapshot: true` instead. */
-export type SnapshotEggOptions = Pick<StartEggOptions, 'framework' | 'baseDir' | 'env' | 'plugins'>;
-
 export interface SingleModeApplication extends Application {
   agent: SingleModeAgent;
 }
@@ -108,13 +105,4 @@ export async function startEgg(options: StartEggOptions = {}): Promise<SingleMod
     application.messenger.broadcast('egg-ready');
   }
   return application;
-}
-
-/**
- * Load egg application metadata for V8 startup snapshot construction.
- *
- * @deprecated Use `startEgg({ ...options, snapshot: true })` instead.
- */
-export async function startEggForSnapshot(options: SnapshotEggOptions = {}): Promise<SingleModeApplication> {
-  return startEgg({ ...options, snapshot: true });
 }

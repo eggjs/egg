@@ -6,7 +6,7 @@ import { describe, it, afterEach } from 'vitest';
 import { Agent } from '../src/lib/agent.ts';
 import { Application } from '../src/lib/application.ts';
 import { restoreSnapshot } from '../src/lib/snapshot.ts';
-import { startEgg, startEggForSnapshot } from '../src/lib/start.ts';
+import { startEgg } from '../src/lib/start.ts';
 
 const fixtures = path.join(import.meta.dirname, 'fixtures');
 const demoApp = path.join(fixtures, 'apps/demo');
@@ -212,17 +212,6 @@ describe('test/snapshot.test.ts', () => {
       // Both should be in snapshot mode
       assert.equal(app.options.snapshot, true);
       assert.equal(app.agent.options.snapshot, true);
-
-      await app.close();
-      await app.agent.close();
-    });
-
-    it('should work via deprecated startEggForSnapshot wrapper', async () => {
-      const app = await startEggForSnapshot({ baseDir: demoApp });
-
-      assert.ok(app, 'application should exist');
-      assert.ok(app.agent, 'agent should exist');
-      assert.equal(app.options.snapshot, true);
 
       await app.close();
       await app.agent.close();

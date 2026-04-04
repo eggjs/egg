@@ -98,6 +98,5 @@ exports[`should expose properties 1`] = `
   "start": [Function],
   "startCluster": [Function],
   "startEgg": [Function],
-  "startEggForSnapshot": [Function],
 }
 `;

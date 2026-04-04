@@ -525,7 +525,6 @@ export class EggApplicationCore extends EggCore {
     this.messenger.once('egg-ready', () => {
       this.lifecycle.triggerServerDidReady();
     });
-    this._unhandledRejectionHandler = this._unhandledRejectionHandler.bind(this);
     process.on('unhandledRejection', this._unhandledRejectionHandler);
   }
 
