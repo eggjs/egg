@@ -136,12 +136,12 @@ export class EggApplicationCore extends EggCore {
 
   /**
    * Promise that resolves when the `load()` method has finished.
-   * In snapshot mode the lifecycle becomes ready before loading completes,
-   * so callers (e.g. `startEgg({ snapshot: true })`) must await this instead of `ready()`.
+   * This is useful for callers that need to ensure config and metadata
+   * are fully loaded before proceeding.
    */
   readonly loadFinished: Promise<void>;
 
-  messenger: IMessenger;
+  readonly messenger: IMessenger;
   agent?: Agent;
   application?: Application;
   declare loader: EggApplicationLoader;
@@ -216,19 +216,23 @@ export class EggApplicationCore extends EggCore {
 
   protected async load(): Promise<void> {
     await this.loadConfig();
-    // dump config after ready, ensure all the modifications during start will be recorded
-    // make sure dumpConfig is the last ready callback
-    this.ready(() =>
-      process.nextTick(() => {
-        const dumpStartTime = Date.now();
-        this.dumpConfig();
-        this.dumpTiming();
-        this.dumpManifest();
-        ManifestStore.flushCompileCache();
-        this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
-      }),
-    );
-    this.#setupTimeoutTimer();
+    // In snapshot mode, skip runtime-only setup (dump, timeout timer).
+    // These will run after snapshot restore when the full lifecycle resumes.
+    if (!this.options.snapshot) {
+      // dump config after ready, ensure all the modifications during start will be recorded
+      // make sure dumpConfig is the last ready callback
+      this.ready(() =>
+        process.nextTick(() => {
+          const dumpStartTime = Date.now();
+          this.dumpConfig();
+          this.dumpTiming();
+          this.dumpManifest();
+          ManifestStore.flushCompileCache();
+          this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
+        }),
+      );
+      this.#setupTimeoutTimer();
+    }
 
     this.console.info('[egg] App root: %s', this.baseDir);
     this.console.info('[egg] All *.log files save on %j', this.config.logger.dir);
@@ -521,7 +525,7 @@ export class EggApplicationCore extends EggCore {
    * Loggers are lazily re-created via the `loggers` getter.
    */
   protected snapshotDidDeserialize(): void {
-    this.messenger = createMessenger(this);
+    (this as { messenger: IMessenger }).messenger = createMessenger(this);
     this.messenger.once('egg-ready', () => {
       this.lifecycle.triggerServerDidReady();
     });

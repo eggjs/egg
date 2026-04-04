@@ -466,16 +466,11 @@ describe('test/snapshot.test.ts', () => {
       await lifecycle.close();
     });
 
-    it('should emit error when snapshotWillSerialize hook throws', async () => {
+    it('should throw when snapshotWillSerialize hook throws', async () => {
       const lifecycle = new Lifecycle({
         baseDir: '.',
         app: new EggCore(),
         snapshot: true,
-      });
-
-      const errors: Error[] = [];
-      lifecycle.on('error', (err: Error) => {
-        errors.push(err);
       });
 
       lifecycle.addBootHook(
@@ -493,23 +488,16 @@ describe('test/snapshot.test.ts', () => {
       lifecycle.triggerConfigWillLoad();
       await lifecycle.ready();
 
-      await lifecycle.triggerSnapshotWillSerialize();
-      assert.equal(errors.length, 1);
-      assert.equal(errors[0].message, 'serialize failed');
+      await assert.rejects(() => lifecycle.triggerSnapshotWillSerialize(), { message: 'serialize failed' });
 
       await lifecycle.close();
     });
 
-    it('should emit error when snapshotDidDeserialize hook throws', async () => {
+    it('should throw when snapshotDidDeserialize hook throws', async () => {
       const lifecycle = new Lifecycle({
         baseDir: '.',
         app: new EggCore(),
         snapshot: true,
-      });
-
-      const errors: Error[] = [];
-      lifecycle.on('error', (err: Error) => {
-        errors.push(err);
       });
 
       lifecycle.addBootHook(
@@ -527,8 +515,7 @@ describe('test/snapshot.test.ts', () => {
       lifecycle.triggerConfigWillLoad();
       await lifecycle.ready();
 
-      await lifecycle.triggerSnapshotDidDeserialize();
-      assert.ok(errors.some((e) => e.message === 'deserialize failed'));
+      await assert.rejects(() => lifecycle.triggerSnapshotDidDeserialize(), { message: 'deserialize failed' });
 
       await lifecycle.close();
     });

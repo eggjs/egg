@@ -422,7 +422,8 @@ export class Lifecycle extends EventEmitter {
         await utils.callFn(boot.snapshotWillSerialize.bind(boot));
       } catch (err) {
         debug('trigger snapshotWillSerialize error at %o, error: %s', fullPath, err);
-        this.emit('error', err);
+        this.timing.end(timingKey);
+        throw err;
       }
       this.timing.end(timingKey);
     }
@@ -450,7 +451,8 @@ export class Lifecycle extends EventEmitter {
         await utils.callFn(boot.snapshotDidDeserialize.bind(boot));
       } catch (err) {
         debug('trigger snapshotDidDeserialize error at %o, error: %s', fullPath, err);
-        this.emit('error', err);
+        this.timing.end(timingKey);
+        throw err;
       }
       this.timing.end(timingKey);
     }

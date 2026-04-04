@@ -10,8 +10,9 @@ import { startEgg, type StartEggOptions, type SingleModeApplication } from './st
  * `node --snapshot-blob=snapshot.blob --build-snapshot snapshot_entry.js`.
  *
  * It loads all metadata (plugins, configs, extensions, services, controllers,
- * router, tegg modules) without creating servers, timers, or connections,
- * then registers serialize/deserialize callbacks with the V8 snapshot API.
+ * router, tegg modules), triggers snapshotWillSerialize hooks to clean up
+ * non-serializable resources (file handles, timers, process listeners),
+ * then registers a V8 deserialize callback to stash the app for later restore.
  *
  * Example snapshot entry script:
  * ```ts
@@ -22,8 +23,8 @@ import { startEgg, type StartEggOptions, type SingleModeApplication } from './st
  * Example restoring from snapshot:
  * ```ts
  * import { restoreSnapshot } from 'egg';
- * const app = restoreSnapshot();
- * // app is fully loaded with metadata, ready for server creation
+ * const app = await restoreSnapshot();
+ * // app is fully restored with resources recreated, ready for server creation
  * ```
  */
 export async function buildSnapshot(
@@ -53,20 +54,30 @@ export async function buildSnapshot(
 /**
  * Restore an egg application from a V8 startup snapshot.
  *
- * Returns the Application instance that was captured during snapshot
- * construction. The application has all metadata pre-loaded (plugins,
- * configs, extensions, services, controllers, router). Loggers and
- * messenger have been automatically re-created by the deserialize callbacks.
+ * Triggers the snapshotDidDeserialize lifecycle hooks to recreate
+ * non-serializable resources (messenger, loggers, process listeners)
+ * and resumes the lifecycle from configDidLoad through didReady.
+ *
+ * Returns the fully restored Application instance with all metadata
+ * pre-loaded (plugins, configs, extensions, services, controllers, router).
  */
-export function restoreSnapshot(): Application {
-  const app = globalThis.__egg_snapshot_app;
+export async function restoreSnapshot(): Promise<Application> {
+  const app = globalThis.__egg_snapshot_app as SingleModeApplication | undefined;
   if (!app) {
     throw new Error(
       'No egg application found in snapshot. ' +
         'Ensure the process was started from a snapshot built with buildSnapshot().',
     );
   }
-  return app as Application;
+
+  // Trigger deserialize hooks to restore non-serializable resources
+  // (messenger, loggers, process listeners) and resume lifecycle.
+  if (app.agent) {
+    await app.agent.triggerSnapshotDidDeserialize();
+  }
+  await app.triggerSnapshotDidDeserialize();
+
+  return app;
 }
 
 interface SnapshotData {

@@ -44,7 +44,7 @@ describe('test/snapshot.test.ts', () => {
 
       // In normal mode, configDidLoad runs, so startKeepAlive() is called.
       // Calling startKeepAlive() again should be a no-op (idempotent guard).
-      agent.startKeepAlive();
+      (agent as any).startKeepAlive();
 
       // close() should clear the interval without error
       await agent.close();
@@ -59,9 +59,9 @@ describe('test/snapshot.test.ts', () => {
       await agent.ready();
 
       // Manually call startKeepAlive multiple times — should not create multiple timers
-      agent.startKeepAlive();
-      agent.startKeepAlive();
-      agent.startKeepAlive();
+      (agent as any).startKeepAlive();
+      (agent as any).startKeepAlive();
+      (agent as any).startKeepAlive();
 
       // close() clears only one interval
       await agent.close();
@@ -183,7 +183,6 @@ describe('test/snapshot.test.ts', () => {
         mode: 'single',
         snapshot: true,
       });
-      // In snapshot mode, ready() resolves before load() finishes
       await app.ready();
 
       // loadFinished should resolve when load() fully completes
@@ -219,11 +218,11 @@ describe('test/snapshot.test.ts', () => {
   });
 
   describe('restoreSnapshot', () => {
-    it('should throw when no snapshot app exists', () => {
+    it('should throw when no snapshot app exists', async () => {
       // Ensure no global snapshot app
       globalThis.__egg_snapshot_app = undefined;
 
-      assert.throws(() => restoreSnapshot(), /No egg application found in snapshot/);
+      await assert.rejects(() => restoreSnapshot(), /No egg application found in snapshot/);
     });
   });
 });
