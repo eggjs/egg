@@ -408,6 +408,9 @@ export class Lifecycle extends EventEmitter {
    * Called by the build script before V8 serializes the heap.
    */
   async triggerSnapshotWillSerialize(): Promise<void> {
+    if (!this.options.snapshot) {
+      throw new Error('triggerSnapshotWillSerialize() can only be called on a snapshot-mode lifecycle');
+    }
     debug('trigger snapshotWillSerialize start');
     const boots = [...this.#boots].reverse();
     for (const boot of boots) {
@@ -438,6 +441,9 @@ export class Lifecycle extends EventEmitter {
    * full lifecycle (configDidLoad → didLoad → willReady) has completed.
    */
   async triggerSnapshotDidDeserialize(): Promise<void> {
+    if (!this.options.snapshot) {
+      throw new Error('triggerSnapshotDidDeserialize() can only be called on a snapshot-mode lifecycle');
+    }
     debug('trigger snapshotDidDeserialize start');
     for (const boot of this.#boots) {
       if (typeof boot.snapshotDidDeserialize !== 'function') {
