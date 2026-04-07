@@ -67,6 +67,7 @@
     "tsdown": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
+    "unplugin-unused": "catalog:",
     "urllib": "catalog:",
     "vitest": "catalog:"
   },
