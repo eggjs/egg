@@ -41,7 +41,6 @@ package-lock.json
 .tshy*
 dist
 site/.dumi/
-!pnpm-lock.yaml
 
 !packages/egg/test/fixtures/apps/loader-plugin/node_modules
 !packages/egg/test/fixtures/apps/app-ts/node_modules
@@ -117,4 +116,5 @@ tegg/plugin/tegg/test/fixtures/apps/**/*.js
 *.tgz
 
 ecosystem-ci/cnpmcore
-ecosystem-ci/examplespnpm-lock.yaml
+ecosystem-ci/examples
+pnpm-lock.yaml
