@@ -92,6 +92,10 @@ export class FileLoader {
   constructor(options: FileLoaderOptions) {
     assert(options.directory, 'options.directory is required');
     assert(options.target, 'options.target is required');
+    // Auto-resolve manifest from inject (the app) when not explicitly provided
+    if (!options.manifest && options.inject) {
+      options.manifest = options.inject.loader?.manifest;
+    }
     this.options = {
       caseStyle: CaseStyle.camel,
       call: true,
