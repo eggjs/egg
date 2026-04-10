@@ -230,9 +230,11 @@ function optionalDepsStubPlugin(): EsbuildPlugin {
  * Pure transformation for ESM polyfill. Exported for unit testing.
  *
  * Returns the modified source, or `null` if the file is CJS (no ESM
- * markers) or needs no changes. Detects ESM by presence of `import.meta.`
- * or a top-level `import`/`export` statement — CJS files (e.g. files
- * using `module.exports` and `require`) are left untouched.
+ * markers), if the file declares `__dirname`/`__filename` locally, or
+ * if no substitutions were needed. Detects ESM by presence of
+ * `import.meta.` or a top-level `import`/`export` statement — CJS
+ * files (e.g. files using `module.exports` and `require`) are left
+ * untouched.
  *
  * Replacements:
  * - `import.meta.dirname`/`url`/`filename` → literal strings baked at
@@ -242,13 +244,25 @@ function optionalDepsStubPlugin(): EsbuildPlugin {
  * Deliberately does NOT touch `__filename`: ESM sources often contain
  * `const __filename = fileURLToPath(import.meta.url)` as a CJS-compat
  * fallback (e.g. koa-onerror), and a literal substitution would turn
- * the declaration into `const "/path" = ...` (syntax error). The
- * `__dirname` form `const __dirname = path.dirname(__filename)` does
- * not appear in our runtime dependency tree.
+ * the declaration into `const "/path" = ...` (syntax error).
+ *
+ * If the file declares `__dirname` or `__filename` locally (e.g.
+ * `@cnpmjs/packument` uses
+ * `const __dirname = new URL('.', import.meta.url).pathname` in the
+ * NAPI-RS style), the whole file is treated as opt-out — the local
+ * declaration already provides the right value and any substitution
+ * would break the declaration itself.
  */
 export function applyEsmPolyfill(contents: string, absPath: string): string | null {
   const isESM = contents.includes('import.meta.') || /^(?:import|export)\s/m.test(contents);
   if (!isESM) return null;
+
+  // Skip files that declare __dirname/__filename locally — the file
+  // already knows how to compute these, and substituting would turn
+  // the LHS of the declaration into a string literal (syntax error).
+  if (/^\s*(?:const|let|var)\s+(?:__dirname|__filename)\b/m.test(contents)) {
+    return null;
+  }
 
   const dirname = path.dirname(absPath);
   const url = pathToFileURL(absPath).href;
