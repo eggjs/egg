@@ -263,6 +263,64 @@ interface Manifest {
 }
 
 /**
+ * Resolve the framework's main entry file from its package.json.
+ *
+ * Supports multiple layouts:
+ * - Worktree/monorepo: `src/index.ts` (preferred when present)
+ * - Installed CJS: `dist/index.js` (via `main`)
+ * - Installed ESM/dual: resolved via `exports['.']`
+ *
+ * Returns the entry path plus all keys that should map to the framework
+ * module in the snapshot registry (so runtime lookups by either the
+ * package directory or the resolved entry file both hit).
+ */
+export function resolveFrameworkEntry(frameworkPath: string): { entryPath: string; registryKeys: string[] } {
+  const keys: string[] = [frameworkPath];
+
+  // Worktree/monorepo layout: prefer .ts source directly
+  const srcEntry = path.join(frameworkPath, 'src/index.ts');
+  if (existsSync(srcEntry)) {
+    keys.push(srcEntry, path.join(frameworkPath, 'src'));
+    return { entryPath: srcEntry, registryKeys: keys };
+  }
+
+  // Installed layout: read package.json
+  const pkgPath = path.join(frameworkPath, 'package.json');
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+
+  let relEntry: string | undefined;
+  const dotExport = pkg.exports?.['.'];
+  if (typeof dotExport === 'string') {
+    relEntry = dotExport;
+  } else if (dotExport && typeof dotExport === 'object') {
+    // conditional exports — try common conditions in priority order
+    const pick = (v: unknown): string | undefined => {
+      if (typeof v === 'string') return v;
+      if (v && typeof v === 'object') {
+        const o = v as Record<string, unknown>;
+        return pick(o.import) ?? pick(o.node) ?? pick(o.default) ?? pick(o.require);
+      }
+      return undefined;
+    };
+    relEntry = pick(dotExport);
+  }
+  relEntry ??= pkg.main ?? 'index.js';
+
+  const entryPath = path.resolve(frameworkPath, relEntry as string);
+  if (!existsSync(entryPath)) {
+    throw new Error(
+      `Framework entry not found: ${entryPath} (resolved from ${pkgPath}). ` +
+        'Ensure the package is built and has a valid "main" or "exports" field.',
+    );
+  }
+  keys.push(entryPath);
+  const entryDir = path.dirname(entryPath);
+  if (entryDir !== frameworkPath) keys.push(entryDir);
+
+  return { entryPath, registryKeys: keys };
+}
+
+/**
  * Generate an ESM snapshot entry file from the manifest.
  *
  * Reads `.egg/manifest.json`, collects all resolved module paths, and
@@ -330,12 +388,13 @@ function generateEntrySource(manifest: Manifest, baseDir: string, frameworkPath?
   ];
 
   // Optionally import the framework
+  let frameworkEntry: string | undefined;
+  let frameworkRegistryKeys: string[] = [];
   if (frameworkPath) {
-    const fwEntry = path.join(frameworkPath, 'src/index.ts');
-    const fwUrl = existsSync(fwEntry)
-      ? pathToFileURL(fwEntry).href
-      : pathToFileURL(path.join(frameworkPath, 'src/index.js')).href;
-    lines.push(`import * as framework from ${JSON.stringify(fwUrl)};`);
+    const resolved = resolveFrameworkEntry(frameworkPath);
+    frameworkEntry = resolved.entryPath;
+    frameworkRegistryKeys = resolved.registryKeys;
+    lines.push(`import * as framework from ${JSON.stringify(pathToFileURL(frameworkEntry).href)};`);
     lines.push('');
   }
 
@@ -357,12 +416,7 @@ function generateEntrySource(manifest: Manifest, baseDir: string, frameworkPath?
   // Register framework under multiple resolution keys
   if (frameworkPath) {
     lines.push('// Framework entry');
-    const fwEntry = path.join(frameworkPath, 'src/index.ts');
-    const fwPaths = [frameworkPath];
-    if (existsSync(fwEntry)) fwPaths.push(fwEntry);
-    const fwSrc = path.join(frameworkPath, 'src');
-    if (existsSync(fwSrc)) fwPaths.push(fwSrc);
-    for (const p of fwPaths) {
+    for (const p of frameworkRegistryKeys) {
       lines.push(`__moduleRegistry.set(${JSON.stringify(p)}, framework);`);
     }
     lines.push('');
@@ -390,9 +444,7 @@ function generateEntrySource(manifest: Manifest, baseDir: string, frameworkPath?
   lines.push('');
   lines.push('startupSnapshot.setDeserializeMainFunction(async () => {');
   lines.push('  const http = require("node:http");');
-  lines.push(
-    `  const frameworkMod = __moduleRegistry.get(${JSON.stringify(frameworkPath ? path.join(frameworkPath, 'src/index.ts') : '')}) || framework;`,
-  );
+  lines.push(`  const frameworkMod = __moduleRegistry.get(${JSON.stringify(frameworkEntry ?? '')}) || framework;`);
   lines.push('  const startEgg = frameworkMod.start ?? frameworkMod.startEgg;');
   lines.push('  if (typeof startEgg !== "function") {');
   lines.push('    throw new Error("Cannot find start/startEgg in snapshot framework module");');
