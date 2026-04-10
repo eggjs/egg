@@ -227,25 +227,53 @@ function optionalDepsStubPlugin(): EsbuildPlugin {
 }
 
 /**
- * esbuild plugin: polyfill import.meta.dirname/url/filename for CJS output.
+ * Pure transformation for ESM polyfill. Exported for unit testing.
+ *
+ * Returns the modified source, or `null` if the file is CJS (no ESM
+ * markers) or needs no changes. Detects ESM by presence of `import.meta.`
+ * or a top-level `import`/`export` statement — CJS files (e.g. files
+ * using `module.exports` and `require`) are left untouched.
+ *
+ * Replacements:
+ * - `import.meta.dirname`/`url`/`filename` → literal strings baked at
+ *   build time using the original source path
+ * - `__dirname` → literal absolute dirname of the original source
+ *
+ * Deliberately does NOT touch `__filename`: ESM sources often contain
+ * `const __filename = fileURLToPath(import.meta.url)` as a CJS-compat
+ * fallback (e.g. koa-onerror), and a literal substitution would turn
+ * the declaration into `const "/path" = ...` (syntax error). The
+ * `__dirname` form `const __dirname = path.dirname(__filename)` does
+ * not appear in our runtime dependency tree.
  */
-function importMetaPolyfillPlugin(): EsbuildPlugin {
+export function applyEsmPolyfill(contents: string, absPath: string): string | null {
+  const isESM = contents.includes('import.meta.') || /^(?:import|export)\s/m.test(contents);
+  if (!isESM) return null;
+
+  const dirname = path.dirname(absPath);
+  const url = pathToFileURL(absPath).href;
+
+  const modified = contents
+    .replace(/\bimport\.meta\.dirname\b/g, JSON.stringify(dirname))
+    .replace(/\bimport\.meta\.url\b/g, JSON.stringify(url))
+    .replace(/\bimport\.meta\.filename\b/g, JSON.stringify(absPath))
+    .replace(/\b__dirname\b/g, JSON.stringify(dirname));
+
+  return modified === contents ? null : modified;
+}
+
+/**
+ * esbuild plugin: polyfill ESM-only constructs (`import.meta.*`,
+ * `__dirname`) for CJS snapshot output. See {@link applyEsmPolyfill}.
+ */
+function esmPolyfillPlugin(): EsbuildPlugin {
   return {
-    name: 'import-meta-polyfill',
+    name: 'esm-polyfill',
     setup(build) {
       build.onLoad({ filter: /\.(ts|js|mjs|cjs)$/ }, async (args) => {
         const contents = await fs.readFile(args.path, 'utf8');
-        if (!contents.includes('import.meta.')) return null;
-
-        const dirname = path.dirname(args.path);
-        const url = pathToFileURL(args.path).href;
-
-        const modified = contents
-          .replace(/\bimport\.meta\.dirname\b/g, JSON.stringify(dirname))
-          .replace(/\bimport\.meta\.url\b/g, JSON.stringify(url))
-          .replace(/\bimport\.meta\.filename\b/g, JSON.stringify(args.path));
-
-        if (modified === contents) return null;
+        const modified = applyEsmPolyfill(contents, args.path);
+        if (modified === null) return null;
 
         const ext = path.extname(args.path);
         const loader = ext === '.ts' ? ('ts' as const) : ('js' as const);
@@ -638,7 +666,7 @@ export default class SnapshotBuild<T extends typeof SnapshotBuild> extends BaseC
         urllibStubPlugin(),
         optionalDepsStubPlugin(),
         fileUrlResolverPlugin(),
-        importMetaPolyfillPlugin(),
+        esmPolyfillPlugin(),
       ],
     });
 
