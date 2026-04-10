@@ -131,6 +131,15 @@ export class EggApplicationCore extends EggCore {
   #httpClient?: HttpClient;
   #loggers?: EggLoggers;
   #clusterClients: any[] = [];
+  #loadFinishedResolve!: () => void;
+  #loadFinishedReject!: (err: unknown) => void;
+
+  /**
+   * Promise that resolves when the `load()` method has finished.
+   * This is useful for callers that need to ensure config and metadata
+   * are fully loaded before proceeding.
+   */
+  readonly loadFinished: Promise<void>;
 
   readonly messenger: IMessenger;
   agent?: Agent;
@@ -153,6 +162,12 @@ export class EggApplicationCore extends EggCore {
       ...options,
     };
     super(options);
+
+    this.loadFinished = new Promise<void>((resolve, reject) => {
+      this.#loadFinishedResolve = resolve;
+      this.#loadFinishedReject = reject;
+    });
+
     /**
      * messenger instance
      * @member {Messenger}
@@ -165,8 +180,26 @@ export class EggApplicationCore extends EggCore {
     this.messenger.once('egg-ready', () => {
       this.lifecycle.triggerServerDidReady();
     });
+
+    // Register snapshot lifecycle hooks for non-serializable resources:
+    // - Messenger: holds process listeners (IPC) that cannot survive serialization
+    // - Loggers: hold file descriptors
+    // - unhandledRejection handler: process-level listener
+    // All are cleaned up during serialize and restored during deserialize,
+    // avoiding scattered `if (snapshot)` guards throughout the codebase.
+    this.lifecycle.addBootHook({
+      snapshotWillSerialize: () => this.snapshotWillSerialize(),
+      snapshotDidDeserialize: () => this.snapshotDidDeserialize(),
+    });
+
     this.lifecycle.registerBeforeStart(async () => {
-      await this.load();
+      try {
+        await this.load();
+        this.#loadFinishedResolve();
+      } catch (err) {
+        this.#loadFinishedReject(err);
+        throw err;
+      }
     }, 'load files');
   }
 
@@ -183,19 +216,23 @@ export class EggApplicationCore extends EggCore {
 
   protected async load(): Promise<void> {
     await this.loadConfig();
-    // dump config after ready, ensure all the modifications during start will be recorded
-    // make sure dumpConfig is the last ready callback
-    this.ready(() =>
-      process.nextTick(() => {
-        const dumpStartTime = Date.now();
-        this.dumpConfig();
-        this.dumpTiming();
-        this.dumpManifest();
-        ManifestStore.flushCompileCache();
-        this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
-      }),
-    );
-    this.#setupTimeoutTimer();
+    // In snapshot mode, skip runtime-only setup (dump, timeout timer).
+    // These will run after snapshot restore when the full lifecycle resumes.
+    if (!this.options.snapshot) {
+      // dump config after ready, ensure all the modifications during start will be recorded
+      // make sure dumpConfig is the last ready callback
+      this.ready(() =>
+        process.nextTick(() => {
+          const dumpStartTime = Date.now();
+          this.dumpConfig();
+          this.dumpTiming();
+          this.dumpManifest();
+          ManifestStore.flushCompileCache();
+          this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
+        }),
+      );
+      this.#setupTimeoutTimer();
+    }
 
     this.console.info('[egg] App root: %s', this.baseDir);
     this.console.info('[egg] All *.log files save on %j', this.config.logger.dir);
@@ -463,6 +500,36 @@ export class EggApplicationCore extends EggCore {
       err.name = 'unhandledRejectionError';
     }
     this.coreLogger.error(err);
+  }
+
+  /**
+   * Clean up non-serializable resources before V8 heap serialization.
+   * Closes messenger (IPC listeners), loggers (file descriptors),
+   * and removes the process-level unhandledRejection listener.
+   */
+  protected snapshotWillSerialize(): void {
+    this.messenger.close();
+    if (this.#loggers) {
+      for (const logger of this.#loggers.values()) {
+        logger.close();
+      }
+      this.#loggers = undefined;
+    }
+    process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
+  }
+
+  /**
+   * Restore non-serializable resources after V8 heap deserialization.
+   * Recreates messenger, re-registers the egg-ready listener,
+   * and re-attaches the process-level unhandledRejection listener.
+   * Loggers are lazily re-created via the `loggers` getter.
+   */
+  protected snapshotDidDeserialize(): void {
+    (this as { messenger: IMessenger }).messenger = createMessenger(this);
+    this.messenger.once('egg-ready', () => {
+      this.lifecycle.triggerServerDidReady();
+    });
+    process.on('unhandledRejection', this._unhandledRejectionHandler);
   }
 
   /**
