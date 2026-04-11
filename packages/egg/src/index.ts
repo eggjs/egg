@@ -41,9 +41,6 @@ export type {
 
 export * from './lib/start.ts';
 
-// export snapshot utilities
-export * from './lib/snapshot.ts';
-
 // export singleton
 export { Singleton, type SingletonCreateMethod, type SingletonOptions } from '@eggjs/core';
 

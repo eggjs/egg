@@ -405,7 +405,22 @@ export class Lifecycle extends EventEmitter {
 
   /**
    * Trigger snapshotWillSerialize on all boots in REVERSE order.
-   * Called by the build script before V8 serializes the heap.
+   *
+   * This is a general-purpose "clean up non-serializable resources" hook
+   * intended to run before a heap serialization mechanism captures application
+   * state. Each boot can implement `snapshotWillSerialize` to close file
+   * descriptors, drop process listeners, or release other resources that
+   * would otherwise prevent the heap from being serialized cleanly.
+   *
+   * NOTE: There is currently no caller that drives this hook under
+   * `node --build-snapshot`. A previous `buildSnapshot()` facade was removed
+   * because Node 22's mksnapshot blocks userland `require()`
+   * (MODULE_NOT_FOUND on any non-builtin) and rejects heap state containing
+   * non-zero async_hooks stacks — and egg's loader inherently creates async
+   * contexts that the event loop drain inside `SpinEventLoopInternal` cannot
+   * flush to depth 0. The hook API is kept as a stable abstraction for a
+   * future non-mksnapshot serialization mechanism (e.g. forked-worker
+   * snapshots) that does not have the same restrictions.
    */
   async triggerSnapshotWillSerialize(): Promise<void> {
     if (!this.options.snapshot) {
