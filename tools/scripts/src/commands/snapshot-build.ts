@@ -230,11 +230,10 @@ function optionalDepsStubPlugin(): EsbuildPlugin {
  * Pure transformation for ESM polyfill. Exported for unit testing.
  *
  * Returns the modified source, or `null` if the file is CJS (no ESM
- * markers), if the file declares `__dirname`/`__filename` locally, or
- * if no substitutions were needed. Detects ESM by presence of
- * `import.meta.` or a top-level `import`/`export` statement — CJS
- * files (e.g. files using `module.exports` and `require`) are left
- * untouched.
+ * markers), if the file declares `__dirname` at top-level, or if no
+ * substitutions were needed. Detects ESM by presence of `import.meta.`
+ * or a top-level `import`/`export` statement — CJS files (e.g. files
+ * using `module.exports` and `require`) are left untouched.
  *
  * Replacements:
  * - `import.meta.dirname`/`url`/`filename` → literal strings baked at
@@ -243,24 +242,28 @@ function optionalDepsStubPlugin(): EsbuildPlugin {
  *
  * Deliberately does NOT touch `__filename`: ESM sources often contain
  * `const __filename = fileURLToPath(import.meta.url)` as a CJS-compat
- * fallback (e.g. koa-onerror), and a literal substitution would turn
- * the declaration into `const "/path" = ...` (syntax error).
+ * fallback (e.g. koa-onerror), and literal substitution would turn the
+ * declaration into `const "/path" = ...` (syntax error). Because
+ * `__filename` is never substituted, a local `__filename` declaration
+ * is already safe and does NOT need to trigger opt-out.
  *
- * If the file declares `__dirname` or `__filename` locally (e.g.
- * `@cnpmjs/packument` uses
- * `const __dirname = new URL('.', import.meta.url).pathname` in the
- * NAPI-RS style), the whole file is treated as opt-out — the local
- * declaration already provides the right value and any substitution
- * would break the declaration itself.
+ * The opt-out check is top-level only: `@cnpmjs/packument` uses
+ * `const __dirname = new URL('.', import.meta.url).pathname` at module
+ * top-level, which is what we need to skip. Restricting to top-level
+ * (no leading whitespace) means nested-scope declarations — e.g.
+ * koa-onerror's function-body `  const __filename = fileURLToPath(...)`
+ * — don't accidentally opt out the whole file and lose the critical
+ * `__dirname` substitution in their CJS-compat branch.
  */
 export function applyEsmPolyfill(contents: string, absPath: string): string | null {
   const isESM = contents.includes('import.meta.') || /^(?:import|export)\s/m.test(contents);
   if (!isESM) return null;
 
-  // Skip files that declare __dirname/__filename locally — the file
-  // already knows how to compute these, and substituting would turn
-  // the LHS of the declaration into a string literal (syntax error).
-  if (/^\s*(?:const|let|var)\s+(?:__dirname|__filename)\b/m.test(contents)) {
+  // Skip files that declare __dirname at top level — substituting the
+  // LHS of the declaration would produce `const "/path" = ...`. Only
+  // __dirname is substituted below, so only __dirname declarations
+  // need to opt out; __filename is left untouched unconditionally.
+  if (/^(?:const|let|var)\s+__dirname\b/m.test(contents)) {
     return null;
   }
 

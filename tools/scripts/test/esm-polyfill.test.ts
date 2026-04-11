@@ -69,20 +69,25 @@ describe('test/esm-polyfill.test.ts', () => {
     });
   });
 
-  describe('local declaration opt-out', () => {
-    it('@cnpmjs/packument: top-level const __dirname = new URL(...)', () => {
+  describe('local declaration opt-out (top-level __dirname only)', () => {
+    it('@cnpmjs/packument: top-level const __dirname = new URL(...) → opt out', () => {
       const src = [
         "import { createRequire } from 'node:module';",
         'const require = createRequire(import.meta.url);',
         "const __dirname = new URL('.', import.meta.url).pathname;",
         "export const root = __dirname + '/assets';",
       ].join('\n');
-      // File declares __dirname locally — polyfill must NOT rewrite anything,
-      // otherwise the LHS becomes a string literal (syntax error).
+      // File declares __dirname at top level — polyfill must NOT rewrite
+      // anything, otherwise the LHS becomes a string literal (syntax error).
       assert.equal(applyEsmPolyfill(src, absPath), null);
     });
 
-    it('koa-onerror: nested const __filename inside function', () => {
+    it('top-level let __dirname → opt out', () => {
+      const src = "let __dirname = '/foo';\nexport const x = __dirname;";
+      assert.equal(applyEsmPolyfill(src, absPath), null);
+    });
+
+    it('koa-onerror: nested const __filename inside function body → keep substituting __dirname', () => {
       const src = [
         "import path from 'node:path';",
         "import { fileURLToPath } from 'node:url';",
@@ -94,30 +99,64 @@ describe('test/esm-polyfill.test.ts', () => {
         '  return path.dirname(__filename);',
         '}',
       ].join('\n');
-      // File locally declares __filename (even at inner scope). Opt out
-      // the whole file conservatively — regex can't tell top-level from
-      // nested without parsing, and a nested __dirname declaration would
-      // also break substitution.
-      assert.equal(applyEsmPolyfill(src, absPath), null);
+      const out = applyEsmPolyfill(src, absPath);
+      assert.ok(out, 'expected file to be polyfilled, not opted out');
+      // `__dirname` in the typeof guard AND the return are both substituted
+      // with the baked source dir.
+      assert.ok(out.includes(`typeof ${JSON.stringify(dirname)} === 'string'`));
+      assert.ok(out.includes(`return ${JSON.stringify(dirname)};`));
+      // Nested `const __filename = fileURLToPath(...)` declaration is intact:
+      // the polyfill never substitutes __filename, so the LHS is preserved.
+      assert.ok(out.includes('const __filename = fileURLToPath('));
+      // `import.meta.url` got baked.
+      assert.ok(out.includes(JSON.stringify(url)));
     });
 
-    it('top-level let __dirname', () => {
-      const src = "let __dirname = '/foo';\nexport const x = __dirname;";
-      assert.equal(applyEsmPolyfill(src, absPath), null);
+    it('nested-scope const __dirname inside function → opt out does NOT trigger (rare, top-level only)', () => {
+      // Indented `const __dirname = ...` inside a function body: the
+      // regex is anchored to line-starting const/let/var (no leading
+      // whitespace), so this does NOT trigger opt-out. The polyfill
+      // then runs and substitutes both the typeof check and the LHS
+      // of the nested declaration — which would be a syntax error at
+      // bundle time. This test documents the rare-case behavior; we
+      // intentionally prefer the koa-onerror-safe top-level-only rule
+      // because nested `const __dirname = ...` is genuinely uncommon.
+      const src = [
+        'function getDirname() {',
+        "  const __dirname = '/foo';",
+        '  return __dirname;',
+        '}',
+        'export { getDirname };',
+      ].join('\n');
+      const out = applyEsmPolyfill(src, absPath);
+      assert.ok(out, 'expected file to be polyfilled, not opted out');
+      // Both occurrences (including the declaration LHS) are substituted.
+      // The resulting file would be a syntax error if bundled, but that
+      // only matters for files with this rare nested pattern.
+      assert.ok(out.includes(`const ${JSON.stringify(dirname)} = '/foo';`));
+      assert.ok(out.includes(`return ${JSON.stringify(dirname)};`));
     });
 
-    it('top-level var __filename', () => {
-      const src = "var __filename = 'foo.js';\nexport const x = __filename;";
-      assert.equal(applyEsmPolyfill(src, absPath), null);
+    it('local `var __filename` does NOT trigger opt-out (only __dirname matters)', () => {
+      // __filename is never substituted, so a local __filename declaration
+      // is already safe and must not cause opt-out.
+      const src = [
+        "import { fileURLToPath } from 'node:url';",
+        'var __filename = fileURLToPath(import.meta.url);',
+        "export const x = __dirname + '/' + __filename;",
+      ].join('\n');
+      const out = applyEsmPolyfill(src, absPath);
+      assert.ok(out);
+      // __dirname substituted, __filename preserved
+      assert.ok(out.includes(`${JSON.stringify(dirname)} + '/' + __filename`));
+      assert.ok(out.includes('var __filename = fileURLToPath('));
+      // import.meta.url also substituted
+      assert.ok(out.includes(JSON.stringify(url)));
     });
 
     it('does not opt out on comments or unrelated const declarations', () => {
-      // Comments mentioning __dirname and unrelated `const x` declarations
-      // must NOT trigger opt-out — the regex is anchored to line-starting
-      // const/let/var *with* __dirname/__filename as the binding name.
       const src = "// use __dirname\nconst x = 1;\nexport const y = path.join(__dirname, 'foo');";
       const out = applyEsmPolyfill(src, absPath);
-      // Opt-out should NOT trigger → out is non-null and __dirname got substituted.
       assert.ok(out);
       assert.ok(out.includes(`path.join(${JSON.stringify(dirname)}, 'foo')`));
     });
