@@ -27,6 +27,8 @@ export async function cleanup(baseDir: string) {
       let type = 'unknown: ' + cmd;
       if (cmd.includes('start-cluster')) {
         type = 'master';
+      } else if (cmd.includes('start-single')) {
+        type = 'single';
       } else if (cmd.includes('app_worker.js')) {
         type = 'worker';
       } else if (cmd.includes('agent_worker.js')) {
@@ -34,7 +36,7 @@ export async function cleanup(baseDir: string) {
       }
 
       try {
-        process.kill(pid, type === 'master' ? '' : 'SIGKILL');
+        process.kill(pid, type === 'master' || type === 'single' ? '' : 'SIGKILL');
         console.log(`cleanup ${type} ${pid}`);
       } catch (err: any) {
         console.log(`cleanup ${type} ${pid} got error ${err.code || err.message || err}`);

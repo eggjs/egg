@@ -31,7 +31,10 @@
     "./baseCommand": "./src/baseCommand.ts",
     "./commands/start": "./src/commands/start.ts",
     "./commands/stop": "./src/commands/stop.ts",
+    "./esm-polyfill": "./src/esm-polyfill.ts",
+    "./file-url-resolver": "./src/file-url-resolver.ts",
     "./helper": "./src/helper.ts",
+    "./resolve-framework-entry": "./src/resolve-framework-entry.ts",
     "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
@@ -42,7 +45,10 @@
       "./baseCommand": "./dist/baseCommand.js",
       "./commands/start": "./dist/commands/start.js",
       "./commands/stop": "./dist/commands/stop.js",
+      "./esm-polyfill": "./dist/esm-polyfill.js",
+      "./file-url-resolver": "./dist/file-url-resolver.js",
       "./helper": "./dist/helper.js",
+      "./resolve-framework-entry": "./dist/resolve-framework-entry.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
@@ -56,9 +62,11 @@
   "dependencies": {
     "@eggjs/utils": "workspace:*",
     "@oclif/core": "catalog:",
+    "esbuild": "catalog:",
     "node-homedir": "catalog:",
     "runscript": "catalog:",
     "source-map-support": "catalog:",
+    "tsx": "catalog:",
     "utility": "catalog:"
   },
   "devDependencies": {
