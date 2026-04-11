@@ -1,3 +1,4 @@
+export { EntryGenerator, type EntryGeneratorOptions, type GeneratedEntries } from './lib/EntryGenerator.ts';
 export { ExternalsResolver, type ExternalsConfig, type ExternalsResolverOptions } from './lib/ExternalsResolver.ts';
 export { ManifestLoader, type ManifestLoaderOptions } from './lib/ManifestLoader.ts';
 export {
