@@ -1,0 +1,7 @@
+{
+  "name": "tegg-app-foo",
+  "type": "module",
+  "eggModule": {
+    "name": "foo"
+  }
+}
