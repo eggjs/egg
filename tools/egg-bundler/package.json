@@ -52,7 +52,8 @@
   },
   "dependencies": {
     "@eggjs/core": "workspace:*",
-    "@utoo/pack": "catalog:"
+    "@utoo/pack": "catalog:",
+    "tsx": "catalog:"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",

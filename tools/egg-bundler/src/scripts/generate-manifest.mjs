@@ -18,7 +18,18 @@ async function main() {
   const { ManifestStore } = await import('@eggjs/core');
   ManifestStore.clean(options.baseDir);
 
-  const framework = options.framework ? await import(options.framework) : await import('egg');
+  // `frameworkEntry` (a file:// URL to the package's real entry file) is the
+  // only way to load a workspace-linked framework whose `exports` map points at
+  // a TypeScript source. Importing the package directory directly would bypass
+  // `exports` and fall through to legacy directory resolution.
+  let framework;
+  if (options.frameworkEntry) {
+    framework = await import(options.frameworkEntry);
+  } else if (options.framework) {
+    framework = await import(options.framework);
+  } else {
+    framework = await import('egg');
+  }
 
   const app = await framework.start({
     baseDir: options.baseDir,
