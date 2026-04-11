@@ -394,7 +394,32 @@ export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
   isESM = false;
 }
 
+/**
+ * Module loader for bundled egg apps. Called with the raw `importModule()`
+ * filepath (posix-normalized) before `importResolve`, so bundled apps can
+ * serve modules that no longer exist on disk. Return `undefined` to fall
+ * through to the standard import path.
+ */
+export type BundleModuleLoader = (filepath: string) => unknown;
+
+let _bundleModuleLoader: BundleModuleLoader | undefined;
+
+export function setBundleModuleLoader(loader: BundleModuleLoader | undefined): void {
+  _bundleModuleLoader = loader;
+  if (loader) isESM = false;
+}
+
 export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
+  if (_bundleModuleLoader) {
+    const hit = _bundleModuleLoader(filepath.replaceAll('\\', '/'));
+    if (hit !== undefined) {
+      let obj = hit as any;
+      if (obj?.default?.__esModule === true && 'default' in obj.default) obj = obj.default;
+      if (options?.importDefaultOnly && obj && typeof obj === 'object' && 'default' in obj) obj = obj.default;
+      return obj;
+    }
+  }
+
   const moduleFilePath = importResolve(filepath, options);
 
   if (_snapshotModuleLoader) {
