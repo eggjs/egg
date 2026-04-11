@@ -46,7 +46,7 @@ const DEFAULT_BUILD_FUNC: BuildFunc = async (wrapped, projectPath, rootPath) => 
   const mod = require('@utoo/pack/cjs/commands/build.js') as {
     build: (options: unknown, projectPath?: string, rootPath?: string) => Promise<void>;
   };
-  await mod.build(wrapped.config, projectPath, rootPath);
+  await mod.build(wrapped, projectPath, rootPath);
 };
 
 export class PackRunner {
