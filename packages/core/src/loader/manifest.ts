@@ -53,7 +53,30 @@ export class ManifestStore {
    * Load and validate manifest from `.egg/manifest.json`.
    * Returns null if manifest doesn't exist or is invalid.
    */
+  static #bundleStore: ManifestStore | undefined;
+
+  /**
+   * Register a pre-built manifest store for bundled egg apps. When set,
+   * `ManifestStore.load()` returns this store unconditionally, bypassing
+   * disk reads and invalidation checks. The bundler-generated entry calls
+   * this at startup before creating the Application.
+   */
+  static setBundleStore(store: ManifestStore | undefined): void {
+    ManifestStore.#bundleStore = store;
+  }
+
+  /**
+   * Return the registered bundle store, if any.
+   */
+  static getBundleStore(): ManifestStore | undefined {
+    return ManifestStore.#bundleStore;
+  }
+
   static load(baseDir: string, serverEnv: string, serverScope: string): ManifestStore | null {
+    if (ManifestStore.#bundleStore) {
+      debug('load: returning registered bundle store');
+      return ManifestStore.#bundleStore;
+    }
     if (serverEnv === 'local' && process.env.EGG_MANIFEST !== 'true') {
       debug('skip manifest in local env (set EGG_MANIFEST=true to enable)');
       return null;
