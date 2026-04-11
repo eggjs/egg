@@ -30,30 +30,90 @@ function fileUrlResolverPlugin(): EsbuildPlugin {
 }
 
 /**
- * esbuild plugin: replace `urllib` with a lightweight stub.
+ * Build the lazy-Proxy module source that defers `require(<specifier>)`
+ * until the first property access. Used by plugins that need to skip
+ * loading a module at `--build-snapshot` time (when it depends on
+ * WebAssembly, native bindings, or other snapshot-hostile features)
+ * while still exposing the real exports at restore time.
  *
- * urllib (via undici) compiles a WASM llhttp parser at module-evaluation
- * time. WebAssembly is not available inside `node --build-snapshot`, so
- * we replace urllib with a minimal stub. At snapshot restore time,
- * `registerSnapshotCallbacks()` patches in the real urllib.
+ * Safe for any caller that does `const x = require('<specifier>')` and
+ * only accesses properties later (at method-call time). Callers that
+ * destructure at module-eval top level — `const { Foo } = require('x')`
+ * — will still trigger the real require at build time, because the
+ * destructuring invokes the Proxy's `get` trap immediately.
  */
-function urllibStubPlugin(): EsbuildPlugin {
+export function lazyRequireProxySource(specifier: string): string {
+  const requireCall = `require(${JSON.stringify(specifier)})`;
+  return `
+    let _real;
+    function getReal() {
+      if (!_real) _real = ${requireCall};
+      return _real;
+    }
+    module.exports = new Proxy({}, {
+      get(_, prop) {
+        if (prop === '__esModule') return false;
+        if (prop === 'default') return module.exports;
+        return getReal()[prop];
+      },
+      set(_, prop, value) { getReal()[prop] = value; return true; },
+      has(_, prop) { if (!_real) return false; return prop in _real; },
+      ownKeys() { if (!_real) return []; return Reflect.ownKeys(_real); },
+      getOwnPropertyDescriptor(_, prop) {
+        if (!_real) return undefined;
+        return Object.getOwnPropertyDescriptor(_real, prop);
+      },
+    });
+  `;
+}
+
+/**
+ * esbuild plugin: defer loading `urllib` via a lazy Proxy.
+ *
+ * urllib transitively pulls in undici, which compiles llhttp as a
+ * WebAssembly module. WebAssembly is not available inside
+ * `node --build-snapshot`, so we replace urllib at build time with a
+ * lazy Proxy whose `get` trap calls `require('urllib')` only on first
+ * property access. At restore time, egg-httpclient / Egg's
+ * `ctx.curl()` exercise urllib for real — the proxy forwards cleanly.
+ */
+function urllibDeferPlugin(): EsbuildPlugin {
   return {
-    name: 'urllib-stub',
+    name: 'urllib-defer',
     setup(build) {
-      build.onResolve({ filter: /^urllib$/ }, () => ({
-        path: 'urllib',
-        namespace: 'urllib-stub',
+      build.onResolve({ filter: /^urllib$/ }, (args) => {
+        if (args.namespace === 'urllib-defer') return { path: 'urllib', external: true };
+        return { path: 'urllib', namespace: 'urllib-defer' };
+      });
+      build.onLoad({ filter: /.*/, namespace: 'urllib-defer' }, () => ({
+        contents: lazyRequireProxySource('urllib'),
+        loader: 'js',
       }));
-      build.onLoad({ filter: /.*/, namespace: 'urllib-stub' }, () => ({
-        contents: `
-          class HttpClient {
-            constructor(options) { this.options = options || {}; }
-            async request() { throw new Error('urllib stub: not available during snapshot build'); }
-          }
-          module.exports = { HttpClient };
-          module.exports.default = { HttpClient };
-        `,
+    },
+  };
+}
+
+/**
+ * esbuild plugin: defer loading `undici` via a lazy Proxy.
+ *
+ * Some deps (`@elastic/transport`, etc.) require undici directly
+ * instead of going through urllib. undici's `client-h1.js` initializes
+ * an llhttp WebAssembly parser during its internal `connectH1` path,
+ * and deep callers reference `WebAssembly` synchronously — which
+ * triggers `ReferenceError: WebAssembly is not defined` under
+ * `node --build-snapshot`. Route undici through the same lazy Proxy
+ * pattern as urllib so the real module is only loaded at restore time.
+ */
+function undiciDeferPlugin(): EsbuildPlugin {
+  return {
+    name: 'undici-defer',
+    setup(build) {
+      build.onResolve({ filter: /^undici$/ }, (args) => {
+        if (args.namespace === 'undici-defer') return { path: 'undici', external: true };
+        return { path: 'undici', namespace: 'undici-defer' };
+      });
+      build.onLoad({ filter: /.*/, namespace: 'undici-defer' }, () => ({
+        contents: lazyRequireProxySource('undici'),
         loader: 'js',
       }));
     },
@@ -680,7 +740,8 @@ export default class SnapshotBuild<T extends typeof SnapshotBuild> extends BaseC
       plugins: [
         httpDeferPlugin(),
         http2DeferPlugin(),
-        urllibStubPlugin(),
+        urllibDeferPlugin(),
+        undiciDeferPlugin(),
         optionalDepsStubPlugin(),
         fileUrlResolverPlugin(),
         esmPolyfillPlugin(),
