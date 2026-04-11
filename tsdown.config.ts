@@ -26,7 +26,10 @@ export default defineConfig({
 
   // Default entry pattern - glob to include all source files
   entry: 'src/**/*.ts',
-  // should set unbundle and external together, avoid bundle @eggjs/* and egg packages
+  // should set unbundle and external together, avoid bundle @eggjs/* and egg packages.
+  // `@utoo/pack` ships prebuilt NAPI-RS binaries (`*.node`), and its transitive
+  // `domparser-rs` does the same — rolldown cannot analyse those binary files,
+  // so keep both the package and any `.node` binary fully external.
   unbundle: true,
-  external: [/^@eggjs\//, 'egg'],
+  external: [/^@eggjs\//, 'egg', '@utoo/pack', /\.node$/],
 });
