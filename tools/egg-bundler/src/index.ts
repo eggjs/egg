@@ -1,3 +1,4 @@
+export { Bundler } from './lib/Bundler.ts';
 export { EntryGenerator, type EntryGeneratorOptions, type GeneratedEntries } from './lib/EntryGenerator.ts';
 export { ExternalsResolver, type ExternalsConfig, type ExternalsResolverOptions } from './lib/ExternalsResolver.ts';
 export { ManifestLoader, type ManifestLoaderOptions } from './lib/ManifestLoader.ts';
@@ -9,6 +10,7 @@ export {
   type PackRunnerResult,
 } from './lib/PackRunner.ts';
 
+import { Bundler } from './lib/Bundler.ts';
 import type { BuildFunc } from './lib/PackRunner.ts';
 
 export interface BundlerExternalsConfig {
@@ -53,6 +55,6 @@ export interface BundleResult {
   readonly manifestPath: string;
 }
 
-export async function bundle(_config: BundlerConfig): Promise<BundleResult> {
-  throw new Error('@eggjs/egg-bundler: bundle() is not implemented yet (T8)');
+export async function bundle(config: BundlerConfig): Promise<BundleResult> {
+  return new Bundler(config).run();
 }

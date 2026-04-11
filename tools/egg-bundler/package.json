@@ -22,6 +22,8 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./lib/Bundler": "./src/lib/Bundler.ts",
+    "./lib/EntryGenerator": "./src/lib/EntryGenerator.ts",
     "./lib/ExternalsResolver": "./src/lib/ExternalsResolver.ts",
     "./lib/ManifestLoader": "./src/lib/ManifestLoader.ts",
     "./lib/PackRunner": "./src/lib/PackRunner.ts",
@@ -31,6 +33,8 @@
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./lib/Bundler": "./dist/lib/Bundler.js",
+      "./lib/EntryGenerator": "./dist/lib/EntryGenerator.js",
       "./lib/ExternalsResolver": "./dist/lib/ExternalsResolver.js",
       "./lib/ManifestLoader": "./dist/lib/ManifestLoader.js",
       "./lib/PackRunner": "./dist/lib/PackRunner.js",
