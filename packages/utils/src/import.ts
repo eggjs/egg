@@ -376,8 +376,6 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
  */
 export type SnapshotModuleLoader = (resolvedPath: string) => any;
 
-let _snapshotModuleLoader: SnapshotModuleLoader | undefined;
-
 /**
  * Register a snapshot module loader that intercepts `importModule()` calls.
  *
@@ -388,9 +386,11 @@ let _snapshotModuleLoader: SnapshotModuleLoader | undefined;
  *
  * Also sets `isESM = false` because the snapshot bundle is CJS and
  * esbuild's `import.meta` polyfill causes incorrect ESM detection.
+ *
+ * Uses globalThis so that bundled and external copies share the same loader.
  */
 export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
-  _snapshotModuleLoader = loader;
+  (globalThis as any).__EGG_SNAPSHOT_MODULE_LOADER__ = loader;
   isESM = false;
 }
 
@@ -402,14 +402,17 @@ export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
  */
 export type BundleModuleLoader = (filepath: string) => unknown;
 
-let _bundleModuleLoader: BundleModuleLoader | undefined;
-
+/**
+ * Register a bundle module loader. Uses globalThis so that bundled and
+ * external copies of @eggjs/utils share the same loader.
+ */
 export function setBundleModuleLoader(loader: BundleModuleLoader | undefined): void {
-  _bundleModuleLoader = loader;
+  (globalThis as any).__EGG_BUNDLE_MODULE_LOADER__ = loader;
   if (loader) isESM = false;
 }
 
 export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
+  const _bundleModuleLoader: BundleModuleLoader | undefined = (globalThis as any).__EGG_BUNDLE_MODULE_LOADER__;
   if (_bundleModuleLoader) {
     const hit = _bundleModuleLoader(filepath.replaceAll('\\', '/'));
     if (hit !== undefined) {
@@ -422,6 +425,7 @@ export async function importModule(filepath: string, options?: ImportModuleOptio
 
   const moduleFilePath = importResolve(filepath, options);
 
+  const _snapshotModuleLoader: SnapshotModuleLoader | undefined = (globalThis as any).__EGG_SNAPSHOT_MODULE_LOADER__;
   if (_snapshotModuleLoader) {
     let obj = _snapshotModuleLoader(moduleFilePath);
     if (obj && typeof obj === 'object' && obj.default?.__esModule === true && obj.default && 'default' in obj.default) {

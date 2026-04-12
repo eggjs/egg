@@ -63,12 +63,14 @@ export class ExternalsResolver {
   async #shouldExternalize(name: string, peerDeps: ReadonlySet<string>): Promise<boolean> {
     if (peerDeps.has(name)) return true;
     if (ALWAYS_EXTERNAL_NAMES.has(name)) return true;
-    if (name === 'egg' || name.startsWith('@eggjs/')) return true;
+    if (name === 'egg') return true;
 
     const pkgDir = await this.#findPackageDir(name);
     if (!pkgDir) return false;
     if (await this.#hasNativeBinary(pkgDir)) return true;
-    if (await this.#isEsmOnly(pkgDir)) return true;
+    // ESM-only packages are NOT externalized: turbopack can bundle ESM
+    // natively, while externalizing them would emit CJS require() which
+    // fails for packages without a CJS entry.
     return false;
   }
 
