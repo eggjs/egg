@@ -71,6 +71,15 @@ export class PackRunner {
     await fs.writeFile(path.join(outputDir, 'tsconfig.json'), JSON.stringify(OUTPUT_TSCONFIG, null, 2));
     await fs.writeFile(path.join(outputDir, 'package.json'), JSON.stringify(OUTPUT_PACKAGE_JSON, null, 2));
 
+    // UMD-form externals ({ commonjs, root }) make @utoo/pack's standalone
+    // output emit a `require(name)` branch under `typeof exports === 'object'`,
+    // which is what node picks. Plain string externals only emit the
+    // `globalThis[name]` branch, unusable for direct node execution.
+    const umdExternals: Record<string, { commonjs: string; root: string }> = {};
+    for (const [k, v] of Object.entries(externals)) {
+      umdExternals[k] = { commonjs: v, root: v };
+    }
+
     const config = {
       entry: entries.map((e) => ({ name: e.name, import: e.filepath })),
       target: 'node 22',
@@ -80,7 +89,7 @@ export class PackRunner {
         path: outputDir,
         type: 'standalone',
       },
-      externals,
+      externals: umdExternals,
       optimization: {
         treeShaking: false,
         minify: false,

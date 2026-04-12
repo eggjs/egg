@@ -73,6 +73,7 @@ export class Bundler {
       baseDir: absBaseDir,
       manifestLoader,
       framework,
+      externals: new Set(Object.keys(externalsMap)),
     });
     const entries = await wrapStep('entry generation', () => entryGen.generate());
     debug('generated worker entry: %s', entries.workerEntry);
@@ -88,6 +89,18 @@ export class Bundler {
     });
     const packResult = await wrapStep('pack build', () => packRunner.run());
     debug('pack produced %d files', packResult.files.length);
+
+    // Merge project name into output package.json so the framework's
+    // getAppname() finds it (it reads baseDir/package.json).
+    const outputPkgPath = path.join(absOutputDir, 'package.json');
+    await wrapStep('patch output package.json', async () => {
+      const srcPkg = JSON.parse(await fs.readFile(path.join(absBaseDir, 'package.json'), 'utf8')) as {
+        name?: string;
+      };
+      const outPkg = JSON.parse(await fs.readFile(outputPkgPath, 'utf8')) as Record<string, unknown>;
+      if (srcPkg.name) outPkg.name = srcPkg.name;
+      await fs.writeFile(outputPkgPath, JSON.stringify(outPkg, null, 2));
+    });
 
     const manifestPathAbs = path.join(absOutputDir, BUNDLE_MANIFEST_FILENAME);
     const bundleManifest: BundleManifest = {

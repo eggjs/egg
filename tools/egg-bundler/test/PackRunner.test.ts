@@ -79,7 +79,7 @@ describe('PackRunner', () => {
     await expect(fs.stat(deepOut)).resolves.toBeTruthy();
   });
 
-  it('passes a pack config with entry[], target node 22, platform node, standalone output, and externals through to buildFunc', async () => {
+  it('passes a pack config with entry[], target node 22, platform node, standalone output, and UMD-form externals through to buildFunc', async () => {
     const buildFunc = vi.fn<BuildFunc>(async () => {});
     const entries: PackEntry[] = [
       { name: 'worker', filepath: '/abs/worker.entry.ts' },
@@ -99,7 +99,11 @@ describe('PackRunner', () => {
     expect(config.target).toBe('node 22');
     expect(config.platform).toBe('node');
     expect(config.output).toEqual({ path: path.join(tmpDir, 'out'), type: 'standalone' });
-    expect(config.externals).toEqual(externals);
+    // Externals must be UMD-form ({ commonjs, root }) so @utoo/pack standalone
+    // output emits `require(name)` for CJS runtime (not globalThis[name]).
+    expect(config.externals).toEqual({
+      '@eggjs/core': { commonjs: '@eggjs/core', root: '@eggjs/core' },
+    });
     expect(projectPath).toBe(tmpDir);
     expect(rootPath).toBe(tmpDir);
   });
