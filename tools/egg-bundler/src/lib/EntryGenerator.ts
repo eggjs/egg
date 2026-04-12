@@ -240,7 +240,13 @@ setBundleModuleLoader((filepath) => {
   return __BUNDLE_MAP[key];
 });
 
-startEgg({ baseDir: __baseDir, mode: 'single' }).catch((err) => {
+startEgg({ baseDir: __baseDir, mode: 'single' }).then((app) => {
+  const port = process.env.PORT || app.config.cluster?.listen?.port || 7001;
+  app.listen(port, () => {
+    // eslint-disable-next-line no-console
+    console.log('[egg-bundler] server listening on port %s', port);
+  });
+}).catch((err) => {
   // eslint-disable-next-line no-console
   console.error('[egg-bundler] failed to start bundled app:', err);
   process.exit(1);
