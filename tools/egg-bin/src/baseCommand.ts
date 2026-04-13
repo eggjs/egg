@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
+
 import { Command, Flags, Interfaces } from '@oclif/core';
 
 import { type PackageEgg } from './types.ts';
