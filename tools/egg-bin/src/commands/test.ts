@@ -12,8 +12,13 @@ import { startVitest } from 'vitest/node';
 import type { InlineConfig as VitestConfig } from 'vitest/node';
 
 import { BaseCommand, ForkError } from '../baseCommand.ts';
+import { readPackageJSON } from '../utils.ts';
 
 const debug = debuglog('egg/bin/commands/test');
+
+function hasDependency(pkg: Record<string, any>, name: string): boolean {
+  return !!(pkg.dependencies?.[name] || pkg.devDependencies?.[name] || pkg.peerDependencies?.[name]);
+}
 
 export default class Test<T extends typeof Test> extends BaseCommand<T> {
   static override args = {
@@ -210,40 +215,52 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     const requires = await this.formatRequires();
     setupFiles.push(...requires);
 
-    // auto add @eggjs/mock/setup_vitest for egg applications
+    // auto add @eggjs/mock/setup_vitest for egg applications that declare
+    // @eggjs/mock as a dependency. The dependency check prevents false
+    // positives with flat-hoisting package managers (npm/utoo) where
+    // importResolve would find @eggjs/mock hoisted to workspace root even
+    // when the project doesn't use it.
     const eggType = await detectType(flags.base);
     debug('eggType: %s', eggType);
     if (eggType === EggType.application) {
-      try {
-        const mockSetup = importResolve('@eggjs/mock/setup_vitest', {
-          paths: [flags.base],
-        });
-        setupFiles.push(mockSetup);
-        debug('auto add @eggjs/mock/setup_vitest: %o', mockSetup);
-      } catch (err) {
-        if (!(err instanceof ImportResolveError)) throw err;
-        debug('skip @eggjs/mock/setup_vitest: @eggjs/mock not installed');
+      const projectPkg = await readPackageJSON(flags.base);
+      const hasMockDep = hasDependency(projectPkg, '@eggjs/mock');
+      debug('hasMockDep: %s', hasMockDep);
+      if (hasMockDep) {
+        try {
+          const mockSetup = importResolve('@eggjs/mock/setup_vitest', {
+            paths: [flags.base],
+          });
+          setupFiles.push(mockSetup);
+          debug('auto add @eggjs/mock/setup_vitest: %o', mockSetup);
+        } catch (err) {
+          if (!(err instanceof ImportResolveError)) throw err;
+          debug('skip @eggjs/mock/setup_vitest: @eggjs/mock not installed');
+        }
       }
     }
 
-    // auto detect @eggjs/tegg-vitest/runner
-    // Try resolving from the project first, then from egg-bin's own dependencies.
-    // This ensures tegg context injection works even when the project doesn't
-    // explicitly depend on @eggjs/tegg-vitest (e.g. cnpmcore).
+    // auto detect @eggjs/tegg-vitest/runner — only when the project declares
+    // @eggjs/tegg or @eggjs/tegg-vitest as a dependency (same flat-hoisting
+    // guard as above).
     let runner: string | undefined;
-    for (const resolveFrom of [flags.base, import.meta.dirname]) {
-      try {
-        runner = importResolve('@eggjs/tegg-vitest/runner', {
-          paths: [resolveFrom],
-        });
-        debug('auto use @eggjs/tegg-vitest/runner from %s: %o', resolveFrom, runner);
-        break;
-      } catch (err) {
-        if (!(err instanceof ImportResolveError)) throw err;
+    const projectPkg = await readPackageJSON(flags.base);
+    const hasTeggDep = hasDependency(projectPkg, '@eggjs/tegg') || hasDependency(projectPkg, '@eggjs/tegg-vitest');
+    if (hasTeggDep) {
+      for (const resolveFrom of [flags.base, import.meta.dirname]) {
+        try {
+          runner = importResolve('@eggjs/tegg-vitest/runner', {
+            paths: [resolveFrom],
+          });
+          debug('auto use @eggjs/tegg-vitest/runner from %s: %o', resolveFrom, runner);
+          break;
+        } catch (err) {
+          if (!(err instanceof ImportResolveError)) throw err;
+        }
       }
     }
     if (!runner) {
-      debug('skip @eggjs/tegg-vitest/runner: not resolvable');
+      debug('skip @eggjs/tegg-vitest/runner: not resolvable or not a dependency');
     }
 
     return {
