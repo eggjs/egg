@@ -350,30 +350,7 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
       try {
         moduleFilePath = import.meta.resolve(filepath);
       } catch (err) {
-        // Fallback: require.resolve for CJS subpaths without exports field
-        // (e.g. tsconfig-paths/register). Scope-check the result to prevent
-        // require.resolve's directory-tree walk from escaping the caller's
-        // intended paths — without this, hoisted packages (e.g. @eggjs/mock
-        // at workspace root) get resolved from deep fixture directories,
-        // adding heavy startup overhead to every forked test process.
         debug('[importResolve:error] import.meta.resolve %o => %o, options: %o', filepath, err, options);
-        try {
-          moduleFilePath = getRequire().resolve(filepath, { paths });
-          // Scope check: verify the package is directly accessible from one of
-          // the provided paths (exists in its node_modules). This prevents
-          // require.resolve's directory-tree walk from resolving packages
-          // hoisted far above the caller's intended scope. Uses fs.existsSync
-          // which follows symlinks, so pnpm's .pnpm layout works correctly.
-          const pkgName = filepath.startsWith('@') ? filepath.split('/').slice(0, 2).join('/') : filepath.split('/')[0];
-          const inScope = paths.some((p) => fs.existsSync(path.join(p, 'node_modules', pkgName)));
-          if (inScope) {
-            debug('[importResolve:requireResolveFallback] %o => %o', filepath, moduleFilePath);
-            return moduleFilePath;
-          }
-          debug('[importResolve:requireResolveFallback:outOfScope] %o => %o (rejected)', filepath, moduleFilePath);
-        } catch {
-          // require.resolve also failed, fall through
-        }
         throw new ImportResolveError(filepath, paths, err as Error);
       }
       if (moduleFilePath.startsWith('file://')) {
