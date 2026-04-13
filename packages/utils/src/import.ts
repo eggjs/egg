@@ -359,8 +359,13 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
         debug('[importResolve:error] import.meta.resolve %o => %o, options: %o', filepath, err, options);
         try {
           moduleFilePath = getRequire().resolve(filepath, { paths });
-          const resolvedDir = path.resolve(moduleFilePath);
-          const inScope = paths.some((p) => resolvedDir.startsWith(path.resolve(p) + path.sep));
+          // Scope check: verify the package is directly accessible from one of
+          // the provided paths (exists in its node_modules). This prevents
+          // require.resolve's directory-tree walk from resolving packages
+          // hoisted far above the caller's intended scope. Uses fs.existsSync
+          // which follows symlinks, so pnpm's .pnpm layout works correctly.
+          const pkgName = filepath.startsWith('@') ? filepath.split('/').slice(0, 2).join('/') : filepath.split('/')[0];
+          const inScope = paths.some((p) => fs.existsSync(path.join(p, 'node_modules', pkgName)));
           if (inScope) {
             debug('[importResolve:requireResolveFallback] %o => %o', filepath, moduleFilePath);
             return moduleFilePath;
