@@ -363,7 +363,7 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
       // workspace root even when they are not dependencies of the project
       // at `paths`. Enforce the paths constraint by verifying the package
       // is directly accessible from at least one paths entry.
-      if (!isAbsolute && !isRelativePath(filepath)) {
+      if (options?.paths && !isAbsolute && !isRelativePath(filepath)) {
         const pkgName = filepath.startsWith('@') ? filepath.split('/').slice(0, 2).join('/') : filepath.split('/')[0];
         const inScope = paths.some((p) => fs.existsSync(path.join(p, 'node_modules', pkgName)));
         if (!inScope) {
