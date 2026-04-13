@@ -351,24 +351,6 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
         moduleFilePath = import.meta.resolve(filepath);
       } catch (err) {
         debug('[importResolve:error] import.meta.resolve %o => %o, options: %o', filepath, err, options);
-        // Fallback for CJS bare specifiers without `exports` field (e.g.
-        // tsconfig-paths/register). Only for bare specifiers — absolute and
-        // relative paths are never CJS package subpaths.
-        if (!isAbsolute && !isRelativePath(filepath)) {
-          try {
-            moduleFilePath = getRequire().resolve(filepath, { paths });
-            const pkgName = filepath.startsWith('@') ? filepath.split('/').slice(0, 2).join('/') : filepath.split('/')[0];
-            const pkgJsonPath = getRequire().resolve(`${pkgName}/package.json`, { paths });
-            const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8'));
-            if (!pkg.exports) {
-              debug('[importResolve:cjsFallback] %o => %o (no exports field)', filepath, moduleFilePath);
-              return moduleFilePath;
-            }
-            debug('[importResolve:cjsFallback:rejected] %o has exports field, skip fallback', pkgName);
-          } catch {
-            // require.resolve also failed, fall through
-          }
-        }
         throw new ImportResolveError(filepath, paths, err as Error);
       }
       if (moduleFilePath.startsWith('file://')) {

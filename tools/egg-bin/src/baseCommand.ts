@@ -1,10 +1,10 @@
 import { fork, type ForkOptions, ChildProcess } from 'node:child_process';
+import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
-import { importResolve } from '@eggjs/utils';
 import { Command, Flags, Interfaces } from '@oclif/core';
 
 import { type PackageEgg } from './types.ts';
@@ -207,12 +207,22 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     // try app baseDir first on custom tscompiler
     // then try to find tscompiler in @eggjs/bin/node_modules
     const findPaths: string[] = [flags.base, rootDir];
+    // Use createRequire for CJS package resolution (ts-node, tsconfig-paths).
+    // importResolve uses import.meta.resolve which is lexically scoped to
+    // @eggjs/utils, not the caller — createRequire resolves from the correct
+    // location regardless of package manager layout (pnpm/npm/utoo).
+    const cjsResolve = (specifier: string): string => {
+      for (const p of findPaths) {
+        try {
+          return createRequire(path.join(p, 'package.json')).resolve(specifier);
+        } catch { /* try next path */ }
+      }
+      throw new Error(`Cannot resolve '${specifier}' from ${findPaths.join(', ')}`);
+    };
     this.isESM = pkg.type === 'module';
     if (typescript) {
       flags.tscompiler = flags.tscompiler ?? 'ts-node/register';
-      const tsNodeRegister = importResolve(flags.tscompiler, {
-        paths: findPaths,
-      });
+      const tsNodeRegister = cjsResolve(flags.tscompiler);
       flags.tscompiler = tsNodeRegister;
       // should require tsNodeRegister on current process, let it can require *.ts files
       // e.g.: dev command will execute egg loader to find configs and plugins
@@ -228,16 +238,12 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       this.env.TS_NODE_FILES = process.env.TS_NODE_FILES ?? 'true';
       // keep same logic with egg-core, test cmd load files need it
       // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L49
-      const tsConfigPathsRegister = importResolve('tsconfig-paths/register', {
-        paths: findPaths,
-      });
+      const tsConfigPathsRegister = cjsResolve('tsconfig-paths/register');
       this.addNodeOptions(this.formatImportModule(tsConfigPathsRegister));
     }
     if (this.isESM) {
       // use ts-node/esm loader on esm
-      let esmLoader = importResolve('ts-node/esm', {
-        paths: findPaths,
-      });
+      let esmLoader = cjsResolve('ts-node/esm');
       // ES Module loading with absolute path fails on windows
       // https://github.com/nodejs/node/issues/31710#issuecomment-583916239
       // https://nodejs.org/api/url.html#url_url_pathtofileurl_path
