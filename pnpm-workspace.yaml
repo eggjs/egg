@@ -19,7 +19,6 @@ catalog:
   '@fengmk2/ps-tree': ^2.0.1
   '@oclif/core': ^4.2.0
   '@oxc-node/core': ^0.0.35
-  typebox: ^1.0.65
   '@swc-node/register': ^1.11.1
   '@swc/core': ^1.15.1
   '@types/accepts': ^1.3.7
@@ -131,9 +130,9 @@ catalog:
   http-errors: ^2.0.0
   humanize-ms: ^2.0.0
   husky: ^9.1.7
+  iconv-lite: ^0.6.3
   inflection: ^3.0.0
   ini: ^6.0.0
-  iconv-lite: ^0.6.3
   ioredis: ^5.4.2
   ioredis-mock: ^8.13.1
   is-type-of: ^2.2.0
@@ -177,8 +176,8 @@ catalog:
   oss-client: ^2.5.1
   oxc-minify: ^0.105.0
   oxfmt: ^0.20.0
-  oxlint: ^1.32.0
-  oxlint-tsgolint: ^0.11.0
+  oxlint: ^1.60.0
+  oxlint-tsgolint: ^0.18.1
   parseurl: ^1.3.3
   path-to-regexp: ^6.3.0
   performance-ms: ^1.1.0
@@ -208,6 +207,7 @@ catalog:
   tsx: 4.20.6
   type-fest: ^5.0.1
   type-is: ^2.0.0
+  typebox: ^1.0.65
   typescript: ^5.9.3
   unplugin-unused: ^0.5.4
   urijs: ^1.19.11

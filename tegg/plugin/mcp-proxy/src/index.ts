@@ -13,12 +13,10 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import awaitEvent from 'await-event';
 // @ts-expect-error cluster-client is not typed
 import { APIClientBase } from 'cluster-client';
-// @ts-expect-error content-type is not typed
 import contentType from 'content-type';
 import type { Application, Context } from 'egg';
 import type { EggLogger } from 'egg';
 import { EventSourceParserStream } from 'eventsource-parser/stream';
-// @ts-expect-error koa-compose is not typed
 import compose from 'koa-compose';
 import getRawBody from 'raw-body';
 

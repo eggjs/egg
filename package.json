@@ -48,7 +48,9 @@
   "devDependencies": {
     "@eggjs/bin": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
+    "@types/content-type": "catalog:",
     "@types/js-yaml": "catalog:",
+    "@types/koa-compose": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
