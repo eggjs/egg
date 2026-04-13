@@ -232,24 +232,24 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       }
     }
 
-    // auto detect @eggjs/tegg-vitest/runner — only when the project declares
-    // @eggjs/tegg as a dependency (same flat-hoisting guard as above).
+    // auto detect @eggjs/tegg-vitest/runner
+    // Unlike mock, tegg-runner is a runtime necessity — projects like cnpmcore
+    // use tegg transitively via egg without declaring it directly. So we keep
+    // the resolve-then-use approach: if it's resolvable, it should be loaded.
     let runner: string | undefined;
-    if (hasDependency(projectPkg, '@eggjs/tegg') || hasDependency(projectPkg, '@eggjs/tegg-vitest')) {
-      for (const resolveFrom of [flags.base, import.meta.dirname]) {
-        try {
-          runner = importResolve('@eggjs/tegg-vitest/runner', {
-            paths: [resolveFrom],
-          });
-          debug('auto use @eggjs/tegg-vitest/runner from %s: %o', resolveFrom, runner);
-          break;
-        } catch (err) {
-          if (!(err instanceof ImportResolveError)) throw err;
-        }
+    for (const resolveFrom of [flags.base, import.meta.dirname]) {
+      try {
+        runner = importResolve('@eggjs/tegg-vitest/runner', {
+          paths: [resolveFrom],
+        });
+        debug('auto use @eggjs/tegg-vitest/runner from %s: %o', resolveFrom, runner);
+        break;
+      } catch (err) {
+        if (!(err instanceof ImportResolveError)) throw err;
       }
     }
     if (!runner) {
-      debug('skip @eggjs/tegg-vitest/runner: not a dependency or not resolvable');
+      debug('skip @eggjs/tegg-vitest/runner: not resolvable');
     }
 
     return {
