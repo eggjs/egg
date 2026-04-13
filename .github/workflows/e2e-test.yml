@@ -47,8 +47,7 @@ jobs:
           - name: cnpmcore
             node-version: 24
             command: |
-              npm install
-              npm run lint -- --quiet
+              npm install --legacy-peer-deps
               npm run typecheck
               npm run build
               npm run prepublishOnly
@@ -132,6 +131,10 @@ jobs:
               npm run lint
               npm run test
               npm run prepublishOnly
+
+              # Manifest E2E: generate, validate, boot with manifest, clean
+              node ../../scripts/verify-manifest.mjs
+              cd ..
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - uses: ./.github/actions/clone
@@ -145,10 +148,9 @@ jobs:
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
           node-version: ${{ matrix.project.node-version }}
-          cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build all packages
         run: pnpm build

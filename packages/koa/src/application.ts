@@ -3,6 +3,7 @@ import Emitter from 'node:events';
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import Stream from 'node:stream';
 import util, { debuglog } from 'node:util';
+import v8 from 'node:v8';
 
 import { getAsyncLocalStorage } from 'gals';
 import { HttpError } from 'http-errors';
@@ -48,7 +49,7 @@ export class Application extends Emitter {
   maxIpsCount: number;
   protected _keys?: string[];
   middleware: MiddlewareFunc<Context>[];
-  ctxStorage: AsyncLocalStorage<Context>;
+  ctxStorage: AsyncLocalStorage<Context> | null;
   silent: boolean;
   ContextClass: ProtoImplClass<Context>;
   context: AnyProto;
@@ -88,7 +89,14 @@ export class Application extends Emitter {
       this._keys = options.keys;
     }
     this.middleware = [];
-    this.ctxStorage = getAsyncLocalStorage();
+    if (v8.startupSnapshot?.isBuildingSnapshot?.()) {
+      this.ctxStorage = null;
+      v8.startupSnapshot.addDeserializeCallback((app: Application) => {
+        app.ctxStorage = getAsyncLocalStorage();
+      }, this);
+    } else {
+      this.ctxStorage = getAsyncLocalStorage();
+    }
     this.silent = false;
     this.ContextClass = class ApplicationContext extends Context {} as ProtoImplClass<Context>;
     this.context = this.ContextClass.prototype;
@@ -184,9 +192,12 @@ export class Application extends Emitter {
 
     const handleRequest = (req: IncomingMessage, res: ServerResponse) => {
       const ctx = this.createContext(req, res);
-      return this.ctxStorage.run(ctx, async () => {
-        return await this.handleRequest(ctx, fn);
-      });
+      if (this.ctxStorage) {
+        return this.ctxStorage.run(ctx, async () => {
+          return await this.handleRequest(ctx, fn);
+        });
+      }
+      return this.handleRequest(ctx, fn);
     };
 
     return handleRequest;
@@ -196,7 +207,7 @@ export class Application extends Emitter {
    * return current context from async local storage
    */
   get currentContext(): Context | undefined {
-    return this.ctxStorage.getStore();
+    return this.ctxStorage?.getStore();
   }
 
   /**

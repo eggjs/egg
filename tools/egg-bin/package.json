@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/bin",
-  "version": "8.0.2-beta.6",
+  "version": "8.0.2-beta.9",
   "description": "egg developer tool",
   "homepage": "https://github.com/eggjs/egg/tree/next/tools/egg-bin",
   "bugs": {
@@ -30,6 +30,7 @@
     "./baseCommand": "./src/baseCommand.ts",
     "./commands/cov": "./src/commands/cov.ts",
     "./commands/dev": "./src/commands/dev.ts",
+    "./commands/manifest": "./src/commands/manifest.ts",
     "./commands/test": "./src/commands/test.ts",
     "./types": "./src/types.ts",
     "./utils": "./src/utils.ts",
@@ -42,6 +43,7 @@
       "./baseCommand": "./dist/baseCommand.js",
       "./commands/cov": "./dist/commands/cov.js",
       "./commands/dev": "./dist/commands/dev.js",
+      "./commands/manifest": "./dist/commands/manifest.js",
       "./commands/test": "./dist/commands/test.js",
       "./types": "./dist/types.js",
       "./utils": "./dist/utils.js",
@@ -49,13 +51,14 @@
     }
   },
   "scripts": {
+    "build": "tsdown -c tsdown.config.ts",
     "typecheck": "tsgo --noEmit",
-    "pretest": "tsdown",
     "test": "vitest run",
     "cov": "vitest run --coverage",
     "ci": "npm run cov"
   },
   "dependencies": {
+    "@eggjs/core": "workspace:*",
     "@eggjs/tegg-vitest": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "@oclif/core": "catalog:",

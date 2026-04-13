@@ -213,6 +213,7 @@ catalog:
   urijs: ^1.19.11
   urllib: ^4.8.2
   utility: ^2.5.0
+  utoo: ^1
   vary: ^1.1.2
   vitepress: 2.0.0-alpha.15
   vitepress-plugin-llms: ^1.10.0
@@ -226,6 +227,9 @@ catalogMode: prefer
 catalogs:
   path-to-regexp1:
     path-to-regexp: ^1.9.0
+
+onlyBuiltDependencies:
+  - utoo
 
 minimumReleaseAge: 1440
 

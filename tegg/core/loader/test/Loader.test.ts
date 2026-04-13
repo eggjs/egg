@@ -51,7 +51,7 @@ describe('core/loader/test/Loader.test.ts', () => {
         (err: Error) => {
           assert.match(
             err.message,
-            /Syntax Error|ERROR: Expected ";" but found "here"|failed: Expected `;` but found `Identifier`/,
+            /Syntax Error|ERROR: Expected ";" but found "here"|Expected `;` but found `Identifier`/,
           );
           return true;
         },

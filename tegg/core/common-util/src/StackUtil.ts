@@ -70,10 +70,15 @@ export class StackUtil {
     }
     let callSite = stacks[stackIndex];
     // skip the @oxc-project/runtime/src/helpers/decorate.js stack frame
-    // node_modules/.pnpm/@oxc-project+runtime@0.92.0/node_modules/@oxc-project/runtime/src/helpers/decorate.js
+    // - filesystem path: node_modules/.pnpm/@oxc-project+runtime@0.92.0/node_modules/@oxc-project/runtime/src/helpers/decorate.js
+    // - vite/rolldown virtual module id: \x00@oxc-project+runtime@0.122.0/helpers/decorate.js
     if (callSite) {
       const fileName = callSite.scriptName;
-      if (fileName.includes('/@oxc-project/runtime/') || fileName.includes('\\@oxc-project\\runtime\\')) {
+      if (
+        fileName.includes('/@oxc-project/runtime/') ||
+        fileName.includes('\\@oxc-project\\runtime\\') ||
+        fileName.includes('@oxc-project+runtime@')
+      ) {
         callSite = stacks[stackIndex + 1];
       }
     }

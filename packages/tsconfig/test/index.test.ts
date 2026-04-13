@@ -1,11 +1,14 @@
 import fs from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 
 import coffee from 'coffee';
 import { test, expect } from 'vitest';
 
+const require = createRequire(import.meta.url);
+
 test('should tsc build work', async () => {
-  const tsc = path.join(import.meta.dirname, '..', 'node_modules', 'typescript', 'bin', 'tsc');
+  const tsc = require.resolve('typescript/bin/tsc');
   const fixturePath = path.join(import.meta.dirname, 'fixtures/apps/ts-proj');
   const tsconfigPath = path.join(fixturePath, 'tsconfig.json');
   console.log('%s -p %s, cwd: %s', tsc, tsconfigPath, fixturePath);

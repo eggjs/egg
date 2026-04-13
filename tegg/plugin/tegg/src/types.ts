@@ -26,7 +26,7 @@ import type { ModuleHandler } from './lib/ModuleHandler.ts';
 declare module 'egg' {
   export interface EggModule {}
 
-  interface Application {
+  export interface Application {
     eggPrototypeCreatorFactory: typeof EggPrototypeCreatorFactory;
     eggPrototypeFactory: EggPrototypeFactory;
     eggContainerFactory: typeof EggContainerFactory;

@@ -69,6 +69,15 @@ export interface LifecycleOptions {
   baseDir: string;
   app: EggCore;
   logger: EggConsoleLogger;
+  /**
+   * When true, the lifecycle stops after configWillLoad phase completes.
+   * configDidLoad, didLoad, willReady, didReady, and serverDidReady hooks
+   * are NOT called. Used for V8 startup snapshot construction — SDKs
+   * typically execute during configDidLoad, opening connections and starting
+   * timers which are not serializable. The handling is analogous to
+   * metadataOnly mode: both short-circuit the lifecycle chain early.
+   */
+  snapshot?: boolean;
 }
 
 export type FunWithFullPath = Fun & { fullPath?: string };
@@ -119,7 +128,7 @@ export class Lifecycle extends EventEmitter {
     });
 
     this.ready((err) => {
-      if (!this.#metadataOnly) {
+      if (!this.#metadataOnly && !this.options.snapshot) {
         void this.triggerDidReady(err);
       }
       debug('app ready');
@@ -251,6 +260,14 @@ export class Lifecycle extends EventEmitter {
       }
     }
     debug('trigger configWillLoad end');
+    if (this.options.snapshot) {
+      // Snapshot mode: stop AFTER configWillLoad, BEFORE configDidLoad.
+      // SDKs typically execute during configDidLoad hooks — these open connections
+      // and start timers which are not serializable in V8 startup snapshots.
+      debug('snapshot mode: stopping after configWillLoad, skipping configDidLoad and later phases');
+      this.ready(true);
+      return;
+    }
     this.triggerConfigDidLoad();
   }
 

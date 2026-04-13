@@ -8,7 +8,8 @@
     "packages/core/test/fixtures/load_dirs/syntax_error/*",
     "packages/core/test/fixtures/syntaxerror/*",
     "packages/core/test/fixtures/load_context_syntax_error/**/*",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "/package.json"
   ],
   "experimentalSortImports": {
     "groups": [

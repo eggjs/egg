@@ -1,66 +1,58 @@
-import { describe } from 'vitest';
+import { strict as assert } from 'node:assert';
 
-// import utils from '../utils';
-// import assert from 'assert';
-// import path from 'path';
+import { describe, it, afterAll, beforeAll } from 'vitest';
 
-// let app;
+import { singleProcessApp, type SingleModeApplication } from './utils.ts';
 
-describe.skip('test/lib/start.test.js', () => {
-  //   afterEach(() => app.close());
-  //   describe('start', () => {
-  //     it('should dump config and plugins', async () => {
-  //       app = await utils.singleProcessApp('apps/demo');
-  //       const baseDir = utils.getFilepath('apps/demo');
-  //       let json = require(path.join(baseDir, 'run/agent_config.json'));
-  //       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
-  //       assert(json.config.name === 'demo');
-  //       assert(json.config.tips === 'hello egg');
-  //       json = require(path.join(baseDir, 'run/application_config.json'));
-  //       checkApp(json);
-  //       const dumpped = app.dumpConfigToObject();
-  //       checkApp(dumpped.config);
-  //       function checkApp(json) {
-  //         assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
-  //         assert(json.config.name === 'demo');
-  //         // should dump dynamic config
-  //         assert(json.config.tips === 'hello egg started');
-  //       }
-  //     });
-  //     it('should request work', async () => {
-  //       app = await utils.singleProcessApp('apps/demo');
-  //       await app.httpRequest().get('/protocol')
-  //         .expect(200)
-  //         .expect('http');
-  //       await app.httpRequest().get('/class-controller')
-  //         .expect(200)
-  //         .expect('this is bar!');
-  //     });
-  //     it('should env work', async () => {
-  //       app = await utils.singleProcessApp('apps/demo', { env: 'prod' });
-  //       assert(app.config.env === 'prod');
-  //     });
-  //   });
-  //   describe('custom framework work', () => {
-  //     it('should work with options.framework', async () => {
-  //       app = await utils.singleProcessApp('apps/demo', { framework: path.join(__dirname, '../fixtures/custom-egg') });
-  //       assert(app.customEgg);
-  //       await app.httpRequest().get('/protocol')
-  //         .expect(200)
-  //         .expect('http');
-  //       await app.httpRequest().get('/class-controller')
-  //         .expect(200)
-  //         .expect('this is bar!');
-  //     });
-  //     it('should work with package.egg.framework', async () => {
-  //       app = await utils.singleProcessApp('apps/custom-framework-demo');
-  //       assert(app.customEgg);
-  //       await app.httpRequest().get('/protocol')
-  //         .expect(200)
-  //         .expect('http');
-  //       await app.httpRequest().get('/class-controller')
-  //         .expect(200)
-  //         .expect('this is bar!');
-  //     });
-  //   });
+describe('test/start.test.ts', () => {
+  describe('metadataOnly mode', () => {
+    let app: SingleModeApplication;
+
+    beforeAll(async () => {
+      app = await singleProcessApp('apps/metadata-only-app', { metadataOnly: true });
+    });
+
+    afterAll(async () => {
+      await app.close();
+    });
+
+    it('should only call loadMetadata, not normal lifecycle hooks', () => {
+      assert.deepStrictEqual(app.bootLog, ['loadMetadata']);
+    });
+
+    it('should skip loadRouter — no routes registered', () => {
+      assert.strictEqual(app.router.stack.length, 0);
+    });
+
+    it('should not create agent', () => {
+      assert.strictEqual(app.agent, undefined);
+    });
+  });
+
+  describe('normal mode (baseline)', () => {
+    let app: SingleModeApplication;
+
+    beforeAll(async () => {
+      app = await singleProcessApp('apps/metadata-only-app');
+    });
+
+    afterAll(async () => {
+      await app.close();
+    });
+
+    it('should call normal lifecycle hooks, not loadMetadata', () => {
+      assert(app.bootLog.includes('configDidLoad'));
+      assert(app.bootLog.includes('didLoad'));
+      assert(app.bootLog.includes('willReady'));
+      assert(!app.bootLog.includes('loadMetadata'));
+    });
+
+    it('should register routes', () => {
+      assert(app.router.stack.length > 0);
+    });
+
+    it('should create agent', () => {
+      assert(app.agent);
+    });
+  });
 });

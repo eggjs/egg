@@ -22,6 +22,7 @@ export default defineConfig({
   publint: {
     level: 'suggestion',
     strict: true,
+    pack: 'npm',
   },
 
   // Default entry pattern - glob to include all source files
