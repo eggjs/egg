@@ -207,10 +207,31 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     // try app baseDir first on custom tscompiler
     // then try to find tscompiler in @eggjs/bin/node_modules
     const findPaths: string[] = [flags.base, rootDir];
-    // Use createRequire for CJS package resolution (ts-node, tsconfig-paths).
-    // importResolve uses import.meta.resolve which is lexically scoped to
-    // @eggjs/utils, not the caller — createRequire resolves from the correct
-    // location regardless of package manager layout (pnpm/npm/utoo).
+    //
+    // Why createRequire instead of importResolve (@eggjs/utils)?
+    //
+    // The packages resolved here (ts-node, tsconfig-paths) are CJS packages
+    // that lack an `exports` field and expose bare subpaths like
+    // `tsconfig-paths/register`. Two resolution mechanisms fail for them:
+    //
+    // 1. import.meta.resolve (used inside importResolve) is lexically scoped
+    //    to the MODULE that calls it — i.e. @eggjs/utils/src/import.ts, not
+    //    the egg-bin caller. So it resolves from @eggjs/utils's dependency
+    //    tree, which doesn't include ts-node or tsconfig-paths.
+    //
+    // 2. Node.js ESM resolver (≥22) does NOT auto-append file extensions for
+    //    packages without `exports`. A bare `tsconfig-paths/register` fails
+    //    because the ESM resolver won't try `register.js` automatically —
+    //    unlike the CJS resolver which does.
+    //
+    // createRequire(callerPath).resolve(specifier) avoids both issues:
+    // - It resolves from the CALLER's location (flags.base or egg-bin root),
+    //   not from @eggjs/utils
+    // - It uses the CJS resolution algorithm which auto-appends extensions
+    //   and walks up the node_modules tree from the specified path
+    // - Works consistently across package managers (pnpm symlinks, npm/utoo
+    //   flat hoisting) since it follows Node's native resolution
+    //
     const cjsResolve = (specifier: string): string => {
       for (const p of findPaths) {
         try {
