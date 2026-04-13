@@ -1,10 +1,10 @@
 import { fork, type ForkOptions, ChildProcess } from 'node:child_process';
-import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
+import { importResolve } from '@eggjs/utils';
 import { Command, Flags, Interfaces } from '@oclif/core';
 
 import { type PackageEgg } from './types.ts';
@@ -207,45 +207,12 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     // try app baseDir first on custom tscompiler
     // then try to find tscompiler in @eggjs/bin/node_modules
     const findPaths: string[] = [flags.base, rootDir];
-    //
-    // Why createRequire instead of importResolve (@eggjs/utils)?
-    //
-    // The packages resolved here (ts-node, tsconfig-paths) are CJS packages
-    // that lack an `exports` field and expose bare subpaths like
-    // `tsconfig-paths/register`. Two resolution mechanisms fail for them:
-    //
-    // 1. import.meta.resolve (used inside importResolve) is lexically scoped
-    //    to the MODULE that calls it — i.e. @eggjs/utils/src/import.ts, not
-    //    the egg-bin caller. So it resolves from @eggjs/utils's dependency
-    //    tree, which doesn't include ts-node or tsconfig-paths.
-    //
-    // 2. Node.js ESM resolver (≥22) does NOT auto-append file extensions for
-    //    packages without `exports`. A bare `tsconfig-paths/register` fails
-    //    because the ESM resolver won't try `register.js` automatically —
-    //    unlike the CJS resolver which does.
-    //
-    // createRequire(callerPath).resolve(specifier) avoids both issues:
-    // - It resolves from the CALLER's location (flags.base or egg-bin root),
-    //   not from @eggjs/utils
-    // - It uses the CJS resolution algorithm which auto-appends extensions
-    //   and walks up the node_modules tree from the specified path
-    // - Works consistently across package managers (pnpm symlinks, npm/utoo
-    //   flat hoisting) since it follows Node's native resolution
-    //
-    const cjsResolve = (specifier: string): string => {
-      for (const p of findPaths) {
-        try {
-          return createRequire(path.join(p, 'package.json')).resolve(specifier);
-        } catch {
-          /* try next path */
-        }
-      }
-      throw new Error(`Cannot resolve '${specifier}' from ${findPaths.join(', ')}`);
-    };
     this.isESM = pkg.type === 'module';
     if (typescript) {
       flags.tscompiler = flags.tscompiler ?? 'ts-node/register';
-      const tsNodeRegister = cjsResolve(flags.tscompiler);
+      const tsNodeRegister = importResolve(flags.tscompiler, {
+        paths: findPaths,
+      });
       flags.tscompiler = tsNodeRegister;
       // should require tsNodeRegister on current process, let it can require *.ts files
       // e.g.: dev command will execute egg loader to find configs and plugins
@@ -261,12 +228,16 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       this.env.TS_NODE_FILES = process.env.TS_NODE_FILES ?? 'true';
       // keep same logic with egg-core, test cmd load files need it
       // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L49
-      const tsConfigPathsRegister = cjsResolve('tsconfig-paths/register');
+      const tsConfigPathsRegister = importResolve('tsconfig-paths/register', {
+        paths: findPaths,
+      });
       this.addNodeOptions(this.formatImportModule(tsConfigPathsRegister));
     }
     if (this.isESM) {
       // use ts-node/esm loader on esm
-      let esmLoader = cjsResolve('ts-node/esm');
+      let esmLoader = importResolve('ts-node/esm', {
+        paths: findPaths,
+      });
       // ES Module loading with absolute path fails on windows
       // https://github.com/nodejs/node/issues/31710#issuecomment-583916239
       // https://nodejs.org/api/url.html#url_url_pathtofileurl_path

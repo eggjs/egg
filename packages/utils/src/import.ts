@@ -357,6 +357,22 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
         // resolve will return file:// URL on Linux and MacOS expect on Windows
         moduleFilePath = fileURLToPath(moduleFilePath);
       }
+      // import.meta.resolve is lexically scoped to THIS module, not the
+      // caller — it ignores the `paths` parameter. With flat-hoisting
+      // (npm workspaces, utoo), it resolves packages hoisted to the
+      // workspace root even when they are not dependencies of the project
+      // at `paths`. Enforce the paths constraint by verifying the package
+      // is directly accessible from at least one paths entry.
+      if (!isAbsolute && !isRelativePath(filepath)) {
+        const pkgName = filepath.startsWith('@') ? filepath.split('/').slice(0, 2).join('/') : filepath.split('/')[0];
+        const inScope = paths.some((p) => fs.existsSync(path.join(p, 'node_modules', pkgName)));
+        if (!inScope) {
+          debug('[importResolve:outOfScope] %o resolved to %o but not in paths scope', filepath, moduleFilePath);
+          throw new ImportResolveError(filepath, paths, new Error(
+            `Package '${pkgName}' is not accessible from paths: ${paths.join(', ')}`,
+          ));
+        }
+      }
       debug('[importResolve] import.meta.resolve %o => %o', filepath, moduleFilePath);
       const stat = fs.statSync(moduleFilePath, { throwIfNoEntry: false });
       if (!stat?.isFile()) {
