@@ -61,6 +61,23 @@ export interface ILifecycleBoot {
    * when the application is started with metadataOnly: true.
    */
   loadMetadata?(): Promise<void> | void;
+
+  /**
+   * Called before V8 serializes the heap for startup snapshot.
+   * Clean up non-serializable resources: close file handles, clear timers,
+   * remove process listeners, close network connections.
+   * Executed in REVERSE registration order (like beforeClose).
+   */
+  snapshotWillSerialize?(): Promise<void> | void;
+
+  /**
+   * Called after V8 deserializes the heap from a startup snapshot.
+   * Restore non-serializable resources: reopen file handles, recreate timers,
+   * re-register process listeners, reinitialize connections.
+   * Executed in FORWARD registration order (like configWillLoad).
+   * After all hooks complete, the normal lifecycle resumes from configDidLoad.
+   */
+  snapshotDidDeserialize?(): Promise<void> | void;
 }
 
 export type BootImplClass<T = ILifecycleBoot> = new (...args: any[]) => T;
@@ -89,6 +106,7 @@ export class Lifecycle extends EventEmitter {
   #boots: ILifecycleBoot[];
   #isClosed: boolean;
   #metadataOnly: boolean;
+  #snapshotBuilding: boolean;
   #closeFunctionSet: Set<FunWithFullPath>;
   loadReady: Ready;
   bootReady: Ready;
@@ -105,6 +123,7 @@ export class Lifecycle extends EventEmitter {
     this.#closeFunctionSet = new Set();
     this.#isClosed = false;
     this.#metadataOnly = false;
+    this.#snapshotBuilding = false;
     this.#init = false;
 
     this.timing.start(`${this.options.app.type} Start`);
@@ -264,8 +283,12 @@ export class Lifecycle extends EventEmitter {
       // Snapshot mode: stop AFTER configWillLoad, BEFORE configDidLoad.
       // SDKs typically execute during configDidLoad hooks — these open connections
       // and start timers which are not serializable in V8 startup snapshots.
+      // Start loadReady so registerBeforeStart callbacks (e.g. load()) can complete
+      // and drive readiness — callers can simply `await app.ready()` without
+      // needing to distinguish snapshot from normal mode.
       debug('snapshot mode: stopping after configWillLoad, skipping configDidLoad and later phases');
-      this.ready(true);
+      this.#snapshotBuilding = true;
+      this.loadReady.start();
       return;
     }
     this.triggerConfigDidLoad();
@@ -380,6 +403,88 @@ export class Lifecycle extends EventEmitter {
     this.ready(firstError ?? true);
   }
 
+  /**
+   * Trigger snapshotWillSerialize on all boots in REVERSE order.
+   * Called by the build script before V8 serializes the heap.
+   */
+  async triggerSnapshotWillSerialize(): Promise<void> {
+    if (!this.options.snapshot) {
+      throw new Error('triggerSnapshotWillSerialize() can only be called on a snapshot-mode lifecycle');
+    }
+    debug('trigger snapshotWillSerialize start');
+    const boots = [...this.#boots].reverse();
+    for (const boot of boots) {
+      if (typeof boot.snapshotWillSerialize !== 'function') {
+        continue;
+      }
+      const fullPath = boot.fullPath ?? 'unknown';
+      debug('trigger snapshotWillSerialize at %o', fullPath);
+      const timingKey = `Snapshot Will Serialize in ${utils.getResolvedFilename(fullPath, this.app.baseDir)}`;
+      this.timing.start(timingKey);
+      try {
+        await utils.callFn(boot.snapshotWillSerialize.bind(boot));
+      } catch (err) {
+        debug('trigger snapshotWillSerialize error at %o, error: %s', fullPath, err);
+        this.timing.end(timingKey);
+        throw err;
+      }
+      this.timing.end(timingKey);
+    }
+    debug('trigger snapshotWillSerialize end');
+  }
+
+  /**
+   * Trigger snapshotDidDeserialize on all boots in FORWARD order.
+   * Called by the restore entry after V8 deserializes the heap.
+   * After all hooks complete, resets the ready state and resumes the normal
+   * lifecycle from configDidLoad. The returned promise resolves when the
+   * full lifecycle (configDidLoad → didLoad → willReady) has completed.
+   */
+  async triggerSnapshotDidDeserialize(): Promise<void> {
+    if (!this.options.snapshot) {
+      throw new Error('triggerSnapshotDidDeserialize() can only be called on a snapshot-mode lifecycle');
+    }
+    debug('trigger snapshotDidDeserialize start');
+    for (const boot of this.#boots) {
+      if (typeof boot.snapshotDidDeserialize !== 'function') {
+        continue;
+      }
+      const fullPath = boot.fullPath ?? 'unknown';
+      debug('trigger snapshotDidDeserialize at %o', fullPath);
+      const timingKey = `Snapshot Did Deserialize in ${utils.getResolvedFilename(fullPath, this.app.baseDir)}`;
+      this.timing.start(timingKey);
+      try {
+        await utils.callFn(boot.snapshotDidDeserialize.bind(boot));
+      } catch (err) {
+        debug('trigger snapshotDidDeserialize error at %o, error: %s', fullPath, err);
+        this.timing.end(timingKey);
+        throw err;
+      }
+      this.timing.end(timingKey);
+    }
+    debug('trigger snapshotDidDeserialize end');
+
+    // Reset ready state for the resumed lifecycle.
+    // In snapshot mode, ready(true) was called when loadReady completed,
+    // resolving the ready promise early. We need fresh ready objects so the
+    // resumed lifecycle (didLoad → willReady → didReady) can track properly.
+    // Note: keep options.snapshot = true so the constructor's stale ready
+    // callback (which may fire asynchronously) correctly skips triggerDidReady.
+    this.#snapshotBuilding = false;
+    this.#readyObject = new ReadyObject();
+    this.#initReady();
+    this.ready((err) => {
+      void this.triggerDidReady(err);
+      debug('app ready after snapshot deserialize');
+    });
+
+    // Resume the normal lifecycle from configDidLoad
+    this.triggerConfigDidLoad();
+
+    // Wait for the full resumed lifecycle to complete
+    await this.ready();
+  }
+
   #initReady(): void {
     debug('loadReady init');
     this.loadReady = new Ready({ timeout: this.readyTimeout, lazyStart: true });
@@ -389,6 +494,9 @@ export class Lifecycle extends EventEmitter {
       debug('trigger didLoad end');
       if (err) {
         this.ready(err);
+      } else if (this.#snapshotBuilding) {
+        // Snapshot build: skip willReady/bootReady phases, signal ready directly
+        this.ready(true);
       } else {
         this.triggerWillReady();
       }
