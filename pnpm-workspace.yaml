@@ -176,7 +176,7 @@ catalog:
   oss-client: ^2.5.1
   oxc-minify: ^0.105.0
   oxfmt: ^0.20.0
-  oxlint: ^1.32.0
+  oxlint: ^1.60.0
   oxlint-tsgolint: ^0.18.1
   parseurl: ^1.3.3
   path-to-regexp: ^6.3.0
