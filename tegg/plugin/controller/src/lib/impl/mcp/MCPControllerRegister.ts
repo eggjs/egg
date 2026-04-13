@@ -23,7 +23,6 @@ import { isInitializeRequest, isJSONRPCRequest } from '@modelcontextprotocol/sdk
 import type { JSONRPCMessage, MessageExtraInfo } from '@modelcontextprotocol/sdk/types.js';
 // @ts-expect-error await-event is not typed
 import awaitEvent from 'await-event';
-// @ts-expect-error content-type is not typed
 import contentType from 'content-type';
 import type { Application, Context, Router } from 'egg';
 import compose from 'koa-compose';
