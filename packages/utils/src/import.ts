@@ -350,7 +350,26 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
       try {
         moduleFilePath = import.meta.resolve(filepath);
       } catch (err) {
+        // Fallback for CJS packages without `exports` field: require.resolve
+        // can resolve bare subpaths (e.g. tsconfig-paths/register) that the
+        // ESM resolver rejects. Only accept the fallback when the target
+        // package has no `exports` — if it does, import.meta.resolve should
+        // have worked and the failure means the package is not accessible
+        // from this module (not a CJS subpath issue).
         debug('[importResolve:error] import.meta.resolve %o => %o, options: %o', filepath, err, options);
+        try {
+          moduleFilePath = getRequire().resolve(filepath, { paths });
+          const pkgName = filepath.startsWith('@') ? filepath.split('/').slice(0, 2).join('/') : filepath.split('/')[0];
+          const pkgJsonPath = getRequire().resolve(`${pkgName}/package.json`, { paths });
+          const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8'));
+          if (!pkg.exports) {
+            debug('[importResolve:cjsFallback] %o => %o (no exports field)', filepath, moduleFilePath);
+            return moduleFilePath;
+          }
+          debug('[importResolve:cjsFallback:rejected] %o has exports field, skip fallback', pkgName);
+        } catch {
+          // require.resolve also failed, fall through
+        }
         throw new ImportResolveError(filepath, paths, err as Error);
       }
       if (moduleFilePath.startsWith('file://')) {
