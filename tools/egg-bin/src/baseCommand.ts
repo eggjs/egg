@@ -236,7 +236,9 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       for (const p of findPaths) {
         try {
           return createRequire(path.join(p, 'package.json')).resolve(specifier);
-        } catch { /* try next path */ }
+        } catch {
+          /* try next path */
+        }
       }
       throw new Error(`Cannot resolve '${specifier}' from ${findPaths.join(', ')}`);
     };
