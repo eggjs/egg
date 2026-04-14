@@ -12,7 +12,6 @@ import { startVitest } from 'vitest/node';
 import type { InlineConfig as VitestConfig } from 'vitest/node';
 
 import { BaseCommand, ForkError } from '../baseCommand.ts';
-import { readPackageJSON } from '../utils.ts';
 
 const debug = debuglog('egg/bin/commands/test');
 
@@ -211,15 +210,17 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     const requires = await this.formatRequires();
     setupFiles.push(...requires);
 
-    // auto add @eggjs/mock/setup_vitest for egg applications that declare
-    // @eggjs/mock as a dependency. Check package.json instead of relying on
-    // importResolve success/failure — with flat-hoisting package managers
-    // (npm workspaces, utoo), importResolve finds hoisted packages even when
-    // the project doesn't use them, causing unnecessary mock framework loading.
+    // auto-detect @eggjs/mock/setup_vitest and @eggjs/tegg-vitest/runner.
+    // Skipped when running against an egg-bin self-test fixture (signalled by
+    // EGG_BIN_SELF_TEST_FIXTURE from the test harness) — fixtures don't use
+    // these frameworks but reach them via monorepo flat-hoisting, which would
+    // load them in every fork (~90s for mock, ~7s per fork for tegg runner).
     const eggType = await detectType(flags.base);
     debug('eggType: %s', eggType);
-    const projectPkg = await readPackageJSON(flags.base);
-    if (eggType === EggType.application && hasDependency(projectPkg, '@eggjs/mock')) {
+
+    const isSelfTestFixture = !!process.env.EGG_BIN_SELF_TEST_FIXTURE;
+
+    if (!isSelfTestFixture && eggType === EggType.application) {
       try {
         const mockSetup = importResolve('@eggjs/mock/setup_vitest', {
           paths: [flags.base],
@@ -228,17 +229,12 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
         debug('auto add @eggjs/mock/setup_vitest: %o', mockSetup);
       } catch (err) {
         if (!(err instanceof ImportResolveError)) throw err;
-        debug('skip @eggjs/mock/setup_vitest: resolve failed');
+        debug('skip @eggjs/mock/setup_vitest: not resolvable');
       }
     }
 
-    // auto detect @eggjs/tegg-vitest/runner
-    // Skip when running against an egg-bin self-test fixture (signalled by the
-    // test harness via EGG_BIN_SELF_TEST_FIXTURE env var). Fixtures don't use
-    // tegg but reach tegg-vitest via monorepo flat-hoisting, which would load
-    // the runner in every fork and add ~7s each.
     let runner: string | undefined;
-    if (!process.env.EGG_BIN_SELF_TEST_FIXTURE) {
+    if (!isSelfTestFixture) {
       // Try resolving from the project first, then from egg-bin's own
       // dependencies. The fallback supports E2E scenarios (e.g. cnpmcore) where
       // tegg is used transitively via egg but not directly in node_modules.
@@ -307,8 +303,4 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     }
     return files;
   }
-}
-
-function hasDependency(pkg: Record<string, any>, name: string): boolean {
-  return !!(pkg.dependencies?.[name] || pkg.devDependencies?.[name] || pkg.peerDependencies?.[name]);
 }
