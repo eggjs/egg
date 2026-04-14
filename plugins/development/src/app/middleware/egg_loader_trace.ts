@@ -5,16 +5,15 @@ import type { Application, MiddlewareFunc } from 'egg';
 import { readJSON } from 'utility';
 
 import { isTimingFile } from '../../utils.ts';
+import { LOADER_TRACE_TEMPLATE } from './loader_trace_template.ts';
 
 export default function createEggLoaderTraceMiddleware(_options: unknown, app: Application): MiddlewareFunc {
   return async (ctx, next) => {
     if (ctx.path !== '/__loader_trace__') {
       return await next();
     }
-    const templatePath = path.join(import.meta.dirname, 'loader_trace.html');
-    const template = await fs.readFile(templatePath, 'utf8');
     const data = await loadTimingData(app);
-    ctx.body = template.replace('{{placeholder}}', JSON.stringify(data));
+    ctx.body = LOADER_TRACE_TEMPLATE.replace('{{placeholder}}', JSON.stringify(data));
   };
 }
 
