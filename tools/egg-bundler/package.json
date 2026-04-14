@@ -22,12 +22,14 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./lib/EntryGenerator": "./src/lib/EntryGenerator.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./lib/EntryGenerator": "./dist/lib/EntryGenerator.js",
       "./package.json": "./package.json"
     }
   },
