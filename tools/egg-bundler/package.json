@@ -23,6 +23,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./lib/EntryGenerator": "./src/lib/EntryGenerator.ts",
+    "./lib/PackRunner": "./src/lib/PackRunner.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -30,6 +31,7 @@
     "exports": {
       ".": "./dist/index.js",
       "./lib/EntryGenerator": "./dist/lib/EntryGenerator.js",
+      "./lib/PackRunner": "./dist/lib/PackRunner.js",
       "./package.json": "./package.json"
     }
   },
