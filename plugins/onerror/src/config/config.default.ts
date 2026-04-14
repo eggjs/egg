@@ -1,5 +1,3 @@
-import path from 'node:path';
-
 import type { Context } from 'egg';
 import type { OnerrorError, OnerrorOptions } from 'koa-onerror';
 
@@ -20,7 +18,9 @@ export interface OnerrorConfig extends OnerrorOptions {
    */
   appErrorFilter?: (err: OnerrorError, ctx: Context) => boolean;
   /**
-   * default template path
+   * Custom template path. If empty, uses the built-in error page template.
+   *
+   * Default: `''`
    */
   templatePath: string;
 }
@@ -29,6 +29,6 @@ export default {
   onerror: {
     errorPageUrl: '',
     appErrorFilter: undefined,
-    templatePath: path.join(import.meta.dirname, '../lib/onerror_page.mustache.html'),
+    templatePath: '',
   } as OnerrorConfig,
 };
