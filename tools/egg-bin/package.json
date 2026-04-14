@@ -28,6 +28,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./baseCommand": "./src/baseCommand.ts",
+    "./commands/bundle": "./src/commands/bundle.ts",
     "./commands/cov": "./src/commands/cov.ts",
     "./commands/dev": "./src/commands/dev.ts",
     "./commands/manifest": "./src/commands/manifest.ts",
@@ -41,6 +42,7 @@
     "exports": {
       ".": "./dist/index.js",
       "./baseCommand": "./dist/baseCommand.js",
+      "./commands/bundle": "./dist/commands/bundle.js",
       "./commands/cov": "./dist/commands/cov.js",
       "./commands/dev": "./dist/commands/dev.js",
       "./commands/manifest": "./dist/commands/manifest.js",
@@ -59,6 +61,7 @@
   },
   "dependencies": {
     "@eggjs/core": "workspace:*",
+    "@eggjs/egg-bundler": "workspace:*",
     "@eggjs/tegg-vitest": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "@oclif/core": "catalog:",
