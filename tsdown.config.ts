@@ -22,7 +22,11 @@ export default defineConfig({
   publint: {
     level: 'suggestion',
     strict: true,
-    pack: 'npm',
+    // Auto-detect the package manager (pnpm/npm) based on lockfile presence.
+    // E2E uses pnpm (with lockfile) → fast pnpm pack. Main CI uses utoo (no
+    // lockfile) → falls back to npm pack. Pinning to 'npm' would cause pnpm
+    // workspaces to run npm pack against a symlinked node_modules, which is
+    // ~10x slower per package.
   },
 
   // Default entry pattern - glob to include all source files
