@@ -1,0 +1,19 @@
+{
+  "name": "basic-app",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@eggjs/some-plugin": "1.0.0",
+    "esm-dual": "1.0.0",
+    "esm-only": "1.0.0",
+    "missing-pkg": "1.0.0",
+    "native-binding": "1.0.0",
+    "native-dotnode": "1.0.0",
+    "native-prebuilds": "1.0.0",
+    "native-scripts": "1.0.0",
+    "normal-js": "1.0.0"
+  },
+  "peerDependencies": {
+    "peer-only": "1.0.0"
+  }
+}
