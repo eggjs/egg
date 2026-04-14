@@ -1,9 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
-import { bundle } from '../src/index.ts';
+import { bundle, Bundler } from '../src/index.ts';
 
 describe('@eggjs/egg-bundler', () => {
-  it('bundle() is a placeholder that throws until implemented', async () => {
-    await expect(bundle({ baseDir: '/tmp', outputDir: '/tmp/out' })).rejects.toThrow(/not implemented/);
+  it('exposes a Bundler class and a bundle() helper', () => {
+    expect(typeof bundle).toBe('function');
+    expect(typeof Bundler).toBe('function');
+    expect(new Bundler({ baseDir: '/tmp', outputDir: '/tmp/out' })).toBeInstanceOf(Bundler);
   });
+
+  // Full bundle() integration coverage lives in T12 (minimal-app fixture
+  // end-to-end via test-expert). This file just pins the public surface.
 });
