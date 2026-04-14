@@ -32,9 +32,9 @@ describe('ExternalsResolver', () => {
   });
 
   describe('tier 2: ESM-only detection', () => {
-    it('externalizes a pure-ESM package (type=module without require condition)', async () => {
+    it('does not externalize a pure-ESM package (type=module without require condition)', async () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
-      expect(result['esm-only']).toBe('esm-only');
+      expect(result['esm-only']).toBeUndefined();
     });
 
     it('does not externalize a dual-ESM package that exposes a require condition', async () => {
@@ -44,9 +44,9 @@ describe('ExternalsResolver', () => {
   });
 
   describe('tier 3: hard-coded always-external', () => {
-    it('externalizes @eggjs/* packages by name alone', async () => {
+    it('does not externalize @eggjs/* packages by name alone (globalThis approach)', async () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
-      expect(result['@eggjs/some-plugin']).toBe('@eggjs/some-plugin');
+      expect(result['@eggjs/some-plugin']).toBeUndefined();
     });
 
     it('externalizes every peerDependency even if the package is not installed', async () => {

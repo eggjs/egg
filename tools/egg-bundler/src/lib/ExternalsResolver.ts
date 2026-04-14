@@ -63,12 +63,14 @@ export class ExternalsResolver {
   async #shouldExternalize(name: string, peerDeps: ReadonlySet<string>): Promise<boolean> {
     if (peerDeps.has(name)) return true;
     if (ALWAYS_EXTERNAL_NAMES.has(name)) return true;
-    if (name === 'egg' || name.startsWith('@eggjs/')) return true;
+    if (name === 'egg') return true;
 
     const pkgDir = await this.#findPackageDir(name);
     if (!pkgDir) return false;
     if (await this.#hasNativeBinary(pkgDir)) return true;
-    if (await this.#isEsmOnly(pkgDir)) return true;
+    // ESM-only packages are NOT externalized: turbopack can bundle ESM
+    // natively, while externalizing them would emit CJS require() which
+    // fails for packages without a CJS entry.
     return false;
   }
 
@@ -112,29 +114,6 @@ export class ExternalsResolver {
       // unreadable dir
     }
 
-    return false;
-  }
-
-  async #isEsmOnly(pkgDir: string): Promise<boolean> {
-    const pkg = await this.#readPackageJson(pkgDir);
-    if (pkg.type !== 'module') return false;
-    const exportsField = pkg.exports;
-    if (!exportsField || typeof exportsField !== 'object') {
-      return false;
-    }
-    return !this.#hasRequireCondition(exportsField);
-  }
-
-  #hasRequireCondition(value: unknown): boolean {
-    if (!value || typeof value !== 'object') return false;
-    if (Array.isArray(value)) {
-      return value.some((v) => this.#hasRequireCondition(v));
-    }
-    const obj = value as Record<string, unknown>;
-    if ('require' in obj) return true;
-    for (const v of Object.values(obj)) {
-      if (this.#hasRequireCondition(v)) return true;
-    }
     return false;
   }
 
