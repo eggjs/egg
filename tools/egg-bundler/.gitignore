@@ -1,0 +1,4 @@
+dist
+node_modules
+test/fixtures/apps/*/.egg/
+.egg-bundle/
