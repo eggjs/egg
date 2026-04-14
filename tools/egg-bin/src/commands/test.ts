@@ -233,23 +233,29 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     }
 
     // auto detect @eggjs/tegg-vitest/runner
-    // Unlike mock, tegg-runner is a runtime necessity — projects like cnpmcore
-    // use tegg transitively via egg without declaring it directly. So we keep
-    // the resolve-then-use approach: if it's resolvable, it should be loaded.
+    // Skip when running against an egg-bin self-test fixture (signalled by the
+    // test harness via EGG_BIN_SELF_TEST_FIXTURE env var). Fixtures don't use
+    // tegg but reach tegg-vitest via monorepo flat-hoisting, which would load
+    // the runner in every fork and add ~7s each.
     let runner: string | undefined;
-    for (const resolveFrom of [flags.base, import.meta.dirname]) {
-      try {
-        runner = importResolve('@eggjs/tegg-vitest/runner', {
-          paths: [resolveFrom],
-        });
-        debug('auto use @eggjs/tegg-vitest/runner from %s: %o', resolveFrom, runner);
-        break;
-      } catch (err) {
-        if (!(err instanceof ImportResolveError)) throw err;
+    if (!process.env.EGG_BIN_SELF_TEST_FIXTURE) {
+      // Try resolving from the project first, then from egg-bin's own
+      // dependencies. The fallback supports E2E scenarios (e.g. cnpmcore) where
+      // tegg is used transitively via egg but not directly in node_modules.
+      for (const resolveFrom of [flags.base, import.meta.dirname]) {
+        try {
+          runner = importResolve('@eggjs/tegg-vitest/runner', {
+            paths: [resolveFrom],
+          });
+          debug('auto use @eggjs/tegg-vitest/runner from %s: %o', resolveFrom, runner);
+          break;
+        } catch (err) {
+          if (!(err instanceof ImportResolveError)) throw err;
+        }
       }
     }
     if (!runner) {
-      debug('skip @eggjs/tegg-vitest/runner: not resolvable');
+      debug('skip @eggjs/tegg-vitest/runner: self-test fixture or not resolvable');
     }
 
     return {
