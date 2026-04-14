@@ -239,10 +239,12 @@ describe('test/options.test.ts', () => {
         baseDir,
       });
       const expectPaths = [
-        // run int workspace root
+        // run in workspace root
         path.join(__dirname, '../../egg'),
-        // run in project root
+        // run in project root (pnpm nested)
         path.join(__dirname, '../node_modules/egg'),
+        // run with flat/hoisted node_modules (e.g. ut install)
+        path.join(__dirname, '../../../node_modules/egg'),
       ];
       assert(
         expectPaths.includes(options.framework),

@@ -153,6 +153,11 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Build all packages
+        env:
+          # publint pack defaults to npm (main CI env has no pnpm); in E2E we
+          # already have pnpm installed and npm pack against pnpm's symlinked
+          # node_modules is ~10x slower, so prefer pnpm pack here
+          PUBLINT_PACK: pnpm
         run: pnpm build
 
       - name: Pack packages into tgz

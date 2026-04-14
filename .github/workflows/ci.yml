@@ -1,3 +1,4 @@
+# CI workflow for egg monorepo
 name: CI
 
 on:
@@ -27,8 +28,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+      - name: Setup utoo
+        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
 
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
@@ -36,22 +37,22 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: ut install --from pnpm
 
       - name: Run lint
-        run: pnpm run lint
+        run: ut run lint
 
       - name: Run typecheck
-        run: pnpm run typecheck
+        run: ut run typecheck
 
       - name: Run format check
-        run: pnpm run fmtcheck
+        run: ut run fmtcheck
 
       - name: Run build
-        run: pnpm run build
+        run: ut run build
 
       - name: Run site build
-        run: pnpm run site:build
+        run: ut run site:build
 
   test:
     strategy:
@@ -150,8 +151,8 @@ jobs:
           # & mysqladmin -u root password root
           & mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+      - name: Setup utoo
+        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
 
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
@@ -159,15 +160,15 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: ut install --from pnpm
 
       - name: Run tests
-        run: pnpm run ci
+        run: ut run ci
 
       - name: Run example tests
         if: ${{ matrix.os != 'windows-latest' }}
         run: |
-          pnpm run example:test:all
+          ut run example:test:all
 
       - name: Code Coverage
         # skip on windows, it will hangup on codecov
@@ -194,8 +195,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+      - name: Setup utoo
+        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
 
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
@@ -203,12 +204,12 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: ut install --from pnpm
 
       - name: Run tests
         run: |
-          pnpm build --workspace ./tools/egg-bin
-          pnpm run --filter ./tools/egg-bin ci
+          ut run build -- --workspace ./tools/egg-bin
+          ut run ci --workspace @eggjs/bin
 
       - name: Code Coverage
         # skip on windows, it will hangup on codecov https://github.com/codecov/codecov-action/issues/1787
@@ -235,8 +236,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+      - name: Setup utoo
+        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
 
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
@@ -244,12 +245,12 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: ut install --from pnpm
 
       - name: Run tests
         run: |
-          pnpm build
-          pnpm run --filter=./tools/scripts ci
+          ut run build -- --workspace ./tools/scripts
+          ut run ci --workspace tools/scripts
 
       - name: Code Coverage
         if: ${{ matrix.os != 'windows-latest' }}

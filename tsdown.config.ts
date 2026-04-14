@@ -22,6 +22,10 @@ export default defineConfig({
   publint: {
     level: 'suggestion',
     strict: true,
+    // Default to npm pack so main CI (utoo env, no pnpm binary) works.
+    // E2E workflow overrides via PUBLINT_PACK=pnpm because running npm pack
+    // against pnpm's symlinked node_modules is ~10x slower per package.
+    pack: (process.env.PUBLINT_PACK as 'npm' | 'pnpm' | 'yarn' | 'bun' | undefined) ?? 'npm',
   },
 
   // Default entry pattern - glob to include all source files

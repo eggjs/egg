@@ -118,3 +118,5 @@ tegg/plugin/tegg/test/fixtures/apps/**/*.js
 ecosystem-ci/cnpmcore
 ecosystem-ci/examples
 pnpm-lock.yaml
+.utoo.toml
+.claude/

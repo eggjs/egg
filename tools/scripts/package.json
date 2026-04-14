@@ -50,8 +50,8 @@
   "scripts": {
     "typecheck": "tsgo --noEmit",
     "test": "vitest run --bail 1 --no-file-parallelism",
-    "cov": "pnpm test --coverage",
-    "ci": "pnpm run cov"
+    "cov": "ut run test -- --coverage",
+    "ci": "ut run cov"
   },
   "dependencies": {
     "@eggjs/utils": "workspace:*",

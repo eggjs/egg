@@ -1,8 +1,13 @@
 import { defineConfig } from 'tsdown';
 
 export default defineConfig({
+  entry: 'src/**/*.ts',
   unbundle: true,
   fixedExtension: false,
+  external: [/^@eggjs\//, 'egg'],
+  exports: {
+    devExports: true,
+  },
   // MEMO: @oclif/core only works in unbundle mode (already default)
   unused: {
     level: 'error',

@@ -210,10 +210,17 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     const requires = await this.formatRequires();
     setupFiles.push(...requires);
 
-    // auto add @eggjs/mock/setup_vitest for egg applications
+    // auto-detect @eggjs/mock/setup_vitest and @eggjs/tegg-vitest/runner.
+    // Skipped when running against an egg-bin self-test fixture (signalled by
+    // EGG_BIN_SELF_TEST_FIXTURE from the test harness) — fixtures don't use
+    // these frameworks but reach them via monorepo flat-hoisting, which would
+    // load them in every fork (~90s for mock, ~7s per fork for tegg runner).
     const eggType = await detectType(flags.base);
     debug('eggType: %s', eggType);
-    if (eggType === EggType.application) {
+
+    const isSelfTestFixture = !!process.env.EGG_BIN_SELF_TEST_FIXTURE;
+
+    if (!isSelfTestFixture && eggType === EggType.application) {
       try {
         const mockSetup = importResolve('@eggjs/mock/setup_vitest', {
           paths: [flags.base],
@@ -222,28 +229,29 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
         debug('auto add @eggjs/mock/setup_vitest: %o', mockSetup);
       } catch (err) {
         if (!(err instanceof ImportResolveError)) throw err;
-        debug('skip @eggjs/mock/setup_vitest: @eggjs/mock not installed');
+        debug('skip @eggjs/mock/setup_vitest: not resolvable');
       }
     }
 
-    // auto detect @eggjs/tegg-vitest/runner
-    // Try resolving from the project first, then from egg-bin's own dependencies.
-    // This ensures tegg context injection works even when the project doesn't
-    // explicitly depend on @eggjs/tegg-vitest (e.g. cnpmcore).
     let runner: string | undefined;
-    for (const resolveFrom of [flags.base, import.meta.dirname]) {
-      try {
-        runner = importResolve('@eggjs/tegg-vitest/runner', {
-          paths: [resolveFrom],
-        });
-        debug('auto use @eggjs/tegg-vitest/runner from %s: %o', resolveFrom, runner);
-        break;
-      } catch (err) {
-        if (!(err instanceof ImportResolveError)) throw err;
+    if (!isSelfTestFixture) {
+      // Try resolving from the project first, then from egg-bin's own
+      // dependencies. The fallback supports E2E scenarios (e.g. cnpmcore) where
+      // tegg is used transitively via egg but not directly in node_modules.
+      for (const resolveFrom of [flags.base, import.meta.dirname]) {
+        try {
+          runner = importResolve('@eggjs/tegg-vitest/runner', {
+            paths: [resolveFrom],
+          });
+          debug('auto use @eggjs/tegg-vitest/runner from %s: %o', resolveFrom, runner);
+          break;
+        } catch (err) {
+          if (!(err instanceof ImportResolveError)) throw err;
+        }
       }
     }
     if (!runner) {
-      debug('skip @eggjs/tegg-vitest/runner: not resolvable');
+      debug('skip @eggjs/tegg-vitest/runner: self-test fixture or not resolvable');
     }
 
     return {

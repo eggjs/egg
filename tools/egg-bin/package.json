@@ -51,8 +51,8 @@
     }
   },
   "scripts": {
+    "build": "tsdown -c tsdown.config.ts",
     "typecheck": "tsgo --noEmit",
-    "pretest": "tsdown",
     "test": "vitest run",
     "cov": "vitest run --coverage",
     "ci": "npm run cov"
