@@ -1,4 +1,3 @@
-dist
-node_modules
+# Integration test runtime output (fixture manifest + .egg-bundle/entries)
 test/fixtures/apps/*/.egg/
-.egg-bundle/
+test/fixtures/apps/*/.egg-bundle/
