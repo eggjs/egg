@@ -56,8 +56,12 @@
     "tsx": "catalog:"
   },
   "devDependencies": {
+    "@eggjs/controller-plugin": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/static": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
     "@types/node": "catalog:",
     "rimraf": "catalog:",
     "typescript": "catalog:",

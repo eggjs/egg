@@ -1,0 +1,13 @@
+{
+  "name": "tegg-app",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@eggjs/controller-plugin": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
+  }
+}
