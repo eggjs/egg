@@ -1,5 +1,14 @@
 export { ExternalsResolver, type ExternalsConfig, type ExternalsResolverOptions } from './lib/ExternalsResolver.ts';
 export { ManifestLoader, type ManifestLoaderOptions } from './lib/ManifestLoader.ts';
+export {
+  PackRunner,
+  type BuildFunc,
+  type PackEntry,
+  type PackRunnerOptions,
+  type PackRunnerResult,
+} from './lib/PackRunner.ts';
+
+import type { BuildFunc } from './lib/PackRunner.ts';
 
 export interface BundlerExternalsConfig {
   /** Package names to always mark as external, in addition to auto-detected ones. */
@@ -9,6 +18,8 @@ export interface BundlerExternalsConfig {
 }
 
 export interface BundlerPackConfig {
+  /** Injection point for tests (T11) to replace the real @utoo/pack build entry. */
+  readonly buildFunc?: BuildFunc;
   /** Override for the monorepo workspace root. Defaults to auto-detection. */
   readonly rootPath?: string;
 }
