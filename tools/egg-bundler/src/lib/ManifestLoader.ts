@@ -1,8 +1,8 @@
-import { fork } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
 import type { ManifestStore, StartupManifest } from '@eggjs/core';
@@ -158,18 +158,31 @@ export class ManifestLoader {
   async #generate(): Promise<void> {
     const scriptUrl = new URL('../scripts/generate-manifest.mjs', import.meta.url);
     const scriptPath = fileURLToPath(scriptUrl);
+    // The child loader needs BOTH:
+    //   1. `framework` — the absolute package dir egg's internal
+    //      `resolveFrameworkClasses()` uses (it calls `importResolve(framework,
+    //      baseDir)` which walks node_modules from baseDir).
+    //   2. `frameworkEntry` — a concrete file URL for the subprocess's initial
+    //      `import(framework)`. Importing the package dir directly bypasses
+    //      `exports` (workspace dev links point at `./src/index.ts`, and bare
+    //      directory resolution falls through to `index.js/json`).
     const payload = {
       baseDir: this.#baseDir,
       framework: this.#resolveFrameworkPath(),
+      frameworkEntry: this.#resolveFrameworkEntryUrl(),
       env: this.#env,
       scope: this.#scope,
     };
     debug('fork generate-manifest: %o', payload);
 
+    const execArgv = this.#buildExecArgv();
+
+    // Use spawn (not fork) so the child has no IPC channel: tsx's ESM loader has
+    // resolver issues inside Node 22's IPC hooks-worker, causing workspace-linked
+    // packages with `exports: "./src/*.ts"` to fall back to directory resolution.
     await new Promise<void>((resolve, reject) => {
-      const child = fork(scriptPath, [JSON.stringify(payload)], {
+      const child = spawn(process.execPath, [...execArgv, scriptPath, JSON.stringify(payload)], {
         stdio: 'inherit',
-        execArgv: this.#execArgv ?? process.execArgv,
         env: {
           ...process.env,
           EGG_MANIFEST: 'true',
@@ -184,6 +197,66 @@ export class ManifestLoader {
       });
       child.on('error', reject);
     });
+  }
+
+  #buildExecArgv(): string[] {
+    const base = this.#execArgv ?? process.execArgv;
+    // Detect any prior tsx loader injection so recursive forks don't append duplicates.
+    // Accepts either bare specifier (`tsx`, `tsx/esm`) or absolute file:// URL pointing
+    // inside a tsx package (e.g. `.../tsx/dist/esm/index.mjs`).
+    const hasTsxLoader = base.some((arg) => /(^|[=\s])tsx($|\/|\s)|\/tsx(@[^/]*)?\/(dist\/)?esm\//.test(arg));
+    if (hasTsxLoader) return [...base];
+    // The subprocess imports 'egg' through workspace dev links into raw .ts sources
+    // (which contain decorators Node's strip-types mode cannot transform). Inject
+    // tsx's ESM loader so the child can load those sources regardless of how the
+    // parent Node was invoked (raw node, egg-bin, vitest, etc.).
+    try {
+      const req = createRequire(import.meta.url);
+      const tsxEsm = req.resolve('tsx/esm');
+      const tsxUrl = pathToFileURL(tsxEsm).href;
+      return [...base, `--import=${tsxUrl}`];
+    } catch {
+      debug('tsx/esm not resolvable from @eggjs/egg-bundler; falling back to inherited execArgv');
+      return [...base];
+    }
+  }
+
+  #resolveFrameworkEntryUrl(): string {
+    const frameworkDir = this.#resolveFrameworkPath();
+    const pkgJsonPath = path.join(frameworkDir, 'package.json');
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8')) as {
+        exports?: Record<string, unknown> | string;
+        main?: string;
+        module?: string;
+      };
+      let entryRel: string | undefined;
+      if (typeof pkg.exports === 'string') {
+        entryRel = pkg.exports;
+      } else if (pkg.exports && typeof pkg.exports === 'object') {
+        const dot = (pkg.exports as Record<string, unknown>)['.'];
+        if (typeof dot === 'string') {
+          entryRel = dot;
+        } else if (dot && typeof dot === 'object') {
+          const cond = dot as Record<string, unknown>;
+          for (const key of ['import', 'module', 'default'] as const) {
+            const val = cond[key];
+            if (typeof val === 'string') {
+              entryRel = val;
+              break;
+            }
+          }
+        }
+      }
+      entryRel = entryRel ?? pkg.module ?? pkg.main;
+      if (!entryRel) {
+        throw new Error(`[@eggjs/egg-bundler] framework package ${pkgJsonPath} has no resolvable entry`);
+      }
+      return pathToFileURL(path.resolve(frameworkDir, entryRel)).href;
+    } catch (err) {
+      debug('resolve framework entry failed: %o', err);
+      throw err;
+    }
   }
 
   #resolveFrameworkPath(): string {

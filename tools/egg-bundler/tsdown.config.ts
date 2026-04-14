@@ -5,6 +5,7 @@ const config: UserConfig = defineConfig({
   unbundle: true,
   fixedExtension: false,
   external: [/^@eggjs\//, 'egg', '@utoo/pack', /\.node$/],
+  copy: [{ from: 'src/scripts/generate-manifest.mjs', to: 'dist/scripts/' }],
   unused: {
     level: 'warn',
     ignore: ['@utoo/pack', 'egg', 'tsx', '@eggjs/core'],
