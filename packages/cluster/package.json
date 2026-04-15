@@ -54,6 +54,7 @@
     "egg-logger": "catalog:",
     "get-ready": "catalog:",
     "graceful-process": "catalog:",
+    "onelogger": "^1.0.1",
     "sendmessage": "catalog:",
     "terminal-link": "catalog:",
     "utility": "catalog:"

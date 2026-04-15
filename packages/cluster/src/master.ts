@@ -15,6 +15,7 @@ import terminalLink from 'terminal-link';
 import { readJSONSync } from 'utility';
 
 import { ClusterWorkerExceptionError } from './error/ClusterWorkerExceptionError.ts';
+import { ipcLogger, formatIpcMessage } from './utils/ipc_logger.ts';
 import { Messenger } from './utils/messenger.ts';
 import { AgentProcessWorker, AgentProcessUtils as ProcessAgentWorker } from './utils/mode/impl/process/agent.ts';
 import { AppProcessWorker, AppProcessUtils as ProcessAppWorker } from './utils/mode/impl/process/app.ts';
@@ -291,6 +292,11 @@ export class Master extends ReadyEventEmitter {
             connection.destroy();
           } else {
             const worker = this.stickyWorker(connection.remoteAddress) as AppProcessWorker;
+            // A'. master -> app sticky-session direct send (bypasses AppProcessWorker#send),
+            // carries a net.Socket handle — safe-printed by formatIpcMessage's replacer.
+            ipcLogger.info(
+              formatIpcMessage(`master->app#${worker.workerId}`, { action: 'sticky-session:connection' }, connection),
+            );
             worker.instance.send('sticky-session:connection', connection);
           }
         },
