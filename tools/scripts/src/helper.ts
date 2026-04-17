@@ -15,7 +15,7 @@ export async function findNodeProcess(filterFn?: FilterFunction): Promise<NodePr
   const command = isWindows
     ? 'wmic Path win32_process Where "Name = \'node.exe\'" Get CommandLine,ProcessId'
     : // command, cmd are alias of args, not POSIX standard, so we use args
-      'ps -wweo "pid,args"';
+      'command -v ps >/dev/null 2>&1 && ps --help 2>&1 | grep -q BusyBox && ps -o "pid,args" || ps -wweo "pid,args"';
   const stdio = await runScript(command, { stdio: 'pipe' });
   const processList = stdio
     .stdout!.toString()
