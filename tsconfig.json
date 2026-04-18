@@ -118,6 +118,9 @@
     },
     {
       "path": "./tegg/core/agent-runtime"
+    },
+    {
+      "path": "./tegg/standalone/service-worker"
     }
   ]
 }

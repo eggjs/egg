@@ -209,6 +209,7 @@ catalog:
   type-is: ^2.0.0
   typebox: ^1.0.65
   typescript: ^5.9.3
+  undici: ^7.10.0
   unplugin-unused: ^0.5.4
   urijs: ^1.19.11
   urllib: ^4.8.2

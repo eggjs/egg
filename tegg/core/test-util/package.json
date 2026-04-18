@@ -29,11 +29,13 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./StandaloneTestUtil": "./src/StandaloneTestUtil.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
+      "./StandaloneTestUtil": "./dist/StandaloneTestUtil.js",
       "./package.json": "./package.json"
     }
   },
@@ -47,7 +49,9 @@
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
-    "globby": "catalog:"
+    "@eggjs/tegg-types": "workspace:*",
+    "globby": "catalog:",
+    "undici": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

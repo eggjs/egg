@@ -1,0 +1,6 @@
+{
+  "name": "mcp-app",
+  "eggModule": {
+    "name": "mcpApp"
+  }
+}

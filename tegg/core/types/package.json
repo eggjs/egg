@@ -124,6 +124,9 @@
     "./runtime/model/EggObject": "./src/runtime/model/EggObject.ts",
     "./runtime/model/LoadUnitInstance": "./src/runtime/model/LoadUnitInstance.ts",
     "./schedule": "./src/schedule.ts",
+    "./standalone": "./standalone/index.ts",
+    "./standalone/fetch": "./standalone/fetch.ts",
+    "./standalone/ServiceWorkerContext": "./standalone/ServiceWorkerContext.ts",
     "./transaction": "./src/transaction.ts",
     "./package.json": "./package.json"
   },
@@ -227,6 +230,9 @@
       "./runtime/model/EggObject": "./dist/runtime/model/EggObject.js",
       "./runtime/model/LoadUnitInstance": "./dist/runtime/model/LoadUnitInstance.js",
       "./schedule": "./dist/schedule.js",
+      "./standalone": "./dist/standalone/index.js",
+      "./standalone/fetch": "./dist/standalone/fetch.js",
+      "./standalone/ServiceWorkerContext": "./dist/standalone/ServiceWorkerContext.js",
       "./transaction": "./dist/transaction.js",
       "./package.json": "./package.json"
     }
