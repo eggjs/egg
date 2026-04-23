@@ -405,7 +405,7 @@ return app.httpRequest().post('/login').expect(302);
 ```js
 app.get('/', async (ctx) => {
   const ret = await ctx.curl('https://eggjs.org');
-  this.body = ret.data.toString();
+  ctx.body = ret.data.toString();
 });
 
 app.mockHttpclient('https://eggjs.org', {

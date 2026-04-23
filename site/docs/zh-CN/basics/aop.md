@@ -178,13 +178,13 @@ class PointcutAdvice implements IAdvice<Hello> {
 
   // 记录调用异常
   async afterThrow(ctx: AdviceContext<Hello, any>, error: Error): Promise<void> {
-    this.logger.info(`${ctx.that.constructor.name}.${ctx.method.name} throw an error: %j`, error);
+    this.logger.info(`${ctx.that.constructor.name}.${ctx.method} throw an error: %j`, error);
   }
 
   // 打个调用结束的日志
   async afterFinally(ctx: AdviceContext<Hello>): Promise<void> {
     this.logger.info(`called ${ctx.that.constructor.name}.${ctx.method.name}, params: %j`, args);
-  }
+    this.logger.info(`called ${ctx.that.constructor.name}.${ctx.method}, params: %j`, ctx.args);
 
   // 修改被切函数的调用过程，比如将被切函数放到事务中执行
   async around(ctx: AdviceContext<Hello>, next: () => Promise<any>): Promise<any> {
