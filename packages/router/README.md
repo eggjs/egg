@@ -137,10 +137,10 @@ router.get(
       next();
     });
   },
-  ctx => {
+  (ctx) => {
     console.log(ctx.user);
     // => { id: 17, name: "Alex" }
-  }
+  },
 );
 ```
 
@@ -299,7 +299,7 @@ app.use(
     throw: true,
     notImplemented: () => new Boom.notImplemented(),
     methodNotAllowed: () => new Boom.methodNotAllowed(),
-  })
+  }),
 );
 ```
 
@@ -318,7 +318,7 @@ router.redirect('/login', 'sign-in');
 This is equivalent to:
 
 ```ts
-router.all('/login', ctx => {
+router.all('/login', (ctx) => {
   ctx.redirect('/sign-in');
   ctx.status = 301;
 });
@@ -407,10 +407,10 @@ router
     if (!ctx.user) return (ctx.status = 404);
     return next();
   })
-  .get('/users/:user', ctx => {
+  .get('/users/:user', (ctx) => {
     ctx.body = ctx.user;
   })
-  .get('/users/:user/friends', ctx => {
+  .get('/users/:user/friends', (ctx) => {
     return ctx.user.getFriends().then(function (friends) {
       ctx.body = friends;
     });

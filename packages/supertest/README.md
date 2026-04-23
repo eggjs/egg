@@ -154,7 +154,7 @@ describe('GET /users', function () {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200)
-      .then(response => {
+      .then((response) => {
         expect(response.body.email).toEqual('foo@bar.com');
       });
   });
@@ -194,7 +194,7 @@ describe('POST /user', function () {
           id: 'some fixed id',
           name: 'john',
         },
-        done
+        done,
       );
   });
 });

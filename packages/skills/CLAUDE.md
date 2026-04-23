@@ -139,9 +139,7 @@ packages/skills/eval/
       "id": 1,
       "prompt": "用户的任务描述",
       "expected_output": "期望输出的关键要素描述",
-      "files": [
-        { "path": "相对路径", "content": "文件内容（可选，用于提供上下文或有 bug 的代码）" }
-      ]
+      "files": [{ "path": "相对路径", "content": "文件内容（可选，用于提供上下文或有 bug 的代码）" }]
     }
   ]
 }

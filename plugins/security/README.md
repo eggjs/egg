@@ -90,7 +90,7 @@ There are times when we want to be more flexible to configure security plugins.F
 Then we can configure `ctx.securityOptions[name] opts` in the custom middleware or controller, then the current request configuration will override the default configuration (new configuration will be merged and override the default project configuration, but only take effect in the current request)
 
 ```js
-async ctx => {
+async (ctx) => {
   // if satisfied some condition
   // change configuration
   ctx.securityOptions.xframe = {

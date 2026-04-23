@@ -279,11 +279,7 @@ The framework combines these precautions to provide a configurable CSRF preventi
 In synchronous rendering the page, you should add a parameter name called `_csrf` in the form's submit url, the value is `ctx.csrf`, when user submitting this form , CSRF token will be submitted:
 
 ```html
-<form
-  method="POST"
-  action="/upload?_csrf={{ ctx.csrf | safe }}"
-  enctype="multipart/form-data"
->
+<form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
   title: <input name="title" /> file: <input name="file" type="file" />
   <button type="submit">upload</button>
 </form>

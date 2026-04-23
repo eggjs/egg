@@ -185,10 +185,7 @@ In `uuid` middleware:
 
 import { Context, Application, EggAppConfig } from 'egg';
 
-export default function uuid(
-  options: EggAppConfig['uuid'],
-  app: Application,
-): any {
+export default function uuid(options: EggAppConfig['uuid'], app: Application): any {
   return async (ctx: Context, next: () => Promise<any>) => {
     // The 'name' is just the sub prop in uuid in the config.default.js
     console.info(options.name);

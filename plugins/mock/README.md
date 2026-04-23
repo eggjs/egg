@@ -321,14 +321,14 @@ console.log(ctx.user.name); // Jason
 
 ```js
 await app.mockContextScope(
-  async ctx => {
+  async (ctx) => {
     console.log(ctx.user.name); // Jason
   },
   {
     user: {
       name: 'Jason',
     },
-  }
+  },
 );
 ```
 
@@ -443,7 +443,7 @@ describe('test app', () => {
     return app
       .httpRequest()
       .get('/foo')
-      .expect(res => {
+      .expect((res) => {
         assert(!res.headers.foo);
       })
       .expect(/bar/);

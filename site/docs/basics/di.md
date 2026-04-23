@@ -434,13 +434,7 @@ In this case, you need to tell the `Module` which instantiation method the injec
 ### Example
 
 ```ts
-import {
-  Logger,
-  Inject,
-  InitTypeQualifier,
-  ObjectInitType,
-  SingletonProto,
-} from 'egg';
+import { Logger, Inject, InitTypeQualifier, ObjectInitType, SingletonProto } from 'egg';
 
 @SingletonProto()
 export class HelloService {
@@ -519,8 +513,10 @@ export const HELLO_ATTRIBUTE = Symbol('HELLO_ATTRIBUTE');
 // This utility class can implement type checking
 // 1. With this annotation, you must implement the abstract class
 // 2. The annotation parameter must be an enum value
-export const Hello: ImplDecorator<AbstractHello, typeof HelloType> =
-  QualifierImplDecoratorUtil.generatorDecorator(AbstractHello, HELLO_ATTRIBUTE);
+export const Hello: ImplDecorator<AbstractHello, typeof HelloType> = QualifierImplDecoratorUtil.generatorDecorator(
+  AbstractHello,
+  HELLO_ATTRIBUTE,
+);
 ```
 
 3. Implement the abstract class.
@@ -553,10 +549,7 @@ export class HelloService {
   private eggObjectFactory: EggObjectFactory;
 
   async hello(): Promise<string> {
-    const helloImpl = await this.eggObjectFactory.getEggObject(
-      AbstractHello,
-      HelloType.BAR,
-    );
+    const helloImpl = await this.eggObjectFactory.getEggObject(AbstractHello, HelloType.BAR);
     return helloImpl.hello();
   }
 }
@@ -574,6 +567,8 @@ export class HelloService {
 // Use a record to masquerade as an enum
 type AnyEnum = Record<string, string>;
 
-export const Convertor: ImplDecorator<AbstractFoo, AnyEnum> =
-  QualifierImplDecoratorUtil.generatorDecorator(AbstractFoo, FOO_ATTRIBUTE);
+export const Convertor: ImplDecorator<AbstractFoo, AnyEnum> = QualifierImplDecoratorUtil.generatorDecorator(
+  AbstractFoo,
+  FOO_ATTRIBUTE,
+);
 ```

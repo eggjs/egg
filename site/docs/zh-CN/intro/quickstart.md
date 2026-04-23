@@ -240,17 +240,14 @@ class NewsService extends Service {
     const { serverUrl, pageSize } = this.config.news;
 
     // use build-in http client to GET hacker-news api
-    const { data: idList } = await this.ctx.curl(
-      `${serverUrl}/topstories.json`,
-      {
-        data: {
-          orderBy: '"$key"',
-          startAt: `"${pageSize * (page - 1)}"`,
-          endAt: `"${pageSize * page - 1}"`,
-        },
-        dataType: 'json',
+    const { data: idList } = await this.ctx.curl(`${serverUrl}/topstories.json`, {
+      data: {
+        orderBy: '"$key"',
+        startAt: `"${pageSize * (page - 1)}"`,
+        endAt: `"${pageSize * page - 1}"`,
       },
-    );
+      dataType: 'json',
+    });
 
     // parallel GET detail
     const newsList = await Promise.all(
@@ -401,11 +398,7 @@ const { app, mock, assert } = require('egg-mock/bootstrap');
 
 describe('test/app/middleware/robot.test.js', () => {
   it('should block robot', () => {
-    return app
-      .httpRequest()
-      .get('/')
-      .set('User-Agent', 'Baiduspider')
-      .expect(403);
+    return app.httpRequest().get('/').set('User-Agent', 'Baiduspider').expect(403);
   });
 });
 ```

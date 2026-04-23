@@ -56,7 +56,7 @@ export class LogAdvice implements IAdvice {
 ```typescript
 await beforeCall(ctx);
 try {
-  const result = await around(ctx, next);  // next 执行目标方法
+  const result = await around(ctx, next); // next 执行目标方法
   await afterReturn(ctx, result);
   return result;
 } catch (e) {
@@ -78,12 +78,12 @@ try {
 
 ```typescript
 interface AdviceContext<T = object, K = any> {
-  that: T;              // 被切的对象实例
-  method: PropertyKey;  // 被切的方法名
-  args: any[];          // 方法参数（可修改）
-  adviceParams?: K;     // 装饰器透传的参数
-  get(key: PropertyKey): any;       // 获取共享状态
-  set(key: PropertyKey, value: any): this;  // 设置共享状态
+  that: T; // 被切的对象实例
+  method: PropertyKey; // 被切的方法名
+  args: any[]; // 方法参数（可修改）
+  adviceParams?: K; // 装饰器透传的参数
+  get(key: PropertyKey): any; // 获取共享状态
+  set(key: PropertyKey, value: any): this; // 设置共享状态
 }
 ```
 
@@ -201,10 +201,14 @@ export class CacheAdvice implements IAdvice {
 @SingletonProto()
 export class UserService {
   @Pointcut(CacheAdvice, { adviceParams: { ttl: 3600 } })
-  async getUser(id: string) { /* ... */ }
+  async getUser(id: string) {
+    /* ... */
+  }
 
   @Pointcut(CacheAdvice, { adviceParams: { ttl: 60 } })
-  async getUserList() { /* ... */ }
+  async getUserList() {
+    /* ... */
+  }
 }
 ```
 

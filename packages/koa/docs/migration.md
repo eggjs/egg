@@ -19,7 +19,7 @@ app.use(async (ctx, next) => {
   }
 });
 
-app.use(async ctx => {
+app.use(async (ctx) => {
   const user = await User.getById(this.session.userid); // await instead of yield
   ctx.body = user; // ctx instead of this
 });
@@ -57,7 +57,7 @@ app.use(
     yield next;
     const ms = Date.now() - start;
     console.log(`${this.method} ${this.url} - ${ms}ms`);
-  })
+  }),
 );
 ```
 

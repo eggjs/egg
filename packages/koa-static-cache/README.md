@@ -42,7 +42,7 @@ const { staticCache } = require('@eggjs/koa-static-cache');
 app.use(
   staticCache(path.join(__dirname, 'public'), {
     maxAge: 365 * 24 * 60 * 60,
-  })
+  }),
 );
 ```
 
@@ -115,8 +115,8 @@ app.use(
     {
       maxAge: 60 * 60 * 24 * 365,
     },
-    files
-  )
+    files,
+  ),
 );
 
 files['/package.json'].maxAge = 60 * 60 * 24 * 30;
@@ -135,7 +135,7 @@ app.use(
     dir: '/public',
     dynamic: true,
     files,
-  })
+  }),
 );
 ```
 

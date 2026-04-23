@@ -357,7 +357,7 @@ ctx.tValidate(
   Type.Object({
     name: Type.String({ minLength: 1, maxLength: 5, transform: ['trim'] }),
   }),
-  body
+  body,
 );
 ```
 
@@ -374,10 +374,10 @@ ctx.tValidate(
 
 ```ts
 config.typeboxValidate = {
-  patchAjv: ajv => {
+  patchAjv: (ajv) => {
     ajv.addFormat('json-string', {
       type: 'string',
-      validate: x => {
+      validate: (x) => {
         try {
           JSON.parse(x);
           return true;

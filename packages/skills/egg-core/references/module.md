@@ -71,8 +71,8 @@ app/
 
 ```json
 [
-  { "path": "../app/module-a" },          // 相对于 config 目录的路径
-  { "package": "@eggjs/common-module" }   // npm 包名
+  { "path": "../app/module-a" }, // 相对于 config 目录的路径
+  { "package": "@eggjs/common-module" } // npm 包名
 ]
 ```
 

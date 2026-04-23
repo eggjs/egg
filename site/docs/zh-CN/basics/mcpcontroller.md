@@ -17,13 +17,7 @@ plugin.mcpProxy = true;
 ### Tool
 
 ```typescript
-import {
-  MCPController,
-  ToolArgs,
-  MCPToolResponse,
-  MCPTool,
-  ToolArgsSchema,
-} from 'egg';
+import { MCPController, ToolArgs, MCPToolResponse, MCPTool, ToolArgsSchema } from 'egg';
 import z from 'zod';
 
 export const ToolType = {
@@ -43,9 +37,7 @@ export const ToolType = {
 export class MCPFooController {
   @MCPTool()
   // 请在这里用 typeof
-  async bar(
-    @ToolArgsSchema(ToolType) args: ToolArgs<typeof ToolType>,
-  ): Promise<MCPToolResponse> {
+  async bar(@ToolArgsSchema(ToolType) args: ToolArgs<typeof ToolType>): Promise<MCPToolResponse> {
     return {
       content: [
         {
@@ -61,13 +53,7 @@ export class MCPFooController {
 ### Prompt
 
 ```typescript
-import {
-  MCPController,
-  PromptArgs,
-  MCPPromptResponse,
-  MCPPrompt,
-  PromptArgsSchema,
-} from 'egg';
+import { MCPController, PromptArgs, MCPPromptResponse, MCPPrompt, PromptArgsSchema } from 'egg';
 import z from 'zod';
 
 export const PromptType = {
@@ -85,9 +71,7 @@ export const PromptType = {
 export class MCPFooController {
   @MCPPrompt()
   // 请在这里用 typeof
-  async foo(
-    @PromptArgsSchema(PromptType) args: PromptArgs<typeof PromptType>,
-  ): Promise<MCPPromptResponse> {
+  async foo(@PromptArgsSchema(PromptType) args: PromptArgs<typeof PromptType>): Promise<MCPPromptResponse> {
     return {
       messages: [
         {
@@ -149,34 +133,19 @@ export class MCPFooController {
 ### Notification
 
 ```typescript
-import {
-  MCPController,
-  ToolArgs,
-  MCPToolResponse,
-  MCPTool,
-  ToolExtra,
-  ToolArgsSchema,
-  Extra,
-} from 'egg';
+import { MCPController, ToolArgs, MCPToolResponse, MCPTool, ToolExtra, ToolArgsSchema, Extra } from 'egg';
 import z from 'zod';
 
 export const NotificationType = {
-  interval: z
-    .number()
-    .describe('Interval in milliseconds between notifications')
-    .default(100),
-  count: z
-    .number()
-    .describe('Number of notifications to send (0 for 100)')
-    .default(50),
+  interval: z.number().describe('Interval in milliseconds between notifications').default(100),
+  count: z.number().describe('Number of notifications to send (0 for 100)').default(50),
 };
 
 @MCPController()
 export class AppController {
   @MCPTool({
     name: 'start-notification-stream',
-    description:
-      'Starts sending periodic notifications for testing resumability',
+    description: 'Starts sending periodic notifications for testing resumability',
   })
   async startNotificationStream(
     @ToolArgsSchema(NotificationType) args: ToolArgs<typeof NotificationType>,
@@ -184,8 +153,7 @@ export class AppController {
   ): Promise<MCPToolResponse> {
     const { interval, count } = args;
     const { sendNotification } = extra;
-    const sleep = (ms: number) =>
-      new Promise((resolve) => setTimeout(resolve, ms));
+    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
     let counter = 0;
 
     while (count === 0 || counter < count) {
@@ -219,13 +187,7 @@ export class AppController {
 #### 调用
 
 ```ts
-import {
-  HTTPBody,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  Inject,
-} from 'egg';
+import { HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, Inject } from 'egg';
 import { MCPClientFactory } from 'egg/mcp';
 
 export interface ListMcpRequest {
@@ -257,9 +219,7 @@ export default class MCPDemoHTTPController {
     method: HTTPMethodEnum.POST,
     path: '/list',
   })
-  async getMcpTools(
-    @HTTPBody() request: ListMcpRequest,
-  ): Promise<Record<string, string>> {
+  async getMcpTools(@HTTPBody() request: ListMcpRequest): Promise<Record<string, string>> {
     const client = await this.mcpClientFactory.build(
       {
         name: request.clientName ?? request.servername,
@@ -282,9 +242,7 @@ export default class MCPDemoHTTPController {
     method: HTTPMethodEnum.POST,
     path: '/call',
   })
-  async callMcpTools(
-    @HTTPBody() request: CallMcpRequest,
-  ): Promise<Record<string, string>> {
+  async callMcpTools(@HTTPBody() request: CallMcpRequest): Promise<Record<string, string>> {
     const client = await this.mcpClientFactory.build(
       {
         name: request.clientName ?? request.servername,
@@ -390,9 +348,7 @@ describe('plugin/controller/test/mcp/mcpcontroller.test.ts', () => {
       uri: 'hitu://npm/tegg?version=4.10.0',
     });
     assert.deepEqual(resourceRes, {
-      contents: [
-        { uri: 'hitu://npm/tegg?version=4.10.0', text: 'MOCK TEXT 张三' },
-      ],
+      contents: [{ uri: 'hitu://npm/tegg?version=4.10.0', text: 'MOCK TEXT 张三' }],
     });
   });
 });

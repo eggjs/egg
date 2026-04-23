@@ -48,8 +48,8 @@ it('should call notify with correct args', async () => {
   const orderService = await app.getEggObject(OrderService);
   await orderService.create({ productId: '1' });
 
-  assert.equal(mockFn.called, 1);                         // 调用次数
-  assert.deepStrictEqual(mockFn.lastCalledArguments, ['user-1', '订单创建成功']);  // 最后一次调用参数
+  assert.equal(mockFn.called, 1); // 调用次数
+  assert.deepStrictEqual(mockFn.lastCalledArguments, ['user-1', '订单创建成功']); // 最后一次调用参数
   // mockFn.calledArguments — 所有调用参数的数组
 });
 ```
@@ -84,10 +84,7 @@ it('should mock external API', () => {
     data: JSON.stringify({ name: 'test' }),
   });
 
-  return app.httpRequest()
-    .get('/api/proxy/users')
-    .expect(200)
-    .expect({ name: 'test' });
+  return app.httpRequest().get('/api/proxy/users').expect(200).expect({ name: 'test' });
 });
 ```
 
@@ -100,10 +97,7 @@ POST/PUT/DELETE 测试时跳过 CSRF 校验：
 ```typescript
 it('should POST without CSRF error', () => {
   app.mockCsrf();
-  return app.httpRequest()
-    .post('/api/users')
-    .send({ name: 'test' })
-    .expect(200);
+  return app.httpRequest().post('/api/users').send({ name: 'test' }).expect(200);
 });
 ```
 

@@ -177,8 +177,8 @@ Here's an example of stream error handling without automatically destroying the 
 ```js
 const PassThrough = require('stream').PassThrough;
 
-app.use(async ctx => {
-  ctx.body = someHTTPStream.on('error', err => ctx.onerror(err)).pipe(PassThrough());
+app.use(async (ctx) => {
+  ctx.body = someHTTPStream.on('error', (err) => ctx.onerror(err)).pipe(PassThrough());
 });
 ```
 

@@ -1,5 +1,8 @@
 import { strict as assert } from 'assert';
 
+import type { RequestOptions as RequestOptionsNext } from 'urllib';
+import type { RequestOptions2, RequestOptions } from 'urllib';
+
 import {
   Controller,
   RequestObjectBody,
@@ -9,9 +12,6 @@ import {
   EggHttpClient,
   EggContextHttpClient,
 } from '../../../../../../src/index.js';
-
-import type { RequestOptions as RequestOptionsNext } from 'urllib';
-import type { RequestOptions2, RequestOptions } from 'urllib';
 
 // add user controller and service
 declare module 'egg' {
