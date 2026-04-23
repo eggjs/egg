@@ -376,8 +376,6 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
  */
 export type SnapshotModuleLoader = (resolvedPath: string) => any;
 
-let _snapshotModuleLoader: SnapshotModuleLoader | undefined;
-
 /**
  * Register a snapshot module loader that intercepts `importModule()` calls.
  *
@@ -388,15 +386,46 @@ let _snapshotModuleLoader: SnapshotModuleLoader | undefined;
  *
  * Also sets `isESM = false` because the snapshot bundle is CJS and
  * esbuild's `import.meta` polyfill causes incorrect ESM detection.
+ *
+ * Uses globalThis so that bundled and external copies share the same loader.
  */
 export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
-  _snapshotModuleLoader = loader;
+  (globalThis as any).__EGG_SNAPSHOT_MODULE_LOADER__ = loader;
   isESM = false;
 }
 
+/**
+ * Module loader for bundled egg apps. Called with the raw `importModule()`
+ * filepath (posix-normalized) before `importResolve`, so bundled apps can
+ * serve modules that no longer exist on disk. Return `undefined` to fall
+ * through to the standard import path.
+ */
+export type BundleModuleLoader = (filepath: string) => unknown;
+
+/**
+ * Register a bundle module loader. Uses globalThis so that bundled and
+ * external copies of @eggjs/utils share the same loader.
+ */
+export function setBundleModuleLoader(loader: BundleModuleLoader | undefined): void {
+  (globalThis as any).__EGG_BUNDLE_MODULE_LOADER__ = loader;
+  if (loader) isESM = false;
+}
+
 export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
+  const _bundleModuleLoader: BundleModuleLoader | undefined = (globalThis as any).__EGG_BUNDLE_MODULE_LOADER__;
+  if (_bundleModuleLoader) {
+    const hit = _bundleModuleLoader(filepath.replaceAll('\\', '/'));
+    if (hit !== undefined) {
+      let obj = hit as any;
+      if (obj?.default?.__esModule === true && 'default' in obj.default) obj = obj.default;
+      if (options?.importDefaultOnly && obj && typeof obj === 'object' && 'default' in obj) obj = obj.default;
+      return obj;
+    }
+  }
+
   const moduleFilePath = importResolve(filepath, options);
 
+  const _snapshotModuleLoader: SnapshotModuleLoader | undefined = (globalThis as any).__EGG_SNAPSHOT_MODULE_LOADER__;
   if (_snapshotModuleLoader) {
     let obj = _snapshotModuleLoader(moduleFilePath);
     if (obj && typeof obj === 'object' && obj.default?.__esModule === true && obj.default && 'default' in obj.default) {

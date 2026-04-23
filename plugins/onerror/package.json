@@ -28,6 +28,7 @@
     "./app": "./src/app.ts",
     "./config/config.default": "./src/config/config.default.ts",
     "./lib/error_view": "./src/lib/error_view.ts",
+    "./lib/onerror_page": "./src/lib/onerror_page.ts",
     "./lib/utils": "./src/lib/utils.ts",
     "./types": "./src/types.ts",
     "./package.json": "./package.json"
@@ -40,6 +41,7 @@
       "./app": "./dist/app.js",
       "./config/config.default": "./dist/config/config.default.js",
       "./lib/error_view": "./dist/lib/error_view.js",
+      "./lib/onerror_page": "./dist/lib/onerror_page.js",
       "./lib/utils": "./dist/lib/utils.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
