@@ -253,11 +253,7 @@ IE 提供的一些 XSS 检测与防范机制，默认开启。
 在同步渲染页面时，在表单请求中增加一个名为 `_csrf` 的 url query，其值为 `ctx.csrf`。这样用户在提交这个表单时会将 CSRF token 提交上来：
 
 ```html
-<form
-  method="POST"
-  action="/upload?_csrf={{ ctx.csrf | safe }}"
-  enctype="multipart/form-data"
->
+<form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
   title: <input name="title" /> file: <input name="file" type="file" />
   <button type="submit">上传</button>
 </form>

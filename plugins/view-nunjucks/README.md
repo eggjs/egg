@@ -63,7 +63,7 @@ class TestController extends Controller {
       { name: 'view test' },
       {
         path: '***',
-      }
+      },
     );
   }
 }
@@ -92,7 +92,7 @@ class TestController extends Controller {
       { name: 'egg' },
       {
         path: '***',
-      }
+      },
     );
   }
 }

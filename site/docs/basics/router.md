@@ -175,10 +175,7 @@ Regular expressions, as well, can be used in routing rules to acquire parameters
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get(
-    /^\/package\/([\w-.]+\/[\w-.]+)$/,
-    app.controller.package.detail,
-  );
+  app.router.get(/^\/package\/([\w-.]+\/[\w-.]+)$/, app.controller.package.detail);
 };
 
 // app/controller/package.js
@@ -318,12 +315,7 @@ module.exports = () => {
 
 // app/router.js
 module.exports = (app) => {
-  app.router.get(
-    's',
-    '/search',
-    app.middleware.uppercase(),
-    app.controller.search,
-  );
+  app.router.get('s', '/search', app.middleware.uppercase(), app.controller.search);
 };
 
 // curl http://localhost:7001/search?name=egg

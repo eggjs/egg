@@ -111,16 +111,16 @@ import { ContextProto, Inject, type ContextEventBus } from 'egg';
 @ContextProto()
 export class BatchService {
   @Inject()
-  private eventBus: ContextEventBus;  // 注意：cork/uncork 需要 ContextEventBus
+  private eventBus: ContextEventBus; // 注意：cork/uncork 需要 ContextEventBus
 
   async processBatch(items: string[]): Promise<void> {
-    this.eventBus.cork();     // 开始缓冲，事件不会立即派发
+    this.eventBus.cork(); // 开始缓冲，事件不会立即派发
 
     for (const item of items) {
       this.eventBus.emit('orderCreated', item, 'batch-user');
     }
 
-    this.eventBus.uncork();   // 释放缓冲，所有事件一次性派发
+    this.eventBus.uncork(); // 释放缓冲，所有事件一次性派发
   }
 }
 ```

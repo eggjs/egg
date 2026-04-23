@@ -113,7 +113,7 @@ export class Foo {
     },
     {
       primaryKey: true,
-    }
+    },
   )
   id: number;
 
@@ -271,7 +271,7 @@ export class Foo {
     },
     {
       primaryKey: true,
-    }
+    },
   )
   id: ColumnTsType['INT'];
 

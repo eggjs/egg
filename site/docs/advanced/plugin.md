@@ -154,20 +154,12 @@ Extend the built-in objects of the framework, just like the application
    const mkdirp = require('mkdirp');
 
    module.exports = (options, app) => {
-     assert.strictEqual(
-       typeof options.dir,
-       'string',
-       'Must set `app.config.static.dir` when static plugin enable',
-     );
+     assert.strictEqual(typeof options.dir, 'string', 'Must set `app.config.static.dir` when static plugin enable');
 
      // ensure directory exists
      mkdirp.sync(options.dir);
 
-     app.loggers.coreLogger.info(
-       '[egg-static] starting static serve %s -> %s',
-       options.prefix,
-       options.dir,
-     );
+     app.loggers.coreLogger.info('[egg-static] starting static serve %s -> %s', options.prefix, options.dir);
 
      return staticCache(options);
    };
@@ -302,9 +294,7 @@ function createMysql(config, app) {
   // check before start the application
   app.beforeStart(async () => {
     const rows = await client.query('select now() as currentTime;');
-    app.coreLogger.info(
-      `[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`,
-    );
+    app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
   });
 
   return client;
@@ -317,20 +307,13 @@ The initialization function also supports `Async function`, convenient for some 
 async function createMysql(config, app) {
   // get mysql configurations asynchronous
   const mysqlConfig = await app.configManager.getMysqlConfig(config.mysql);
-  assert(
-    mysqlConfig.host &&
-      mysqlConfig.port &&
-      mysqlConfig.user &&
-      mysqlConfig.database,
-  );
+  assert(mysqlConfig.host && mysqlConfig.port && mysqlConfig.user && mysqlConfig.database);
   // create instance
   const client = new Mysql(mysqlConfig);
 
   // check before start the application
   const rows = await client.query('select now() as currentTime;');
-  app.coreLogger.info(
-    `[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`,
-  );
+  app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
 
   return client;
 }
@@ -469,14 +452,7 @@ It's well welcomed to your contributions to the new plugins, but also hope you f
         "name": "nunjucks",
         "dep": ["security"]
       },
-      "keywords": [
-        "egg",
-        "egg-plugin",
-        "eggPlugin",
-        "egg-plugin-view",
-        "egg-view",
-        "nunjucks"
-      ]
+      "keywords": ["egg", "egg-plugin", "eggPlugin", "egg-plugin-view", "egg-view", "nunjucks"]
     }
     ```
 

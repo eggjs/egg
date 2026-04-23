@@ -82,10 +82,10 @@ import { LogAdvice } from '../common/advice/LogAdvice.ts';
 import { countMw } from './middleware/count.ts';
 
 @HTTPController({ path: '/api' })
-@Middleware(LogAdvice)  // 类级别：所有方法都会执行
+@Middleware(LogAdvice) // 类级别：所有方法都会执行
 export class FooController {
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/profile' })
-  @Middleware(countMw)  // 方法级别：仅此方法执行
+  @Middleware(countMw) // 方法级别：仅此方法执行
   async getProfile() {
     return { name: 'test' };
   }
@@ -119,11 +119,11 @@ export class FooController {
 **若混用函数式和 AOP 中间件，所有函数式中间件（无论类级别还是方法级别）会先于所有 AOP 中间件执行。** 即函数式和 AOP 分属两个独立的执行阶段，函数式阶段在前，AOP 阶段在后：
 
 ```typescript
-@Middleware(countMw)       // 函数式 - 类级别
-@Middleware(LogAdvice)     // AOP - 类级别
+@Middleware(countMw) // 函数式 - 类级别
+@Middleware(LogAdvice) // AOP - 类级别
 export class FooController {
-  @Middleware(timeMw)      // 函数式 - 方法级别
-  @Middleware(AuthAdvice)  // AOP - 方法级别
+  @Middleware(timeMw) // 函数式 - 方法级别
+  @Middleware(AuthAdvice) // AOP - 方法级别
   async hello() {}
 }
 

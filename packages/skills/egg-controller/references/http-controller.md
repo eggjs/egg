@@ -27,11 +27,11 @@ export class DemoController {
 export class PathController {
   // 最终路径: GET /api/hello
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: 'hello' })
-  async hello() { }
+  async hello() {}
 
   // 最终路径: POST /api/create
   @HTTPMethod({ method: HTTPMethodEnum.POST, path: 'create' })
-  async create() { }
+  async create() {}
 }
 ```
 
@@ -199,13 +199,13 @@ export class PriorityController {
     path: '/(api|openapi)/version',
     priority: 100000, // 提升优先级
   })
-  async high() { }
+  async high() {}
 
   @HTTPMethod({
     method: HTTPMethodEnum.POST,
     path: '/(api|openapi)/(.+)',
   })
-  async low() { }
+  async low() {}
 }
 ```
 
@@ -227,10 +227,7 @@ export class PriorityController {
 @HTTPController({ path: '/api/users' })
 export class UserController {
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: ':userId/posts/:postId' })
-  async getPost(
-    @HTTPParam() userId: string,
-    @HTTPParam() postId: string
-  ) {
+  async getPost(@HTTPParam() userId: string, @HTTPParam() postId: string) {
     return { userId, postId };
   }
 }
@@ -460,7 +457,7 @@ export class DebugController {
     return {
       app: ctx.app.name,
       ip: ctx.ip,
-      userAgent: ctx.get('user-agent')
+      userAgent: ctx.get('user-agent'),
     };
   }
 }

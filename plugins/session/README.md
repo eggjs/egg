@@ -59,7 +59,7 @@ exports.redis = {
 ```js
 // app.js
 
-module.exports = app => {
+module.exports = (app) => {
   // set redis session store
   // session store must have 3 methods
   // define sessionStore in `app.js` so you can access `app.redis`

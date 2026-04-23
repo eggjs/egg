@@ -31,7 +31,7 @@ The obligatory hello world application:
 const Koa = require('koa');
 const app = new Koa();
 
-app.use(async ctx => {
+app.use(async (ctx) => {
   ctx.body = 'Hello World';
 });
 
@@ -77,7 +77,7 @@ app.use(async (ctx, next) => {
 
 // response
 
-app.use(async ctx => {
+app.use(async (ctx) => {
   ctx.body = 'Hello World';
 });
 
@@ -192,7 +192,7 @@ app.keys = new KeyGrip(
     'OEK5zjaAMPc3L6iK7PyUjCOziUH3rsrMKB9u8H07La1SkfwtuBoDnHaaPCkG5Brg',
     'MNKeIebviQnCPo38ufHcSfw3FFv8EtnAe1xE02xkN1wkCV1B2z126U44yk2BQVK7',
   ],
-  'sha256'
+  'sha256',
 );
 ```
 
@@ -218,7 +218,7 @@ For example, to add a reference to your database from `ctx`:
 ```js
 app.context.db = db();
 
-app.use(async ctx => {
+app.use(async (ctx) => {
   console.log(ctx.db);
 });
 ```
@@ -235,7 +235,7 @@ The default error handler also won't output errors when `err.status` is `404` or
 To perform custom error-handling logic such as centralized logging you can add an "error" event listener:
 
 ```js
-app.on('error', err => {
+app.on('error', (err) => {
   log.error('server error', err);
 });
 ```

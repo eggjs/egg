@@ -172,10 +172,7 @@ exports.info = async (ctx) => {
 ```js
 // app/router.js
 module.exports = (app) => {
-  app.router.get(
-    /^\/package\/([\w-.]+\/[\w-.]+)$/,
-    app.controller.package.detail,
-  );
+  app.router.get(/^\/package\/([\w-.]+\/[\w-.]+)$/, app.controller.package.detail);
 };
 
 // app/controller/package.js
@@ -313,12 +310,7 @@ module.exports = () => {
 
 // app/router.js
 module.exports = (app) => {
-  app.router.get(
-    's',
-    '/search',
-    app.middleware.uppercase(),
-    app.controller.search.index,
-  );
+  app.router.get('s', '/search', app.middleware.uppercase(), app.controller.search.index);
 };
 
 // curl http://localhost:7001/search?name=egg

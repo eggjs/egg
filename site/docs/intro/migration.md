@@ -169,10 +169,7 @@ const [ news, user ] = yield [
 In this case, use `Promise.all()` to wrap it:
 
 ```js
-const [news, user] = await Promise.all([
-  ctx.service.news.list(topic),
-  ctx.service.user.get(uid),
-]);
+const [news, user] = await Promise.all([ctx.service.news.list(topic), ctx.service.user.get(uid)]);
 ```
 
 #### object - yield {}
@@ -200,10 +197,7 @@ It's recommended to use `await Promise.all([])`:
 // app/service/biz.js
 class BizService extends Service {
   list(topic, uid) {
-    return Promise.all([
-      ctx.service.news.list(topic),
-      ctx.service.user.get(uid),
-    ]);
+    return Promise.all([ctx.service.news.list(topic), ctx.service.user.get(uid)]);
   }
 }
 

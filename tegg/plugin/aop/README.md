@@ -108,7 +108,7 @@ import { Crosscut, Advice, IAdvice } from '@eggjs/tegg/aop';
     clazz: CrosscutExample,
     methodName: 'hello',
   },
-  { adviceParams: { foo: 'bar' } }
+  { adviceParams: { foo: 'bar' } },
 )
 @Advice()
 export class CrosscutClassAdviceExample implements IAdvice {}

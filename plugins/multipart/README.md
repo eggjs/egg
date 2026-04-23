@@ -94,7 +94,7 @@ Or by function：
 
 ```js
 exports.multipart = {
-  whitelist: filename => ['.png'].includes(path.extname(filename) || ''),
+  whitelist: (filename) => ['.png'].includes(path.extname(filename) || ''),
 };
 ```
 

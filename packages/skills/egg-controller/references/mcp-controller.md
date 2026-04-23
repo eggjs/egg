@@ -109,11 +109,17 @@ plugin.mcpProxy = true;
 
 ```typescript
 import {
-  MCPController, MCPTool, MCPToolResponse,
-  MCPPrompt, MCPPromptResponse,
-  MCPResource, MCPResourceResponse,
-  ToolArgs, ToolArgsSchema,
-  PromptArgs, PromptArgsSchema,
+  MCPController,
+  MCPTool,
+  MCPToolResponse,
+  MCPPrompt,
+  MCPPromptResponse,
+  MCPResource,
+  MCPResourceResponse,
+  ToolArgs,
+  ToolArgsSchema,
+  PromptArgs,
+  PromptArgsSchema,
   Inject,
 } from '@eggjs/tegg';
 import { z } from '@eggjs/tegg/zod';
@@ -134,9 +140,7 @@ export class PackageMCPController {
   private readonly packageService: PackageService;
 
   @MCPTool({ description: 'Search npm package info' })
-  async searchPackage(
-    @ToolArgsSchema(SearchSchema) args: ToolArgs<typeof SearchSchema>,
-  ): Promise<MCPToolResponse> {
+  async searchPackage(@ToolArgsSchema(SearchSchema) args: ToolArgs<typeof SearchSchema>): Promise<MCPToolResponse> {
     const pkg = await this.packageService.findByName(args.name);
     if (!pkg) {
       return { content: [{ type: 'text', text: `Package ${args.name} not found` }] };
@@ -145,17 +149,17 @@ export class PackageMCPController {
   }
 
   @MCPPrompt({ description: 'Generate package summary' })
-  async summarize(
-    @PromptArgsSchema(SummarySchema) args: PromptArgs<typeof SummarySchema>,
-  ): Promise<MCPPromptResponse> {
+  async summarize(@PromptArgsSchema(SummarySchema) args: PromptArgs<typeof SummarySchema>): Promise<MCPPromptResponse> {
     return {
-      messages: [{
-        role: 'user',
-        content: {
-          type: 'text',
-          text: `Summarize the npm package: ${args.name}`,
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Summarize the npm package: ${args.name}`,
+          },
         },
-      }],
+      ],
     };
   }
 
@@ -200,7 +204,7 @@ describe('PackageMCPController', () => {
     const client: Client = await app.mcpClient();
 
     const tools = await client.listTools();
-    assert(tools.tools.some(t => t.name === 'searchPackage'));
+    assert(tools.tools.some((t) => t.name === 'searchPackage'));
 
     const res = await client.callTool({
       name: 'searchPackage',

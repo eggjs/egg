@@ -40,10 +40,7 @@ module.exports = (appInfo) => {
   const config = {};
 
   config.view = {
-    root: [
-      path.join(appInfo.baseDir, 'app/view'),
-      path.join(appInfo.baseDir, 'path/to/another'),
-    ].join(','),
+    root: [path.join(appInfo.baseDir, 'app/view'), path.join(appInfo.baseDir, 'path/to/another')].join(','),
   };
 
   return config;
@@ -170,10 +167,7 @@ const data = { name: 'egg' };
 await ctx.renderString('{{ name }} - {{ appName }}', data);
 
 // `helper`、`ctx`、`request` 将被自动注入。
-await ctx.renderString(
-  '{{ name }} - {{ helper.lowercaseFirst(ctx.app.config.baseDir) }}',
-  data,
-);
+await ctx.renderString('{{ name }} - {{ helper.lowercaseFirst(ctx.app.config.baseDir) }}', data);
 ```
 
 注意：

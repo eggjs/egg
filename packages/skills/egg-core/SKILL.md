@@ -158,10 +158,10 @@ import { FooService } from './FooService.ts';
 @SingletonProto()
 export class HelloService {
   @Inject()
-  fooService: FooService;  // 注入另一个 Proto
+  fooService: FooService; // 注入另一个 Proto
 
   @Inject()
-  logger: Logger;  // 注入 Egg 对象
+  logger: Logger; // 注入 Egg 对象
 
   async hello(): Promise<string> {
     this.logger.info(`[HelloService] ${this.fooService.hello()}`);

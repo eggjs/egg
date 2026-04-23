@@ -249,7 +249,7 @@ export const LOG_PATH_ATTRIBUTE = Symbol.for('LOG_PATH_ATTRIBUTE');
   // 从 module.yml 中动态获取配置来决定需要初始化几个对象
   getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
     const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath);
-    return (config as any).features.logger.map(name => {
+    return (config as any).features.logger.map((name) => {
       return {
         name: 'dynamicLogger',
         qualifiers: [
@@ -277,7 +277,7 @@ export class DynamicLogger {
   @LifecycleDestroy()
   async destroy() {
     return new Promise<void>((resolve, reject) => {
-      this.stream.end(err => {
+      this.stream.end((err) => {
         if (err) {
           return reject(err);
         }
@@ -288,7 +288,7 @@ export class DynamicLogger {
 
   info(msg: string) {
     return new Promise<void>((resolve, reject) => {
-      this.stream.write(msg + EOL, err => {
+      this.stream.write(msg + EOL, (err) => {
         if (err) {
           return reject(err);
         }
@@ -537,7 +537,7 @@ import { Inject } from '@eggjs/tegg';
 export class HelloService {
   constructor(
     @Inject() readonly logger: EggLogger,
-    @InjectOptional() readonly maybeUndefinedLogger?: EggLogger
+    @InjectOptional() readonly maybeUndefinedLogger?: EggLogger,
   ) {}
 
   async hello(user: User): Promise<string> {
@@ -954,7 +954,7 @@ export const HELLO_ATTRIBUTE = 'HELLO_ATTRIBUTE';
 
 export const Hello: ImplDecorator<AbstractHello, typeof HelloType> = QualifierImplDecoratorUtil.generatorDecorator(
   AbstractHello,
-  HELLO_ATTRIBUTE
+  HELLO_ATTRIBUTE,
 );
 ```
 

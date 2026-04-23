@@ -113,10 +113,7 @@ module.exports = class HomeController extends Controller {
       'index.js',
       {},
       {
-        templatePath: path.join(
-          this.app.config.baseDir,
-          'app/view/template.html',
-        ),
+        templatePath: path.join(this.app.config.baseDir, 'app/view/template.html'),
         templateViewEngine: 'nunjucks',
       },
     );

@@ -362,11 +362,7 @@ describe('test/controller/home.test.ts', () => {
         .expect('hello world'); // 期望响应内容为 hello world
 
       // 再次请求
-      const result = await app
-        .httpRequest()
-        .get('/')
-        .expect(200)
-        .expect('hello world');
+      const result = await app.httpRequest().get('/').expect(200).expect('hello world');
 
       // 也可以这样验证
       assert(result.status === 200);
@@ -792,10 +788,7 @@ describe('GET /httpclient', () => {
       // 按照请求时的 options.dataType 来做对应的转换。
       data: 'mock eggjs.org response',
     });
-    return app
-      .httpRequest()
-      .get('/httpclient')
-      .expect('mock eggjs.org response');
+    return app.httpRequest().get('/httpclient').expect('mock eggjs.org response');
   });
 });
 ```

@@ -282,13 +282,7 @@ class RemoteErrorTransport extends Transport {
     let log;
     if (args[0] instanceof Error) {
       const err = args[0];
-      log = util.format(
-        '%s: %s\n%s\npid: %s\n',
-        err.name,
-        err.message,
-        err.stack,
-        process.pid,
-      );
+      log = util.format('%s: %s\n%s\npid: %s\n', err.name, err.message, err.stack, process.pid);
     } else {
       log = util.format(...args);
     }
@@ -303,9 +297,7 @@ class RemoteErrorTransport extends Transport {
 }
 
 // Transport attached to errorLogger in app.js, makes logs sync to it once those are created.
-app
-  .getLogger('errorLogger')
-  .set('remote', new RemoteErrorTransport({ level: 'ERROR', app }));
+app.getLogger('errorLogger').set('remote', new RemoteErrorTransport({ level: 'ERROR', app }));
 ```
 
 Performance is what we always consider as important part in our services so that logs will firstly be written into memory and transferred to remote later.
@@ -329,9 +321,7 @@ const path = require('path');
 module.exports = (appInfo) => {
   return {
     logrotator: {
-      filesRotateBySize: [
-        path.join(appInfo.root, 'logs', appInfo.name, 'egg-web.log'),
-      ],
+      filesRotateBySize: [path.join(appInfo.root, 'logs', appInfo.name, 'egg-web.log')],
       maxFileSize: 2 * 1024 * 1024 * 1024,
     },
   };
@@ -353,9 +343,7 @@ const path = require('path');
 module.exports = (appInfo) => {
   return {
     logrotator: {
-      filesRotateByHour: [
-        path.join(appInfo.root, 'logs', appInfo.name, 'common-error.log'),
-      ],
+      filesRotateByHour: [path.join(appInfo.root, 'logs', appInfo.name, 'common-error.log')],
     },
   };
 };

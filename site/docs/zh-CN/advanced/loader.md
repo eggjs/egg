@@ -406,9 +406,7 @@ module.exports = UserService;
 
 // app.js
 // 获取所有的 loadUnit
-const servicePaths = app.loader
-  .getLoadUnits()
-  .map((unit) => path.join(unit.path, 'app/service'));
+const servicePaths = app.loader.getLoadUnits().map((unit) => path.join(unit.path, 'app/service'));
 
 app.loader.loadToContext(servicePaths, 'service', {
   // service 需要继承 app.Service，因此需要 app 参数

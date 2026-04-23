@@ -36,8 +36,10 @@ import { AbstractHello } from '../AbstractHello.ts';
 
 export const HELLO_ATTRIBUTE = Symbol('HELLO_ATTRIBUTE');
 
-export const Hello: ImplDecorator<AbstractHello, typeof HelloType> =
-  QualifierImplDecoratorUtil.generatorDecorator(AbstractHello, HELLO_ATTRIBUTE);
+export const Hello: ImplDecorator<AbstractHello, typeof HelloType> = QualifierImplDecoratorUtil.generatorDecorator(
+  AbstractHello,
+  HELLO_ATTRIBUTE,
+);
 ```
 
 **注意事项：**
@@ -81,10 +83,7 @@ export class HelloService {
   private eggObjectFactory: EggObjectFactory;
 
   async hello(type: HelloType): Promise<string> {
-    const helloImpl = await this.eggObjectFactory.getEggObject(
-      AbstractHello,
-      type,
-    );
+    const helloImpl = await this.eggObjectFactory.getEggObject(AbstractHello, type);
     return helloImpl.hello();
   }
 }

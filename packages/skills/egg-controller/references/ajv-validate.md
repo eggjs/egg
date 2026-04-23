@@ -32,13 +32,7 @@ import { Ajv, Type, Static, TransformEnum } from 'egg/ajv';
 
 ```typescript
 // app/userModule/UserController.ts
-import {
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPBody,
-  Inject,
-} from 'egg';
+import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPBody, Inject } from 'egg';
 import { Ajv, Type, Static, TransformEnum } from 'egg/ajv';
 
 // 1. 定义 Schema
@@ -84,15 +78,15 @@ export class UserController {
 ```typescript
 import { Type } from 'egg/ajv';
 
-Type.String()                                      // string
-Type.Number()                                      // number
-Type.Integer()                                     // 整数
-Type.Boolean()                                     // boolean
-Type.Optional(Type.String())                       // string | undefined
-Type.Array(Type.String())                          // string[]
-Type.Object({ name: Type.String() })               // { name: string }
-Type.Union([Type.String(), Type.Number()])          // string | number
-Type.Literal('admin')                              // 'admin'
+Type.String(); // string
+Type.Number(); // number
+Type.Integer(); // 整数
+Type.Boolean(); // boolean
+Type.Optional(Type.String()); // string | undefined
+Type.Array(Type.String()); // string[]
+Type.Object({ name: Type.String() }); // { name: string }
+Type.Union([Type.String(), Type.Number()]); // string | number
+Type.Literal('admin'); // 'admin'
 ```
 
 完整的 TypeBox JSON Schema 类型定义参考：https://github.com/sinclairzx81/typebox#json-types
@@ -115,9 +109,9 @@ Type.Literal('admin')                              // 'admin'
 | `regex`     | 正则表达式 | `^\\d+$`                               |
 
 ```typescript
-Type.String({ format: 'email' })
-Type.String({ format: 'uuid' })
-Type.String({ format: 'date-time' })
+Type.String({ format: 'email' });
+Type.String({ format: 'uuid' });
+Type.String({ format: 'date-time' });
 ```
 
 ### transform 预处理
@@ -128,12 +122,12 @@ Type.String({ format: 'date-time' })
 import { TransformEnum } from 'egg/ajv';
 
 Type.String({
-  transform: [TransformEnum.trim],               // 去除首尾空格
-})
+  transform: [TransformEnum.trim], // 去除首尾空格
+});
 
 Type.String({
-  transform: [TransformEnum.trim, TransformEnum.toLowerCase],  // 去空格 + 转小写
-})
+  transform: [TransformEnum.trim, TransformEnum.toLowerCase], // 去空格 + 转小写
+});
 ```
 
 ---

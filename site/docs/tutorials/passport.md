@@ -203,10 +203,7 @@ module.exports = (app) => {
   router.get('/authCallback', controller.home.authCallback); // Render login page, user inputs account password
 
   router.get('/login', controller.home.login); // Login verification
-  router.post(
-    '/login',
-    app.passport.authenticate('local', { successRedirect: '/authCallback' }),
-  );
+  router.post('/login', app.passport.authenticate('local', { successRedirect: '/authCallback' }));
 };
 ```
 

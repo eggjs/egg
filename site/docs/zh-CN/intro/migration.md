@@ -169,10 +169,7 @@ const [ news, user ] = yield [
 这种修改比较简单，使用 `Promise.all()` 包装即可：
 
 ```js
-const [news, user] = await Promise.all([
-  ctx.service.news.list(topic),
-  ctx.service.user.get(uid),
-]);
+const [news, user] = await Promise.all([ctx.service.news.list(topic), ctx.service.user.get(uid)]);
 ```
 
 #### 对象 - yield {}
@@ -200,10 +197,7 @@ const { news, user } = yield ctx.service.biz.list(topic, uid);
 // app/service/biz.js
 class BizService extends Service {
   async list(topic, uid) {
-    const results = await Promise.all([
-      ctx.service.news.list(topic),
-      ctx.service.user.get(uid),
-    ]);
+    const results = await Promise.all([ctx.service.news.list(topic), ctx.service.user.get(uid)]);
     return {
       news: results[0],
       user: results[1],

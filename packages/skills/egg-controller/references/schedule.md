@@ -91,7 +91,7 @@ export class CronScheduler {
     },
   },
   {
-    immediate: true,            // 应用启动后立即执行一次
+    immediate: true, // 应用启动后立即执行一次
     // disable: true,           // 禁用该定时任务
     env: ['devserver', 'test'], // 仅在指定环境下启动
   },

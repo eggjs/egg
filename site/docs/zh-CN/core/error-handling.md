@@ -28,9 +28,7 @@ class HomeController extends Controller {
     const config = await this.ctx.service.trade.buy(request);
     // 下单后需要进行一次核对，且不阻塞当前请求
     setImmediate(() => {
-      this.ctx.service.trade
-        .check(request)
-        .catch((err) => this.ctx.logger.error(err));
+      this.ctx.service.trade.check(request).catch((err) => this.ctx.logger.error(err));
     });
   }
 }

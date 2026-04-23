@@ -347,23 +347,18 @@ describe('test/controller/home.test.ts', () => {
   describe('GET /', () => {
     it('should status 200 and get the body', () => {
       // load `GET /` request
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/')
         .expect(200) // set expectation of status to 200
         .expect('hello world'); // set expectation of body to 'hello world'
     });
 
     it('should send multi requests', async () => {
-      await app.httpRequest()
-        .get('/')
-        .expect(200)
-        .expect('hello world'); // set expectation of body to 'hello world'
+      await app.httpRequest().get('/').expect(200).expect('hello world'); // set expectation of body to 'hello world'
 
       // once more
-      const result = await app.httpRequest()
-        .get('/')
-        .expect(200)
-        .expect('hello world');
+      const result = await app.httpRequest().get('/').expect(200).expect('hello world');
 
       // verify via assert
       assert(result.status === 200);
@@ -791,10 +786,7 @@ describe('GET /httpclient', () => {
       // according to options.dataType
       data: 'mock eggjs.org response',
     });
-    return app
-      .httpRequest()
-      .get('/httpclient')
-      .expect('mock eggjs.org response');
+    return app.httpRequest().get('/httpclient').expect('mock eggjs.org response');
   });
 });
 ```

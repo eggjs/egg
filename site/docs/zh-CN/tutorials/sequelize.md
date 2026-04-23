@@ -331,9 +331,7 @@ NODE_ENV=test npx sequelize db:migrate:up
   before(() => factories(app));
   afterEach(async () => {
     // 在每个测试案例执行完后清理数据库
-    await Promise.all([
-      app.model.User.destroy({ truncate: true, force: true }),
-    ]);
+    await Promise.all([app.model.User.destroy({ truncate: true, force: true })]);
   });
   ```
 
