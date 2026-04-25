@@ -337,7 +337,11 @@ export class ErrorView {
     }
   }
 
-  redactConfig(value: unknown, ignoreList: (string | RegExp)[], seen = new WeakSet<object>()): unknown {
+  redactConfig(
+    value: unknown,
+    ignoreList: (string | RegExp)[],
+    seen: WeakSet<object> = new WeakSet<object>(),
+  ): unknown {
     if (!value || typeof value !== 'object') {
       return value;
     }
