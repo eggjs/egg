@@ -70,7 +70,7 @@ describe('test/bundle-import.test.ts', () => {
     assert.equal(result.default.foo, 'bar');
   });
 
-  it('short-circuits importResolve so bundled paths need not exist on disk', async () => {
+  it('serves virtual specifiers from the loader without requiring them on disk', async () => {
     const fakeModule = { virtual: true };
     setBundleModuleLoader((p) => (p === 'virtual/not-on-disk' ? fakeModule : undefined));
 
