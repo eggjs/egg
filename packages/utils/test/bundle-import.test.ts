@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import path from 'node:path';
 
 import { afterEach, describe, it } from 'vitest';
 
@@ -51,6 +52,7 @@ describe('test/bundle-import.test.ts', () => {
 
     const result = await importModule(getFilepath('esm'));
     assert.ok(result);
+    assert.equal(result.default.foo, 'bar');
   });
 
   it('short-circuits importResolve so bundled paths need not exist on disk', async () => {
@@ -58,6 +60,16 @@ describe('test/bundle-import.test.ts', () => {
     setBundleModuleLoader((p) => (p === 'virtual/not-on-disk' ? fakeModule : undefined));
 
     const result = await importModule('virtual/not-on-disk');
+    assert.deepEqual(result, fakeModule);
+  });
+
+  it('normalizes Windows-style bundle paths before loader lookup', async () => {
+    const fakeModule = { windows: true };
+    const filepath = getFilepath('esm').split(path.posix.sep).join(path.win32.sep);
+
+    setBundleModuleLoader((p) => (p.endsWith('/fixtures/esm') ? fakeModule : undefined));
+
+    const result = await importModule(filepath);
     assert.deepEqual(result, fakeModule);
   });
 });
