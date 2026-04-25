@@ -30,39 +30,13 @@ describe('test/cluster1/app_worker.test.ts', () => {
   });
 
   it('should response 400 bad request when HTTP request packet broken', async () => {
-    const test1 = app
-      .httpRequest()
-      // Node.js (http-parser) will occur an error while the raw URI in HTTP
-      // request packet containing space.
-      //
-      // Refs: https://zhuanlan.zhihu.com/p/31966196
-      .get('/foo bar');
-    const test2 = app.httpRequest().get('/foo baz');
+    const responses = await Promise.all([rawRequest(app.port, '/foo bar'), rawRequest(app.port, '/foo baz')]);
 
-    // app.httpRequest().expect() will encode the uri so that we cannot
-    // request the server with raw `/foo bar` to emit 400 status code.
-    //
-    // So we generate `test.req` via `test.request()` first and override the
-    // encoded uri.
-    //
-    // `test.req` will only generated once:
-    //
-    //   ```
-    //   function Request::request() {
-    //     if (this.req) return this.req;
-    //
-    //     // code to generate this.req
-    //
-    //     return this.req;
-    //   }
-    //   ```
-    (test1 as any).request().path = '/foo bar';
-    (test2 as any).request().path = '/foo baz';
-
-    await Promise.all([
-      test1.expect(DEFAULT_BAD_REQUEST_HTML).expect(400),
-      test2.expect(DEFAULT_BAD_REQUEST_HTML).expect(400),
-    ]);
+    for (const response of responses) {
+      const [header, body] = response.split('\r\n\r\n');
+      assert.match(header, /^HTTP\/1\.1 400 Bad Request/);
+      assert.equal(body, DEFAULT_BAD_REQUEST_HTML);
+    }
   });
 
   describe.skip('server timeout', () => {
@@ -156,6 +130,41 @@ function connect(port: number) {
         socket.destroy();
         resolve();
       });
+    });
+  });
+}
+
+function rawRequest(port: number, path: string) {
+  return new Promise<string>((resolve, reject) => {
+    const socket = net.createConnection(port, '127.0.0.1');
+    let response = '';
+    let settled = false;
+
+    function resolveOnce() {
+      if (!settled) {
+        settled = true;
+        resolve(response);
+      }
+    }
+
+    socket.setEncoding('utf8');
+    socket.on('connect', () => {
+      socket.write(`GET ${path} HTTP/1.1\r\nHost: 127.0.0.1:${port}\r\nConnection: close\r\n\r\n`);
+    });
+    socket.on('data', (chunk) => {
+      response += chunk;
+    });
+    socket.on('end', resolveOnce);
+    socket.on('close', (hasError) => {
+      if (!hasError) {
+        resolveOnce();
+      }
+    });
+    socket.on('error', (err) => {
+      if (!settled) {
+        settled = true;
+        reject(err);
+      }
     });
   });
 }
