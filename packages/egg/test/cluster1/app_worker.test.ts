@@ -33,7 +33,10 @@ describe('test/cluster1/app_worker.test.ts', () => {
     const responses = await Promise.all([rawRequest(app.port, '/foo bar'), rawRequest(app.port, '/foo baz')]);
 
     for (const response of responses) {
-      const [header, body] = response.split('\r\n\r\n');
+      const separatorIndex = response.indexOf('\r\n\r\n');
+      assert.notEqual(separatorIndex, -1);
+      const header = response.slice(0, separatorIndex);
+      const body = response.slice(separatorIndex + 4);
       assert.match(header, /^HTTP\/1\.1 400 Bad Request/);
       assert.equal(body, DEFAULT_BAD_REQUEST_HTML);
     }
