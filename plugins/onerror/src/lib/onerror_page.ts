@@ -1,4 +1,4 @@
-/** Error page template - inlined from onerror_page.mustache.html */
+/** Built-in error page template. */
 export const ONERROR_PAGE_TEMPLATE = `<!doctype html>
 <html lang="en">
   <head>
@@ -1167,7 +1167,7 @@ export const ONERROR_PAGE_TEMPLATE = `<!doctype html>
               var u = +o[0],
                 m = +o[1] || u,
                 h = document.createElement('div');
-              ((h.textContent = Array(m - u + 2).join(' \\n')),
+              ((h.textContent = Array(m - u + 2).join('\\n')),
                 h.setAttribute('aria-hidden', 'true'),
                 (h.className = (i || '') + ' line-highlight'),
                 t(e, 'line-numbers') || (h.setAttribute('data-start', u), m > u && h.setAttribute('data-end', m)),
@@ -1280,9 +1280,12 @@ export const ONERROR_PAGE_TEMPLATE = `<!doctype html>
                 node.classList.remove('force-show');
               });
               var activeFrame = $('.frame-row.active');
-              if (activeFrame.classList.contains('native-frame')) {
+              if (activeFrame && activeFrame.classList.contains('native-frame')) {
                 activeFrame.classList.remove('active');
                 var firstFrame = $$('.frame-row')[0];
+                if (!firstFrame) {
+                  return;
+                }
                 firstFrame.classList.add('active');
                 showFrameContext(firstFrame);
               }
@@ -1294,7 +1297,13 @@ export const ONERROR_PAGE_TEMPLATE = `<!doctype html>
             }
           }
           function showFrameContext(frame) {
-            $frameContext = frame.querySelector('.frame-context');
+            if (!frame) {
+              return;
+            }
+            const $frameContext = frame.querySelector('.frame-context');
+            if (!$frameContext) {
+              return;
+            }
             var $context = $frameContext.innerHTML;
             $context = $context.trim().length === 0 ? 'Missing stack frames' : $context;
             var $line = $frameContext.getAttribute('data-line');
@@ -1310,7 +1319,7 @@ export const ONERROR_PAGE_TEMPLATE = `<!doctype html>
             $('#code-drop').setAttribute('class', 'language-' + $language);
             $('#code-drop').innerHTML = $context;
             $('#frame-file').innerHTML = $file;
-            $('#frame-method').innerHTML = $method + '' + $lineColumn;
+            $('#frame-method').innerHTML = $method + ' ' + $lineColumn;
 
             Prism.highlightAll();
           }
@@ -1327,7 +1336,7 @@ export const ONERROR_PAGE_TEMPLATE = `<!doctype html>
             filterFrames();
           };
           displayFirstView();
-          showFrameContext($('.frame-row.active'));
+          showFrameContext($('.frame-row.active') || $('.frame-row'));
         })();
       </script>
     </section>
