@@ -37,6 +37,21 @@ describe('test/bundle-import.test.ts', () => {
     assert.deepEqual(result, { greet: 'hi' });
   });
 
+  it('keeps non-default bundle hits when importDefaultOnly is enabled', async () => {
+    const fakeModule = { named: 'bundle' };
+    setBundleModuleLoader(() => fakeModule);
+
+    const result = await importModule(getFilepath('esm'), { importDefaultOnly: true });
+    assert.deepEqual(result, fakeModule);
+  });
+
+  it('keeps null bundle hits when importDefaultOnly is enabled', async () => {
+    setBundleModuleLoader(() => null);
+
+    const result = await importModule(getFilepath('esm'), { importDefaultOnly: true });
+    assert.equal(result, null);
+  });
+
   it('unwraps __esModule double-default shape', async () => {
     setBundleModuleLoader(() => ({
       default: { __esModule: true, default: { fn: 'bundled' } },
