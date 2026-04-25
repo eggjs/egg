@@ -402,19 +402,26 @@ export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
  */
 export type BundleModuleLoader = (filepath: string) => unknown;
 
+declare global {
+  var __EGG_BUNDLE_MODULE_LOADER__: BundleModuleLoader | undefined;
+}
+
+function normalizeBundleModulePath(filepath: string): string {
+  return filepath.split(path.win32.sep).join(path.posix.sep);
+}
+
 /**
  * Register a bundle module loader. Uses globalThis so that bundled and
  * external copies of @eggjs/utils share the same loader.
  */
 export function setBundleModuleLoader(loader: BundleModuleLoader | undefined): void {
-  (globalThis as any).__EGG_BUNDLE_MODULE_LOADER__ = loader;
-  if (loader) isESM = false;
+  globalThis.__EGG_BUNDLE_MODULE_LOADER__ = loader;
 }
 
 export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
-  const _bundleModuleLoader: BundleModuleLoader | undefined = (globalThis as any).__EGG_BUNDLE_MODULE_LOADER__;
+  const _bundleModuleLoader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
   if (_bundleModuleLoader) {
-    const hit = _bundleModuleLoader(filepath.replaceAll('\\', '/'));
+    const hit = _bundleModuleLoader(normalizeBundleModulePath(filepath));
     if (hit !== undefined) {
       let obj = hit as any;
       if (obj?.default?.__esModule === true && 'default' in obj.default) obj = obj.default;
