@@ -1318,8 +1318,8 @@ export const ONERROR_PAGE_TEMPLATE = `<!doctype html>
             $('#code-drop').parentNode.setAttribute('data-line-offset', Number($start) - 1);
             $('#code-drop').setAttribute('class', 'language-' + $language);
             $('#code-drop').innerHTML = $context;
-            $('#frame-file').innerHTML = $file;
-            $('#frame-method').innerHTML = $method + ' ' + $lineColumn;
+            $('#frame-file').innerHTML = $file || '';
+            $('#frame-method').innerHTML = [$method, $lineColumn].filter(Boolean).join(' ');
 
             Prism.highlightAll();
           }

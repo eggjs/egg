@@ -340,28 +340,40 @@ export class ErrorView {
   redactConfig(
     value: unknown,
     ignoreList: (string | RegExp)[],
-    seen: WeakSet<object> = new WeakSet<object>(),
+    ancestors: WeakSet<object> = new WeakSet<object>(),
   ): unknown {
     if (!value || typeof value !== 'object') {
       return value;
     }
 
-    if (seen.has(value)) {
+    if (value instanceof Date || value instanceof RegExp || value instanceof URL) {
+      return value.toString();
+    }
+
+    if (Buffer.isBuffer(value)) {
+      return value;
+    }
+
+    if (ancestors.has(value)) {
       return '[Circular]';
     }
-    seen.add(value);
+    ancestors.add(value);
 
-    if (Array.isArray(value)) {
-      return value.map((item) => this.redactConfig(item, ignoreList, seen));
-    }
+    try {
+      if (Array.isArray(value)) {
+        return value.map((item) => this.redactConfig(item, ignoreList, ancestors));
+      }
 
-    const result: Record<string, unknown> = {};
-    for (const key of Object.keys(value)) {
-      result[key] = this.shouldRedactConfigKey(key, ignoreList)
-        ? redactedValue
-        : this.redactConfig((value as Record<string, unknown>)[key], ignoreList, seen);
+      const result: Record<string, unknown> = {};
+      for (const key of Object.keys(value)) {
+        result[key] = this.shouldRedactConfigKey(key, ignoreList)
+          ? redactedValue
+          : this.redactConfig((value as Record<string, unknown>)[key], ignoreList, ancestors);
+      }
+      return result;
+    } finally {
+      ancestors.delete(value);
     }
-    return result;
   }
 
   shouldRedactConfigKey(key: string, ignoreList: (string | RegExp)[]): boolean {

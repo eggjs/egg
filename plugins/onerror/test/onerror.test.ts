@@ -111,6 +111,41 @@ describe('test/onerror.test.ts', () => {
     assert(!appInfo.config.includes('secret-value'));
   });
 
+  it('should use default config redaction without marking shared values as circular', () => {
+    const shared = { name: 'shared-value' };
+    const circular: Record<string, unknown> = { name: 'circular-value' };
+    circular.self = circular;
+    const view = new ErrorView(
+      {
+        request: {},
+        app: {
+          config: {
+            baseDir: '/tmp/app',
+            keys: 'foo,bar',
+            password: 'password-value',
+            token_secret: 'secret-value',
+            sharedA: shared,
+            sharedB: shared,
+            circular,
+            normal: 'visible',
+          },
+        },
+      } as any,
+      new Error('test error') as any,
+      '',
+    );
+
+    const appInfo = view.serializeAppInfo();
+    assert.equal(appInfo.baseDir, '/tmp/app');
+    assert.match(appInfo.config, /normal: 'visible'/);
+    assert.match(appInfo.config, /sharedA: \{ name: 'shared-value' \}/);
+    assert.match(appInfo.config, /sharedB: \{ name: 'shared-value' \}/);
+    assert.match(appInfo.config, /self: '\[Circular\]'/);
+    assert(!appInfo.config.includes('foo,bar'));
+    assert(!appInfo.config.includes('password-value'));
+    assert(!appInfo.config.includes('secret-value'));
+  });
+
   it('should handle status:1 as status:500', async () => {
     await app
       .httpRequest()
