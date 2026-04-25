@@ -85,6 +85,24 @@ export class ManifestStore {
   }
 
   /**
+   * Create a ManifestStore from pre-validated bundled data.
+   * Skips invalidation checks — the caller (bundler) is responsible for
+   * guaranteeing the data matches the shipped artifact.
+   */
+  static fromBundle(data: StartupManifest, baseDir: string): ManifestStore {
+    if (!data || data.version !== MANIFEST_VERSION) {
+      throw new Error(
+        `[@eggjs/core] bundled manifest version mismatch: expected ${MANIFEST_VERSION}, got ${data?.version}`,
+      );
+    }
+    if (!data.invalidation) {
+      throw new Error('[@eggjs/core] bundled manifest missing invalidation data');
+    }
+    debug('manifest loaded from bundle');
+    return new ManifestStore(data, baseDir);
+  }
+
+  /**
    * Create a collector-only ManifestStore (no cached data).
    * Used during normal startup to collect data for future manifest generation.
    */
