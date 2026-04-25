@@ -6,7 +6,6 @@ import { onerror, type OnerrorOptions, type OnerrorError } from 'koa-onerror';
 
 import type { OnerrorConfig } from './config/config.default.ts';
 import { ErrorView } from './lib/error_view.ts';
-import { ONERROR_PAGE_TEMPLATE } from './lib/onerror_page.ts';
 import { isProd, detectStatus, detectErrorMessage, accepts } from './lib/utils.ts';
 
 export interface OnerrorErrorWithCode extends OnerrorError {
@@ -24,7 +23,9 @@ export default class Boot implements ILifecycleBoot {
   async didLoad(): Promise<void> {
     // logging error
     const config = this.app.config.onerror;
-    const viewTemplate = config.templatePath ? fs.readFileSync(config.templatePath, 'utf8') : ONERROR_PAGE_TEMPLATE;
+    const viewTemplate = config.templatePath
+      ? fs.readFileSync(config.templatePath, 'utf8')
+      : (await import('./lib/onerror_page.ts')).ONERROR_PAGE_TEMPLATE;
     const app = this.app;
     app.on('error', (err, ctx) => {
       if (!ctx) {
