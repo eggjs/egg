@@ -34,7 +34,7 @@ describe('test/cluster1/app_worker.test.ts', () => {
 
     for (const response of responses) {
       assert.match(response, /^HTTP\/1\.1 400 Bad Request/);
-      assert.ok(response.includes(DEFAULT_BAD_REQUEST_HTML));
+      assert.ok(response.replaceAll('\r\n', '\n').includes(DEFAULT_BAD_REQUEST_HTML));
     }
   });
 
@@ -139,11 +139,25 @@ function requestRawPath(port: number, path: string) {
     const socket = net.createConnection(port, '127.0.0.1', () => {
       socket.write(`GET ${path} HTTP/1.1\r\nHost: 127.0.0.1:${port}\r\nConnection: close\r\n\r\n`);
     });
+    let settled = false;
+    const settle = (callback: () => void) => {
+      if (settled) return;
+      settled = true;
+      socket.setTimeout(0);
+      callback();
+    };
+
+    socket.setTimeout(5000, () =>
+      settle(() => {
+        socket.destroy();
+        reject(new Error(`requestRawPath timeout after 5s, partial response: ${response}`));
+      }),
+    );
     socket.setEncoding('utf8');
     socket.on('data', (chunk) => {
       response += chunk;
     });
-    socket.on('error', reject);
-    socket.on('end', () => resolve(response));
+    socket.on('error', (err) => settle(() => reject(err)));
+    socket.on('end', () => settle(() => resolve(response)));
   });
 }
