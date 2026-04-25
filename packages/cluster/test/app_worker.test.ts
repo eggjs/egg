@@ -52,7 +52,8 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
         app
           // .debug()
           .expect('code', 1)
-          .expect('stdout', /\[app_worker] beforeExit success/)
+          .expect('stderr', /Error: mock error/)
+          .expect('stderr', /app_worker#1:\d+ start fail/)
           .end()
       );
     });

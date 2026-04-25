@@ -30,6 +30,9 @@ describe('test/cluster1/app_worker.test.ts', () => {
   });
 
   it('should response 400 bad request when HTTP request packet broken', async () => {
+    // Node.js will emit a clientError when the raw URI in the HTTP request
+    // packet contains spaces. Send raw packets because modern clients reject
+    // unescaped paths before they reach the server.
     const responses = await Promise.all([rawRequest(app.port, '/foo bar'), rawRequest(app.port, '/foo baz')]);
 
     for (const response of responses) {
@@ -139,9 +142,11 @@ function connect(port: number) {
 
 function rawRequest(port: number, path: string) {
   return new Promise<string>((resolve, reject) => {
-    const socket = net.createConnection(port, '127.0.0.1');
     let response = '';
     let settled = false;
+    const socket = net.createConnection(port, '127.0.0.1', () => {
+      socket.write(`GET ${path} HTTP/1.1\r\nHost: 127.0.0.1:${port}\r\nConnection: close\r\n\r\n`);
+    });
 
     function resolveOnce() {
       if (!settled) {
@@ -150,23 +155,26 @@ function rawRequest(port: number, path: string) {
       }
     }
 
-    socket.setEncoding('utf8');
-    socket.on('connect', () => {
-      socket.write(`GET ${path} HTTP/1.1\r\nHost: 127.0.0.1:${port}\r\nConnection: close\r\n\r\n`);
-    });
-    socket.on('data', (chunk) => {
-      response += chunk;
-    });
-    socket.on('end', resolveOnce);
-    socket.on('close', (hasError) => {
-      if (!hasError) {
-        resolveOnce();
-      }
-    });
-    socket.on('error', (err) => {
+    function rejectOnce(err: Error) {
       if (!settled) {
         settled = true;
         reject(err);
+      }
+    }
+
+    socket.setEncoding('utf8');
+    socket.setTimeout(5000);
+    socket.on('data', (chunk) => {
+      response += chunk;
+    });
+    socket.on('timeout', () => {
+      socket.destroy(new Error('Timed out waiting for raw HTTP response'));
+    });
+    socket.on('end', resolveOnce);
+    socket.on('error', rejectOnce);
+    socket.on('close', (hadError) => {
+      if (!hadError) {
+        resolveOnce();
       }
     });
   });
