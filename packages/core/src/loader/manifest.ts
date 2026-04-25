@@ -34,9 +34,9 @@ export interface StartupManifest {
   fileDiscovery: Record<string, string[]>;
 }
 
-type GlobalThisWithBundleStore = typeof globalThis & {
-  [BUNDLE_STORE_KEY]?: ManifestStore;
-};
+declare global {
+  var __EGG_BUNDLE_STORE__: ManifestStore | undefined;
+}
 
 export class ManifestStore {
   readonly data: StartupManifest;
@@ -64,14 +64,14 @@ export class ManifestStore {
    * share the same store instance.
    */
   static setBundleStore(store: ManifestStore | undefined): void {
-    (globalThis as GlobalThisWithBundleStore)[BUNDLE_STORE_KEY] = store;
+    globalThis[BUNDLE_STORE_KEY] = store;
   }
 
   /**
    * Return the registered bundle store, if any.
    */
   static getBundleStore(): ManifestStore | undefined {
-    return (globalThis as GlobalThisWithBundleStore)[BUNDLE_STORE_KEY];
+    return globalThis[BUNDLE_STORE_KEY];
   }
 
   /**
