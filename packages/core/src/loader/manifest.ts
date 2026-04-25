@@ -120,11 +120,15 @@ export class ManifestStore {
    * guaranteeing the data matches the shipped artifact.
    */
   static fromBundle(data: StartupManifest, baseDir: string): ManifestStore {
-    if (data.version !== MANIFEST_VERSION) {
+    if (!data || data.version !== MANIFEST_VERSION) {
       throw new Error(
-        `[@eggjs/core] bundled manifest version mismatch: expected ${MANIFEST_VERSION}, got ${data.version}`,
+        `[@eggjs/core] bundled manifest version mismatch: expected ${MANIFEST_VERSION}, got ${data?.version}`,
       );
     }
+    if (!data.invalidation) {
+      throw new Error('[@eggjs/core] bundled manifest missing invalidation data');
+    }
+    debug('manifest loaded from bundle');
     return new ManifestStore(data, baseDir);
   }
 
