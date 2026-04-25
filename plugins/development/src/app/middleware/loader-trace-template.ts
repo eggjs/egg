@@ -1,4 +1,4 @@
-/** Loader trace visualization template - inlined from loader_trace.html */
+/** Loader trace visualization template inlined for static bundlers. */
 export const LOADER_TRACE_TEMPLATE = `<!doctype html>
 <html lang="en">
   <head>
@@ -8,7 +8,7 @@ export const LOADER_TRACE_TEMPLATE = `<!doctype html>
     <div id="mountNode"></div>
     <script src="https://gw.alipayobjects.com/os/antv/assets/g2/3.0.9/g2.min.js"></script>
     <script>
-      var data = {{placeholder}};
+      const data = {{placeholder}};
 
       const chart = new G2.Chart({
         container: 'mountNode', // 指定图表容器 ID

@@ -5,7 +5,7 @@ import type { Application, MiddlewareFunc } from 'egg';
 import { readJSON } from 'utility';
 
 import { isTimingFile } from '../../utils.ts';
-import { LOADER_TRACE_TEMPLATE } from './loader_trace_template.ts';
+import { LOADER_TRACE_TEMPLATE } from './loader-trace-template.ts';
 
 export default function createEggLoaderTraceMiddleware(_options: unknown, app: Application): MiddlewareFunc {
   return async (ctx, next) => {
@@ -13,8 +13,18 @@ export default function createEggLoaderTraceMiddleware(_options: unknown, app: A
       return await next();
     }
     const data = await loadTimingData(app);
-    ctx.body = LOADER_TRACE_TEMPLATE.replace('{{placeholder}}', JSON.stringify(data));
+    const serializedData = serializeLoaderTraceData(data);
+    ctx.body = LOADER_TRACE_TEMPLATE.replace('{{placeholder}}', () => serializedData);
   };
+}
+
+function serializeLoaderTraceData(data: unknown) {
+  return JSON.stringify(data)
+    .replace(/</g, '\\u003C')
+    .replace(/>/g, '\\u003E')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
 }
 
 async function loadTimingData(app: Application) {
