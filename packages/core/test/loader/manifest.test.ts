@@ -18,6 +18,7 @@ describe('ManifestStore', () => {
 
   afterEach(() => {
     mm.restore();
+    ManifestStore.setBundleStore(undefined);
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 
@@ -257,6 +258,15 @@ describe('ManifestStore', () => {
   });
 
   describe('load()', () => {
+    function createBundleStore(baseDir: string, serverEnv = 'prod') {
+      const manifest = ManifestStore.createCollector(baseDir).generateManifest({
+        serverEnv,
+        serverScope: '',
+        typescriptEnabled: true,
+      });
+      return ManifestStore.fromBundle(manifest, baseDir);
+    }
+
     it('should load a valid manifest', async () => {
       const baseDir = setupBaseDir();
       try {
@@ -267,6 +277,69 @@ describe('ManifestStore', () => {
         assert.equal(store.baseDir, baseDir);
       } finally {
         fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should return registered bundle store when manifest file does not exist', () => {
+      const baseDir = setupBaseDir();
+      try {
+        const bundleStore = createBundleStore(baseDir);
+        ManifestStore.setBundleStore(bundleStore);
+
+        const store = ManifestStore.load(baseDir, 'prod', '');
+        assert.equal(store, bundleStore);
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should return registered bundle store before reading invalid manifest JSON', () => {
+      const baseDir = setupBaseDir();
+      try {
+        const eggDir = path.join(baseDir, '.egg');
+        fs.mkdirSync(eggDir, { recursive: true });
+        fs.writeFileSync(path.join(eggDir, 'manifest.json'), 'not json{{{');
+
+        const bundleStore = createBundleStore(baseDir);
+        ManifestStore.setBundleStore(bundleStore);
+
+        const store = ManifestStore.load(baseDir, 'prod', '');
+        assert.equal(store, bundleStore);
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should return registered bundle store in local env when EGG_MANIFEST is unset', () => {
+      const baseDir = setupBaseDir();
+      const savedEggManifest = process.env.EGG_MANIFEST;
+      try {
+        delete process.env.EGG_MANIFEST;
+        const bundleStore = createBundleStore(baseDir, 'local');
+        ManifestStore.setBundleStore(bundleStore);
+
+        const store = ManifestStore.load(baseDir, 'local', '');
+        assert.equal(store, bundleStore);
+      } finally {
+        if (savedEggManifest !== undefined) {
+          process.env.EGG_MANIFEST = savedEggManifest;
+        } else {
+          delete process.env.EGG_MANIFEST;
+        }
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should ignore registered bundle store for a different baseDir', () => {
+      const bundleBaseDir = setupBaseDir();
+      try {
+        const bundleStore = createBundleStore(bundleBaseDir);
+        ManifestStore.setBundleStore(bundleStore);
+
+        const store = ManifestStore.load(tmpDir, 'prod', '');
+        assert.equal(store, null);
+      } finally {
+        fs.rmSync(bundleBaseDir, { recursive: true, force: true });
       }
     });
 
