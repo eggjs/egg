@@ -148,33 +148,28 @@ function rawRequest(port: number, path: string) {
       socket.write(`GET ${path} HTTP/1.1\r\nHost: 127.0.0.1:${port}\r\nConnection: close\r\n\r\n`);
     });
 
-    function resolveOnce() {
-      if (!settled) {
-        settled = true;
-        resolve(response);
-      }
-    }
+    const settle = (callback: () => void) => {
+      if (settled) return;
+      settled = true;
+      socket.setTimeout(0);
+      callback();
+    };
 
-    function rejectOnce(err: Error) {
-      if (!settled) {
-        settled = true;
-        reject(err);
-      }
-    }
-
+    socket.setTimeout(5000, () =>
+      settle(() => {
+        socket.destroy();
+        reject(new Error(`rawRequest timeout after 5s, partial response: ${response}`));
+      }),
+    );
     socket.setEncoding('utf8');
-    socket.setTimeout(5000);
     socket.on('data', (chunk) => {
       response += chunk;
     });
-    socket.on('timeout', () => {
-      socket.destroy(new Error('Timed out waiting for raw HTTP response'));
-    });
-    socket.on('end', resolveOnce);
-    socket.on('error', rejectOnce);
+    socket.on('error', (err) => settle(() => reject(err)));
+    socket.on('end', () => settle(() => resolve(response)));
     socket.on('close', (hadError) => {
       if (!hadError) {
-        resolveOnce();
+        settle(() => resolve(response));
       }
     });
   });
