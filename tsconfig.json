@@ -18,6 +18,9 @@
       "path": "./packages/core"
     },
     {
+      "path": "./packages/typings"
+    },
+    {
       "path": "./packages/errors"
     },
     {
