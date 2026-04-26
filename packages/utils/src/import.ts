@@ -4,7 +4,6 @@ import path from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { debuglog } from 'node:util';
 
-import type {} from '../../core/src/global.d.ts';
 import { ImportResolveError } from './error/index.ts';
 
 const debug = debuglog('egg/utils/import');
