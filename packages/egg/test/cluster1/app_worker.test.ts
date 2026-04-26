@@ -166,7 +166,12 @@ function rawRequest(port: number, path: string) {
       response += chunk;
     });
     socket.on('end', () => settle(() => resolve(response)));
-    socket.on('error', (err) => settle(() => reject(err)));
+    socket.on('error', (err) =>
+      settle(() => {
+        socket.destroy();
+        reject(err);
+      }),
+    );
     socket.on('close', (hadError) => {
       if (!hadError) {
         settle(() => resolve(response));
