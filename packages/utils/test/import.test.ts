@@ -327,6 +327,15 @@ describe('test/import.test.ts', () => {
       assert.deepEqual(Object.keys(obj), ['foo', 'one']);
       assert.equal(obj.foo, 'bar');
       assert.equal(obj.one, 1);
+
+      obj = await importModule(getFilepath('esm/es-module-default.js'));
+      assert.deepEqual(Object.keys(obj), ['__esModule', 'default']);
+      assert.deepEqual(obj.default, { foo: 'bar', one: 1 });
+
+      obj = await importModule(getFilepath('esm/es-module-default.js'), {
+        importDefaultOnly: true,
+      });
+      assert.deepEqual(obj, { foo: 'bar', one: 1 });
     });
 
     it('should work on tshy without dist', async () => {

@@ -4,6 +4,8 @@ import path from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { debuglog } from 'node:util';
 
+import type { BundleModuleLoader } from '@eggjs/typings';
+
 import { ImportResolveError } from './error/index.ts';
 
 const debug = debuglog('egg/utils/import');
@@ -394,13 +396,7 @@ export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
   isESM = false;
 }
 
-/**
- * Module loader for bundled egg apps. Called with the raw `importModule()`
- * filepath (posix-normalized) before `importResolve`, so bundled apps can
- * serve modules that no longer exist on disk. Return `undefined` to fall
- * through to the standard import path.
- */
-export type BundleModuleLoader = (filepath: string) => unknown;
+export type { BundleModuleLoader } from '@eggjs/typings';
 
 type BundleModuleGlobalThis = typeof globalThis & {
   __EGG_BUNDLE_MODULE_LOADER__: BundleModuleLoader | undefined;
@@ -415,6 +411,12 @@ function normalizeBundleModulePath(filepath: string): string {
 /**
  * Register a bundle module loader. Uses globalThis so that bundled and
  * external copies of @eggjs/utils share the same loader.
+ *
+ * The loader receives a POSIX-normalized filepath or virtual specifier before
+ * normal resolution runs. Return `undefined` to fall through to the default
+ * import path. Non-undefined hits use the same default unwrapping semantics as
+ * normal imports, including `importDefaultOnly` and double-default `__esModule`
+ * compatibility.
  */
 export function setBundleModuleLoader(loader: BundleModuleLoader | undefined): void {
   bundleModuleGlobalThis.__EGG_BUNDLE_MODULE_LOADER__ = loader;

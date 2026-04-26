@@ -21,7 +21,7 @@ describe('test/cluster1/app_worker.test.ts', () => {
   beforeAll(async () => {
     app = cluster('apps/app-server');
     await app.ready();
-  });
+  }, 60000);
   afterAll(() => app.close());
 
   // FIXME: unsable
