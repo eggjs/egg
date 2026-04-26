@@ -5,7 +5,7 @@ import type { Application, MiddlewareFunc } from 'egg';
 import { readJSON } from 'utility';
 
 import { isTimingFile } from '../../utils.ts';
-import { LOADER_TRACE_TEMPLATE } from './loader-trace-template.ts';
+import { LOADER_TRACE_TEMPLATE } from './loader_trace_template.ts';
 
 export default function createEggLoaderTraceMiddleware(_options: unknown, app: Application): MiddlewareFunc {
   return async (ctx, next) => {
