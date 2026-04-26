@@ -42,6 +42,27 @@ npm i @eggjs/utils
 - {String} baseDir - the current directory of application
 - {String} framework - the directory of framework
 
+### `setBundleModuleLoader(loader)`
+
+Register a custom module loader for bundled Egg applications.
+
+- {Function|undefined} loader - receives a POSIX-normalized filepath or virtual specifier before normal module resolution
+- Return `undefined` from the loader to fall through to the default `importModule()` behavior
+- Non-`undefined` return values are treated as module exports and keep the same `importDefaultOnly` and `__esModule` compatibility handling as normal imports
+- Pass `undefined` to clear the registered loader
+
+```ts
+import { importModule, setBundleModuleLoader } from '@eggjs/utils';
+
+setBundleModuleLoader((filepath) => {
+  if (filepath === 'virtual/config') {
+    return { default: { name: 'egg' } };
+  }
+});
+
+const config = await importModule('virtual/config', { importDefaultOnly: true });
+```
+
 ## License
 
 [MIT](LICENSE)
