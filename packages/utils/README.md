@@ -42,6 +42,16 @@ npm i @eggjs/utils
 - {String} baseDir - the current directory of application
 - {String} framework - the directory of framework
 
+### `setBundleModuleLoader(loader)`
+
+Register a bundle module loader for `importModule()`.
+
+- {Function|undefined} loader - called with a POSIX-normalized filepath or virtual specifier before normal module resolution.
+
+Return `undefined` from the loader to fall back to the default import path. Any other return value is treated as a bundle hit and uses the same default export handling as `importModule()`, including `importDefaultOnly` and double-default `__esModule` compatibility.
+
+Pass `undefined` to clear the registered loader.
+
 ## License
 
 [MIT](LICENSE)
