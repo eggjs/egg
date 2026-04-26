@@ -11,3 +11,9 @@
 - sources touched: `AGENTS.md`, `CLAUDE.md`
 - pages updated: `wiki/log.md`
 - note: Moved shared coding-agent and wiki guidance into AGENTS.md, and reduced CLAUDE.md to a thin wrapper that imports it.
+
+## [2026-04-26] package | add shared typings package
+
+- sources touched: `packages/typings`, `packages/utils/src/import.ts`, `packages/core/src/global.d.ts`, `AGENTS.md`, `CLAUDE.md`
+- pages updated: `wiki/index.md`, `wiki/packages/typings.md`, `wiki/log.md`
+- note: Added `@eggjs/typings` as the shared home for bundle module loader types and the related global augmentation.

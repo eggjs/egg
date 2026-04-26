@@ -9,6 +9,7 @@ If another agent-specific file exists, it should import or defer to this file fo
 Egg is maintained as a pnpm monorepo.
 
 - `packages/` contains core framework packages and shared internals.
+- `packages/typings` contains shared type-only contracts used across Egg packages.
 - `plugins/` contains optional Egg integrations.
 - `tools/` contains developer tooling such as CLI packages.
 - `tegg/` contains the tegg ecosystem.

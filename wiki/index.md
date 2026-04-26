@@ -18,7 +18,7 @@ Read this file before exploring raw sources.
 
 ## Packages
 
-- No package pages seeded yet.
+- [Typings](./packages/typings.md) - Shared type-only contracts for cross-package Egg APIs.
 
 ## Sources
 

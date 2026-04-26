@@ -27,6 +27,9 @@
       "path": "./packages/path-matching"
     },
     {
+      "path": "./packages/typings"
+    },
+    {
       "path": "./packages/utils"
     },
     {
