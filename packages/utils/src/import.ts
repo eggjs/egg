@@ -4,6 +4,8 @@ import path from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { debuglog } from 'node:util';
 
+import type { BundleModuleLoader } from '@eggjs/typings';
+
 import { ImportResolveError } from './error/index.ts';
 
 const debug = debuglog('egg/utils/import');
@@ -394,7 +396,44 @@ export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
   isESM = false;
 }
 
+export type { BundleModuleLoader } from '@eggjs/typings';
+
+type BundleModuleGlobalThis = typeof globalThis & {
+  __EGG_BUNDLE_MODULE_LOADER__: BundleModuleLoader | undefined;
+};
+
+const bundleModuleGlobalThis = globalThis as BundleModuleGlobalThis;
+
+function normalizeBundleModulePath(filepath: string): string {
+  return filepath.split(path.win32.sep).join(path.posix.sep);
+}
+
+/**
+ * Register a bundle module loader. Uses globalThis so that bundled and
+ * external copies of @eggjs/utils share the same loader.
+ *
+ * The loader receives a POSIX-normalized filepath or virtual specifier before
+ * normal resolution runs. Return `undefined` to fall through to the default
+ * import path. Non-undefined hits use the same default unwrapping semantics as
+ * normal imports, including `importDefaultOnly` and double-default `__esModule`
+ * compatibility.
+ */
+export function setBundleModuleLoader(loader: BundleModuleLoader | undefined): void {
+  bundleModuleGlobalThis.__EGG_BUNDLE_MODULE_LOADER__ = loader;
+}
+
 export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
+  const _bundleModuleLoader = bundleModuleGlobalThis.__EGG_BUNDLE_MODULE_LOADER__;
+  if (_bundleModuleLoader) {
+    const hit = _bundleModuleLoader(normalizeBundleModulePath(filepath));
+    if (hit !== undefined) {
+      let obj = hit as any;
+      if (obj?.default?.__esModule === true && 'default' in obj.default) obj = obj.default;
+      if (options?.importDefaultOnly && obj && typeof obj === 'object' && 'default' in obj) obj = obj.default;
+      return obj;
+    }
+  }
+
   const moduleFilePath = importResolve(filepath, options);
 
   if (_snapshotModuleLoader) {
