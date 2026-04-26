@@ -44,11 +44,13 @@ npm i @eggjs/utils
 
 ### `setBundleModuleLoader(loader)`
 
-Register a bundle module loader for `importModule()`.
+Register a bundle module loader for `importModule()`. The loader is shared globally via `globalThis` across all instances of `@eggjs/utils` in the same process.
 
-- {Function|undefined} loader - called with a POSIX-normalized filepath or virtual specifier before normal module resolution.
+- {Function|undefined} loader - a synchronous hook called with a POSIX-normalized filepath or virtual specifier before normal module resolution.
 
-Return `undefined` from the loader to fall back to the default import path. Any other return value is treated as a bundle hit and uses the same default export handling as `importModule()`, including `importDefaultOnly` and double-default `__esModule` compatibility.
+Return `undefined` from the loader to fall back to standard module resolution. Otherwise, return the module exports synchronously; any non-`undefined` return value is treated as a bundle hit and uses the same default export handling as `importModule()`, including `importDefaultOnly` and double-default `__esModule` compatibility.
+
+The loader must not be an `async` function or return a `Promise`, because `importModule()` does not `await` the hook.
 
 Pass `undefined` to clear the registered loader.
 
