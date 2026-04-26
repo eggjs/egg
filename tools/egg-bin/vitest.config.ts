@@ -12,6 +12,7 @@ const config: ViteUserConfig = {
     exclude: ['**/test/fixtures/**', '**/node_modules/**', '**/dist/**'],
     testTimeout: 60000,
     globals: true,
+    maxWorkers: Number(process.env.VITEST_MAX_WORKERS) || 2,
   },
 };
 

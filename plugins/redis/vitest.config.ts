@@ -4,6 +4,7 @@ const config: UserWorkspaceConfig = defineConfig({
   test: {
     testTimeout: 30000,
     hookTimeout: 30000,
+    fileParallelism: false,
     globals: true,
   },
 });

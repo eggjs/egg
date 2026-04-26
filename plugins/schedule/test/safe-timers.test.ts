@@ -1,5 +1,3 @@
-import { setTimeout as sleep } from 'node:timers/promises';
-
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, afterAll, beforeAll, expect } from 'vitest';
 
@@ -16,15 +14,29 @@ describe.skipIf(process.platform === 'win32')('cluster', () => {
   afterAll(() => app.close());
 
   it('should support interval and cron', async () => {
-    await sleep(5000);
+    await expect
+      .poll(
+        () => {
+          const log = getLogContent('safe-timers');
+          const agentLog = getAgentLogContent('safe-timers');
+          return (
+            contains(log, 'interval') >= 1 &&
+            contains(log, 'cron') >= 1 &&
+            contains(agentLog, 'reschedule 4321') >= 2 &&
+            contains(agentLog, 'reschedule') >= 4
+          );
+        },
+        {
+          interval: 500,
+          timeout: 15000,
+        },
+      )
+      .toBe(true);
 
     const log = getLogContent('safe-timers');
-    // console.log(log);
+    const agentLog = getAgentLogContent('safe-timers');
     expect(contains(log, 'interval')).toBeGreaterThanOrEqual(1);
     expect(contains(log, 'cron')).toBeGreaterThanOrEqual(1);
-
-    const agentLog = getAgentLogContent('safe-timers');
-    // console.log(agentLog);
     expect(contains(agentLog, 'reschedule 4321')).toBeGreaterThanOrEqual(2);
     expect(contains(agentLog, 'reschedule')).toBeGreaterThanOrEqual(4);
   });

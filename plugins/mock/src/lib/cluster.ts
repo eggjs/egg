@@ -20,8 +20,22 @@ const clusters = new Map();
 declare global {
   // define the global variable to avoid the port conflict in parallel process mode
   var eggMockMasterPort: number;
+  var eggMockClusterPortCursor: number;
+  var eggMockClusterPorts: Set<number>;
 }
 globalThis.eggMockMasterPort = 17000 + (process.pid % 1000);
+globalThis.eggMockClusterPortCursor ??= Math.floor(Math.random() * 45000);
+globalThis.eggMockClusterPorts ??= new Set<number>();
+
+function nextMockClusterPort(): number {
+  while (true) {
+    const port = 20000 + (++globalThis.eggMockClusterPortCursor % 45000);
+    if (!globalThis.eggMockClusterPorts.has(port)) {
+      globalThis.eggMockClusterPorts.add(port);
+      return port;
+    }
+  }
+}
 
 let serverBin = path.join(import.meta.dirname, 'start-cluster.js');
 if (!existsSync(serverBin)) {
@@ -83,6 +97,7 @@ export class ClusterApplication extends Coffee {
 
     // incremental port
     options.port = options.port ?? ++globalThis.eggMockMasterPort;
+    options.clusterPort = options.clusterPort ?? nextMockClusterPort();
     // Set 1 worker when test
     if (!options.workers) {
       options.workers = 1;

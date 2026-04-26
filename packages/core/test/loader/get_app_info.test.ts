@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import os from 'node:os';
 
 import { mm } from 'mm';
 import { describe, it, afterEach } from 'vitest';
@@ -15,7 +16,7 @@ describe('test/loader/get_app_info.test.ts', () => {
     assert.equal(app.loader.appInfo.name, 'appinfo');
     assert.equal(app.loader.appInfo.baseDir, getFilepath('appinfo'));
     assert.equal(app.loader.appInfo.env, 'unittest');
-    assert.equal(app.loader.appInfo.HOME, process.env.HOME);
+    assert.equal(app.loader.appInfo.HOME, process.env.HOME || os.homedir());
     assert.deepEqual(app.loader.appInfo.pkg, {
       name: 'appinfo',
     });
@@ -36,7 +37,7 @@ describe('test/loader/get_app_info.test.ts', () => {
   it('should get root when unittest', () => {
     mm(process.env, 'EGG_SERVER_ENV', 'default');
     app = createApp('appinfo');
-    assert.equal(app.loader.appInfo.root, process.env.HOME);
+    assert.equal(app.loader.appInfo.root, process.env.HOME || os.homedir());
   });
 
   it('should get scope when specified', () => {

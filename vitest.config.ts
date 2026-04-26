@@ -1,9 +1,12 @@
 import { defineConfig, type UserWorkspaceConfig } from 'vitest/config';
 
+const maxWorkers = Number(process.env.VITEST_MAX_WORKERS) || (process.platform === 'linux' ? 8 : 3);
+
 const config: UserWorkspaceConfig = defineConfig({
   test: {
     pool: 'threads',
-    isolate: false,
+    isolate: true,
+    maxWorkers,
     projects: [
       'packages/*',
       'plugins/*',
