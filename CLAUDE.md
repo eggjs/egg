@@ -211,6 +211,13 @@ The framework follows a specific loading order:
 - `pnpm lint` - Run oxlint with type-aware checking in all packages
 - `pnpm lint:fix` - Auto-fix linting issues with oxlint
 
+### TypeScript Global Types
+
+- Package-wide global type declarations should live in a dedicated `src/global.d.ts` file for that package, not inside implementation modules.
+- Use `import type` for any referenced local types, then add the ambient declaration with `declare global { ... }` and `export {};`.
+- Declare global runtime properties with `var` inside `declare global` so TypeScript adds them to `globalThis`; runtime code can then use `globalThis.<name>` or `globalThis[KEY]` without local `as` casts.
+- For app or fixture-specific globals, use that app's `typings/global.d.ts`.
+
 ### Examples
 
 - `pnpm run example:commonjs` - Run CommonJS example
