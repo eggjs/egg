@@ -13,6 +13,18 @@ import stackTrace, { type StackFrame } from 'stack-trace';
 import { detectErrorMessage } from './utils.ts';
 
 const startingSlashRegex = /\\|\//;
+const defaultConfigIgnoreList: (string | RegExp)[] = [
+  'pass',
+  'pwd',
+  'passd',
+  'passwd',
+  'password',
+  'keys',
+  'masterKey',
+  'accessKey',
+  /secret/i,
+];
+const redactedValue = '<Redacted>';
 
 export interface FrameSource {
   pre: string[];
@@ -302,13 +314,69 @@ export class ErrorView {
     baseDir: string;
     config: string;
   } {
-    let config = this.app.config;
-    if ('dumpConfigToObject' in this.app && typeof this.app.dumpConfigToObject === 'function') {
-      config = this.app.dumpConfigToObject().config.config;
-    }
+    const config = this.serializeConfig();
     return {
       baseDir: this.app.config.baseDir as string,
       config: util.inspect(config) satisfies string as string,
     };
+  }
+
+  serializeConfig(): unknown {
+    if ('dumpConfigToObject' in this.app && typeof this.app.dumpConfigToObject === 'function') {
+      return this.app.dumpConfigToObject().config.config;
+    }
+
+    return this.redactConfig(this.app.config, this.getConfigIgnoreList());
+  }
+
+  getConfigIgnoreList(): (string | RegExp)[] {
+    try {
+      return Array.from(this.app.config.dump.ignore);
+    } catch {
+      return defaultConfigIgnoreList;
+    }
+  }
+
+  redactConfig(
+    value: unknown,
+    ignoreList: (string | RegExp)[],
+    ancestors: WeakSet<object> = new WeakSet<object>(),
+  ): unknown {
+    if (!value || typeof value !== 'object') {
+      return value;
+    }
+
+    if (value instanceof Date || value instanceof RegExp || value instanceof URL) {
+      return value.toString();
+    }
+
+    if (Buffer.isBuffer(value)) {
+      return value;
+    }
+
+    if (ancestors.has(value)) {
+      return '[Circular]';
+    }
+    ancestors.add(value);
+
+    try {
+      if (Array.isArray(value)) {
+        return value.map((item) => this.redactConfig(item, ignoreList, ancestors));
+      }
+
+      const result: Record<string, unknown> = {};
+      for (const key of Object.keys(value)) {
+        result[key] = this.shouldRedactConfigKey(key, ignoreList)
+          ? redactedValue
+          : this.redactConfig((value as Record<string, unknown>)[key], ignoreList, ancestors);
+      }
+      return result;
+    } finally {
+      ancestors.delete(value);
+    }
+  }
+
+  shouldRedactConfigKey(key: string, ignoreList: (string | RegExp)[]): boolean {
+    return ignoreList.some((item) => (typeof item === 'string' ? item === key : item.test(key)));
   }
 }
