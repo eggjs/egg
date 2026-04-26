@@ -33,6 +33,13 @@ Egg is maintained as a pnpm monorepo.
 - keep public API changes deliberate and documented
 - use `oxfmt` and `oxlint --type-aware` conventions already present in the repo
 
+## TypeScript Global Types
+
+- put package-wide global augmentations in a dedicated `src/global.ts` or `src/global.d.ts`
+- shared cross-package global types belong in `@eggjs/typings`, not in one consumer package
+- import shared global augmentations from the package entry that needs the type surface, for example `import '@eggjs/typings/global'`
+- keep `declare global` files as modules by using an `import type` or `export {}`
+
 ## Testing And PR Expectations
 
 - run the most targeted tests that validate the touched area

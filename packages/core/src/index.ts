@@ -1,3 +1,4 @@
+import '@eggjs/typings/global';
 import utils from './utils/index.ts';
 
 export { utils };

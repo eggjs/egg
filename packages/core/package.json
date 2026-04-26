@@ -43,6 +43,7 @@
     "@eggjs/koa": "workspace:*",
     "@eggjs/path-matching": "workspace:*",
     "@eggjs/router": "workspace:*",
+    "@eggjs/typings": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "egg-logger": "catalog:",
     "get-ready": "catalog:",

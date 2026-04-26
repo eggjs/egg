@@ -1,0 +1,52 @@
+{
+  "name": "@eggjs/typings",
+  "version": "4.1.2-beta.9",
+  "description": "Shared typings for egg projects",
+  "keywords": [
+    "egg",
+    "typescript",
+    "typings"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/typings",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "eggjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "packages/typings"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./global": "./src/global.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./global": "./dist/global.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@eggjs/tsconfig": "workspace:*",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

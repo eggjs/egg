@@ -18,7 +18,7 @@ Read this file before exploring raw sources.
 
 ## Packages
 
-- No package pages seeded yet.
+- [Typings Package](./packages/typings.md) - Shared TypeScript type surface for cross-package Egg typings.
 
 ## Sources
 
