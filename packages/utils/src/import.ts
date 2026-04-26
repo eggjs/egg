@@ -4,6 +4,7 @@ import path from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { debuglog } from 'node:util';
 
+import type {} from '../../core/src/global.d.ts';
 import { ImportResolveError } from './error/index.ts';
 
 const debug = debuglog('egg/utils/import');
@@ -401,10 +402,6 @@ export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
  * through to the standard import path.
  */
 export type BundleModuleLoader = (filepath: string) => unknown;
-
-declare global {
-  var __EGG_BUNDLE_MODULE_LOADER__: BundleModuleLoader | undefined;
-}
 
 function normalizeBundleModulePath(filepath: string): string {
   return filepath.split(path.win32.sep).join(path.posix.sep);
