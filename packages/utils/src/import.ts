@@ -402,6 +402,12 @@ export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
  */
 export type BundleModuleLoader = (filepath: string) => unknown;
 
+type BundleModuleGlobalThis = typeof globalThis & {
+  __EGG_BUNDLE_MODULE_LOADER__: BundleModuleLoader | undefined;
+};
+
+const bundleModuleGlobalThis = globalThis as BundleModuleGlobalThis;
+
 function normalizeBundleModulePath(filepath: string): string {
   return filepath.split(path.win32.sep).join(path.posix.sep);
 }
@@ -411,11 +417,11 @@ function normalizeBundleModulePath(filepath: string): string {
  * external copies of @eggjs/utils share the same loader.
  */
 export function setBundleModuleLoader(loader: BundleModuleLoader | undefined): void {
-  globalThis.__EGG_BUNDLE_MODULE_LOADER__ = loader;
+  bundleModuleGlobalThis.__EGG_BUNDLE_MODULE_LOADER__ = loader;
 }
 
 export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
-  const _bundleModuleLoader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
+  const _bundleModuleLoader = bundleModuleGlobalThis.__EGG_BUNDLE_MODULE_LOADER__;
   if (_bundleModuleLoader) {
     const hit = _bundleModuleLoader(normalizeBundleModulePath(filepath));
     if (hit !== undefined) {
