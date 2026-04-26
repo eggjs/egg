@@ -12,6 +12,7 @@ const debug = debuglog('egg/core/loader/manifest');
 const MANIFEST_VERSION = 1;
 
 const LOCKFILE_NAMES = ['pnpm-lock.yaml', 'package-lock.json', 'yarn.lock'] as const;
+const BUNDLE_STORE_KEY = '__EGG_BUNDLE_STORE__' as const;
 
 export interface ManifestInvalidation {
   lockfileFingerprint: string;
@@ -50,10 +51,35 @@ export class ManifestStore {
   // --- Factory Methods ---
 
   /**
+   * Register a pre-built manifest store for bundled egg apps. When set,
+   * `ManifestStore.load()` returns this store for matching baseDir requests,
+   * bypassing disk reads and invalidation checks. The bundler-generated entry
+   * calls this at startup before creating the Application.
+   *
+   * Uses globalThis so that bundled and external copies of @eggjs/core
+   * share the same store instance.
+   */
+  static setBundleStore(store: ManifestStore | undefined): void {
+    globalThis[BUNDLE_STORE_KEY] = store;
+  }
+
+  /**
+   * Return the registered bundle store, if any.
+   */
+  static getBundleStore(): ManifestStore | undefined {
+    return globalThis[BUNDLE_STORE_KEY];
+  }
+
+  /**
    * Load and validate manifest from `.egg/manifest.json`.
    * Returns null if manifest doesn't exist or is invalid.
    */
   static load(baseDir: string, serverEnv: string, serverScope: string): ManifestStore | null {
+    const bundleStore = ManifestStore.getBundleStore();
+    if (bundleStore && bundleStore.baseDir === baseDir) {
+      debug('load: returning registered bundle store for %s', baseDir);
+      return bundleStore;
+    }
     if (serverEnv === 'local' && process.env.EGG_MANIFEST !== 'true') {
       debug('skip manifest in local env (set EGG_MANIFEST=true to enable)');
       return null;
