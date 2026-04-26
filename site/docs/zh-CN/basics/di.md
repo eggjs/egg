@@ -434,13 +434,7 @@ export default {
 ### 示例
 
 ```ts
-import {
-  Logger,
-  Inject,
-  InitTypeQualifier,
-  ObjectInitType,
-  SingletonProto,
-} from 'egg';
+import { Logger, Inject, InitTypeQualifier, ObjectInitType, SingletonProto } from 'egg';
 
 @SingletonProto()
 export class HelloService {
@@ -519,8 +513,10 @@ export const HELLO_ATTRIBUTE = Symbol('HELLO_ATTRIBUTE');
 // 这个工具类可以实现类型检查
 // 1. 加了这个注解一定要实现抽象类
 // 2. 注解的参数一定是枚举值
-export const Hello: ImplDecorator<AbstractHello, typeof HelloType> =
-  QualifierImplDecoratorUtil.generatorDecorator(AbstractHello, HELLO_ATTRIBUTE);
+export const Hello: ImplDecorator<AbstractHello, typeof HelloType> = QualifierImplDecoratorUtil.generatorDecorator(
+  AbstractHello,
+  HELLO_ATTRIBUTE,
+);
 ```
 
 3. 实现抽象类。
@@ -553,10 +549,7 @@ export class HelloService {
   private eggObjectFactory: EggObjectFactory;
 
   async hello(): Promise<string> {
-    const helloImpl = await this.eggObjectFactory.getEggObject(
-      AbstractHello,
-      HelloType.BAR,
-    );
+    const helloImpl = await this.eggObjectFactory.getEggObject(AbstractHello, HelloType.BAR);
     return helloImpl.hello();
   }
 }
@@ -574,6 +567,8 @@ export class HelloService {
 // 通过使用一个 record 来伪装成一个 enum
 type AnyEnum = Record<string, string>;
 
-export const Convertor: ImplDecorator<AbstractFoo, AnyEnum> =
-  QualifierImplDecoratorUtil.generatorDecorator(AbstractFoo, FOO_ATTRIBUTE);
+export const Convertor: ImplDecorator<AbstractFoo, AnyEnum> = QualifierImplDecoratorUtil.generatorDecorator(
+  AbstractFoo,
+  FOO_ATTRIBUTE,
+);
 ```

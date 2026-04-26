@@ -177,29 +177,17 @@ class PointcutAdvice implements IAdvice<Hello> {
   }
 
   // 记录调用异常
-  async afterThrow(
-    ctx: AdviceContext<Hello, any>,
-    error: Error,
-  ): Promise<void> {
-    this.logger.info(
-      `${ctx.that.constructor.name}.${ctx.method.name} throw an error: %j`,
-      error,
-    );
+  async afterThrow(ctx: AdviceContext<Hello, any>, error: Error): Promise<void> {
+    this.logger.info(`${ctx.that.constructor.name}.${ctx.method} throw an error: %j`, error);
   }
 
   // 打个调用结束的日志
   async afterFinally(ctx: AdviceContext<Hello>): Promise<void> {
-    this.logger.info(
-      `called ${ctx.that.constructor.name}.${ctx.method.name}, params: %j`,
-      args,
-    );
-  }
+    this.logger.info(`called ${ctx.that.constructor.name}.${ctx.method.name}, params: %j`, args);
+    this.logger.info(`called ${ctx.that.constructor.name}.${ctx.method}, params: %j`, ctx.args);
 
   // 修改被切函数的调用过程，比如将被切函数放到事务中执行
-  async around(
-    ctx: AdviceContext<Hello>,
-    next: () => Promise<any>,
-  ): Promise<any> {
+  async around(ctx: AdviceContext<Hello>, next: () => Promise<any>): Promise<any> {
     await this.runInTransaction(next);
   }
 }
@@ -340,23 +328,13 @@ export class OneapiCallAdvice implements IAdvice<LayottoFacade> {
   @Inject()
   logger: Logger; // 可以修改为注入自定义实现的 logger
 
-  async around(
-    ctx: AdviceContext<LayottoFacade>,
-    next: () => Promise<any>,
-  ): Promise<any> {
+  async around(ctx: AdviceContext<LayottoFacade>, next: () => Promise<any>): Promise<any> {
     const facadeName = ctx.that.constructor.name;
     const methodName = ctx.method;
     const start = Date.now();
     const res = await next();
     const cost = Date.now() - start;
-    this.logger.info(
-      '%s.%s called, cost: %d, params: %j, result: %j',
-      facadeName,
-      methodName,
-      cost,
-      ctx.args,
-      res,
-    );
+    this.logger.info('%s.%s called, cost: %d, params: %j, result: %j', facadeName, methodName, cost, ctx.args, res);
     return res;
   }
 }

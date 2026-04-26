@@ -94,9 +94,7 @@ For example, passing invalided parameters from the client may return a response 
 ```json
 {
   "error": "Validation Failed",
-  "detail": [
-    { "message": "required", "field": "title", "code": "missing_field" }
-  ]
+  "detail": [{ "message": "required", "field": "title", "code": "missing_field" }]
 }
 ```
 
@@ -210,10 +208,7 @@ class TopicService extends Service {
   // Encapsulated a uniform check function, can be reused in query, create, update and such on in service
   checkSuccess(result) {
     if (result.status !== 200) {
-      const errorMsg =
-        result.data && result.data.error_msg
-          ? result.data.error_msg
-          : 'unknown error';
+      const errorMsg = result.data && result.data.error_msg ? result.data.error_msg : 'unknown error';
       this.ctx.throw(result.status, errorMsg);
     }
     if (!result.data.success) {
@@ -252,10 +247,7 @@ module.exports = () => {
 
       const status = err.status || 500;
       // error 500 not returning to client when in the production environment because it may contain sensitive information
-      const error =
-        status === 500 && ctx.app.config.env === 'prod'
-          ? 'Internal Server Error'
-          : err.message;
+      const error = status === 500 && ctx.app.config.env === 'prod' ? 'Internal Server Error' : err.message;
 
       // Reading from the properties of error object and set it to the response
       ctx.body = { error };

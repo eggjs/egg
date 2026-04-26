@@ -12,7 +12,7 @@ as the receiver, or the `ctx` identifier, as shown in the following
 snippet:
 
 ```js
-app.use(async ctx => {
+app.use(async (ctx) => {
   ctx; // is the Context
   ctx.request; // is a Koa Request
   ctx.response; // is a Koa Response

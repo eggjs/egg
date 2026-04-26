@@ -165,7 +165,7 @@ export class FooController {
     // HTTPQuery: name=bar
     // HTTPQueries: name=[bar]
     @HTTPQuery() name: string,
-    @HTTPQueries() names: string[]
+    @HTTPQueries() names: string[],
   ) {
     return `hello, ${name}`;
   }

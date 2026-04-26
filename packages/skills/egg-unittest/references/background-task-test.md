@@ -42,9 +42,7 @@ import { app } from '@eggjs/mock/bootstrap';
 import { CountService } from '../app/modules/count/CountService.ts';
 
 it('should complete background task', async () => {
-  await app.httpRequest()
-    .get('/api/trigger-task')
-    .expect(200);
+  await app.httpRequest().get('/api/trigger-task').expect(200);
 
   // 等待后台任务完成
   await app.backgroundTasksFinished();

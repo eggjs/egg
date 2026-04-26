@@ -211,10 +211,7 @@ class TopicService extends Service {
   // 封装统一的调用检查函数，可以在查询、创建和更新等 Service 中复用
   checkSuccess(result) {
     if (result.status !== 200) {
-      const errorMsg =
-        result.data && result.data.error_msg
-          ? result.data.error_msg
-          : 'unknown error';
+      const errorMsg = result.data && result.data.error_msg ? result.data.error_msg : 'unknown error';
       this.ctx.throw(result.status, errorMsg);
     }
     if (!result.data.success) {
@@ -251,10 +248,7 @@ module.exports = () => {
 
       const status = err.status || 500;
       // 在生产环境中，500 错误的详细内容不返回给客户端，因为可能含有敏感信息
-      const error =
-        status === 500 && ctx.app.config.env === 'prod'
-          ? 'Internal Server Error'
-          : err.message;
+      const error = status === 500 && ctx.app.config.env === 'prod' ? 'Internal Server Error' : err.message;
 
       // 从 error 对象读出各属性，设置到响应中
       ctx.body = { error };

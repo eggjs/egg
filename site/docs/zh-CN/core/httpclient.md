@@ -15,12 +15,9 @@
 export default (app: EggApplication) => {
   app.beforeStart(async () => {
     // 示例：启动时去读取 https://registry.npmmirror.com/egg/latest 的版本信息
-    const result = await app.httpClient.request(
-      'https://registry.npmmirror.com/egg/latest',
-      {
-        dataType: 'json',
-      },
-    );
+    const result = await app.httpClient.request('https://registry.npmmirror.com/egg/latest', {
+      dataType: 'json',
+    });
     app.logger.info('Egg 最新版本：%s', result.data.version);
   });
 };
@@ -37,15 +34,12 @@ export default class NpmController extends Controller {
     const ctx = this.ctx;
 
     // 示例：请求一个 npm 模块信息
-    const result = await ctx.httpClient.request(
-      'https://registry.npmmirror.com/egg/latest',
-      {
-        // 自动解析 JSON 响应
-        dataType: 'json',
-        // 3 秒超时
-        timeout: 3000,
-      },
-    );
+    const result = await ctx.httpClient.request('https://registry.npmmirror.com/egg/latest', {
+      // 自动解析 JSON 响应
+      dataType: 'json',
+      // 3 秒超时
+      timeout: 3000,
+    });
 
     ctx.body = {
       status: result.status,
@@ -71,9 +65,7 @@ HTTP 已经被广泛大量使用。尽管 HTTP 有多种请求方式，但是万
 export default class NpmController extends Controller {
   async get() {
     const ctx = this.ctx;
-    const result = await ctx.httpClient.request(
-      'https://httpbin.org/get?foo=bar',
-    );
+    const result = await ctx.httpClient.request('https://httpbin.org/get?foo=bar');
     ctx.status = result.status;
     ctx.set(result.headers);
     ctx.body = result.data;

@@ -6,3 +6,4 @@
 - [Multi-Process Development Model Enhancement](./cluster-client.md)
 - [View Plugin Development](./view-plugin.md)
 - [Upgrade your event functions in your lifecycle](./loader-update.md)
+- [V8 Startup Snapshot](./snapshot.md)

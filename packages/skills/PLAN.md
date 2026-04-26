@@ -150,10 +150,12 @@ describe('路由评测', () => {
       const parsed = JSON.parse(text);
 
       // 3. 断言路由正确性
-      assert.equal(parsed.skill, expectedSkill,
+      assert.equal(
+        parsed.skill,
+        expectedSkill,
         `路由错误: 期望 "${expectedSkill}" 但得到 "${parsed.skill}"` +
-        `\n  用例理由: ${reason}` +
-        `\n  AI 理由: ${parsed.reason}`
+          `\n  用例理由: ${reason}` +
+          `\n  AI 理由: ${parsed.reason}`,
       );
     });
   }
@@ -178,16 +180,12 @@ export const qualityCases: QualityCase[] = [
       '使用 @HTTPBody() 获取请求体',
       '包含完整可运行的代码示例',
     ],
-    references: ['references/http-controller.md'],  // 需要加载的参考文档
+    references: ['references/http-controller.md'], // 需要加载的参考文档
   },
   {
     skill: 'tegg-core',
     query: '如何让一个服务可以被其他模块访问？',
-    criteria: [
-      '提到 AccessLevel.PUBLIC',
-      '使用 @SingletonProto 装饰器',
-      '解释跨模块访问机制',
-    ],
+    criteria: ['提到 AccessLevel.PUBLIC', '使用 @SingletonProto 装饰器', '解释跨模块访问机制'],
     references: [],
   },
   // ... 更多用例
@@ -215,8 +213,7 @@ describe('内容质量评测', () => {
       // Step 1: 加载 skill 内容作为 system prompt，向被测 LLM 提问
       it('生成回答', async () => {
         const skillContent = loadSkillContent(testCase.skill);
-        const refContents = testCase.references
-          .map(ref => loadReference(testCase.skill, ref));
+        const refContents = testCase.references.map((ref) => loadReference(testCase.skill, ref));
 
         const systemPrompt = [skillContent, ...refContents].join('\n\n---\n\n');
 
@@ -247,12 +244,13 @@ describe('内容质量评测', () => {
         }
 
         // 断言：所有 criteria 都应满足
-        assert.ok(result.totalScore >= 0.8,
+        assert.ok(
+          result.totalScore >= 0.8,
           `质量不达标: ${result.totalScore} < 0.8\n` +
-          result.details
-            .filter(d => d.score === 0)
-            .map(d => `  ✗ ${d.criterion}: ${d.reason}`)
-            .join('\n')
+            result.details
+              .filter((d) => d.score === 0)
+              .map((d) => `  ✗ ${d.criterion}: ${d.reason}`)
+              .join('\n'),
         );
       });
     });
@@ -267,21 +265,17 @@ describe('内容质量评测', () => {
 import type Anthropic from '@anthropic-ai/sdk';
 import type { JudgeInput, JudgeResult, JudgeDetail } from './types.ts';
 
-export async function judge(
-  client: Anthropic,
-  input: JudgeInput,
-): Promise<JudgeResult> {
-  const criteriaList = input.criteria
-    .map((c, i) => `${i + 1}. ${c}`)
-    .join('\n');
+export async function judge(client: Anthropic, input: JudgeInput): Promise<JudgeResult> {
+  const criteriaList = input.criteria.map((c, i) => `${i + 1}. ${c}`).join('\n');
 
   const response = await client.messages.create({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 1024,
     system: '你是 AI 回答质量评估专家。严格按照 JSON 格式输出评分结果。',
-    messages: [{
-      role: 'user',
-      content: `请根据评分标准，对以下 AI 回答逐项评分。
+    messages: [
+      {
+        role: 'user',
+        content: `请根据评分标准，对以下 AI 回答逐项评分。
 
 ## 评分标准
 ${criteriaList}
@@ -298,13 +292,14 @@ ${input.response}
     { "criterion": "标准内容", "score": 0 或 1, "reason": "简要理由" }
   ]
 }`,
-    }],
+      },
+    ],
   });
 
   const text = response.content[0].type === 'text' ? response.content[0].text : '';
   const parsed = JSON.parse(text);
   const details: JudgeDetail[] = parsed.details;
-  const passed = details.filter(d => d.score === 1).length;
+  const passed = details.filter((d) => d.score === 1).length;
 
   return {
     details,

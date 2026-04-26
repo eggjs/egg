@@ -7,3 +7,4 @@
 - [View 插件开发](./view-plugin.md)
 - [升级你的生命周期事件函数](./loader-update.md)
 - [对象生命周期](./lifecycle.md)
+- [V8 启动快照](./snapshot.md)

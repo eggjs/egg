@@ -403,9 +403,7 @@ module.exports = UserService;
 
 // app.js
 // get all loadUnit
-const servicePaths = app.loader
-  .getLoadUnits()
-  .map((unit) => path.join(unit.path, 'app/service'));
+const servicePaths = app.loader.getLoadUnits().map((unit) => path.join(unit.path, 'app/service'));
 
 app.loader.loadToContext(servicePaths, 'service', {
   // service needs to inherit app.Service, so needs app as parameter

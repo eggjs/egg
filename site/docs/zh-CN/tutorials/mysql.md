@@ -317,10 +317,7 @@ const result = await this.app.mysql.delete('posts', {
 
 ```js
 const postId = 1;
-const results = await this.app.mysql.query(
-  'update posts set hits = (hits + ?) where id = ?',
-  [1, postId],
-);
+const results = await this.app.mysql.query('update posts set hits = (hits + ?) where id = ?', [1, postId]);
 
 // => update posts set hits = (hits + 1) where id = 1;
 ```

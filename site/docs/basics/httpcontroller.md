@@ -106,13 +106,7 @@ The `HTTPHeaders` decorator is used to get the complete HTTP request headers.
 :::
 
 ```typescript
-import {
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPHeaders,
-  IncomingHttpHeaders,
-} from 'egg';
+import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPHeaders, IncomingHttpHeaders } from 'egg';
 
 @HTTPController()
 export default class ArgsController {
@@ -130,13 +124,7 @@ export default class ArgsController {
 The `HTTPQuery/HTTPQueries` decorators are used to get querystring parameters from HTTP requests. `HTTPQuery` only takes the first parameter and must be of type `string`; `HTTPQueries` injects parameters as an array containing one or more values, of type `string[]`.
 
 ```typescript
-import {
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPQuery,
-  HTTPQueries,
-} from 'egg';
+import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPQuery, HTTPQueries } from 'egg';
 
 @HTTPController()
 export default class ArgsController {
@@ -219,13 +207,7 @@ export default class ArgsController {
 The `Cookies` decorator is used to get the complete HTTP Cookies.
 
 ```typescript
-import {
-  Cookies,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPCookies,
-} from 'egg';
+import { Cookies, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPCookies } from 'egg';
 
 @HTTPController()
 export default class ArgsController {
@@ -248,13 +230,7 @@ The `HTTPRequest` decorator is used to get the complete HTTP request object, all
 :::
 
 ```typescript
-import {
-  HTTPBody,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPRequest,
-} from 'egg';
+import { HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPRequest } from 'egg';
 
 @HTTPController()
 export default class ArgsController {
@@ -290,13 +266,7 @@ In standard applications, you can use the `HTTPContext` decorator to get the Egg
 :::
 
 ```typescript
-import {
-  HTTPContext,
-  Context,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-} from 'egg';
+import { HTTPContext, Context, HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
 
 @HTTPController()
 export default class ArgsController {
@@ -358,13 +328,7 @@ export default class ResponseController {
 In standard applications, you can use the APIs provided by [Context][Context] to customize HTTP response codes and response headers.
 
 ```typescript
-import {
-  Context,
-  HTTPContext,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-} from 'egg';
+import { Context, HTTPContext, HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
 
 @HTTPController()
 export default class ResponseController {
@@ -390,13 +354,7 @@ Simply wrap the streaming data as a `Readable` object and return it.
 ```typescript
 import { Readable } from 'node:stream';
 import { setTimeout } from 'node:timers/promises';
-import {
-  Context,
-  HTTPContext,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-} from 'egg';
+import { Context, HTTPContext, HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
 
 // Construct streaming data
 async function* generate(count = 5, duration = 500) {

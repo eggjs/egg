@@ -23,7 +23,9 @@ export default class Boot implements ILifecycleBoot {
   async didLoad(): Promise<void> {
     // logging error
     const config = this.app.config.onerror;
-    const viewTemplate = fs.readFileSync(config.templatePath, 'utf8');
+    const viewTemplate = config.templatePath
+      ? fs.readFileSync(config.templatePath, 'utf8')
+      : (await import('./lib/onerror_page.ts')).ONERROR_PAGE_TEMPLATE;
     const app = this.app;
     app.on('error', (err, ctx) => {
       if (!ctx) {

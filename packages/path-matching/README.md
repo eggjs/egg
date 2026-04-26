@@ -27,9 +27,9 @@ const options = {
   // support regexp
   ignore: /^\/api/,
   // support function
-  ignore: ctx => ctx.path.startsWith('/api'),
+  ignore: (ctx) => ctx.path.startsWith('/api'),
   // support Array
-  ignore: [ctx => ctx.path.startsWith('/api'), /^\/foo$/, '/bar'],
+  ignore: [(ctx) => ctx.path.startsWith('/api'), /^\/foo$/, '/bar'],
   // support match or ignore
   match: '/api',
   // custom path-to-regexp module, default is `path-to-regexp@6`

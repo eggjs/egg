@@ -333,14 +333,14 @@ console.log(ctx.user.name); // Jason
 
 ```js
 await app.mockContextScope(
-  async ctx => {
+  async (ctx) => {
     console.log(ctx.user.name); // Jason
   },
   {
     user: {
       name: 'Jason',
     },
-  }
+  },
 );
 ```
 
@@ -403,9 +403,9 @@ return app.httpRequest().post('/login').expect(302);
 模拟 httpclient 的请求，例如 `ctx.curl`
 
 ```js
-app.get('/', async ctx => {
+app.get('/', async (ctx) => {
   const ret = await ctx.curl('https://eggjs.org');
-  this.body = ret.data.toString();
+  ctx.body = ret.data.toString();
 });
 
 app.mockHttpclient('https://eggjs.org', {
@@ -432,7 +432,7 @@ describe('test app', () => {
     return app
       .httpRequest()
       .get('/foo')
-      .expect(res => {
+      .expect((res) => {
         assert(!res.headers.foo);
       })
       .expect(/bar/);

@@ -76,7 +76,7 @@ describe('test/eventbus.test.ts', () => {
     const helloService = await ctx.getEggObject(HelloService);
     let msg: string | undefined;
     // helloLogger is in child context, should mock the prototype
-    mm(HelloLogger.prototype, 'handle', m => {
+    mm(HelloLogger.prototype, 'handle', (m) => {
       msg = m;
     });
     const eventWaiter = await app.getEventWaiter();

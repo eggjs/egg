@@ -58,7 +58,7 @@ logrotator 默认在每日0点按照时间切割，会将 app.loggers 下所有�
 
 ```js
 // app/schedule/custom.js
-module.exports = app => {
+module.exports = (app) => {
   const rotator = getRotator(app);
   return {
     // https://github.com/eggjs/egg-schedule

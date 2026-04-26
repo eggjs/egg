@@ -65,10 +65,7 @@ import { app } from '@eggjs/mock/bootstrap';
 
 describe('test/controller/home.test.ts', () => {
   it('should GET /', () => {
-    return app.httpRequest()
-      .get('/')
-      .expect(200)
-      .expect('hello world');
+    return app.httpRequest().get('/').expect(200).expect('hello world');
   });
 });
 ```

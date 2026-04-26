@@ -42,11 +42,7 @@ export class SimpleAopAdvice implements IAdvice {
     const res = await next();
 
     // 控制器之后执行的逻辑
-    this.logger.info(
-      '%dms, traceId: %s',
-      Date.now() - startTime,
-      this.tracer.traceId,
-    );
+    this.logger.info('%dms, traceId: %s', Date.now() - startTime, this.tracer.traceId);
 
     // 对结果进行处理后，再返回
     return {

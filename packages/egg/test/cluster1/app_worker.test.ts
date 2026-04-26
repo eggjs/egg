@@ -30,11 +30,18 @@ describe('test/cluster1/app_worker.test.ts', () => {
   });
 
   it('should response 400 bad request when HTTP request packet broken', async () => {
-    const responses = await Promise.all([requestRawPath(app.port, '/foo bar'), requestRawPath(app.port, '/foo baz')]);
+    // Node.js will emit a clientError when the raw URI in the HTTP request
+    // packet contains spaces. Send raw packets because modern clients reject
+    // unescaped paths before they reach the server.
+    const responses = await Promise.all([rawRequest(app.port, '/foo bar'), rawRequest(app.port, '/foo baz')]);
 
     for (const response of responses) {
-      assert.match(response, /^HTTP\/1\.1 400 Bad Request/);
-      assert.ok(response.replaceAll('\r\n', '\n').includes(DEFAULT_BAD_REQUEST_HTML));
+      const separatorIndex = response.indexOf('\r\n\r\n');
+      assert.notEqual(separatorIndex, -1);
+      const header = response.slice(0, separatorIndex);
+      const body = response.slice(separatorIndex + 4);
+      assert.match(header, /^HTTP\/1\.1 400 Bad Request/);
+      assert.equal(body.replaceAll('\r\n', '\n'), DEFAULT_BAD_REQUEST_HTML.replaceAll('\r\n', '\n'));
     }
   });
 
@@ -133,13 +140,14 @@ function connect(port: number) {
   });
 }
 
-function requestRawPath(port: number, path: string) {
+function rawRequest(port: number, path: string) {
   return new Promise<string>((resolve, reject) => {
     let response = '';
+    let settled = false;
     const socket = net.createConnection(port, '127.0.0.1', () => {
       socket.write(`GET ${path} HTTP/1.1\r\nHost: 127.0.0.1:${port}\r\nConnection: close\r\n\r\n`);
     });
-    let settled = false;
+
     const settle = (callback: () => void) => {
       if (settled) return;
       settled = true;
@@ -147,17 +155,22 @@ function requestRawPath(port: number, path: string) {
       callback();
     };
 
+    socket.setEncoding('utf8');
     socket.setTimeout(5000, () =>
       settle(() => {
         socket.destroy();
-        reject(new Error(`requestRawPath timeout after 5s, partial response: ${response}`));
+        reject(new Error(`Timed out waiting for raw HTTP response, partial response: ${response}`));
       }),
     );
-    socket.setEncoding('utf8');
     socket.on('data', (chunk) => {
       response += chunk;
     });
-    socket.on('error', (err) => settle(() => reject(err)));
     socket.on('end', () => settle(() => resolve(response)));
+    socket.on('error', (err) => settle(() => reject(err)));
+    socket.on('close', (hadError) => {
+      if (!hadError) {
+        settle(() => resolve(response));
+      }
+    });
   });
 }

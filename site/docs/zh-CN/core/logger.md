@@ -281,13 +281,7 @@ class RemoteErrorTransport extends Transport {
     let log;
     if (args[0] instanceof Error) {
       const err = args[0];
-      log = util.format(
-        '%s: %s\n%s\npid: %s\n',
-        err.name,
-        err.message,
-        err.stack,
-        process.pid,
-      );
+      log = util.format('%s: %s\n%s\npid: %s\n', err.name, err.message, err.stack, process.pid);
     } else {
       log = util.format(...args);
     }
@@ -302,9 +296,7 @@ class RemoteErrorTransport extends Transport {
 }
 
 // 在 app.js 中给 errorLogger 添加 transport，这样每条日志就会同时打印到这个 transport。
-app
-  .getLogger('errorLogger')
-  .set('remote', new RemoteErrorTransport({ level: 'ERROR', app }));
+app.getLogger('errorLogger').set('remote', new RemoteErrorTransport({ level: 'ERROR', app }));
 ```
 
 上述代码示例中，虽然比较简单，但是在实际使用时需要考虑性能问题。通常采取先暂存至内存，再定时上传的策略，以此优化性能。
@@ -332,9 +324,7 @@ const path = require('path');
 module.exports = (appInfo) => {
   return {
     logrotator: {
-      filesRotateBySize: [
-        path.join(appInfo.root, 'logs', appInfo.name, 'egg-web.log'),
-      ],
+      filesRotateBySize: [path.join(appInfo.root, 'logs', appInfo.name, 'egg-web.log')],
       maxFileSize: 2 * 1024 * 1024 * 1024,
     },
   };
@@ -356,9 +346,7 @@ const path = require('path');
 module.exports = (appInfo) => {
   return {
     logrotator: {
-      filesRotateByHour: [
-        path.join(appInfo.root, 'logs', appInfo.name, 'common-error.log'),
-      ],
+      filesRotateByHour: [path.join(appInfo.root, 'logs', appInfo.name, 'common-error.log')],
     },
   };
 };

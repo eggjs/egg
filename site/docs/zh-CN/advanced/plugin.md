@@ -150,20 +150,12 @@ $ npm test
    const mkdirp = require('mkdirp');
 
    module.exports = (options, app) => {
-     assert.strictEqual(
-       typeof options.dir,
-       'string',
-       'Must set `app.config.static.dir` when static plugin enable',
-     );
+     assert.strictEqual(typeof options.dir, 'string', 'Must set `app.config.static.dir` when static plugin enable');
 
      // 确保目录存在
      mkdirp.sync(options.dir);
 
-     app.loggers.coreLogger.info(
-       '[egg-static] starting static serve %s -> %s',
-       options.prefix,
-       options.dir,
-     );
+     app.loggers.coreLogger.info('[egg-static] starting static serve %s -> %s', options.prefix, options.dir);
 
      return staticCache(options);
    };
@@ -296,9 +288,7 @@ function createMysql(config, app) {
   // 应用启动前检查
   app.beforeStart(async () => {
     const rows = await client.query('select now() as currentTime;');
-    app.coreLogger.info(
-      `[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`,
-    );
+    app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
   });
 
   return client;
@@ -311,20 +301,13 @@ function createMysql(config, app) {
 async function createMysql(config, app) {
   // 异步获取 mysql 配置
   const mysqlConfig = await app.configManager.getMysqlConfig(config.mysql);
-  assert(
-    mysqlConfig.host &&
-      mysqlConfig.port &&
-      mysqlConfig.user &&
-      mysqlConfig.database,
-  );
+  assert(mysqlConfig.host && mysqlConfig.port && mysqlConfig.user && mysqlConfig.database);
   // 创建实例
   const client = new Mysql(mysqlConfig);
 
   // 应用启动前检查
   const rows = await client.query('select now() as currentTime;');
-  app.coreLogger.info(
-    `[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`,
-  );
+  app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
 
   return client;
 }
@@ -464,14 +447,7 @@ class PostController extends Controller {
     "name": "nunjucks",
     "dep": ["security"]
   },
-  "keywords": [
-    "egg",
-    "egg-plugin",
-    "eggPlugin",
-    "egg-plugin-view",
-    "egg-view",
-    "nunjucks"
-  ]
+  "keywords": ["egg", "egg-plugin", "eggPlugin", "egg-plugin-view", "egg-view", "nunjucks"]
 }
 ```
 

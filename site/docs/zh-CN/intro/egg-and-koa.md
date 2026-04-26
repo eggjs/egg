@@ -103,9 +103,7 @@ module.exports = {
 ```javascript
 // app/controller/home.js
 exports.handler = (ctx) => {
-  ctx.body = ctx.isIOS
-    ? 'Your operating system is iOS.'
-    : 'Your operating system is not iOS.';
+  ctx.body = ctx.isIOS ? 'Your operating system is iOS.' : 'Your operating system is not iOS.';
 };
 ```
 

@@ -106,13 +106,7 @@ export default class PriorityController {
 :::
 
 ```typescript
-import {
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPHeaders,
-  IncomingHttpHeaders,
-} from 'egg';
+import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPHeaders, IncomingHttpHeaders } from 'egg';
 
 @HTTPController()
 export default class ArgsController {
@@ -130,13 +124,7 @@ export default class ArgsController {
 `HTTPQuery/HTTPQueries` 装饰器用于获取 HTTP 请求中 querystring 参数。`HTTPQuery` 只取第一个参数，类型必须为 `string`；`HTTPQueries` 以数组形式注入参数，数组包含一个或多个值，类型为 `string[]`。
 
 ```typescript
-import {
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPQuery,
-  HTTPQueries,
-} from 'egg';
+import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPQuery, HTTPQueries } from 'egg';
 
 @HTTPController()
 export default class ArgsController {
@@ -219,13 +207,7 @@ export default class ArgsController {
 `Cookies` 装饰器用于获取完整的 HTTP Cookies。
 
 ```typescript
-import {
-  Cookies,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPCookies,
-} from 'egg';
+import { Cookies, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPCookies } from 'egg';
 
 @HTTPController()
 export default class ArgsController {
@@ -248,13 +230,7 @@ export default class ArgsController {
 :::
 
 ```typescript
-import {
-  HTTPBody,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPRequest,
-} from 'egg';
+import { HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPRequest } from 'egg';
 
 @HTTPController()
 export default class ArgsController {
@@ -290,13 +266,7 @@ export default class ArgsController {
 :::
 
 ```typescript
-import {
-  HTTPContext,
-  Context,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-} from 'egg';
+import { HTTPContext, Context, HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
 
 @HTTPController()
 export default class ArgsController {
@@ -358,13 +328,7 @@ export default class ResponseController {
 在标准应用中，可以通过 [Context][Context] 提供的 api 来自定义设置 HTTP 响应码和响应头等信息。
 
 ```typescript
-import {
-  Context,
-  HTTPContext,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-} from 'egg';
+import { Context, HTTPContext, HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
 
 @HTTPController()
 export default class ResponseController {
@@ -390,13 +354,7 @@ export default class ResponseController {
 ```typescript
 import { Readable } from 'node:stream';
 import { setTimeout } from 'node:timers/promises';
-import {
-  Context,
-  HTTPContext,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-} from 'egg';
+import { Context, HTTPContext, HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
 
 // 构造流式数据
 async function* generate(count = 5, duration = 500) {
