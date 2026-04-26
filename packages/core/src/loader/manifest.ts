@@ -34,10 +34,6 @@ export interface StartupManifest {
   fileDiscovery: Record<string, string[]>;
 }
 
-declare global {
-  var __EGG_BUNDLE_STORE__: ManifestStore | undefined;
-}
-
 export class ManifestStore {
   readonly data: StartupManifest;
   readonly baseDir: string;
