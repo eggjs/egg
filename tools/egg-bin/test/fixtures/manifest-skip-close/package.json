@@ -1,0 +1,7 @@
+{
+  "name": "manifest-skip-close",
+  "type": "module",
+  "devDependencies": {
+    "typescript": "*"
+  }
+}

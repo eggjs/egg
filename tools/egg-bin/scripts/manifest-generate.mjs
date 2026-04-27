@@ -48,8 +48,8 @@ async function main() {
   console.log('[manifest]   extension entries: %d', extensionCount);
   console.log('[manifest] Written to %s/.egg/manifest.json', options.baseDir);
 
-  // Clean up and exit
-  await app.close();
+  // The manifest subprocess is metadata-only. Exiting directly avoids running
+  // real application beforeClose hooks that may depend on full runtime state.
   process.exit(0);
 }
 
