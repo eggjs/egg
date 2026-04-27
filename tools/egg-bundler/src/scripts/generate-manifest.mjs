@@ -2,6 +2,16 @@ import { debuglog } from 'node:util';
 
 const debug = debuglog('egg/bundler/scripts/generate-manifest');
 
+async function flushWritable(stream) {
+  if (!stream.writable || stream.destroyed) return;
+  await new Promise((resolve) => stream.write('', resolve));
+}
+
+async function exitAfterManifestWrite() {
+  await Promise.all([flushWritable(process.stdout), flushWritable(process.stderr)]);
+  process.exit(0);
+}
+
 async function main() {
   debug('argv: %o', process.argv);
   const options = JSON.parse(process.argv[2]);
@@ -49,8 +59,11 @@ async function main() {
   console.log('[bundler-manifest]   fileDiscovery: %d', fileDiscoveryCount);
   console.log('[bundler-manifest]   extensions: %d', extensionCount);
 
-  await app.close();
-  process.exit(0);
+  // This helper runs in a dedicated subprocess. Closing the real app would
+  // trigger user beforeClose hooks that may depend on services intentionally
+  // unavailable during bundle metadata collection, so exit after the manifest
+  // is written and stdio has been flushed.
+  await exitAfterManifestWrite();
 }
 
 main().catch((err) => {
