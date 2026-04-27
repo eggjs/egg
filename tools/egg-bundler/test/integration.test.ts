@@ -213,7 +213,7 @@ globalThis.__patchedMeta = {
     const buildFunc: BuildFunc = async () => {
       await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// mock worker entry\n');
       await fs.mkdir(path.join(tmpOutput, 'chunks'), { recursive: true });
-      await fs.writeFile(path.join(tmpOutput, 'chunks/chunk #?.js'), throwingMeta);
+      await fs.writeFile(path.join(tmpOutput, 'chunks/chunk $1 #?.js'), throwingMeta);
       await fs.writeFile(path.join(tmpOutput, 'chunks/url-only.js'), urlOnlyMeta);
     };
 
@@ -245,7 +245,7 @@ globalThis.__patchedMeta = {
       return u.href;
     }
 
-    const nestedFilename = path.join(tmpOutput, 'chunks/chunk #?.js');
+    const nestedFilename = path.join(tmpOutput, 'chunks/chunk $1 #?.js');
     const nestedMeta = await runPatchedChunk(nestedFilename);
     expect(nestedMeta).toEqual({
       url: expectedFileUrl(nestedFilename),

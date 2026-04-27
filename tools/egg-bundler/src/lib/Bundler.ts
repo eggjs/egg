@@ -158,7 +158,7 @@ export class Bundler {
       /\b(var|let|const)\s+([A-Za-z_$][\w$]*import\$2e\$meta__[A-Za-z0-9_$]*)\s*=\s*\{\s*get\s+url\s*\(\)\s*\{[\s\S]*?\}\s*\};?/g;
 
     function buildRuntimeExpressions(relativeName: string): { chunkFilenameExpr: string; urlExpr: string } {
-      const chunkFilenameExpr = `process.argv[1].replace(/[^\\\\/]*$/, ${JSON.stringify(relativeName)})`;
+      const chunkFilenameExpr = `process.argv[1].replace(/[^\\\\/]*$/, () => ${JSON.stringify(relativeName)})`;
       const urlExpr = `(() => { const u = new URL("file:///"); u.pathname = ${chunkFilenameExpr}.replace(/\\\\/g, "/"); return u.href; })()`;
       return { chunkFilenameExpr, urlExpr };
     }
