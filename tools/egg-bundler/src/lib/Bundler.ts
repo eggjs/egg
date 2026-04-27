@@ -90,6 +90,12 @@ export class Bundler {
     const packResult = await wrapStep('pack build', () => packRunner.run());
     debug('pack produced %d files', packResult.files.length);
 
+    // turbopack wraps `import.meta` in a throwing getter for bundled ESM
+    // chunks.  Patch the output so `createRequire(import.meta.url)` and
+    // other `import.meta.url` usages work at runtime.
+    const patchCount = await wrapStep('patch import.meta.url', () => this.#patchImportMetaUrl(absOutputDir));
+    debug('patched %d import.meta.url occurrences', patchCount);
+
     // Merge project name into output package.json so the framework's
     // getAppname() finds it (it reads baseDir/package.json).
     const outputPkgPath = path.join(absOutputDir, 'package.json');
@@ -129,5 +135,82 @@ export class Bundler {
       files,
       manifestPath: manifestPathAbs,
     };
+  }
+
+  /**
+   * Turbopack replaces `import.meta` in bundled ESM chunks with an object
+   * that only defines a throwing `url` getter and omits `dirname`/`filename`.
+   *
+   * We post-process the output .js files in two passes:
+   * 1. Replace the throwing `url` IIFE with a working `file://` URL.
+   * 2. Inject `dirname` and `filename` getters so code like
+   *    `path.join(import.meta.dirname, '../lib/asset.html')` works.
+   */
+  async #patchImportMetaUrl(outputDir: string): Promise<number> {
+    // Pass 1 - fix the throwing url getter.
+    const THROWING_IIFE =
+      /\(\(\)\s*=>\s*\{\s*throw\s+new\s+Error\(\s*['"]could not convert import\.meta\.url to filepath['"]\s*\)\s*;?\s*\}\)\s*\(\)/g;
+
+    // Pass 2 - add dirname/filename for a url-only import.meta object. Match
+    // the Turbopack import.meta binding structurally so formatting changes,
+    // let/const declarations, or an already-patched url getter still work.
+    const META_URL_ONLY =
+      /\b(var|let|const)\s+([A-Za-z_$][\w$]*import\$2e\$meta__[A-Za-z0-9_$]*)\s*=\s*\{\s*get\s+url\s*\(\)\s*\{[\s\S]*?\}\s*\};?/g;
+
+    function buildRuntimeExpressions(relativeName: string): { chunkFilenameExpr: string; urlExpr: string } {
+      const chunkFilenameExpr = `process.argv[1].replace(/[^\\\\/]*$/, () => ${JSON.stringify(relativeName)})`;
+      const urlExpr = `(() => { const u = new URL("file:///"); u.pathname = ${chunkFilenameExpr}.replace(/\\\\/g, "/"); return u.href; })()`;
+      return { chunkFilenameExpr, urlExpr };
+    }
+
+    function buildMetaFull(
+      declarationKind: string,
+      metaName: string,
+      chunkFilenameExpr: string,
+      urlExpr: string,
+    ): string {
+      return `${declarationKind} ${metaName} = {
+    get url () {
+        return ${urlExpr};
+    },
+    get dirname () {
+        return ${chunkFilenameExpr}.replace(/[\\\\/][^\\\\/]*$/, "");
+    },
+    get filename () {
+        return ${chunkFilenameExpr};
+    }
+};`;
+    }
+
+    let totalPatches = 0;
+    const entries = await fs.readdir(outputDir, {
+      recursive: true,
+      withFileTypes: true,
+    });
+    for (const entry of entries) {
+      if (!entry.isFile() || !entry.name.endsWith('.js')) continue;
+      const filepath = path.join(entry.parentPath ?? outputDir, entry.name);
+      const relativeName = path.relative(outputDir, filepath).split(path.sep).join('/');
+      const content = await fs.readFile(filepath, 'utf8');
+      const { chunkFilenameExpr, urlExpr } = buildRuntimeExpressions(relativeName);
+
+      // Pass 1
+      const urlMatches = content.match(THROWING_IIFE);
+      let patched = content.replace(THROWING_IIFE, urlExpr);
+
+      // Pass 2
+      let metaMatches = 0;
+      patched = patched.replace(META_URL_ONLY, (_match, declarationKind: string, metaName: string) => {
+        metaMatches++;
+        return buildMetaFull(declarationKind, metaName, chunkFilenameExpr, urlExpr);
+      });
+
+      if (!urlMatches && metaMatches === 0) continue;
+
+      await fs.writeFile(filepath, patched);
+      totalPatches += (urlMatches?.length ?? 0) + metaMatches;
+      debug('patched %d import.meta in %s', (urlMatches?.length ?? 0) + metaMatches, relativeName);
+    }
+    return totalPatches;
   }
 }
