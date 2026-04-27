@@ -147,48 +147,69 @@ export class Bundler {
    *    `path.join(import.meta.dirname, '../lib/asset.html')` works.
    */
   async #patchImportMetaUrl(outputDir: string): Promise<number> {
-    // Pass 1 — fix the throwing url getter.
+    // Pass 1 - fix the throwing url getter.
     const THROWING_IIFE =
       /\(\(\)\s*=>\s*\{\s*throw\s+new\s+Error\(\s*['"]could not convert import\.meta\.url to filepath['"]\s*\)\s*;?\s*\}\)\s*\(\)/g;
-    // Avoid require() in the replacement — turbopack modules may declare
-    // `const require = createRequire(import.meta.url)` which would be in
-    // the TDZ when our getter runs.  Use globals only.
-    const URL_EXPR = 'new URL("file:///" + encodeURI(process.argv[1])).href';
 
-    // Pass 2 — add dirname/filename after patching url.
-    // Match the url-only meta object that results from pass 1.
+    // Pass 2 - add dirname/filename for a url-only import.meta object. Match
+    // the Turbopack import.meta binding structurally so formatting changes,
+    // let/const declarations, or an already-patched url getter still work.
     const META_URL_ONLY =
-      /var __TURBOPACK__import\$2e\$meta__ = \{\s*get url \(\) \{\s*return new URL\("file:\/\/\/" \+ encodeURI\(process\.argv\[1\]\)\)\.href;\s*\}\s*\};/g;
-    const META_FULL = `var __TURBOPACK__import$2e$meta__ = {
+      /\b(var|let|const)\s+([A-Za-z_$][\w$]*import\$2e\$meta__[A-Za-z0-9_$]*)\s*=\s*\{\s*get\s+url\s*\(\)\s*\{[\s\S]*?\}\s*\};?/g;
+
+    function buildRuntimeExpressions(relativeName: string): { chunkFilenameExpr: string; urlExpr: string } {
+      const chunkFilenameExpr = `process.argv[1].replace(/[^\\\\/]*$/, ${JSON.stringify(relativeName)})`;
+      const urlExpr = `(() => { const u = new URL("file:///"); u.pathname = ${chunkFilenameExpr}.replace(/\\\\/g, "/"); return u.href; })()`;
+      return { chunkFilenameExpr, urlExpr };
+    }
+
+    function buildMetaFull(
+      declarationKind: string,
+      metaName: string,
+      chunkFilenameExpr: string,
+      urlExpr: string,
+    ): string {
+      return `${declarationKind} ${metaName} = {
     get url () {
-        return new URL("file:///" + encodeURI(process.argv[1])).href;
+        return ${urlExpr};
     },
     get dirname () {
-        return process.argv[1].replace(/[\\\\/][^\\\\/]*$/, "");
+        return ${chunkFilenameExpr}.replace(/[\\\\/][^\\\\/]*$/, "");
     },
     get filename () {
-        return process.argv[1];
+        return ${chunkFilenameExpr};
     }
 };`;
+    }
 
     let totalPatches = 0;
-    const entries = await fs.readdir(outputDir);
-    for (const name of entries) {
-      if (!name.endsWith('.js')) continue;
-      const filepath = path.join(outputDir, name);
+    const entries = await fs.readdir(outputDir, {
+      recursive: true,
+      withFileTypes: true,
+    });
+    for (const entry of entries) {
+      if (!entry.isFile() || !entry.name.endsWith('.js')) continue;
+      const filepath = path.join(entry.parentPath ?? outputDir, entry.name);
+      const relativeName = path.relative(outputDir, filepath).split(path.sep).join('/');
       const content = await fs.readFile(filepath, 'utf8');
+      const { chunkFilenameExpr, urlExpr } = buildRuntimeExpressions(relativeName);
 
       // Pass 1
       const urlMatches = content.match(THROWING_IIFE);
-      if (!urlMatches) continue;
-      let patched = content.replace(THROWING_IIFE, URL_EXPR);
+      let patched = content.replace(THROWING_IIFE, urlExpr);
 
       // Pass 2
-      patched = patched.replace(META_URL_ONLY, META_FULL);
+      let metaMatches = 0;
+      patched = patched.replace(META_URL_ONLY, (_match, declarationKind: string, metaName: string) => {
+        metaMatches++;
+        return buildMetaFull(declarationKind, metaName, chunkFilenameExpr, urlExpr);
+      });
+
+      if (!urlMatches && metaMatches === 0) continue;
 
       await fs.writeFile(filepath, patched);
-      totalPatches += urlMatches.length;
-      debug('patched %d import.meta in %s', urlMatches.length, name);
+      totalPatches += (urlMatches?.length ?? 0) + metaMatches;
+      debug('patched %d import.meta in %s', (urlMatches?.length ?? 0) + metaMatches, relativeName);
     }
     return totalPatches;
   }
