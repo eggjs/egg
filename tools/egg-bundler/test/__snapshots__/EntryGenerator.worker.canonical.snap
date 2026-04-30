@@ -14,7 +14,7 @@ import * as __m3 from "../../node_modules/@eggjs/fake-module/app/service/UserSer
 // Derive the runtime output directory from the entry file being executed.
 // Cannot use __dirname because turbopack replaces it with the compile-time
 // path of the INPUT file, not the OUTPUT directory.
-const __baseDir = path.dirname(path.resolve(process.argv[1]));
+const __baseDir = path.dirname(path.resolve(process.argv[1] || '.'));
 
 const MANIFEST_DATA = {
   "version": 1,

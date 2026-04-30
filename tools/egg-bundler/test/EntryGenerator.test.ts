@@ -169,6 +169,32 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('__BUNDLE_MAP[rel] = mod');
   });
 
+  it('loads externalized package files via createRequire instead of static imports', async () => {
+    const manifest = makeManifest({
+      fileDiscovery: {
+        app: ['controller.ts'],
+        'node_modules/fake-external/dist/config': ['config.default.js'],
+        'node_modules/fake-external/dist': ['register.cjs'],
+      },
+    });
+
+    const gen = new EntryGenerator({
+      baseDir: tmpDir,
+      externals: new Set(['fake-external']),
+      manifestLoader: createFakeLoader(manifest),
+    });
+    const result = await gen.generate();
+    const worker = await fs.readFile(result.workerEntry, 'utf8');
+
+    expect(extractImports(worker)).toEqual([{ index: 0, specifier: '../../app/controller.ts' }]);
+    expect(worker).not.toContain('import * as __m1 from "../../node_modules/fake-external');
+    expect(worker).toContain("import { createRequire as __createRequire } from 'node:module'");
+    expect(worker).toContain(
+      'const __EXTERNAL_SPECS: Array<[string, string]> = [["node_modules/fake-external/dist/config/config.default.js","fake-external/config/config.default"],["node_modules/fake-external/dist/register.cjs","fake-external/register.cjs"]];',
+    );
+    expect(worker).toContain('__BUNDLE_MAP_REL[key] = __rtReq(spec)');
+  });
+
   it('inlines the full StartupManifest as MANIFEST_DATA so runtime never reads .egg/manifest.json', async () => {
     const manifest = makeManifest({
       fileDiscovery: { app: ['a.ts'] },

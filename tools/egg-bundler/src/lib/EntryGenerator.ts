@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
 import type { StartupManifest } from '@eggjs/core';
@@ -104,7 +105,11 @@ export class EntryGenerator {
       }
     }
 
-    return Array.from(map.values()).sort((a, b) => a.relKey.localeCompare(b.relKey));
+    return Array.from(map.values()).sort((a, b) => {
+      if (a.relKey < b.relKey) return -1;
+      if (a.relKey > b.relKey) return 1;
+      return 0;
+    });
   }
 
   #addEntry(map: Map<string, BundleEntry>, relKey: string): void {
@@ -129,9 +134,13 @@ export class EntryGenerator {
     if (slashIdx === -1) return { name: rest, subpath: '' };
     const name = rest.slice(0, slashIdx);
     let subpath = rest.slice(slashIdx + 1);
-    // Strip dist/ prefix and file extension for bare specifier resolution
+    // Strip dist/ prefix and only known-safe runtime extensions for bare specifier resolution.
+    // Preserve significant extensions such as .cjs/.mjs and multi-part names like .d.ts.
     // e.g. "dist/config/config.default.js" → "config/config.default"
-    subpath = subpath.replace(/^dist\//, '').replace(/\.[^.]+$/, '');
+    subpath = subpath.replace(/^dist\//, '');
+    if (subpath.endsWith('.js')) {
+      subpath = subpath.slice(0, -'.js'.length);
+    }
     return { name, subpath };
   }
 
@@ -218,7 +227,7 @@ ${importLines.join('\n')}
 // Derive the runtime output directory from the entry file being executed.
 // Cannot use __dirname because turbopack replaces it with the compile-time
 // path of the INPUT file, not the OUTPUT directory.
-const __baseDir = path.dirname(path.resolve(process.argv[1]));
+const __baseDir = path.dirname(path.resolve(process.argv[1] || '.'));
 
 const MANIFEST_DATA = ${manifestJson} as const;
 
@@ -273,6 +282,7 @@ console.log('[egg-bundler] agent entry is a no-op in single-mode bundles');
     // bundled paths portable across machines (absolute paths would leak
     // the bundle-time filesystem layout into the generated source).
     const rel = path.relative(this.#outputDir, absPath).replaceAll(path.sep, '/');
+    if (path.isAbsolute(rel)) return pathToFileURL(absPath).href;
     if (rel.startsWith('.')) return rel;
     return `./${rel}`;
   }
