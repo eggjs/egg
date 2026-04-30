@@ -52,7 +52,7 @@ export class ManifestLoader {
   constructor(options: ManifestLoaderOptions) {
     this.#baseDir = options.baseDir;
     this.#manifestPath = options.manifestPath ?? path.join(options.baseDir, '.egg', 'manifest.json');
-    this.#autoGenerate = options.autoGenerate ?? true;
+    this.#autoGenerate = options.autoGenerate ?? false;
     this.#env = options.env;
     this.#scope = options.scope;
     this.#framework = options.framework ?? FRAMEWORK_DEFAULT;
@@ -167,6 +167,9 @@ export class ManifestLoader {
   async #generate(): Promise<void> {
     const scriptUrl = new URL('../scripts/generate-manifest.mjs', import.meta.url);
     const scriptPath = fileURLToPath(scriptUrl);
+    if (!fs.existsSync(scriptPath)) {
+      throw new Error(`[@eggjs/egg-bundler] manifest auto-generation is not available: ${scriptPath} does not exist`);
+    }
     const payload = {
       baseDir: this.#baseDir,
       framework: this.#resolveFrameworkPath(),
