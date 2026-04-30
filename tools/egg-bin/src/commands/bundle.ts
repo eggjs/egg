@@ -1,13 +1,23 @@
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
+import { getFrameworkPath } from '@eggjs/utils';
 import { Flags } from '@oclif/core';
 
 import { BaseCommand } from '../baseCommand.ts';
 
 const debug = debuglog('egg/bin/commands/bundle');
+const bundleModes = ['production', 'development'] as const;
+type BundleMode = (typeof bundleModes)[number];
 
-export default class Bundle<T extends typeof Bundle> extends BaseCommand<T> {
+function getBundleMode(mode: string): BundleMode {
+  if (mode === 'production' || mode === 'development') {
+    return mode;
+  }
+  throw new Error(`Unsupported bundle mode: ${mode}`);
+}
+
+export default class Bundle extends BaseCommand<typeof Bundle> {
   static override description = 'Bundle an egg app into a deployable artifact using @eggjs/egg-bundler';
 
   static override examples = [
@@ -33,7 +43,7 @@ export default class Bundle<T extends typeof Bundle> extends BaseCommand<T> {
     }),
     mode: Flags.string({
       description: 'build mode',
-      options: ['production', 'development'],
+      options: [...bundleModes],
       default: 'production',
     }),
     'no-tegg': Flags.boolean({
@@ -43,10 +53,12 @@ export default class Bundle<T extends typeof Bundle> extends BaseCommand<T> {
     'force-external': Flags.string({
       description: 'package name to always mark as external (repeatable)',
       multiple: true,
+      default: [],
     }),
     'inline-external': Flags.string({
       description: 'package name to force-inline even if auto-detected as external (repeatable)',
       multiple: true,
+      default: [],
     }),
   };
 
@@ -74,8 +86,8 @@ export default class Bundle<T extends typeof Bundle> extends BaseCommand<T> {
       baseDir,
       outputDir,
       manifestPath,
-      framework: flags.framework,
-      mode: flags.mode as 'production' | 'development',
+      framework: getFrameworkPath({ framework: flags.framework, baseDir }),
+      mode: getBundleMode(flags.mode),
       tegg: !flags['no-tegg'],
       externals: {
         force: flags['force-external'],
