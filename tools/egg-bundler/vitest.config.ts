@@ -1,6 +1,6 @@
-import { defineProject, type UserWorkspaceConfig } from 'vitest/config';
+import { defineConfig, type UserConfig } from 'vitest/config';
 
-const config: UserWorkspaceConfig = defineProject({
+const config: UserConfig = defineConfig({
   test: {
     testTimeout: 20000,
     include: ['test/**/*.test.ts'],
