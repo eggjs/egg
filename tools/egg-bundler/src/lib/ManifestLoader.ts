@@ -182,8 +182,11 @@ export class ManifestLoader {
     };
     debug('execa generate-manifest: %o', payload);
 
-    await execaNode(scriptPath, [JSON.stringify(payload)], {
-      stdio: 'inherit',
+    await execaNode(scriptPath, [], {
+      input: JSON.stringify(payload),
+      stdin: 'pipe',
+      stdout: 'inherit',
+      stderr: 'inherit',
       nodeOptions: this.#buildExecArgv(),
       env: {
         ...process.env,
