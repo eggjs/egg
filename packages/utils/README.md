@@ -47,9 +47,11 @@ npm i @eggjs/utils
 Register a module loader hook for bundled Egg apps. The hook runs before the
 normal `importModule()` resolution path.
 
-- {Function | undefined} loader - receives a POSIX-normalized filepath or
-  virtual specifier and returns module exports. Return `undefined` to fall back
-  to the normal import path.
+- {Function | undefined} loader - a synchronous function that receives the
+  original `filepath` argument passed to `importModule()` after POSIX separator
+  normalization, or a virtual specifier. It does not receive the resolved
+  absolute file path from `importResolve()`. Return `undefined` to fall back to
+  the normal import path.
 
 The bundle loader is stored on `globalThis`, so bundled and external copies of
 `@eggjs/utils` share the same loader. Non-`undefined` results follow the same
