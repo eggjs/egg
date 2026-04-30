@@ -182,4 +182,14 @@ describe('PackRunner', () => {
       expect((err as Error).cause).toBe(original);
     }
   });
+
+  it('wraps non-Error buildFunc failures with a useful message', async () => {
+    const buildFunc: BuildFunc = async () => {
+      throw 'pack crashed as string';
+    };
+
+    await expect(makeRunner({ buildFunc }).run()).rejects.toThrowError(
+      /PackRunner failed to build worker: pack crashed as string/,
+    );
+  });
 });

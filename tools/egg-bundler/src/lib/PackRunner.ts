@@ -100,7 +100,8 @@ export class PackRunner {
       await buildFunc({ config }, projectPath, rootPath);
     } catch (err) {
       const names = entries.map((e) => e.name).join(', ');
-      throw new Error(`PackRunner failed to build ${names}: ${(err as Error).message}`, { cause: err });
+      const message = err instanceof Error ? err.message : String(err);
+      throw new Error(`PackRunner failed to build ${names}: ${message}`, { cause: err });
     }
 
     const files = await this.#collectFiles(outputDir);
@@ -108,16 +109,22 @@ export class PackRunner {
   }
 
   async #collectFiles(dir: string): Promise<readonly string[]> {
-    const entries = await fs.readdir(dir, {
-      recursive: true,
-      withFileTypes: true,
-    });
-    return entries
-      .filter((d) => d.isFile())
-      .map((d) => {
-        const parent = d.parentPath ?? dir;
-        return path.relative(dir, path.join(parent, d.name));
-      })
-      .sort();
+    const files: string[] = [];
+    await this.#collectFilesInDir(dir, dir, files);
+    return files.sort();
+  }
+
+  async #collectFilesInDir(rootDir: string, currentDir: string, files: string[]): Promise<void> {
+    const entries = await fs.readdir(currentDir, { withFileTypes: true });
+    await Promise.all(
+      entries.map(async (entry) => {
+        const filepath = path.join(currentDir, entry.name);
+        if (entry.isDirectory()) {
+          await this.#collectFilesInDir(rootDir, filepath, files);
+        } else if (entry.isFile()) {
+          files.push(path.relative(rootDir, filepath));
+        }
+      }),
+    );
   }
 }
