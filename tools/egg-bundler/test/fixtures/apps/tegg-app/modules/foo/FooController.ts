@@ -7,13 +7,13 @@ import { FooService } from './FooService.js';
 })
 export class FooController {
   @Inject()
-  fooService: FooService;
+  fooService!: FooService;
 
   @HTTPMethod({
     method: HTTPMethodEnum.GET,
     path: '/hello',
   })
-  async hello(@HTTPQuery() name: string): Promise<{ message: string }> {
+  async hello(@HTTPQuery() name?: string): Promise<{ message: string }> {
     return {
       message: this.fooService.hello(name || 'world'),
     };
