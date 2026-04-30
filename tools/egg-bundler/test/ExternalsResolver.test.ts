@@ -50,10 +50,12 @@ describe('ExternalsResolver', () => {
     });
   });
 
-  describe('tier 3: hard-coded always-external', () => {
-    it('externalizes @eggjs/* packages by name alone', async () => {
+  describe('tier 3: dependency metadata', () => {
+    it('does not externalize framework or helper packages by name alone', async () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
-      expect(result['@eggjs/some-plugin']).toBe('@eggjs/some-plugin');
+      expect(result.egg).toBeUndefined();
+      expect(result['@swc/helpers']).toBeUndefined();
+      expect(result['@eggjs/some-plugin']).toBeUndefined();
     });
 
     it('externalizes every peerDependency even if the package is not installed', async () => {
@@ -150,12 +152,14 @@ describe('ExternalsResolver', () => {
       expect(result['optional-only']).toBeUndefined();
     });
 
-    it('inline removes a hard-coded @eggjs/* package from externals', async () => {
+    it('force can still externalize framework and helper packages explicitly', async () => {
       const result = await new ExternalsResolver({
         baseDir: basicApp,
-        inline: ['@eggjs/some-plugin'],
+        force: ['egg', '@swc/helpers', '@eggjs/some-plugin'],
       }).resolve();
-      expect(result['@eggjs/some-plugin']).toBeUndefined();
+      expect(result.egg).toBe('egg');
+      expect(result['@swc/helpers']).toBe('@swc/helpers');
+      expect(result['@eggjs/some-plugin']).toBe('@eggjs/some-plugin');
     });
   });
 });

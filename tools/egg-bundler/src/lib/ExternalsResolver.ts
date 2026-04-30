@@ -19,8 +19,6 @@ interface PackageJson {
   readonly exports?: unknown;
 }
 
-const ALWAYS_EXTERNAL_NAMES: ReadonlySet<string> = new Set(['egg', '@swc/helpers']);
-
 // install-time hooks using one of these tools strongly imply a native addon
 const NATIVE_SCRIPT_PATTERN = /node-gyp|prebuild-install|napi-rs|node-pre-gyp|electron-rebuild/i;
 
@@ -74,8 +72,6 @@ export class ExternalsResolver {
   ): Promise<boolean> {
     if (optionalDeps.has(name)) return true;
     if (peerDeps.has(name)) return true;
-    if (ALWAYS_EXTERNAL_NAMES.has(name)) return true;
-    if (name.startsWith('@eggjs/')) return true;
 
     const pkgDir = await this.#findPackageDir(name);
     if (!pkgDir) return false;
