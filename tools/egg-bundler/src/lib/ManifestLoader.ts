@@ -1,16 +1,17 @@
-import { fork } from 'node:child_process';
-import fs from 'node:fs';
+import fsp from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
 import { ManifestStore, type StartupManifest } from '@eggjs/core';
+import { execaNode } from 'execa';
 
 const debug = debuglog('egg/bundler/manifest-loader');
 
 const SUPPORTED_MANIFEST_VERSION = 1;
 const FRAMEWORK_DEFAULT = 'egg';
+const PACKAGE_ENTRY_CONDITIONS = ['import', 'module', 'node', 'default', 'require', 'development', 'production'];
 
 export interface ManifestLoaderOptions {
   baseDir: string;
@@ -63,19 +64,19 @@ export class ManifestLoader {
   async load(): Promise<StartupManifest> {
     if (this.#manifest) return this.#manifest;
 
-    let data = this.#readFromDisk();
+    let data = await this.#readFromDisk();
     if (!data) {
       if (!this.#autoGenerate) {
         throw new Error(`[@eggjs/egg-bundler] manifest not found at ${this.#manifestPath}`);
       }
       await this.#generate();
-      data = this.#readFromDisk();
+      data = await this.#readFromDisk();
       if (!data) {
         throw new Error(`[@eggjs/egg-bundler] manifest generation did not produce ${this.#manifestPath}`);
       }
     }
 
-    const normalized = this.#normalize(data);
+    const normalized = await this.#normalize(data);
     this.#manifest = normalized;
     this.#store = ManifestStore.fromBundle(normalized, this.#baseDir);
     return normalized;
@@ -140,10 +141,10 @@ export class ManifestLoader {
     return path.resolve(this.#baseDir, rel);
   }
 
-  #readFromDisk(): StartupManifest | undefined {
+  async #readFromDisk(): Promise<StartupManifest | undefined> {
     let raw: string;
     try {
-      raw = fs.readFileSync(this.#manifestPath, 'utf-8');
+      raw = await fsp.readFile(this.#manifestPath, 'utf-8');
     } catch {
       return undefined;
     }
@@ -167,35 +168,140 @@ export class ManifestLoader {
   async #generate(): Promise<void> {
     const scriptUrl = new URL('../scripts/generate-manifest.mjs', import.meta.url);
     const scriptPath = fileURLToPath(scriptUrl);
-    if (!fs.existsSync(scriptPath)) {
+    try {
+      await fsp.access(scriptPath);
+    } catch {
       throw new Error(`[@eggjs/egg-bundler] manifest auto-generation is not available: ${scriptPath} does not exist`);
     }
     const payload = {
       baseDir: this.#baseDir,
       framework: this.#resolveFrameworkPath(),
+      frameworkEntry: await this.#resolveFrameworkEntryUrl(),
       env: this.#env,
       scope: this.#scope,
     };
-    debug('fork generate-manifest: %o', payload);
+    debug('execa generate-manifest: %o', payload);
 
-    await new Promise<void>((resolve, reject) => {
-      const child = fork(scriptPath, [JSON.stringify(payload)], {
-        stdio: 'inherit',
-        execArgv: this.#execArgv ?? process.execArgv,
-        env: {
-          ...process.env,
-          EGG_MANIFEST: 'true',
-        },
-      });
-      child.on('exit', (code, signal) => {
-        if (code === 0) resolve();
-        else
-          reject(
-            new Error(`[@eggjs/egg-bundler] manifest generate subprocess exited with code=${code} signal=${signal}`),
-          );
-      });
-      child.on('error', reject);
+    await execaNode(scriptPath, [JSON.stringify(payload)], {
+      stdio: 'inherit',
+      nodeOptions: this.#buildExecArgv(),
+      env: {
+        ...process.env,
+        EGG_MANIFEST: 'true',
+      },
     });
+  }
+
+  #isTsxImportTarget(specifier: string): boolean {
+    if (specifier === 'tsx' || specifier === 'tsx/esm') return true;
+
+    let normalized = specifier;
+    if (specifier.startsWith('file://')) {
+      try {
+        normalized = fileURLToPath(specifier);
+      } catch {
+        return false;
+      }
+    }
+
+    normalized = normalized.replaceAll('\\', '/');
+    return normalized.endsWith('/tsx/dist/esm/index.mjs') || normalized.endsWith('/tsx/esm/index.mjs');
+  }
+
+  #hasTsxLoader(base: readonly string[]): boolean {
+    for (let i = 0; i < base.length; i++) {
+      const arg = base[i];
+      let importTarget: string | undefined;
+
+      if (arg === '--import') {
+        importTarget = base[i + 1];
+        i++;
+      } else if (arg.startsWith('--import=')) {
+        importTarget = arg.slice('--import='.length);
+      }
+
+      if (importTarget && this.#isTsxImportTarget(importTarget)) return true;
+    }
+
+    return false;
+  }
+
+  #buildExecArgv(): string[] {
+    const base = this.#execArgv ?? process.execArgv;
+    if (this.#hasTsxLoader(base)) return [...base];
+    try {
+      const req = createRequire(import.meta.url);
+      const tsxEsm = req.resolve('tsx/esm');
+      return [...base, `--import=${pathToFileURL(tsxEsm).href}`];
+    } catch {
+      debug('tsx/esm not resolvable from @eggjs/egg-bundler; falling back to inherited execArgv');
+      return [...base];
+    }
+  }
+
+  #resolvePackageEntry(target: unknown): string | undefined {
+    if (typeof target === 'string') return target;
+    if (Array.isArray(target)) {
+      for (const item of target) {
+        const resolved = this.#resolvePackageEntry(item);
+        if (resolved) return resolved;
+      }
+      return undefined;
+    }
+    if (!target || typeof target !== 'object') return undefined;
+
+    const map = target as Record<string, unknown>;
+    const used = new Set<string>();
+    for (const key of PACKAGE_ENTRY_CONDITIONS) {
+      used.add(key);
+      const resolved = this.#resolvePackageEntry(map[key]);
+      if (resolved) return resolved;
+    }
+    for (const [key, value] of Object.entries(map)) {
+      if (used.has(key)) continue;
+      const resolved = this.#resolvePackageEntry(value);
+      if (resolved) return resolved;
+    }
+    return undefined;
+  }
+
+  #resolveExportsEntry(exportsField: Record<string, unknown> | string): string | undefined {
+    if (typeof exportsField === 'string') return exportsField;
+
+    const keys = Object.keys(exportsField);
+    const rootTarget = keys.length > 0 && !keys.some((key) => key.startsWith('.')) ? exportsField : exportsField['.'];
+    return this.#resolvePackageEntry(rootTarget);
+  }
+
+  #resolvePackageEntryUrl(frameworkDir: string, entryRel: string, pkgJsonPath: string): string {
+    if (path.isAbsolute(entryRel) || /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(entryRel)) {
+      throw new Error(`[@eggjs/egg-bundler] framework package ${pkgJsonPath} entry must be a relative path`);
+    }
+    const entryPath = path.resolve(frameworkDir, entryRel);
+    const rel = path.relative(frameworkDir, entryPath);
+    if (rel.startsWith('..') || path.isAbsolute(rel)) {
+      throw new Error(`[@eggjs/egg-bundler] framework package ${pkgJsonPath} entry escapes package root`);
+    }
+    return pathToFileURL(entryPath).href;
+  }
+
+  async #resolveFrameworkEntryUrl(): Promise<string> {
+    const frameworkDir = this.#resolveFrameworkPath();
+    const pkgJsonPath = path.join(frameworkDir, 'package.json');
+    const pkg = JSON.parse(await fsp.readFile(pkgJsonPath, 'utf-8')) as {
+      exports?: Record<string, unknown> | string;
+      main?: string;
+      module?: string;
+    };
+    let entryRel: string | undefined;
+    if (pkg.exports) {
+      entryRel = this.#resolveExportsEntry(pkg.exports);
+    }
+    entryRel = entryRel ?? pkg.module ?? pkg.main;
+    if (!entryRel) {
+      throw new Error(`[@eggjs/egg-bundler] framework package ${pkgJsonPath} has no resolvable entry`);
+    }
+    return this.#resolvePackageEntryUrl(frameworkDir, entryRel, pkgJsonPath);
   }
 
   #resolveFrameworkPath(): string {
@@ -210,24 +316,24 @@ export class ManifestLoader {
 
   // --- Key normalization ---
 
-  #normalize(data: StartupManifest): StartupManifest {
-    const moduleMap = this.#buildModuleMap();
+  async #normalize(data: StartupManifest): Promise<StartupManifest> {
+    const moduleMap = await this.#buildModuleMap();
     debug('moduleMap size: %d', moduleMap.length);
 
     const normalizedDiscovery: Record<string, string[]> = {};
     for (const [key, files] of Object.entries(data.fileDiscovery)) {
-      const newKey = this.#normalizeRelKey(key, moduleMap);
+      const newKey = await this.#normalizeRelKey(key, moduleMap);
       normalizedDiscovery[newKey] = files;
     }
 
     const normalizedResolveCache: Record<string, string | null> = {};
     for (const [key, value] of Object.entries(data.resolveCache)) {
-      const newKey = this.#normalizeRelKey(key, moduleMap);
-      const newValue = value === null ? null : this.#normalizeRelKey(value, moduleMap);
+      const newKey = await this.#normalizeRelKey(key, moduleMap);
+      const newValue = value === null ? null : await this.#normalizeRelKey(value, moduleMap);
       normalizedResolveCache[newKey] = newValue;
     }
 
-    const normalizedExtensions = this.#normalizeExtensions(data.extensions ?? {}, moduleMap);
+    const normalizedExtensions = await this.#normalizeExtensions(data.extensions ?? {}, moduleMap);
 
     return {
       ...data,
@@ -237,7 +343,7 @@ export class ManifestLoader {
     };
   }
 
-  #normalizeRelKey(relKey: string, moduleMap: ModuleMapEntry[]): string {
+  async #normalizeRelKey(relKey: string, moduleMap: ModuleMapEntry[]): Promise<string> {
     if (!relKey) return relKey;
     // Already inside baseDir, relative, and not escaping — leave as-is.
     if (
@@ -249,7 +355,7 @@ export class ManifestLoader {
       return relKey;
     }
     const abs = path.resolve(this.#baseDir, relKey);
-    const realAbs = this.#realpath(abs);
+    const realAbs = await this.#realpath(abs);
     let best: ModuleMapEntry | undefined;
     for (const entry of moduleMap) {
       if (realAbs === entry.realDir || realAbs.startsWith(entry.realDir + path.sep)) {
@@ -266,44 +372,49 @@ export class ManifestLoader {
     return normalized;
   }
 
-  #normalizeExtensions(extensions: Record<string, unknown> = {}, moduleMap: ModuleMapEntry[]): Record<string, unknown> {
+  async #normalizeExtensions(
+    extensions: Record<string, unknown> = {},
+    moduleMap: ModuleMapEntry[],
+  ): Promise<Record<string, unknown>> {
     const result: Record<string, unknown> = { ...extensions };
     const tegg = extensions?.tegg as TeggManifestExtension | undefined;
     if (tegg?.moduleDescriptors) {
       result.tegg = {
         ...tegg,
-        moduleDescriptors: tegg.moduleDescriptors.map((desc) => {
-          if (!path.isAbsolute(desc.unitPath)) return desc;
-          const real = this.#realpath(desc.unitPath);
-          let best: ModuleMapEntry | undefined;
-          for (const entry of moduleMap) {
-            if (real === entry.realDir || real.startsWith(entry.realDir + path.sep)) {
-              best = entry;
-              break;
+        moduleDescriptors: await Promise.all(
+          tegg.moduleDescriptors.map(async (desc) => {
+            if (!path.isAbsolute(desc.unitPath)) return desc;
+            const real = await this.#realpath(desc.unitPath);
+            let best: ModuleMapEntry | undefined;
+            for (const entry of moduleMap) {
+              if (real === entry.realDir || real.startsWith(entry.realDir + path.sep)) {
+                best = entry;
+                break;
+              }
             }
-          }
-          if (!best) {
-            // keep as relative-to-baseDir form so runtime can resolve via #resolveFromBase
-            const rel = path.relative(this.#baseDir, real).replaceAll(path.sep, '/');
-            return { ...desc, unitPath: rel };
-          }
-          const rest = real === best.realDir ? '' : real.slice(best.realDir.length + 1);
-          const unitPath = [best.normalizedDir, rest].filter(Boolean).join('/').replaceAll(path.sep, '/');
-          return { ...desc, unitPath };
-        }),
+            if (!best) {
+              // keep as relative-to-baseDir form so runtime can resolve via #resolveFromBase
+              const rel = path.relative(this.#baseDir, real).replaceAll(path.sep, '/');
+              return { ...desc, unitPath: rel };
+            }
+            const rest = real === best.realDir ? '' : real.slice(best.realDir.length + 1);
+            const unitPath = [best.normalizedDir, rest].filter(Boolean).join('/').replaceAll(path.sep, '/');
+            return { ...desc, unitPath };
+          }),
+        ),
       };
     }
     return result;
   }
 
-  #buildModuleMap(): ModuleMapEntry[] {
+  async #buildModuleMap(): Promise<ModuleMapEntry[]> {
     const entries = new Map<string, string>();
     const seen = new Set<string>();
 
-    const addPackageDeps = (packageJsonPath: string, parentNormalizedDir: string): void => {
+    const addPackageDeps = async (packageJsonPath: string, parentNormalizedDir: string): Promise<void> => {
       let pkg: { dependencies?: Record<string, string>; devDependencies?: Record<string, string> };
       try {
-        pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+        pkg = JSON.parse(await fsp.readFile(packageJsonPath, 'utf-8'));
       } catch {
         return;
       }
@@ -312,34 +423,34 @@ export class ManifestLoader {
       for (const name of depNames) {
         try {
           const depPkgJson = req.resolve(`${name}/package.json`);
-          const realDir = this.#realpath(path.dirname(depPkgJson));
+          const realDir = await this.#realpath(path.dirname(depPkgJson));
           if (seen.has(realDir)) continue;
           seen.add(realDir);
           const normalizedDir = [parentNormalizedDir, 'node_modules', name].filter(Boolean).join('/');
           if (!entries.has(realDir)) entries.set(realDir, normalizedDir);
-          addPackageDeps(depPkgJson, normalizedDir);
+          await addPackageDeps(depPkgJson, normalizedDir);
         } catch {
           /* dep not resolvable (optional/peer); skip */
         }
       }
     };
 
-    addPackageDeps(path.join(this.#baseDir, 'package.json'), '');
+    await addPackageDeps(path.join(this.#baseDir, 'package.json'), '');
     const frameworkDir = this.#resolveFrameworkPath();
-    const frameworkNormalizedDir = entries.get(this.#realpath(frameworkDir)) ?? '';
-    addPackageDeps(path.join(frameworkDir, 'package.json'), frameworkNormalizedDir);
+    const frameworkNormalizedDir = entries.get(await this.#realpath(frameworkDir)) ?? '';
+    await addPackageDeps(path.join(frameworkDir, 'package.json'), frameworkNormalizedDir);
 
     return Array.from(entries, ([realDir, normalizedDir]) => ({ realDir, normalizedDir })).sort(
       (a, b) => b.realDir.length - a.realDir.length,
     );
   }
 
-  #realpath(filepath: string): string {
+  async #realpath(filepath: string): Promise<string> {
     const cached = this.#realpathCache.get(filepath);
     if (cached) return cached;
     let resolved: string;
     try {
-      resolved = fs.realpathSync(filepath);
+      resolved = await fsp.realpath(filepath);
     } catch {
       resolved = filepath;
     }
