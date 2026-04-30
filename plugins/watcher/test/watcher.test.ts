@@ -5,6 +5,8 @@ import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, afterEach } from 'vitest';
 
 import type { ChangeInfo } from '../src/index.ts';
+import DefaultEventSource from '../src/lib/event-sources/default.ts';
+import DevelopmentEventSource from '../src/lib/event-sources/development.ts';
 import { getFilePath } from './utils.ts';
 
 describe('test/watcher.test.ts', () => {
@@ -80,5 +82,17 @@ describe('test/watcher.test.ts', () => {
         resolve();
       });
     });
+  });
+
+  it('should handle built-in event source no-op paths', async () => {
+    const defaultEventSource = new DefaultEventSource();
+    const messages: string[] = [];
+    defaultEventSource.on('info', (msg) => messages.push(msg));
+    defaultEventSource.unwatch();
+    assert(messages.includes('[@eggjs/watcher] using defaultEventSource watcher.unwatch() does NOTHING'));
+
+    const developmentEventSource = new DevelopmentEventSource();
+    developmentEventSource.watch(getFilePath('not-exists'));
+    developmentEventSource.unwatch('');
   });
 });
