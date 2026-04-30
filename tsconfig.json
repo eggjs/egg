@@ -105,6 +105,9 @@
       "path": "./tools/egg-bin"
     },
     {
+      "path": "./tools/egg-bundler"
+    },
+    {
       "path": "./tools/scripts"
     },
     {
