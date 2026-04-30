@@ -62,7 +62,11 @@ function generatedManifest(): StartupManifest {
   });
 }
 
-async function createFrameworkFixture(): Promise<{ appDir: string; frameworkDir: string }> {
+async function createFrameworkFixture(
+  exportsField: unknown = {
+    import: './src/index.js',
+  },
+): Promise<{ appDir: string; frameworkDir: string }> {
   const root = createTempApp();
   const appDir = path.join(root, 'app');
   const frameworkDir = path.join(root, 'framework');
@@ -76,9 +80,7 @@ async function createFrameworkFixture(): Promise<{ appDir: string; frameworkDir:
       {
         name: 'fake-framework',
         type: 'module',
-        exports: {
-          import: './src/index.js',
-        },
+        exports: exportsField,
         dependencies: {},
       },
       null,
@@ -93,6 +95,7 @@ import path from 'node:path';
 
 export async function start(options) {
   await fs.writeFile(path.join(options.baseDir, 'framework-entry.txt'), import.meta.url);
+  await fs.writeFile(path.join(options.baseDir, 'exec-argv.json'), JSON.stringify(process.execArgv));
   return {
     loader: {
       generateManifest() {
@@ -108,6 +111,19 @@ export async function start(options) {
   );
 
   return { appDir, frameworkDir };
+}
+
+async function loadFrameworkFixture(exportsField: unknown): Promise<{ appDir: string; frameworkDir: string }> {
+  const fixture = await createFrameworkFixture(exportsField);
+  const loader = new ManifestLoader({
+    baseDir: fixture.appDir,
+    framework: fixture.frameworkDir,
+    autoGenerate: true,
+    env: 'prod',
+    execArgv: [],
+  });
+  await loader.load();
+  return fixture;
 }
 
 afterEach(() => {
@@ -245,5 +261,29 @@ describe('ManifestLoader', () => {
     const loader = new ManifestLoader({ baseDir, manifestPath, autoGenerate: false });
 
     await expect(loader.load()).rejects.toThrow(`invalid manifest JSON at ${manifestPath}`);
+  });
+
+  it('resolves package exports shorthand condition maps for frameworkEntry', async () => {
+    const { appDir, frameworkDir } = await loadFrameworkFixture({
+      import: './src/index.js',
+      default: './src/missing.js',
+    });
+
+    const loadedEntry = await fsp.readFile(path.join(appDir, 'framework-entry.txt'), 'utf-8');
+    expect(loadedEntry).toBe(pathToFileURL(path.join(frameworkDir, 'src/index.js')).href);
+  });
+
+  it('resolves nested package exports conditions for frameworkEntry', async () => {
+    const { appDir, frameworkDir } = await loadFrameworkFixture({
+      '.': {
+        import: {
+          default: './src/index.js',
+        },
+        default: './src/missing.js',
+      },
+    });
+
+    const loadedEntry = await fsp.readFile(path.join(appDir, 'framework-entry.txt'), 'utf-8');
+    expect(loadedEntry).toBe(pathToFileURL(path.join(frameworkDir, 'src/index.js')).href);
   });
 });
