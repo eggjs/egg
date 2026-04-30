@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@eggjs/some-plugin": "1.0.0",
+    "@swc/helpers": "1.0.0",
+    "egg": "1.0.0",
     "esm-dual": "1.0.0",
     "esm-only": "1.0.0",
     "esm-string-export": "1.0.0",
