@@ -130,6 +130,16 @@ describe('ManifestLoader', () => {
     expect(loaded.extensions).toEqual({});
   });
 
+  it('does not auto-generate missing manifests by default', async () => {
+    const baseDir = createTempApp();
+    writeJson(path.join(baseDir, 'package.json'), {});
+    const manifestPath = path.join(baseDir, '.egg/manifest.json');
+
+    const loader = new ManifestLoader({ baseDir, manifestPath });
+
+    await expect(loader.load()).rejects.toThrow(`manifest not found at ${manifestPath}`);
+  });
+
   it('includes the manifest path when JSON parsing fails', async () => {
     const baseDir = createTempApp();
     const manifestPath = path.join(baseDir, '.egg/manifest.json');
