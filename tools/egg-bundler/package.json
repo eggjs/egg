@@ -48,6 +48,7 @@
   "dependencies": {
     "@eggjs/core": "workspace:*",
     "@utoo/pack": "catalog:",
+    "execa": "catalog:",
     "tsx": "catalog:"
   },
   "devDependencies": {

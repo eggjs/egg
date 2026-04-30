@@ -1,6 +1,8 @@
 import fs from 'node:fs';
+import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 import type { StartupManifest } from '@eggjs/core';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -36,6 +38,76 @@ function manifest(overrides: Partial<StartupManifest> = {}): StartupManifest {
     fileDiscovery: {},
     ...overrides,
   };
+}
+
+function generatedManifest(): StartupManifest {
+  return manifest({
+    generatedAt: '2026-04-30T00:00:00.000Z',
+    invalidation: {
+      lockfileFingerprint: '',
+      configFingerprint: '',
+      serverEnv: 'prod',
+      serverScope: '',
+      typescriptEnabled: false,
+    },
+    extensions: {
+      generated: true,
+    },
+    resolveCache: {
+      'app/service/user': 'app/service/user.ts',
+    },
+    fileDiscovery: {
+      'app/service': ['user.ts'],
+    },
+  });
+}
+
+async function createFrameworkFixture(): Promise<{ appDir: string; frameworkDir: string }> {
+  const root = createTempApp();
+  const appDir = path.join(root, 'app');
+  const frameworkDir = path.join(root, 'framework');
+  await fsp.mkdir(path.join(frameworkDir, 'src'), { recursive: true });
+  await fsp.mkdir(appDir, { recursive: true });
+
+  await fsp.writeFile(path.join(appDir, 'package.json'), JSON.stringify({ name: 'app', dependencies: {} }));
+  await fsp.writeFile(
+    path.join(frameworkDir, 'package.json'),
+    JSON.stringify(
+      {
+        name: 'fake-framework',
+        type: 'module',
+        exports: {
+          import: './src/index.js',
+        },
+        dependencies: {},
+      },
+      null,
+      2,
+    ),
+  );
+  await fsp.writeFile(
+    path.join(frameworkDir, 'src/index.js'),
+    `
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+export async function start(options) {
+  await fs.writeFile(path.join(options.baseDir, 'framework-entry.txt'), import.meta.url);
+  return {
+    loader: {
+      generateManifest() {
+        return ${JSON.stringify(generatedManifest(), null, 10)};
+      },
+    },
+    async close() {
+      await fs.writeFile(path.join(options.baseDir, 'closed.txt'), 'true');
+    },
+  };
+}
+`,
+  );
+
+  return { appDir, frameworkDir };
 }
 
 afterEach(() => {
@@ -138,6 +210,30 @@ describe('ManifestLoader', () => {
     const loader = new ManifestLoader({ baseDir, manifestPath });
 
     await expect(loader.load()).rejects.toThrow(`manifest not found at ${manifestPath}`);
+  });
+
+  it('auto-generates a missing manifest and loads the exact generated data', async () => {
+    const { appDir, frameworkDir } = await createFrameworkFixture();
+    const manifestPath = path.join(appDir, '.egg/manifest.json');
+    const expected = generatedManifest();
+
+    const loader = new ManifestLoader({
+      baseDir: appDir,
+      framework: frameworkDir,
+      autoGenerate: true,
+      env: 'prod',
+      execArgv: [],
+    });
+    const loaded = await loader.load();
+    const written = JSON.parse(await fsp.readFile(manifestPath, 'utf-8'));
+
+    expect(written).toEqual(expected);
+    expect(loaded).toEqual(expected);
+    expect(loader.store.data).toBe(loaded);
+    await expect(fsp.readFile(path.join(appDir, 'closed.txt'), 'utf-8')).resolves.toBe('true');
+    await expect(fsp.readFile(path.join(appDir, 'framework-entry.txt'), 'utf-8')).resolves.toBe(
+      pathToFileURL(path.join(frameworkDir, 'src/index.js')).href,
+    );
   });
 
   it('includes the manifest path when JSON parsing fails', async () => {
