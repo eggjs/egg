@@ -9,7 +9,7 @@ import { bundle, type BundleResult, type BundlerConfig } from '../src/index.js';
 
 describe('@eggjs/egg-bundler', () => {
   it('exports the expected public API', () => {
-    expect(Object.keys(bundler).sort()).toEqual(['ExternalsResolver', 'ManifestLoader', 'bundle']);
+    expect(Object.keys(bundler).sort()).toEqual(['ExternalsResolver', 'ManifestLoader', 'PackRunner', 'bundle']);
     expectTypeOf(bundle).toEqualTypeOf<(config: BundlerConfig) => Promise<BundleResult>>();
   });
 
