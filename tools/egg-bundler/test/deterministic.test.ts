@@ -66,7 +66,9 @@ async function cloneFixture(destParent: string): Promise<string> {
     recursive: true,
     filter: (src) => {
       const rel = path.relative(FIXTURE_SOURCE, src);
-      return !rel.startsWith('.egg-bundle') && !rel.startsWith('.egg');
+      if (!rel) return true;
+      const firstSegment = rel.split(path.sep)[0];
+      return firstSegment !== '.egg-bundle' && firstSegment !== '.egg';
     },
   });
   // Pre-write the fixture manifest so ManifestLoader short-circuits the
