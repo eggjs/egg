@@ -1,3 +1,5 @@
+import { promises as fs } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -37,6 +39,11 @@ describe('ExternalsResolver', () => {
       expect(result['esm-only']).toBe('esm-only');
     });
 
+    it('externalizes a pure-ESM package whose exports field is a string', async () => {
+      const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
+      expect(result['esm-string-export']).toBe('esm-string-export');
+    });
+
     it('does not externalize a dual-ESM package that exposes a require condition', async () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
       expect(result['esm-dual']).toBeUndefined();
@@ -52,6 +59,11 @@ describe('ExternalsResolver', () => {
     it('externalizes every peerDependency even if the package is not installed', async () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
       expect(result['peer-only']).toBe('peer-only');
+    });
+
+    it('externalizes every optionalDependency even if the package is not installed', async () => {
+      const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
+      expect(result['optional-only']).toBe('optional-only');
     });
   });
 
@@ -69,6 +81,30 @@ describe('ExternalsResolver', () => {
     it('does not throw when the project itself has no package.json', async () => {
       const resolver = new ExternalsResolver({ baseDir: path.join(fixtureBase, 'nonexistent') });
       await expect(resolver.resolve()).resolves.toEqual({});
+    });
+
+    it('throws when an installed package has malformed package.json metadata', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await fs.mkdir(path.join(tempDir, 'node_modules/bad-json'), { recursive: true });
+        await fs.writeFile(
+          path.join(tempDir, 'package.json'),
+          JSON.stringify({
+            name: 'malformed-app',
+            version: '1.0.0',
+            private: true,
+            dependencies: {
+              'bad-json': '1.0.0',
+            },
+          }),
+        );
+        await fs.writeFile(path.join(tempDir, 'node_modules/bad-json/package.json'), '{\n  "name": "bad-json",');
+
+        const resolver = new ExternalsResolver({ baseDir: tempDir });
+        await expect(resolver.resolve()).rejects.toThrow(SyntaxError);
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
     });
   });
 
@@ -104,6 +140,14 @@ describe('ExternalsResolver', () => {
         inline: ['peer-only'],
       }).resolve();
       expect(result['peer-only']).toBeUndefined();
+    });
+
+    it('inline removes an optionalDependency from externals', async () => {
+      const result = await new ExternalsResolver({
+        baseDir: basicApp,
+        inline: ['optional-only'],
+      }).resolve();
+      expect(result['optional-only']).toBeUndefined();
     });
 
     it('inline removes a hard-coded @eggjs/* package from externals', async () => {
