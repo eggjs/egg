@@ -60,14 +60,14 @@ export class ManifestStore {
    * share the same store instance.
    */
   static setBundleStore(store: ManifestStore | undefined): void {
-    globalThis[BUNDLE_STORE_KEY] = store;
+    (globalThis as Partial<Record<typeof BUNDLE_STORE_KEY, ManifestStore>>)[BUNDLE_STORE_KEY] = store;
   }
 
   /**
    * Return the registered bundle store, if any.
    */
   static getBundleStore(): ManifestStore | undefined {
-    return globalThis[BUNDLE_STORE_KEY];
+    return (globalThis as Partial<Record<typeof BUNDLE_STORE_KEY, ManifestStore>>)[BUNDLE_STORE_KEY];
   }
 
   /**

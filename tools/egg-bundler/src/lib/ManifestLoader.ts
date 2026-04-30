@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { debuglog } from 'node:util';
 
-import type { ManifestStore, StartupManifest } from '@eggjs/core';
+import { ManifestStore, type StartupManifest } from '@eggjs/core';
 
 const debug = debuglog('egg/bundler/manifest-loader');
 
@@ -33,7 +33,7 @@ interface TeggManifestExtension {
 
 interface ModuleMapEntry {
   realDir: string;
-  pkgName: string;
+  normalizedDir: string;
 }
 
 export class ManifestLoader {
@@ -44,6 +44,8 @@ export class ManifestLoader {
   readonly #scope: string | undefined;
   readonly #framework: string;
   readonly #execArgv: string[] | undefined;
+  readonly #baseRequire: NodeJS.Require;
+  readonly #realpathCache = new Map<string, string>();
   #manifest: StartupManifest | undefined;
   #store: ManifestStore | undefined;
 
@@ -55,6 +57,7 @@ export class ManifestLoader {
     this.#scope = options.scope;
     this.#framework = options.framework ?? FRAMEWORK_DEFAULT;
     this.#execArgv = options.execArgv;
+    this.#baseRequire = createRequire(path.join(this.#baseDir, 'package.json'));
   }
 
   async load(): Promise<StartupManifest> {
@@ -74,8 +77,7 @@ export class ManifestLoader {
 
     const normalized = this.#normalize(data);
     this.#manifest = normalized;
-    // TODO: wire ManifestStore.fromBundle once @eggjs/core exposes it (tracked in
-    // a separate runtime split). Until then, the #store getter throws when accessed.
+    this.#store = ManifestStore.fromBundle(normalized, this.#baseDir);
     return normalized;
   }
 
@@ -124,13 +126,12 @@ export class ManifestLoader {
   #resolveFromBase(rel: string): string {
     if (path.isAbsolute(rel)) return rel;
     if (rel.startsWith('node_modules/')) {
-      const req = createRequire(path.join(this.#baseDir, 'package.json'));
       const rest = rel.slice('node_modules/'.length);
       const slashIdx = rest.startsWith('@') ? rest.indexOf('/', rest.indexOf('/') + 1) : rest.indexOf('/');
       const pkgName = slashIdx === -1 ? rest : rest.slice(0, slashIdx);
       const sub = slashIdx === -1 ? '' : rest.slice(slashIdx + 1);
       try {
-        const pkgJson = req.resolve(`${pkgName}/package.json`);
+        const pkgJson = this.#baseRequire.resolve(`${pkgName}/package.json`);
         return path.resolve(path.dirname(pkgJson), sub);
       } catch {
         return path.resolve(this.#baseDir, rel);
@@ -146,7 +147,15 @@ export class ManifestLoader {
     } catch {
       return undefined;
     }
-    const parsed = JSON.parse(raw) as StartupManifest;
+    let parsed: StartupManifest;
+    try {
+      parsed = JSON.parse(raw) as StartupManifest;
+    } catch (error) {
+      throw new Error(
+        `[@eggjs/egg-bundler] invalid manifest JSON at ${this.#manifestPath}: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
+      );
+    }
     if (parsed.version !== SUPPORTED_MANIFEST_VERSION) {
       throw new Error(
         `[@eggjs/egg-bundler] manifest version mismatch at ${this.#manifestPath}: expected ${SUPPORTED_MANIFEST_VERSION}, got ${parsed.version}`,
@@ -189,8 +198,7 @@ export class ManifestLoader {
   #resolveFrameworkPath(): string {
     if (path.isAbsolute(this.#framework)) return this.#framework;
     try {
-      const req = createRequire(path.join(this.#baseDir, 'package.json'));
-      const pkgJson = req.resolve(`${this.#framework}/package.json`);
+      const pkgJson = this.#baseRequire.resolve(`${this.#framework}/package.json`);
       return path.dirname(pkgJson);
     } catch {
       return this.#framework;
@@ -216,7 +224,7 @@ export class ManifestLoader {
       normalizedResolveCache[newKey] = newValue;
     }
 
-    const normalizedExtensions = this.#normalizeExtensions(data.extensions, moduleMap);
+    const normalizedExtensions = this.#normalizeExtensions(data.extensions ?? {}, moduleMap);
 
     return {
       ...data,
@@ -228,24 +236,22 @@ export class ManifestLoader {
 
   #normalizeRelKey(relKey: string, moduleMap: ModuleMapEntry[]): string {
     if (!relKey) return relKey;
-    // Already inside baseDir and not escaping — leave as-is.
-    if (!relKey.startsWith('..') && !relKey.includes('node_modules/') && !relKey.includes('.pnpm/')) {
+    // Already inside baseDir, relative, and not escaping — leave as-is.
+    if (
+      !path.isAbsolute(relKey) &&
+      !relKey.startsWith('..') &&
+      !relKey.includes('node_modules/') &&
+      !relKey.includes('.pnpm/')
+    ) {
       return relKey;
     }
     const abs = path.resolve(this.#baseDir, relKey);
-    let realAbs: string;
-    try {
-      realAbs = fs.realpathSync(abs);
-    } catch {
-      realAbs = abs;
-    }
-    // Longest-prefix match
+    const realAbs = this.#realpath(abs);
     let best: ModuleMapEntry | undefined;
     for (const entry of moduleMap) {
       if (realAbs === entry.realDir || realAbs.startsWith(entry.realDir + path.sep)) {
-        if (!best || entry.realDir.length > best.realDir.length) {
-          best = entry;
-        }
+        best = entry;
+        break;
       }
     }
     if (!best) {
@@ -253,11 +259,11 @@ export class ManifestLoader {
       return relKey;
     }
     const rest = realAbs === best.realDir ? '' : realAbs.slice(best.realDir.length + 1);
-    const normalized = ['node_modules', best.pkgName, rest].filter(Boolean).join('/').replaceAll(path.sep, '/');
+    const normalized = [best.normalizedDir, rest].filter(Boolean).join('/').replaceAll(path.sep, '/');
     return normalized;
   }
 
-  #normalizeExtensions(extensions: Record<string, unknown>, moduleMap: ModuleMapEntry[]): Record<string, unknown> {
+  #normalizeExtensions(extensions: Record<string, unknown> = {}, moduleMap: ModuleMapEntry[]): Record<string, unknown> {
     const result: Record<string, unknown> = { ...extensions };
     const tegg = extensions?.tegg as TeggManifestExtension | undefined;
     if (tegg?.moduleDescriptors) {
@@ -265,16 +271,12 @@ export class ManifestLoader {
         ...tegg,
         moduleDescriptors: tegg.moduleDescriptors.map((desc) => {
           if (!path.isAbsolute(desc.unitPath)) return desc;
-          let real: string;
-          try {
-            real = fs.realpathSync(desc.unitPath);
-          } catch {
-            real = desc.unitPath;
-          }
+          const real = this.#realpath(desc.unitPath);
           let best: ModuleMapEntry | undefined;
           for (const entry of moduleMap) {
             if (real === entry.realDir || real.startsWith(entry.realDir + path.sep)) {
-              if (!best || entry.realDir.length > best.realDir.length) best = entry;
+              best = entry;
+              break;
             }
           }
           if (!best) {
@@ -283,7 +285,7 @@ export class ManifestLoader {
             return { ...desc, unitPath: rel };
           }
           const rest = real === best.realDir ? '' : real.slice(best.realDir.length + 1);
-          const unitPath = ['node_modules', best.pkgName, rest].filter(Boolean).join('/');
+          const unitPath = [best.normalizedDir, rest].filter(Boolean).join('/').replaceAll(path.sep, '/');
           return { ...desc, unitPath };
         }),
       };
@@ -293,9 +295,9 @@ export class ManifestLoader {
 
   #buildModuleMap(): ModuleMapEntry[] {
     const entries = new Map<string, string>();
-    const seenPkgs = new Set<string>();
+    const seen = new Set<string>();
 
-    const addFromPackageJson = (packageJsonPath: string): void => {
+    const addPackageDeps = (packageJsonPath: string, parentNormalizedDir: string): void => {
       let pkg: { dependencies?: Record<string, string>; devDependencies?: Record<string, string> };
       try {
         pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
@@ -305,24 +307,40 @@ export class ManifestLoader {
       const req = createRequire(packageJsonPath);
       const depNames = [...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.devDependencies ?? {})];
       for (const name of depNames) {
-        if (seenPkgs.has(name)) continue;
-        seenPkgs.add(name);
         try {
           const depPkgJson = req.resolve(`${name}/package.json`);
-          const realDir = fs.realpathSync(path.dirname(depPkgJson));
-          if (!entries.has(realDir)) entries.set(realDir, name);
+          const realDir = this.#realpath(path.dirname(depPkgJson));
+          if (seen.has(realDir)) continue;
+          seen.add(realDir);
+          const normalizedDir = [parentNormalizedDir, 'node_modules', name].filter(Boolean).join('/');
+          if (!entries.has(realDir)) entries.set(realDir, normalizedDir);
+          addPackageDeps(depPkgJson, normalizedDir);
         } catch {
           /* dep not resolvable (optional/peer); skip */
         }
       }
     };
 
-    addFromPackageJson(path.join(this.#baseDir, 'package.json'));
+    addPackageDeps(path.join(this.#baseDir, 'package.json'), '');
     const frameworkDir = this.#resolveFrameworkPath();
-    addFromPackageJson(path.join(frameworkDir, 'package.json'));
+    const frameworkNormalizedDir = entries.get(this.#realpath(frameworkDir)) ?? '';
+    addPackageDeps(path.join(frameworkDir, 'package.json'), frameworkNormalizedDir);
 
-    return Array.from(entries, ([realDir, pkgName]) => ({ realDir, pkgName })).sort(
+    return Array.from(entries, ([realDir, normalizedDir]) => ({ realDir, normalizedDir })).sort(
       (a, b) => b.realDir.length - a.realDir.length,
     );
+  }
+
+  #realpath(filepath: string): string {
+    const cached = this.#realpathCache.get(filepath);
+    if (cached) return cached;
+    let resolved: string;
+    try {
+      resolved = fs.realpathSync(filepath);
+    } catch {
+      resolved = filepath;
+    }
+    this.#realpathCache.set(filepath, resolved);
+    return resolved;
   }
 }
