@@ -1,3 +1,4 @@
+import type {} from './global.d.ts';
 import utils from './utils/index.ts';
 
 export { utils };
