@@ -2,7 +2,7 @@
 
 exports.schedule = {
   type: 'worker',
-  interval: 20000,
+  interval: 5000,
 };
 
 exports.task = async function (ctx) {

@@ -30,7 +30,7 @@ function readWorkspacePatterns() {
     }
   }
 
-  return patterns;
+  return patterns.sort((a, b) => a.localeCompare(b));
 }
 
 function expandWorkspacePattern(pattern) {
@@ -41,6 +41,7 @@ function expandWorkspacePattern(pattern) {
   const baseDir = join(root, pattern.slice(0, -2));
   return readdirSync(baseDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
+    .sort((a, b) => a.name.localeCompare(b.name))
     .map((entry) => join(baseDir, entry.name));
 }
 

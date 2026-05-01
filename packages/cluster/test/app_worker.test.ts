@@ -16,16 +16,34 @@ import { cluster } from './utils.ts';
 
 async function waitForSocket(filepath: string) {
   const start = Date.now();
-  while (Date.now() - start < 5000) {
+  const timeout = 5000;
+  while (Date.now() - start < timeout) {
+    const remaining = timeout - (Date.now() - start);
     const connected = await new Promise<boolean>((resolve) => {
       const socket = createConnection(filepath);
+      let settled = false;
+      const finish = (result: boolean) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        socket.setTimeout(0);
+        if (result) {
+          socket.end();
+        } else {
+          socket.destroy();
+        }
+        resolve(result);
+      };
+      socket.setTimeout(Math.max(1, Math.min(remaining, 500)));
       socket.once('connect', () => {
-        socket.end();
-        resolve(true);
+        finish(true);
       });
       socket.once('error', () => {
-        socket.destroy();
-        resolve(false);
+        finish(false);
+      });
+      socket.once('timeout', () => {
+        finish(false);
       });
     });
     if (connected) {
