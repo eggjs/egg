@@ -237,3 +237,31 @@ describe('bundle() integration — minimal-app (Phase 2: real @utoo/pack)', () =
     // parse tegg decorators reachable from egg's src entry).
   });
 });
+
+describe('bundle() integration — tegg-app fixture structure', () => {
+  const TEGG_FIXTURE_BASE = path.join(__dirname, 'fixtures/apps/tegg-app');
+
+  it('tegg-app fixture exposes the expected @HTTPController + @SingletonProto module layout', async () => {
+    // This fixture exercises the tegg plugin path for future T14 coverage of
+    // real-@utoo/pack tegg bundling. Pin both the on-disk shape and key tegg
+    // decorators so refactors that weaken the fixture are caught early.
+    const expected = [
+      'config/config.default.ts',
+      'config/module.json',
+      'config/plugin.ts',
+      'modules/foo/FooController.ts',
+      'modules/foo/FooService.ts',
+      'modules/foo/package.json',
+      'package.json',
+      'tsconfig.json',
+    ];
+    for (const rel of expected) {
+      await expect(fs.stat(path.join(TEGG_FIXTURE_BASE, rel))).resolves.toBeTruthy();
+    }
+
+    const controllerSource = await fs.readFile(path.join(TEGG_FIXTURE_BASE, 'modules/foo/FooController.ts'), 'utf8');
+    const serviceSource = await fs.readFile(path.join(TEGG_FIXTURE_BASE, 'modules/foo/FooService.ts'), 'utf8');
+    expect(controllerSource).toContain('@HTTPController');
+    expect(serviceSource).toContain('@SingletonProto');
+  });
+});
