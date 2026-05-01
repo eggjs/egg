@@ -32,7 +32,7 @@ describe('test/commands/bundle.test.ts', () => {
       baseDir,
       outputDir: path.join(baseDir, 'dist-bundle'),
       manifestPath: undefined,
-      framework: getFrameworkPath({ framework: 'egg', baseDir }),
+      framework: getFrameworkPath({ baseDir }),
       mode: 'production',
       tegg: true,
       externals: {
@@ -66,7 +66,7 @@ describe('test/commands/bundle.test.ts', () => {
       baseDir,
       outputDir: path.join(baseDir, 'bundle-output'),
       manifestPath: path.join(baseDir, '.egg/custom-manifest.json'),
-      framework: getFrameworkPath({ framework: 'egg', baseDir }),
+      framework: getFrameworkPath({ baseDir }),
       mode: 'development',
       tegg: false,
       externals: {

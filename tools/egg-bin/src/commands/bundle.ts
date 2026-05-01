@@ -39,7 +39,6 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
     framework: Flags.string({
       char: 'f',
       description: 'framework name or absolute path',
-      default: 'egg',
     }),
     mode: Flags.string({
       description: 'build mode',
