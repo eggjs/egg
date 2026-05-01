@@ -139,10 +139,15 @@ describe('ManifestLoader', () => {
     const transitiveRoot = path.join(directRoot, 'node_modules/transitive');
     const transitiveLib = path.join(transitiveRoot, 'lib');
     const transitiveFile = path.join(transitiveLib, 'svc.ts');
+    const optionalRoot = path.join(baseDir, 'node_modules/optional-native');
+    const optionalFile = path.join(optionalRoot, 'index.ts');
 
     writeJson(path.join(baseDir, 'package.json'), {
       dependencies: {
         direct: '1.0.0',
+      },
+      optionalDependencies: {
+        'optional-native': '1.0.0',
       },
     });
     writeJson(path.join(directRoot, 'package.json'), {
@@ -156,8 +161,13 @@ describe('ManifestLoader', () => {
       name: 'transitive',
       version: '1.0.0',
     });
+    writeJson(path.join(optionalRoot, 'package.json'), {
+      name: 'optional-native',
+      version: '1.0.0',
+    });
     fs.mkdirSync(transitiveLib, { recursive: true });
     fs.writeFileSync(transitiveFile, 'export const value = 1;\n');
+    fs.writeFileSync(optionalFile, 'export const optional = true;\n');
 
     const manifestPath = path.join(baseDir, '.egg/manifest.json');
     writeJson(
@@ -168,6 +178,7 @@ describe('ManifestLoader', () => {
         },
         resolveCache: {
           [path.join(transitiveRoot, 'entry')]: transitiveFile,
+          [path.join(optionalRoot, 'entry')]: optionalFile,
         },
         extensions: {
           tegg: {
@@ -190,6 +201,7 @@ describe('ManifestLoader', () => {
     });
     expect(loaded.resolveCache).toEqual({
       'node_modules/direct/node_modules/transitive/entry': 'node_modules/direct/node_modules/transitive/lib/svc.ts',
+      'node_modules/optional-native/entry': 'node_modules/optional-native/index.ts',
     });
     expect(loaded.extensions.tegg).toEqual({
       moduleDescriptors: [
@@ -263,6 +275,16 @@ describe('ManifestLoader', () => {
     await expect(loader.load()).rejects.toThrow(`invalid manifest JSON at ${manifestPath}`);
   });
 
+  it('surfaces non-ENOENT manifest read errors', async () => {
+    const baseDir = createTempApp();
+    const manifestPath = path.join(baseDir, '.egg/manifest.json');
+    fs.mkdirSync(manifestPath, { recursive: true });
+
+    const loader = new ManifestLoader({ baseDir, manifestPath, autoGenerate: false });
+
+    await expect(loader.load()).rejects.toMatchObject({ code: 'EISDIR' });
+  });
+
   it('resolves package exports shorthand condition maps for frameworkEntry', async () => {
     const { appDir, frameworkDir } = await loadFrameworkFixture({
       import: './src/index.js',
@@ -285,5 +307,20 @@ describe('ManifestLoader', () => {
 
     const loadedEntry = await fsp.readFile(path.join(appDir, 'framework-entry.txt'), 'utf-8');
     expect(loadedEntry).toBe(pathToFileURL(path.join(frameworkDir, 'src/index.js')).href);
+  });
+
+  it('does not treat package exports subpath maps as root condition maps', async () => {
+    const { appDir, frameworkDir } = await createFrameworkFixture({
+      './feature': './src/index.js',
+    });
+    const loader = new ManifestLoader({
+      baseDir: appDir,
+      framework: frameworkDir,
+      autoGenerate: true,
+      env: 'prod',
+      execArgv: [],
+    });
+
+    await expect(loader.load()).rejects.toThrow(/has no resolvable entry/);
   });
 });

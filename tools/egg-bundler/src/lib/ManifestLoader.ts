@@ -145,8 +145,11 @@ export class ManifestLoader {
     let raw: string;
     try {
       raw = await fsp.readFile(this.#manifestPath, 'utf-8');
-    } catch {
-      return undefined;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+        return undefined;
+      }
+      throw error;
     }
     let parsed: StartupManifest;
     try {
@@ -254,6 +257,10 @@ export class ManifestLoader {
     if (!target || typeof target !== 'object') return undefined;
 
     const map = target as Record<string, unknown>;
+    if (Object.keys(map).some((key) => key.startsWith('.'))) {
+      return undefined;
+    }
+
     const used = new Set<string>();
     for (const key of PACKAGE_ENTRY_CONDITIONS) {
       used.add(key);
@@ -348,12 +355,13 @@ export class ManifestLoader {
 
   async #normalizeRelKey(relKey: string, moduleMap: ModuleMapEntry[]): Promise<string> {
     if (!relKey) return relKey;
+    const segments = this.#pathSegments(relKey);
     // Already inside baseDir, relative, and not escaping — leave as-is.
     if (
       !path.isAbsolute(relKey) &&
       !relKey.startsWith('..') &&
-      !relKey.includes('node_modules/') &&
-      !relKey.includes('.pnpm/')
+      !segments.includes('node_modules') &&
+      !segments.includes('.pnpm')
     ) {
       return relKey;
     }
@@ -415,14 +423,22 @@ export class ManifestLoader {
     const seen = new Set<string>();
 
     const addPackageDeps = async (packageJsonPath: string, parentNormalizedDir: string): Promise<void> => {
-      let pkg: { dependencies?: Record<string, string>; devDependencies?: Record<string, string> };
+      let pkg: {
+        dependencies?: Record<string, string>;
+        optionalDependencies?: Record<string, string>;
+        devDependencies?: Record<string, string>;
+      };
       try {
         pkg = JSON.parse(await fsp.readFile(packageJsonPath, 'utf-8'));
       } catch {
         return;
       }
       const req = createRequire(packageJsonPath);
-      const depNames = [...Object.keys(pkg.dependencies ?? {}), ...Object.keys(pkg.devDependencies ?? {})];
+      const depNames = [
+        ...Object.keys(pkg.dependencies ?? {}),
+        ...Object.keys(pkg.optionalDependencies ?? {}),
+        ...Object.keys(pkg.devDependencies ?? {}),
+      ];
       for (const name of depNames) {
         try {
           const depPkgJson = req.resolve(`${name}/package.json`);
@@ -446,6 +462,10 @@ export class ManifestLoader {
     return Array.from(entries, ([realDir, normalizedDir]) => ({ realDir, normalizedDir })).sort(
       (a, b) => b.realDir.length - a.realDir.length,
     );
+  }
+
+  #pathSegments(filepath: string): string[] {
+    return filepath.split(/[\\/]+/).filter(Boolean);
   }
 
   async #realpath(filepath: string): Promise<string> {
