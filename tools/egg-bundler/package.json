@@ -24,6 +24,10 @@
       "types": "./src/index.ts",
       "import": "./src/index.ts"
     },
+    "./lib/EntryGenerator": {
+      "types": "./src/lib/EntryGenerator.ts",
+      "import": "./src/lib/EntryGenerator.ts"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -32,6 +36,10 @@
       ".": {
         "types": "./dist/index.d.ts",
         "import": "./dist/index.js"
+      },
+      "./lib/EntryGenerator": {
+        "types": "./dist/lib/EntryGenerator.d.ts",
+        "import": "./dist/lib/EntryGenerator.js"
       },
       "./package.json": "./package.json"
     }
