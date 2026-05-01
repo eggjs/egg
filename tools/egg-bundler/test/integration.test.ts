@@ -215,6 +215,13 @@ globalThis.__patchedMeta = {
 };
 //# ${sourceMapToken}=not-a-map.txt
 `;
+    const noSourceMapMeta = `const __TURBOPACK__import$2e$meta__ = { get url () { return "file:///already-patched.js"; } };
+globalThis.__patchedMeta = {
+    url: __TURBOPACK__import$2e$meta__.url,
+    dirname: __TURBOPACK__import$2e$meta__.dirname,
+    filename: __TURBOPACK__import$2e$meta__.filename
+};
+`;
 
     const buildFunc: BuildFunc = async () => {
       await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// mock worker entry\n');
@@ -225,6 +232,7 @@ globalThis.__patchedMeta = {
       await fs.writeFile(path.join(tmpOutput, 'chunks/url-only.js.map'), '{"version":3}');
       await fs.writeFile(path.join(tmpOutput, 'chunks/non-map-target.js'), nonMapTargetMeta);
       await fs.writeFile(path.join(tmpOutput, 'chunks/not-a-map.txt'), 'keep me');
+      await fs.writeFile(path.join(tmpOutput, 'chunks/no-sourcemap.js'), noSourceMapMeta);
     };
 
     const result = await bundle({
@@ -283,6 +291,17 @@ globalThis.__patchedMeta = {
       url: expectedFileUrl(urlOnlyFilename),
       dirname: path.dirname(urlOnlyFilename),
       filename: urlOnlyFilename,
+    });
+
+    const noSourceMapFilename = path.join(tmpOutput, 'chunks/no-sourcemap.js');
+    const noSourceMapMetaResult = await runPatchedChunk(noSourceMapFilename, {
+      argv: ['node'],
+      filename: noSourceMapFilename,
+    });
+    expect(noSourceMapMetaResult).toEqual({
+      url: expectedFileUrl(noSourceMapFilename),
+      dirname: path.dirname(noSourceMapFilename),
+      filename: noSourceMapFilename,
     });
 
     const fallbackFilename = path.join(tmpOutput, 'worker.js');
