@@ -209,7 +209,8 @@ node worker.js
 - `--manifest` path to `manifest.json`, default to `<baseDir>/.egg/manifest.json`
 - `--framework` / `-f` framework name or absolute path
 - `--mode` build mode, `production` or `development`, default to `production`
-- `--no-tegg` disable tegg decorated file collection
+- `--no-tegg` accepted by the CLI, but not applied by the current bundler
+  implementation yet
 - `--force-external` package name to always keep external, supports multiple
 - `--inline-external` package name to force inline, supports multiple
 

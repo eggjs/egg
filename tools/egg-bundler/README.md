@@ -30,7 +30,7 @@ path is `<baseDir>/.egg/manifest.json`.
 | `manifestPath` | Path to `manifest.json`. Defaults to `<baseDir>/.egg/manifest.json`. |
 | `framework` | Framework name or absolute path. Defaults to `egg`. |
 | `mode` | Build mode, `production` or `development`. Defaults to `production`. |
-| `tegg` | Enable tegg decorated file collection. Defaults to `true`. |
+| `tegg` | Accepted by `BundlerConfig`, but not applied by the current implementation yet. |
 | `externals.force` | Package names to always keep external. |
 | `externals.inline` | Package names to force inline even if auto-detected as external. |
 | `pack.buildFunc` | Test hook for replacing the real `@utoo/pack` build entry. |

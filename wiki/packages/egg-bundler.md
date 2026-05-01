@@ -39,9 +39,7 @@ CommonJS artifact from an Egg application.
 - Relative `outputDir` values are resolved from `baseDir`.
 - Default mode is `production`; `development` is also accepted.
 - The generated app runs in Egg single-process mode.
-- Native addons, ESM-only packages, peer dependencies, `@eggjs/*`, and
-  explicit `externals.force` entries are external.
-
-Inference: because `egg-bin bundle` is now a public CLI surface, user-facing
-tooling docs should mention the command and its key flags whenever this package
-changes materially.
+- Explicit `externals.force` entries, root `peerDependencies`, `egg`,
+  `@swc/helpers`, `@eggjs/*`, native addons, and ESM-only packages are external.
+- `BundlerConfig.tegg` is accepted but not applied by the current implementation
+  yet.
