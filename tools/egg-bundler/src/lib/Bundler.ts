@@ -12,6 +12,16 @@ const debug = debuglog('egg/bundler/bundler');
 
 const BUNDLE_MANIFEST_VERSION = 1;
 const BUNDLE_MANIFEST_FILENAME = 'bundle-manifest.json';
+const IMPORT_META_FALLBACK_FILENAME_EXPR =
+  '(() => { const entryArg = typeof process !== "undefined" && process.argv && process.argv[1] ? process.argv[1] : "worker.js"; if (/^(?:[A-Za-z]:[\\\\/]|\\\\\\\\|\\/)/.test(entryArg)) return entryArg; const cwd = typeof process !== "undefined" && process.cwd ? process.cwd() : "."; const raw = cwd + "/" + entryArg; const parts = []; for (const part of raw.replace(/\\\\/g, "/").split("/")) { if (!part || part === ".") continue; if (part === "..") parts.pop(); else parts.push(part); } return (raw.startsWith("/") ? "/" : "") + parts.join("/"); })()';
+const IMPORT_META_FILENAME_EXPR = `(typeof __filename === "string" ? __filename : ${IMPORT_META_FALLBACK_FILENAME_EXPR})`;
+const IMPORT_META_URL_EXPR = `(() => { const u = new URL("file:///"); u.pathname = ${IMPORT_META_FILENAME_EXPR}.replace(/\\\\/g, "/"); return u.href; })()`;
+const THROWING_IMPORT_META_URL =
+  /\(\(\)\s*=>\s*\{\s*throw\s+new\s+Error\(\s*['"][^'"]*import\.meta\.url[^'"]*['"]\s*\)\s*;?\s*\}\)\s*\(\)/g;
+const TURBOPACK_IMPORT_META_OBJECT =
+  /\b(var|let|const)\s+([A-Za-z_$][\w$]*import\$2e\$meta__[A-Za-z0-9_$]*)\s*=\s*\{\s*get\s+url\s*\(\)\s*\{[\s\S]*?\}\s*\};?/g;
+const LINE_SOURCE_MAP_URL = /(?:\r?\n)?\/\/# sourceMappingURL=([^\r\n]*)\s*$/;
+const BLOCK_SOURCE_MAP_URL = /(?:\r?\n)?\/\*# sourceMappingURL=([\s\S]*?)\*\/\s*$/;
 
 interface BundleManifest {
   readonly version: number;
@@ -90,6 +100,15 @@ export class Bundler {
     const packResult = await wrapStep('pack build', () => packRunner.run());
     debug('pack produced %d files', packResult.files.length);
 
+    const patchResult = await wrapStep('patch import.meta output', () =>
+      this.#patchImportMetaOutput(absOutputDir, packResult.files),
+    );
+    debug(
+      'patched %d import.meta output occurrences and removed %d sourcemaps',
+      patchResult.patchCount,
+      patchResult.deletedMapCount,
+    );
+
     // Merge project name into output package.json so the framework's
     // getAppname() finds it (it reads baseDir/package.json).
     const outputPkgPath = path.join(absOutputDir, 'package.json');
@@ -113,14 +132,14 @@ export class Bundler {
       framework,
       entries: [{ name: 'worker', source: entries.workerEntry }],
       externals: Object.keys(externalsMap).sort((a, b) => a.localeCompare(b)),
-      chunks: packResult.files,
+      chunks: patchResult.outputFiles,
     };
     await wrapStep('write bundle-manifest', () =>
       fs.writeFile(manifestPathAbs, JSON.stringify(bundleManifest, null, 2)),
     );
 
     // Re-enumerate files so bundle-manifest.json is included in the result.
-    const finalRelFiles = new Set<string>(packResult.files);
+    const finalRelFiles = new Set<string>(patchResult.outputFiles);
     finalRelFiles.add(BUNDLE_MANIFEST_FILENAME);
     const files = Array.from(finalRelFiles)
       .map((rel) => path.join(absOutputDir, rel))
@@ -131,5 +150,129 @@ export class Bundler {
       files,
       manifestPath: manifestPathAbs,
     };
+  }
+
+  async #patchImportMetaOutput(
+    outputDir: string,
+    inputFiles: readonly string[],
+  ): Promise<{ patchCount: number; deletedMapCount: number; outputFiles: readonly string[] }> {
+    let patchCount = 0;
+    let deletedMapCount = 0;
+    const files = inputFiles.map((rel) => this.#sanitizeOutputRelativePath(rel)).sort((a, b) => a.localeCompare(b));
+    const deletedFiles = new Set<string>();
+
+    for (const rel of files) {
+      if (!rel.endsWith('.js')) continue;
+
+      const filepath = path.join(outputDir, rel);
+      const content = await fs.readFile(filepath, 'utf8');
+
+      let metaMatches = 0;
+      let patched = content.replace(
+        TURBOPACK_IMPORT_META_OBJECT,
+        (_match, declarationKind: string, metaName: string) => {
+          metaMatches++;
+          return this.#renderImportMetaObject(declarationKind, metaName);
+        },
+      );
+
+      const urlMatches = patched.match(THROWING_IMPORT_META_URL);
+      patched = patched.replace(THROWING_IMPORT_META_URL, IMPORT_META_URL_EXPR);
+
+      const patchesForFile = (urlMatches?.length ?? 0) + metaMatches;
+      if (patchesForFile === 0) continue;
+
+      const stripped = this.#stripSourceMappingUrl(patched);
+      await fs.writeFile(filepath, stripped);
+
+      patchCount += patchesForFile;
+      const staleMaps = await this.#deleteStaleSourceMaps(outputDir, filepath, content);
+      deletedMapCount += staleMaps.deletedCount;
+      for (const deleted of staleMaps.deletedFiles) deletedFiles.add(deleted);
+      debug('patched %d import.meta output occurrences in %s', patchesForFile, rel);
+    }
+
+    const outputFiles = files.filter((rel) => !deletedFiles.has(rel));
+    return { patchCount, deletedMapCount, outputFiles };
+  }
+
+  #renderImportMetaObject(declarationKind: string, metaName: string): string {
+    return `${declarationKind} ${metaName} = (() => {
+    const filename = ${IMPORT_META_FILENAME_EXPR};
+    const dirname = typeof __dirname === "string" ? __dirname : filename.replace(/[\\\\/][^\\\\/]*$/, "");
+    const url = (() => { const u = new URL("file:///"); u.pathname = filename.replace(/\\\\/g, "/"); return u.href; })();
+    return {
+    get url () {
+        return url;
+    },
+    get dirname () {
+        return dirname;
+    },
+    get filename () {
+        return filename;
+    }
+};
+})();`;
+  }
+
+  #stripSourceMappingUrl(content: string): string {
+    return content.replace(LINE_SOURCE_MAP_URL, '').replace(BLOCK_SOURCE_MAP_URL, '');
+  }
+
+  async #deleteStaleSourceMaps(
+    outputDir: string,
+    filepath: string,
+    originalContent: string,
+  ): Promise<{ deletedCount: number; deletedFiles: readonly string[] }> {
+    const mapPaths = new Set<string>([`${filepath}.map`]);
+    const sourceMapUrl = this.#extractSourceMappingUrl(originalContent);
+    if (sourceMapUrl && !sourceMapUrl.startsWith('data:')) {
+      const resolved = path.resolve(path.dirname(filepath), sourceMapUrl);
+      if (this.#isInsideDir(outputDir, resolved)) mapPaths.add(resolved);
+    }
+
+    let deletedCount = 0;
+    const deletedFiles: string[] = [];
+    for (const mapPath of mapPaths) {
+      if (!this.#isInsideDir(outputDir, mapPath)) continue;
+      try {
+        await fs.unlink(mapPath);
+        deletedCount++;
+        deletedFiles.push(
+          this.#sanitizeOutputRelativePath(path.relative(outputDir, mapPath).split(path.sep).join('/')),
+        );
+      } catch (err) {
+        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') throw err;
+      }
+    }
+    return { deletedCount, deletedFiles };
+  }
+
+  #extractSourceMappingUrl(content: string): string | undefined {
+    const lineMatch = content.match(LINE_SOURCE_MAP_URL);
+    if (lineMatch?.[1]) return lineMatch[1].trim();
+    const blockMatch = content.match(BLOCK_SOURCE_MAP_URL);
+    if (blockMatch?.[1]) return blockMatch[1].trim();
+    return undefined;
+  }
+
+  #sanitizeOutputRelativePath(relativeName: string): string {
+    const normalized = relativeName.split(path.sep).join('/');
+    const segments = normalized.split('/');
+    if (
+      !normalized ||
+      path.posix.isAbsolute(normalized) ||
+      segments.some((segment) => !segment || segment === '.' || segment === '..') ||
+      normalized.includes('\0') ||
+      /[\r\n\u2028\u2029]/u.test(normalized)
+    ) {
+      throw new Error(`Unsafe bundle output path: ${relativeName}`);
+    }
+    return normalized;
+  }
+
+  #isInsideDir(dir: string, target: string): boolean {
+    const rel = path.relative(dir, target);
+    return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
   }
 }

@@ -1,7 +1,8 @@
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { runInNewContext } from 'node:vm';
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -181,6 +182,114 @@ describe('bundle() integration — minimal-app (Phase 1: mocked @utoo/pack)', ()
     });
     const bm = JSON.parse(await fs.readFile(result.manifestPath, 'utf8'));
     expect(bm.externals).toContain('synthetic-force-ext');
+  });
+
+  it('patches nested Turbopack import.meta chunks and removes stale sourcemaps', async () => {
+    const sourceMapToken = 'sourceMapping' + 'URL';
+    const throwingMeta = `var __TURBOPACK__import$2e$meta__ = {
+    get url () {
+        return (() => { throw new Error("could not convert import.meta.url to filepath"); })();
+    }
+};
+globalThis.__patchedMeta = {
+    url: __TURBOPACK__import$2e$meta__.url,
+    dirname: __TURBOPACK__import$2e$meta__.dirname,
+    filename: __TURBOPACK__import$2e$meta__.filename
+};
+//# ${sourceMapToken}=chunk #.js.map
+`;
+    const urlOnlyMeta = `let __TURBOPACK__import$2e$meta__ = { get url () { return "file:///already-patched.js"; } };
+globalThis.__patchedMeta = {
+    url: __TURBOPACK__import$2e$meta__.url,
+    dirname: __TURBOPACK__import$2e$meta__.dirname,
+    filename: __TURBOPACK__import$2e$meta__.filename
+};
+/*# ${sourceMapToken}=url-only.js.map */
+`;
+
+    const buildFunc: BuildFunc = async () => {
+      await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// mock worker entry\n');
+      await fs.mkdir(path.join(tmpOutput, 'chunks'), { recursive: true });
+      await fs.writeFile(path.join(tmpOutput, 'chunks/chunk #.js'), throwingMeta);
+      await fs.writeFile(path.join(tmpOutput, 'chunks/chunk #.js.map'), '{"version":3}');
+      await fs.writeFile(path.join(tmpOutput, 'chunks/url-only.js'), urlOnlyMeta);
+      await fs.writeFile(path.join(tmpOutput, 'chunks/url-only.js.map'), '{"version":3}');
+    };
+
+    const result = await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: { buildFunc },
+    });
+    const bm = JSON.parse(await fs.readFile(result.manifestPath, 'utf8')) as { chunks: string[] };
+
+    async function runPatchedChunk(
+      filepath: string,
+      options: { argv: string[]; filename?: string },
+    ): Promise<{ url: string; dirname: string; filename: string }> {
+      interface SandboxProcess {
+        argv: string[];
+        cwd: () => string;
+      }
+      interface Sandbox {
+        URL: typeof URL;
+        process: SandboxProcess;
+        globalThis: Sandbox;
+        __dirname?: string;
+        __filename?: string;
+        __patchedMeta?: { url: string; dirname: string; filename: string };
+      }
+      const sandbox = {
+        URL,
+        process: { argv: options.argv, cwd: () => tmpOutput },
+      } as unknown as Sandbox;
+      if (options.filename) {
+        sandbox.__filename = options.filename;
+        sandbox.__dirname = path.dirname(options.filename);
+      }
+      sandbox.globalThis = sandbox;
+      runInNewContext(await fs.readFile(filepath, 'utf8'), sandbox);
+      return sandbox.__patchedMeta!;
+    }
+
+    function expectedFileUrl(filename: string): string {
+      return pathToFileURL(filename).href;
+    }
+
+    const nestedFilename = path.join(tmpOutput, 'chunks/chunk #.js');
+    const nestedMeta = await runPatchedChunk(nestedFilename, { argv: ['node', 'worker.js'], filename: nestedFilename });
+    expect(nestedMeta).toEqual({
+      url: expectedFileUrl(nestedFilename),
+      dirname: path.dirname(nestedFilename),
+      filename: nestedFilename,
+    });
+
+    const urlOnlyFilename = path.join(tmpOutput, 'chunks/url-only.js');
+    const urlOnlyPatched = await fs.readFile(urlOnlyFilename, 'utf8');
+    expect(urlOnlyPatched).not.toContain('already-patched.js');
+    const urlOnlyMetaResult = await runPatchedChunk(urlOnlyFilename, { argv: ['node'], filename: urlOnlyFilename });
+    expect(urlOnlyMetaResult).toEqual({
+      url: expectedFileUrl(urlOnlyFilename),
+      dirname: path.dirname(urlOnlyFilename),
+      filename: urlOnlyFilename,
+    });
+
+    const fallbackFilename = path.join(tmpOutput, 'worker.js');
+    const fallbackMetaResult = await runPatchedChunk(urlOnlyFilename, { argv: ['node', './worker.js'] });
+    expect(fallbackMetaResult).toEqual({
+      url: expectedFileUrl(fallbackFilename),
+      dirname: tmpOutput,
+      filename: fallbackFilename,
+    });
+
+    for (const name of ['chunks/chunk #.js', 'chunks/url-only.js']) {
+      const content = await fs.readFile(path.join(tmpOutput, name), 'utf8');
+      expect(content).not.toContain(sourceMapToken);
+    }
+    await expect(fs.stat(path.join(tmpOutput, 'chunks/chunk #.js.map'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(fs.stat(path.join(tmpOutput, 'chunks/url-only.js.map'))).rejects.toMatchObject({ code: 'ENOENT' });
+    expect(result.files).not.toEqual(expect.arrayContaining([expect.stringContaining('.js.map')]));
+    expect(bm.chunks).not.toEqual(expect.arrayContaining([expect.stringContaining('.js.map')]));
   });
 
   it('wraps a buildFunc failure under the "pack build" step with an identifiable prefix and preserves cause', async () => {
