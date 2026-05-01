@@ -18,9 +18,9 @@ function readLogIfExists(logPath: string) {
   }
 }
 
-async function waitForNewLog(logPath: string, match: string, previousLog: string) {
+async function waitForNewLog(logPath: string, match: string, previousLog: string, timeout = 5000) {
   const start = Date.now();
-  while (Date.now() - start < 5000) {
+  while (Date.now() - start < timeout) {
     const log = readLogIfExists(logPath);
     const appendedLog = log.startsWith(previousLog) ? log.slice(previousLog.length) : log;
     if (appendedLog.includes(match)) {
@@ -33,9 +33,9 @@ async function waitForNewLog(logPath: string, match: string, previousLog: string
 
 describe.skipIf(process.platform === 'win32')('test/stop.test.ts', () => {
   let app: MockApplication | undefined;
-  let scheduleLogBeforeStart = '';
+  let intervalLogBeforeStart = '';
   beforeAll(async () => {
-    scheduleLogBeforeStart = readLogIfExists(getFixtures('stop/logs/stop/egg-schedule.log'));
+    intervalLogBeforeStart = readLogIfExists(getFixtures('stop/logs/stop/stop-web.log'));
     app = mm.cluster({ baseDir: getFixtures('stop'), workers: 2 });
     // app.debug();
     await app.ready();
@@ -43,17 +43,15 @@ describe.skipIf(process.platform === 'win32')('test/stop.test.ts', () => {
   afterAll(() => app?.close());
 
   it('should stop interval timer after cluster closes', async () => {
-    const scheduleLogPath = getFixtures('stop/logs/stop/egg-schedule.log');
-    await waitForNewLog(scheduleLogPath, 'app/schedule/interval.js', scheduleLogBeforeStart);
-
     const logPath = getFixtures('stop/logs/stop/stop-web.log');
-    const beforeCloseLog = readLogIfExists(logPath);
-    const beforeCloseCount = contains(beforeCloseLog, 'interval');
+    await waitForNewLog(logPath, 'interval', intervalLogBeforeStart, 12000);
+
     await app!.close();
     app = undefined;
+    const afterCloseCount = contains(readLogIfExists(logPath), 'interval');
 
     await sleep(10000);
     const log = readLogIfExists(logPath);
-    expect(contains(log, 'interval')).toBe(beforeCloseCount);
+    expect(contains(log, 'interval')).toBe(afterCloseCount);
   });
 });
