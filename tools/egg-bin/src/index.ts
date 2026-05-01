@@ -1,9 +1,10 @@
+import Bundle from './commands/bundle.ts';
 import Cov from './commands/cov.ts';
 import Dev from './commands/dev.ts';
 import Manifest from './commands/manifest.ts';
 import Test from './commands/test.ts';
 
-export { Test, Cov, Dev, Manifest };
+export { Test, Cov, Dev, Manifest, Bundle };
 
 export * from './baseCommand.ts';
 export * from './types.ts';
