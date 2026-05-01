@@ -333,13 +333,17 @@ export class ManifestLoader {
     const normalizedDiscovery: Record<string, string[]> = {};
     for (const [key, files] of Object.entries(data.fileDiscovery)) {
       const newKey = await this.#normalizeRelKey(key, moduleMap);
-      normalizedDiscovery[newKey] = files;
+      const existing = normalizedDiscovery[newKey];
+      normalizedDiscovery[newKey] = existing ? Array.from(new Set([...existing, ...files])) : files;
     }
 
     const normalizedResolveCache: Record<string, string | null> = {};
     for (const [key, value] of Object.entries(data.resolveCache)) {
       const newKey = await this.#normalizeRelKey(key, moduleMap);
       const newValue = value === null ? null : await this.#normalizeRelKey(value, moduleMap);
+      if (Object.hasOwn(normalizedResolveCache, newKey) && normalizedResolveCache[newKey] !== newValue) {
+        throw new Error(`[@eggjs/egg-bundler] conflicting normalized resolveCache entry for ${newKey}`);
+      }
       normalizedResolveCache[newKey] = newValue;
     }
 
@@ -355,17 +359,19 @@ export class ManifestLoader {
 
   async #normalizeRelKey(relKey: string, moduleMap: ModuleMapEntry[]): Promise<string> {
     if (!relKey) return relKey;
-    const segments = this.#pathSegments(relKey);
+    const abs = path.resolve(this.#baseDir, relKey);
+    const relativeToBase = path.relative(this.#baseDir, abs).replaceAll(path.sep, '/');
+    const segments = this.#pathSegments(relativeToBase);
     // Already inside baseDir, relative, and not escaping — leave as-is.
     if (
       !path.isAbsolute(relKey) &&
-      !relKey.startsWith('..') &&
+      !relativeToBase.startsWith('..') &&
+      !path.isAbsolute(relativeToBase) &&
       !segments.includes('node_modules') &&
       !segments.includes('.pnpm')
     ) {
       return relKey;
     }
-    const abs = path.resolve(this.#baseDir, relKey);
     const realAbs = await this.#realpath(abs);
     let best: ModuleMapEntry | undefined;
     for (const entry of moduleMap) {
@@ -422,6 +428,55 @@ export class ManifestLoader {
     const entries = new Map<string, string>();
     const seen = new Set<string>();
 
+    const findPackageJsonFromNodeModules = async (name: string, startDir: string): Promise<string | undefined> => {
+      let dir = startDir;
+      const nameSegments = name.split('/');
+      while (true) {
+        const candidates = [
+          path.join(dir, 'node_modules', ...nameSegments, 'package.json'),
+          path.join(dir, 'node_modules', '.pnpm', 'node_modules', ...nameSegments, 'package.json'),
+        ];
+        for (const candidate of candidates) {
+          try {
+            await fsp.access(candidate);
+            return candidate;
+          } catch (error) {
+            if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+          }
+        }
+        const parent = path.dirname(dir);
+        if (parent === dir) return undefined;
+        dir = parent;
+      }
+    };
+
+    const resolvePackageJson = async (
+      name: string,
+      req: ReturnType<typeof createRequire>,
+      startDir: string,
+    ): Promise<string> => {
+      try {
+        return req.resolve(`${name}/package.json`);
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ERR_PACKAGE_PATH_NOT_EXPORTED') throw error;
+        const packageJsonFromNodeModules = await findPackageJsonFromNodeModules(name, startDir);
+        if (packageJsonFromNodeModules) return packageJsonFromNodeModules;
+        const entry = req.resolve(name);
+        let dir = path.dirname(entry);
+        while (true) {
+          const candidate = path.join(dir, 'package.json');
+          try {
+            await fsp.access(candidate);
+            return candidate;
+          } catch {
+            const parent = path.dirname(dir);
+            if (parent === dir) throw error;
+            dir = parent;
+          }
+        }
+      }
+    };
+
     const addPackageDeps = async (packageJsonPath: string, parentNormalizedDir: string): Promise<void> => {
       let pkg: {
         dependencies?: Record<string, string>;
@@ -430,8 +485,9 @@ export class ManifestLoader {
       };
       try {
         pkg = JSON.parse(await fsp.readFile(packageJsonPath, 'utf-8'));
-      } catch {
-        return;
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === 'ENOENT') return;
+        throw new Error(`[@eggjs/egg-bundler] failed to read ${packageJsonPath}`, { cause: error });
       }
       const req = createRequire(packageJsonPath);
       const depNames = [
@@ -441,14 +497,15 @@ export class ManifestLoader {
       ];
       for (const name of depNames) {
         try {
-          const depPkgJson = req.resolve(`${name}/package.json`);
+          const depPkgJson = await resolvePackageJson(name, req, path.dirname(packageJsonPath));
           const realDir = await this.#realpath(path.dirname(depPkgJson));
           if (seen.has(realDir)) continue;
           seen.add(realDir);
           const normalizedDir = this.#normalizePackageDir(realDir, parentNormalizedDir, name);
           if (!entries.has(realDir)) entries.set(realDir, normalizedDir);
           await addPackageDeps(depPkgJson, normalizedDir);
-        } catch {
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'MODULE_NOT_FOUND') throw error;
           /* dep not resolvable (optional/peer); skip */
         }
       }

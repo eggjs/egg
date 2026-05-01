@@ -33,15 +33,15 @@ describe('ExternalsResolver', () => {
     });
   });
 
-  describe('tier 2: ESM-only detection', () => {
-    it('externalizes a pure-ESM package (type=module without require condition)', async () => {
+  describe('tier 2: ESM-only packages', () => {
+    it('does not externalize a pure-ESM package because externals are loaded through createRequire', async () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
-      expect(result['esm-only']).toBe('esm-only');
+      expect(result['esm-only']).toBeUndefined();
     });
 
-    it('externalizes a pure-ESM package whose exports field is a string', async () => {
+    it('does not externalize a pure-ESM package whose exports field is a string', async () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
-      expect(result['esm-string-export']).toBe('esm-string-export');
+      expect(result['esm-string-export']).toBeUndefined();
     });
 
     it('does not externalize a dual-ESM package that exposes a require condition', async () => {

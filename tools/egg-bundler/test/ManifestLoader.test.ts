@@ -226,6 +226,68 @@ describe('ManifestLoader', () => {
     expect(loader.store.data).toBe(loaded);
   });
 
+  it('merges file discovery entries that normalize to the same package path', async () => {
+    const baseDir = createTempApp();
+    const directLib = path.join(baseDir, 'node_modules/direct/lib');
+    fs.mkdirSync(directLib, { recursive: true });
+    writeJson(path.join(baseDir, 'package.json'), {
+      dependencies: {
+        direct: '1.0.0',
+      },
+    });
+    writeJson(path.join(baseDir, 'node_modules/direct/package.json'), {
+      name: 'direct',
+      version: '1.0.0',
+    });
+
+    const manifestPath = path.join(baseDir, '.egg/manifest.json');
+    writeJson(
+      manifestPath,
+      manifest({
+        fileDiscovery: {
+          [directLib]: ['a.ts'],
+          'node_modules/direct/lib': ['a.ts', 'b.ts'],
+        },
+      }),
+    );
+
+    const loaded = await new ManifestLoader({ baseDir, manifestPath, autoGenerate: false }).load();
+
+    expect(loaded.fileDiscovery).toEqual({
+      'node_modules/direct/lib': ['a.ts', 'b.ts'],
+    });
+  });
+
+  it('rejects conflicting resolve cache entries that normalize to the same key', async () => {
+    const baseDir = createTempApp();
+    const directRoot = path.join(baseDir, 'node_modules/direct');
+    fs.mkdirSync(directRoot, { recursive: true });
+    writeJson(path.join(baseDir, 'package.json'), {
+      dependencies: {
+        direct: '1.0.0',
+      },
+    });
+    writeJson(path.join(directRoot, 'package.json'), {
+      name: 'direct',
+      version: '1.0.0',
+    });
+
+    const manifestPath = path.join(baseDir, '.egg/manifest.json');
+    writeJson(
+      manifestPath,
+      manifest({
+        resolveCache: {
+          [path.join(directRoot, 'entry')]: path.join(directRoot, 'a.ts'),
+          'node_modules/direct/entry': 'node_modules/direct/b.ts',
+        },
+      }),
+    );
+
+    await expect(new ManifestLoader({ baseDir, manifestPath, autoGenerate: false }).load()).rejects.toThrow(
+      'conflicting normalized resolveCache entry for node_modules/direct/entry',
+    );
+  });
+
   it('loads older minimal manifests without extensions', async () => {
     const baseDir = createTempApp();
     writeJson(path.join(baseDir, 'package.json'), {});
@@ -293,6 +355,24 @@ describe('ManifestLoader', () => {
     const loader = new ManifestLoader({ baseDir, manifestPath, autoGenerate: false });
 
     await expect(loader.load()).rejects.toMatchObject({ code: 'EISDIR' });
+  });
+
+  it('surfaces malformed dependency package metadata during normalization', async () => {
+    const baseDir = createTempApp();
+    const badPackageDir = path.join(baseDir, 'node_modules/bad-json');
+    fs.mkdirSync(badPackageDir, { recursive: true });
+    writeJson(path.join(baseDir, 'package.json'), {
+      dependencies: {
+        'bad-json': '1.0.0',
+      },
+    });
+    fs.writeFileSync(path.join(badPackageDir, 'package.json'), '{\n  "name": "bad-json",');
+    const manifestPath = path.join(baseDir, '.egg/manifest.json');
+    writeJson(manifestPath, manifest());
+
+    await expect(new ManifestLoader({ baseDir, manifestPath, autoGenerate: false }).load()).rejects.toThrow(
+      `Invalid package config ${path.join(badPackageDir, 'package.json')}`,
+    );
   });
 
   it('resolves package exports shorthand condition maps for frameworkEntry', async () => {

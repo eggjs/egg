@@ -77,7 +77,6 @@ export class ExternalsResolver {
     if (!pkgDir) return false;
     const pkg = await this.#readPackageJson(pkgDir);
     if (await this.#hasNativeBinary(pkgDir, pkg)) return true;
-    if (this.#isEsmOnly(pkg)) return true;
     return false;
   }
 
@@ -128,28 +127,6 @@ export class ExternalsResolver {
       // unreadable dir
     }
 
-    return false;
-  }
-
-  #isEsmOnly(pkg: PackageJson): boolean {
-    if (pkg.type !== 'module') return false;
-    const exportsField = pkg.exports;
-    if (!exportsField) return false;
-    if (typeof exportsField === 'string') return true;
-    if (typeof exportsField !== 'object') return false;
-    return !this.#hasRequireCondition(exportsField);
-  }
-
-  #hasRequireCondition(value: unknown): boolean {
-    if (!value || typeof value !== 'object') return false;
-    if (Array.isArray(value)) {
-      return value.some((v) => this.#hasRequireCondition(v));
-    }
-    const obj = value as Record<string, unknown>;
-    if ('require' in obj) return true;
-    for (const v of Object.values(obj)) {
-      if (this.#hasRequireCondition(v)) return true;
-    }
     return false;
   }
 
