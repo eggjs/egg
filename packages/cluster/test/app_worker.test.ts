@@ -1,5 +1,9 @@
 import { strict as assert } from 'node:assert';
+import { randomBytes } from 'node:crypto';
 import { rm } from 'node:fs/promises';
+import { createConnection } from 'node:net';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
@@ -8,7 +12,47 @@ import { ip } from 'address';
 import urllib from 'urllib';
 import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
 
-import { cluster, getFilepath } from './utils.ts';
+import { cluster } from './utils.ts';
+
+async function waitForSocket(filepath: string) {
+  const start = Date.now();
+  const timeout = 5000;
+  while (Date.now() - start < timeout) {
+    const remaining = timeout - (Date.now() - start);
+    const connected = await new Promise<boolean>((resolve) => {
+      const socket = createConnection(filepath);
+      let settled = false;
+      const finish = (result: boolean) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        socket.setTimeout(0);
+        if (result) {
+          socket.end();
+        } else {
+          socket.destroy();
+        }
+        resolve(result);
+      };
+      socket.setTimeout(Math.max(1, Math.min(remaining, 500)));
+      socket.once('connect', () => {
+        finish(true);
+      });
+      socket.once('error', () => {
+        finish(false);
+      });
+      socket.once('timeout', () => {
+        finish(false);
+      });
+    });
+    if (connected) {
+      return;
+    }
+    await scheduler.wait(50);
+  }
+  throw new Error(`Socket ${filepath} did not become connectable`);
+}
 
 // node v24 will hang when test this file
 // FIXME: should enable this test after node v24 is stable
@@ -204,15 +248,16 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
   });
 
   describe('listen config', () => {
-    const sockFile = getFilepath('apps/app-listen-path/my.sock');
-    beforeEach(() => {
+    const sockFile = path.join(tmpdir(), `egg-app-listen-path-${process.pid}-${randomBytes(4).toString('hex')}.sock`);
+    beforeEach(async () => {
       mm.env('default');
+      await rm(sockFile, { force: true });
     });
     afterEach(async () => {
       await app.close();
       await mm.restore();
     });
-    afterEach(() => rm(sockFile, { force: true, recursive: true }));
+    afterEach(() => rm(sockFile, { force: true }));
 
     it.skip('should set default port 170xx then config.listen.port is null', async () => {
       app = cluster('apps/app-listen-without-port');
@@ -276,13 +321,22 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
     });
 
     it('should use path in config', async () => {
-      app = cluster('apps/app-listen-path');
+      app = cluster('apps/app-listen-path', {
+        opt: {
+          execArgv: [],
+          env: {
+            ...process.env,
+            EGG_APP_LISTEN_PATH_SOCKET: sockFile,
+          },
+        },
+      });
       // app.debug();
       await app.ready();
 
       app.expect('code', 0);
       app.expect('stdout', new RegExp(`egg started on ${sockFile}`));
 
+      await waitForSocket(sockFile);
       const sock = encodeURIComponent(sockFile);
       await request(`http+unix://${sock}`).get('/').expect('done').expect(200);
     });

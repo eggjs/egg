@@ -7,7 +7,7 @@ module.exports = (app) => {
     keys: '123',
     cluster: {
       listen: {
-        path: path.join(app.baseDir, 'my.sock'),
+        path: process.env.EGG_APP_LISTEN_PATH_SOCKET || path.join(app.baseDir, 'my.sock'),
       },
     },
   };

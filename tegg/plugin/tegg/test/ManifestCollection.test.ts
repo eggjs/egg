@@ -9,6 +9,16 @@ import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/ManifestCollection.test.ts', () => {
   let app: MockApplication;
+  let teggExtCache: TeggManifestExtension | undefined;
+
+  function getTeggManifestExtension() {
+    if (!teggExtCache) {
+      teggExtCache =
+        (app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined) ??
+        (app.loader.generateManifest().extensions[TEGG_MANIFEST_KEY] as TeggManifestExtension | undefined);
+    }
+    return teggExtCache;
+  }
 
   afterEach(async () => {
     return mm.restore();
@@ -19,6 +29,7 @@ describe('plugin/tegg/test/ManifestCollection.test.ts', () => {
       app = mm.app({
         baseDir: getAppBaseDir('egg-app'),
       });
+      teggExtCache = undefined;
       await app.ready();
     });
 
@@ -27,12 +38,12 @@ describe('plugin/tegg/test/ManifestCollection.test.ts', () => {
     });
 
     it('should collect tegg manifest extension after ready', () => {
-      const teggExt = app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined;
+      const teggExt = getTeggManifestExtension();
       assert.ok(teggExt, 'tegg manifest extension should be set');
     });
 
     it('should have moduleReferences matching app.moduleReferences', () => {
-      const teggExt = app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension;
+      const teggExt = getTeggManifestExtension()!;
       assert.ok(teggExt.moduleReferences);
       assert.ok(teggExt.moduleReferences.length > 0);
 
@@ -52,7 +63,7 @@ describe('plugin/tegg/test/ManifestCollection.test.ts', () => {
     });
 
     it('should have moduleDescriptors with decoratedFiles', () => {
-      const teggExt = app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension;
+      const teggExt = getTeggManifestExtension()!;
       assert.ok(teggExt.moduleDescriptors);
       assert.ok(teggExt.moduleDescriptors.length > 0);
 
@@ -64,7 +75,7 @@ describe('plugin/tegg/test/ManifestCollection.test.ts', () => {
     });
 
     it('should have non-empty decoratedFiles for modules with prototypes', () => {
-      const teggExt = app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension;
+      const teggExt = getTeggManifestExtension()!;
       // At least one module should have decorated files
       const hasFiles = teggExt.moduleDescriptors.some((d) => d.decoratedFiles.length > 0);
       assert.ok(hasFiles, 'at least one module should have decorated files');

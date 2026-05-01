@@ -13,6 +13,7 @@
   ],
   "type": "module",
   "scripts": {
+    "clean": "node scripts/run-workspace-scripts.mjs clean",
     "clean-dist": "ut run clean --workspaces --if-present",
     "build": "tsdown",
     "prelint": "ut run clean-dist",
@@ -20,7 +21,7 @@
     "fmt": "oxfmt",
     "typecheck": "ut run clean-dist && ut run typecheck --workspaces --if-present",
     "fmtcheck": "oxfmt --check .",
-    "pretest": "ut run clean-dist && ut run pretest --workspaces --if-present",
+    "pretest": "ut run clean-dist",
     "test": "vitest run --bail 1 --retry 2 --testTimeout 20000 --hookTimeout 20000",
     "test:cov": "ut run test -- --coverage",
     "preci": "ut run pretest --workspaces --if-present",
