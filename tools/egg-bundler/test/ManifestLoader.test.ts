@@ -441,6 +441,21 @@ describe('ManifestLoader', () => {
     await expect(loadFrameworkFixture({ require: './src/index.js' })).rejects.toThrow(/has no resolvable entry/);
   });
 
+  it('surfaces malformed framework package metadata with path context', async () => {
+    const { appDir, frameworkDir } = await createFrameworkFixture();
+    const pkgJsonPath = path.join(frameworkDir, 'package.json');
+    await fsp.writeFile(pkgJsonPath, '{\n  "name": "fake-framework",');
+    const loader = new ManifestLoader({
+      baseDir: appDir,
+      framework: frameworkDir,
+      autoGenerate: true,
+      env: 'prod',
+      execArgv: [],
+    });
+
+    await expect(loader.load()).rejects.toThrow(`[@eggjs/egg-bundler] failed to read framework package ${pkgJsonPath}`);
+  });
+
   it('resolves nested package exports conditions for frameworkEntry', async () => {
     const { appDir, frameworkDir } = await loadFrameworkFixture({
       '.': {

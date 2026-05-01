@@ -292,11 +292,16 @@ export class ManifestLoader {
   async #resolveFrameworkEntryUrl(): Promise<string> {
     const frameworkDir = await this.#resolveFrameworkPath();
     const pkgJsonPath = path.join(frameworkDir, 'package.json');
-    const pkg = JSON.parse(await fsp.readFile(pkgJsonPath, 'utf-8')) as {
+    let pkg: {
       exports?: Record<string, unknown> | string;
       main?: string;
       module?: string;
     };
+    try {
+      pkg = JSON.parse(await fsp.readFile(pkgJsonPath, 'utf-8'));
+    } catch (error) {
+      throw new Error(`[@eggjs/egg-bundler] failed to read framework package ${pkgJsonPath}`, { cause: error });
+    }
     let entryRel: string | undefined;
     if (pkg.exports) {
       entryRel = this.#resolveExportsEntry(pkg.exports);

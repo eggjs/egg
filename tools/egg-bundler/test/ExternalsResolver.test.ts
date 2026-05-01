@@ -103,7 +103,9 @@ describe('ExternalsResolver', () => {
         await fs.writeFile(path.join(tempDir, 'node_modules/bad-json/package.json'), '{\n  "name": "bad-json",');
 
         const resolver = new ExternalsResolver({ baseDir: tempDir });
-        await expect(resolver.resolve()).rejects.toThrow(SyntaxError);
+        await expect(resolver.resolve()).rejects.toThrow(
+          `[@eggjs/egg-bundler] failed to read ${path.join(tempDir, 'node_modules/bad-json/package.json')}`,
+        );
       } finally {
         await fs.rm(tempDir, { recursive: true, force: true });
       }

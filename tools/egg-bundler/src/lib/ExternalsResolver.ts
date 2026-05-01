@@ -139,14 +139,15 @@ export class ExternalsResolver {
   }
 
   async #readPackageJsonUncached(dir: string): Promise<PackageJson> {
+    const packageJsonPath = path.join(dir, 'package.json');
     try {
-      const raw = await fs.readFile(path.join(dir, 'package.json'), 'utf8');
+      const raw = await fs.readFile(packageJsonPath, 'utf8');
       return JSON.parse(raw) as PackageJson;
     } catch (error) {
       if ((error as { code?: string }).code === 'ENOENT') {
         return {};
       }
-      throw error;
+      throw new Error(`[@eggjs/egg-bundler] failed to read ${packageJsonPath}`, { cause: error });
     }
   }
 
