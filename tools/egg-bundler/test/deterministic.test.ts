@@ -27,11 +27,10 @@ const FIXTURE_SOURCE = path.join(__dirname, 'fixtures/apps/minimal-app');
 //   * The outputDir absolute path must NOT leak into any artifact (two tmpdirs
 //     with different names would cause drift if it did).
 //
-// Isolation note: T17 clones the fixture into its own per-test tmp dirs rather
-// than writing into `fixtures/apps/minimal-app/.egg/`, because T12's
-// integration.test.ts also uses that fixture and vitest runs test files in
-// parallel threads. Sharing the fixture would produce flaky ENOENT on
-// `.egg/manifest.json` when one file's `afterAll` races the other's `beforeAll`.
+// Isolation note: T17 clones only source fixture files into per-test tmp dirs,
+// then owns the generated `.egg/` and `.egg-bundle/` state inside each clone.
+// Determinism should not depend on stale generated metadata from prior runs or
+// shared fixture output.
 //
 // Real @utoo/pack determinism is a separate concern, deferred to T16/T20.
 
@@ -58,10 +57,8 @@ const FIXTURE_MANIFEST = {
 
 async function cloneFixture(destParent: string): Promise<string> {
   const dest = path.join(destParent, 'app');
-  // Skip .egg/ and .egg-bundle/ during copy. Other test files (notably
-  // integration.test.ts) write into the shared fixture's .egg/ and rm it in
-  // afterAll(), which races with the recursive walk here. Filtering at copy
-  // time means we never read those dirs and the race is impossible.
+  // Skip generated metadata dirs during copy; this test creates the exact
+  // generated state it needs inside the cloned fixture.
   await fs.cp(FIXTURE_SOURCE, dest, {
     recursive: true,
     filter: (src) => {
@@ -104,10 +101,14 @@ async function sha256(filepath: string): Promise<string> {
     .digest('hex');
 }
 
-async function hashByBasename(files: readonly string[]): Promise<Record<string, string>> {
+function outputRel(outputDir: string, filepath: string): string {
+  return path.relative(outputDir, filepath);
+}
+
+async function hashByOutputRel(files: readonly string[], outputDir: string): Promise<Record<string, string>> {
   const hashes: Record<string, string> = {};
   for (const f of files) {
-    hashes[path.basename(f)] = await sha256(f);
+    hashes[outputRel(outputDir, f)] = await sha256(f);
   }
   return hashes;
 }
@@ -160,13 +161,13 @@ describe('bundle() is deterministic (T17)', () => {
       pack: { buildFunc: makeDeterministicMockBuild(outB) },
     });
 
-    // File sets must match by basename.
-    const basenamesA = resultA.files.map((f) => path.basename(f)).sort();
-    const basenamesB = resultB.files.map((f) => path.basename(f)).sort();
-    expect(basenamesA).toEqual(basenamesB);
+    // File sets must match by output-relative path.
+    const pathsA = resultA.files.map((f) => outputRel(outA, f)).sort();
+    const pathsB = resultB.files.map((f) => outputRel(outB, f)).sort();
+    expect(pathsA).toEqual(pathsB);
 
-    const hashesA = await hashByBasename(resultA.files);
-    const hashesB = await hashByBasename(resultB.files);
+    const hashesA = await hashByOutputRel(resultA.files, outA);
+    const hashesB = await hashByOutputRel(resultB.files, outB);
 
     const drift: string[] = [];
     for (const name of Object.keys(hashesA)) {
