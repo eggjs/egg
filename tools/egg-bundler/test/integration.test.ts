@@ -296,6 +296,7 @@ globalThis.__patchedMeta = {
   it('rejects Windows drive-absolute output paths before resolving bundle files', () => {
     expect(() => sanitizeBundleOutputRelativePath('C:/foo.js')).toThrow(/Unsafe bundle output path/);
     expect(() => sanitizeBundleOutputRelativePath('C:\\foo.js')).toThrow(/Unsafe bundle output path/);
+    expect(() => sanitizeBundleOutputRelativePath('..\\foo.js')).toThrow(/Unsafe bundle output path/);
   });
 
   it('wraps a buildFunc failure under the "pack build" step with an identifiable prefix and preserves cause', async () => {

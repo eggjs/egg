@@ -43,7 +43,7 @@ function wrapStep<T>(step: string, fn: () => Promise<T>): Promise<T> {
 }
 
 export function sanitizeBundleOutputRelativePath(relativeName: string): string {
-  const normalized = relativeName.split(path.sep).join('/');
+  const normalized = relativeName.replace(/\\/g, '/');
   const segments = normalized.split('/');
   if (
     !normalized ||
