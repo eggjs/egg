@@ -12,8 +12,21 @@ const debug = debuglog('egg/bundler/bundler');
 
 const BUNDLE_MANIFEST_VERSION = 1;
 const BUNDLE_MANIFEST_FILENAME = 'bundle-manifest.json';
-const IMPORT_META_FALLBACK_FILENAME_EXPR =
-  '(() => { const entryArg = typeof process !== "undefined" && process.argv && process.argv[1] ? process.argv[1] : "worker.js"; if (/^(?:[A-Za-z]:[\\\\/]|\\\\\\\\|\\/)/.test(entryArg)) return entryArg; const cwd = typeof process !== "undefined" && process.cwd ? process.cwd() : "."; const raw = cwd + "/" + entryArg; const parts = []; for (const part of raw.replace(/\\\\/g, "/").split("/")) { if (!part || part === ".") continue; if (part === "..") parts.pop(); else parts.push(part); } return (raw.startsWith("/") ? "/" : "") + parts.join("/"); })()';
+const IMPORT_META_FALLBACK_FILENAME_EXPR = [
+  '(() => {',
+  'const entryArg = typeof process !== "undefined" && process.argv && process.argv[1] ? process.argv[1] : "worker.js";',
+  'if (/^(?:[A-Za-z]:[\\\\/]|\\\\\\\\|\\/)/.test(entryArg)) return entryArg;',
+  'const cwd = typeof process !== "undefined" && process.cwd ? process.cwd() : ".";',
+  'const sep = cwd.includes("\\\\") ? "\\\\" : "/";',
+  'const raw = cwd + sep + entryArg;',
+  'const slash = raw.replace(/\\\\/g, "/");',
+  'const root = /^[A-Za-z]:\\//.test(slash) ? slash.slice(0, 2) : slash.startsWith("//") ? "//" : slash.startsWith("/") ? "/" : "";',
+  'const body = root && root !== "/" ? slash.slice(root.length + (root === "//" ? 0 : 1)) : slash;',
+  'const parts = [];',
+  'for (const part of body.split("/")) { if (!part || part === ".") continue; if (part === "..") parts.pop(); else parts.push(part); }',
+  'return root === "/" ? "/" + parts.join("/") : root === "//" ? (sep === "\\\\" ? "\\\\\\\\" : "//") + parts.join(sep) : root ? root + sep + parts.join(sep) : parts.join(sep);',
+  '})()',
+].join(' ');
 const IMPORT_META_FILENAME_EXPR = `(typeof __filename === "string" ? __filename : ${IMPORT_META_FALLBACK_FILENAME_EXPR})`;
 const IMPORT_META_URL_EXPR = `(() => { const u = new URL("file:///"); u.pathname = ${IMPORT_META_FILENAME_EXPR}.replace(/\\\\/g, "/"); return u.href; })()`;
 const THROWING_IMPORT_META_URL =
@@ -244,7 +257,7 @@ export class Bundler {
     const sourceMapUrl = this.#extractSourceMappingUrl(originalContent);
     if (sourceMapUrl && !sourceMapUrl.startsWith('data:')) {
       const resolved = path.resolve(path.dirname(filepath), sourceMapUrl);
-      if (this.#isInsideDir(outputDir, resolved)) mapPaths.add(resolved);
+      if (resolved.endsWith('.map') && this.#isInsideDir(outputDir, resolved)) mapPaths.add(resolved);
     }
 
     let deletedCount = 0;

@@ -207,6 +207,14 @@ globalThis.__patchedMeta = {
 };
 /*# ${sourceMapToken}=url-only.js.map */
 `;
+    const nonMapTargetMeta = `let __TURBOPACK__import$2e$meta__ = { get url () { return "file:///already-patched.js"; } };
+globalThis.__patchedMeta = {
+    url: __TURBOPACK__import$2e$meta__.url,
+    dirname: __TURBOPACK__import$2e$meta__.dirname,
+    filename: __TURBOPACK__import$2e$meta__.filename
+};
+//# ${sourceMapToken}=not-a-map.txt
+`;
 
     const buildFunc: BuildFunc = async () => {
       await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// mock worker entry\n');
@@ -215,6 +223,8 @@ globalThis.__patchedMeta = {
       await fs.writeFile(path.join(tmpOutput, 'chunks/chunk #.js.map'), '{"version":3}');
       await fs.writeFile(path.join(tmpOutput, 'chunks/url-only.js'), urlOnlyMeta);
       await fs.writeFile(path.join(tmpOutput, 'chunks/url-only.js.map'), '{"version":3}');
+      await fs.writeFile(path.join(tmpOutput, 'chunks/non-map-target.js'), nonMapTargetMeta);
+      await fs.writeFile(path.join(tmpOutput, 'chunks/not-a-map.txt'), 'keep me');
     };
 
     const result = await bundle({
@@ -226,7 +236,7 @@ globalThis.__patchedMeta = {
 
     async function runPatchedChunk(
       filepath: string,
-      options: { argv: string[]; filename?: string },
+      options: { argv: string[]; filename?: string; cwd?: string },
     ): Promise<{ url: string; dirname: string; filename: string }> {
       interface SandboxProcess {
         argv: string[];
@@ -242,7 +252,7 @@ globalThis.__patchedMeta = {
       }
       const sandbox = {
         URL,
-        process: { argv: options.argv, cwd: () => tmpOutput },
+        process: { argv: options.argv, cwd: () => options.cwd ?? tmpOutput },
       } as unknown as Sandbox;
       if (options.filename) {
         sandbox.__filename = options.filename;
@@ -283,12 +293,25 @@ globalThis.__patchedMeta = {
       filename: fallbackFilename,
     });
 
-    for (const name of ['chunks/chunk #.js', 'chunks/url-only.js']) {
+    const windowsFallbackMetaResult = await runPatchedChunk(urlOnlyFilename, {
+      argv: ['node', 'worker.js'],
+      cwd: 'C:\\app\\dist',
+    });
+    expect(windowsFallbackMetaResult).toEqual({
+      url: 'file:///C:/app/dist/worker.js',
+      dirname: 'C:\\app\\dist',
+      filename: 'C:\\app\\dist\\worker.js',
+    });
+
+    for (const name of ['chunks/chunk #.js', 'chunks/url-only.js', 'chunks/non-map-target.js']) {
       const content = await fs.readFile(path.join(tmpOutput, name), 'utf8');
       expect(content).not.toContain(sourceMapToken);
     }
     await expect(fs.stat(path.join(tmpOutput, 'chunks/chunk #.js.map'))).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(fs.stat(path.join(tmpOutput, 'chunks/url-only.js.map'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(fs.stat(path.join(tmpOutput, 'chunks/not-a-map.txt'))).resolves.toBeTruthy();
+    expect(result.files).toEqual(expect.arrayContaining([path.join(tmpOutput, 'chunks/not-a-map.txt')]));
+    expect(bm.chunks).toContain('chunks/not-a-map.txt');
     expect(result.files).not.toEqual(expect.arrayContaining([expect.stringContaining('.js.map')]));
     expect(bm.chunks).not.toEqual(expect.arrayContaining([expect.stringContaining('.js.map')]));
   });
