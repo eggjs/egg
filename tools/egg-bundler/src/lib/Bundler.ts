@@ -42,6 +42,22 @@ function wrapStep<T>(step: string, fn: () => Promise<T>): Promise<T> {
   });
 }
 
+export function sanitizeBundleOutputRelativePath(relativeName: string): string {
+  const normalized = relativeName.split(path.sep).join('/');
+  const segments = normalized.split('/');
+  if (
+    !normalized ||
+    path.posix.isAbsolute(normalized) ||
+    path.win32.isAbsolute(normalized) ||
+    segments.some((segment) => !segment || segment === '.' || segment === '..') ||
+    normalized.includes('\0') ||
+    /[\r\n\u2028\u2029]/u.test(normalized)
+  ) {
+    throw new Error(`Unsafe bundle output path: ${relativeName}`);
+  }
+  return normalized;
+}
+
 export class Bundler {
   readonly #config: BundlerConfig;
 
@@ -257,18 +273,7 @@ export class Bundler {
   }
 
   #sanitizeOutputRelativePath(relativeName: string): string {
-    const normalized = relativeName.split(path.sep).join('/');
-    const segments = normalized.split('/');
-    if (
-      !normalized ||
-      path.posix.isAbsolute(normalized) ||
-      segments.some((segment) => !segment || segment === '.' || segment === '..') ||
-      normalized.includes('\0') ||
-      /[\r\n\u2028\u2029]/u.test(normalized)
-    ) {
-      throw new Error(`Unsafe bundle output path: ${relativeName}`);
-    }
-    return normalized;
+    return sanitizeBundleOutputRelativePath(relativeName);
   }
 
   #isInsideDir(dir: string, target: string): boolean {

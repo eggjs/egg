@@ -7,6 +7,7 @@ import { runInNewContext } from 'node:vm';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { bundle, type BuildFunc } from '../src/index.ts';
+import { sanitizeBundleOutputRelativePath } from '../src/lib/Bundler.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURE_BASE = path.join(__dirname, 'fixtures/apps/minimal-app');
@@ -290,6 +291,11 @@ globalThis.__patchedMeta = {
     await expect(fs.stat(path.join(tmpOutput, 'chunks/url-only.js.map'))).rejects.toMatchObject({ code: 'ENOENT' });
     expect(result.files).not.toEqual(expect.arrayContaining([expect.stringContaining('.js.map')]));
     expect(bm.chunks).not.toEqual(expect.arrayContaining([expect.stringContaining('.js.map')]));
+  });
+
+  it('rejects Windows drive-absolute output paths before resolving bundle files', () => {
+    expect(() => sanitizeBundleOutputRelativePath('C:/foo.js')).toThrow(/Unsafe bundle output path/);
+    expect(() => sanitizeBundleOutputRelativePath('C:\\foo.js')).toThrow(/Unsafe bundle output path/);
   });
 
   it('wraps a buildFunc failure under the "pack build" step with an identifiable prefix and preserves cause', async () => {
