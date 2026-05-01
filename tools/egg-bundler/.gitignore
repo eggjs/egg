@@ -1,0 +1,3 @@
+# Integration test runtime output (fixture manifest + .egg-bundle/entries)
+test/fixtures/apps/*/.egg/
+test/fixtures/apps/*/.egg-bundle/

@@ -1,0 +1,72 @@
+{
+  "name": "@eggjs/egg-bundler",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Bundle an Egg.js application into a deployable artifact using @utoo/pack",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tools/egg-bundler",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tools/egg-bundler"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./lib/Bundler": "./src/lib/Bundler.ts",
+    "./lib/EntryGenerator": "./src/lib/EntryGenerator.ts",
+    "./lib/ExternalsResolver": "./src/lib/ExternalsResolver.ts",
+    "./lib/ManifestLoader": "./src/lib/ManifestLoader.ts",
+    "./lib/PackRunner": "./src/lib/PackRunner.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./lib/Bundler": "./dist/lib/Bundler.js",
+      "./lib/EntryGenerator": "./dist/lib/EntryGenerator.js",
+      "./lib/ExternalsResolver": "./dist/lib/ExternalsResolver.js",
+      "./lib/ManifestLoader": "./dist/lib/ManifestLoader.js",
+      "./lib/PackRunner": "./dist/lib/PackRunner.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsgo --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@eggjs/core": "workspace:*",
+    "@utoo/pack": "catalog:",
+    "tsx": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/static": "workspace:*",
+    "@types/node": "catalog:",
+    "rimraf": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

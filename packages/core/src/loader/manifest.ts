@@ -50,10 +50,35 @@ export class ManifestStore {
   // --- Factory Methods ---
 
   /**
+   * Register a pre-built manifest store for bundled egg apps. When set,
+   * `ManifestStore.load()` returns this store unconditionally, bypassing
+   * disk reads and invalidation checks. The bundler-generated entry calls
+   * this at startup before creating the Application.
+   *
+   * Uses globalThis so that bundled and external copies of @eggjs/core
+   * share the same store instance.
+   */
+  static setBundleStore(store: ManifestStore | undefined): void {
+    (globalThis as any).__EGG_BUNDLE_STORE__ = store;
+  }
+
+  /**
+   * Return the registered bundle store, if any.
+   */
+  static getBundleStore(): ManifestStore | undefined {
+    return (globalThis as any).__EGG_BUNDLE_STORE__;
+  }
+
+  /**
    * Load and validate manifest from `.egg/manifest.json`.
    * Returns null if manifest doesn't exist or is invalid.
    */
   static load(baseDir: string, serverEnv: string, serverScope: string): ManifestStore | null {
+    const bundleStore: ManifestStore | undefined = (globalThis as any).__EGG_BUNDLE_STORE__;
+    if (bundleStore) {
+      debug('load: returning registered bundle store');
+      return bundleStore;
+    }
     if (serverEnv === 'local' && process.env.EGG_MANIFEST !== 'true') {
       debug('skip manifest in local env (set EGG_MANIFEST=true to enable)');
       return null;
@@ -81,6 +106,20 @@ export class ManifestStore {
     }
 
     debug('manifest loaded successfully');
+    return new ManifestStore(data, baseDir);
+  }
+
+  /**
+   * Create a ManifestStore from pre-validated bundled data.
+   * Skips invalidation checks — the caller (bundler) is responsible for
+   * guaranteeing the data matches the shipped artifact.
+   */
+  static fromBundle(data: StartupManifest, baseDir: string): ManifestStore {
+    if (data.version !== MANIFEST_VERSION) {
+      throw new Error(
+        `[@eggjs/core] bundled manifest version mismatch: expected ${MANIFEST_VERSION}, got ${data.version}`,
+      );
+    }
     return new ManifestStore(data, baseDir);
   }
 
