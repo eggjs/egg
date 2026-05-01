@@ -77,8 +77,9 @@ export class ManifestLoader {
     }
 
     const normalized = await this.#normalize(data);
+    const store = ManifestStore.fromBundle(normalized, this.#baseDir);
+    this.#store = store;
     this.#manifest = normalized;
-    this.#store = ManifestStore.fromBundle(normalized, this.#baseDir);
     return normalized;
   }
 
@@ -303,10 +304,14 @@ export class ManifestLoader {
       throw new Error(`[@eggjs/egg-bundler] failed to read framework package ${pkgJsonPath}`, { cause: error });
     }
     let entryRel: string | undefined;
-    if (pkg.exports) {
+    if (pkg.exports !== undefined) {
       entryRel = this.#resolveExportsEntry(pkg.exports);
+      if (!entryRel) {
+        throw new Error(`[@eggjs/egg-bundler] framework package ${pkgJsonPath} has no resolvable entry`);
+      }
+    } else {
+      entryRel = pkg.module ?? pkg.main;
     }
-    entryRel = entryRel ?? pkg.module ?? pkg.main;
     if (!entryRel) {
       throw new Error(`[@eggjs/egg-bundler] framework package ${pkgJsonPath} has no resolvable entry`);
     }

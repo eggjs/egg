@@ -427,6 +427,21 @@ describe('ManifestLoader', () => {
     );
   });
 
+  it('does not cache a manifest when bundle store creation rejects it', async () => {
+    const baseDir = createTempApp();
+    writeJson(path.join(baseDir, 'package.json'), {});
+    const manifestPath = path.join(baseDir, '.egg/manifest.json');
+    const data = manifest();
+    delete (data as Partial<StartupManifest>).invalidation;
+    writeJson(manifestPath, data);
+
+    const loader = new ManifestLoader({ baseDir, manifestPath, autoGenerate: false });
+
+    await expect(loader.load()).rejects.toThrow('bundled manifest missing invalidation data');
+    expect(() => loader.manifest).toThrow('ManifestLoader.load() must be awaited');
+    await expect(loader.load()).rejects.toThrow('bundled manifest missing invalidation data');
+  });
+
   it('resolves package exports shorthand condition maps in key order for frameworkEntry', async () => {
     const { appDir, frameworkDir } = await loadFrameworkFixture({
       default: './src/index.js',
@@ -474,6 +489,25 @@ describe('ManifestLoader', () => {
     const { appDir, frameworkDir } = await createFrameworkFixture({
       './feature': './src/index.js',
     });
+    const loader = new ManifestLoader({
+      baseDir: appDir,
+      framework: frameworkDir,
+      autoGenerate: true,
+      env: 'prod',
+      execArgv: [],
+    });
+
+    await expect(loader.load()).rejects.toThrow(/has no resolvable entry/);
+  });
+
+  it('does not fall back to main when package exports has no root entry', async () => {
+    const { appDir, frameworkDir } = await createFrameworkFixture({
+      './feature': './src/missing.js',
+    });
+    const pkgJsonPath = path.join(frameworkDir, 'package.json');
+    const pkg = JSON.parse(await fsp.readFile(pkgJsonPath, 'utf-8'));
+    pkg.main = './src/index.js';
+    await fsp.writeFile(pkgJsonPath, JSON.stringify(pkg, null, 2));
     const loader = new ManifestLoader({
       baseDir: appDir,
       framework: frameworkDir,
