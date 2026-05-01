@@ -7,6 +7,7 @@ import mm from 'mm';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { ManifestStore } from '../../src/loader/manifest.ts';
+import type { StartupManifest } from '../../src/loader/manifest.ts';
 import { createTmpDir, setupBaseDir, generateAndWrite } from './manifest_helper.ts';
 
 let tmpDir: string;
@@ -18,6 +19,7 @@ describe('ManifestStore', () => {
 
   afterEach(() => {
     mm.restore();
+    ManifestStore.setBundleStore(undefined);
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 
@@ -257,6 +259,15 @@ describe('ManifestStore', () => {
   });
 
   describe('load()', () => {
+    function createBundleStore(baseDir: string, serverEnv = 'prod') {
+      const manifest = ManifestStore.createCollector(baseDir).generateManifest({
+        serverEnv,
+        serverScope: '',
+        typescriptEnabled: true,
+      });
+      return ManifestStore.fromBundle(manifest, baseDir);
+    }
+
     it('should load a valid manifest', async () => {
       const baseDir = setupBaseDir();
       try {
@@ -267,6 +278,69 @@ describe('ManifestStore', () => {
         assert.equal(store.baseDir, baseDir);
       } finally {
         fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should return registered bundle store when manifest file does not exist', () => {
+      const baseDir = setupBaseDir();
+      try {
+        const bundleStore = createBundleStore(baseDir);
+        ManifestStore.setBundleStore(bundleStore);
+
+        const store = ManifestStore.load(baseDir, 'prod', '');
+        assert.equal(store, bundleStore);
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should return registered bundle store before reading invalid manifest JSON', () => {
+      const baseDir = setupBaseDir();
+      try {
+        const eggDir = path.join(baseDir, '.egg');
+        fs.mkdirSync(eggDir, { recursive: true });
+        fs.writeFileSync(path.join(eggDir, 'manifest.json'), 'not json{{{');
+
+        const bundleStore = createBundleStore(baseDir);
+        ManifestStore.setBundleStore(bundleStore);
+
+        const store = ManifestStore.load(baseDir, 'prod', '');
+        assert.equal(store, bundleStore);
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should return registered bundle store in local env when EGG_MANIFEST is unset', () => {
+      const baseDir = setupBaseDir();
+      const savedEggManifest = process.env.EGG_MANIFEST;
+      try {
+        delete process.env.EGG_MANIFEST;
+        const bundleStore = createBundleStore(baseDir, 'local');
+        ManifestStore.setBundleStore(bundleStore);
+
+        const store = ManifestStore.load(baseDir, 'local', '');
+        assert.equal(store, bundleStore);
+      } finally {
+        if (savedEggManifest !== undefined) {
+          process.env.EGG_MANIFEST = savedEggManifest;
+        } else {
+          delete process.env.EGG_MANIFEST;
+        }
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should ignore registered bundle store for a different baseDir', () => {
+      const bundleBaseDir = setupBaseDir();
+      try {
+        const bundleStore = createBundleStore(bundleBaseDir);
+        ManifestStore.setBundleStore(bundleStore);
+
+        const store = ManifestStore.load(tmpDir, 'prod', '');
+        assert.equal(store, null);
+      } finally {
+        fs.rmSync(bundleBaseDir, { recursive: true, force: true });
       }
     });
 
@@ -371,6 +445,95 @@ describe('ManifestStore', () => {
         const store = ManifestStore.load(baseDir, 'local', '');
         assert.ok(store);
         assert.equal(store.data.invalidation.serverEnv, 'local');
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+  });
+
+  describe('fromBundle()', () => {
+    it('should create store from bundled manifest data', () => {
+      const baseDir = setupBaseDir();
+      try {
+        const manifest = ManifestStore.createCollector(baseDir).generateManifest({
+          serverEnv: 'prod',
+          serverScope: '',
+          typescriptEnabled: true,
+        });
+        manifest.resolveCache['config/plugin'] = 'config/plugin.ts';
+
+        const store = ManifestStore.fromBundle(manifest, baseDir);
+        const result = store.resolveModule(path.join(baseDir, 'config/plugin'), () => {
+          throw new Error('should not be called');
+        });
+
+        assert.equal(store.baseDir, baseDir);
+        assert.equal(store.data, manifest);
+        assert.equal(result, path.join(baseDir, 'config/plugin.ts'));
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should throw when bundled manifest version mismatches', () => {
+      const baseDir = setupBaseDir();
+      try {
+        const manifest = ManifestStore.createCollector(baseDir).generateManifest({
+          serverEnv: 'prod',
+          serverScope: '',
+          typescriptEnabled: true,
+        });
+        manifest.version = 999;
+
+        assert.throws(
+          () => ManifestStore.fromBundle(manifest, baseDir),
+          /bundled manifest version mismatch: expected 1, got 999/,
+        );
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should throw when bundled manifest is missing invalidation data', () => {
+      const baseDir = setupBaseDir();
+      try {
+        const manifest = ManifestStore.createCollector(baseDir).generateManifest({
+          serverEnv: 'prod',
+          serverScope: '',
+          typescriptEnabled: true,
+        });
+        delete (manifest as Partial<StartupManifest>).invalidation;
+
+        assert.throws(() => ManifestStore.fromBundle(manifest, baseDir), /bundled manifest missing invalidation data/);
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should throw a clear error when bundled manifest data is null', () => {
+      assert.throws(
+        () => ManifestStore.fromBundle(null as unknown as StartupManifest, tmpDir),
+        /bundled manifest version mismatch: expected 1, got undefined/,
+      );
+    });
+
+    it('should bypass normal invalidation checks for bundled manifest data', async () => {
+      const baseDir = setupBaseDir({ lockfile: 'pnpm' });
+      try {
+        const manifest = ManifestStore.createCollector(baseDir).generateManifest({
+          serverEnv: 'prod',
+          serverScope: '',
+          typescriptEnabled: true,
+        });
+        manifest.invalidation.serverEnv = 'stale-env';
+        manifest.invalidation.serverScope = 'stale-scope';
+        manifest.invalidation.typescriptEnabled = !manifest.invalidation.typescriptEnabled;
+        manifest.invalidation.lockfileFingerprint = 'stale-lockfile';
+        manifest.invalidation.configFingerprint = 'stale-config';
+        await ManifestStore.write(baseDir, manifest);
+
+        assert.equal(ManifestStore.load(baseDir, 'prod', ''), null);
+        assert.doesNotThrow(() => ManifestStore.fromBundle(manifest, baseDir));
       } finally {
         fs.rmSync(baseDir, { recursive: true, force: true });
       }

@@ -151,9 +151,9 @@ describe('bundle() integration — minimal-app (Phase 1: mocked @utoo/pack)', ()
     expect(bm.framework).toBe('egg');
     expect(bm.entries).toEqual([{ name: 'worker', source: expect.stringContaining('worker.entry.ts') }]);
     expect(Array.isArray(bm.externals)).toBe(true);
-    // externals should be sorted and should contain at least egg (workspace dep)
+    // externals should be sorted; framework packages are bundled by default.
     expect([...bm.externals]).toEqual(sortStrings(bm.externals));
-    expect(bm.externals).toContain('egg');
+    expect(bm.externals).not.toContain('egg');
     // chunks should be sorted and contain worker.js
     expect([...bm.chunks]).toEqual(sortStrings(bm.chunks));
     expect(bm.chunks).toContain('worker.js');

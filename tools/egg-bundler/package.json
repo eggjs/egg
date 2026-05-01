@@ -20,23 +20,59 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./lib/Bundler": "./src/lib/Bundler.ts",
-    "./lib/EntryGenerator": "./src/lib/EntryGenerator.ts",
-    "./lib/ExternalsResolver": "./src/lib/ExternalsResolver.ts",
-    "./lib/ManifestLoader": "./src/lib/ManifestLoader.ts",
-    "./lib/PackRunner": "./src/lib/PackRunner.ts",
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./lib/Bundler": {
+      "types": "./src/lib/Bundler.ts",
+      "import": "./src/lib/Bundler.ts"
+    },
+    "./lib/EntryGenerator": {
+      "types": "./src/lib/EntryGenerator.ts",
+      "import": "./src/lib/EntryGenerator.ts"
+    },
+    "./lib/ExternalsResolver": {
+      "types": "./src/lib/ExternalsResolver.ts",
+      "import": "./src/lib/ExternalsResolver.ts"
+    },
+    "./lib/ManifestLoader": {
+      "types": "./src/lib/ManifestLoader.ts",
+      "import": "./src/lib/ManifestLoader.ts"
+    },
+    "./lib/PackRunner": {
+      "types": "./src/lib/PackRunner.ts",
+      "import": "./src/lib/PackRunner.ts"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.js",
-      "./lib/Bundler": "./dist/lib/Bundler.js",
-      "./lib/EntryGenerator": "./dist/lib/EntryGenerator.js",
-      "./lib/ExternalsResolver": "./dist/lib/ExternalsResolver.js",
-      "./lib/ManifestLoader": "./dist/lib/ManifestLoader.js",
-      "./lib/PackRunner": "./dist/lib/PackRunner.js",
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "./lib/Bundler": {
+        "types": "./dist/lib/Bundler.d.ts",
+        "import": "./dist/lib/Bundler.js"
+      },
+      "./lib/EntryGenerator": {
+        "types": "./dist/lib/EntryGenerator.d.ts",
+        "import": "./dist/lib/EntryGenerator.js"
+      },
+      "./lib/ExternalsResolver": {
+        "types": "./dist/lib/ExternalsResolver.d.ts",
+        "import": "./dist/lib/ExternalsResolver.js"
+      },
+      "./lib/ManifestLoader": {
+        "types": "./dist/lib/ManifestLoader.d.ts",
+        "import": "./dist/lib/ManifestLoader.js"
+      },
+      "./lib/PackRunner": {
+        "types": "./dist/lib/PackRunner.d.ts",
+        "import": "./dist/lib/PackRunner.js"
+      },
       "./package.json": "./package.json"
     }
   },
@@ -53,6 +89,7 @@
     "@eggjs/core": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "@utoo/pack": "catalog:",
+    "execa": "catalog:",
     "tsx": "catalog:"
   },
   "devDependencies": {
@@ -63,6 +100,7 @@
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "rimraf": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

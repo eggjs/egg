@@ -13,12 +13,11 @@ interface PackageJson {
   readonly name?: string;
   readonly type?: string;
   readonly dependencies?: Record<string, string>;
+  readonly optionalDependencies?: Record<string, string>;
   readonly peerDependencies?: Record<string, string>;
   readonly scripts?: Record<string, string>;
   readonly exports?: unknown;
 }
-
-const ALWAYS_EXTERNAL_NAMES: ReadonlySet<string> = new Set(['egg', '@swc/helpers']);
 
 // install-time hooks using one of these tools strongly imply a native addon
 const NATIVE_SCRIPT_PATTERN = /node-gyp|prebuild-install|napi-rs|node-pre-gyp|electron-rebuild/i;
@@ -27,6 +26,8 @@ export class ExternalsResolver {
   readonly #baseDir: string;
   readonly #force: ReadonlySet<string>;
   readonly #inline: ReadonlySet<string>;
+  readonly #packageDirCache = new Map<string, Promise<string | undefined>>();
+  readonly #packageJsonCache = new Map<string, Promise<PackageJson>>();
 
   constructor(options: ExternalsResolverOptions) {
     this.#baseDir = options.baseDir;
@@ -36,7 +37,11 @@ export class ExternalsResolver {
 
   async resolve(): Promise<ExternalsConfig> {
     const rootPkg = await this.#readPackageJson(this.#baseDir);
-    const deps = Object.keys(rootPkg.dependencies ?? {});
+    const deps = new Set([
+      ...Object.keys(rootPkg.dependencies ?? {}),
+      ...Object.keys(rootPkg.optionalDependencies ?? {}),
+    ]);
+    const optionalDeps = new Set(Object.keys(rootPkg.optionalDependencies ?? {}));
     const peerDeps = new Set(Object.keys(rootPkg.peerDependencies ?? {}));
     const result: Record<string, string> = {};
 
@@ -47,7 +52,7 @@ export class ExternalsResolver {
     for (const name of deps) {
       if (this.#inline.has(name) && !this.#force.has(name)) continue;
       if (result[name]) continue;
-      if (await this.#shouldExternalize(name, peerDeps)) {
+      if (await this.#shouldExternalize(name, optionalDeps, peerDeps)) {
         result[name] = name;
       }
     }
@@ -60,19 +65,31 @@ export class ExternalsResolver {
     return result;
   }
 
-  async #shouldExternalize(name: string, peerDeps: ReadonlySet<string>): Promise<boolean> {
+  async #shouldExternalize(
+    name: string,
+    optionalDeps: ReadonlySet<string>,
+    peerDeps: ReadonlySet<string>,
+  ): Promise<boolean> {
+    if (optionalDeps.has(name)) return true;
     if (peerDeps.has(name)) return true;
-    if (ALWAYS_EXTERNAL_NAMES.has(name)) return true;
-    if (name === 'egg' || name.startsWith('@eggjs/')) return true;
 
     const pkgDir = await this.#findPackageDir(name);
     if (!pkgDir) return false;
-    if (await this.#hasNativeBinary(pkgDir)) return true;
-    if (await this.#isEsmOnly(pkgDir)) return true;
+    const pkg = await this.#readPackageJson(pkgDir);
+    if (await this.#hasNativeBinary(pkgDir, pkg)) return true;
+    if (this.#isEsmOnly(pkg)) return true;
     return false;
   }
 
   async #findPackageDir(name: string): Promise<string | undefined> {
+    const cached = this.#packageDirCache.get(name);
+    if (cached) return cached;
+    const result = this.#findPackageDirUncached(name);
+    this.#packageDirCache.set(name, result);
+    return result;
+  }
+
+  async #findPackageDirUncached(name: string): Promise<string | undefined> {
     let dir = this.#baseDir;
     while (true) {
       const candidate = path.join(dir, 'node_modules', name);
@@ -88,8 +105,7 @@ export class ExternalsResolver {
     }
   }
 
-  async #hasNativeBinary(pkgDir: string): Promise<boolean> {
-    const pkg = await this.#readPackageJson(pkgDir);
+  async #hasNativeBinary(pkgDir: string, pkg: PackageJson): Promise<boolean> {
     const scripts = pkg.scripts ?? {};
     for (const hook of ['install', 'postinstall', 'preinstall'] as const) {
       const script = scripts[hook];
@@ -115,13 +131,12 @@ export class ExternalsResolver {
     return false;
   }
 
-  async #isEsmOnly(pkgDir: string): Promise<boolean> {
-    const pkg = await this.#readPackageJson(pkgDir);
+  #isEsmOnly(pkg: PackageJson): boolean {
     if (pkg.type !== 'module') return false;
     const exportsField = pkg.exports;
-    if (!exportsField || typeof exportsField !== 'object') {
-      return false;
-    }
+    if (!exportsField) return false;
+    if (typeof exportsField === 'string') return true;
+    if (typeof exportsField !== 'object') return false;
     return !this.#hasRequireCondition(exportsField);
   }
 
@@ -139,11 +154,22 @@ export class ExternalsResolver {
   }
 
   async #readPackageJson(dir: string): Promise<PackageJson> {
+    const cached = this.#packageJsonCache.get(dir);
+    if (cached) return cached;
+    const result = this.#readPackageJsonUncached(dir);
+    this.#packageJsonCache.set(dir, result);
+    return result;
+  }
+
+  async #readPackageJsonUncached(dir: string): Promise<PackageJson> {
     try {
       const raw = await fs.readFile(path.join(dir, 'package.json'), 'utf8');
       return JSON.parse(raw) as PackageJson;
-    } catch {
-      return {};
+    } catch (error) {
+      if ((error as { code?: string }).code === 'ENOENT') {
+        return {};
+      }
+      throw error;
     }
   }
 

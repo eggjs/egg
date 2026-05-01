@@ -1,10 +1,24 @@
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
 const debug = debuglog('egg/bundler/scripts/generate-manifest');
 
+async function readOptions() {
+  if (process.argv[2]) {
+    return JSON.parse(process.argv[2]);
+  }
+
+  let raw = '';
+  for await (const chunk of process.stdin) {
+    raw += chunk;
+  }
+  return JSON.parse(raw);
+}
+
 async function main() {
   debug('argv: %o', process.argv);
-  const options = JSON.parse(process.argv[2]);
+  const options = await readOptions();
   debug('generate manifest options: %o', options);
 
   if (options.env) {
@@ -16,17 +30,13 @@ async function main() {
   process.env.EGG_MANIFEST = 'true';
 
   const { ManifestStore } = await import('@eggjs/core');
-  ManifestStore.clean(options.baseDir);
 
-  // `frameworkEntry` (a file:// URL to the package's real entry file) is the
-  // only way to load a workspace-linked framework whose `exports` map points at
-  // a TypeScript source. Importing the package directory directly would bypass
-  // `exports` and fall through to legacy directory resolution.
   let framework;
   if (options.frameworkEntry) {
     framework = await import(options.frameworkEntry);
   } else if (options.framework) {
-    framework = await import(options.framework);
+    const specifier = path.isAbsolute(options.framework) ? pathToFileURL(options.framework).href : options.framework;
+    framework = await import(specifier);
   } else {
     framework = await import('egg');
   }
@@ -50,7 +60,6 @@ async function main() {
   console.log('[bundler-manifest]   extensions: %d', extensionCount);
 
   await app.close();
-  process.exit(0);
 }
 
 main().catch((err) => {
