@@ -9,12 +9,13 @@ import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/ManifestCollection.test.ts', () => {
   let app: MockApplication;
+  let teggExtCache: TeggManifestExtension | undefined;
 
   function getTeggManifestExtension() {
-    return (
+    teggExtCache ??=
       (app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined) ??
-      (app.loader.generateManifest().extensions[TEGG_MANIFEST_KEY] as TeggManifestExtension | undefined)
-    );
+      (app.loader.generateManifest().extensions[TEGG_MANIFEST_KEY] as TeggManifestExtension | undefined);
+    return teggExtCache;
   }
 
   afterEach(async () => {
@@ -26,6 +27,7 @@ describe('plugin/tegg/test/ManifestCollection.test.ts', () => {
       app = mm.app({
         baseDir: getAppBaseDir('egg-app'),
       });
+      teggExtCache = undefined;
       await app.ready();
     });
 
