@@ -12,9 +12,11 @@ describe('plugin/tegg/test/ManifestCollection.test.ts', () => {
   let teggExtCache: TeggManifestExtension | undefined;
 
   function getTeggManifestExtension() {
-    teggExtCache ??=
-      (app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined) ??
-      (app.loader.generateManifest().extensions[TEGG_MANIFEST_KEY] as TeggManifestExtension | undefined);
+    if (!teggExtCache) {
+      teggExtCache =
+        (app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined) ??
+        (app.loader.generateManifest().extensions[TEGG_MANIFEST_KEY] as TeggManifestExtension | undefined);
+    }
     return teggExtCache;
   }
 
