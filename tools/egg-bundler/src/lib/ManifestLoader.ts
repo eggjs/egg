@@ -466,9 +466,16 @@ export class ManifestLoader {
         try {
           await fsp.access(candidate);
           return candidate;
-        } catch {
+        } catch (accessError) {
+          if ((accessError as NodeJS.ErrnoException).code !== 'ENOENT') {
+            throw new Error(`[@eggjs/egg-bundler] failed to access ${candidate}`, { cause: accessError });
+          }
           const parent = path.dirname(dir);
-          if (parent === dir) throw error;
+          if (parent === dir) {
+            throw new Error(`[@eggjs/egg-bundler] failed to resolve package.json for ${name}`, {
+              cause: accessError,
+            });
+          }
           dir = parent;
         }
       }

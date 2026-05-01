@@ -58,6 +58,7 @@ export class Bundler {
       baseDir: absBaseDir,
       manifestPath,
       framework,
+      autoGenerate: true,
     });
     await wrapStep('manifest load', () => manifestLoader.load());
 
