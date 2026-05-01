@@ -188,6 +188,8 @@ describe('bundle() is deterministic (T17)', () => {
     const bmB = JSON.parse(await fs.readFile(resultB.manifestPath, 'utf8')) as LooseManifest;
     expect(typeof bmA.generatedAt).toBe('string');
     expect(new Date(bmA.generatedAt as string).toString()).not.toBe('Invalid Date');
+    expect(typeof bmB.generatedAt).toBe('string');
+    expect(new Date(bmB.generatedAt as string).toString()).not.toBe('Invalid Date');
     delete bmA.generatedAt;
     delete bmB.generatedAt;
     expect(bmA).toEqual(bmB);
