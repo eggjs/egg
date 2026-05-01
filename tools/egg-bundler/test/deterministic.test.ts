@@ -204,12 +204,12 @@ describe('bundle() is deterministic (T17)', () => {
     const { baseDir: baseDirB, outputDir: outB } = await makeWorkspace('diff-b');
     expect(baseDirA).not.toBe(baseDirB);
 
-    await bundle({
+    const resultA = await bundle({
       baseDir: baseDirA,
       outputDir: outA,
       pack: { buildFunc: makeDeterministicMockBuild(outA) },
     });
-    await bundle({
+    const resultB = await bundle({
       baseDir: baseDirB,
       outputDir: outB,
       pack: { buildFunc: makeDeterministicMockBuild(outB) },
@@ -223,16 +223,18 @@ describe('bundle() is deterministic (T17)', () => {
     expect(entryA).not.toContain(baseDirA);
     expect(entryA).not.toContain(baseDirB);
 
-    // Same for worker.js / tsconfig.json / package.json — everything in outA
-    // should be byte-identical to its outB counterpart.
+    // Same for every produced artifact — everything in outA should be
+    // byte-identical to its outB counterpart, including nested files.
     const drift: string[] = [];
-    const namesInA = (await fs.readdir(outA)).sort();
-    const namesInB = (await fs.readdir(outB)).sort();
+    const hashesA = await hashByOutputRel(resultA.files, outA);
+    const hashesB = await hashByOutputRel(resultB.files, outB);
+    const namesInA = Object.keys(hashesA).sort();
+    const namesInB = Object.keys(hashesB).sort();
     expect(namesInA).toEqual(namesInB);
     for (const name of namesInA) {
       if (name === 'bundle-manifest.json') continue; // carries baseDir + generatedAt
-      const hashA = await sha256(path.join(outA, name));
-      const hashB = await sha256(path.join(outB, name));
+      const hashA = hashesA[name];
+      const hashB = hashesB[name];
       if (hashA !== hashB) drift.push(name);
     }
     expect(drift, `non-deterministic files across clones: ${drift.join(', ')}`).toEqual([]);
