@@ -1,5 +1,5 @@
 import '@eggjs/typings/global';
-import type {} from './global.d.ts';
+import type {} from './global.ts';
 import utils from './utils/index.ts';
 
 export { utils };

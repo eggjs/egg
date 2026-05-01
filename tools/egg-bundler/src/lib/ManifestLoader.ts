@@ -445,7 +445,7 @@ export class ManifestLoader {
           const realDir = await this.#realpath(path.dirname(depPkgJson));
           if (seen.has(realDir)) continue;
           seen.add(realDir);
-          const normalizedDir = [parentNormalizedDir, 'node_modules', name].filter(Boolean).join('/');
+          const normalizedDir = this.#normalizePackageDir(realDir, parentNormalizedDir, name);
           if (!entries.has(realDir)) entries.set(realDir, normalizedDir);
           await addPackageDeps(depPkgJson, normalizedDir);
         } catch {
@@ -462,6 +462,15 @@ export class ManifestLoader {
     return Array.from(entries, ([realDir, normalizedDir]) => ({ realDir, normalizedDir })).sort(
       (a, b) => b.realDir.length - a.realDir.length,
     );
+  }
+
+  #normalizePackageDir(realDir: string, parentNormalizedDir: string, name: string): string {
+    const rel = path.relative(this.#baseDir, realDir).replaceAll(path.sep, '/');
+    const segments = this.#pathSegments(rel);
+    if (rel && !rel.startsWith('..') && !path.isAbsolute(rel) && segments[0] === 'node_modules') {
+      if (!segments.includes('.pnpm')) return rel;
+    }
+    return [parentNormalizedDir, 'node_modules', name].filter(Boolean).join('/');
   }
 
   #pathSegments(filepath: string): string[] {

@@ -139,6 +139,8 @@ describe('ManifestLoader', () => {
     const transitiveRoot = path.join(directRoot, 'node_modules/transitive');
     const transitiveLib = path.join(transitiveRoot, 'lib');
     const transitiveFile = path.join(transitiveLib, 'svc.ts');
+    const hoistedRoot = path.join(baseDir, 'node_modules/hoisted-transitive');
+    const hoistedFile = path.join(hoistedRoot, 'index.ts');
     const optionalRoot = path.join(baseDir, 'node_modules/optional-native');
     const optionalFile = path.join(optionalRoot, 'index.ts');
 
@@ -155,10 +157,15 @@ describe('ManifestLoader', () => {
       version: '1.0.0',
       dependencies: {
         transitive: '1.0.0',
+        'hoisted-transitive': '1.0.0',
       },
     });
     writeJson(path.join(transitiveRoot, 'package.json'), {
       name: 'transitive',
+      version: '1.0.0',
+    });
+    writeJson(path.join(hoistedRoot, 'package.json'), {
+      name: 'hoisted-transitive',
       version: '1.0.0',
     });
     writeJson(path.join(optionalRoot, 'package.json'), {
@@ -167,6 +174,7 @@ describe('ManifestLoader', () => {
     });
     fs.mkdirSync(transitiveLib, { recursive: true });
     fs.writeFileSync(transitiveFile, 'export const value = 1;\n');
+    fs.writeFileSync(hoistedFile, 'export const hoisted = true;\n');
     fs.writeFileSync(optionalFile, 'export const optional = true;\n');
 
     const manifestPath = path.join(baseDir, '.egg/manifest.json');
@@ -178,6 +186,7 @@ describe('ManifestLoader', () => {
         },
         resolveCache: {
           [path.join(transitiveRoot, 'entry')]: transitiveFile,
+          [path.join(hoistedRoot, 'entry')]: hoistedFile,
           [path.join(optionalRoot, 'entry')]: optionalFile,
         },
         extensions: {
@@ -200,6 +209,7 @@ describe('ManifestLoader', () => {
       'node_modules/direct/node_modules/transitive/lib': ['svc.ts'],
     });
     expect(loaded.resolveCache).toEqual({
+      'node_modules/hoisted-transitive/entry': 'node_modules/hoisted-transitive/index.ts',
       'node_modules/direct/node_modules/transitive/entry': 'node_modules/direct/node_modules/transitive/lib/svc.ts',
       'node_modules/optional-native/entry': 'node_modules/optional-native/index.ts',
     });
