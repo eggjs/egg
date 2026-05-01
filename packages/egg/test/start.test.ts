@@ -24,9 +24,15 @@ describe('test/start.test.ts', () => {
       assert.strictEqual(app.router.stack.length, 0);
     });
 
-    it('should not create agent', () => {
+  it('should not create agent', () => {
       assert.strictEqual(app.agent, undefined);
     });
+  });
+
+  it('should skip beforeClose callbacks when closing a metadataOnly app', async () => {
+    const app = await singleProcessApp('apps/metadata-only-app', { metadataOnly: true });
+    await app.close();
+    assert.deepStrictEqual(app.bootLog, ['loadMetadata']);
   });
 
   describe('normal mode (baseline)', () => {

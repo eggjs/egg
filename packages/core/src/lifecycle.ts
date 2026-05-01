@@ -254,6 +254,16 @@ export class Lifecycle extends EventEmitter {
   }
 
   async close(): Promise<void> {
+    if (this.#metadataOnly) {
+      debug('%s skip beforeClose functions in metadataOnly mode', this.app.type);
+      this.app.emit('close');
+      this.removeAllListeners();
+      this.app.removeAllListeners();
+      this.#isClosed = true;
+      debug('%s closed', this.app.type);
+      return;
+    }
+
     // close in reverse order: first created, last closed
     const closeFns = Array.from(this.#closeFunctionSet);
     debug('%s start trigger %d beforeClose functions', this.app.type, closeFns.length);
