@@ -126,6 +126,58 @@ async function loadFrameworkFixture(exportsField: unknown): Promise<{ appDir: st
   return fixture;
 }
 
+async function createInstalledFrameworkFixture(
+  exportsField: unknown = {
+    '.': {
+      import: './src/index.js',
+    },
+  },
+): Promise<{ appDir: string; frameworkDir: string }> {
+  const root = createTempApp();
+  const appDir = path.join(root, 'app');
+  const frameworkDir = path.join(appDir, 'node_modules/fake-framework');
+  await fsp.mkdir(path.join(frameworkDir, 'src'), { recursive: true });
+
+  await fsp.writeFile(
+    path.join(appDir, 'package.json'),
+    JSON.stringify({ name: 'app', dependencies: { 'fake-framework': '1.0.0' } }),
+  );
+  await fsp.writeFile(
+    path.join(frameworkDir, 'package.json'),
+    JSON.stringify(
+      {
+        name: 'fake-framework',
+        type: 'module',
+        exports: exportsField,
+        dependencies: {},
+      },
+      null,
+      2,
+    ),
+  );
+  await fsp.writeFile(
+    path.join(frameworkDir, 'src/index.js'),
+    `
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+export async function start(options) {
+  await fs.writeFile(path.join(options.baseDir, 'framework-entry.txt'), import.meta.url);
+  return {
+    loader: {
+      generateManifest() {
+        return ${JSON.stringify(generatedManifest(), null, 10)};
+      },
+    },
+    async close() {},
+  };
+}
+`,
+  );
+
+  return { appDir, frameworkDir };
+}
+
 afterEach(() => {
   for (const dir of tempDirs.splice(0)) {
     fs.rmSync(dir, { recursive: true, force: true });
@@ -375,14 +427,18 @@ describe('ManifestLoader', () => {
     );
   });
 
-  it('resolves package exports shorthand condition maps for frameworkEntry', async () => {
+  it('resolves package exports shorthand condition maps in key order for frameworkEntry', async () => {
     const { appDir, frameworkDir } = await loadFrameworkFixture({
-      import: './src/index.js',
-      default: './src/missing.js',
+      default: './src/index.js',
+      import: './src/missing.js',
     });
 
     const loadedEntry = await fsp.readFile(path.join(appDir, 'framework-entry.txt'), 'utf-8');
     expect(loadedEntry).toBe(pathToFileURL(path.join(frameworkDir, 'src/index.js')).href);
+  });
+
+  it('ignores inactive package exports conditions for frameworkEntry', async () => {
+    await expect(loadFrameworkFixture({ require: './src/index.js' })).rejects.toThrow(/has no resolvable entry/);
   });
 
   it('resolves nested package exports conditions for frameworkEntry', async () => {
@@ -412,5 +468,21 @@ describe('ManifestLoader', () => {
     });
 
     await expect(loader.load()).rejects.toThrow(/has no resolvable entry/);
+  });
+
+  it('resolves framework package roots when package.json is hidden by exports', async () => {
+    const { appDir, frameworkDir } = await createInstalledFrameworkFixture();
+    const loader = new ManifestLoader({
+      baseDir: appDir,
+      framework: 'fake-framework',
+      autoGenerate: true,
+      env: 'prod',
+      execArgv: [],
+    });
+
+    await loader.load();
+
+    const loadedEntry = await fsp.readFile(path.join(appDir, 'framework-entry.txt'), 'utf-8');
+    expect(loadedEntry).toBe(pathToFileURL(path.join(frameworkDir, 'src/index.js')).href);
   });
 });

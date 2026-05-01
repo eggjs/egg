@@ -11,7 +11,7 @@ const debug = debuglog('egg/bundler/manifest-loader');
 
 const SUPPORTED_MANIFEST_VERSION = 1;
 const FRAMEWORK_DEFAULT = 'egg';
-const PACKAGE_ENTRY_CONDITIONS = ['import', 'module', 'node', 'default', 'require', 'development', 'production'];
+const PACKAGE_ENTRY_ACTIVE_CONDITIONS = new Set(['import', 'node', 'default']);
 
 export interface ManifestLoaderOptions {
   baseDir: string;
@@ -178,7 +178,7 @@ export class ManifestLoader {
     }
     const payload = {
       baseDir: this.#baseDir,
-      framework: this.#resolveFrameworkPath(),
+      framework: await this.#resolveFrameworkPath(),
       frameworkEntry: await this.#resolveFrameworkEntryUrl(),
       env: this.#env,
       scope: this.#scope,
@@ -261,14 +261,8 @@ export class ManifestLoader {
       return undefined;
     }
 
-    const used = new Set<string>();
-    for (const key of PACKAGE_ENTRY_CONDITIONS) {
-      used.add(key);
-      const resolved = this.#resolvePackageEntry(map[key]);
-      if (resolved) return resolved;
-    }
     for (const [key, value] of Object.entries(map)) {
-      if (used.has(key)) continue;
+      if (key.startsWith('.') || !PACKAGE_ENTRY_ACTIVE_CONDITIONS.has(key)) continue;
       const resolved = this.#resolvePackageEntry(value);
       if (resolved) return resolved;
     }
@@ -296,7 +290,7 @@ export class ManifestLoader {
   }
 
   async #resolveFrameworkEntryUrl(): Promise<string> {
-    const frameworkDir = this.#resolveFrameworkPath();
+    const frameworkDir = await this.#resolveFrameworkPath();
     const pkgJsonPath = path.join(frameworkDir, 'package.json');
     const pkg = JSON.parse(await fsp.readFile(pkgJsonPath, 'utf-8')) as {
       exports?: Record<string, unknown> | string;
@@ -314,12 +308,14 @@ export class ManifestLoader {
     return this.#resolvePackageEntryUrl(frameworkDir, entryRel, pkgJsonPath);
   }
 
-  #resolveFrameworkPath(): string {
+  async #resolveFrameworkPath(): Promise<string> {
     if (path.isAbsolute(this.#framework)) return this.#framework;
     try {
-      const pkgJson = this.#baseRequire.resolve(`${this.#framework}/package.json`);
+      const pkgJson = await this.#resolvePackageJson(this.#framework, this.#baseRequire, this.#baseDir);
       return path.dirname(pkgJson);
-    } catch {
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code;
+      if (code !== 'MODULE_NOT_FOUND' && code !== 'ERR_PACKAGE_PATH_NOT_EXPORTED') throw error;
       return this.#framework;
     }
   }
@@ -424,58 +420,54 @@ export class ManifestLoader {
     return result;
   }
 
+  async #findPackageJsonFromNodeModules(name: string, startDir: string): Promise<string | undefined> {
+    let dir = startDir;
+    const nameSegments = name.split('/');
+    while (true) {
+      const candidates = [
+        path.join(dir, 'node_modules', ...nameSegments, 'package.json'),
+        path.join(dir, 'node_modules', '.pnpm', 'node_modules', ...nameSegments, 'package.json'),
+      ];
+      for (const candidate of candidates) {
+        try {
+          await fsp.access(candidate);
+          return candidate;
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+        }
+      }
+      const parent = path.dirname(dir);
+      if (parent === dir) return undefined;
+      dir = parent;
+    }
+  }
+
+  async #resolvePackageJson(name: string, req: ReturnType<typeof createRequire>, startDir: string): Promise<string> {
+    try {
+      return req.resolve(`${name}/package.json`);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ERR_PACKAGE_PATH_NOT_EXPORTED') throw error;
+      const packageJsonFromNodeModules = await this.#findPackageJsonFromNodeModules(name, startDir);
+      if (packageJsonFromNodeModules) return packageJsonFromNodeModules;
+      const entry = req.resolve(name);
+      let dir = path.dirname(entry);
+      while (true) {
+        const candidate = path.join(dir, 'package.json');
+        try {
+          await fsp.access(candidate);
+          return candidate;
+        } catch {
+          const parent = path.dirname(dir);
+          if (parent === dir) throw error;
+          dir = parent;
+        }
+      }
+    }
+  }
+
   async #buildModuleMap(): Promise<ModuleMapEntry[]> {
     const entries = new Map<string, string>();
     const seen = new Set<string>();
-
-    const findPackageJsonFromNodeModules = async (name: string, startDir: string): Promise<string | undefined> => {
-      let dir = startDir;
-      const nameSegments = name.split('/');
-      while (true) {
-        const candidates = [
-          path.join(dir, 'node_modules', ...nameSegments, 'package.json'),
-          path.join(dir, 'node_modules', '.pnpm', 'node_modules', ...nameSegments, 'package.json'),
-        ];
-        for (const candidate of candidates) {
-          try {
-            await fsp.access(candidate);
-            return candidate;
-          } catch (error) {
-            if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
-          }
-        }
-        const parent = path.dirname(dir);
-        if (parent === dir) return undefined;
-        dir = parent;
-      }
-    };
-
-    const resolvePackageJson = async (
-      name: string,
-      req: ReturnType<typeof createRequire>,
-      startDir: string,
-    ): Promise<string> => {
-      try {
-        return req.resolve(`${name}/package.json`);
-      } catch (error) {
-        if ((error as NodeJS.ErrnoException).code !== 'ERR_PACKAGE_PATH_NOT_EXPORTED') throw error;
-        const packageJsonFromNodeModules = await findPackageJsonFromNodeModules(name, startDir);
-        if (packageJsonFromNodeModules) return packageJsonFromNodeModules;
-        const entry = req.resolve(name);
-        let dir = path.dirname(entry);
-        while (true) {
-          const candidate = path.join(dir, 'package.json');
-          try {
-            await fsp.access(candidate);
-            return candidate;
-          } catch {
-            const parent = path.dirname(dir);
-            if (parent === dir) throw error;
-            dir = parent;
-          }
-        }
-      }
-    };
 
     const addPackageDeps = async (packageJsonPath: string, parentNormalizedDir: string): Promise<void> => {
       let pkg: {
@@ -497,7 +489,7 @@ export class ManifestLoader {
       ];
       for (const name of depNames) {
         try {
-          const depPkgJson = await resolvePackageJson(name, req, path.dirname(packageJsonPath));
+          const depPkgJson = await this.#resolvePackageJson(name, req, path.dirname(packageJsonPath));
           const realDir = await this.#realpath(path.dirname(depPkgJson));
           if (seen.has(realDir)) continue;
           seen.add(realDir);
@@ -512,7 +504,7 @@ export class ManifestLoader {
     };
 
     await addPackageDeps(path.join(this.#baseDir, 'package.json'), '');
-    const frameworkDir = this.#resolveFrameworkPath();
+    const frameworkDir = await this.#resolveFrameworkPath();
     const frameworkNormalizedDir = entries.get(await this.#realpath(frameworkDir)) ?? '';
     await addPackageDeps(path.join(frameworkDir, 'package.json'), frameworkNormalizedDir);
 
