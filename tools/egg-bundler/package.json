@@ -28,6 +28,10 @@
       "types": "./src/lib/EntryGenerator.ts",
       "import": "./src/lib/EntryGenerator.ts"
     },
+    "./lib/PackRunner": {
+      "types": "./src/lib/PackRunner.ts",
+      "import": "./src/lib/PackRunner.ts"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -40,6 +44,10 @@
       "./lib/EntryGenerator": {
         "types": "./dist/lib/EntryGenerator.d.ts",
         "import": "./dist/lib/EntryGenerator.js"
+      },
+      "./lib/PackRunner": {
+        "types": "./dist/lib/PackRunner.d.ts",
+        "import": "./dist/lib/PackRunner.js"
       },
       "./package.json": "./package.json"
     }
