@@ -1,6 +1,9 @@
 import { strict as assert } from 'node:assert';
 import { rm } from 'node:fs/promises';
+import { createConnection } from 'node:net';
+import { join } from 'node:path';
 import { scheduler } from 'node:timers/promises';
+import { tmpdir } from 'node:os';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { request } from '@eggjs/supertest';
@@ -8,7 +11,29 @@ import { ip } from 'address';
 import urllib from 'urllib';
 import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
 
-import { cluster, getFilepath } from './utils.ts';
+import { cluster } from './utils.ts';
+
+async function waitForSocket(filepath: string) {
+  const start = Date.now();
+  while (Date.now() - start < 5000) {
+    const connected = await new Promise<boolean>(resolve => {
+      const socket = createConnection(filepath);
+      socket.once('connect', () => {
+        socket.end();
+        resolve(true);
+      });
+      socket.once('error', () => {
+        socket.destroy();
+        resolve(false);
+      });
+    });
+    if (connected) {
+      return;
+    }
+    await scheduler.wait(50);
+  }
+  throw new Error(`Socket ${filepath} did not become connectable`);
+}
 
 // node v24 will hang when test this file
 // FIXME: should enable this test after node v24 is stable
@@ -204,9 +229,10 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
   });
 
   describe('listen config', () => {
-    const sockFile = getFilepath('apps/app-listen-path/my.sock');
+    const sockFile = join(tmpdir(), `egg-app-listen-path-${process.pid}.sock`);
     beforeEach(() => {
       mm.env('default');
+      mm(process.env, 'EGG_CLUSTER_SOCK_PATH', sockFile);
     });
     afterEach(async () => {
       await app.close();
@@ -283,6 +309,7 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
       app.expect('code', 0);
       app.expect('stdout', new RegExp(`egg started on ${sockFile}`));
 
+      await waitForSocket(sockFile);
       const sock = encodeURIComponent(sockFile);
       await request(`http+unix://${sock}`).get('/').expect('done').expect(200);
     });

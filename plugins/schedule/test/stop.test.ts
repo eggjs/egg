@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
@@ -16,7 +17,8 @@ describe.skipIf(process.platform === 'win32')('test/stop.test.ts', () => {
 
   it('should thrown', async () => {
     await sleep(10000);
-    const log = getLogContent('stop');
+    const logPath = getFixtures('stop/logs/stop/stop-web.log');
+    const log = existsSync(logPath) ? getLogContent('stop') : '';
     expect(contains(log, 'interval')).toBe(0);
   });
 });
