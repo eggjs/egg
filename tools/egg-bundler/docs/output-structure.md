@@ -31,9 +31,10 @@ node worker.js
 ```
 
 The worker entry installs `ManifestStore.setBundleStore(...)` and
-`setBundleModuleLoader(...)` before calling `startEgg({ baseDir, mode: 'single' })`,
-so all framework file discovery and module resolution is served from the
-inlined bundle map — no `fs.readdir` scanning at runtime.
+`globalThis.__EGG_BUNDLE_MODULE_LOADER__` before calling
+`startEgg({ baseDir, mode: 'single' })`, so all framework file discovery and
+module resolution is served from the inlined bundle map — no `fs.readdir`
+scanning at runtime.
 
 ## `bundle-manifest.json`
 

@@ -16,6 +16,7 @@ exports[`should expose properties 1`] = `
   "Boot": [Function],
   "ClusterAgentWorkerError": [Function],
   "ClusterWorkerExceptionError": [Function],
+  "Config": [Function],
   "Context": [Function],
   "ContextHttpClient": [Function],
   "ContextProto": [Function],

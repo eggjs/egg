@@ -52,11 +52,11 @@ export class ExternalsResolver {
 
     for (const name of deps) {
       if (this.#inline.has(name) && !this.#force.has(name)) continue;
+      await this.#addMissingOptionalPeerExternals(name, result);
       if (result[name]) continue;
       if (await this.#shouldExternalize(name, optionalDeps, peerDeps)) {
         result[name] = name;
       }
-      await this.#addMissingOptionalPeerExternals(name, result);
     }
 
     for (const name of peerDeps) {

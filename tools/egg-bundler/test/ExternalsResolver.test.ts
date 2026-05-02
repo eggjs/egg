@@ -146,6 +146,15 @@ describe('ExternalsResolver', () => {
       expect(result['normal-js']).toBe('normal-js');
     });
 
+    it('adds missing optional peerDependencies for force-listed packages', async () => {
+      const result = await new ExternalsResolver({
+        baseDir: basicApp,
+        force: ['optional-peer-host'],
+      }).resolve();
+      expect(result['optional-peer-host']).toBe('optional-peer-host');
+      expect(result['missing-optional-peer']).toBe('missing-optional-peer');
+    });
+
     it('inline removes a peerDependency from externals', async () => {
       const result = await new ExternalsResolver({
         baseDir: basicApp,

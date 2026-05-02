@@ -1,6 +1,7 @@
 import Helper from './app/extend/helper.ts';
 import { BaseContextClass } from './lib/core/base_context_class.ts';
 import { startEgg, type SingleModeApplication, type SingleModeAgent } from './lib/start.ts';
+import { EggAppConfig, type EggAppConfig as EggAppConfigType } from './lib/types.ts';
 
 // export extends
 export { Helper };
@@ -16,28 +17,27 @@ export * from './lib/types.ts';
 export * from './lib/define.ts';
 
 // alias EggAppConfig to Config
-export type {
-  /**
-   * Egg Application Config, can be injected into Proto, e.g. SingletonProto/ContextProto/HttpController.
-   *
-   * Usage:
-   * ```ts
-   * import { Inject, Config } from 'egg';
-   *
-   * @SingletonProto()
-   * class FooService {
-   *   @Inject()
-   *   config: Config;
-   *
-   *   async bar() {
-   *     console.log(this.config.env);
-   *   }
-   * }
-   * ```
-   * @since 4.1.0
-   */
-  EggAppConfig as Config,
-} from './lib/types.ts';
+export const Config = EggAppConfig;
+/**
+ * Egg Application Config, can be injected into Proto, e.g. SingletonProto/ContextProto/HttpController.
+ *
+ * Usage:
+ * ```ts
+ * import { Inject, Config } from 'egg';
+ *
+ * @SingletonProto()
+ * class FooService {
+ *   @Inject()
+ *   config: Config;
+ *
+ *   async bar() {
+ *     console.log(this.config.env);
+ *   }
+ * }
+ * ```
+ * @since 4.1.0
+ */
+export type Config = EggAppConfigType;
 
 export * from './lib/start.ts';
 
