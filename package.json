@@ -23,6 +23,7 @@
     "pretest": "ut run clean-dist && ut run pretest --workspaces --if-present",
     "test": "vitest run --bail 1 --retry 2 --testTimeout 20000 --hookTimeout 20000",
     "test:cov": "ut run test -- --coverage",
+    "benchmark:ci-test": "node scripts/ci-test-benchmark.js",
     "preci": "ut run pretest --workspaces --if-present",
     "ci": "ut run test -- --coverage",
     "site:dev": "cd site && npm run dev",
