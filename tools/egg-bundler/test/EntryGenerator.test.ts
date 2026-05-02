@@ -300,6 +300,25 @@ describe('EntryGenerator', () => {
     expect(worker).not.toContain(frameworkDir);
   });
 
+  it('keeps an absolute framework checkout relative when the app cannot resolve its package name', async () => {
+    const frameworkDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-framework-'));
+    createdDirs.push(frameworkDir);
+    await fs.writeFile(path.join(frameworkDir, 'package.json'), JSON.stringify({ name: 'custom-egg' }));
+
+    const gen = new EntryGenerator({
+      baseDir: tmpDir,
+      framework: frameworkDir,
+      manifestLoader: createFakeLoader(makeManifest()),
+    });
+    const result = await gen.generate();
+    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const relFramework = path.relative(result.entryDir, frameworkDir).replaceAll(path.sep, '/');
+
+    expect(worker).toContain(`import { startEgg } from "${relFramework}"`);
+    expect(worker).not.toContain('import { startEgg } from "custom-egg"');
+    expect(worker).not.toContain(frameworkDir);
+  });
+
   it('produces byte-identical worker output across independent baseDir runs (T17 determinism baseline)', async () => {
     const manifest = makeManifest({
       extensions: {

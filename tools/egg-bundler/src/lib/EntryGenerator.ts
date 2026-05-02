@@ -264,7 +264,10 @@ startEgg({ baseDir: __baseDir, mode: 'single' }).then((app) => {
   #toFrameworkImportSpecifier(): string {
     if (!path.isAbsolute(this.#framework)) return this.#framework;
     const packageName = this.#packageNameFromDir(this.#framework);
-    return packageName ?? this.#toImportSpecifier(this.#framework);
+    if (packageName && this.#canUseFrameworkPackageName(packageName, this.#framework)) {
+      return packageName;
+    }
+    return this.#toImportSpecifier(this.#framework);
   }
 
   #packageNameFromDir(dir: string): string | undefined {
@@ -275,6 +278,27 @@ startEgg({ baseDir: __baseDir, mode: 'single' }).then((app) => {
     } catch {
       return undefined;
     }
+  }
+
+  #canUseFrameworkPackageName(packageName: string, dir: string): boolean {
+    if (this.#isInsideDir(path.join(this.#baseDir, 'node_modules'), dir)) return true;
+
+    try {
+      const req = createRequire(path.join(this.#baseDir, 'package.json'));
+      const resolvedPackageJson = req.resolve(`${packageName}/package.json`);
+      return this.#samePath(path.dirname(resolvedPackageJson), dir);
+    } catch {
+      return false;
+    }
+  }
+
+  #isInsideDir(parent: string, dir: string): boolean {
+    const rel = path.relative(path.resolve(parent), path.resolve(dir));
+    return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
+  }
+
+  #samePath(left: string, right: string): boolean {
+    return path.resolve(left) === path.resolve(right);
   }
 
   #toImportSpecifier(absPath: string): string {
