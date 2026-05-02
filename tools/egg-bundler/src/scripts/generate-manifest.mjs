@@ -16,6 +16,19 @@ async function readOptions() {
   return JSON.parse(raw);
 }
 
+async function flushWritable(stream) {
+  if (stream.destroyed || stream.writableEnded) return;
+  await new Promise((resolve, reject) => {
+    stream.write('', (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
 async function main() {
   debug('argv: %o', process.argv);
   const options = await readOptions();
@@ -46,6 +59,7 @@ async function main() {
     framework: options.framework,
     env: options.env,
     mode: 'single',
+    metadataOnly: true,
   });
 
   const manifest = app.loader.generateManifest();
@@ -59,7 +73,9 @@ async function main() {
   console.log('[bundler-manifest]   fileDiscovery: %d', fileDiscoveryCount);
   console.log('[bundler-manifest]   extensions: %d', extensionCount);
 
-  await app.close();
+  // This runs in a dedicated child process; exit after flushing so real app close hooks cannot affect bundling.
+  await Promise.all([flushWritable(process.stdout), flushWritable(process.stderr)]);
+  process.exit(0);
 }
 
 main().catch((err) => {

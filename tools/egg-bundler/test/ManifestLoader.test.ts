@@ -382,7 +382,7 @@ describe('ManifestLoader', () => {
     expect(written).toEqual(expected);
     expect(loaded).toEqual(expected);
     expect(loader.store.data).toBe(loaded);
-    await expect(fsp.readFile(path.join(appDir, 'closed.txt'), 'utf-8')).resolves.toBe('true');
+    await expect(fsp.readFile(path.join(appDir, 'closed.txt'), 'utf-8')).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(fsp.readFile(path.join(appDir, 'framework-entry.txt'), 'utf-8')).resolves.toBe(
       pathToFileURL(path.join(frameworkDir, 'src/index.js')).href,
     );
