@@ -100,6 +100,11 @@ export interface HttpClientConfig {
  */
 export type PowerPartial<T> = PartialDeep<T>;
 
+// Some applications use this framework type name in decorated fields without
+// `import type`; keep a runtime export available for decorator metadata and
+// bundler static export validation while the interface below remains the type.
+export const EggAppConfig: ObjectConstructor = Object;
+
 export interface EggAppConfig extends EggCoreAppConfig {
   workerStartTimeout: number;
   baseDir: string;

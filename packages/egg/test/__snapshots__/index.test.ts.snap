@@ -22,6 +22,7 @@ exports[`should expose properties 1`] = `
   "Controller": [Function],
   "CookieLimitExceedError": [Function],
   "Cookies": [Function],
+  "EggAppConfig": [Function],
   "EggApplicationCore": [Function],
   "EggQualifier": [Function],
   "EggType": {
@@ -70,6 +71,7 @@ exports[`should expose properties 1`] = `
   "LifecyclePreDestroy": [Function],
   "LifecyclePreInject": [Function],
   "LifecyclePreLoad": [Function],
+  "Logger": [Function],
   "Master": [Function],
   "MessageUnhandledRejectionError": [Function],
   "MetadataUtil": [Function],

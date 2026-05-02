@@ -3,7 +3,6 @@
 import path from 'node:path';
 
 import { ManifestStore } from '@eggjs/core';
-import { setBundleModuleLoader } from '@eggjs/utils';
 import { startEgg } from "egg";
 
 import * as __m0 from "../../app/controller/home.ts";
@@ -67,11 +66,14 @@ for (const [rel, mod] of Object.entries(__BUNDLE_MAP_REL)) {
   __BUNDLE_MAP[rel] = mod;
 }
 
+const __bundleGlobalThis = globalThis as typeof globalThis & {
+  __EGG_BUNDLE_MODULE_LOADER__?: (filepath: string) => unknown;
+};
 ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA as any, __baseDir));
-setBundleModuleLoader((filepath) => {
+__bundleGlobalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath) => {
   const key = filepath.split(path.sep).join('/');
   return __BUNDLE_MAP[key];
-});
+};
 
 startEgg({ baseDir: __baseDir, mode: 'single' }).then((app) => {
   const port = process.env.PORT || app.config.cluster?.listen?.port || 7001;

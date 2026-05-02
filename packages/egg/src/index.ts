@@ -51,7 +51,8 @@ export { Singleton, type SingletonCreateMethod, type SingletonOptions } from '@e
 export * from './lib/error/index.ts';
 
 // export loggers
-export type { LoggerLevel, EggLogger, EggLogger as Logger } from 'egg-logger';
+export { EggLogger as Logger } from 'egg-logger';
+export type { LoggerLevel, EggLogger } from 'egg-logger';
 
 // export httpClients
 export * from './lib/core/httpclient.ts';

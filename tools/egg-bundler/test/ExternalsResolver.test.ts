@@ -67,6 +67,14 @@ describe('ExternalsResolver', () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
       expect(result['optional-only']).toBe('optional-only');
     });
+
+    it('externalizes missing optional peerDependencies declared by installed dependencies', async () => {
+      const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
+      expect(result['optional-peer-host']).toBe('optional-peer-host');
+      expect(result['missing-optional-peer']).toBe('missing-optional-peer');
+      expect(result['required-peer']).toBeUndefined();
+      expect(result['normal-js']).toBeUndefined();
+    });
   });
 
   describe('negative cases', () => {
@@ -152,6 +160,14 @@ describe('ExternalsResolver', () => {
         inline: ['optional-only'],
       }).resolve();
       expect(result['optional-only']).toBeUndefined();
+    });
+
+    it('inline removes a missing optional peerDependency from externals', async () => {
+      const result = await new ExternalsResolver({
+        baseDir: basicApp,
+        inline: ['missing-optional-peer'],
+      }).resolve();
+      expect(result['missing-optional-peer']).toBeUndefined();
     });
 
     it('force can still externalize framework and helper packages explicitly', async () => {

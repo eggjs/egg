@@ -15,6 +15,7 @@ interface PackageJson {
   readonly dependencies?: Record<string, string>;
   readonly optionalDependencies?: Record<string, string>;
   readonly peerDependencies?: Record<string, string>;
+  readonly peerDependenciesMeta?: Record<string, { optional?: boolean }>;
   readonly scripts?: Record<string, string>;
   readonly exports?: unknown;
 }
@@ -55,6 +56,7 @@ export class ExternalsResolver {
       if (await this.#shouldExternalize(name, optionalDeps, peerDeps)) {
         result[name] = name;
       }
+      await this.#addMissingOptionalPeerExternals(name, result);
     }
 
     for (const name of peerDeps) {
@@ -63,6 +65,21 @@ export class ExternalsResolver {
     }
 
     return result;
+  }
+
+  async #addMissingOptionalPeerExternals(name: string, result: Record<string, string>): Promise<void> {
+    const pkgDir = await this.#findPackageDir(name);
+    if (!pkgDir) return;
+    const pkg = await this.#readPackageJson(pkgDir);
+    const peerDependencies = pkg.peerDependencies ?? {};
+    const peerDependenciesMeta = pkg.peerDependenciesMeta ?? {};
+    for (const peerName of Object.keys(peerDependencies)) {
+      if (result[peerName]) continue;
+      if (this.#inline.has(peerName) && !this.#force.has(peerName)) continue;
+      if (!peerDependenciesMeta[peerName]?.optional) continue;
+      if (await this.#findPackageDir(peerName)) continue;
+      result[peerName] = peerName;
+    }
   }
 
   async #shouldExternalize(
@@ -76,7 +93,18 @@ export class ExternalsResolver {
     const pkgDir = await this.#findPackageDir(name);
     if (!pkgDir) return false;
     const pkg = await this.#readPackageJson(pkgDir);
+    if (await this.#hasMissingOptionalPeerDependencies(pkg)) return true;
     if (await this.#hasNativeBinary(pkgDir, pkg)) return true;
+    return false;
+  }
+
+  async #hasMissingOptionalPeerDependencies(pkg: PackageJson): Promise<boolean> {
+    const peerDependencies = pkg.peerDependencies ?? {};
+    const peerDependenciesMeta = pkg.peerDependenciesMeta ?? {};
+    for (const peerName of Object.keys(peerDependencies)) {
+      if (!peerDependenciesMeta[peerName]?.optional) continue;
+      if (!(await this.#findPackageDir(peerName))) return true;
+    }
     return false;
   }
 

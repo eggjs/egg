@@ -87,7 +87,6 @@
   },
   "dependencies": {
     "@eggjs/core": "workspace:*",
-    "@eggjs/utils": "workspace:*",
     "@utoo/pack": "catalog:",
     "execa": "catalog:",
     "tsx": "catalog:"

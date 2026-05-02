@@ -171,10 +171,9 @@ describe('EntryGenerator', () => {
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
     expect(worker).toContain("import { ManifestStore } from '@eggjs/core'");
-    expect(worker).toContain("import { setBundleModuleLoader } from '@eggjs/utils'");
     expect(worker).toContain('import { startEgg } from "egg"');
     expect(worker).toContain('ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA');
-    expect(worker).toContain('setBundleModuleLoader(');
+    expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain("startEgg({ baseDir: __baseDir, mode: 'single' })");
   });
 
@@ -244,7 +243,7 @@ describe('EntryGenerator', () => {
 
     expect(extractImports(worker).length).toBe(0);
     expect(worker).toContain("startEgg({ baseDir: __baseDir, mode: 'single' })");
-    expect(worker).toContain('setBundleModuleLoader(');
+    expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain('ManifestStore.setBundleStore');
   });
 
@@ -282,6 +281,23 @@ describe('EntryGenerator', () => {
 
     expect(worker).toContain('import { startEgg } from "@my-org/framework"');
     expect(worker).not.toContain('import { startEgg } from "egg"');
+  });
+
+  it('uses the package name for an absolute framework directory with package metadata', async () => {
+    const frameworkDir = path.join(tmpDir, 'node_modules/custom-egg');
+    await fs.mkdir(frameworkDir, { recursive: true });
+    await fs.writeFile(path.join(frameworkDir, 'package.json'), JSON.stringify({ name: 'custom-egg' }));
+
+    const gen = new EntryGenerator({
+      baseDir: tmpDir,
+      framework: frameworkDir,
+      manifestLoader: createFakeLoader(makeManifest()),
+    });
+    const result = await gen.generate();
+    const worker = await fs.readFile(result.workerEntry, 'utf8');
+
+    expect(worker).toContain('import { startEgg } from "custom-egg"');
+    expect(worker).not.toContain(frameworkDir);
   });
 
   it('produces byte-identical worker output across independent baseDir runs (T17 determinism baseline)', async () => {
