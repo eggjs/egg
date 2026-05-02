@@ -14,7 +14,8 @@
     "native-dotnode": "1.0.0",
     "native-prebuilds": "1.0.0",
     "native-scripts": "1.0.0",
-    "normal-js": "1.0.0"
+    "normal-js": "1.0.0",
+    "optional-peer-host": "1.0.0"
   },
   "peerDependencies": {
     "peer-only": "1.0.0"

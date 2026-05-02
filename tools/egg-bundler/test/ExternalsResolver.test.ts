@@ -67,6 +67,62 @@ describe('ExternalsResolver', () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
       expect(result['optional-only']).toBe('optional-only');
     });
+
+    it('externalizes missing optional peerDependencies declared by installed dependencies', async () => {
+      const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
+      expect(result['optional-peer-host']).toBe('optional-peer-host');
+      expect(result['missing-optional-peer']).toBe('missing-optional-peer');
+      expect(result['required-peer']).toBeUndefined();
+      expect(result['normal-js']).toBeUndefined();
+    });
+
+    it('resolves optional peers from the dependent package directory', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await fs.mkdir(path.join(tempDir, 'node_modules/nested-peer-host/node_modules/present-optional-peer'), {
+          recursive: true,
+        });
+        await fs.writeFile(
+          path.join(tempDir, 'package.json'),
+          JSON.stringify({
+            name: 'nested-peer-app',
+            version: '1.0.0',
+            private: true,
+            dependencies: {
+              'nested-peer-host': '1.0.0',
+            },
+          }),
+        );
+        await fs.writeFile(
+          path.join(tempDir, 'node_modules/nested-peer-host/package.json'),
+          JSON.stringify({
+            name: 'nested-peer-host',
+            version: '1.0.0',
+            peerDependencies: {
+              'present-optional-peer': '^1.0.0',
+            },
+            peerDependenciesMeta: {
+              'present-optional-peer': {
+                optional: true,
+              },
+            },
+          }),
+        );
+        await fs.writeFile(
+          path.join(tempDir, 'node_modules/nested-peer-host/node_modules/present-optional-peer/package.json'),
+          JSON.stringify({
+            name: 'present-optional-peer',
+            version: '1.0.0',
+          }),
+        );
+
+        const result = await new ExternalsResolver({ baseDir: tempDir }).resolve();
+        expect(result['nested-peer-host']).toBeUndefined();
+        expect(result['present-optional-peer']).toBeUndefined();
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
+    });
   });
 
   describe('negative cases', () => {
@@ -138,6 +194,15 @@ describe('ExternalsResolver', () => {
       expect(result['normal-js']).toBe('normal-js');
     });
 
+    it('adds missing optional peerDependencies for force-listed packages', async () => {
+      const result = await new ExternalsResolver({
+        baseDir: basicApp,
+        force: ['optional-peer-host'],
+      }).resolve();
+      expect(result['optional-peer-host']).toBe('optional-peer-host');
+      expect(result['missing-optional-peer']).toBe('missing-optional-peer');
+    });
+
     it('inline removes a peerDependency from externals', async () => {
       const result = await new ExternalsResolver({
         baseDir: basicApp,
@@ -152,6 +217,14 @@ describe('ExternalsResolver', () => {
         inline: ['optional-only'],
       }).resolve();
       expect(result['optional-only']).toBeUndefined();
+    });
+
+    it('inline removes a missing optional peerDependency from externals', async () => {
+      const result = await new ExternalsResolver({
+        baseDir: basicApp,
+        inline: ['missing-optional-peer'],
+      }).resolve();
+      expect(result['missing-optional-peer']).toBeUndefined();
     });
 
     it('force can still externalize framework and helper packages explicitly', async () => {

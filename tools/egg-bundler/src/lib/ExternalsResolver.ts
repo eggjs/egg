@@ -15,6 +15,7 @@ interface PackageJson {
   readonly dependencies?: Record<string, string>;
   readonly optionalDependencies?: Record<string, string>;
   readonly peerDependencies?: Record<string, string>;
+  readonly peerDependenciesMeta?: Record<string, { optional?: boolean }>;
   readonly scripts?: Record<string, string>;
   readonly exports?: unknown;
 }
@@ -51,6 +52,7 @@ export class ExternalsResolver {
 
     for (const name of deps) {
       if (this.#inline.has(name) && !this.#force.has(name)) continue;
+      await this.#addMissingOptionalPeerExternals(name, result);
       if (result[name]) continue;
       if (await this.#shouldExternalize(name, optionalDeps, peerDeps)) {
         result[name] = name;
@@ -65,6 +67,21 @@ export class ExternalsResolver {
     return result;
   }
 
+  async #addMissingOptionalPeerExternals(name: string, result: Record<string, string>): Promise<void> {
+    const pkgDir = await this.#findPackageDir(name);
+    if (!pkgDir) return;
+    const pkg = await this.#readPackageJson(pkgDir);
+    const peerDependencies = pkg.peerDependencies ?? {};
+    const peerDependenciesMeta = pkg.peerDependenciesMeta ?? {};
+    for (const peerName of Object.keys(peerDependencies)) {
+      if (result[peerName]) continue;
+      if (this.#inline.has(peerName) && !this.#force.has(peerName)) continue;
+      if (!peerDependenciesMeta[peerName]?.optional) continue;
+      if (await this.#findPackageDir(peerName, pkgDir)) continue;
+      result[peerName] = peerName;
+    }
+  }
+
   async #shouldExternalize(
     name: string,
     optionalDeps: ReadonlySet<string>,
@@ -76,20 +93,32 @@ export class ExternalsResolver {
     const pkgDir = await this.#findPackageDir(name);
     if (!pkgDir) return false;
     const pkg = await this.#readPackageJson(pkgDir);
+    if (await this.#hasMissingOptionalPeerDependencies(pkgDir, pkg)) return true;
     if (await this.#hasNativeBinary(pkgDir, pkg)) return true;
     return false;
   }
 
-  async #findPackageDir(name: string): Promise<string | undefined> {
-    const cached = this.#packageDirCache.get(name);
+  async #hasMissingOptionalPeerDependencies(pkgDir: string, pkg: PackageJson): Promise<boolean> {
+    const peerDependencies = pkg.peerDependencies ?? {};
+    const peerDependenciesMeta = pkg.peerDependenciesMeta ?? {};
+    for (const peerName of Object.keys(peerDependencies)) {
+      if (!peerDependenciesMeta[peerName]?.optional) continue;
+      if (!(await this.#findPackageDir(peerName, pkgDir))) return true;
+    }
+    return false;
+  }
+
+  async #findPackageDir(name: string, fromDir = this.#baseDir): Promise<string | undefined> {
+    const cacheKey = `${fromDir}\0${name}`;
+    const cached = this.#packageDirCache.get(cacheKey);
     if (cached) return cached;
-    const result = this.#findPackageDirUncached(name);
-    this.#packageDirCache.set(name, result);
+    const result = this.#findPackageDirUncached(name, fromDir);
+    this.#packageDirCache.set(cacheKey, result);
     return result;
   }
 
-  async #findPackageDirUncached(name: string): Promise<string | undefined> {
-    let dir = this.#baseDir;
+  async #findPackageDirUncached(name: string, fromDir: string): Promise<string | undefined> {
+    let dir = fromDir;
     while (true) {
       const candidate = path.join(dir, 'node_modules', name);
       try {

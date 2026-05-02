@@ -383,7 +383,7 @@ globalThis.__patchedMeta = {
     // Spot-check: the generated entry contains the runtime hook calls
     const entrySource = await fs.readFile(workerSource, 'utf8');
     expect(entrySource).toContain('ManifestStore.setBundleStore');
-    expect(entrySource).toContain('setBundleModuleLoader');
+    expect(entrySource).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(entrySource).toContain('startEgg');
   });
 });
