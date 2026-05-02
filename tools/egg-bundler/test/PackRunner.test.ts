@@ -140,6 +140,41 @@ describe('PackRunner', () => {
     });
   });
 
+  it('finds hoisted supports-color and resolves nested node condition exports', async () => {
+    const buildFunc = vi.fn<BuildFunc>(async () => {});
+    const supportsHyperlinksDir = path.join(tmpDir, 'node_modules', 'supports-hyperlinks');
+    const supportsColorDir = path.join(tmpDir, 'node_modules', 'supports-color');
+    await fs.mkdir(supportsColorDir, { recursive: true });
+    await fs.mkdir(supportsHyperlinksDir, { recursive: true });
+    await fs.writeFile(
+      path.join(supportsHyperlinksDir, 'package.json'),
+      JSON.stringify({ name: 'supports-hyperlinks' }),
+    );
+    await fs.writeFile(
+      path.join(supportsColorDir, 'package.json'),
+      JSON.stringify({
+        name: 'supports-color',
+        exports: {
+          types: './index.d.ts',
+          node: {
+            import: './index.js',
+            default: './browser.js',
+          },
+          default: './browser.js',
+        },
+      }),
+    );
+
+    await makeRunner({ buildFunc }).run();
+
+    const config = (buildFunc.mock.calls[0]![0] as { config: Record<string, unknown> }).config;
+    expect(config.resolve).toEqual({
+      alias: {
+        'supports-color': path.join(supportsColorDir, 'index.js'),
+      },
+    });
+  });
+
   it('disables treeShaking and minify in the pack config (tegg runtime requires the full graph)', async () => {
     const buildFunc = vi.fn<BuildFunc>(async () => {});
     await makeRunner({ buildFunc }).run();

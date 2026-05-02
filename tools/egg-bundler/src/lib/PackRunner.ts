@@ -182,11 +182,11 @@ export class PackRunner {
     return this.#resolvePackageTarget(rootTarget);
   }
 
-  #resolvePackageTarget(target: unknown): string | undefined {
+  #resolvePackageTarget(target: unknown, inNodeCondition = false): string | undefined {
     if (typeof target === 'string') return target;
     if (Array.isArray(target)) {
       for (const item of target) {
-        const resolved = this.#resolvePackageTarget(item);
+        const resolved = this.#resolvePackageTarget(item, inNodeCondition);
         if (resolved) return resolved;
       }
       return undefined;
@@ -194,8 +194,16 @@ export class PackRunner {
     if (!target || typeof target !== 'object') return undefined;
 
     const map = target as Record<string, unknown>;
-    if (!Object.hasOwn(map, 'node')) return undefined;
-    return this.#resolvePackageTarget(map.node);
+    if (Object.hasOwn(map, 'node')) return this.#resolvePackageTarget(map.node, true);
+
+    if (inNodeCondition) {
+      for (const condition of ['import', 'default', 'require'] as const) {
+        const resolved = this.#resolvePackageTarget(map[condition], true);
+        if (resolved) return resolved;
+      }
+    }
+
+    return undefined;
   }
 
   #resolvePackageEntryPath(packageDir: string, entry: string): string {
