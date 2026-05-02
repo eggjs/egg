@@ -9,13 +9,14 @@ export async function collectEnvironment(command) {
     readJsonIfExists(path.resolve(process.cwd(), 'package.json')),
     readVitestConfigDefaults(path.resolve(process.cwd(), 'vitest.config.ts')),
   ]);
+  const cpus = os.cpus();
 
   return {
     arch: os.arch(),
     ci: Boolean(process.env.CI),
     commandParameters: extractCommandParameters(command),
-    cpuCount: os.cpus().length,
-    cpuModel: os.cpus()[0]?.model ?? 'unknown',
+    cpuCount: cpus.length,
+    cpuModel: cpus[0]?.model ?? 'unknown',
     cwd: process.cwd(),
     env: pickEnv([
       'CI',
