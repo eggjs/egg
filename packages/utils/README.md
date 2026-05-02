@@ -42,6 +42,22 @@ npm i @eggjs/utils
 - {String} baseDir - the current directory of application
 - {String} framework - the directory of framework
 
+### `setBundleModuleLoader(loader)`
+
+Register a module loader hook for bundled Egg apps. The hook runs before the
+normal `importModule()` resolution path.
+
+- {Function | undefined} loader - a synchronous function that receives the
+  original `filepath` argument passed to `importModule()` after POSIX separator
+  normalization, or a virtual specifier. It does not receive the resolved
+  absolute file path from `importResolve()`. Return `undefined` to fall back to
+  the normal import path.
+
+The bundle loader is stored on `globalThis`, so bundled and external copies of
+`@eggjs/utils` share the same loader. Non-`undefined` results follow the same
+default export unwrapping rules as `importModule()`, including
+`importDefaultOnly`.
+
 ## License
 
 [MIT](LICENSE)
