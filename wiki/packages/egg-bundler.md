@@ -44,10 +44,11 @@ CommonJS artifact from an Egg application.
   process exits after writing the manifest, so registered `beforeClose` hooks do
   not run.
 - The generated app runs in Egg single-process mode.
-- Explicit `externals.force` entries, root `peerDependencies`, root
-  `optionalDependencies`, root dependency packages with native addons, root
-  dependency packages whose optional peer dependencies cannot be resolved, and
-  the names of those missing optional peer packages are external.
+- Explicit `externals.force` entries are external, and `ExternalsResolver`
+  auto-detects root `peerDependencies`, root `optionalDependencies`, root
+  dependency packages with native addons, root dependency packages whose optional
+  peer dependencies cannot be resolved, and the names of those missing optional
+  peer packages as external.
 - `externals.inline` removes an auto-detected external unless the same package
   name is also listed in `externals.force`.
 - ESM-only packages, `egg`, `@swc/helpers`, and `@eggjs/*` packages are bundled
