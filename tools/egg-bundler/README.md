@@ -21,6 +21,11 @@ await bundle({
 `outputDir` is resolved from `baseDir` when it is relative. The default manifest
 path is `<baseDir>/.egg/manifest.json`.
 
+If the startup manifest is missing, the bundler generates it by starting the app
+with `metadataOnly: true`. In that mode Egg skips the agent and normal boot
+lifecycle, runs `loadMetadata()` hooks, and does not run registered
+`beforeClose` hooks while closing the temporary app.
+
 ## Options
 
 | Option             | Description                                                                     |
