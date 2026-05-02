@@ -17,7 +17,7 @@ export * from './lib/types.ts';
 export * from './lib/define.ts';
 
 // alias EggAppConfig to Config
-export const Config: ObjectConstructor = EggAppConfig;
+export const Config: typeof EggAppConfig = EggAppConfig;
 /**
  * Egg Application Config, can be injected into Proto, e.g. SingletonProto/ContextProto/HttpController.
  *

@@ -75,6 +75,54 @@ describe('ExternalsResolver', () => {
       expect(result['required-peer']).toBeUndefined();
       expect(result['normal-js']).toBeUndefined();
     });
+
+    it('resolves optional peers from the dependent package directory', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await fs.mkdir(path.join(tempDir, 'node_modules/nested-peer-host/node_modules/present-optional-peer'), {
+          recursive: true,
+        });
+        await fs.writeFile(
+          path.join(tempDir, 'package.json'),
+          JSON.stringify({
+            name: 'nested-peer-app',
+            version: '1.0.0',
+            private: true,
+            dependencies: {
+              'nested-peer-host': '1.0.0',
+            },
+          }),
+        );
+        await fs.writeFile(
+          path.join(tempDir, 'node_modules/nested-peer-host/package.json'),
+          JSON.stringify({
+            name: 'nested-peer-host',
+            version: '1.0.0',
+            peerDependencies: {
+              'present-optional-peer': '^1.0.0',
+            },
+            peerDependenciesMeta: {
+              'present-optional-peer': {
+                optional: true,
+              },
+            },
+          }),
+        );
+        await fs.writeFile(
+          path.join(tempDir, 'node_modules/nested-peer-host/node_modules/present-optional-peer/package.json'),
+          JSON.stringify({
+            name: 'present-optional-peer',
+            version: '1.0.0',
+          }),
+        );
+
+        const result = await new ExternalsResolver({ baseDir: tempDir }).resolve();
+        expect(result['nested-peer-host']).toBeUndefined();
+        expect(result['present-optional-peer']).toBeUndefined();
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
+    });
   });
 
   describe('negative cases', () => {

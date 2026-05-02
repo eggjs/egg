@@ -77,7 +77,7 @@ export class ExternalsResolver {
       if (result[peerName]) continue;
       if (this.#inline.has(peerName) && !this.#force.has(peerName)) continue;
       if (!peerDependenciesMeta[peerName]?.optional) continue;
-      if (await this.#findPackageDir(peerName)) continue;
+      if (await this.#findPackageDir(peerName, pkgDir)) continue;
       result[peerName] = peerName;
     }
   }
@@ -93,31 +93,32 @@ export class ExternalsResolver {
     const pkgDir = await this.#findPackageDir(name);
     if (!pkgDir) return false;
     const pkg = await this.#readPackageJson(pkgDir);
-    if (await this.#hasMissingOptionalPeerDependencies(pkg)) return true;
+    if (await this.#hasMissingOptionalPeerDependencies(pkgDir, pkg)) return true;
     if (await this.#hasNativeBinary(pkgDir, pkg)) return true;
     return false;
   }
 
-  async #hasMissingOptionalPeerDependencies(pkg: PackageJson): Promise<boolean> {
+  async #hasMissingOptionalPeerDependencies(pkgDir: string, pkg: PackageJson): Promise<boolean> {
     const peerDependencies = pkg.peerDependencies ?? {};
     const peerDependenciesMeta = pkg.peerDependenciesMeta ?? {};
     for (const peerName of Object.keys(peerDependencies)) {
       if (!peerDependenciesMeta[peerName]?.optional) continue;
-      if (!(await this.#findPackageDir(peerName))) return true;
+      if (!(await this.#findPackageDir(peerName, pkgDir))) return true;
     }
     return false;
   }
 
-  async #findPackageDir(name: string): Promise<string | undefined> {
-    const cached = this.#packageDirCache.get(name);
+  async #findPackageDir(name: string, fromDir = this.#baseDir): Promise<string | undefined> {
+    const cacheKey = `${fromDir}\0${name}`;
+    const cached = this.#packageDirCache.get(cacheKey);
     if (cached) return cached;
-    const result = this.#findPackageDirUncached(name);
-    this.#packageDirCache.set(name, result);
+    const result = this.#findPackageDirUncached(name, fromDir);
+    this.#packageDirCache.set(cacheKey, result);
     return result;
   }
 
-  async #findPackageDirUncached(name: string): Promise<string | undefined> {
-    let dir = this.#baseDir;
+  async #findPackageDirUncached(name: string, fromDir: string): Promise<string | undefined> {
+    let dir = fromDir;
     while (true) {
       const candidate = path.join(dir, 'node_modules', name);
       try {
