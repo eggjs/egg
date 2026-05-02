@@ -162,8 +162,13 @@ jobs:
       - name: Install dependencies
         run: ut install --from pnpm
 
-      - name: Run tests
+      - name: Run tests with coverage
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.node == '24' }}
         run: ut run ci
+
+      - name: Run tests without coverage
+        if: ${{ matrix.os != 'ubuntu-latest' || matrix.node != '24' }}
+        run: ut run test
 
       - name: Run example tests
         if: ${{ matrix.os != 'windows-latest' }}
@@ -171,8 +176,7 @@ jobs:
           ut run example:test:all
 
       - name: Code Coverage
-        # skip on windows, it will hangup on codecov
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.node == '24' }}
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
@@ -206,14 +210,20 @@ jobs:
       - name: Install dependencies
         run: ut install --from pnpm
 
-      - name: Run tests
+      - name: Run tests with coverage
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
           ut run build -- --workspace ./tools/egg-bin
           ut run ci --workspace @eggjs/bin
 
+      - name: Run tests without coverage
+        if: ${{ matrix.os != 'ubuntu-latest' }}
+        run: |
+          ut run build -- --workspace ./tools/egg-bin
+          ut run test --workspace @eggjs/bin
+
       - name: Code Coverage
-        # skip on windows, it will hangup on codecov https://github.com/codecov/codecov-action/issues/1787
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
@@ -247,13 +257,20 @@ jobs:
       - name: Install dependencies
         run: ut install --from pnpm
 
-      - name: Run tests
+      - name: Run tests with coverage
+        if: ${{ matrix.node == '24' }}
         run: |
           ut run build -- --workspace ./tools/scripts
           ut run ci --workspace tools/scripts
 
+      - name: Run tests without coverage
+        if: ${{ matrix.node != '24' }}
+        run: |
+          ut run build -- --workspace ./tools/scripts
+          ut run test --workspace tools/scripts
+
       - name: Code Coverage
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ matrix.node == '24' }}
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
