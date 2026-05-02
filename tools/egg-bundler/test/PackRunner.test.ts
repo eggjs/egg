@@ -104,8 +104,40 @@ describe('PackRunner', () => {
     expect(config.externals).toEqual({
       '@eggjs/core': { commonjs: '@eggjs/core', root: '@eggjs/core' },
     });
+    expect(config.resolve).toBeUndefined();
     expect(projectPath).toBe(tmpDir);
     expect(rootPath).toBe(tmpDir);
+  });
+
+  it('aliases supports-color to its node export when bundled through supports-hyperlinks', async () => {
+    const buildFunc = vi.fn<BuildFunc>(async () => {});
+    const supportsHyperlinksDir = path.join(tmpDir, 'node_modules', 'supports-hyperlinks');
+    const supportsColorDir = path.join(supportsHyperlinksDir, 'node_modules', 'supports-color');
+    await fs.mkdir(supportsColorDir, { recursive: true });
+    await fs.writeFile(
+      path.join(supportsHyperlinksDir, 'package.json'),
+      JSON.stringify({ name: 'supports-hyperlinks' }),
+    );
+    await fs.writeFile(
+      path.join(supportsColorDir, 'package.json'),
+      JSON.stringify({
+        name: 'supports-color',
+        exports: {
+          types: './index.d.ts',
+          node: './index.js',
+          default: './browser.js',
+        },
+      }),
+    );
+
+    await makeRunner({ buildFunc }).run();
+
+    const config = (buildFunc.mock.calls[0]![0] as { config: Record<string, unknown> }).config;
+    expect(config.resolve).toEqual({
+      alias: {
+        'supports-color': path.join(supportsColorDir, 'index.js'),
+      },
+    });
   });
 
   it('disables treeShaking and minify in the pack config (tegg runtime requires the full graph)', async () => {
