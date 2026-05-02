@@ -26,6 +26,7 @@ const DEFAULT_COMMAND = [
   '--hookTimeout',
   '20000',
 ];
+const BOOLEAN_COMMAND_OPTIONS = new Set(['--isolate', '--no-isolate']);
 
 function printHelp() {
   console.log(`
@@ -157,9 +158,7 @@ function buildCommand(commandArgs, options, vitestJsonPath) {
   }
 
   const hasReporter = hasJsonReporter(replaced);
-  const hasOutputFile = replaced.some(
-    (arg) => arg === '--outputFile' || arg === '--outputFile.json' || arg.startsWith('--outputFile='),
-  );
+  const hasOutputFile = hasVitestOutputFile(replaced);
   const reporterArgs = [];
   if (!hasReporter) {
     reporterArgs.push('--reporter=json');
@@ -185,6 +184,12 @@ function hasJsonReporter(command) {
     }
   }
   return false;
+}
+
+function hasVitestOutputFile(command) {
+  return command.some(
+    (arg) => arg === '--outputFile' || arg.startsWith('--outputFile=') || arg.startsWith('--outputFile.'),
+  );
 }
 
 async function runCommand(command, env) {
@@ -343,7 +348,7 @@ function collectOptionValues(command, names) {
     for (const name of names) {
       if (arg === name) {
         const next = command[index + 1];
-        const value = next && !next.startsWith('--') ? next : true;
+        const value = getSeparatedOptionValue(name, next);
         values.push({ name, value });
       } else if (arg.startsWith(`${name}=`)) {
         values.push({ name, value: arg.slice(name.length + 1) });
@@ -351,6 +356,16 @@ function collectOptionValues(command, names) {
     }
   }
   return values;
+}
+
+function getSeparatedOptionValue(name, next) {
+  if (name.startsWith('--no-')) {
+    return false;
+  }
+  if (BOOLEAN_COMMAND_OPTIONS.has(name)) {
+    return true;
+  }
+  return next && !next.startsWith('--') ? next : true;
 }
 
 function summarizeVitest(vitestJson, topLimit) {
