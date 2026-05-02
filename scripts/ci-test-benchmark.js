@@ -251,7 +251,7 @@ function collectEnvironment(command) {
   const packageJson = readJsonIfExists(path.resolve(process.cwd(), 'package.json')) ?? {};
   return {
     arch: os.arch(),
-    ci: process.env.CI === 'true',
+    ci: Boolean(process.env.CI),
     cpuCount: os.cpus().length,
     cpuModel: os.cpus()[0]?.model ?? 'unknown',
     cwd: process.cwd(),
@@ -669,16 +669,7 @@ async function main() {
     CI_BENCHMARK_VITEST_JSON: vitestJsonPath,
   };
 
-  const run = options.dryRun
-    ? {
-        endedAt: new Date().toISOString(),
-        error: null,
-        exitCode: 0,
-        signal: null,
-        startedAt: new Date().toISOString(),
-        wallTimeMs: 0,
-      }
-    : await runCommand(command, env);
+  const run = options.dryRun ? createDryRunResult() : await runCommand(command, env);
 
   const vitestJson = readJsonIfExists(vitestJsonPath);
   const report = createReport({
@@ -707,6 +698,18 @@ async function main() {
   if (run.exitCode !== 0) {
     process.exitCode = run.exitCode ?? 1;
   }
+}
+
+function createDryRunResult() {
+  const startedAt = new Date().toISOString();
+  return {
+    endedAt: new Date().toISOString(),
+    error: null,
+    exitCode: 0,
+    signal: null,
+    startedAt,
+    wallTimeMs: 0,
+  };
 }
 
 main().catch((error) => {
