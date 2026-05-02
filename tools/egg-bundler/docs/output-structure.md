@@ -58,12 +58,14 @@ checks (T17).
 ## Externals
 
 Packages classified as external by `ExternalsResolver` are **not** inlined.
-This includes the user's `externals.force` list, root `peerDependencies`,
-always-external packages (`egg`, `@swc/helpers`, and `@eggjs/*`), native addons,
-and ESM-only packages. They must be installed alongside the bundle — typically
-by copying the app's `package.json` next to
-`worker.js` and running `npm ci --omit=dev`, or by deploying the bundle
-into an image that already has these dependencies on disk.
+This includes the user's `externals.force` list, root `peerDependencies`, root
+`optionalDependencies`, and native addons/native binaries. They must be
+installed alongside the bundle — typically by copying the app's `package.json`
+next to `worker.js` and running `npm ci --omit=dev`, or by deploying into an
+environment where these dependencies are already installed. ESM-only packages,
+`egg`, `@swc/helpers`, and `@eggjs/*` packages are bundled by default unless
+`ExternalsResolver` externalizes them through `externals.force`, dependency
+metadata, or native addon detection.
 
 ## Known limitations
 
