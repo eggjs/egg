@@ -29,6 +29,12 @@ describe('test/start.test.ts', () => {
     });
   });
 
+  it('should skip beforeClose callbacks when closing a metadataOnly app', async () => {
+    const app = await singleProcessApp('apps/metadata-only-app', { metadataOnly: true });
+    await app.close();
+    assert.deepStrictEqual(app.bootLog, ['loadMetadata']);
+  });
+
   describe('normal mode (baseline)', () => {
     let app: SingleModeApplication;
 

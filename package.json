@@ -82,5 +82,8 @@
   "engines": {
     "node": ">=22.18.0"
   },
+  "optionalDependencies": {
+    "@utoo/utoo-mingw64_nt-10.0-26100-x64": "npm:@utoo/utoo-win32-x64@1.0.28"
+  },
   "packageManager": "pnpm@10.28.0"
 }

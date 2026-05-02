@@ -188,6 +188,35 @@ describe('test/snapshot.test.ts', () => {
       // beforeClose is registered during configDidLoad iteration, which is skipped
       assert.ok(!beforeCloseCalled, 'beforeClose should NOT be called since configDidLoad is skipped');
     });
+
+    it('should skip app.beforeClose callbacks when closing during snapshot build', async () => {
+      let beforeCloseCalled = false;
+      app = new EggCore({ snapshot: true });
+
+      app.lifecycle.addBootHook(
+        class Boot {
+          app: EggCore;
+
+          constructor(app: EggCore) {
+            this.app = app;
+          }
+
+          configWillLoad(): void {
+            this.app.beforeClose(() => {
+              beforeCloseCalled = true;
+            });
+          }
+        },
+      );
+
+      app.lifecycle.init();
+      app.lifecycle.triggerConfigWillLoad();
+      await app.ready();
+      await app.close();
+      app = undefined;
+
+      assert.ok(!beforeCloseCalled, 'app.beforeClose should NOT be called during snapshot build close');
+    });
   });
 
   describe('snapshotWillSerialize / snapshotDidDeserialize lifecycle hooks', () => {

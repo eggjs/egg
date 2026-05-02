@@ -254,14 +254,20 @@ export class Lifecycle extends EventEmitter {
   }
 
   async close(): Promise<void> {
-    // close in reverse order: first created, last closed
-    const closeFns = Array.from(this.#closeFunctionSet);
-    debug('%s start trigger %d beforeClose functions', this.app.type, closeFns.length);
-    for (const fn of closeFns.reverse()) {
-      debug('%s trigger beforeClose at %o', this.app.type, fn.fullPath);
-      await utils.callFn(fn);
-      this.#closeFunctionSet.delete(fn);
+    if (this.#metadataOnly || this.#snapshotBuilding) {
+      debug('%s skip beforeClose functions in early-exit lifecycle mode', this.app.type);
+      this.#closeFunctionSet.clear();
+    } else {
+      // close in reverse order: first created, last closed
+      const closeFns = Array.from(this.#closeFunctionSet);
+      debug('%s start trigger %d beforeClose functions', this.app.type, closeFns.length);
+      for (const fn of closeFns.reverse()) {
+        debug('%s trigger beforeClose at %o', this.app.type, fn.fullPath);
+        await utils.callFn(fn);
+        this.#closeFunctionSet.delete(fn);
+      }
     }
+
     // Be called after other close callbacks
     this.app.emit('close');
     this.removeAllListeners();

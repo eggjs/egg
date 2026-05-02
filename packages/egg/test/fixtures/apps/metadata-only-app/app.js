@@ -2,6 +2,9 @@ module.exports = class MetadataOnlyBoot {
   constructor(app) {
     this.app = app;
     app.bootLog = [];
+    app.beforeClose(() => {
+      app.bootLog.push('app.beforeClose');
+    });
   }
 
   configWillLoad() {
