@@ -106,6 +106,31 @@ describe('EntryGenerator', () => {
     expect(imports.map((i) => i.index)).toEqual([0, 1, 2, 3]);
   });
 
+  it('keeps absolute tegg decorated files only when they stay inside baseDir', async () => {
+    const unitPath = path.join(tmpDir, 'modules/foo');
+    const manifest = makeManifest({
+      extensions: {
+        tegg: {
+          moduleDescriptors: [
+            { unitPath, decoratedFiles: ['FooController.ts', '../outside.ts'] },
+            { unitPath: path.dirname(tmpDir), decoratedFiles: [path.basename(tmpDir) + '/app/Service.ts'] },
+            { unitPath: path.dirname(tmpDir), decoratedFiles: ['other-app/ignored.ts'] },
+          ],
+        },
+      },
+    });
+
+    const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
+    const result = await gen.generate();
+    const worker = await fs.readFile(result.workerEntry, 'utf8');
+
+    expect(extractImports(worker).map((i) => i.specifier)).toEqual([
+      '../../app/Service.ts',
+      '../../modules/foo/FooController.ts',
+      '../../modules/outside.ts',
+    ]);
+  });
+
   it('skips resolveCache entries whose value is null', async () => {
     const manifest = makeManifest({
       resolveCache: {

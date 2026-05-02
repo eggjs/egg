@@ -8,7 +8,7 @@ import path from 'node:path';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import express, { type Express } from 'express';
-import { describe, it, beforeEach, beforeAll, expect } from 'vitest';
+import { describe, it, beforeEach, beforeAll, expect, vi } from 'vitest';
 
 import request, { Test } from '../src/index.ts';
 import { throwError } from './throwError.ts';
@@ -68,6 +68,18 @@ describe('request(url)', () => {
   });
 
   describe('.end(cb)', () => {
+    it('should warn when callback function is not provided', () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const test = new Test('http://127.0.0.1', 'get', '/');
+
+      try {
+        test.assert(null, { status: 200 } as any, undefined as any);
+        expect(warn).toHaveBeenCalledWith('[@eggjs/supertest] no callback function provided, fn: %s', 'undefined');
+      } finally {
+        warn.mockRestore();
+      }
+    });
+
     it('should set `this` to the test object when calling cb', async () => {
       const app = express();
 
