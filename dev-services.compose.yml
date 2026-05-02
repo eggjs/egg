@@ -1,0 +1,30 @@
+name: ${EGG_DEV_SERVICES_PROJECT:-eggjs_dev_services}
+
+services:
+  mysql:
+    image: ${EGG_DEV_SERVICES_MYSQL_IMAGE:-mysql:8}
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: test
+    ports:
+      - '127.0.0.1:${EGG_DEV_SERVICES_MYSQL_PORT:-3306}:3306'
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uroot', '--silent']
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  redis:
+    image: ${EGG_DEV_SERVICES_REDIS_IMAGE:-redis:7}
+    ports:
+      - '127.0.0.1:${EGG_DEV_SERVICES_REDIS_PORT:-6379}:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  mysql-data:
