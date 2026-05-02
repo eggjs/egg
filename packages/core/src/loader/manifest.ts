@@ -12,6 +12,7 @@ const debug = debuglog('egg/core/loader/manifest');
 const MANIFEST_VERSION = 1;
 
 const LOCKFILE_NAMES = ['pnpm-lock.yaml', 'package-lock.json', 'yarn.lock'] as const;
+const BUNDLE_STORE_KEY = '__EGG_BUNDLE_STORE__' as const;
 
 export interface ManifestInvalidation {
   lockfileFingerprint: string;
@@ -51,22 +52,22 @@ export class ManifestStore {
 
   /**
    * Register a pre-built manifest store for bundled egg apps. When set,
-   * `ManifestStore.load()` returns this store unconditionally, bypassing
-   * disk reads and invalidation checks. The bundler-generated entry calls
-   * this at startup before creating the Application.
+   * `ManifestStore.load()` returns this store for matching baseDir requests,
+   * bypassing disk reads and invalidation checks. The bundler-generated entry
+   * calls this at startup before creating the Application.
    *
    * Uses globalThis so that bundled and external copies of @eggjs/core
    * share the same store instance.
    */
   static setBundleStore(store: ManifestStore | undefined): void {
-    (globalThis as any).__EGG_BUNDLE_STORE__ = store;
+    globalThis[BUNDLE_STORE_KEY] = store;
   }
 
   /**
    * Return the registered bundle store, if any.
    */
   static getBundleStore(): ManifestStore | undefined {
-    return (globalThis as any).__EGG_BUNDLE_STORE__;
+    return globalThis[BUNDLE_STORE_KEY];
   }
 
   /**
@@ -74,9 +75,9 @@ export class ManifestStore {
    * Returns null if manifest doesn't exist or is invalid.
    */
   static load(baseDir: string, serverEnv: string, serverScope: string): ManifestStore | null {
-    const bundleStore: ManifestStore | undefined = (globalThis as any).__EGG_BUNDLE_STORE__;
-    if (bundleStore) {
-      debug('load: returning registered bundle store');
+    const bundleStore = ManifestStore.getBundleStore();
+    if (bundleStore && bundleStore.baseDir === baseDir) {
+      debug('load: returning registered bundle store for %s', baseDir);
       return bundleStore;
     }
     if (serverEnv === 'local' && process.env.EGG_MANIFEST !== 'true') {
@@ -115,11 +116,15 @@ export class ManifestStore {
    * guaranteeing the data matches the shipped artifact.
    */
   static fromBundle(data: StartupManifest, baseDir: string): ManifestStore {
-    if (data.version !== MANIFEST_VERSION) {
+    if (!data || data.version !== MANIFEST_VERSION) {
       throw new Error(
-        `[@eggjs/core] bundled manifest version mismatch: expected ${MANIFEST_VERSION}, got ${data.version}`,
+        `[@eggjs/core] bundled manifest version mismatch: expected ${MANIFEST_VERSION}, got ${data?.version}`,
       );
     }
+    if (!data.invalidation) {
+      throw new Error('[@eggjs/core] bundled manifest missing invalidation data');
+    }
+    debug('manifest loaded from bundle');
     return new ManifestStore(data, baseDir);
   }
 
