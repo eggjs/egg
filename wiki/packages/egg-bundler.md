@@ -40,8 +40,9 @@ CommonJS artifact from an Egg application.
 - Default mode is `production`; `development` is also accepted.
 - If `<baseDir>/.egg/manifest.json` is missing, `ManifestLoader` starts the app
   with `metadataOnly: true` to generate it. This skips the agent and normal boot
-  lifecycle, runs `loadMetadata()` hooks, and skips registered `beforeClose`
-  hooks when the temporary app closes.
+  lifecycle, runs `loadMetadata()` hooks, and the manifest generation child
+  process exits after writing the manifest, so registered `beforeClose` hooks do
+  not run.
 - The generated app runs in Egg single-process mode.
 - Explicit `externals.force` entries, root `peerDependencies`, root
   `optionalDependencies`, root dependency packages with native addons, root
