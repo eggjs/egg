@@ -1,0 +1,13 @@
+diff --git a/postinstall.sh b/postinstall.sh
+index 369a04f88f26feb26984227710fa480d4d6e7b5a..d22c4e87f14b3932cf19e3fd869f57fb313628df 100755
+--- a/postinstall.sh
++++ b/postinstall.sh
+@@ -1,7 +1,7 @@
+ #!/bin/sh
+ 
+ # Get CPU & OS info - POSIX compatible (works with sh on Windows Git)
+-if [ "$OSTYPE" = "msys" ] || [ "$OSTYPE" = "win32" ]; then
++if [ "$OS" = "Windows_NT" ] || [ "$OSTYPE" = "msys" ] || [ "$OSTYPE" = "win32" ]; then
+     OS="win32"
+     # On Windows, use PROCESSOR_ARCHITECTURE
+     if [ "$PROCESSOR_ARCHITECTURE" = "AMD64" ] || [ "$PROCESSOR_ARCHITECTURE" = "x86_64" ]; then

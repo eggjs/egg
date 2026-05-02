@@ -82,5 +82,10 @@
   "engines": {
     "node": ">=22.18.0"
   },
-  "packageManager": "pnpm@10.28.0"
+  "packageManager": "pnpm@10.28.0",
+  "pnpm": {
+    "patchedDependencies": {
+      "utoo@1.0.28": "patches/utoo@1.0.28.patch"
+    }
+  }
 }
