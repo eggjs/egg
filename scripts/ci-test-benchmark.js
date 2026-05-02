@@ -176,7 +176,7 @@ function buildCommand(commandArgs, options, vitestJsonPath) {
 function hasJsonReporter(command) {
   for (let index = 0; index < command.length; index++) {
     const arg = command[index];
-    if (arg === '--reporter=json' || arg.startsWith('--reporter=json')) {
+    if (arg === '--reporter=json') {
       return true;
     }
     if (arg === '--reporter' && command[index + 1] === 'json') {
