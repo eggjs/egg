@@ -1,5 +1,8 @@
 import { strict as assert } from 'node:assert';
-import { rm } from 'node:fs/promises';
+import { rm, stat } from 'node:fs/promises';
+import { request as httpRequest } from 'node:http';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
@@ -8,7 +11,53 @@ import { ip } from 'address';
 import urllib from 'urllib';
 import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
 
-import { cluster, getFilepath } from './utils.ts';
+import { cluster } from './utils.ts';
+
+async function waitForFile(filepath: string) {
+  const deadline = Date.now() + 5000;
+  do {
+    try {
+      await stat(filepath);
+      return;
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== 'ENOENT' || Date.now() >= deadline) {
+        throw err;
+      }
+      await scheduler.wait(50);
+    }
+  } while (true);
+}
+
+async function requestUnixSocket(filepath: string) {
+  const deadline = Date.now() + 5000;
+  do {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const req = httpRequest({ socketPath: filepath, path: '/', method: 'GET' }, (res) => {
+          const chunks: Buffer[] = [];
+          res.on('data', (chunk) => chunks.push(chunk));
+          res.on('end', () => {
+            try {
+              assert.equal(res.statusCode, 200);
+              assert.equal(Buffer.concat(chunks).toString(), 'done');
+              resolve();
+            } catch (err) {
+              reject(err);
+            }
+          });
+        });
+        req.on('error', reject);
+        req.end();
+      });
+      return;
+    } catch (err) {
+      if (!String((err as Error).message).includes('ENOENT') || Date.now() >= deadline) {
+        throw err;
+      }
+      await scheduler.wait(50);
+    }
+  } while (true);
+}
 
 // node v24 will hang when test this file
 // FIXME: should enable this test after node v24 is stable
@@ -204,8 +253,9 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
   });
 
   describe('listen config', () => {
-    const sockFile = getFilepath('apps/app-listen-path/my.sock');
-    beforeEach(() => {
+    const sockFile = path.join(tmpdir(), `egg-app-listen-path-${process.pid}.sock`);
+    beforeEach(async () => {
+      await rm(sockFile, { force: true, recursive: true });
       mm.env('default');
     });
     afterEach(async () => {
@@ -276,15 +326,22 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
     });
 
     it('should use path in config', async () => {
-      app = cluster('apps/app-listen-path');
+      app = cluster('apps/app-listen-path', {
+        opt: {
+          env: {
+            ...process.env,
+            EGG_CLUSTER_LISTEN_PATH: sockFile,
+          },
+        },
+      });
       // app.debug();
       await app.ready();
 
       app.expect('code', 0);
       app.expect('stdout', new RegExp(`egg started on ${sockFile}`));
 
-      const sock = encodeURIComponent(sockFile);
-      await request(`http+unix://${sock}`).get('/').expect('done').expect(200);
+      await waitForFile(sockFile);
+      await requestUnixSocket(sockFile);
     });
 
     it.skipIf(process.platform !== 'linux')('should use reusePort in config on Linux', async () => {

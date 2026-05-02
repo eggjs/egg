@@ -3,6 +3,7 @@ import { strict as assert } from 'node:assert';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, afterEach } from 'vitest';
 
+import { Master } from '../../src/master.ts';
 import { cluster } from '../utils.ts';
 
 let app: MockApplication;
@@ -11,6 +12,39 @@ afterEach(mm.restore);
 
 describe('start master', () => {
   afterEach(() => app && app.close());
+
+  describe('detectPorts()', () => {
+    it('should detect clusterPort when it is not specified', async () => {
+      const options: { clusterPort?: number } = {};
+      const ctx = {
+        options,
+        log: () => {},
+        logger: {
+          error: () => {},
+        },
+      };
+
+      await Master.prototype.detectPorts.call(ctx as unknown as Master);
+
+      assert.equal(typeof ctx.options.clusterPort, 'number');
+    });
+
+    it('should keep the specified clusterPort', async () => {
+      const ctx = {
+        options: {
+          clusterPort: 34567,
+        },
+        log: () => {},
+        logger: {
+          error: () => {},
+        },
+      };
+
+      await Master.prototype.detectPorts.call(ctx as unknown as Master);
+
+      assert.equal(ctx.options.clusterPort, 34567);
+    });
+  });
 
   it.skip('start success in local env', async () => {
     mm.env('local');

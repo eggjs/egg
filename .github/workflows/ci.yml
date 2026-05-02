@@ -163,6 +163,124 @@ jobs:
         run: ut install --from pnpm
 
       - name: Run tests
+        run: |
+          ut run pretest --workspaces --if-present
+          node scripts/ci-run-vitest.mjs
+
+      - name: Run example tests
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: |
+          ut run example:test:all
+
+  coverage:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest']
+        node: ['24']
+
+    name: Coverage (${{ matrix.os }}, ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+      group: coverage-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Start Redis (MacOS or Linux)
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
+        uses: shogo82148/actions-setup-redis@cff708d63a30aebc0bfaa7276fb709d173f36cb6 # v1
+        with:
+          redis-version: '7'
+          auto-start: 'true'
+
+      - name: Start Redis (Windows via Memurai)
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: pwsh
+        run: |
+          # retry up to 3 times to handle Chocolatey feed flakiness
+          for ($i = 1; $i -le 3; $i++) {
+            choco install -y memurai-developer.install
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($i -lt 3) {
+              Write-Host "choco install failed (attempt $i/3), retrying in 15s..."
+              Start-Sleep -Seconds 15
+            } else {
+              Write-Error "choco install failed after 3 attempts"
+              exit 1
+            }
+          }
+
+          # ensure service exists and running (avoid non-zero return code of net start)
+          $svc = Get-Service -Name Memurai -ErrorAction SilentlyContinue
+          if (-not $svc) {
+            Write-Error "Memurai service not found after install"
+            exit 1
+          }
+          if ($svc.Status -ne 'Running') {
+            Start-Service -Name Memurai -ErrorAction Stop
+            # wait for 20s until Running
+            $svc.WaitForStatus('Running', '00:00:20')
+          } else {
+            Write-Host "Memurai already running."
+          }
+
+          # wait for 6379 port ready (max ~60s)
+          $deadline = (Get-Date).AddSeconds(60)
+          $ready = $false
+          while ((Get-Date) -lt $deadline -and -not $ready) {
+            try {
+              $client = New-Object System.Net.Sockets.TcpClient
+              $async  = $client.BeginConnect('127.0.0.1', 6379, $null, $null)
+              $ok = $async.AsyncWaitHandle.WaitOne(2000)
+              if ($ok -and $client.Connected) { $ready = $true }
+              $client.Close()
+            } catch { }
+          }
+          if (-not $ready) {
+            Write-Error "Memurai (Redis) not ready on 127.0.0.1:6379"
+            exit 1
+          }
+
+          Write-Host "Memurai is ready on 127.0.0.1:6379"
+
+      # install and start MySQL (will automatically start mysqld)
+      - name: Start MySQL (macOS or Linux)
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
+        uses: shogo82148/actions-setup-mysql@27e74fac04c136a9f4c2dc2ed457df57331b3e0c # v1
+        with:
+          mysql-version: '8'
+          auto-start: 'true'
+      - name: Init DB (macOS or Linux)
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
+        run: |
+          mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
+
+      - name: Start MySQL (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: pwsh
+        run: |
+          choco install -y mysql
+          refreshenv
+          # MySQL default root has no password, set a password and create database/user
+          # & mysqladmin -u root password root
+          & mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
+
+      - name: Setup utoo
+        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies
+        run: ut install --from pnpm
+
+      - name: Run tests with coverage
         run: ut run ci
 
       - name: Run example tests

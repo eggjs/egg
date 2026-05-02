@@ -63,6 +63,7 @@ export interface MockClusterOptions extends MockOptions {
   workers?: number | string;
   cache?: boolean;
   port?: number;
+  clusterPort?: number;
   /**
    * opt pass to coffee, such as { execArgv: ['--debug'] }
    */

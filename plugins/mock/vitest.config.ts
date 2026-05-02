@@ -6,6 +6,7 @@ const config: UserWorkspaceConfig = defineProject({
     exclude: ['test/fixtures/**', '**/node_modules/**', '**/dist/**'],
     testTimeout: 15000,
     hookTimeout: 20000,
+    fileParallelism: false,
   },
 });
 

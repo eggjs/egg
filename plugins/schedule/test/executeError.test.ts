@@ -1,5 +1,3 @@
-import { setTimeout as sleep } from 'node:timers/promises';
-
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, afterAll, beforeAll, expect } from 'vitest';
 
@@ -16,8 +14,11 @@ describe.skipIf(process.platform === 'win32')('test/executeError.test.ts', () =>
   afterAll(() => app.close());
 
   it('should schedule execute error', async () => {
-    await sleep(5000);
-    const scheduleLog = getScheduleLogContent('executeError');
-    expect(contains(scheduleLog, 'interval.js execute failed')).toBe(2);
+    await expect
+      .poll(() => contains(getScheduleLogContent('executeError'), 'interval.js execute failed'), {
+        interval: 500,
+        timeout: 10000,
+      })
+      .toBe(2);
   });
 });

@@ -252,9 +252,11 @@ export class Master extends ReadyEventEmitter {
   async detectPorts(): Promise<void> {
     // Detect cluster client port
     try {
-      const clusterPort = await detectPort();
-      this.options.clusterPort = clusterPort;
-      this.log('[master] detected cluster port: %s', clusterPort);
+      if (!this.options.clusterPort) {
+        const clusterPort = await detectPort();
+        this.options.clusterPort = clusterPort;
+        this.log('[master] detected cluster port: %s', clusterPort);
+      }
       // If sticky mode, detect worker port
       if (this.options.sticky) {
         const stickyWorkerPort = await detectPort();

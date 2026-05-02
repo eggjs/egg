@@ -31,7 +31,7 @@ describe('test/loader/egg_loader.test.ts', () => {
         (userInfo as any).homedir = undefined;
         mm(os, 'userInfo', () => userInfo);
       }
-      assert.equal(app.loader.getHomedir(), process.env.HOME);
+      assert.equal(app.loader.getHomedir(), process.env.HOME || os.homedir());
     });
 
     it('should return /home/admin when process.env.HOME is not exist', () => {
