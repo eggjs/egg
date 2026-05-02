@@ -156,9 +156,7 @@ function buildCommand(commandArgs, options, vitestJsonPath) {
     return replaced;
   }
 
-  const hasReporter = replaced.some(
-    (arg) => arg === '--reporter=json' || arg === '--reporter' || arg.startsWith('--reporter='),
-  );
+  const hasReporter = hasJsonReporter(replaced);
   const hasOutputFile = replaced.some(
     (arg) => arg === '--outputFile' || arg === '--outputFile.json' || arg.startsWith('--outputFile='),
   );
@@ -174,6 +172,19 @@ function buildCommand(commandArgs, options, vitestJsonPath) {
     return replaced;
   }
   return [...replaced, ...reporterArgs];
+}
+
+function hasJsonReporter(command) {
+  for (let index = 0; index < command.length; index++) {
+    const arg = command[index];
+    if (arg === '--reporter=json' || arg.startsWith('--reporter=json')) {
+      return true;
+    }
+    if (arg === '--reporter' && command[index + 1] === 'json') {
+      return true;
+    }
+  }
+  return false;
 }
 
 async function runCommand(command, env) {
@@ -223,7 +234,12 @@ function readJsonIfExists(filePath) {
   if (!fs.existsSync(filePath)) {
     return null;
   }
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch (error) {
+    console.warn(`Failed to parse JSON report at ${filePath}: ${error.message}`);
+    return null;
+  }
 }
 
 function collectEnvironment(command) {
@@ -284,16 +300,20 @@ function readVitestConfigDefaults(configPath) {
 }
 
 function matchStringProperty(source, property) {
-  const match = new RegExp(`${property}:\\s*['"]([^'"]+)['"]`).exec(source);
+  const match = new RegExp(`^\\s*(?!//|/\\*)${escapeRegExp(property)}:\\s*['"]([^'"]+)['"]`, 'm').exec(source);
   return match?.[1] ?? null;
 }
 
 function matchBooleanProperty(source, property) {
-  const match = new RegExp(`${property}:\\s*(true|false)`).exec(source);
+  const match = new RegExp(`^\\s*(?!//|/\\*)${escapeRegExp(property)}:\\s*(true|false)`, 'm').exec(source);
   if (!match) {
     return null;
   }
   return match[1] === 'true';
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function extractCommandParameters(command) {
@@ -322,7 +342,9 @@ function collectOptionValues(command, names) {
     const arg = command[index];
     for (const name of names) {
       if (arg === name) {
-        values.push({ name, value: command[index + 1] ?? true });
+        const next = command[index + 1];
+        const value = next && !next.startsWith('--') ? next : true;
+        values.push({ name, value });
       } else if (arg.startsWith(`${name}=`)) {
         values.push({ name, value: arg.slice(name.length + 1) });
       }
