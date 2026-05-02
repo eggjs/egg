@@ -24,7 +24,7 @@ describe('test/start.test.ts', () => {
       assert.strictEqual(app.router.stack.length, 0);
     });
 
-  it('should not create agent', () => {
+    it('should not create agent', () => {
       assert.strictEqual(app.agent, undefined);
     });
   });
