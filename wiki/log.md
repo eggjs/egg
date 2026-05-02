@@ -1,5 +1,11 @@
 # Wiki Log
 
+## [2026-05-02] package | document egg bundler tooling
+
+- sources touched: `tools/egg-bundler/src/index.ts`, `tools/egg-bundler/src/lib/Bundler.ts`, `tools/egg-bin/src/commands/bundle.ts`, `tools/egg-bundler/docs/output-structure.md`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Recorded the new `@eggjs/egg-bundler` package and its `egg-bin bundle` CLI surface after the bundler stack reached `next`.
+
 ## [2026-04-21] bootstrap | seed wiki schema and starter pages
 
 - sources touched: `CLAUDE.md`

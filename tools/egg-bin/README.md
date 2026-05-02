@@ -36,6 +36,7 @@ Add `egg-bin` to `package.json` scripts:
     "test-local": "egg-bin test",
     "test": "npm run lint -- --fix && npm run test-local",
     "cov": "egg-bin cov",
+    "bundle": "egg-bin bundle",
     "lint": "eslint .",
     "ci": "npm run lint && npm run cov"
   }
@@ -182,6 +183,39 @@ You can set `COV_EXCLUDES` env to add glob patterns to exclude from coverage (co
 ```bash
 COV_EXCLUDES="app/plugins/c*,app/autocreate/**" egg-bin cov
 ```
+
+### bundle
+
+Bundle an Egg application into a deployable artifact with `@eggjs/egg-bundler`.
+
+```bash
+egg-bin bundle
+egg-bin bundle --output ./dist-bundle
+egg-bin bundle --mode development
+egg-bin bundle --framework egg --output ./out
+```
+
+The command writes the bundle to `./dist-bundle` by default. The generated
+artifact can be started with Node from the output directory:
+
+```bash
+cd dist-bundle
+node worker.js
+```
+
+#### bundle options
+
+- `--output` / `-o` output directory, default to `./dist-bundle`
+- `--manifest` path to `manifest.json`, default to `<baseDir>/.egg/manifest.json`
+- `--framework` / `-f` framework name or absolute path
+- `--mode` build mode, `production` or `development`, default to `production`
+- `--no-tegg` accepted by the CLI, but not applied by the current bundler
+  implementation yet
+- `--force-external` package name to always keep external, supports multiple
+- `--inline-external` package name to force inline, supports multiple
+
+See [`@eggjs/egg-bundler`](../egg-bundler/README.md) for the programmatic API
+and output structure.
 
 ## Breaking Changes (v8)
 

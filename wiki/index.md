@@ -18,6 +18,7 @@ Read this file before exploring raw sources.
 
 ## Packages
 
+- [Egg Bundler](./packages/egg-bundler.md) - Tooling package that bundles Egg applications and backs `egg-bin bundle`.
 - [Typings Package](./packages/typings.md) - Shared TypeScript type surface for cross-package Egg typings.
 
 ## Sources
