@@ -100,4 +100,36 @@ describe('ManifestStore coverage: FileLoader getter auto-injects manifest', () =
 
     await testApp.close();
   });
+
+  it('should include plugin convention files that metadataOnly app loading does not execute', async () => {
+    const testApp = createApp('manifest-dynamic-plugin', { metadataOnly: true });
+    await testApp.loader.loadPlugin();
+    await testApp.loader.loadConfig();
+    await testApp.loader.loadApplicationExtend();
+    await testApp.loader.loadContextExtend();
+    await testApp.loader.loadRequestExtend();
+    await testApp.loader.loadResponseExtend();
+    await testApp.loader.loadHelperExtend();
+    await testApp.loader.loadCustomApp();
+    await testApp.loader.loadMiddleware();
+
+    const manifest = testApp.loader.generateManifest();
+
+    assert.equal(manifest.resolveCache['node_modules/@eggjs/security/agent'], 'node_modules/@eggjs/security/agent.js');
+    assert.equal(manifest.resolveCache['node_modules/@eggjs/security/app'], 'node_modules/@eggjs/security/app.js');
+    assert.equal(
+      manifest.resolveCache['node_modules/@eggjs/security/app/extend/agent'],
+      'node_modules/@eggjs/security/app/extend/agent.js',
+    );
+    assert.equal(
+      manifest.resolveCache['node_modules/@eggjs/security/app/extend/application'],
+      'node_modules/@eggjs/security/app/extend/application.js',
+    );
+    assert.ok(
+      manifest.fileDiscovery['node_modules/@eggjs/security/app/middleware'].includes('securities.js'),
+      'security middleware should be included in manifest fileDiscovery',
+    );
+
+    await testApp.close();
+  });
 });

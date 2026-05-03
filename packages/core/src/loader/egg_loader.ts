@@ -8,6 +8,7 @@ import { Request, Response, Application, Context as KoaContext } from '@eggjs/ko
 import { pathMatching, type PathMatchingOptions } from '@eggjs/path-matching';
 import { isESM, isSupportTypeScript } from '@eggjs/utils';
 import type { Logger } from 'egg-logger';
+import globby from 'globby';
 import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } from 'is-type-of';
 import { homedir } from 'node-homedir';
 import { now, diff } from 'performance-ms';
@@ -26,6 +27,7 @@ import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
+const CONVENTIONAL_EXTEND_NAMES = ['agent', 'application', 'request', 'response', 'context', 'helper'] as const;
 
 const originalPrototypes: Record<string, unknown> = {
   request: Request.prototype,
@@ -1764,11 +1766,56 @@ export class EggLoader {
    * Should be called after all loading phases complete.
    */
   generateManifest(): StartupManifest {
-    return this.manifest.generateManifest({
+    const manifest = this.manifest.generateManifest({
       serverEnv: this.serverEnv,
       serverScope: this.serverScope,
       typescriptEnabled: isSupportTypeScript(),
     });
+    this.#collectConventionalDynamicFiles(manifest);
+    return manifest;
+  }
+
+  /**
+   * metadataOnly startup intentionally skips the agent process, but bundled
+   * single-mode workers still load agent boot hooks and agent extends later.
+   * Record convention-based dynamic entry points so the bundle can satisfy
+   * those runtime lookups without running agent lifecycle hooks at manifest
+   * generation time.
+   */
+  #collectConventionalDynamicFiles(manifest: StartupManifest): void {
+    for (const unit of this.getLoadUnits()) {
+      this.#collectConventionResolve(manifest, unit.path, 'agent');
+      this.#collectConventionResolve(manifest, unit.path, 'app');
+      for (const name of CONVENTIONAL_EXTEND_NAMES) {
+        this.#collectConventionResolve(manifest, unit.path, 'app', 'extend', name);
+      }
+      this.#collectConventionFileDiscovery(manifest, path.join(unit.path, 'app/middleware'));
+    }
+  }
+
+  #collectConventionResolve(manifest: StartupManifest, root: string, ...segments: string[]): void {
+    const request = path.join(root, ...segments);
+    const requestKey = this.#toManifestRel(request);
+    if (Object.hasOwn(manifest.resolveCache, requestKey)) return;
+
+    const resolved = this.#doResolveModule(request);
+    manifest.resolveCache[requestKey] = resolved ? this.#toManifestRel(resolved) : null;
+  }
+
+  #collectConventionFileDiscovery(manifest: StartupManifest, directory: string): void {
+    const dirKey = this.#toManifestRel(directory);
+    if (Object.hasOwn(manifest.fileDiscovery, dirKey)) return;
+
+    const files = isSupportTypeScript() ? ['**/*.{js,ts}', '!**/*.d.ts'] : ['**/*.js'];
+    manifest.fileDiscovery[dirKey] =
+      fs.existsSync(directory) && fs.statSync(directory).isDirectory()
+        ? globby.sync(files, { cwd: directory }).sort()
+        : [];
+  }
+
+  #toManifestRel(filepath: string): string {
+    const rel = path.isAbsolute(filepath) ? path.relative(this.options.baseDir, filepath) : filepath;
+    return rel.replaceAll(path.sep, '/');
   }
 }
 
