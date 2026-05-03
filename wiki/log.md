@@ -2,7 +2,7 @@
 
 ## [2026-05-04] workflow | record local test infrastructure
 
-- sources touched: `README.md`, `benchmark/ci-test/README.md`, `scripts/dev-services.js`, `scripts/ci-test-benchmark.js`
+- sources consulted: `README.md`, `benchmark/ci-test/README.md`, `dev-services.compose.yml`, `package.json`, `scripts/dev-services.js`, `scripts/ci-test-benchmark.js`
 - pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/workflows/test-infrastructure.md`
 - note: Added a durable workflow page for local MySQL/Redis service helpers and optional CI benchmark report generation.
 

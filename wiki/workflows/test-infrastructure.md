@@ -5,6 +5,7 @@ summary: Local services and CI benchmark tooling used to reproduce and measure t
 source_files:
   - README.md
   - benchmark/ci-test/README.md
+  - dev-services.compose.yml
   - package.json
   - scripts/dev-services.js
   - scripts/ci-test-benchmark.js
@@ -19,16 +20,17 @@ and optional CI benchmark reports.
 
 ## Local External Services
 
-`utoo run dev:services:start` starts the Docker Compose stack declared in
+`ut run dev:services:start` starts the Docker Compose stack declared in
 `dev-services.compose.yml`. It provides MySQL 8 and Redis 7 on the CI-aligned
 default host ports:
 
 - MySQL: `127.0.0.1:3306`
 - Redis: `127.0.0.1:6379`
 
-The helper creates the MySQL databases used by DAL, ORM, Redis, session, and
-cnpmcore-related fixtures. `dev:services:status`, `dev:services:stop`, and
-`dev:services:reset` wrap the corresponding lifecycle actions. Port and image
+The helper creates MySQL databases used by DAL, ORM, session, and
+cnpmcore-related fixtures, and provides Redis for fixture requirements.
+`ut run dev:services:status`, `ut run dev:services:stop`, and
+`ut run dev:services:reset` wrap the corresponding lifecycle actions. Port and image
 overrides exist for compatibility checks, but the full local test path still
 expects the default host ports because several fixtures hard-code them.
 
