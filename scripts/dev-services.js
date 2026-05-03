@@ -7,9 +7,6 @@ import { fileURLToPath } from 'node:url';
 
 const rootDir = dirname(dirname(fileURLToPath(import.meta.url)));
 const composeFile = join(rootDir, 'dev-services.compose.yml');
-const mysqlPort = Number.parseInt(process.env.EGG_DEV_SERVICES_MYSQL_PORT || '3306', 10);
-const redisPort = Number.parseInt(process.env.EGG_DEV_SERVICES_REDIS_PORT || '6379', 10);
-const waitTimeout = Number.parseInt(process.env.EGG_DEV_SERVICES_WAIT_TIMEOUT || '90', 10);
 
 const databaseNames = [
   'test',
@@ -22,6 +19,35 @@ const databaseNames = [
   'cnpmcore',
   'cnpmcore_unittest',
 ];
+
+function readPositiveInteger(name, defaultValue) {
+  const rawValue = process.env[name];
+  if (!rawValue) {
+    return defaultValue;
+  }
+
+  const value = Number(rawValue);
+  if (!Number.isInteger(value) || value <= 0) {
+    throw new Error(`${name} must be a positive integer, got ${rawValue}`);
+  }
+  return value;
+}
+
+function readPort(name, defaultValue) {
+  const port = readPositiveInteger(name, defaultValue);
+  if (port > 65535) {
+    throw new Error(`${name} must be between 1 and 65535, got ${port}`);
+  }
+  return port;
+}
+
+function readConfig() {
+  return {
+    mysqlPort: readPort('EGG_DEV_SERVICES_MYSQL_PORT', 3306),
+    redisPort: readPort('EGG_DEV_SERVICES_REDIS_PORT', 6379),
+    waitTimeout: readPositiveInteger('EGG_DEV_SERVICES_WAIT_TIMEOUT', 150),
+  };
+}
 
 function dockerCompose(args, options = {}) {
   const result = spawnSync('docker', ['compose', '-f', composeFile, ...args], {
@@ -105,7 +131,7 @@ async function assertPortAvailable(service, port, containerPort, running) {
     throw new Error(
       [
         `${service} is already running for this compose project on ${current}, but this run requested 127.0.0.1:${port}.`,
-        'Re-run with the same EGG_DEV_SERVICES_* port override, or run utoo run dev:services:reset before changing ports.',
+        'Re-run with the same EGG_DEV_SERVICES_* port override, or use `utoo run dev:services:reset` before changing ports.',
       ].join('\n'),
     );
   }
@@ -123,7 +149,7 @@ async function assertPortAvailable(service, port, containerPort, running) {
   );
 }
 
-async function waitFor(command, label) {
+async function waitFor(command, label, waitTimeout) {
   const deadline = Date.now() + waitTimeout * 1000;
   let lastOutput = '';
 
@@ -139,18 +165,20 @@ async function waitFor(command, label) {
   throw new Error(`${label} was not ready within ${waitTimeout}s.\n${lastOutput}`);
 }
 
-async function initMysql() {
-  await waitFor(['mysql', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uroot', '--silent'], 'MySQL');
+async function initMysql(waitTimeout) {
+  await waitFor(['mysql', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uroot', '--silent'], 'MySQL', waitTimeout);
 
   const sql = databaseNames.map((name) => `CREATE DATABASE IF NOT EXISTS \`${name}\`;`).join(' ');
   dockerCompose(['exec', '-T', 'mysql', 'mysql', '-uroot', '-e', sql], { stdio: 'inherit' });
 }
 
-async function waitRedis() {
-  await waitFor(['redis', 'redis-cli', 'ping'], 'Redis');
+async function waitRedis(waitTimeout) {
+  await waitFor(['redis', 'redis-cli', 'ping'], 'Redis', waitTimeout);
 }
 
 async function start() {
+  const { mysqlPort, redisPort, waitTimeout } = readConfig();
+
   runDocker(['compose', 'version']);
 
   const running = runningServices();
@@ -158,8 +186,20 @@ async function start() {
   await assertPortAvailable('redis', redisPort, 6379, running);
 
   dockerCompose(['up', '-d'], { stdio: 'inherit' });
-  await initMysql();
-  await waitRedis();
+  try {
+    await initMysql(waitTimeout);
+    await waitRedis(waitTimeout);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(
+      [
+        message,
+        'The compose stack is still running so Docker health status and logs can be inspected.',
+        'After fixing the issue, run `utoo run dev:services:reset` to clean up before starting again.',
+      ].join('\n'),
+      { cause: err },
+    );
+  }
 
   console.log(`Local services are ready: MySQL 127.0.0.1:${mysqlPort}, Redis 127.0.0.1:${redisPort}`);
 }
@@ -196,7 +236,7 @@ async function main() {
       break;
     default:
       console.error(`Unknown command: ${command}`);
-      console.error('Usage: node scripts/dev-services.js <start|stop|status|reset>');
+      console.error('Usage: node scripts/dev-services.js <start|up|stop|down|status|ps|reset>');
       process.exitCode = 1;
   }
 }
