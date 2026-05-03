@@ -97,6 +97,7 @@ Run `utoo run dev:services:reset` before switching MySQL image families, for exa
 Current hard-coded service assumptions:
 
 - Redis plugin fixtures under `plugins/redis/test/fixtures/apps/**/config.*` use `127.0.0.1:6379`; skipped Redis plugin tests become runnable when that port is available.
+- Session Redis fixtures under `plugins/session/test/fixtures/redis-session/config/config.default.js` use `127.0.0.1:6379`.
 - DAL runtime tests in `tegg/core/dal-runtime/test/DataSource.test.ts` and `tegg/core/dal-runtime/test/DAO.test.ts` use local MySQL on port `3306`.
 - DAL module fixtures in `tegg/plugin/dal/test/fixtures/apps/dal-app/modules/dal/module.yml` and `tegg/standalone/standalone/test/fixtures/dal-*/module.yml` use local MySQL on port `3306`.
 - ORM fixtures in `tegg/plugin/orm/test/fixtures/prepare.js` and `tegg/plugin/orm/test/fixtures/apps/orm-app/config/config.default.ts` use local MySQL on port `3306`.
