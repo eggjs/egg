@@ -118,4 +118,119 @@ describe('Bundler', () => {
 
     expect(packResolve).toEqual({ alias });
   });
+
+  it('loads pack resolve aliases from module.yml and resolves dot-relative targets from baseDir', async () => {
+    let packResolve: unknown;
+    await fs.writeFile(
+      path.join(tmpApp, 'module.yml'),
+      [
+        'bundle:',
+        '  pack:',
+        '    resolve:',
+        '      alias:',
+        '        module-file: ./node_modules/module-file/index.js',
+        '        package-style: package-style',
+      ].join('\n'),
+    );
+
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: {
+        buildFunc: async (wrapped) => {
+          packResolve = (wrapped.config as { resolve?: unknown }).resolve;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// worker\n');
+        },
+      },
+    });
+
+    expect(packResolve).toEqual({
+      alias: {
+        'module-file': path.join(tmpApp, 'node_modules/module-file/index.js'),
+        'package-style': 'package-style',
+      },
+    });
+  });
+
+  it('lets explicit pack resolve aliases override module.yml aliases', async () => {
+    let packResolve: unknown;
+    await fs.writeFile(
+      path.join(tmpApp, 'module.yml'),
+      [
+        'bundle:',
+        '  pack:',
+        '    resolve:',
+        '      alias:',
+        '        shared: ./from-module.js',
+        '        module-only: ./module-only.js',
+      ].join('\n'),
+    );
+
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: {
+        resolve: {
+          conditionNames: ['node'],
+          alias: {
+            shared: path.join(tmpApp, 'from-cli.js'),
+            'cli-only': 'cli-only',
+          },
+        },
+        buildFunc: async (wrapped) => {
+          packResolve = (wrapped.config as { resolve?: unknown }).resolve;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// worker\n');
+        },
+      },
+    });
+
+    expect(packResolve).toEqual({
+      conditionNames: ['node'],
+      alias: {
+        shared: path.join(tmpApp, 'from-cli.js'),
+        'module-only': path.join(tmpApp, 'module-only.js'),
+        'cli-only': 'cli-only',
+      },
+    });
+  });
+
+  it('throws a clear error when module.yml bundle alias config is invalid', async () => {
+    await fs.writeFile(
+      path.join(tmpApp, 'module.yml'),
+      ['bundle:', '  pack:', '    resolve:', '      alias:', '        invalid-target:', '          nested: true'].join(
+        '\n',
+      ),
+    );
+
+    await expect(
+      bundle({
+        baseDir: tmpApp,
+        outputDir: tmpOutput,
+        pack: {
+          buildFunc: async () => {
+            await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// worker\n');
+          },
+        },
+      }),
+    ).rejects.toThrow(/module\.yml bundle config load failed: .*bundle\.pack\.resolve\.alias\.invalid-target/);
+  });
+
+  it('rejects prototype-polluting module.yml bundle alias specifiers', async () => {
+    await fs.writeFile(
+      path.join(tmpApp, 'module.yml'),
+      ['bundle:', '  pack:', '    resolve:', '      alias:', '        constructor: ./polluted.js'].join('\n'),
+    );
+
+    await expect(
+      bundle({
+        baseDir: tmpApp,
+        outputDir: tmpOutput,
+        pack: {
+          buildFunc: async () => {
+            await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// worker\n');
+          },
+        },
+      }),
+    ).rejects.toThrow(/module\.yml bundle config load failed: .*bundle\.pack\.resolve\.alias\.constructor/);
+  });
 });

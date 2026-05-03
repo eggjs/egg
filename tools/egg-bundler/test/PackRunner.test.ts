@@ -33,6 +33,7 @@ describe('PackRunner', () => {
       buildFunc?: BuildFunc;
       resolve?: {
         alias?: Record<string, string>;
+        [key: string]: unknown;
       };
     } = {},
   ): PackRunner {
@@ -123,6 +124,22 @@ describe('PackRunner', () => {
 
     const config = (buildFunc.mock.calls[0]![0] as { config: Record<string, unknown> }).config;
     expect(config.resolve).toEqual({ alias });
+  });
+
+  it('preserves non-alias resolve options while cloning aliases', async () => {
+    const buildFunc = vi.fn<BuildFunc>(async () => {});
+    const alias = {
+      'some-package': path.join(tmpDir, 'node_modules', 'some-package', 'index.js'),
+    };
+
+    await makeRunner({ buildFunc, resolve: { conditionNames: ['node'], alias } }).run();
+
+    const config = (buildFunc.mock.calls[0]![0] as { config: Record<string, unknown> }).config;
+    expect(config.resolve).toEqual({
+      conditionNames: ['node'],
+      alias,
+    });
+    expect((config.resolve as { alias: Record<string, string> }).alias).not.toBe(alias);
   });
 
   it('disables treeShaking and minify in the pack config (tegg runtime requires the full graph)', async () => {
