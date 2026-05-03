@@ -59,8 +59,8 @@ CommonJS artifact from an Egg application.
 - `externals.inline` removes an auto-detected external unless the same package
   name is also listed in `externals.force`.
 - ESM-only packages, `egg`, `@swc/helpers`, and `@eggjs/*` packages are bundled
-  by default unless force-external or dependency metadata applies. If a wrapper
-  around native optional platform packages cannot be loaded through
+  by default unless `externals.force` or dependency metadata applies. If a
+  wrapper around native optional platform packages cannot be loaded through
   `createRequire`, the wrapper stays bundled and the platform packages are kept
   external.
 - `BundlerConfig.tegg` is accepted but intentionally not wired into the current

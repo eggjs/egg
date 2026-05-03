@@ -77,11 +77,13 @@ removes an auto-detected external unless the same name is also present in
 typically by copying the app's `package.json` next to `worker.js` and running
 `npm ci --omit=dev`, or by deploying into an environment where these dependencies
 are already installed. ESM-only packages, `egg`, `@swc/helpers`, and `@eggjs/*`
-packages are bundled by default unless `externals.force` or dependency metadata
-explicitly marks them external. For wrappers around native optional platform
-packages that cannot be loaded through `createRequire`, the wrapper stays
-bundled so the CommonJS standalone output does not emit a plain
-`require(wrapper)`, while the optional native platform packages remain external.
+packages are bundled by default unless an explicit or auto-detected external
+rule applies, such as `externals.force`, peer/optional dependency metadata,
+native addon detection, or missing optional peer detection. For wrappers around
+native optional platform packages that cannot be loaded through `createRequire`,
+the wrapper stays bundled so the CommonJS standalone output does not emit a
+plain `require(wrapper)`, while the optional native platform packages remain
+external.
 
 ## Known limitations
 
