@@ -1,5 +1,11 @@
 # Wiki Log
 
+## [2026-05-04] workflow | record local test infrastructure
+
+- sources touched: `README.md`, `benchmark/ci-test/README.md`, `scripts/dev-services.js`, `scripts/ci-test-benchmark.js`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/workflows/test-infrastructure.md`
+- note: Added a durable workflow page for local MySQL/Redis service helpers and optional CI benchmark report generation.
+
 ## [2026-05-03] package | record egg bundler runtime path mapping
 
 - sources touched: `tools/egg-bundler/src/lib/EntryGenerator.ts`, `tools/egg-bundler/docs/output-structure.md`

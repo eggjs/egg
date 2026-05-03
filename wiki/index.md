@@ -11,6 +11,7 @@ Read this file before exploring raw sources.
 ## Workflows
 
 - [Docs and API Updates](./workflows/docs-and-api-updates.md) - How to handle changes that affect user-facing docs or durable project understanding.
+- [Test Infrastructure](./workflows/test-infrastructure.md) - Local external services and optional CI benchmark report tooling.
 
 ## Decisions
 
