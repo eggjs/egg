@@ -7,8 +7,8 @@ export const REPORT_JSON_FILENAME = 'report.json';
 export const REPORT_MARKDOWN_FILENAME = 'report.md';
 export const VITEST_JSON_PLACEHOLDER = '{vitestJson}';
 export const DEFAULT_COMMAND = [
-  'pnpm',
-  'exec',
+  'ut',
+  'execute',
   'vitest',
   'run',
   '--bail',

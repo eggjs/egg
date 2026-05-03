@@ -3,9 +3,9 @@ import { DEFAULT_TOP_LIMIT, VITEST_JSON_PLACEHOLDER } from './constants.js';
 export function printHelp() {
   console.log(`
 Usage:
-  pnpm run benchmark:ci-test
-  pnpm run benchmark:ci-test -- --coverage
-  pnpm run benchmark:ci-test -- --output-dir .tmp/bench -- pnpm exec vitest run --maxWorkers=4
+  ut run benchmark:ci-test
+  ut run benchmark:ci-test -- --coverage
+  ut run benchmark:ci-test -- --output-dir .tmp/bench -- ut execute vitest run --maxWorkers=4
 
 Options:
   --output-dir <dir>                 Directory for report.md, report.json, and raw Vitest JSON.
