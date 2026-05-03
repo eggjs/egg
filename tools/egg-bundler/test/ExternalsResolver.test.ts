@@ -31,6 +31,11 @@ describe('ExternalsResolver', () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
       expect(result['native-dotnode']).toBe('native-dotnode');
     });
+
+    it('externalizes a wrapper package whose installed optional dependency is native', async () => {
+      const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
+      expect(result['native-optional-wrapper']).toBe('native-optional-wrapper');
+    });
   });
 
   describe('tier 2: ESM-only packages', () => {
@@ -129,6 +134,11 @@ describe('ExternalsResolver', () => {
     it('leaves a plain CJS JS package out of the externals map', async () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
       expect(result['normal-js']).toBeUndefined();
+    });
+
+    it('leaves a package with only plain JS optional dependencies out of the externals map', async () => {
+      const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
+      expect(result['optional-js-wrapper']).toBeUndefined();
     });
 
     it('does not externalize a declared dep that is not installed and matches no rule', async () => {
