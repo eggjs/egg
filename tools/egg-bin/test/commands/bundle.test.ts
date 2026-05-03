@@ -31,7 +31,7 @@ describe('test/commands/bundle.test.ts', () => {
       baseDir,
       outputDir: path.join(baseDir, 'dist-bundle'),
       manifestPath: undefined,
-      framework: 'egg',
+      framework: 'aliyun-egg',
       mode: 'production',
       tegg: true,
       externals: {
@@ -65,7 +65,7 @@ describe('test/commands/bundle.test.ts', () => {
       baseDir,
       outputDir: path.join(baseDir, 'bundle-output'),
       manifestPath: path.join(baseDir, '.egg/custom-manifest.json'),
-      framework: 'egg',
+      framework: 'aliyun-egg',
       mode: 'development',
       tegg: false,
       externals: {
@@ -90,7 +90,7 @@ describe('test/commands/bundle.test.ts', () => {
       baseDir,
       outputDir: path.join(baseDir, 'dist-bundle'),
       manifestPath: undefined,
-      framework: 'egg',
+      framework: 'aliyun-egg',
       mode: 'production',
       tegg: true,
       externals: {
