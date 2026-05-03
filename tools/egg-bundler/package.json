@@ -89,6 +89,7 @@
     "@eggjs/core": "workspace:*",
     "@utoo/pack": "catalog:",
     "execa": "catalog:",
+    "js-yaml": "catalog:",
     "tsx": "catalog:"
   },
   "devDependencies": {
@@ -98,6 +99,7 @@
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
+    "@types/js-yaml": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "rimraf": "catalog:",

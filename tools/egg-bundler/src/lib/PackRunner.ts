@@ -11,6 +11,7 @@ export type BuildFunc = (config: { config: unknown }, projectPath: string, rootP
 
 export interface PackRunnerResolveConfig {
   readonly alias?: Readonly<Record<string, string>>;
+  readonly [key: string]: unknown;
 }
 
 export interface PackRunnerOptions {
@@ -118,8 +119,15 @@ export class PackRunner {
   }
 
   #buildResolveConfig(resolve: PackRunnerResolveConfig | undefined): PackRunnerResolveConfig | undefined {
-    if (!resolve?.alias || Object.keys(resolve.alias).length === 0) return undefined;
-    return { alias: { ...resolve.alias } };
+    if (!resolve) return undefined;
+
+    const { alias, ...rest } = resolve;
+    const resolveConfig = {
+      ...rest,
+      ...(alias && Object.keys(alias).length > 0 ? { alias: { ...alias } } : {}),
+    };
+
+    return Object.keys(resolveConfig).length > 0 ? resolveConfig : undefined;
   }
 
   async #collectFiles(dir: string): Promise<readonly string[]> {

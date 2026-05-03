@@ -28,6 +28,22 @@ await bundle({
 `outputDir` is resolved from `baseDir` when it is relative. The default manifest
 path is `<baseDir>/.egg/manifest.json`.
 
+Applications can also provide stable bundle configuration in
+`<baseDir>/module.yml`. The supported schema is:
+
+```yaml
+bundle:
+  pack:
+    resolve:
+      alias:
+        some-package: ./node_modules/some-package/index.js
+```
+
+Dot-relative alias targets are resolved from `baseDir`; package-style and
+absolute targets are passed through. Aliases supplied directly through the
+programmatic `pack.resolve.alias` option override aliases with the same key from
+`module.yml`.
+
 If the startup manifest is missing, the bundler generates it by starting the app
 with `metadataOnly: true`. In that mode Egg skips the agent and normal boot
 lifecycle, runs `loadMetadata()` hooks, and the manifest generation child
@@ -48,7 +64,7 @@ not run.
 | `externals.inline`   | Package names to force inline even if auto-detected as external.                |
 | `pack.buildFunc`     | Test hook for replacing the real `@utoo/pack` build entry.                      |
 | `pack.rootPath`      | Override the monorepo workspace root used by `@utoo/pack`.                      |
-| `pack.resolve.alias` | Application-supplied `@utoo/pack` resolve aliases.                              |
+| `pack.resolve.alias` | Application-supplied `@utoo/pack` resolve aliases; overrides `module.yml`.      |
 
 ## Result
 

@@ -218,6 +218,20 @@ node worker.js
   supports multiple. Dot-relative targets such as `./target.js` and
   `../target.js` are resolved from the application base directory
 
+Bundle aliases can also be committed in the application `module.yml`:
+
+```yaml
+bundle:
+  pack:
+    resolve:
+      alias:
+        some-package: ./node_modules/some-package/index.js
+```
+
+`module.yml` aliases use the same target resolution rules as `--pack-alias`.
+If the same alias is configured in both places, the explicit CLI
+`--pack-alias` value wins.
+
 See [`@eggjs/egg-bundler`](../egg-bundler/README.md) for the programmatic API
 and output structure.
 
