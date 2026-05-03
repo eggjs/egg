@@ -76,7 +76,7 @@ describe('test/commands/bundle.test.ts', () => {
     });
   });
 
-  it('should pass pack aliases to egg-bundler with relative targets resolved from baseDir', async () => {
+  it('should pass pack aliases to egg-bundler with dot-relative targets resolved from baseDir', async () => {
     await Bundle.run([
       '--base',
       baseDir,

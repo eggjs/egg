@@ -215,8 +215,8 @@ node worker.js
 - `--force-external` package name to always keep external, supports multiple
 - `--inline-external` package name to force inline, supports multiple
 - `--pack-alias` `@utoo/pack` resolve alias in `<specifier>=<target>` form,
-  supports multiple. Relative targets are resolved from the application base
-  directory
+  supports multiple. Dot-relative targets such as `./target.js` and
+  `../target.js` are resolved from the application base directory
 
 See [`@eggjs/egg-bundler`](../egg-bundler/README.md) for the programmatic API
 and output structure.

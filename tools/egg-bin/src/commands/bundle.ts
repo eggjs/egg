@@ -79,7 +79,7 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
       default: [],
     }),
     'pack-alias': Flags.string({
-      description: '@utoo/pack resolve alias in <specifier>=<target> form, supports multiple',
+      description: '@utoo/pack resolve alias in <specifier>=<target> form, dot-relative targets resolve from --base',
       multiple: true,
       default: [],
     }),
