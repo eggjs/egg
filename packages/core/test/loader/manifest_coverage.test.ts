@@ -110,23 +110,23 @@ describe('ManifestStore coverage: FileLoader getter auto-injects manifest', () =
     const manifest = testApp.loader.generateManifest();
 
     assert.ok(
-      manifest.fileDiscovery['app/adapter'].includes('docker.js'),
+      manifest.fileDiscovery['app/adapter']?.includes('docker.js'),
       'app customLoader directory should be included in manifest fileDiscovery',
     );
     assert.ok(
-      manifest.fileDiscovery['app/util'].includes('sub/fn.js'),
+      manifest.fileDiscovery['app/util']?.includes('sub/fn.js'),
       'nested app customLoader directory should be included in manifest fileDiscovery',
     );
     assert.ok(
-      manifest.fileDiscovery['app/repository'].includes('user.js'),
+      manifest.fileDiscovery['app/repository']?.includes('user.js'),
       'ctx customLoader directory should be included in manifest fileDiscovery',
     );
     assert.ok(
-      manifest.fileDiscovery['app/plugin'].includes('a.js'),
+      manifest.fileDiscovery['app/plugin']?.includes('a.js'),
       'app loadunit customLoader directory should be included in manifest fileDiscovery',
     );
     assert.ok(
-      manifest.fileDiscovery['config/b/app/plugin'].includes('b.js'),
+      manifest.fileDiscovery['config/b/app/plugin']?.includes('b.js'),
       'plugin loadunit customLoader directory should be included in manifest fileDiscovery',
     );
 
@@ -158,7 +158,7 @@ describe('ManifestStore coverage: FileLoader getter auto-injects manifest', () =
       'node_modules/@eggjs/security/app/extend/application.js',
     );
     assert.ok(
-      manifest.fileDiscovery['node_modules/@eggjs/security/app/middleware'].includes('securities.js'),
+      manifest.fileDiscovery['node_modules/@eggjs/security/app/middleware']?.includes('securities.js'),
       'security middleware should be included in manifest fileDiscovery',
     );
 
