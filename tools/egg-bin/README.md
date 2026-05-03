@@ -208,7 +208,9 @@ node worker.js
 
 - `--output` / `-o` output directory, default to `./dist-bundle`
 - `--manifest` path to `manifest.json`, default to `<baseDir>/.egg/manifest.json`
-- `--framework` / `-f` framework name or absolute path
+- `--framework` / `-f` framework package specifier, defaulting to
+  `package.json#egg.framework` or `egg`. Absolute framework paths are not
+  supported by the bundled runtime.
 - `--mode` build mode, `production` or `development`, default to `production`
 - `--no-tegg` accepted by the CLI, but not applied by the current bundler
   implementation yet

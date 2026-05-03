@@ -57,7 +57,7 @@ not run.
 | `baseDir`            | Application root directory. Required.                                           |
 | `outputDir`          | Output directory for the bundled artifact. Required.                            |
 | `manifestPath`       | Path to `manifest.json`. Defaults to `<baseDir>/.egg/manifest.json`.            |
-| `framework`          | Framework name or absolute path. Defaults to `egg`.                             |
+| `framework`          | Framework package specifier. Defaults to `egg`; absolute paths are unsupported. |
 | `mode`               | Build mode, `production` or `development`. Defaults to `production`.            |
 | `tegg`               | Accepted by `BundlerConfig`, but not applied by the current implementation yet. |
 | `externals.force`    | Package names to always keep external.                                          |
