@@ -126,11 +126,13 @@ export class ExternalsResolver {
     optionalDeps: ReadonlySet<string>,
     peerDeps: ReadonlySet<string>,
   ): Promise<ExternalizeDecision> {
-    let externalizePackage = optionalDeps.has(name) || peerDeps.has(name);
+    const isRootOptionalDep = optionalDeps.has(name);
+    let externalizePackage = peerDeps.has(name);
 
     const pkgDir = await this.#findPackageDir(name);
-    if (!pkgDir) return { externalizePackage, extraExternals: [] };
+    if (!pkgDir) return { externalizePackage: externalizePackage || isRootOptionalDep, extraExternals: [] };
     const pkg = await this.#readPackageJson(pkgDir);
+    if (isRootOptionalDep && this.#canLoadPackageThroughCreateRequire(pkg)) externalizePackage = true;
     if (await this.#hasMissingOptionalPeerDependencies(pkgDir, pkg)) externalizePackage = true;
     if (await this.#hasNativeBinary(pkgDir, pkg)) externalizePackage = true;
 

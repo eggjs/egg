@@ -105,6 +105,37 @@ describe('ExternalsResolver', () => {
       expect(result['@cnpmjs/packument-darwin-x64']).toBe('@cnpmjs/packument-darwin-x64');
     });
 
+    it('keeps a root optional import-only native wrapper bundled but externalizes its platform packages', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await writePackageJson(tempDir, {
+          name: 'root-optional-native-wrapper-app',
+          version: '1.0.0',
+          private: true,
+          optionalDependencies: {
+            '@cnpmjs/packument': '1.7.0',
+          },
+        });
+        await writePackageJson(path.join(tempDir, 'node_modules/@cnpmjs/packument'), {
+          name: '@cnpmjs/packument',
+          version: '1.7.0',
+          type: 'module',
+          exports: {
+            './package.json': './package.json',
+          },
+          optionalDependencies: {
+            '@cnpmjs/packument-linux-x64-gnu': '1.7.0',
+          },
+        });
+
+        const result = await new ExternalsResolver({ baseDir: tempDir }).resolve();
+        expect(result['@cnpmjs/packument']).toBeUndefined();
+        expect(result['@cnpmjs/packument-linux-x64-gnu']).toBe('@cnpmjs/packument-linux-x64-gnu');
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
     it('keeps a native optional wrapper bundled when its require export target is not require-able', async () => {
       const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
       try {
