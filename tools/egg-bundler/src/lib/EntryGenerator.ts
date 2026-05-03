@@ -212,11 +212,6 @@ export class EntryGenerator {
     return unique;
   }
 
-  #frameworkRuntimeValue(): string {
-    if (path.isAbsolute(this.#framework)) return this.#normalizeKey(this.#framework);
-    return this.#framework;
-  }
-
   #renderWorkerEntry(entries: BundleEntry[], manifest: StartupManifest): string {
     const importLines: string[] = [];
     const mapLines: string[] = [];
@@ -241,8 +236,7 @@ export class EntryGenerator {
       ),
     );
     const appResolveCacheAliases = JSON.stringify(this.#collectResolveCacheAliases(manifest));
-    const frameworkImportSpec = JSON.stringify(this.#toFrameworkImportSpecifier());
-    const frameworkRuntimeValue = JSON.stringify(this.#frameworkRuntimeValue());
+    const frameworkSpec = JSON.stringify(this.#framework);
 
     const externalBlock =
       externalSpecs.length > 0
@@ -263,8 +257,8 @@ for (const [key, spec] of __EXTERNAL_SPECS) {
 import path from 'node:path';
 
 import { ManifestStore } from '@eggjs/core';
-import { startEgg } from ${frameworkImportSpec};
-import * as __frameworkModule from ${frameworkImportSpec};
+import { startEgg } from ${frameworkSpec};
+import * as __frameworkModule from ${frameworkSpec};
 
 ${importLines.join('\n')}
 
@@ -272,8 +266,7 @@ ${importLines.join('\n')}
 // Cannot use __dirname because turbopack replaces it with the compile-time
 // path of the INPUT file, not the OUTPUT directory.
 const __outputDir = path.dirname(path.resolve(process.argv[1] || '.'));
-const __frameworkImport = ${frameworkImportSpec};
-const __framework = ${frameworkRuntimeValue};
+const __framework = ${frameworkSpec};
 
 const MANIFEST_DATA = ${manifestJson} as const;
 const __APP_ABSOLUTE_ALIASES: Array<[string, string]> = ${appAbsoluteAliases};
@@ -295,7 +288,6 @@ const __setBundleAliases = (rel: string, mod: unknown) => {
     __setBundleMap(path.resolve(__outputDir, rel), mod);
   }
 };
-__setBundleMap(__frameworkImport, __frameworkModule);
 __setBundleMap(__framework, __frameworkModule);
 for (const [rel, mod] of Object.entries(__BUNDLE_MAP_REL)) {
   __setBundleAliases(rel, mod);
@@ -340,46 +332,6 @@ startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single' }).then(
   process.exit(1);
 });
 `;
-  }
-
-  #toFrameworkImportSpecifier(): string {
-    if (!path.isAbsolute(this.#framework)) return this.#framework;
-    const packageName = this.#packageNameFromDir(this.#framework);
-    if (packageName && this.#canUseFrameworkPackageName(packageName, this.#framework)) {
-      return packageName;
-    }
-    return this.#toImportSpecifier(this.#framework);
-  }
-
-  #packageNameFromDir(dir: string): string | undefined {
-    try {
-      const req = createRequire(path.join(dir, 'package.json'));
-      const pkg = req(path.join(dir, 'package.json')) as { name?: unknown };
-      return typeof pkg.name === 'string' && pkg.name ? pkg.name : undefined;
-    } catch {
-      return undefined;
-    }
-  }
-
-  #canUseFrameworkPackageName(packageName: string, dir: string): boolean {
-    if (this.#isInsideDir(path.join(this.#baseDir, 'node_modules'), dir)) return true;
-
-    try {
-      const req = createRequire(path.join(this.#baseDir, 'package.json'));
-      const resolvedPackageJson = req.resolve(`${packageName}/package.json`);
-      return this.#samePath(path.dirname(resolvedPackageJson), dir);
-    } catch {
-      return false;
-    }
-  }
-
-  #isInsideDir(parent: string, dir: string): boolean {
-    const rel = path.relative(path.resolve(parent), path.resolve(dir));
-    return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
-  }
-
-  #samePath(left: string, right: string): boolean {
-    return path.resolve(left) === path.resolve(right);
   }
 
   #toImportSpecifier(absPath: string): string {

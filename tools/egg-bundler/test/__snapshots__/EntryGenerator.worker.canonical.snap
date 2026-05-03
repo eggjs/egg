@@ -15,7 +15,6 @@ import * as __m3 from "../../node_modules/@eggjs/fake-module/app/service/UserSer
 // Cannot use __dirname because turbopack replaces it with the compile-time
 // path of the INPUT file, not the OUTPUT directory.
 const __outputDir = path.dirname(path.resolve(process.argv[1] || '.'));
-const __frameworkImport = "egg";
 const __framework = "egg";
 
 const MANIFEST_DATA = {
@@ -75,7 +74,6 @@ const __setBundleAliases = (rel: string, mod: unknown) => {
     __setBundleMap(path.resolve(__outputDir, rel), mod);
   }
 };
-__setBundleMap(__frameworkImport, __frameworkModule);
 __setBundleMap(__framework, __frameworkModule);
 for (const [rel, mod] of Object.entries(__BUNDLE_MAP_REL)) {
   __setBundleAliases(rel, mod);

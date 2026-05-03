@@ -196,6 +196,8 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('import { startEgg } from "egg"');
     expect(worker).toContain('ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA');
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
+    expect(worker).toContain('__setBundleMap(__framework, __frameworkModule)');
+    expect(worker).not.toContain('__frameworkImport');
     expect(worker).toContain("startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single' })");
   });
 
@@ -420,43 +422,9 @@ export async function startEgg(options) {
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
     expect(worker).toContain('import { startEgg } from "@my-org/framework"');
+    expect(worker).toContain('import * as __frameworkModule from "@my-org/framework"');
+    expect(worker).toContain('const __framework = "@my-org/framework"');
     expect(worker).not.toContain('import { startEgg } from "egg"');
-  });
-
-  it('uses the package name for an absolute framework directory with package metadata', async () => {
-    const frameworkDir = path.join(tmpDir, 'node_modules/custom-egg');
-    await fs.mkdir(frameworkDir, { recursive: true });
-    await fs.writeFile(path.join(frameworkDir, 'package.json'), JSON.stringify({ name: 'custom-egg' }));
-
-    const gen = new EntryGenerator({
-      baseDir: tmpDir,
-      framework: frameworkDir,
-      manifestLoader: createFakeLoader(makeManifest()),
-    });
-    const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
-
-    expect(worker).toContain('import { startEgg } from "custom-egg"');
-    expect(worker).toContain(`const __framework = ${JSON.stringify(toPosixPath(frameworkDir))};`);
-  });
-
-  it('imports an absolute framework checkout relatively while preserving its runtime value', async () => {
-    const frameworkDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-framework-'));
-    createdDirs.push(frameworkDir);
-    await fs.writeFile(path.join(frameworkDir, 'package.json'), JSON.stringify({ name: 'custom-egg' }));
-
-    const gen = new EntryGenerator({
-      baseDir: tmpDir,
-      framework: frameworkDir,
-      manifestLoader: createFakeLoader(makeManifest()),
-    });
-    const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
-    const relFramework = path.relative(result.entryDir, frameworkDir).replaceAll(path.sep, '/');
-
-    expect(worker).toContain(`import { startEgg } from "${relFramework}"`);
-    expect(worker).toContain(`const __framework = ${JSON.stringify(toPosixPath(frameworkDir))};`);
-    expect(worker).not.toContain('import { startEgg } from "custom-egg"');
   });
 
   it('keeps the module graph deterministic apart from original app absolute aliases', async () => {

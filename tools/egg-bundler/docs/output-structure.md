@@ -33,8 +33,8 @@ node worker.js
 The worker entry installs `ManifestStore.setBundleStore(...)` and
 `globalThis.__EGG_BUNDLE_MODULE_LOADER__` before calling
 `startEgg({ baseDir: outputDir, framework, mode: 'single' })`, so framework
-module resolution for bundled files is served from the inlined bundle map,
-avoiding `fs.readdir` for bundled framework file discovery. Runtime lookup keeps
+specifier lookup is served by the already imported bundled framework module,
+without adding framework path aliases. Runtime lookup keeps
 the deploy output directory separate from the original app paths: the bundle map
 is keyed by relKey, output-dir absolute paths, precomputed original app absolute
 paths, and manifest `resolveCache` request aliases. Application code and plugins
