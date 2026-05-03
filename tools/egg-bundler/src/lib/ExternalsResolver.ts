@@ -54,6 +54,11 @@ interface ExternalizeDecision {
   readonly extraExternals: readonly string[];
 }
 
+interface ExportsTargetResolution {
+  readonly matched: boolean;
+  readonly canRequire: boolean;
+}
+
 export class ExternalsResolver {
   readonly #baseDir: string;
   readonly #force: ReadonlySet<string>;
@@ -235,22 +240,36 @@ export class ExternalsResolver {
   }
 
   #exportsTargetCanBeRequired(target: unknown, pkg: PackageJson): boolean {
-    if (typeof target === 'string') return this.#packageTargetCanBeRequired(target, pkg);
-    if (Array.isArray(target)) return target.some((item) => this.#exportsTargetCanBeRequired(item, pkg));
-    if (!this.#isRecord(target)) return false;
+    return this.#resolveExportsTargetForCreateRequire(target, pkg).canRequire;
+  }
+
+  #resolveExportsTargetForCreateRequire(target: unknown, pkg: PackageJson): ExportsTargetResolution {
+    if (typeof target === 'string') {
+      return { matched: true, canRequire: this.#packageTargetCanBeRequired(target, pkg) };
+    }
+
+    if (Array.isArray(target)) {
+      for (const item of target) {
+        const result = this.#resolveExportsTargetForCreateRequire(item, pkg);
+        if (result.matched) return result;
+      }
+      return { matched: false, canRequire: false };
+    }
+
+    if (!this.#isRecord(target)) return { matched: false, canRequire: false };
 
     const keys = Object.keys(target);
     if (keys.some((key) => key.startsWith('.'))) {
-      if (!Object.hasOwn(target, '.')) return false;
-      return this.#exportsTargetCanBeRequired(target['.'], pkg);
+      if (!Object.hasOwn(target, '.')) return { matched: false, canRequire: false };
+      return this.#resolveExportsTargetForCreateRequire(target['.'], pkg);
     }
 
     for (const condition of keys) {
       if (!CREATE_REQUIRE_EXPORT_CONDITIONS.has(condition)) continue;
-      return this.#exportsTargetCanBeRequired(target[condition], pkg);
+      return this.#resolveExportsTargetForCreateRequire(target[condition], pkg);
     }
 
-    return false;
+    return { matched: false, canRequire: false };
   }
 
   #packageTargetCanBeRequired(target: string, pkg: PackageJson): boolean {

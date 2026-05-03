@@ -208,6 +208,37 @@ describe('ExternalsResolver', () => {
         await fs.rm(tempDir, { recursive: true, force: true });
       }
     });
+
+    it('keeps a native optional wrapper bundled when the first array export fallback is not require-able', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await writePackageJson(tempDir, {
+          name: 'array-export-app',
+          version: '1.0.0',
+          private: true,
+          dependencies: {
+            'array-export-wrapper': '1.0.0',
+          },
+        });
+        await writePackageJson(path.join(tempDir, 'node_modules/array-export-wrapper'), {
+          name: 'array-export-wrapper',
+          version: '1.0.0',
+          type: 'module',
+          exports: {
+            '.': ['./index.js', './index.cjs'],
+          },
+          optionalDependencies: {
+            'array-export-wrapper-linux-x64-gnu': '1.0.0',
+          },
+        });
+
+        const result = await new ExternalsResolver({ baseDir: tempDir }).resolve();
+        expect(result['array-export-wrapper']).toBeUndefined();
+        expect(result['array-export-wrapper-linux-x64-gnu']).toBe('array-export-wrapper-linux-x64-gnu');
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
+    });
   });
 
   describe('tier 3: dependency metadata', () => {
