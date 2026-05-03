@@ -230,7 +230,13 @@ export class Bundler {
   #renderImportMetaObject(declarationKind: string, metaName: string): string {
     return `${declarationKind} ${metaName} = (() => {
     const filename = ${IMPORT_META_FILENAME_EXPR};
-    const dirname = typeof __dirname === "string" ? __dirname : filename.replace(/[\\\\/][^\\\\/]*$/, "");
+    const dirname = (() => {
+        const slashIndex = Math.max(filename.lastIndexOf("/"), filename.lastIndexOf("\\\\"));
+        if (slashIndex > 2 || (slashIndex > 0 && !/^[A-Za-z]:[\\\\/]/.test(filename))) return filename.slice(0, slashIndex);
+        if (slashIndex === 2 && /^[A-Za-z]:[\\\\/]/.test(filename)) return filename.slice(0, 3);
+        if (slashIndex === 0) return filename[0];
+        return ".";
+    })();
     const url = (() => { const u = new URL("file:///"); u.pathname = filename.replace(/\\\\/g, "/"); return u.href; })();
     return {
     get url () {

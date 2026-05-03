@@ -335,6 +335,53 @@ globalThis.__patchedMeta = {
     expect(bm.chunks).not.toEqual(expect.arrayContaining([expect.stringContaining('.js.map')]));
   });
 
+  it('patches import.meta chunks without touching a shadowed __dirname binding', async () => {
+    const shadowedDirnameMeta = `const __TURBOPACK__import$2e$meta__ = { get url () { return "file:///already-patched.js"; } };
+globalThis.__patchedMeta = {
+    dirname: __TURBOPACK__import$2e$meta__.dirname
+};
+const __dirname = "/generated/shadow";
+`;
+
+    const buildFunc: BuildFunc = async () => {
+      await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// mock worker entry\n');
+      await fs.writeFile(path.join(tmpOutput, 'shadowed-dirname.js'), shadowedDirnameMeta);
+    };
+
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: { buildFunc },
+    });
+
+    interface Sandbox {
+      URL: typeof URL;
+      process: { argv: string[]; cwd: () => string };
+      globalThis: Sandbox;
+      __dirname: string;
+      __filename: string;
+      __patchedMeta?: { dirname: string };
+    }
+
+    const content = await fs.readFile(path.join(tmpOutput, 'shadowed-dirname.js'), 'utf8');
+    function runWithFilename(filename: string): { dirname: string } {
+      const sandbox = {
+        URL,
+        process: { argv: ['node', 'worker.js'], cwd: () => tmpOutput },
+        __filename: filename,
+        __dirname: path.dirname(filename),
+      } as Sandbox;
+      sandbox.globalThis = sandbox;
+      runInNewContext(content, sandbox);
+      return sandbox.__patchedMeta!;
+    }
+
+    const filename = path.join(tmpOutput, 'shadowed-dirname.js');
+    expect(runWithFilename(filename)).toEqual({ dirname: path.dirname(filename) });
+    expect(runWithFilename('/worker.js')).toEqual({ dirname: '/' });
+    expect(runWithFilename('C:\\worker.js')).toEqual({ dirname: 'C:\\' });
+  });
+
   it('rejects Windows drive-absolute output paths before resolving bundle files', () => {
     expect(() => sanitizeBundleOutputRelativePath('C:/foo.js')).toThrow(/Unsafe bundle output path/);
     expect(() => sanitizeBundleOutputRelativePath('C:\\foo.js')).toThrow(/Unsafe bundle output path/);
