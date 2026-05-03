@@ -65,6 +65,43 @@ pnpm --filter=@examples/helloworld-typescript run dev
 pnpm --filter=site run dev
 ```
 
+### Local External Services
+
+Some DAL, ORM, Redis, and ecosystem benchmark paths need local MySQL and Redis services. Start the repository-aligned Docker services before running those tests on a clean machine:
+
+```bash
+utoo run dev:services:start
+```
+
+This starts MySQL 8 and Redis 7, matching the main CI service versions, and creates the databases used by local DAL/ORM/e2e fixtures: `test`, `apple`, `banana`, `test_runtime_datasource`, `test_runtime_dao`, `test_dal_plugin`, `test_dal_standalone`, `cnpmcore`, and `cnpmcore_unittest`.
+
+Useful commands:
+
+```bash
+utoo run dev:services:status
+utoo run dev:services:stop
+utoo run dev:services:reset
+```
+
+The default host ports are `127.0.0.1:3306` for MySQL and `127.0.0.1:6379` for Redis. If either port is already used, the start command stops before changing containers. Keep using the existing service if it is compatible with CI, or stop it and run the command again. You can change Docker host ports with `EGG_DEV_SERVICES_MYSQL_PORT` and `EGG_DEV_SERVICES_REDIS_PORT`; however, the full DAL/ORM/Redis local test path still expects the default host ports.
+
+Image overrides are available for compatibility checks:
+
+```bash
+EGG_DEV_SERVICES_MYSQL_IMAGE=mysql:5.7 utoo run dev:services:start
+EGG_DEV_SERVICES_REDIS_IMAGE=redis:7 utoo run dev:services:start
+```
+
+Run `utoo run dev:services:reset` before switching MySQL image families, for example between MySQL 8 and MySQL 5.7, because MySQL data directories are not downgrade-compatible across major versions.
+
+Current hard-coded service assumptions:
+
+- Redis plugin fixtures under `plugins/redis/test/fixtures/apps/**/config.*` use `127.0.0.1:6379`; skipped Redis plugin tests become runnable when that port is available.
+- Session Redis fixtures under `plugins/session/test/fixtures/redis-session/config/config.default.js` use `127.0.0.1:6379`.
+- DAL runtime tests in `tegg/core/dal-runtime/test/DataSource.test.ts` and `tegg/core/dal-runtime/test/DAO.test.ts` use local MySQL on port `3306`.
+- DAL module fixtures in `tegg/plugin/dal/test/fixtures/apps/dal-app/modules/dal/module.yml` and `tegg/standalone/standalone/test/fixtures/dal-*/module.yml` use local MySQL on port `3306`.
+- ORM fixtures in `tegg/plugin/orm/test/fixtures/prepare.js` and `tegg/plugin/orm/test/fixtures/apps/orm-app/config/config.default.ts` use local MySQL on port `3306`.
+
 ## Documentations
 
 - [Documentations](https://eggjs.org/)
