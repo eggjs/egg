@@ -55,6 +55,11 @@ export class EntryGenerator {
     this.#loader = options.manifestLoader;
     this.#outputDir = options.outputDir ?? path.join(options.baseDir, '.egg-bundle', 'entries');
     this.#framework = options.framework ?? 'egg';
+    if (path.isAbsolute(this.#framework)) {
+      throw new Error(
+        `[@eggjs/egg-bundler] framework must be a package specifier for bundled runtime, got absolute path: ${this.#framework}`,
+      );
+    }
     this.#externals = options.externals ?? new Set();
   }
 

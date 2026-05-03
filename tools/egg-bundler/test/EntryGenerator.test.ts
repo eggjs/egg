@@ -427,6 +427,17 @@ export async function startEgg(options) {
     expect(worker).not.toContain('import { startEgg } from "egg"');
   });
 
+  it('rejects absolute framework paths because bundled runtime resolves by specifier', () => {
+    expect(
+      () =>
+        new EntryGenerator({
+          baseDir: tmpDir,
+          framework: path.join(tmpDir, 'node_modules/custom-egg'),
+          manifestLoader: createFakeLoader(makeManifest()),
+        }),
+    ).toThrow('framework must be a package specifier for bundled runtime');
+  });
+
   it('keeps the module graph deterministic apart from original app absolute aliases', async () => {
     const manifest = makeManifest({
       extensions: {

@@ -204,6 +204,11 @@ export class Bundler {
 
     const absBaseDir = path.resolve(baseDir);
     const absOutputDir = path.resolve(absBaseDir, rawOutputDir);
+    if (path.isAbsolute(framework)) {
+      throw new Error(
+        `[@eggjs/egg-bundler] framework must be a package specifier for bundled runtime, got absolute path: ${framework}`,
+      );
+    }
     debug('bundle start: baseDir=%s outputDir=%s framework=%s mode=%s', absBaseDir, absOutputDir, framework, mode);
     const mergedPack = mergePackConfig(
       await wrapStep('module.yml bundle config load', () => loadModuleBundlePackConfig(absBaseDir)),

@@ -37,7 +37,7 @@ export interface BundlerConfig {
   readonly outputDir: string;
   /** Path to manifest.json. Defaults to `<baseDir>/.egg/manifest.json`. */
   readonly manifestPath?: string;
-  /** Framework name or absolute path. Defaults to `'egg'`. */
+  /** Framework package specifier. Defaults to `'egg'`; absolute framework paths are not supported by bundle runtime. */
   readonly framework?: string;
   /** Build mode. Defaults to `'production'`. */
   readonly mode?: 'production' | 'development';

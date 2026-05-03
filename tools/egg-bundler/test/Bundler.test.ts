@@ -98,6 +98,26 @@ describe('Bundler', () => {
     });
   });
 
+  it('rejects absolute framework paths before generating bundle entries', async () => {
+    const frameworkDir = path.join(tmpApp, 'node_modules/custom-egg');
+
+    await expect(
+      bundle({
+        baseDir: tmpApp,
+        outputDir: tmpOutput,
+        framework: frameworkDir,
+        pack: {
+          buildFunc: async () => {
+            await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// worker\n');
+          },
+        },
+      }),
+    ).rejects.toThrow('framework must be a package specifier for bundled runtime');
+
+    expect(mocks.manifestLoaderOptions).toHaveLength(0);
+    expect(mocks.entryGenerate).not.toHaveBeenCalled();
+  });
+
   it('passes application supplied pack resolve aliases into the pack build config', async () => {
     let packResolve: unknown;
     const alias = {
