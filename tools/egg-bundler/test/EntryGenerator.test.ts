@@ -171,7 +171,7 @@ describe('EntryGenerator', () => {
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
     expect(worker).toContain("import { ManifestStore } from '@eggjs/core'");
-    expect(worker).toContain('import { startEgg } from "egg"');
+    expect(worker).toContain('import { Agent as __EggAgent, Application as __EggApplication, startEgg } from "egg"');
     expect(worker).toContain(
       'const __outputDir = process.argv[1] ? path.dirname(path.resolve(process.argv[1])) : process.cwd()',
     );
@@ -179,6 +179,7 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('const __framework = __bundleManifest.framework');
     expect(worker).toContain('ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA');
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
+    expect(worker).toContain('__setBundleMapAlias(__framework, { Agent: __EggAgent, Application: __EggApplication })');
     expect(worker).toContain("startEgg({ baseDir: __appBaseDir, framework: __framework, mode: 'single' })");
   });
 
@@ -290,7 +291,7 @@ describe('EntryGenerator', () => {
     const result = await gen.generate();
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
-    expect(worker).toContain('import { startEgg } from "egg"');
+    expect(worker).toContain('import { Agent as __EggAgent, Application as __EggApplication, startEgg } from "egg"');
     expect(worker).toContain('const __framework = __bundleManifest.framework');
     expect(worker).toContain("startEgg({ baseDir: __appBaseDir, framework: __framework, mode: 'single' })");
   });
@@ -308,7 +309,7 @@ describe('EntryGenerator', () => {
     const result = await gen.generate();
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
-    expect(worker).toContain('import { startEgg } from "egg"');
+    expect(worker).toContain('import { Agent as __EggAgent, Application as __EggApplication, startEgg } from "egg"');
     expect(worker).toContain('const __framework = __bundleManifest.framework');
   });
 

@@ -213,7 +213,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { ManifestStore } from '@eggjs/core';
-import { startEgg } from "egg";
+import { Agent as __EggAgent, Application as __EggApplication, startEgg } from "egg";
 
 ${importLines.join('\n')}
 
@@ -257,6 +257,10 @@ function __toMapKey(filepath: string): string {
 function __setBundleMapAlias(key: string | undefined, mod: unknown): void {
   if (!key) return;
   __BUNDLE_MAP[__toMapKey(key)] = mod;
+}
+
+if (__framework === 'egg') {
+  __setBundleMapAlias(__framework, { Agent: __EggAgent, Application: __EggApplication });
 }
 
 for (const [rel, mod] of Object.entries(__BUNDLE_MAP_REL)) {
