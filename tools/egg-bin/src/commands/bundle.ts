@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
-import { getFrameworkPath } from '@eggjs/utils';
 import { Flags } from '@oclif/core';
 
 import { BaseCommand } from '../baseCommand.ts';
@@ -57,7 +56,7 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
     }),
     framework: Flags.string({
       char: 'f',
-      description: 'framework name or absolute path',
+      description: 'framework package specifier',
     }),
     mode: Flags.string({
       description: 'build mode',
@@ -110,7 +109,7 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
       baseDir,
       outputDir,
       manifestPath,
-      framework: getFrameworkPath({ framework: flags.framework, baseDir }),
+      framework: flags.framework ?? 'egg',
       mode: getBundleMode(flags.mode),
       tegg: !flags['no-tegg'],
       externals: {
