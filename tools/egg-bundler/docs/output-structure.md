@@ -67,17 +67,21 @@ This includes the user's `externals.force` list plus auto-detected entries from
 root `peerDependencies`, root `optionalDependencies`, root dependency packages
 with native addons/native binaries, root dependency packages whose optional peer
 dependencies cannot be resolved, and the names of those missing optional peer
-packages. The native addon and missing optional peer checks run only while
-resolving the app's root dependencies/optionalDependencies; `ExternalsResolver`
-does not recursively scan every transitive dependency. `externals.inline`
+packages as `extraExternals`, plus native optional platform packages declared by
+root dependencies.
+The native addon and missing optional peer checks run only while resolving the
+app's root dependencies/optionalDependencies; `ExternalsResolver` does not
+recursively scan every transitive dependency. `externals.inline`
 removes an auto-detected external unless the same name is also present in
 `externals.force`. External packages must be installed alongside the bundle —
 typically by copying the app's `package.json` next to `worker.js` and running
 `npm ci --omit=dev`, or by deploying into an environment where these dependencies
 are already installed. ESM-only packages, `egg`, `@swc/helpers`, and `@eggjs/*`
-packages are bundled by default unless `ExternalsResolver` externalizes them
-through `externals.force`, dependency metadata, native addon detection, or
-missing optional peer detection.
+packages are bundled by default unless `externals.force` or dependency metadata
+explicitly marks them external. For wrappers around native optional platform
+packages that cannot be loaded through `createRequire`, the wrapper stays
+bundled so the CommonJS standalone output does not emit a plain
+`require(wrapper)`, while the optional native platform packages remain external.
 
 ## Known limitations
 
