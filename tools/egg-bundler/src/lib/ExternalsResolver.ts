@@ -47,6 +47,7 @@ const NATIVE_OPTIONAL_ARCH_TOKENS = new Set([
   'wasm32',
   'x64',
 ]);
+const CREATE_REQUIRE_EXPORT_CONDITIONS = new Set(['node-addons', 'node', 'require', 'default']);
 
 interface ExternalizeDecision {
   readonly externalizePackage: boolean;
@@ -243,12 +244,10 @@ export class ExternalsResolver {
       if (!Object.hasOwn(target, '.')) return false;
       return this.#exportsTargetCanBeRequired(target['.'], pkg);
     }
-    if (Object.hasOwn(target, 'require')) {
-      if (this.#exportsTargetCanBeRequired(target.require, pkg)) return true;
-    }
 
-    for (const condition of ['node', 'node-addons', 'default'] as const) {
-      if (this.#exportsTargetCanBeRequired(target[condition], pkg)) return true;
+    for (const condition of keys) {
+      if (!CREATE_REQUIRE_EXPORT_CONDITIONS.has(condition)) continue;
+      return this.#exportsTargetCanBeRequired(target[condition], pkg);
     }
 
     return false;

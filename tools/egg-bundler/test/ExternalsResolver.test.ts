@@ -174,6 +174,40 @@ describe('ExternalsResolver', () => {
         await fs.rm(tempDir, { recursive: true, force: true });
       }
     });
+
+    it('keeps a native optional wrapper bundled when an earlier node condition is not require-able', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await writePackageJson(tempDir, {
+          name: 'ordered-condition-app',
+          version: '1.0.0',
+          private: true,
+          dependencies: {
+            'ordered-condition-wrapper': '1.0.0',
+          },
+        });
+        await writePackageJson(path.join(tempDir, 'node_modules/ordered-condition-wrapper'), {
+          name: 'ordered-condition-wrapper',
+          version: '1.0.0',
+          type: 'module',
+          exports: {
+            '.': {
+              node: './index.js',
+              require: './index.cjs',
+            },
+          },
+          optionalDependencies: {
+            'ordered-condition-wrapper-linux-x64-gnu': '1.0.0',
+          },
+        });
+
+        const result = await new ExternalsResolver({ baseDir: tempDir }).resolve();
+        expect(result['ordered-condition-wrapper']).toBeUndefined();
+        expect(result['ordered-condition-wrapper-linux-x64-gnu']).toBe('ordered-condition-wrapper-linux-x64-gnu');
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
+    });
   });
 
   describe('tier 3: dependency metadata', () => {
