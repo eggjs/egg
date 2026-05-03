@@ -101,6 +101,38 @@ describe('ManifestStore coverage: FileLoader getter auto-injects manifest', () =
     await testApp.close();
   });
 
+  it('should collect configured customLoader directories in metadataOnly startup', async () => {
+    const testApp = createApp('custom-loader', { metadataOnly: true });
+    await testApp.loader.loadPlugin();
+    await testApp.loader.loadConfig();
+    await testApp.loader.loadCustomLoader();
+
+    const manifest = testApp.loader.generateManifest();
+
+    assert.ok(
+      manifest.fileDiscovery['app/adapter'].includes('docker.js'),
+      'app customLoader directory should be included in manifest fileDiscovery',
+    );
+    assert.ok(
+      manifest.fileDiscovery['app/util'].includes('sub/fn.js'),
+      'nested app customLoader directory should be included in manifest fileDiscovery',
+    );
+    assert.ok(
+      manifest.fileDiscovery['app/repository'].includes('user.js'),
+      'ctx customLoader directory should be included in manifest fileDiscovery',
+    );
+    assert.ok(
+      manifest.fileDiscovery['app/plugin'].includes('a.js'),
+      'app loadunit customLoader directory should be included in manifest fileDiscovery',
+    );
+    assert.ok(
+      manifest.fileDiscovery['config/b/app/plugin'].includes('b.js'),
+      'plugin loadunit customLoader directory should be included in manifest fileDiscovery',
+    );
+
+    await testApp.close();
+  });
+
   it('should include plugin convention files that metadataOnly app loading does not execute', async () => {
     const testApp = createApp('manifest-dynamic-plugin', { metadataOnly: true });
     await testApp.loader.loadPlugin();
