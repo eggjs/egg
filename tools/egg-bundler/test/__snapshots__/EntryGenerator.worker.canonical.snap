@@ -18,7 +18,15 @@ const __outputDir = process.argv[1] ? path.dirname(path.resolve(process.argv[1])
 type __BundleManifest = { baseDir?: string; framework?: string };
 function __readBundleManifest(): __BundleManifest {
   try {
-    return JSON.parse(fs.readFileSync(path.join(__outputDir, 'bundle-manifest.json'), 'utf8')) as __BundleManifest;
+    const data = JSON.parse(fs.readFileSync(path.join(__outputDir, 'bundle-manifest.json'), 'utf8')) as Record<
+      string,
+      unknown
+    > | null;
+    if (!data || typeof data !== 'object') return {};
+    return {
+      baseDir: typeof data.baseDir === 'string' ? data.baseDir : undefined,
+      framework: typeof data.framework === 'string' ? data.framework : undefined,
+    };
   } catch {
     return {};
   }

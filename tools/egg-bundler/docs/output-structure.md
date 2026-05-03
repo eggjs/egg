@@ -16,7 +16,7 @@ the chunks.
 ├── _turbopack__runtime.js.map
 ├── tsconfig.json                      # written by PackRunner; SWC reads decorator options from here
 ├── package.json                       # written by PackRunner; `{ "type": "commonjs" }` so node parses *.js as CJS
-└── bundle-manifest.json               # written by Bundler; reference / debug metadata
+└── bundle-manifest.json               # written by Bundler; runtime metadata plus debug metadata
 ```
 
 Chunk filenames prefixed with `_turbopack__` or `_root-of-the-server___` come
@@ -32,14 +32,19 @@ node worker.js
 
 The worker entry installs `ManifestStore.setBundleStore(...)` and
 `globalThis.__EGG_BUNDLE_MODULE_LOADER__` before calling
-`startEgg({ baseDir, mode: 'single' })`, so framework module resolution for
-bundled files is served from the inlined bundle map, avoiding `fs.readdir` for
-bundled framework file discovery. Application code and plugins may still use
-`fs` for resources such as config, views, or assets.
+`startEgg({ baseDir, framework, mode: 'single' })`. The worker reads
+`bundle-manifest.json` at startup to recover the original app `baseDir` and
+configured `framework`, while still using its own output directory to locate the
+bundle artifact. Framework module resolution for bundled files is served from
+the inlined bundle map, avoiding `fs.readdir` for bundled framework file
+discovery. Application code and plugins may still use `fs` for resources such
+as config, views, or assets.
 
 ## `bundle-manifest.json`
 
-A reference file produced by `Bundler` (not consumed at runtime). Shape:
+A runtime metadata file produced by `Bundler`. The worker reads `baseDir` and
+`framework` from this file during startup, so deployment must keep it next to
+`worker.js`. The remaining fields are reference / debug metadata. Shape:
 
 ```json
 {
