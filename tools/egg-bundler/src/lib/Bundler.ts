@@ -7,6 +7,7 @@ import { load as yamlLoad } from 'js-yaml';
 import type { BundlerConfig, BundleResult } from '../index.ts';
 import { EntryGenerator } from './EntryGenerator.ts';
 import { ExternalsResolver } from './ExternalsResolver.ts';
+import { assertFrameworkPackageSpecifier } from './frameworkSpecifier.ts';
 import { ManifestLoader } from './ManifestLoader.ts';
 import { PackRunner } from './PackRunner.ts';
 
@@ -204,6 +205,7 @@ export class Bundler {
 
     const absBaseDir = path.resolve(baseDir);
     const absOutputDir = path.resolve(absBaseDir, rawOutputDir);
+    assertFrameworkPackageSpecifier(framework);
     debug('bundle start: baseDir=%s outputDir=%s framework=%s mode=%s', absBaseDir, absOutputDir, framework, mode);
     const mergedPack = mergePackConfig(
       await wrapStep('module.yml bundle config load', () => loadModuleBundlePackConfig(absBaseDir)),

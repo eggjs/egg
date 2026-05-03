@@ -15,6 +15,9 @@ const FIXTURE_SOURCE = path.join(__dirname, 'fixtures/apps/minimal-app');
 // artifacts, modulo documented exceptions:
 //   - bundle-manifest.json.generatedAt is always `new Date().toISOString()`
 //   - bundle-manifest.json.baseDir reflects the caller's baseDir input
+//   - worker.entry.ts embeds concrete original app absolute aliases so runtime
+//     lookups can serve original absolute paths; comparisons normalize those
+//     aliases by baseDir
 //
 // Determinism sources exercised:
 //   * EntryGenerator sorts fileDiscovery / resolveCache / tegg decoratedFiles
@@ -33,6 +36,9 @@ const FIXTURE_SOURCE = path.join(__dirname, 'fixtures/apps/minimal-app');
 // shared fixture output.
 //
 // Real @utoo/pack determinism is a separate concern, deferred to T16/T20.
+// The mock build still copies the generated worker entry into worker.js so
+// produced artifact checks cover the runtime alias strings emitted by
+// EntryGenerator.
 
 const FIXTURE_MANIFEST = {
   version: 1,
@@ -76,13 +82,22 @@ async function cloneFixture(destParent: string): Promise<string> {
   return dest;
 }
 
-// The mock build must be deterministic itself — two invocations must write
-// identical content. Otherwise we'd be measuring pack variance, not bundler
-// variance. Every byte is hard-coded.
+interface MockPackConfig {
+  entry?: Array<{ name: string; import: string }>;
+}
+
+// The mock build must be deterministic itself. It copies the generated worker
+// entry into worker.js to exercise shipped-runtime content, while all support
+// chunks stay hard-coded so we measure bundler variance rather than pack
+// variance.
 function makeDeterministicMockBuild(outputDir: string): BuildFunc {
-  return async () => {
+  return async ({ config }) => {
+    const packConfig = config as MockPackConfig;
+    const workerEntry = packConfig.entry?.find((entry) => entry.name === 'worker')?.import;
+    if (!workerEntry) throw new Error('worker entry is missing from mock pack config');
+    const workerSource = await fs.readFile(workerEntry, 'utf8');
     const artifacts: Array<[string, string]> = [
-      ['worker.js', '// deterministic worker chunk\nmodule.exports = { marker: "worker" };\n'],
+      ['worker.js', workerSource],
       ['worker.js.map', '{"version":3,"sources":[],"mappings":""}'],
       ['_turbopack__runtime.js', '// deterministic runtime shim\n'],
       ['_turbopack__runtime.js.map', '{}'],
@@ -101,14 +116,40 @@ async function sha256(filepath: string): Promise<string> {
     .digest('hex');
 }
 
+function sha256Content(content: string): string {
+  return createHash('sha256').update(content).digest('hex');
+}
+
 function outputRel(outputDir: string, filepath: string): string {
   return path.relative(outputDir, filepath);
 }
 
-async function hashByOutputRel(files: readonly string[], outputDir: string): Promise<Record<string, string>> {
+function normalizeWorkerAppBaseDir(source: string, baseDir: string): string {
+  const posixBaseDir = baseDir.split(path.sep).join('/');
+  return Array.from(new Set([baseDir, posixBaseDir])).reduce(
+    (result, current) => result.split(current).join('<baseDir>'),
+    source,
+  );
+}
+
+function hasEmbeddedBaseDir(source: string, baseDir: string): boolean {
+  const posixBaseDir = baseDir.split(path.sep).join('/');
+  return source.includes(baseDir) || source.includes(posixBaseDir);
+}
+
+async function hashByOutputRel(
+  files: readonly string[],
+  outputDir: string,
+  options: { normalizeAppBaseDir?: string } = {},
+): Promise<Record<string, string>> {
   const hashes: Record<string, string> = {};
   for (const f of files) {
-    hashes[outputRel(outputDir, f)] = await sha256(f);
+    const rel = outputRel(outputDir, f);
+    if (rel === 'worker.js' && options.normalizeAppBaseDir) {
+      hashes[rel] = sha256Content(normalizeWorkerAppBaseDir(await fs.readFile(f, 'utf8'), options.normalizeAppBaseDir));
+    } else {
+      hashes[rel] = await sha256(f);
+    }
   }
   return hashes;
 }
@@ -195,11 +236,12 @@ describe('bundle() is deterministic (T17)', () => {
     expect(bmA).toEqual(bmB);
   });
 
-  it('different baseDir clones produce byte-identical worker.entry.ts (relative specifier guarantee)', async () => {
+  it('different baseDir clones produce the same worker runtime except for original app absolute aliases', async () => {
     // Two independent workspace clones, bundled to each own output. Because
     // EntryGenerator emits relative specifiers (`../../app/...`) keyed on
-    // manifest relKeys, the two entry files must be byte-identical even
-    // though the absolute baseDirs differ entirely.
+    // manifest relKeys, the module graph stays identical. The original app
+    // absolute aliases intentionally differ so bundled importModule() can still
+    // serve original absolute-path lookups.
     const { baseDir: baseDirA, outputDir: outA } = await makeWorkspace('diff-a');
     const { baseDir: baseDirB, outputDir: outB } = await makeWorkspace('diff-b');
     expect(baseDirA).not.toBe(baseDirB);
@@ -217,17 +259,24 @@ describe('bundle() is deterministic (T17)', () => {
 
     const entryA = await fs.readFile(path.join(baseDirA, '.egg-bundle', 'entries', 'worker.entry.ts'), 'utf8');
     const entryB = await fs.readFile(path.join(baseDirB, '.egg-bundle', 'entries', 'worker.entry.ts'), 'utf8');
-    expect(entryA).toBe(entryB);
-    // Sanity: the entry must actually NOT contain either absolute baseDir,
-    // otherwise byte-equality would be accidental.
-    expect(entryA).not.toContain(baseDirA);
-    expect(entryA).not.toContain(baseDirB);
+    expect(normalizeWorkerAppBaseDir(entryA, baseDirA)).toBe(normalizeWorkerAppBaseDir(entryB, baseDirB));
+    // Sanity: only the owning app absolute aliases are embedded.
+    expect(hasEmbeddedBaseDir(entryA, baseDirA)).toBe(true);
+    expect(hasEmbeddedBaseDir(entryA, baseDirB)).toBe(false);
+    expect(hasEmbeddedBaseDir(entryB, baseDirB)).toBe(true);
+    expect(hasEmbeddedBaseDir(entryB, baseDirA)).toBe(false);
+    const workerA = await fs.readFile(path.join(outA, 'worker.js'), 'utf8');
+    const workerB = await fs.readFile(path.join(outB, 'worker.js'), 'utf8');
+    expect(normalizeWorkerAppBaseDir(workerA, baseDirA)).toBe(normalizeWorkerAppBaseDir(workerB, baseDirB));
+    expect(hasEmbeddedBaseDir(workerA, baseDirA)).toBe(true);
+    expect(hasEmbeddedBaseDir(workerB, baseDirB)).toBe(true);
 
     // Same for every produced artifact — everything in outA should be
-    // byte-identical to its outB counterpart, including nested files.
+    // identical to its outB counterpart after normalizing the documented
+    // original-app absolute aliases in the packed worker runtime.
     const drift: string[] = [];
-    const hashesA = await hashByOutputRel(resultA.files, outA);
-    const hashesB = await hashByOutputRel(resultB.files, outB);
+    const hashesA = await hashByOutputRel(resultA.files, outA, { normalizeAppBaseDir: baseDirA });
+    const hashesB = await hashByOutputRel(resultB.files, outB, { normalizeAppBaseDir: baseDirB });
     const namesInA = Object.keys(hashesA).sort();
     const namesInB = Object.keys(hashesB).sort();
     expect(namesInA).toEqual(namesInB);

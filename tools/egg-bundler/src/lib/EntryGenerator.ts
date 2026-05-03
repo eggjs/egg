@@ -6,6 +6,7 @@ import { debuglog } from 'node:util';
 
 import type { StartupManifest } from '@eggjs/core';
 
+import { assertFrameworkPackageSpecifier } from './frameworkSpecifier.ts';
 import type { ManifestLoader } from './ManifestLoader.ts';
 
 const debug = debuglog('egg/bundler/entry-generator');
@@ -55,6 +56,7 @@ export class EntryGenerator {
     this.#loader = options.manifestLoader;
     this.#outputDir = options.outputDir ?? path.join(options.baseDir, '.egg-bundle', 'entries');
     this.#framework = options.framework ?? 'egg';
+    assertFrameworkPackageSpecifier(this.#framework);
     this.#externals = options.externals ?? new Set();
   }
 
@@ -176,6 +178,42 @@ export class EntryGenerator {
       .replaceAll(/\/+/g, '/');
   }
 
+  #collectResolveCacheAliases(manifest: StartupManifest): Array<[string, string]> {
+    const aliases: Array<[string, string]> = [];
+    for (const [requestRel, targetRel] of Object.entries(manifest.resolveCache)) {
+      if (typeof targetRel !== 'string') continue;
+      for (const requestAbs of this.#absoluteAliasKeys(requestRel)) {
+        aliases.push([requestAbs, targetRel]);
+      }
+    }
+    return this.#uniqueAliasPairs(aliases).sort(([left], [right]) => left.localeCompare(right));
+  }
+
+  #normalizeKey(filepath: string): string {
+    return filepath.replaceAll(path.sep, '/');
+  }
+
+  #absoluteAliasKeys(relKey: string): string[] {
+    const keys = new Set<string>();
+    keys.add(this.#normalizeKey(this.#absFromRelKey(relKey)));
+    if (!path.isAbsolute(relKey)) {
+      keys.add(this.#normalizeKey(path.resolve(this.#baseDir, relKey)));
+    }
+    return [...keys];
+  }
+
+  #uniqueAliasPairs(pairs: Array<[string, string]>): Array<[string, string]> {
+    const seen = new Set<string>();
+    const unique: Array<[string, string]> = [];
+    for (const pair of pairs) {
+      const key = JSON.stringify(pair);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      unique.push(pair);
+    }
+    return unique;
+  }
+
   #renderWorkerEntry(entries: BundleEntry[], manifest: StartupManifest): string {
     const importLines: string[] = [];
     const mapLines: string[] = [];
@@ -194,7 +232,13 @@ export class EntryGenerator {
     }
 
     const manifestJson = JSON.stringify(manifest, null, 2);
-    const frameworkSpec = JSON.stringify(this.#toFrameworkImportSpecifier());
+    const appAbsoluteAliases = JSON.stringify(
+      this.#uniqueAliasPairs(
+        entries.flatMap((entry) => this.#absoluteAliasKeys(entry.relKey).map((abs) => [abs, entry.relKey])),
+      ),
+    );
+    const appResolveCacheAliases = JSON.stringify(this.#collectResolveCacheAliases(manifest));
+    const frameworkSpec = JSON.stringify(this.#framework);
 
     const externalBlock =
       externalSpecs.length > 0
@@ -202,7 +246,7 @@ export class EntryGenerator {
 // External-package files: loaded at runtime via require(), not bundled.
 // Uses createRequire + dynamic specifiers so @utoo/pack cannot trace them.
 import { createRequire as __createRequire } from 'node:module';
-const __rtReq = __createRequire(path.join(__baseDir, 'package.json'));
+const __rtReq = __createRequire(path.join(__outputDir, 'package.json'));
 const __EXTERNAL_SPECS: Array<[string, string]> = ${JSON.stringify(externalSpecs)};
 for (const [key, spec] of __EXTERNAL_SPECS) {
   __BUNDLE_MAP_REL[key] = __rtReq(spec);
@@ -216,38 +260,69 @@ import path from 'node:path';
 
 import { ManifestStore } from '@eggjs/core';
 import { startEgg } from ${frameworkSpec};
+import * as __frameworkModule from ${frameworkSpec};
 
 ${importLines.join('\n')}
 
 // Derive the runtime output directory from the entry file being executed.
 // Cannot use __dirname because turbopack replaces it with the compile-time
 // path of the INPUT file, not the OUTPUT directory.
-const __baseDir = path.dirname(path.resolve(process.argv[1] || '.'));
+const __outputDir = path.dirname(path.resolve(process.argv[1] || '.'));
+const __framework = ${frameworkSpec};
 
 const MANIFEST_DATA = ${manifestJson} as const;
+const __APP_ABSOLUTE_ALIASES: Array<[string, string]> = ${appAbsoluteAliases};
+const __APP_RESOLVE_CACHE_ALIASES: Array<[string, string]> = ${appResolveCacheAliases};
 
 const __BUNDLE_MAP_REL: Record<string, unknown> = {
 ${mapLines.join('\n')}
 };
 ${externalBlock}
 const __BUNDLE_MAP: Record<string, unknown> = {};
+const __normalizeBundleKey = (filepath: string) => filepath.split(path.sep).join('/');
+const __setBundleMap = (filepath: string, mod: unknown) => {
+  __BUNDLE_MAP[__normalizeBundleKey(filepath)] = mod;
+};
+const __getBundleMap = (filepath: string) => __BUNDLE_MAP[__normalizeBundleKey(filepath)];
+const __setBundleAliases = (rel: string, mod: unknown) => {
+  __setBundleMap(rel, mod);
+  if (!path.isAbsolute(rel)) {
+    __setBundleMap(path.resolve(__outputDir, rel), mod);
+  }
+};
+__setBundleMap(__framework, __frameworkModule);
 for (const [rel, mod] of Object.entries(__BUNDLE_MAP_REL)) {
-  const abs = path.resolve(__baseDir, rel).split(path.sep).join('/');
-  __BUNDLE_MAP[abs] = mod;
-  // Also key by posix join so callers that already hand us posix paths hit.
-  __BUNDLE_MAP[rel] = mod;
+  __setBundleAliases(rel, mod);
+}
+for (const [appAbs, targetRel] of __APP_ABSOLUTE_ALIASES) {
+  const mod = __getBundleMap(targetRel);
+  if (mod !== undefined) {
+    __setBundleMap(appAbs, mod);
+  }
+}
+for (const [requestRel, targetRel] of Object.entries(MANIFEST_DATA.resolveCache)) {
+  if (!targetRel) continue;
+  const mod = __getBundleMap(targetRel) ?? __getBundleMap(path.resolve(__outputDir, targetRel));
+  if (mod !== undefined) {
+    __setBundleAliases(requestRel, mod);
+  }
+}
+for (const [appAbsRequest, targetRel] of __APP_RESOLVE_CACHE_ALIASES) {
+  const mod = __getBundleMap(targetRel);
+  if (mod !== undefined) {
+    __setBundleMap(appAbsRequest, mod);
+  }
 }
 
 const __bundleGlobalThis = globalThis as typeof globalThis & {
   __EGG_BUNDLE_MODULE_LOADER__?: (filepath: string) => unknown;
 };
-ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA as any, __baseDir));
+ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA as any, __outputDir));
 __bundleGlobalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath) => {
-  const key = filepath.split(path.sep).join('/');
-  return __BUNDLE_MAP[key];
+  return __getBundleMap(filepath);
 };
 
-startEgg({ baseDir: __baseDir, mode: 'single' }).then((app) => {
+startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single' }).then((app) => {
   const port = process.env.PORT || app.config.cluster?.listen?.port || 7001;
   app.listen(port, () => {
     // eslint-disable-next-line no-console
@@ -259,46 +334,6 @@ startEgg({ baseDir: __baseDir, mode: 'single' }).then((app) => {
   process.exit(1);
 });
 `;
-  }
-
-  #toFrameworkImportSpecifier(): string {
-    if (!path.isAbsolute(this.#framework)) return this.#framework;
-    const packageName = this.#packageNameFromDir(this.#framework);
-    if (packageName && this.#canUseFrameworkPackageName(packageName, this.#framework)) {
-      return packageName;
-    }
-    return this.#toImportSpecifier(this.#framework);
-  }
-
-  #packageNameFromDir(dir: string): string | undefined {
-    try {
-      const req = createRequire(path.join(dir, 'package.json'));
-      const pkg = req(path.join(dir, 'package.json')) as { name?: unknown };
-      return typeof pkg.name === 'string' && pkg.name ? pkg.name : undefined;
-    } catch {
-      return undefined;
-    }
-  }
-
-  #canUseFrameworkPackageName(packageName: string, dir: string): boolean {
-    if (this.#isInsideDir(path.join(this.#baseDir, 'node_modules'), dir)) return true;
-
-    try {
-      const req = createRequire(path.join(this.#baseDir, 'package.json'));
-      const resolvedPackageJson = req.resolve(`${packageName}/package.json`);
-      return this.#samePath(path.dirname(resolvedPackageJson), dir);
-    } catch {
-      return false;
-    }
-  }
-
-  #isInsideDir(parent: string, dir: string): boolean {
-    const rel = path.relative(path.resolve(parent), path.resolve(dir));
-    return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
-  }
-
-  #samePath(left: string, right: string): boolean {
-    return path.resolve(left) === path.resolve(right);
   }
 
   #toImportSpecifier(absPath: string): string {

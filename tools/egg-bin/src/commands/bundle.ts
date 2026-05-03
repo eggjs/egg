@@ -1,7 +1,7 @@
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
-import { getFrameworkPath } from '@eggjs/utils';
 import { Flags } from '@oclif/core';
 
 import { BaseCommand } from '../baseCommand.ts';
@@ -35,6 +35,18 @@ function parsePackAliases(values: readonly string[], baseDir: string): Record<st
   return alias;
 }
 
+async function getBundleFrameworkSpecifier(baseDir: string, framework?: string): Promise<string> {
+  if (framework) return framework;
+
+  const pkgPath = path.join(baseDir, 'package.json');
+  const pkg = JSON.parse(await fs.readFile(pkgPath, 'utf8')) as {
+    egg?: {
+      framework?: unknown;
+    };
+  };
+  return typeof pkg.egg?.framework === 'string' && pkg.egg.framework ? pkg.egg.framework : 'egg';
+}
+
 export default class Bundle extends BaseCommand<typeof Bundle> {
   static override description = 'Bundle an egg app into a deployable artifact using @eggjs/egg-bundler';
 
@@ -57,7 +69,7 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
     }),
     framework: Flags.string({
       char: 'f',
-      description: 'framework name or absolute path',
+      description: 'framework package specifier',
     }),
     mode: Flags.string({
       description: 'build mode',
@@ -110,7 +122,7 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
       baseDir,
       outputDir,
       manifestPath,
-      framework: getFrameworkPath({ framework: flags.framework, baseDir }),
+      framework: await getBundleFrameworkSpecifier(baseDir, flags.framework),
       mode: getBundleMode(flags.mode),
       tegg: !flags['no-tegg'],
       externals: {

@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import { ManifestStore } from '@eggjs/core';
 import { startEgg } from "egg";
+import * as __frameworkModule from "egg";
 
 import * as __m0 from "../../app/controller/home.ts";
 import * as __m1 from "../../app/extend/context.ts";
@@ -13,7 +14,8 @@ import * as __m3 from "../../node_modules/@eggjs/fake-module/app/service/UserSer
 // Derive the runtime output directory from the entry file being executed.
 // Cannot use __dirname because turbopack replaces it with the compile-time
 // path of the INPUT file, not the OUTPUT directory.
-const __baseDir = path.dirname(path.resolve(process.argv[1] || '.'));
+const __outputDir = path.dirname(path.resolve(process.argv[1] || '.'));
+const __framework = "egg";
 
 const MANIFEST_DATA = {
   "version": 1,
@@ -50,6 +52,8 @@ const MANIFEST_DATA = {
     ]
   }
 } as const;
+const __APP_ABSOLUTE_ALIASES: Array<[string, string]> = [["<appBaseDir>/app/controller/home.ts","app/controller/home.ts"],["<appBaseDir>/app/extend/context.ts","app/extend/context.ts"],["<appBaseDir>/app/service/user.ts","app/service/user.ts"],["<appBaseDir>/node_modules/@eggjs/fake-module/app/service/UserService.ts","node_modules/@eggjs/fake-module/app/service/UserService.ts"]];
+const __APP_RESOLVE_CACHE_ALIASES: Array<[string, string]> = [["<appBaseDir>/app/extend/context.ts","app/extend/context.ts"]];
 
 const __BUNDLE_MAP_REL: Record<string, unknown> = {
   ["app/controller/home.ts"]: __m0,
@@ -59,23 +63,50 @@ const __BUNDLE_MAP_REL: Record<string, unknown> = {
 };
 
 const __BUNDLE_MAP: Record<string, unknown> = {};
+const __normalizeBundleKey = (filepath: string) => filepath.split(path.sep).join('/');
+const __setBundleMap = (filepath: string, mod: unknown) => {
+  __BUNDLE_MAP[__normalizeBundleKey(filepath)] = mod;
+};
+const __getBundleMap = (filepath: string) => __BUNDLE_MAP[__normalizeBundleKey(filepath)];
+const __setBundleAliases = (rel: string, mod: unknown) => {
+  __setBundleMap(rel, mod);
+  if (!path.isAbsolute(rel)) {
+    __setBundleMap(path.resolve(__outputDir, rel), mod);
+  }
+};
+__setBundleMap(__framework, __frameworkModule);
 for (const [rel, mod] of Object.entries(__BUNDLE_MAP_REL)) {
-  const abs = path.resolve(__baseDir, rel).split(path.sep).join('/');
-  __BUNDLE_MAP[abs] = mod;
-  // Also key by posix join so callers that already hand us posix paths hit.
-  __BUNDLE_MAP[rel] = mod;
+  __setBundleAliases(rel, mod);
+}
+for (const [appAbs, targetRel] of __APP_ABSOLUTE_ALIASES) {
+  const mod = __getBundleMap(targetRel);
+  if (mod !== undefined) {
+    __setBundleMap(appAbs, mod);
+  }
+}
+for (const [requestRel, targetRel] of Object.entries(MANIFEST_DATA.resolveCache)) {
+  if (!targetRel) continue;
+  const mod = __getBundleMap(targetRel) ?? __getBundleMap(path.resolve(__outputDir, targetRel));
+  if (mod !== undefined) {
+    __setBundleAliases(requestRel, mod);
+  }
+}
+for (const [appAbsRequest, targetRel] of __APP_RESOLVE_CACHE_ALIASES) {
+  const mod = __getBundleMap(targetRel);
+  if (mod !== undefined) {
+    __setBundleMap(appAbsRequest, mod);
+  }
 }
 
 const __bundleGlobalThis = globalThis as typeof globalThis & {
   __EGG_BUNDLE_MODULE_LOADER__?: (filepath: string) => unknown;
 };
-ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA as any, __baseDir));
+ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA as any, __outputDir));
 __bundleGlobalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath) => {
-  const key = filepath.split(path.sep).join('/');
-  return __BUNDLE_MAP[key];
+  return __getBundleMap(filepath);
 };
 
-startEgg({ baseDir: __baseDir, mode: 'single' }).then((app) => {
+startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single' }).then((app) => {
   const port = process.env.PORT || app.config.cluster?.listen?.port || 7001;
   app.listen(port, () => {
     // eslint-disable-next-line no-console

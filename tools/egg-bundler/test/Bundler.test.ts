@@ -98,6 +98,33 @@ describe('Bundler', () => {
     });
   });
 
+  it.each([
+    ['absolute path', () => path.join(tmpApp, 'node_modules/custom-egg')],
+    ['relative path', () => './custom-egg'],
+    ['parent relative path', () => '../custom-egg'],
+    ['file URL', () => 'file:///tmp/custom-egg'],
+    ['Windows absolute path', () => 'C:\\custom-egg'],
+    ['backslash path', () => 'custom\\egg'],
+  ])('rejects %s framework values before generating bundle entries', async (_label, frameworkFactory) => {
+    const framework = frameworkFactory();
+
+    await expect(
+      bundle({
+        baseDir: tmpApp,
+        outputDir: tmpOutput,
+        framework,
+        pack: {
+          buildFunc: async () => {
+            await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// worker\n');
+          },
+        },
+      }),
+    ).rejects.toThrow('framework must be a package specifier for bundled runtime');
+
+    expect(mocks.manifestLoaderOptions).toHaveLength(0);
+    expect(mocks.entryGenerate).not.toHaveBeenCalled();
+  });
+
   it('passes application supplied pack resolve aliases into the pack build config', async () => {
     let packResolve: unknown;
     const alias = {

@@ -1,6 +1,5 @@
 import path from 'node:path';
 
-import { getFrameworkPath } from '@eggjs/utils';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 import Bundle from '../../src/commands/bundle.ts';
@@ -32,7 +31,7 @@ describe('test/commands/bundle.test.ts', () => {
       baseDir,
       outputDir: path.join(baseDir, 'dist-bundle'),
       manifestPath: undefined,
-      framework: getFrameworkPath({ baseDir }),
+      framework: 'aliyun-egg',
       mode: 'production',
       tegg: true,
       externals: {
@@ -66,7 +65,7 @@ describe('test/commands/bundle.test.ts', () => {
       baseDir,
       outputDir: path.join(baseDir, 'bundle-output'),
       manifestPath: path.join(baseDir, '.egg/custom-manifest.json'),
-      framework: getFrameworkPath({ baseDir }),
+      framework: 'aliyun-egg',
       mode: 'development',
       tegg: false,
       externals: {
@@ -91,7 +90,7 @@ describe('test/commands/bundle.test.ts', () => {
       baseDir,
       outputDir: path.join(baseDir, 'dist-bundle'),
       manifestPath: undefined,
-      framework: getFrameworkPath({ baseDir }),
+      framework: 'aliyun-egg',
       mode: 'production',
       tegg: true,
       externals: {
@@ -105,6 +104,24 @@ describe('test/commands/bundle.test.ts', () => {
             'virtual-module': '/abs/virtual-module.js',
           },
         },
+      },
+    });
+  });
+
+  it('should pass framework package specifier without resolving it to an absolute path', async () => {
+    await Bundle.run(['--base', baseDir, '--framework', '@my-org/framework']);
+
+    expect(bundleMock).toHaveBeenCalledTimes(1);
+    expect(bundleMock).toHaveBeenCalledWith({
+      baseDir,
+      outputDir: path.join(baseDir, 'dist-bundle'),
+      manifestPath: undefined,
+      framework: '@my-org/framework',
+      mode: 'production',
+      tegg: true,
+      externals: {
+        force: [],
+        inline: [],
       },
     });
   });

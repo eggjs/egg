@@ -1,5 +1,11 @@
 # Wiki Log
 
+## [2026-05-03] package | record egg bundler runtime path mapping
+
+- sources touched: `tools/egg-bundler/src/lib/EntryGenerator.ts`, `tools/egg-bundler/docs/output-structure.md`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Documented that generated workers keep runtime outputDir separate from original app paths and key bundle module lookup by relKey, output absolute path, precomputed original app absolute path, and manifest resolveCache aliases.
+
 ## [2026-05-03] package | refine egg bundler docs
 
 - sources touched: `tools/egg-bundler/src/lib/ManifestLoader.ts`, `tools/egg-bundler/src/lib/ExternalsResolver.ts`, `packages/core/src/lifecycle.ts`, `packages/egg/src/lib/start.ts`
