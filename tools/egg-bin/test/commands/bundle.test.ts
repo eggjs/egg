@@ -75,4 +75,37 @@ describe('test/commands/bundle.test.ts', () => {
       },
     });
   });
+
+  it('should pass pack aliases to egg-bundler with relative targets resolved from baseDir', async () => {
+    await Bundle.run([
+      '--base',
+      baseDir,
+      '--pack-alias',
+      'some-package=./node_modules/some-package/index.js',
+      '--pack-alias',
+      'virtual-module=/abs/virtual-module.js',
+    ]);
+
+    expect(bundleMock).toHaveBeenCalledTimes(1);
+    expect(bundleMock).toHaveBeenCalledWith({
+      baseDir,
+      outputDir: path.join(baseDir, 'dist-bundle'),
+      manifestPath: undefined,
+      framework: getFrameworkPath({ baseDir }),
+      mode: 'production',
+      tegg: true,
+      externals: {
+        force: [],
+        inline: [],
+      },
+      pack: {
+        resolve: {
+          alias: {
+            'some-package': path.join(baseDir, 'node_modules/some-package/index.js'),
+            'virtual-module': '/abs/virtual-module.js',
+          },
+        },
+      },
+    });
+  });
 });

@@ -9,6 +9,10 @@ export interface PackEntry {
 
 export type BuildFunc = (config: { config: unknown }, projectPath: string, rootPath: string) => Promise<void>;
 
+export interface PackRunnerResolveConfig {
+  readonly alias?: Readonly<Record<string, string>>;
+}
+
 export interface PackRunnerOptions {
   readonly entries: readonly PackEntry[];
   readonly outputDir: string;
@@ -17,15 +21,12 @@ export interface PackRunnerOptions {
   readonly rootPath?: string;
   readonly mode?: 'production' | 'development';
   readonly buildFunc?: BuildFunc;
+  readonly resolve?: PackRunnerResolveConfig;
 }
 
 export interface PackRunnerResult {
   readonly outputDir: string;
   readonly files: readonly string[];
-}
-
-interface PackageJson {
-  readonly exports?: unknown;
 }
 
 // SWC decorator compilation picks up tsconfig from the OUTPUT dir, not the
@@ -43,15 +44,6 @@ const OUTPUT_TSCONFIG = {
 const OUTPUT_PACKAGE_JSON = { type: 'commonjs' };
 
 const require = createRequire(import.meta.url);
-
-// @utoo/pack 1.4.1 resolves this package's browser/default export even for
-// node builds, which drops the named createSupportsColor export.
-const NODE_CONDITION_ALIAS_DEPS = [
-  {
-    issuerPackage: 'supports-hyperlinks',
-    dependency: 'supports-color',
-  },
-] as const;
 
 // Use CJS entry explicitly: under pnpm workspace links the ESM build's
 // extensionless relative imports fail to resolve.
@@ -78,6 +70,7 @@ export class PackRunner {
       rootPath = projectPath,
       mode = 'production',
       buildFunc = DEFAULT_BUILD_FUNC,
+      resolve,
     } = this.#options;
 
     await fs.mkdir(outputDir, { recursive: true });
@@ -93,7 +86,7 @@ export class PackRunner {
       umdExternals[k] = { commonjs: v, root: v };
     }
 
-    const nodeConditionAliases = await this.#resolveNodeConditionAliases(projectPath);
+    const resolveConfig = this.#buildResolveConfig(resolve);
 
     const config = {
       entry: entries.map((e) => ({ name: e.name, import: e.filepath })),
@@ -105,7 +98,7 @@ export class PackRunner {
         type: 'standalone',
       },
       externals: umdExternals,
-      ...(Object.keys(nodeConditionAliases).length > 0 ? { resolve: { alias: nodeConditionAliases } } : {}),
+      ...(resolveConfig ? { resolve: resolveConfig } : {}),
       optimization: {
         treeShaking: false,
         minify: false,
@@ -124,100 +117,9 @@ export class PackRunner {
     return { outputDir, files };
   }
 
-  async #resolveNodeConditionAliases(projectPath: string): Promise<Record<string, string>> {
-    const aliases: Record<string, string> = {};
-
-    for (const { issuerPackage, dependency } of NODE_CONDITION_ALIAS_DEPS) {
-      const issuerDir = await this.#findPackageDir(issuerPackage, projectPath);
-      if (!issuerDir) continue;
-
-      const dependencyDir = await this.#findPackageDir(dependency, issuerDir);
-      if (!dependencyDir) continue;
-
-      const pkg = await this.#readPackageJson(dependencyDir);
-      const nodeEntry = this.#resolveExportsNodeEntry(pkg.exports);
-      if (!nodeEntry) continue;
-
-      aliases[dependency] = this.#resolvePackageEntryPath(dependencyDir, nodeEntry);
-    }
-
-    return aliases;
-  }
-
-  async #findPackageDir(name: string, fromDir: string): Promise<string | undefined> {
-    const nameParts = name.split('/');
-    let dir = fromDir;
-    while (true) {
-      const candidate = path.join(dir, 'node_modules', ...nameParts);
-      try {
-        const stat = await fs.stat(candidate);
-        if (stat.isDirectory()) return candidate;
-      } catch {
-        // continue walking upward
-      }
-
-      const parent = path.dirname(dir);
-      if (parent === dir) return undefined;
-      dir = parent;
-    }
-  }
-
-  async #readPackageJson(packageDir: string): Promise<PackageJson> {
-    const packageJsonPath = path.join(packageDir, 'package.json');
-    try {
-      return JSON.parse(await fs.readFile(packageJsonPath, 'utf8')) as PackageJson;
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return {};
-      throw new Error(`[@eggjs/egg-bundler] failed to read ${packageJsonPath}`, { cause: error });
-    }
-  }
-
-  #resolveExportsNodeEntry(exportsField: unknown): string | undefined {
-    if (typeof exportsField === 'string') return exportsField;
-    if (!exportsField || typeof exportsField !== 'object' || Array.isArray(exportsField)) return undefined;
-
-    const map = exportsField as Record<string, unknown>;
-    const keys = Object.keys(map);
-    const rootTarget = keys.length > 0 && !keys.some((key) => key.startsWith('.')) ? map : map['.'];
-    return this.#resolvePackageTarget(rootTarget);
-  }
-
-  #resolvePackageTarget(target: unknown, inNodeCondition = false): string | undefined {
-    if (typeof target === 'string') return target;
-    if (Array.isArray(target)) {
-      for (const item of target) {
-        const resolved = this.#resolvePackageTarget(item, inNodeCondition);
-        if (resolved) return resolved;
-      }
-      return undefined;
-    }
-    if (!target || typeof target !== 'object') return undefined;
-
-    const map = target as Record<string, unknown>;
-    if (Object.hasOwn(map, 'node')) return this.#resolvePackageTarget(map.node, true);
-
-    if (inNodeCondition) {
-      for (const condition of ['import', 'default', 'require'] as const) {
-        const resolved = this.#resolvePackageTarget(map[condition], true);
-        if (resolved) return resolved;
-      }
-    }
-
-    return undefined;
-  }
-
-  #resolvePackageEntryPath(packageDir: string, entry: string): string {
-    if (path.isAbsolute(entry) || /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(entry)) {
-      throw new Error(`[@eggjs/egg-bundler] package export entry must be relative: ${entry}`);
-    }
-
-    const resolved = path.resolve(packageDir, entry);
-    const rel = path.relative(packageDir, resolved);
-    if (rel.startsWith('..') || path.isAbsolute(rel)) {
-      throw new Error(`[@eggjs/egg-bundler] package export entry escapes package root: ${entry}`);
-    }
-
-    return resolved;
+  #buildResolveConfig(resolve: PackRunnerResolveConfig | undefined): PackRunnerResolveConfig | undefined {
+    if (!resolve?.alias || Object.keys(resolve.alias).length === 0) return undefined;
+    return { alias: { ...resolve.alias } };
   }
 
   async #collectFiles(dir: string): Promise<readonly string[]> {

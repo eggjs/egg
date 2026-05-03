@@ -97,4 +97,25 @@ describe('Bundler', () => {
       autoGenerate: true,
     });
   });
+
+  it('passes application supplied pack resolve aliases into the pack build config', async () => {
+    let packResolve: unknown;
+    const alias = {
+      'some-package': path.join(tmpApp, 'node_modules/some-package/index.js'),
+    };
+
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: {
+        resolve: { alias },
+        buildFunc: async (wrapped) => {
+          packResolve = (wrapped.config as { resolve?: unknown }).resolve;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// worker\n');
+        },
+      },
+    });
+
+    expect(packResolve).toEqual({ alias });
+  });
 });

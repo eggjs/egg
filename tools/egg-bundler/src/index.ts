@@ -8,10 +8,11 @@ export {
   type PackEntry,
   type PackRunnerOptions,
   type PackRunnerResult,
+  type PackRunnerResolveConfig,
 } from './lib/PackRunner.ts';
 
 import { Bundler } from './lib/Bundler.ts';
-import type { BuildFunc } from './lib/PackRunner.ts';
+import type { BuildFunc, PackRunnerResolveConfig } from './lib/PackRunner.ts';
 
 export interface BundlerExternalsConfig {
   /** Package names to always mark as external, in addition to auto-detected ones. */
@@ -25,6 +26,8 @@ export interface BundlerPackConfig {
   readonly buildFunc?: BuildFunc;
   /** Override for the monorepo workspace root. Defaults to auto-detection. */
   readonly rootPath?: string;
+  /** @utoo/pack resolve tuning supplied by the application. */
+  readonly resolve?: PackRunnerResolveConfig;
 }
 
 export interface BundlerConfig {

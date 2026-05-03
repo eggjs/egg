@@ -31,6 +31,9 @@ describe('PackRunner', () => {
       rootPath?: string;
       mode?: 'production' | 'development';
       buildFunc?: BuildFunc;
+      resolve?: {
+        alias?: Record<string, string>;
+      };
     } = {},
   ): PackRunner {
     const outputDir = overrides.outputDir ?? path.join(tmpDir, 'out');
@@ -42,6 +45,7 @@ describe('PackRunner', () => {
       projectPath,
       ...(overrides.rootPath !== undefined ? { rootPath: overrides.rootPath } : {}),
       ...(overrides.mode !== undefined ? { mode: overrides.mode } : {}),
+      ...(overrides.resolve !== undefined ? { resolve: overrides.resolve } : {}),
       buildFunc: overrides.buildFunc ?? (async () => {}),
     });
   }
@@ -109,70 +113,16 @@ describe('PackRunner', () => {
     expect(rootPath).toBe(tmpDir);
   });
 
-  it('aliases supports-color to its node export when bundled through supports-hyperlinks', async () => {
+  it('passes application supplied resolve aliases through to the pack config', async () => {
     const buildFunc = vi.fn<BuildFunc>(async () => {});
-    const supportsHyperlinksDir = path.join(tmpDir, 'node_modules', 'supports-hyperlinks');
-    const supportsColorDir = path.join(supportsHyperlinksDir, 'node_modules', 'supports-color');
-    await fs.mkdir(supportsColorDir, { recursive: true });
-    await fs.writeFile(
-      path.join(supportsHyperlinksDir, 'package.json'),
-      JSON.stringify({ name: 'supports-hyperlinks' }),
-    );
-    await fs.writeFile(
-      path.join(supportsColorDir, 'package.json'),
-      JSON.stringify({
-        name: 'supports-color',
-        exports: {
-          types: './index.d.ts',
-          node: './index.js',
-          default: './browser.js',
-        },
-      }),
-    );
+    const alias = {
+      'some-package': path.join(tmpDir, 'node_modules', 'some-package', 'index.js'),
+    };
 
-    await makeRunner({ buildFunc }).run();
+    await makeRunner({ buildFunc, resolve: { alias } }).run();
 
     const config = (buildFunc.mock.calls[0]![0] as { config: Record<string, unknown> }).config;
-    expect(config.resolve).toEqual({
-      alias: {
-        'supports-color': path.join(supportsColorDir, 'index.js'),
-      },
-    });
-  });
-
-  it('finds hoisted supports-color and resolves nested node condition exports', async () => {
-    const buildFunc = vi.fn<BuildFunc>(async () => {});
-    const supportsHyperlinksDir = path.join(tmpDir, 'node_modules', 'supports-hyperlinks');
-    const supportsColorDir = path.join(tmpDir, 'node_modules', 'supports-color');
-    await fs.mkdir(supportsColorDir, { recursive: true });
-    await fs.mkdir(supportsHyperlinksDir, { recursive: true });
-    await fs.writeFile(
-      path.join(supportsHyperlinksDir, 'package.json'),
-      JSON.stringify({ name: 'supports-hyperlinks' }),
-    );
-    await fs.writeFile(
-      path.join(supportsColorDir, 'package.json'),
-      JSON.stringify({
-        name: 'supports-color',
-        exports: {
-          types: './index.d.ts',
-          node: {
-            import: './index.js',
-            default: './browser.js',
-          },
-          default: './browser.js',
-        },
-      }),
-    );
-
-    await makeRunner({ buildFunc }).run();
-
-    const config = (buildFunc.mock.calls[0]![0] as { config: Record<string, unknown> }).config;
-    expect(config.resolve).toEqual({
-      alias: {
-        'supports-color': path.join(supportsColorDir, 'index.js'),
-      },
-    });
+    expect(config.resolve).toEqual({ alias });
   });
 
   it('disables treeShaking and minify in the pack config (tegg runtime requires the full graph)', async () => {

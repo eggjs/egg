@@ -126,6 +126,7 @@ export class Bundler {
       rootPath: pack?.rootPath,
       mode,
       buildFunc: pack?.buildFunc,
+      resolve: pack?.resolve,
     });
     const packResult = await wrapStep('pack build', () => packRunner.run());
     debug('pack produced %d files', packResult.files.length);
