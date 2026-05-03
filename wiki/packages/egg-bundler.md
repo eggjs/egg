@@ -7,7 +7,7 @@ source_files:
   - tools/egg-bundler/src/lib/Bundler.ts
   - tools/egg-bin/src/commands/bundle.ts
   - tools/egg-bundler/docs/output-structure.md
-updated_at: 2026-05-02
+updated_at: 2026-05-03
 status: active
 ---
 
@@ -38,8 +38,20 @@ CommonJS artifact from an Egg application.
 
 - Relative `outputDir` values are resolved from `baseDir`.
 - Default mode is `production`; `development` is also accepted.
+- If `<baseDir>/.egg/manifest.json` is missing, `ManifestLoader` starts the app
+  with `metadataOnly: true` to generate it. This skips the agent and normal boot
+  lifecycle, runs `loadMetadata()` hooks, and the manifest generation child
+  process exits after writing the manifest, so registered `beforeClose` hooks do
+  not run.
 - The generated app runs in Egg single-process mode.
-- Explicit `externals.force` entries, root `peerDependencies`, `egg`,
-  `@swc/helpers`, `@eggjs/*`, native addons, and ESM-only packages are external.
+- Explicit `externals.force` entries are external, and `ExternalsResolver`
+  auto-detects root `peerDependencies`, root `optionalDependencies`, root
+  dependency packages with native addons, root dependency packages whose optional
+  peer dependencies cannot be resolved, and the names of those missing optional
+  peer packages as external.
+- `externals.inline` removes an auto-detected external unless the same package
+  name is also listed in `externals.force`.
+- ESM-only packages, `egg`, `@swc/helpers`, and `@eggjs/*` packages are bundled
+  by default unless force-external or dependency/native-addon rules apply.
 - `BundlerConfig.tegg` is accepted but not applied by the current implementation
   yet.
