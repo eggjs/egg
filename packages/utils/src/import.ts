@@ -10,6 +10,30 @@ import { ImportResolveError } from './error/index.ts';
 
 const debug = debuglog('egg/utils/import');
 
+type NativeDynamicImport = (specifier: string) => Promise<any>;
+
+let nativeDynamicImport: NativeDynamicImport | undefined;
+
+/* v8 ignore next -- covered by the spawned Node fixture; Vitest cannot instrument this opaque import. */
+function getNativeDynamicImport(): NativeDynamicImport {
+  if (!nativeDynamicImport) {
+    // Keep the fallback dynamic import opaque to bundlers. Turbopack rewrites
+    // dynamic import expressions with non-static specifiers, which breaks the
+    // bundled runtime when the bundle map intentionally falls through to Node.
+    try {
+      // oxlint-disable-next-line typescript-eslint/no-implied-eval
+      nativeDynamicImport = new Function('specifier', 'return import(specifier);') as NativeDynamicImport;
+    } catch (err) {
+      const error = new Error(
+        'Native dynamic import fallback for bundled module loader misses requires code generation from strings.',
+      );
+      (error as Error & { cause?: unknown }).cause = err;
+      throw error;
+    }
+  }
+  return nativeDynamicImport;
+}
+
 export interface ImportResolveOptions {
   paths?: string[];
 }
@@ -454,7 +478,12 @@ export async function importModule(filepath: string, options?: ImportModuleOptio
     // esm
     const fileUrl = pathToFileURL(moduleFilePath).toString();
     debug('[importModule:start] await import fileUrl: %s, isESM: %s', fileUrl, isESM);
-    obj = await import(fileUrl);
+    /* v8 ignore if -- covered by the spawned Node fixture; Vitest cannot instrument this opaque import. */
+    if (_bundleModuleLoader) {
+      obj = await getNativeDynamicImport()(fileUrl);
+    } else {
+      obj = await import(fileUrl);
+    }
     debug('[importModule:success] await import %o', fileUrl);
     // {
     //   default: { foo: 'bar', one: 1 },

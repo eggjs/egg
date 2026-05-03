@@ -1,6 +1,8 @@
 import { strict as assert } from 'node:assert';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import coffee from 'coffee';
 import { afterEach, describe, it } from 'vitest';
 
 import { importModule, setBundleModuleLoader } from '../src/import.ts';
@@ -62,12 +64,58 @@ describe('test/bundle-import.test.ts', () => {
     assert.deepEqual(result.default, { fn: 'bundled' });
   });
 
-  it('falls through to normal import when loader returns undefined', async () => {
-    setBundleModuleLoader(() => undefined);
+  it('falls through to native dynamic import when loader returns undefined', async () => {
+    await coffee
+      .spawn(process.execPath, ['--experimental-strip-types', getFilepath('bundle-native-fallback/run.mjs')])
+      .expect('stdout', /bar/)
+      .expect('code', 0)
+      .end();
+  });
 
-    const result = await importModule(getFilepath('esm'));
-    assert.ok(result);
-    assert.equal(result.default.foo, 'bar');
+  it('does not create the native dynamic import helper at module load time', async () => {
+    const importUrl = new URL('../src/import.ts', import.meta.url).href;
+
+    await coffee
+      .spawn(process.execPath, [
+        '--experimental-strip-types',
+        '--disallow-code-generation-from-strings',
+        '--input-type=module',
+        '--eval',
+        `await import(${JSON.stringify(importUrl)});`,
+      ])
+      .expect('code', 0)
+      .end();
+  });
+
+  it('reports hardened runtime failures when bundled fallback needs code generation', async () => {
+    const importUrl = new URL('../src/import.ts', import.meta.url).href;
+    const esmFilepath = getFilepath('esm');
+
+    await coffee
+      .spawn(process.execPath, [
+        '--experimental-strip-types',
+        '--disallow-code-generation-from-strings',
+        '--input-type=module',
+        '--eval',
+        [
+          `const { importModule, setBundleModuleLoader } = await import(${JSON.stringify(importUrl)});`,
+          'setBundleModuleLoader(() => undefined);',
+          `await importModule(${JSON.stringify(esmFilepath)});`,
+        ].join('\n'),
+      ])
+      .expect('stderr', /Native dynamic import fallback for bundled module loader misses requires code generation/)
+      .expect('code', 1)
+      .end();
+  });
+
+  it('hides dynamic import fallback from bundled expression transforms', async () => {
+    const source = await fs.readFile(new URL('../src/import.ts', import.meta.url), 'utf8');
+
+    assert.match(source, /new Function\('specifier', 'return import\(specifier\);'\)/);
+    assert.match(
+      source,
+      /\/\* v8 ignore if[^\n]*\*\/\r?\n\s+if \(_bundleModuleLoader\) \{\r?\n\s+obj = await getNativeDynamicImport\(\)\(fileUrl\);/,
+    );
   });
 
   it('serves virtual specifiers from the loader without requiring them on disk', async () => {
