@@ -98,14 +98,21 @@ describe('Bundler', () => {
     });
   });
 
-  it('rejects absolute framework paths before generating bundle entries', async () => {
-    const frameworkDir = path.join(tmpApp, 'node_modules/custom-egg');
+  it.each([
+    ['absolute path', () => path.join(tmpApp, 'node_modules/custom-egg')],
+    ['relative path', () => './custom-egg'],
+    ['parent relative path', () => '../custom-egg'],
+    ['file URL', () => 'file:///tmp/custom-egg'],
+    ['Windows absolute path', () => 'C:\\custom-egg'],
+    ['backslash path', () => 'custom\\egg'],
+  ])('rejects %s framework values before generating bundle entries', async (_label, frameworkFactory) => {
+    const framework = frameworkFactory();
 
     await expect(
       bundle({
         baseDir: tmpApp,
         outputDir: tmpOutput,
-        framework: frameworkDir,
+        framework,
         pack: {
           buildFunc: async () => {
             await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// worker\n');

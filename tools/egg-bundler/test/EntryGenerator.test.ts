@@ -427,12 +427,19 @@ export async function startEgg(options) {
     expect(worker).not.toContain('import { startEgg } from "egg"');
   });
 
-  it('rejects absolute framework paths because bundled runtime resolves by specifier', () => {
+  it.each([
+    ['absolute path', () => path.join(tmpDir, 'node_modules/custom-egg')],
+    ['relative path', () => './custom-egg'],
+    ['parent relative path', () => '../custom-egg'],
+    ['file URL', () => 'file:///tmp/custom-egg'],
+    ['Windows absolute path', () => 'C:\\custom-egg'],
+    ['backslash path', () => 'custom\\egg'],
+  ])('rejects %s framework values because bundled runtime resolves by specifier', (_label, frameworkFactory) => {
     expect(
       () =>
         new EntryGenerator({
           baseDir: tmpDir,
-          framework: path.join(tmpDir, 'node_modules/custom-egg'),
+          framework: frameworkFactory(),
           manifestLoader: createFakeLoader(makeManifest()),
         }),
     ).toThrow('framework must be a package specifier for bundled runtime');
