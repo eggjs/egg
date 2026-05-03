@@ -5,6 +5,7 @@ summary: Bundles Egg applications into deployable CommonJS artifacts and powers 
 source_files:
   - tools/egg-bundler/src/index.ts
   - tools/egg-bundler/src/lib/Bundler.ts
+  - tools/egg-bundler/src/lib/EntryGenerator.ts
   - tools/egg-bin/src/commands/bundle.ts
   - tools/egg-bundler/docs/output-structure.md
 updated_at: 2026-05-03
@@ -43,7 +44,11 @@ CommonJS artifact from an Egg application.
   lifecycle, runs `loadMetadata()` hooks, and the manifest generation child
   process exits after writing the manifest, so registered `beforeClose` hooks do
   not run.
-- The generated app runs in Egg single-process mode.
+- The generated app runs in Egg single-process mode. Its worker entry treats the
+  deploy output directory as the runtime Egg `baseDir`, passes the framework
+  specifier explicitly to `startEgg`, and precomputes original app absolute
+  aliases so bundled module lookup can serve relKeys, output-dir absolute paths,
+  original app absolute paths, and manifest `resolveCache` request aliases.
 - Explicit `externals.force` entries are external, and `ExternalsResolver`
   auto-detects root `peerDependencies`, root `optionalDependencies`, root
   dependency packages with native addons, root dependency packages whose optional

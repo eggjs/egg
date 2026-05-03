@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 import type { StartupManifest } from '@eggjs/core';
+import { execaNode } from 'execa';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { EntryGenerator } from '../src/lib/EntryGenerator.ts';
@@ -37,6 +38,27 @@ function extractImports(workerSource: string): { index: number; specifier: strin
     index: Number(m[1]),
     specifier: m[2]!,
   }));
+}
+
+function escapeRegExp(source: string): string {
+  return source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function toPosixPath(filepath: string): string {
+  return filepath.split(path.sep).join('/');
+}
+
+function normalizeAppBaseDir(source: string, baseDir: string): string {
+  return Array.from(new Set([baseDir, toPosixPath(baseDir)])).reduce(
+    (result, current) => result.replace(new RegExp(escapeRegExp(current), 'g'), '<appBaseDir>'),
+    source,
+  );
+}
+
+async function writePackage(dir: string, source: string): Promise<void> {
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(path.join(dir, 'package.json'), JSON.stringify({ type: 'module', exports: './index.js' }));
+  await fs.writeFile(path.join(dir, 'index.js'), source);
 }
 
 describe('EntryGenerator', () => {
@@ -174,12 +196,13 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('import { startEgg } from "egg"');
     expect(worker).toContain('ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA');
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
-    expect(worker).toContain("startEgg({ baseDir: __baseDir, mode: 'single' })");
+    expect(worker).toContain("startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single' })");
   });
 
-  it('builds a BUNDLE_MAP keyed by both the relKey form and the resolved absolute form', async () => {
+  it('builds a BUNDLE_MAP keyed by relKey, output absolute, original app absolute, and resolveCache aliases', async () => {
     const manifest = makeManifest({
       fileDiscovery: { app: ['controller.ts'] },
+      resolveCache: { 'app/controller': 'app/controller.ts' },
     });
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
@@ -188,8 +211,125 @@ describe('EntryGenerator', () => {
 
     expect(worker).toContain('__BUNDLE_MAP_REL');
     expect(worker).toContain('["app/controller.ts"]: __m0');
-    expect(worker).toContain('__BUNDLE_MAP[abs] = mod');
-    expect(worker).toContain('__BUNDLE_MAP[rel] = mod');
+    expect(worker).toContain('__APP_ABSOLUTE_ALIASES');
+    expect(worker).toContain(JSON.stringify(toPosixPath(path.join(tmpDir, 'app/controller.ts'))));
+    expect(worker).toContain('__APP_RESOLVE_CACHE_ALIASES');
+    expect(worker).toContain(JSON.stringify(toPosixPath(path.join(tmpDir, 'app/controller'))));
+    expect(worker).toContain('__setBundleMap(path.resolve(__outputDir, rel), mod)');
+    expect(worker).toContain('for (const [requestRel, targetRel] of Object.entries(MANIFEST_DATA.resolveCache))');
+    expect(worker).toContain('__setBundleAliases(requestRel, mod)');
+  });
+
+  it('keeps original node_modules symlink absolute aliases alongside resolved package paths', async () => {
+    const realPackageDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-real-package-'));
+    createdDirs.push(realPackageDir);
+    await fs.writeFile(path.join(realPackageDir, 'package.json'), JSON.stringify({ name: 'fake-plugin' }));
+    await fs.writeFile(path.join(realPackageDir, 'app.ts'), 'export const plugin = true;\n');
+
+    const linkDir = path.join(tmpDir, 'node_modules/fake-plugin');
+    await fs.mkdir(path.dirname(linkDir), { recursive: true });
+    await fs.symlink(realPackageDir, linkDir, process.platform === 'win32' ? 'junction' : 'dir');
+
+    const manifest = makeManifest({
+      fileDiscovery: { 'node_modules/fake-plugin': ['app.ts'] },
+      resolveCache: { 'node_modules/fake-plugin/app.ts': 'node_modules/fake-plugin/app.ts' },
+    });
+
+    const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
+    const result = await gen.generate();
+    const worker = await fs.readFile(result.workerEntry, 'utf8');
+
+    expect(worker).toContain(JSON.stringify(toPosixPath(path.join(realPackageDir, 'app.ts'))));
+    expect(worker).toContain(JSON.stringify(toPosixPath(path.join(tmpDir, 'node_modules/fake-plugin/app.ts'))));
+  });
+
+  it('executes the generated worker with explicit framework resolved through the bundle loader', async () => {
+    const resultFile = path.join(tmpDir, 'runtime-result.json');
+    await fs.writeFile(path.join(tmpDir, 'package.json'), JSON.stringify({ type: 'module' }));
+    await fs.mkdir(path.join(tmpDir, 'app'), { recursive: true });
+    await fs.writeFile(
+      path.join(tmpDir, 'app/controller.ts'),
+      "export const controllerMarker = 'bundled-controller';\n",
+    );
+    await writePackage(
+      path.join(tmpDir, 'node_modules/@eggjs/core'),
+      `
+export const ManifestStore = {
+  fromBundle(manifest, baseDir) {
+    return { manifest, baseDir };
+  },
+  setBundleStore(store) {
+    globalThis.__manifestStore = store;
+  },
+};
+`,
+    );
+    await writePackage(
+      path.join(tmpDir, 'node_modules/@runtime/framework'),
+      `
+import fs from 'node:fs/promises';
+
+export const frameworkMarker = 'bundled-framework';
+
+export async function startEgg(options) {
+  const loader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
+  const resolvedFramework = loader?.(options.framework);
+  const resolvedController = loader?.('app/controller.ts');
+  await fs.writeFile(process.env.EGG_RUNTIME_RESULT, JSON.stringify({
+    options,
+    manifestBaseDir: globalThis.__manifestStore?.baseDir,
+    frameworkResolved: resolvedFramework?.frameworkMarker,
+    frameworkStartEggMatches: resolvedFramework?.startEgg === startEgg,
+    controllerResolved: resolvedController?.controllerMarker,
+  }, null, 2));
+  return {
+    config: { cluster: { listen: { port: 0 } } },
+    listen(_port, callback) {
+      callback();
+    },
+  };
+}
+`,
+    );
+
+    const manifest = makeManifest({
+      fileDiscovery: { app: ['controller.ts'] },
+    });
+    const outputDir = path.join(tmpDir, 'dist');
+    const gen = new EntryGenerator({
+      baseDir: tmpDir,
+      outputDir,
+      framework: '@runtime/framework',
+      manifestLoader: createFakeLoader(manifest),
+    });
+    const result = await gen.generate();
+
+    await execaNode(result.workerEntry, [], {
+      cwd: tmpDir,
+      env: {
+        ...process.env,
+        EGG_RUNTIME_RESULT: resultFile,
+      },
+      nodeOptions: ['--experimental-strip-types'],
+      timeout: 5_000,
+    });
+
+    const runtimeResult = JSON.parse(await fs.readFile(resultFile, 'utf8')) as {
+      options: { baseDir: string; framework: string; mode: string };
+      manifestBaseDir: string;
+      frameworkResolved: string;
+      frameworkStartEggMatches: boolean;
+      controllerResolved: string;
+    };
+    expect(runtimeResult.options).toEqual({
+      baseDir: outputDir,
+      framework: '@runtime/framework',
+      mode: 'single',
+    });
+    expect(runtimeResult.manifestBaseDir).toBe(outputDir);
+    expect(runtimeResult.frameworkResolved).toBe('bundled-framework');
+    expect(runtimeResult.frameworkStartEggMatches).toBe(true);
+    expect(runtimeResult.controllerResolved).toBe('bundled-controller');
   });
 
   it('loads externalized package files via createRequire instead of static imports', async () => {
@@ -242,7 +382,7 @@ describe('EntryGenerator', () => {
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
     expect(extractImports(worker).length).toBe(0);
-    expect(worker).toContain("startEgg({ baseDir: __baseDir, mode: 'single' })");
+    expect(worker).toContain("startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single' })");
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain('ManifestStore.setBundleStore');
   });
@@ -297,10 +437,10 @@ describe('EntryGenerator', () => {
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
     expect(worker).toContain('import { startEgg } from "custom-egg"');
-    expect(worker).not.toContain(frameworkDir);
+    expect(worker).toContain(`const __framework = ${JSON.stringify(toPosixPath(frameworkDir))};`);
   });
 
-  it('keeps an absolute framework checkout relative when the app cannot resolve its package name', async () => {
+  it('imports an absolute framework checkout relatively while preserving its runtime value', async () => {
     const frameworkDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-framework-'));
     createdDirs.push(frameworkDir);
     await fs.writeFile(path.join(frameworkDir, 'package.json'), JSON.stringify({ name: 'custom-egg' }));
@@ -315,11 +455,11 @@ describe('EntryGenerator', () => {
     const relFramework = path.relative(result.entryDir, frameworkDir).replaceAll(path.sep, '/');
 
     expect(worker).toContain(`import { startEgg } from "${relFramework}"`);
+    expect(worker).toContain(`const __framework = ${JSON.stringify(toPosixPath(frameworkDir))};`);
     expect(worker).not.toContain('import { startEgg } from "custom-egg"');
-    expect(worker).not.toContain(frameworkDir);
   });
 
-  it('produces byte-identical worker output across independent baseDir runs (T17 determinism baseline)', async () => {
+  it('keeps the module graph deterministic apart from original app absolute aliases', async () => {
     const manifest = makeManifest({
       extensions: {
         tegg: {
@@ -344,7 +484,7 @@ describe('EntryGenerator', () => {
     }).generate();
     const secondWorker = await fs.readFile(second.workerEntry, 'utf8');
 
-    expect(firstWorker).toBe(secondWorker);
+    expect(normalizeAppBaseDir(firstWorker, tmpDir)).toBe(normalizeAppBaseDir(secondWorker, tmpDir2));
   });
 
   it('matches the canonical file snapshot for a representative manifest', async () => {
@@ -373,6 +513,7 @@ describe('EntryGenerator', () => {
     const result = await gen.generate();
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
-    await expect(worker).toMatchFileSnapshot('./__snapshots__/EntryGenerator.worker.canonical.snap');
+    const stableWorker = normalizeAppBaseDir(worker, tmpDir);
+    await expect(stableWorker).toMatchFileSnapshot('./__snapshots__/EntryGenerator.worker.canonical.snap');
   });
 });
