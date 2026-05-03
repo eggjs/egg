@@ -9,6 +9,10 @@ export interface PackEntry {
 
 export type BuildFunc = (config: { config: unknown }, projectPath: string, rootPath: string) => Promise<void>;
 
+export interface PackRunnerResolveConfig {
+  readonly alias?: Readonly<Record<string, string>>;
+}
+
 export interface PackRunnerOptions {
   readonly entries: readonly PackEntry[];
   readonly outputDir: string;
@@ -17,6 +21,7 @@ export interface PackRunnerOptions {
   readonly rootPath?: string;
   readonly mode?: 'production' | 'development';
   readonly buildFunc?: BuildFunc;
+  readonly resolve?: PackRunnerResolveConfig;
 }
 
 export interface PackRunnerResult {
@@ -65,6 +70,7 @@ export class PackRunner {
       rootPath = projectPath,
       mode = 'production',
       buildFunc = DEFAULT_BUILD_FUNC,
+      resolve,
     } = this.#options;
 
     await fs.mkdir(outputDir, { recursive: true });
@@ -80,6 +86,8 @@ export class PackRunner {
       umdExternals[k] = { commonjs: v, root: v };
     }
 
+    const resolveConfig = this.#buildResolveConfig(resolve);
+
     const config = {
       entry: entries.map((e) => ({ name: e.name, import: e.filepath })),
       target: 'node 22',
@@ -90,6 +98,7 @@ export class PackRunner {
         type: 'standalone',
       },
       externals: umdExternals,
+      ...(resolveConfig ? { resolve: resolveConfig } : {}),
       optimization: {
         treeShaking: false,
         minify: false,
@@ -106,6 +115,11 @@ export class PackRunner {
 
     const files = await this.#collectFiles(outputDir);
     return { outputDir, files };
+  }
+
+  #buildResolveConfig(resolve: PackRunnerResolveConfig | undefined): PackRunnerResolveConfig | undefined {
+    if (!resolve?.alias || Object.keys(resolve.alias).length === 0) return undefined;
+    return { alias: { ...resolve.alias } };
   }
 
   async #collectFiles(dir: string): Promise<readonly string[]> {

@@ -15,6 +15,13 @@ await bundle({
   outputDir: './dist-bundle',
   framework: 'egg',
   mode: 'production',
+  pack: {
+    resolve: {
+      alias: {
+        'some-package': '/path/to/app/node_modules/some-package/index.js',
+      },
+    },
+  },
 });
 ```
 
@@ -29,18 +36,19 @@ not run.
 
 ## Options
 
-| Option             | Description                                                                     |
-| ------------------ | ------------------------------------------------------------------------------- |
-| `baseDir`          | Application root directory. Required.                                           |
-| `outputDir`        | Output directory for the bundled artifact. Required.                            |
-| `manifestPath`     | Path to `manifest.json`. Defaults to `<baseDir>/.egg/manifest.json`.            |
-| `framework`        | Framework name or absolute path. Defaults to `egg`.                             |
-| `mode`             | Build mode, `production` or `development`. Defaults to `production`.            |
-| `tegg`             | Accepted by `BundlerConfig`, but not applied by the current implementation yet. |
-| `externals.force`  | Package names to always keep external.                                          |
-| `externals.inline` | Package names to force inline even if auto-detected as external.                |
-| `pack.buildFunc`   | Test hook for replacing the real `@utoo/pack` build entry.                      |
-| `pack.rootPath`    | Override the monorepo workspace root used by `@utoo/pack`.                      |
+| Option               | Description                                                                     |
+| -------------------- | ------------------------------------------------------------------------------- |
+| `baseDir`            | Application root directory. Required.                                           |
+| `outputDir`          | Output directory for the bundled artifact. Required.                            |
+| `manifestPath`       | Path to `manifest.json`. Defaults to `<baseDir>/.egg/manifest.json`.            |
+| `framework`          | Framework name or absolute path. Defaults to `egg`.                             |
+| `mode`               | Build mode, `production` or `development`. Defaults to `production`.            |
+| `tegg`               | Accepted by `BundlerConfig`, but not applied by the current implementation yet. |
+| `externals.force`    | Package names to always keep external.                                          |
+| `externals.inline`   | Package names to force inline even if auto-detected as external.                |
+| `pack.buildFunc`     | Test hook for replacing the real `@utoo/pack` build entry.                      |
+| `pack.rootPath`      | Override the monorepo workspace root used by `@utoo/pack`.                      |
+| `pack.resolve.alias` | Application-supplied `@utoo/pack` resolve aliases.                              |
 
 ## Result
 

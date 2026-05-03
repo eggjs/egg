@@ -193,6 +193,7 @@ egg-bin bundle
 egg-bin bundle --output ./dist-bundle
 egg-bin bundle --mode development
 egg-bin bundle --framework egg --output ./out
+egg-bin bundle --pack-alias some-package=./node_modules/some-package/index.js
 ```
 
 The command writes the bundle to `./dist-bundle` by default. The generated
@@ -213,6 +214,9 @@ node worker.js
   implementation yet
 - `--force-external` package name to always keep external, supports multiple
 - `--inline-external` package name to force inline, supports multiple
+- `--pack-alias` `@utoo/pack` resolve alias in `<specifier>=<target>` form,
+  supports multiple. Dot-relative targets such as `./target.js` and
+  `../target.js` are resolved from the application base directory
 
 See [`@eggjs/egg-bundler`](../egg-bundler/README.md) for the programmatic API
 and output structure.

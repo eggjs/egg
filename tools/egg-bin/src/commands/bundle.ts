@@ -17,6 +17,24 @@ function getBundleMode(mode: string): BundleMode {
   throw new Error(`Unsupported bundle mode: ${mode}`);
 }
 
+function parsePackAliases(values: readonly string[], baseDir: string): Record<string, string> | undefined {
+  if (values.length === 0) return undefined;
+
+  const alias: Record<string, string> = {};
+  for (const value of values) {
+    const separator = value.indexOf('=');
+    if (separator <= 0 || separator === value.length - 1) {
+      throw new Error(`Invalid --pack-alias value: ${value}. Expected <specifier>=<target>.`);
+    }
+
+    const specifier = value.slice(0, separator);
+    const target = value.slice(separator + 1);
+    alias[specifier] = target.startsWith('.') ? path.resolve(baseDir, target) : target;
+  }
+
+  return alias;
+}
+
 export default class Bundle extends BaseCommand<typeof Bundle> {
   static override description = 'Bundle an egg app into a deployable artifact using @eggjs/egg-bundler';
 
@@ -25,6 +43,7 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
     '<%= config.bin %> <%= command.id %> --output ./dist-bundle',
     '<%= config.bin %> <%= command.id %> --mode development',
     '<%= config.bin %> <%= command.id %> --framework egg --output ./out',
+    '<%= config.bin %> <%= command.id %> --pack-alias some-package=./node_modules/some-package/index.js',
   ];
 
   static override flags = {
@@ -59,6 +78,11 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
       multiple: true,
       default: [],
     }),
+    'pack-alias': Flags.string({
+      description: '@utoo/pack resolve alias in <specifier>=<target> form, dot-relative targets resolve from --base',
+      multiple: true,
+      default: [],
+    }),
   };
 
   public async run(): Promise<void> {
@@ -81,6 +105,7 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
     );
 
     const { bundle } = await import('@eggjs/egg-bundler');
+    const packAlias = parsePackAliases(flags['pack-alias'], baseDir);
     const result = await bundle({
       baseDir,
       outputDir,
@@ -92,6 +117,7 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
         force: flags['force-external'],
         inline: flags['inline-external'],
       },
+      ...(packAlias ? { pack: { resolve: { alias: packAlias } } } : {}),
     });
 
     this.log(`bundled to ${result.outputDir} (${result.files.length} files)`);
