@@ -171,15 +171,22 @@ describe('EntryGenerator', () => {
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
     expect(worker).toContain("import { ManifestStore } from '@eggjs/core'");
-    expect(worker).toContain('import { startEgg } from "egg"');
+    expect(worker).toContain('import { Agent as __EggAgent, Application as __EggApplication, startEgg } from "egg"');
+    expect(worker).toContain(
+      'const __outputDir = process.argv[1] ? path.dirname(path.resolve(process.argv[1])) : process.cwd()',
+    );
+    expect(worker).toContain('const __appBaseDir = path.resolve(__outputDir, __bundleManifest.baseDir)');
+    expect(worker).toContain('const __framework = __bundleManifest.framework');
     expect(worker).toContain('ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA');
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
-    expect(worker).toContain("startEgg({ baseDir: __baseDir, mode: 'single' })");
+    expect(worker).toContain('__setBundleMapAlias(__framework, { Agent: __EggAgent, Application: __EggApplication })');
+    expect(worker).toContain("startEgg({ baseDir: __appBaseDir, framework: __framework, mode: 'single' })");
   });
 
-  it('builds a BUNDLE_MAP keyed by both the relKey form and the resolved absolute form', async () => {
+  it('builds a BUNDLE_MAP keyed by relKey, app absolute, output absolute, and resolveCache request aliases', async () => {
     const manifest = makeManifest({
       fileDiscovery: { app: ['controller.ts'] },
+      resolveCache: { 'app/controller': 'app/controller.ts' },
     });
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
@@ -188,8 +195,13 @@ describe('EntryGenerator', () => {
 
     expect(worker).toContain('__BUNDLE_MAP_REL');
     expect(worker).toContain('["app/controller.ts"]: __m0');
-    expect(worker).toContain('__BUNDLE_MAP[abs] = mod');
-    expect(worker).toContain('__BUNDLE_MAP[rel] = mod');
+    expect(worker).toContain('__setBundleMapAlias(rel, mod)');
+    expect(worker).toContain('__setBundleMapAlias(path.resolve(__appBaseDir, rel), mod)');
+    expect(worker).toContain('__setBundleMapAlias(path.resolve(__outputDir, rel), mod)');
+    expect(worker).toContain(
+      'for (const [requestRel, resolvedRel] of Object.entries(MANIFEST_DATA.resolveCache ?? {}))',
+    );
+    expect(worker).toContain('__setBundleMapAlias(path.resolve(__appBaseDir, requestRel), mod)');
   });
 
   it('loads externalized package files via createRequire instead of static imports', async () => {
@@ -242,7 +254,7 @@ describe('EntryGenerator', () => {
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
     expect(extractImports(worker).length).toBe(0);
-    expect(worker).toContain("startEgg({ baseDir: __baseDir, mode: 'single' })");
+    expect(worker).toContain("startEgg({ baseDir: __appBaseDir, framework: __framework, mode: 'single' })");
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain('ManifestStore.setBundleStore');
   });
@@ -270,53 +282,17 @@ describe('EntryGenerator', () => {
     expect(path.dirname(result.workerEntry)).toBe(customOut);
   });
 
-  it('honors a custom framework specifier', async () => {
+  it('uses framework from bundle-manifest.json at runtime', async () => {
     const gen = new EntryGenerator({
       baseDir: tmpDir,
-      framework: '@my-org/framework',
       manifestLoader: createFakeLoader(makeManifest()),
     });
     const result = await gen.generate();
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
-    expect(worker).toContain('import { startEgg } from "@my-org/framework"');
-    expect(worker).not.toContain('import { startEgg } from "egg"');
-  });
-
-  it('uses the package name for an absolute framework directory with package metadata', async () => {
-    const frameworkDir = path.join(tmpDir, 'node_modules/custom-egg');
-    await fs.mkdir(frameworkDir, { recursive: true });
-    await fs.writeFile(path.join(frameworkDir, 'package.json'), JSON.stringify({ name: 'custom-egg' }));
-
-    const gen = new EntryGenerator({
-      baseDir: tmpDir,
-      framework: frameworkDir,
-      manifestLoader: createFakeLoader(makeManifest()),
-    });
-    const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
-
-    expect(worker).toContain('import { startEgg } from "custom-egg"');
-    expect(worker).not.toContain(frameworkDir);
-  });
-
-  it('keeps an absolute framework checkout relative when the app cannot resolve its package name', async () => {
-    const frameworkDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-framework-'));
-    createdDirs.push(frameworkDir);
-    await fs.writeFile(path.join(frameworkDir, 'package.json'), JSON.stringify({ name: 'custom-egg' }));
-
-    const gen = new EntryGenerator({
-      baseDir: tmpDir,
-      framework: frameworkDir,
-      manifestLoader: createFakeLoader(makeManifest()),
-    });
-    const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
-    const relFramework = path.relative(result.entryDir, frameworkDir).replaceAll(path.sep, '/');
-
-    expect(worker).toContain(`import { startEgg } from "${relFramework}"`);
-    expect(worker).not.toContain('import { startEgg } from "custom-egg"');
-    expect(worker).not.toContain(frameworkDir);
+    expect(worker).toContain('import { Agent as __EggAgent, Application as __EggApplication, startEgg } from "egg"');
+    expect(worker).toContain('const __framework = __bundleManifest.framework');
+    expect(worker).toContain("startEgg({ baseDir: __appBaseDir, framework: __framework, mode: 'single' })");
   });
 
   it('produces byte-identical worker output across independent baseDir runs (T17 determinism baseline)', async () => {
