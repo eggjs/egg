@@ -70,7 +70,7 @@ pnpm --filter=site run dev
 Some DAL, ORM, Redis, and ecosystem benchmark paths need local MySQL and Redis services. Start the repository-aligned Docker services before running those tests on a clean machine:
 
 ```bash
-pnpm run dev:services:start
+utoo run dev:services:start
 ```
 
 This starts MySQL 8 and Redis 7, matching the main CI service versions, and creates the databases used by local DAL/ORM/e2e fixtures: `test`, `apple`, `banana`, `test_runtime_datasource`, `test_runtime_dao`, `test_dal_plugin`, `test_dal_standalone`, `cnpmcore`, and `cnpmcore_unittest`.
@@ -78,9 +78,9 @@ This starts MySQL 8 and Redis 7, matching the main CI service versions, and crea
 Useful commands:
 
 ```bash
-pnpm run dev:services:status
-pnpm run dev:services:stop
-pnpm run dev:services:reset
+utoo run dev:services:status
+utoo run dev:services:stop
+utoo run dev:services:reset
 ```
 
 The default host ports are `127.0.0.1:3306` for MySQL and `127.0.0.1:6379` for Redis. If either port is already used, the start command stops before changing containers. Keep using the existing service if it is compatible with CI, or stop it and run the command again. You can change Docker host ports with `EGG_DEV_SERVICES_MYSQL_PORT` and `EGG_DEV_SERVICES_REDIS_PORT`; however, the full DAL/ORM/Redis local test path still expects the default host ports.
@@ -88,11 +88,11 @@ The default host ports are `127.0.0.1:3306` for MySQL and `127.0.0.1:6379` for R
 Image overrides are available for compatibility checks:
 
 ```bash
-EGG_DEV_SERVICES_MYSQL_IMAGE=mysql:5.7 pnpm run dev:services:start
-EGG_DEV_SERVICES_REDIS_IMAGE=redis:7 pnpm run dev:services:start
+EGG_DEV_SERVICES_MYSQL_IMAGE=mysql:5.7 utoo run dev:services:start
+EGG_DEV_SERVICES_REDIS_IMAGE=redis:7 utoo run dev:services:start
 ```
 
-Run `pnpm run dev:services:reset` before switching MySQL image families, for example between MySQL 8 and MySQL 5.7, because MySQL data directories are not downgrade-compatible across major versions.
+Run `utoo run dev:services:reset` before switching MySQL image families, for example between MySQL 8 and MySQL 5.7, because MySQL data directories are not downgrade-compatible across major versions.
 
 Current hard-coded service assumptions:
 
