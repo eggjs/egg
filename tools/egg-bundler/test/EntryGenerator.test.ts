@@ -172,8 +172,12 @@ describe('EntryGenerator', () => {
 
     expect(worker).toContain("import { ManifestStore } from '@eggjs/core'");
     expect(worker).toContain('import { startEgg } from "egg"');
-    expect(worker).toContain("const __outputDir = path.dirname(path.resolve(process.argv[1] || '.'))");
-    expect(worker).toContain('const __appBaseDir = path.resolve(__bundleManifest.baseDir || __outputDir)');
+    expect(worker).toContain(
+      'const __outputDir = process.argv[1] ? path.dirname(path.resolve(process.argv[1])) : process.cwd()',
+    );
+    expect(worker).toContain(
+      'const __appBaseDir = __bundleManifest.baseDir ? path.resolve(__outputDir, __bundleManifest.baseDir) : __outputDir',
+    );
     expect(worker).toContain('ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA');
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain("startEgg({ baseDir: __appBaseDir, framework: __framework, mode: 'single' })");

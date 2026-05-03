@@ -223,7 +223,7 @@ ${importLines.join('\n')}
 // Derive the runtime output directory from the entry file being executed.
 // Cannot use __dirname because turbopack replaces it with the compile-time
 // path of the INPUT file, not the OUTPUT directory.
-const __outputDir = path.dirname(path.resolve(process.argv[1] || '.'));
+const __outputDir = process.argv[1] ? path.dirname(path.resolve(process.argv[1])) : process.cwd();
 type __BundleManifest = { baseDir?: string; framework?: string };
 function __readBundleManifest(): __BundleManifest {
   try {
@@ -234,7 +234,7 @@ function __readBundleManifest(): __BundleManifest {
 }
 
 const __bundleManifest = __readBundleManifest();
-const __appBaseDir = path.resolve(__bundleManifest.baseDir || __outputDir);
+const __appBaseDir = __bundleManifest.baseDir ? path.resolve(__outputDir, __bundleManifest.baseDir) : __outputDir;
 const __framework = __bundleManifest.framework || ${frameworkJson};
 
 const MANIFEST_DATA = ${manifestJson} as const;
