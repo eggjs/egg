@@ -95,6 +95,7 @@ export class ExternalsResolver {
     const pkg = await this.#readPackageJson(pkgDir);
     if (await this.#hasMissingOptionalPeerDependencies(pkgDir, pkg)) return true;
     if (await this.#hasNativeBinary(pkgDir, pkg)) return true;
+    if (await this.#hasNativeOptionalDependency(pkgDir, pkg)) return true;
     return false;
   }
 
@@ -104,6 +105,17 @@ export class ExternalsResolver {
     for (const peerName of Object.keys(peerDependencies)) {
       if (!peerDependenciesMeta[peerName]?.optional) continue;
       if (!(await this.#findPackageDir(peerName, pkgDir))) return true;
+    }
+    return false;
+  }
+
+  async #hasNativeOptionalDependency(pkgDir: string, pkg: PackageJson): Promise<boolean> {
+    const optionalDependencies = pkg.optionalDependencies ?? {};
+    for (const depName of Object.keys(optionalDependencies)) {
+      const depDir = await this.#findPackageDir(depName, pkgDir);
+      if (!depDir) continue;
+      const depPkg = await this.#readPackageJson(depDir);
+      if (await this.#hasNativeBinary(depDir, depPkg)) return true;
     }
     return false;
   }

@@ -12,9 +12,11 @@
     "missing-pkg": "1.0.0",
     "native-binding": "1.0.0",
     "native-dotnode": "1.0.0",
+    "native-optional-wrapper": "1.0.0",
     "native-prebuilds": "1.0.0",
     "native-scripts": "1.0.0",
     "normal-js": "1.0.0",
+    "optional-js-wrapper": "1.0.0",
     "optional-peer-host": "1.0.0"
   },
   "peerDependencies": {
