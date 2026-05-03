@@ -175,9 +175,8 @@ describe('EntryGenerator', () => {
     expect(worker).toContain(
       'const __outputDir = process.argv[1] ? path.dirname(path.resolve(process.argv[1])) : process.cwd()',
     );
-    expect(worker).toContain(
-      'const __appBaseDir = __bundleManifest.baseDir ? path.resolve(__outputDir, __bundleManifest.baseDir) : __outputDir',
-    );
+    expect(worker).toContain('const __appBaseDir = path.resolve(__outputDir, __bundleManifest.baseDir)');
+    expect(worker).toContain('const __framework = __bundleManifest.framework');
     expect(worker).toContain('ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA');
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain("startEgg({ baseDir: __appBaseDir, framework: __framework, mode: 'single' })");
@@ -282,7 +281,7 @@ describe('EntryGenerator', () => {
     expect(path.dirname(result.workerEntry)).toBe(customOut);
   });
 
-  it('passes a custom framework specifier to startEgg', async () => {
+  it('reads a custom framework specifier from bundle-manifest.json at runtime', async () => {
     const gen = new EntryGenerator({
       baseDir: tmpDir,
       framework: '@my-org/framework',
@@ -292,11 +291,11 @@ describe('EntryGenerator', () => {
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
     expect(worker).toContain('import { startEgg } from "egg"');
-    expect(worker).toContain('const __framework = __bundleManifest.framework || "@my-org/framework"');
+    expect(worker).toContain('const __framework = __bundleManifest.framework');
     expect(worker).toContain("startEgg({ baseDir: __appBaseDir, framework: __framework, mode: 'single' })");
   });
 
-  it('passes an absolute framework checkout through startEgg', async () => {
+  it('reads an absolute framework checkout from bundle-manifest.json at runtime', async () => {
     const frameworkDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-framework-'));
     createdDirs.push(frameworkDir);
     await fs.writeFile(path.join(frameworkDir, 'package.json'), JSON.stringify({ name: 'custom-egg' }));
@@ -310,7 +309,7 @@ describe('EntryGenerator', () => {
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
     expect(worker).toContain('import { startEgg } from "egg"');
-    expect(worker).toContain(`const __framework = __bundleManifest.framework || ${JSON.stringify(frameworkDir)}`);
+    expect(worker).toContain('const __framework = __bundleManifest.framework');
   });
 
   it('produces byte-identical worker output across independent baseDir runs (T17 determinism baseline)', async () => {

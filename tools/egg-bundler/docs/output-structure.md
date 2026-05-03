@@ -44,7 +44,8 @@ as config, views, or assets.
 
 A runtime metadata file produced by `Bundler`. The worker reads `baseDir` and
 `framework` from this file during startup, so deployment must keep it next to
-`worker.js`. The remaining fields are reference / debug metadata. Shape:
+`worker.js`; a missing, unreadable, or malformed manifest is a startup error.
+The remaining fields are reference / debug metadata. Shape:
 
 ```json
 {

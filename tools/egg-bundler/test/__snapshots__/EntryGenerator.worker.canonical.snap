@@ -15,26 +15,27 @@ import * as __m3 from "../../node_modules/@eggjs/fake-module/app/service/UserSer
 // Cannot use __dirname because turbopack replaces it with the compile-time
 // path of the INPUT file, not the OUTPUT directory.
 const __outputDir = process.argv[1] ? path.dirname(path.resolve(process.argv[1])) : process.cwd();
-type __BundleManifest = { baseDir?: string; framework?: string };
+type __BundleManifest = { baseDir: string; framework: string };
 function __readBundleManifest(): __BundleManifest {
+  const manifestPath = path.join(__outputDir, 'bundle-manifest.json');
+  let data: Record<string, unknown> | null;
   try {
-    const data = JSON.parse(fs.readFileSync(path.join(__outputDir, 'bundle-manifest.json'), 'utf8')) as Record<
-      string,
-      unknown
-    > | null;
-    if (!data || typeof data !== 'object') return {};
-    return {
-      baseDir: typeof data.baseDir === 'string' ? data.baseDir : undefined,
-      framework: typeof data.framework === 'string' ? data.framework : undefined,
-    };
-  } catch {
-    return {};
+    data = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as Record<string, unknown> | null;
+  } catch (error) {
+    throw new Error(`[egg-bundler] failed to read ${manifestPath}: ${String(error)}`);
   }
+  if (!data || typeof data !== 'object' || typeof data.baseDir !== 'string' || typeof data.framework !== 'string') {
+    throw new Error(`[egg-bundler] invalid bundle-manifest.json: ${manifestPath}`);
+  }
+  return {
+    baseDir: data.baseDir,
+    framework: data.framework,
+  };
 }
 
 const __bundleManifest = __readBundleManifest();
-const __appBaseDir = __bundleManifest.baseDir ? path.resolve(__outputDir, __bundleManifest.baseDir) : __outputDir;
-const __framework = __bundleManifest.framework || "egg";
+const __appBaseDir = path.resolve(__outputDir, __bundleManifest.baseDir);
+const __framework = __bundleManifest.framework;
 
 const MANIFEST_DATA = {
   "version": 1,
