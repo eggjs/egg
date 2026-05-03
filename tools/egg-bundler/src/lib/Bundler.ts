@@ -112,7 +112,6 @@ export class Bundler {
     const entryGen = new EntryGenerator({
       baseDir: absBaseDir,
       manifestLoader,
-      framework,
       externals: new Set(Object.keys(externalsMap)),
     });
     const entries = await wrapStep('entry generation', () => entryGen.generate());

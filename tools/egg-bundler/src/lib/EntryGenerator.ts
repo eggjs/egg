@@ -14,7 +14,6 @@ export interface EntryGeneratorOptions {
   baseDir: string;
   manifestLoader: ManifestLoader;
   outputDir?: string;
-  framework?: string;
   externals?: ReadonlySet<string>;
 }
 
