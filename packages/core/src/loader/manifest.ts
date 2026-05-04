@@ -243,6 +243,9 @@ export class ManifestStore {
    * Look up a plugin extension by name.
    */
   getExtension(name: string): unknown {
+    if (Object.hasOwn(this.#extensionCollector, name)) {
+      return this.#extensionCollector[name];
+    }
     return this.data.extensions?.[name];
   }
 
