@@ -1,9 +1,16 @@
 import { defineConfig, type UserWorkspaceConfig } from 'vitest/config';
 
+const isWindowsCI = process.env.CI && process.platform === 'win32';
+
 const config: UserWorkspaceConfig = defineConfig({
   test: {
     pool: 'threads',
     isolate: false,
+    ...(isWindowsCI
+      ? {
+          maxWorkers: 2,
+        }
+      : {}),
     projects: [
       'packages/*',
       'plugins/*',
