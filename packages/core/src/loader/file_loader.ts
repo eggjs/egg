@@ -60,6 +60,10 @@ export interface FileLoaderParseItem {
   exports: object | Fun;
 }
 
+export function getDefaultFileLoaderMatch(): string[] {
+  return isSupportTypeScript() ? ['**/*.(js|ts)', '!**/*.d.ts'] : ['**/*.js'];
+}
+
 /**
  * Load files from directory to target object.
  * @since 1.0.0
@@ -181,7 +185,7 @@ export class FileLoader {
     if (files) {
       files = Array.isArray(files) ? files : [files];
     } else {
-      files = isSupportTypeScript() ? ['**/*.(js|ts)', '!**/*.d.ts'] : ['**/*.js'];
+      files = getDefaultFileLoaderMatch();
     }
 
     let ignore = this.options.ignore;

@@ -23,7 +23,7 @@ import utils, { type Fun } from '../utils/index.ts';
 import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
-import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
+import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader, getDefaultFileLoaderMatch } from './file_loader.ts';
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
@@ -1807,7 +1807,7 @@ export class EggLoader {
     const files = this.#collectConventionFileDiscovery(manifest, directory);
     for (const file of files) {
       const ext = path.extname(file);
-      if (!ext || ext === '.map') continue;
+      if (!ext) continue;
       const request = path.join(directory, file.slice(0, -ext.length));
       this.#collectConventionResolve(manifest, request);
     }
@@ -1817,10 +1817,9 @@ export class EggLoader {
     const dirKey = this.#toManifestRel(directory);
     if (Object.hasOwn(manifest.fileDiscovery, dirKey)) return manifest.fileDiscovery[dirKey];
 
-    const files = isSupportTypeScript() ? ['**/*.{js,ts}', '!**/*.d.ts'] : ['**/*.js'];
     manifest.fileDiscovery[dirKey] =
       fs.existsSync(directory) && fs.statSync(directory).isDirectory()
-        ? globby.sync(files, { cwd: directory }).sort()
+        ? globby.sync(getDefaultFileLoaderMatch(), { cwd: directory }).sort()
         : [];
     return manifest.fileDiscovery[dirKey];
   }
