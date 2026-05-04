@@ -80,14 +80,15 @@ export function onerror(app: any, options?: OnerrorOptions): any {
     }
     this.status = err.status;
 
+    clearResponseHeaders(this);
     if (err.headers) {
       this.set(err.headers);
     }
     let type: string;
     if (options.accepts) {
-      type = options.accepts.call(this, 'html', 'text', 'json');
+      type = options.accepts.call(this, 'html', 'text', 'json', 'js');
     } else {
-      type = this.accepts('html', 'text', 'json');
+      type = this.accepts('html', 'text', 'json', 'js');
     }
     debug('accepts type: %s', type);
     type = type || 'text';
@@ -122,10 +123,6 @@ function isDev(): boolean {
 }
 
 function text(err: OnerrorError, ctx: any): void {
-  clearResponseHeaders(ctx);
-  if (err.headers) {
-    ctx.set(err.headers);
-  }
   ctx.body = (isDev() || err.expose) && err.message ? err.message : http.STATUS_CODES[ctx.status];
 }
 

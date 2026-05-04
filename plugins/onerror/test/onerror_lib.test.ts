@@ -17,7 +17,8 @@ interface TestContext {
   endedBody?: unknown;
   removedHeaders: string[];
   setCalls: unknown[];
-  accepts: () => string;
+  acceptArgs?: string[];
+  accepts: (...args: string[]) => string;
   set: (headers: unknown) => void;
   redirect: (url: string) => void;
   redirectedTo?: string;
@@ -69,7 +70,8 @@ function createContext(app: TestApp, type: string): TestContext {
     status: 200,
     removedHeaders: [] as string[],
     setCalls: [] as unknown[],
-    accepts() {
+    accepts(...args: string[]) {
+      ctx.acceptArgs = args;
       return type;
     },
     set(value: unknown) {
@@ -111,7 +113,8 @@ describe('lib/onerror.ts', () => {
     assert.equal(ctx.endedBody, 'teapot');
     assert.equal(ctx.type, 'text');
     assert.deepEqual(ctx.removedHeaders, ['x-old']);
-    assert.deepEqual(ctx.setCalls, [{ 'x-new': '2' }, { 'x-new': '2' }]);
+    assert.deepEqual(ctx.setCalls, [{ 'x-new': '2' }]);
+    assert.deepEqual(ctx.acceptArgs, ['html', 'text', 'json', 'js']);
     assert.equal(app.emitted[0][0], 'error');
     assert.equal(app.emitted[0][1], err);
   });
@@ -152,6 +155,22 @@ describe('lib/onerror.ts', () => {
     assert.equal(ctx.endedBody, '{"ok":true}');
   });
 
+  it('selects js handlers through default negotiation', () => {
+    const app = createApp({
+      js(err, ctx) {
+        ctx.body = `jsonp:${err.message}`;
+      },
+    });
+    const ctx = createContext(app, 'js');
+
+    callOnerror(app, ctx, makeError(500, 'boom', { expose: true }));
+
+    assert.deepEqual(ctx.acceptArgs, ['html', 'text', 'json', 'js']);
+    assert.equal(ctx.type, 'js');
+    assert.equal(ctx.body, 'jsonp:boom');
+    assert.equal(ctx.endedBody, 'jsonp:boom');
+  });
+
   it('wraps non-error throws and normalizes invalid status to 500', () => {
     const app = createApp();
     const ctx = createContext(app, 'json');
@@ -176,8 +195,10 @@ describe('lib/onerror.ts', () => {
   });
 
   it('supports custom accepts and all handlers', () => {
+    let acceptArgs: string[] = [];
     const app = createApp({
-      accepts() {
+      accepts(...args: string[]) {
+        acceptArgs = args;
         return 'html';
       },
       all(err, ctx) {
@@ -192,6 +213,8 @@ describe('lib/onerror.ts', () => {
     assert.equal(ctx.body, 'all:451');
     assert.equal(ctx.endedBody, 'all:451');
     assert.deepEqual(ctx.setCalls, [{ 'x-reason': 'legal' }]);
+    assert.deepEqual(ctx.removedHeaders, ['x-old']);
+    assert.deepEqual(acceptArgs, ['html', 'text', 'json', 'js']);
   });
 
   it('redirects non-json responses when configured', () => {
