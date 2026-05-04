@@ -211,6 +211,12 @@ export class ManifestStore {
       return cached !== null ? this.#toAbsolute(cached) : undefined;
     }
 
+    const discovered = this.#resolveFromFileDiscovery(relKey);
+    if (discovered !== null) {
+      debug('[resolveModule:fileDiscovery] %o => %o', filepath, discovered);
+      return discovered;
+    }
+
     const result = fallback();
     this.#resolveCacheCollector[relKey] = result !== undefined ? this.#toRelative(result) : null;
     return result;
@@ -341,6 +347,30 @@ export class ManifestStore {
       return relPath;
     }
     return path.join(this.baseDir, relPath);
+  }
+
+  #resolveFromFileDiscovery(relKey: string): string | undefined | null {
+    let matchedDir: string | undefined;
+    for (const dir of Object.keys(this.data.fileDiscovery)) {
+      if ((relKey === dir || relKey.startsWith(dir + '/')) && (!matchedDir || dir.length > matchedDir.length)) {
+        matchedDir = dir;
+      }
+    }
+    if (!matchedDir || relKey === matchedDir) return null;
+
+    const request = relKey.slice(matchedDir.length + 1);
+    const files = this.data.fileDiscovery[matchedDir];
+    const matchedFile = files.find((file) => {
+      if (file === request) return true;
+
+      const ext = path.posix.extname(file);
+      if (!ext || ext === '.map') return false;
+
+      const extensionlessFile = file.slice(0, -ext.length);
+      return extensionlessFile === request || extensionlessFile === `${request}/index`;
+    });
+
+    return matchedFile ? this.#toAbsolute(path.posix.join(matchedDir, matchedFile)) : undefined;
   }
 
   // --- Fingerprint Utilities ---

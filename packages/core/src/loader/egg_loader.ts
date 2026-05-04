@@ -27,7 +27,12 @@ import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
-const CONVENTIONAL_EXTEND_NAMES = ['agent', 'application', 'request', 'response', 'context', 'helper'] as const;
+const CONVENTIONAL_MANIFEST_LOADS = [
+  { type: 'resolve', path: ['agent'] },
+  { type: 'resolve', path: ['app'] },
+  { type: 'discover', path: ['app', 'extend'], extensionlessResolve: true },
+  { type: 'discover', path: ['app', 'middleware'] },
+] as const;
 
 const originalPrototypes: Record<string, unknown> = {
   request: Request.prototype,
@@ -1784,18 +1789,20 @@ export class EggLoader {
    */
   #collectConventionalDynamicFiles(manifest: StartupManifest): void {
     for (const unit of this.getLoadUnits()) {
-      this.#collectConventionResolve(manifest, unit.path, 'agent');
-      this.#collectConventionResolve(manifest, unit.path, 'app');
-      for (const name of CONVENTIONAL_EXTEND_NAMES) {
-        this.#collectConventionResolve(manifest, unit.path, 'app', 'extend', name);
+      for (const load of CONVENTIONAL_MANIFEST_LOADS) {
+        const target = path.join(unit.path, ...load.path);
+        if (load.type === 'resolve') {
+          this.#collectConventionResolve(manifest, target);
+        } else if ('extensionlessResolve' in load && load.extensionlessResolve) {
+          this.#collectConventionFileResolves(manifest, target);
+        } else {
+          this.#collectConventionFileDiscovery(manifest, target);
+        }
       }
-      this.#collectConventionExtends(manifest, path.join(unit.path, 'app/extend'));
-      this.#collectConventionFileDiscovery(manifest, path.join(unit.path, 'app/middleware'));
     }
   }
 
-  #collectConventionResolve(manifest: StartupManifest, root: string, ...segments: string[]): void {
-    const request = path.join(root, ...segments);
+  #collectConventionResolve(manifest: StartupManifest, request: string): void {
     const requestKey = this.#toManifestRel(request);
     if (Object.hasOwn(manifest.resolveCache, requestKey)) return;
 
@@ -1803,7 +1810,7 @@ export class EggLoader {
     manifest.resolveCache[requestKey] = resolved ? this.#toManifestRel(resolved) : null;
   }
 
-  #collectConventionExtends(manifest: StartupManifest, directory: string): void {
+  #collectConventionFileResolves(manifest: StartupManifest, directory: string): void {
     const files = this.#collectConventionFileDiscovery(manifest, directory);
     for (const file of files) {
       const ext = path.extname(file);
