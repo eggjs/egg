@@ -610,12 +610,12 @@ describe('ManifestStore', () => {
           throw new Error('should not fallback when nested fileDiscovery can resolve');
         });
         const missing = store.resolveModule(path.join(baseDir, 'app/extend/missing'), () => {
-          throw new Error('should not fallback when fileDiscovery has scanned the directory');
+          return path.join(baseDir, 'app/extend/missing.mjs');
         });
 
         assert.equal(filter, path.join(baseDir, 'app/extend/filter.js'));
         assert.equal(nested, path.join(baseDir, 'app/extend/nested/helper.ts'));
-        assert.equal(missing, undefined);
+        assert.equal(missing, path.join(baseDir, 'app/extend/missing.mjs'));
       } finally {
         fs.rmSync(baseDir, { recursive: true, force: true });
       }

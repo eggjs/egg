@@ -212,7 +212,7 @@ export class ManifestStore {
     }
 
     const discovered = this.#resolveFromFileDiscovery(relKey);
-    if (discovered !== null) {
+    if (discovered) {
       debug('[resolveModule:fileDiscovery] %o => %o', filepath, discovered);
       return discovered;
     }
@@ -349,14 +349,14 @@ export class ManifestStore {
     return path.join(this.baseDir, relPath);
   }
 
-  #resolveFromFileDiscovery(relKey: string): string | undefined | null {
+  #resolveFromFileDiscovery(relKey: string): string | undefined {
     let matchedDir: string | undefined;
     for (const dir of Object.keys(this.data.fileDiscovery)) {
       if ((relKey === dir || relKey.startsWith(dir + '/')) && (!matchedDir || dir.length > matchedDir.length)) {
         matchedDir = dir;
       }
     }
-    if (!matchedDir || relKey === matchedDir) return null;
+    if (!matchedDir || relKey === matchedDir) return;
 
     const request = relKey.slice(matchedDir.length + 1);
     const files = this.data.fileDiscovery[matchedDir];
