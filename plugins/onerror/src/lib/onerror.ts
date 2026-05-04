@@ -1,5 +1,5 @@
 import http from 'node:http';
-import { debuglog, format } from 'node:util';
+import { debuglog, inspect } from 'node:util';
 
 const debug = debuglog('egg-onerror');
 
@@ -48,7 +48,7 @@ export function onerror(app: any, options?: OnerrorOptions): any {
           errMsg = JSON.stringify(err);
         } catch (e) {
           debug('stringify error: %s', e);
-          errMsg = format('%s', e);
+          errMsg = inspect(err);
         }
       }
       const newError = new Error('non-error thrown: ' + errMsg);
@@ -157,6 +157,7 @@ function escapeHtml(value: string): string {
 function clearResponseHeaders(ctx: any): void {
   const headers = ctx.response?.header ?? ctx.response?.headers ?? ctx.res.getHeaders?.() ?? {};
   for (const name of Object.keys(headers)) {
+    if (name.toLowerCase() === 'set-cookie') continue;
     ctx.res.removeHeader(name);
   }
 }

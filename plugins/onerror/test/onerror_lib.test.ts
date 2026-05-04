@@ -122,9 +122,11 @@ describe('lib/onerror.ts', () => {
   it('does not pass undefined headers into ctx.set', () => {
     const app = createApp();
     const ctx = createContext(app, 'json');
+    ctx.response.header['set-cookie'] = 'csrf=token';
 
     callOnerror(app, ctx, makeError(500, 'boom', { expose: true }));
 
+    assert.deepEqual(ctx.removedHeaders, ['x-old']);
     assert.deepEqual(ctx.setCalls, []);
     assert.equal(ctx.body, '{"error":"boom"}');
     assert.equal(ctx.endedBody, '{"error":"boom"}');
@@ -191,7 +193,7 @@ describe('lib/onerror.ts', () => {
     callOnerror(app, ctx, circular);
 
     assert(app.emitted[0][1] instanceof Error);
-    assert.match((app.emitted[0][1] as Error).message, /^non-error thrown: TypeError:/);
+    assert.match((app.emitted[0][1] as Error).message, /\[Circular/);
   });
 
   it('supports custom accepts and all handlers', () => {
