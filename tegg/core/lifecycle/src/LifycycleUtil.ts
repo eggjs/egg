@@ -49,22 +49,32 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
   async objectPreCreate(ctx: T, obj: R): Promise<void> {
     const globalLifecycleList = this.getLifecycleList();
     const objLifecycleList = this.getObjectLifecycleList(obj);
-    await Promise.all(globalLifecycleList.map((lifecycle) => LifecycleUtil.callPreCreate(lifecycle, ctx, obj)));
-    await Promise.all(objLifecycleList.map((lifecycle) => LifecycleUtil.callPreCreate(lifecycle, ctx, obj)));
+    await LifecycleUtil.waitAll(
+      globalLifecycleList.map((lifecycle) => LifecycleUtil.callPreCreate(lifecycle, ctx, obj)),
+    );
+    await LifecycleUtil.waitAll(objLifecycleList.map((lifecycle) => LifecycleUtil.callPreCreate(lifecycle, ctx, obj)));
   }
 
   async objectPostCreate(ctx: T, obj: R): Promise<void> {
     const lifecycleList = this.getLifecycleList();
     const objLifecycleList = this.getObjectLifecycleList(obj);
-    await Promise.all(lifecycleList.map((lifecycle) => LifecycleUtil.callPostCreate(lifecycle, ctx, obj)));
-    await Promise.all(objLifecycleList.map((lifecycle) => LifecycleUtil.callPostCreate(lifecycle, ctx, obj)));
+    await LifecycleUtil.waitAll(lifecycleList.map((lifecycle) => LifecycleUtil.callPostCreate(lifecycle, ctx, obj)));
+    await LifecycleUtil.waitAll(objLifecycleList.map((lifecycle) => LifecycleUtil.callPostCreate(lifecycle, ctx, obj)));
   }
 
   async objectPreDestroy(ctx: T, obj: R): Promise<void> {
     const lifecycleList = this.getLifecycleList();
     const objLifecycleList = this.getObjectLifecycleList(obj);
-    await Promise.all(lifecycleList.map((lifecycle) => LifecycleUtil.callPreDestroy(lifecycle, ctx, obj)));
-    await Promise.all(objLifecycleList.map((lifecycle) => LifecycleUtil.callPreDestroy(lifecycle, ctx, obj)));
+    await LifecycleUtil.waitAll(lifecycleList.map((lifecycle) => LifecycleUtil.callPreDestroy(lifecycle, ctx, obj)));
+    await LifecycleUtil.waitAll(objLifecycleList.map((lifecycle) => LifecycleUtil.callPreDestroy(lifecycle, ctx, obj)));
+  }
+
+  private static async waitAll(promises: Promise<void>[]): Promise<void> {
+    const results = await Promise.allSettled(promises);
+    const rejected = results.find((result) => result.status === 'rejected');
+    if (rejected) {
+      throw rejected.reason;
+    }
   }
 
   static async callPreCreate<T extends LifecycleContext, R extends LifecycleObject<T>>(
