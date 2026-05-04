@@ -23,7 +23,7 @@ import utils, { type Fun } from '../utils/index.ts';
 import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
-import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader, getDefaultFileLoaderMatch } from './file_loader.ts';
+import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
@@ -1819,7 +1819,7 @@ export class EggLoader {
 
     manifest.fileDiscovery[dirKey] =
       fs.existsSync(directory) && fs.statSync(directory).isDirectory()
-        ? globby.sync(getDefaultFileLoaderMatch(), { cwd: directory }).sort()
+        ? globby.sync(FileLoader.getDefaultMatch(), { cwd: directory }).sort()
         : [];
     return manifest.fileDiscovery[dirKey];
   }
