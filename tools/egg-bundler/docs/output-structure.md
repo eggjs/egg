@@ -40,6 +40,12 @@ is keyed by relKey, output-dir absolute paths, precomputed original app absolute
 paths, and manifest `resolveCache` request aliases. Application code and plugins
 may still use `fs` for resources such as config, views, or assets.
 
+When the bundler generates a missing startup manifest with `metadataOnly: true`,
+Egg also records convention-based dynamic entries from each load unit, including
+`agent`, `app`, `app/extend/*`, and `app/middleware/*`. This lets bundled
+single-mode workers resolve plugin agent hooks, extensions, and middleware that
+are normally discovered later during runtime loading.
+
 ## `bundle-manifest.json`
 
 A reference file produced by `Bundler` (not consumed at runtime). Shape:
