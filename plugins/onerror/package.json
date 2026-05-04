@@ -52,7 +52,6 @@
   },
   "dependencies": {
     "cookie": "catalog:",
-    "koa-onerror": "catalog:",
     "mustache": "catalog:",
     "stack-trace": "catalog:"
   },

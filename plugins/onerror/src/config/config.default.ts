@@ -1,5 +1,6 @@
 import type { Context } from 'egg';
-import type { OnerrorError, OnerrorOptions } from 'koa-onerror';
+
+import type { OnerrorError, OnerrorOptions } from '../lib/onerror.ts';
 
 export interface OnerrorConfig extends OnerrorOptions {
   /**
