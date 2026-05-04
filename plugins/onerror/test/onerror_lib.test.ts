@@ -143,6 +143,26 @@ describe('lib/onerror.ts', () => {
     assert.equal(ctx.endedBody, '<h2>400 &amp;&lt;&gt;&quot;&#39;</h2>');
   });
 
+  it('uses generic status text for non-exposed production errors', () => {
+    process.env.NODE_ENV = 'production';
+    const app = createApp();
+
+    const textCtx = createContext(app, 'text');
+    callOnerror(app, textCtx, makeError(503, 'internal detail'));
+    assert.equal(textCtx.body, 'Service Unavailable');
+    assert.equal(textCtx.endedBody, 'Service Unavailable');
+
+    const jsonCtx = createContext(app, 'json');
+    callOnerror(app, jsonCtx, makeError(503, 'internal detail'));
+    assert.equal(jsonCtx.body, '{"error":"Service Unavailable"}');
+    assert.equal(jsonCtx.endedBody, '{"error":"Service Unavailable"}');
+
+    const htmlCtx = createContext(app, 'html');
+    callOnerror(app, htmlCtx, makeError(503, 'internal detail'));
+    assert.equal(htmlCtx.body, '<h2>503 Service Unavailable</h2>');
+    assert.equal(htmlCtx.endedBody, '<h2>503 Service Unavailable</h2>');
+  });
+
   it('does not double stringify custom json string bodies', () => {
     const app = createApp({
       json(_err, ctx) {
