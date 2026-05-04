@@ -65,6 +65,7 @@ describe('test/app/middlewares/session.test.js', () => {
     it('should warn when httponly false', async () => {
       app = mm.app({ baseDir: getFixtures('httponly-false-session') });
       await app.ready();
+      await scheduler.wait(1000);
       app.expectLog(
         '[@eggjs/session]: please set `config.session.httpOnly` to true. It is very dangerous if session can read by client JavaScript.',
         'coreLogger',
