@@ -35,7 +35,7 @@ export function onerror(app: any, options?: OnerrorOptions): any {
     debug('onerror: %s', err);
     if (err == null) return;
 
-    if (this.req) {
+    if (typeof this.req?.resume === 'function') {
       this.req.resume();
       debug('resume the req stream');
     }
@@ -80,7 +80,9 @@ export function onerror(app: any, options?: OnerrorOptions): any {
     }
     this.status = err.status;
 
-    this.set(err.headers);
+    if (err.headers) {
+      this.set(err.headers);
+    }
     let type: string;
     if (options.accepts) {
       type = options.accepts.call(this, 'html', 'text', 'json');
@@ -99,7 +101,7 @@ export function onerror(app: any, options?: OnerrorOptions): any {
       this.type = type;
     }
 
-    if (type === 'json') {
+    if (type === 'json' && typeof this.body !== 'string') {
       this.body = JSON.stringify(this.body);
     }
     debug('end the response, body: %s', this.body);
@@ -120,8 +122,10 @@ function isDev(): boolean {
 }
 
 function text(err: OnerrorError, ctx: any): void {
-  ctx.res._headers = {};
-  ctx.set(err.headers);
+  clearResponseHeaders(ctx);
+  if (err.headers) {
+    ctx.set(err.headers);
+  }
   ctx.body = (isDev() || err.expose) && err.message ? err.message : http.STATUS_CODES[ctx.status];
 }
 
@@ -151,4 +155,11 @@ function escapeHtml(value: string): string {
         return '&#39;';
     }
   });
+}
+
+function clearResponseHeaders(ctx: any): void {
+  const headers = ctx.response?.header ?? ctx.response?.headers ?? ctx.res.getHeaders?.() ?? {};
+  for (const name of Object.keys(headers)) {
+    ctx.res.removeHeader(name);
+  }
 }
