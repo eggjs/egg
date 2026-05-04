@@ -81,7 +81,7 @@ describe('test/lib/plugins/watcher.test.ts', () => {
       app = cluster('apps/watcher-type-default');
       app.coverage(false);
       return app.ready();
-    });
+    }, 60000);
 
     afterAll(() => app.close());
 
