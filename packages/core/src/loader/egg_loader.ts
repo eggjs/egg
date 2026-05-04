@@ -1789,6 +1789,7 @@ export class EggLoader {
       for (const name of CONVENTIONAL_EXTEND_NAMES) {
         this.#collectConventionResolve(manifest, unit.path, 'app', 'extend', name);
       }
+      this.#collectConventionExtends(manifest, path.join(unit.path, 'app/extend'));
       this.#collectConventionFileDiscovery(manifest, path.join(unit.path, 'app/middleware'));
     }
   }
@@ -1802,15 +1803,26 @@ export class EggLoader {
     manifest.resolveCache[requestKey] = resolved ? this.#toManifestRel(resolved) : null;
   }
 
-  #collectConventionFileDiscovery(manifest: StartupManifest, directory: string): void {
+  #collectConventionExtends(manifest: StartupManifest, directory: string): void {
+    const files = this.#collectConventionFileDiscovery(manifest, directory);
+    for (const file of files) {
+      const ext = path.extname(file);
+      if (!ext || ext === '.map') continue;
+      const request = path.join(directory, file.slice(0, -ext.length));
+      this.#collectConventionResolve(manifest, request);
+    }
+  }
+
+  #collectConventionFileDiscovery(manifest: StartupManifest, directory: string): string[] {
     const dirKey = this.#toManifestRel(directory);
-    if (Object.hasOwn(manifest.fileDiscovery, dirKey)) return;
+    if (Object.hasOwn(manifest.fileDiscovery, dirKey)) return manifest.fileDiscovery[dirKey];
 
     const files = isSupportTypeScript() ? ['**/*.{js,ts}', '!**/*.d.ts'] : ['**/*.js'];
     manifest.fileDiscovery[dirKey] =
       fs.existsSync(directory) && fs.statSync(directory).isDirectory()
         ? globby.sync(files, { cwd: directory }).sort()
         : [];
+    return manifest.fileDiscovery[dirKey];
   }
 
   #toManifestRel(filepath: string): string {

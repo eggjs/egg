@@ -163,6 +163,14 @@ describe('ManifestStore coverage: FileLoader getter auto-injects manifest', () =
         manifest.resolveCache['node_modules/@eggjs/security/app/extend/application'],
         'node_modules/@eggjs/security/app/extend/application.js',
       );
+      assert.equal(
+        manifest.resolveCache['node_modules/@eggjs/security/app/extend/filter'],
+        'node_modules/@eggjs/security/app/extend/filter.js',
+      );
+      assert.ok(
+        manifest.fileDiscovery['node_modules/@eggjs/security/app/extend']?.includes('filter.js'),
+        'custom app/extend file should be included in manifest fileDiscovery',
+      );
       assert.ok(
         manifest.fileDiscovery['node_modules/@eggjs/security/app/middleware']?.includes('securities.js'),
         'security middleware should be included in manifest fileDiscovery',
