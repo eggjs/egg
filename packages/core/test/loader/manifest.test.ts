@@ -590,6 +590,37 @@ describe('ManifestStore', () => {
       }
     });
 
+    it('should resolve extensionless modules from cached fileDiscovery', async () => {
+      const baseDir = setupBaseDir();
+      try {
+        const collector = ManifestStore.createCollector(baseDir);
+        collector.globFiles(path.join(baseDir, 'app/extend'), () => ['filter.js', 'nested/helper.ts']);
+        const manifest = collector.generateManifest({
+          serverEnv: 'prod',
+          serverScope: '',
+          typescriptEnabled: true,
+        });
+        await ManifestStore.write(baseDir, manifest);
+
+        const store = ManifestStore.load(baseDir, 'prod', '')!;
+        const filter = store.resolveModule(path.join(baseDir, 'app/extend/filter'), () => {
+          throw new Error('should not fallback when fileDiscovery can resolve');
+        });
+        const nested = store.resolveModule(path.join(baseDir, 'app/extend/nested/helper'), () => {
+          throw new Error('should not fallback when nested fileDiscovery can resolve');
+        });
+        const missing = store.resolveModule(path.join(baseDir, 'app/extend/missing'), () => {
+          return path.join(baseDir, 'app/extend/missing.mjs');
+        });
+
+        assert.equal(filter, path.join(baseDir, 'app/extend/filter.js'));
+        assert.equal(nested, path.join(baseDir, 'app/extend/nested/helper.ts'));
+        assert.equal(missing, path.join(baseDir, 'app/extend/missing.mjs'));
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
     it('should call fallback on cache miss and collect result', () => {
       const baseDir = setupBaseDir();
       try {

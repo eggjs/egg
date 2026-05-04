@@ -8,6 +8,7 @@ import { Request, Response, Application, Context as KoaContext } from '@eggjs/ko
 import { pathMatching, type PathMatchingOptions } from '@eggjs/path-matching';
 import { isESM, isSupportTypeScript } from '@eggjs/utils';
 import type { Logger } from 'egg-logger';
+import globby from 'globby';
 import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } from 'is-type-of';
 import { homedir } from 'node-homedir';
 import { now, diff } from 'performance-ms';
@@ -26,6 +27,12 @@ import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
+const CONVENTIONAL_MANIFEST_LOADS = [
+  { type: 'resolve', path: ['agent'] },
+  { type: 'resolve', path: ['app'] },
+  { type: 'discover', path: ['app', 'extend'], extensionlessResolve: true },
+  { type: 'discover', path: ['app', 'middleware'] },
+] as const;
 
 const originalPrototypes: Record<string, unknown> = {
   request: Request.prototype,
@@ -1764,11 +1771,69 @@ export class EggLoader {
    * Should be called after all loading phases complete.
    */
   generateManifest(): StartupManifest {
-    return this.manifest.generateManifest({
+    const manifest = this.manifest.generateManifest({
       serverEnv: this.serverEnv,
       serverScope: this.serverScope,
       typescriptEnabled: isSupportTypeScript(),
     });
+    this.#collectConventionalDynamicFiles(manifest);
+    return manifest;
+  }
+
+  /**
+   * metadataOnly startup intentionally skips the agent process, but bundled
+   * single-mode workers still load agent boot hooks and agent extends later.
+   * Record convention-based dynamic entry points so the bundle can satisfy
+   * those runtime lookups without running agent lifecycle hooks at manifest
+   * generation time.
+   */
+  #collectConventionalDynamicFiles(manifest: StartupManifest): void {
+    for (const unit of this.getLoadUnits()) {
+      for (const load of CONVENTIONAL_MANIFEST_LOADS) {
+        const target = path.join(unit.path, ...load.path);
+        if (load.type === 'resolve') {
+          this.#collectConventionResolve(manifest, target);
+        } else if ('extensionlessResolve' in load && load.extensionlessResolve) {
+          this.#collectConventionFileResolves(manifest, target);
+        } else {
+          this.#collectConventionFileDiscovery(manifest, target);
+        }
+      }
+    }
+  }
+
+  #collectConventionResolve(manifest: StartupManifest, request: string): void {
+    const requestKey = this.#toManifestRel(request);
+    if (Object.hasOwn(manifest.resolveCache, requestKey)) return;
+
+    const resolved = this.#doResolveModule(request);
+    manifest.resolveCache[requestKey] = resolved ? this.#toManifestRel(resolved) : null;
+  }
+
+  #collectConventionFileResolves(manifest: StartupManifest, directory: string): void {
+    const files = this.#collectConventionFileDiscovery(manifest, directory);
+    for (const file of files) {
+      const ext = path.extname(file);
+      if (!ext) continue;
+      const request = path.join(directory, file.slice(0, -ext.length));
+      this.#collectConventionResolve(manifest, request);
+    }
+  }
+
+  #collectConventionFileDiscovery(manifest: StartupManifest, directory: string): string[] {
+    const dirKey = this.#toManifestRel(directory);
+    if (Object.hasOwn(manifest.fileDiscovery, dirKey)) return manifest.fileDiscovery[dirKey];
+
+    manifest.fileDiscovery[dirKey] =
+      fs.existsSync(directory) && fs.statSync(directory).isDirectory()
+        ? globby.sync(FileLoader.getDefaultMatch(), { cwd: directory }).sort()
+        : [];
+    return manifest.fileDiscovery[dirKey];
+  }
+
+  #toManifestRel(filepath: string): string {
+    const rel = path.isAbsolute(filepath) ? path.relative(this.options.baseDir, filepath) : filepath;
+    return rel.replaceAll(path.sep, '/');
   }
 }
 

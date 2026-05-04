@@ -23,7 +23,7 @@ function isPathLikeFrameworkSpecifier(framework: string): boolean {
 export function assertFrameworkPackageSpecifier(framework: string): void {
   if (!framework || isPathLikeFrameworkSpecifier(framework)) {
     throw new Error(
-      `[@eggjs/egg-bundler] framework must be a package specifier for bundled runtime, got path-like value: ${framework}`,
+      `[@eggjs/egg-bundler] framework must be a package specifier for bundled runtime, got path-like value: ${JSON.stringify(framework)}`,
     );
   }
 }

@@ -60,6 +60,10 @@ export interface FileLoaderParseItem {
   exports: object | Fun;
 }
 
+function getDefaultFileLoaderMatch(): string[] {
+  return isSupportTypeScript() ? ['**/*.(js|ts)', '!**/*.d.ts'] : ['**/*.js'];
+}
+
 /**
  * Load files from directory to target object.
  * @since 1.0.0
@@ -71,6 +75,10 @@ export class FileLoader {
 
   static get EXPORTS(): typeof EXPORTS {
     return EXPORTS;
+  }
+
+  static getDefaultMatch(): string[] {
+    return getDefaultFileLoaderMatch();
   }
 
   readonly options: FileLoaderOptions & Required<Pick<FileLoaderOptions, 'caseStyle'>>;
@@ -181,7 +189,7 @@ export class FileLoader {
     if (files) {
       files = Array.isArray(files) ? files : [files];
     } else {
-      files = isSupportTypeScript() ? ['**/*.(js|ts)', '!**/*.d.ts'] : ['**/*.js'];
+      files = FileLoader.getDefaultMatch();
     }
 
     let ignore = this.options.ignore;
