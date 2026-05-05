@@ -12,16 +12,52 @@ export type ExternalsConfig = Record<string, string>;
 interface PackageJson {
   readonly name?: string;
   readonly type?: string;
+  readonly main?: string;
   readonly dependencies?: Record<string, string>;
   readonly optionalDependencies?: Record<string, string>;
   readonly peerDependencies?: Record<string, string>;
   readonly peerDependenciesMeta?: Record<string, { optional?: boolean }>;
   readonly scripts?: Record<string, string>;
   readonly exports?: unknown;
+  readonly napi?: unknown;
 }
 
 // install-time hooks using one of these tools strongly imply a native addon
 const NATIVE_SCRIPT_PATTERN = /node-gyp|prebuild-install|napi-rs|node-pre-gyp|electron-rebuild/i;
+const NATIVE_OPTIONAL_PLATFORM_TOKENS = new Set([
+  'android',
+  'darwin',
+  'freebsd',
+  'gnu',
+  'linux',
+  'msvc',
+  'musl',
+  'openharmony',
+  'win32',
+]);
+const NATIVE_OPTIONAL_ARCH_TOKENS = new Set([
+  'aarch64',
+  'arm',
+  'arm64',
+  'ia32',
+  'loong64',
+  'ppc64',
+  'riscv64',
+  's390x',
+  'wasm32',
+  'x64',
+]);
+const CREATE_REQUIRE_EXPORT_CONDITIONS = new Set(['node-addons', 'node', 'require', 'default']);
+
+interface ExternalizeDecision {
+  readonly externalizePackage: boolean;
+  readonly extraExternals: readonly string[];
+}
+
+interface ExportsTargetResolution {
+  readonly matched: boolean;
+  readonly canRequire: boolean;
+}
 
 export class ExternalsResolver {
   readonly #baseDir: string;
@@ -51,10 +87,13 @@ export class ExternalsResolver {
     }
 
     for (const name of deps) {
-      if (this.#inline.has(name) && !this.#force.has(name)) continue;
+      const inlinePackage = this.#inline.has(name) && !this.#force.has(name);
       await this.#addMissingOptionalPeerExternals(name, result);
-      if (result[name]) continue;
-      if (await this.#shouldExternalize(name, optionalDeps, peerDeps)) {
+      const decision = await this.#getExternalizeDecision(name, optionalDeps, peerDeps);
+      for (const extraName of decision.extraExternals) {
+        if (!result[extraName]) result[extraName] = extraName;
+      }
+      if (!inlinePackage && decision.externalizePackage) {
         result[name] = name;
       }
     }
@@ -82,21 +121,30 @@ export class ExternalsResolver {
     }
   }
 
-  async #shouldExternalize(
+  async #getExternalizeDecision(
     name: string,
     optionalDeps: ReadonlySet<string>,
     peerDeps: ReadonlySet<string>,
-  ): Promise<boolean> {
-    if (optionalDeps.has(name)) return true;
-    if (peerDeps.has(name)) return true;
+  ): Promise<ExternalizeDecision> {
+    const isRootOptionalDep = optionalDeps.has(name);
+    let externalizePackage = peerDeps.has(name);
 
     const pkgDir = await this.#findPackageDir(name);
-    if (!pkgDir) return false;
+    if (!pkgDir) return { externalizePackage: externalizePackage || isRootOptionalDep, extraExternals: [] };
     const pkg = await this.#readPackageJson(pkgDir);
-    if (await this.#hasMissingOptionalPeerDependencies(pkgDir, pkg)) return true;
-    if (await this.#hasNativeBinary(pkgDir, pkg)) return true;
-    if (await this.#hasNativeOptionalDependency(pkgDir, pkg)) return true;
-    return false;
+    if (isRootOptionalDep && this.#canLoadPackageThroughCreateRequire(pkg)) externalizePackage = true;
+    if (await this.#hasMissingOptionalPeerDependencies(pkgDir, pkg)) externalizePackage = true;
+    if (await this.#hasNativeBinary(pkgDir, pkg)) externalizePackage = true;
+
+    const nativeOptionalDeps = await this.#getNativeOptionalDependencies(pkgDir, pkg);
+    const extraExternals = nativeOptionalDeps.filter(
+      (depName) => !this.#inline.has(depName) || this.#force.has(depName),
+    );
+    if (nativeOptionalDeps.length > 0 && this.#canLoadPackageThroughCreateRequire(pkg)) {
+      externalizePackage = true;
+    }
+
+    return { externalizePackage, extraExternals };
   }
 
   async #hasMissingOptionalPeerDependencies(pkgDir: string, pkg: PackageJson): Promise<boolean> {
@@ -109,15 +157,23 @@ export class ExternalsResolver {
     return false;
   }
 
-  async #hasNativeOptionalDependency(pkgDir: string, pkg: PackageJson): Promise<boolean> {
+  async #getNativeOptionalDependencies(pkgDir: string, pkg: PackageJson): Promise<readonly string[]> {
     const optionalDependencies = pkg.optionalDependencies ?? {};
+    const result: string[] = [];
     for (const depName of Object.keys(optionalDependencies)) {
       const depDir = await this.#findPackageDir(depName, pkgDir);
-      if (!depDir) continue;
-      const depPkg = await this.#readPackageJson(depDir);
-      if (await this.#hasNativeBinary(depDir, depPkg)) return true;
+      if (depDir) {
+        const depPkg = await this.#readPackageJson(depDir);
+        if (await this.#hasNativeBinary(depDir, depPkg)) {
+          result.push(depName);
+          continue;
+        }
+      }
+      if (this.#isLikelyNativeOptionalDependency(pkg, depName)) {
+        result.push(depName);
+      }
     }
-    return false;
+    return result;
   }
 
   async #findPackageDir(name: string, fromDir = this.#baseDir): Promise<string | undefined> {
@@ -169,6 +225,79 @@ export class ExternalsResolver {
     }
 
     return false;
+  }
+
+  #canLoadPackageThroughCreateRequire(pkg: PackageJson): boolean {
+    const exports = pkg.exports;
+    if (exports !== undefined) {
+      return this.#exportsTargetCanBeRequired(exports, pkg);
+    }
+
+    const main = pkg.main;
+    if (typeof main === 'string') {
+      return this.#packageTargetCanBeRequired(main, pkg);
+    }
+
+    return pkg.type !== 'module';
+  }
+
+  #exportsTargetCanBeRequired(target: unknown, pkg: PackageJson): boolean {
+    return this.#resolveExportsTargetForCreateRequire(target, pkg).canRequire;
+  }
+
+  #resolveExportsTargetForCreateRequire(target: unknown, pkg: PackageJson): ExportsTargetResolution {
+    if (typeof target === 'string') {
+      return { matched: true, canRequire: this.#packageTargetCanBeRequired(target, pkg) };
+    }
+
+    if (Array.isArray(target)) {
+      for (const item of target) {
+        const result = this.#resolveExportsTargetForCreateRequire(item, pkg);
+        if (result.matched) return result;
+      }
+      return { matched: false, canRequire: false };
+    }
+
+    if (!this.#isRecord(target)) return { matched: false, canRequire: false };
+
+    const keys = Object.keys(target);
+    if (keys.some((key) => key.startsWith('.'))) {
+      if (!Object.hasOwn(target, '.')) return { matched: false, canRequire: false };
+      return this.#resolveExportsTargetForCreateRequire(target['.'], pkg);
+    }
+
+    for (const condition of keys) {
+      if (!CREATE_REQUIRE_EXPORT_CONDITIONS.has(condition)) continue;
+      return this.#resolveExportsTargetForCreateRequire(target[condition], pkg);
+    }
+
+    return { matched: false, canRequire: false };
+  }
+
+  #packageTargetCanBeRequired(target: string, pkg: PackageJson): boolean {
+    if (/\.(?:cjs|json|node)$/i.test(target)) return true;
+    if (/\.mjs$/i.test(target)) return false;
+    return pkg.type !== 'module';
+  }
+
+  #isLikelyNativeOptionalDependency(pkg: PackageJson, depName: string): boolean {
+    const depBaseName = this.#getPackageBaseName(depName);
+    const parentBaseName = pkg.name ? this.#getPackageBaseName(pkg.name) : undefined;
+    const tokens = depBaseName.toLowerCase().split(/[-_]/g);
+    const hasPlatformToken = tokens.some((token) => NATIVE_OPTIONAL_PLATFORM_TOKENS.has(token));
+    const hasArchToken = tokens.some((token) => NATIVE_OPTIONAL_ARCH_TOKENS.has(token));
+    if (!hasPlatformToken || !hasArchToken) return false;
+    if (pkg.napi !== undefined) return true;
+    return parentBaseName ? depBaseName === parentBaseName || depBaseName.startsWith(`${parentBaseName}-`) : false;
+  }
+
+  #getPackageBaseName(name: string): string {
+    const slashIndex = name.lastIndexOf('/');
+    return slashIndex === -1 ? name : name.slice(slashIndex + 1);
+  }
+
+  #isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
   }
 
   async #readPackageJson(dir: string): Promise<PackageJson> {

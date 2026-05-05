@@ -10,6 +10,11 @@ import { ExternalsResolver } from '../src/lib/ExternalsResolver.ts';
 const fixtureBase = path.join(path.dirname(fileURLToPath(import.meta.url)), 'fixtures/externals');
 const basicApp = path.join(fixtureBase, 'basic-app');
 
+async function writePackageJson(dir: string, pkg: Record<string, unknown>): Promise<void> {
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(path.join(dir, 'package.json'), JSON.stringify(pkg));
+}
+
 describe('ExternalsResolver', () => {
   describe('tier 1: native binary detection', () => {
     it('externalizes a package whose install script invokes node-gyp', async () => {
@@ -35,6 +40,45 @@ describe('ExternalsResolver', () => {
     it('externalizes a wrapper package whose installed optional dependency is native', async () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
       expect(result['native-optional-wrapper']).toBe('native-optional-wrapper');
+      expect(result['native-optional-platform']).toBe('native-optional-platform');
+    });
+
+    it('externalizes a CJS wrapper and its missing optional native platform package', async () => {
+      const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
+      expect(result['missing-native-optional-wrapper']).toBe('missing-native-optional-wrapper');
+      expect(result['missing-native-optional-wrapper-linux-x64-gnu']).toBe(
+        'missing-native-optional-wrapper-linux-x64-gnu',
+      );
+    });
+
+    it('recognizes native optional package names with ia32 and aarch64 arch tokens', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await writePackageJson(tempDir, {
+          name: 'native-arch-app',
+          version: '1.0.0',
+          private: true,
+          dependencies: {
+            'cross-native-wrapper': '1.0.0',
+          },
+        });
+        await writePackageJson(path.join(tempDir, 'node_modules/cross-native-wrapper'), {
+          name: 'cross-native-wrapper',
+          version: '1.0.0',
+          main: './index.cjs',
+          optionalDependencies: {
+            'cross-native-wrapper-linux-aarch64-gnu': '1.0.0',
+            'cross-native-wrapper-win32-ia32-msvc': '1.0.0',
+          },
+        });
+
+        const result = await new ExternalsResolver({ baseDir: tempDir }).resolve();
+        expect(result['cross-native-wrapper']).toBe('cross-native-wrapper');
+        expect(result['cross-native-wrapper-linux-aarch64-gnu']).toBe('cross-native-wrapper-linux-aarch64-gnu');
+        expect(result['cross-native-wrapper-win32-ia32-msvc']).toBe('cross-native-wrapper-win32-ia32-msvc');
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
     });
   });
 
@@ -52,6 +96,179 @@ describe('ExternalsResolver', () => {
     it('does not externalize a dual-ESM package that exposes a require condition', async () => {
       const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
       expect(result['esm-dual']).toBeUndefined();
+    });
+
+    it('keeps an import-only native optional wrapper bundled but externalizes its platform packages', async () => {
+      const result = await new ExternalsResolver({ baseDir: basicApp }).resolve();
+      expect(result['@cnpmjs/packument']).toBeUndefined();
+      expect(result['@cnpmjs/packument-linux-x64-gnu']).toBe('@cnpmjs/packument-linux-x64-gnu');
+      expect(result['@cnpmjs/packument-darwin-x64']).toBe('@cnpmjs/packument-darwin-x64');
+    });
+
+    it('keeps a root optional import-only native wrapper bundled but externalizes its platform packages', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await writePackageJson(tempDir, {
+          name: 'root-optional-native-wrapper-app',
+          version: '1.0.0',
+          private: true,
+          optionalDependencies: {
+            '@cnpmjs/packument': '1.7.0',
+          },
+        });
+        await writePackageJson(path.join(tempDir, 'node_modules/@cnpmjs/packument'), {
+          name: '@cnpmjs/packument',
+          version: '1.7.0',
+          type: 'module',
+          exports: {
+            './package.json': './package.json',
+          },
+          optionalDependencies: {
+            '@cnpmjs/packument-linux-x64-gnu': '1.7.0',
+          },
+        });
+
+        const result = await new ExternalsResolver({ baseDir: tempDir }).resolve();
+        expect(result['@cnpmjs/packument']).toBeUndefined();
+        expect(result['@cnpmjs/packument-linux-x64-gnu']).toBe('@cnpmjs/packument-linux-x64-gnu');
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('keeps a native optional wrapper bundled when its require export target is not require-able', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await writePackageJson(tempDir, {
+          name: 'esm-require-target-app',
+          version: '1.0.0',
+          private: true,
+          dependencies: {
+            'esm-require-target-wrapper': '1.0.0',
+          },
+        });
+        await writePackageJson(path.join(tempDir, 'node_modules/esm-require-target-wrapper'), {
+          name: 'esm-require-target-wrapper',
+          version: '1.0.0',
+          type: 'module',
+          exports: {
+            '.': {
+              import: './index.js',
+              require: './index.js',
+            },
+          },
+          optionalDependencies: {
+            'esm-require-target-wrapper-linux-x64-gnu': '1.0.0',
+          },
+        });
+
+        const result = await new ExternalsResolver({ baseDir: tempDir }).resolve();
+        expect(result['esm-require-target-wrapper']).toBeUndefined();
+        expect(result['esm-require-target-wrapper-linux-x64-gnu']).toBe('esm-require-target-wrapper-linux-x64-gnu');
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('externalizes a native optional wrapper with a nested require export target', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await writePackageJson(tempDir, {
+          name: 'nested-require-app',
+          version: '1.0.0',
+          private: true,
+          dependencies: {
+            'nested-require-wrapper': '1.0.0',
+          },
+        });
+        await writePackageJson(path.join(tempDir, 'node_modules/nested-require-wrapper'), {
+          name: 'nested-require-wrapper',
+          version: '1.0.0',
+          type: 'module',
+          exports: {
+            '.': {
+              node: {
+                import: './index.js',
+                require: './index.cjs',
+              },
+            },
+          },
+          optionalDependencies: {
+            'nested-require-wrapper-linux-x64-gnu': '1.0.0',
+          },
+        });
+
+        const result = await new ExternalsResolver({ baseDir: tempDir }).resolve();
+        expect(result['nested-require-wrapper']).toBe('nested-require-wrapper');
+        expect(result['nested-require-wrapper-linux-x64-gnu']).toBe('nested-require-wrapper-linux-x64-gnu');
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('keeps a native optional wrapper bundled when an earlier node condition is not require-able', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await writePackageJson(tempDir, {
+          name: 'ordered-condition-app',
+          version: '1.0.0',
+          private: true,
+          dependencies: {
+            'ordered-condition-wrapper': '1.0.0',
+          },
+        });
+        await writePackageJson(path.join(tempDir, 'node_modules/ordered-condition-wrapper'), {
+          name: 'ordered-condition-wrapper',
+          version: '1.0.0',
+          type: 'module',
+          exports: {
+            '.': {
+              node: './index.js',
+              require: './index.cjs',
+            },
+          },
+          optionalDependencies: {
+            'ordered-condition-wrapper-linux-x64-gnu': '1.0.0',
+          },
+        });
+
+        const result = await new ExternalsResolver({ baseDir: tempDir }).resolve();
+        expect(result['ordered-condition-wrapper']).toBeUndefined();
+        expect(result['ordered-condition-wrapper-linux-x64-gnu']).toBe('ordered-condition-wrapper-linux-x64-gnu');
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
+    });
+
+    it('keeps a native optional wrapper bundled when the first array export fallback is not require-able', async () => {
+      const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-externals-'));
+      try {
+        await writePackageJson(tempDir, {
+          name: 'array-export-app',
+          version: '1.0.0',
+          private: true,
+          dependencies: {
+            'array-export-wrapper': '1.0.0',
+          },
+        });
+        await writePackageJson(path.join(tempDir, 'node_modules/array-export-wrapper'), {
+          name: 'array-export-wrapper',
+          version: '1.0.0',
+          type: 'module',
+          exports: {
+            '.': ['./index.js', './index.cjs'],
+          },
+          optionalDependencies: {
+            'array-export-wrapper-linux-x64-gnu': '1.0.0',
+          },
+        });
+
+        const result = await new ExternalsResolver({ baseDir: tempDir }).resolve();
+        expect(result['array-export-wrapper']).toBeUndefined();
+        expect(result['array-export-wrapper-linux-x64-gnu']).toBe('array-export-wrapper-linux-x64-gnu');
+      } finally {
+        await fs.rm(tempDir, { recursive: true, force: true });
+      }
     });
   });
 
@@ -193,6 +410,16 @@ describe('ExternalsResolver', () => {
         inline: ['native-scripts'],
       }).resolve();
       expect(result['native-scripts']).toBeUndefined();
+    });
+
+    it('inline keeps a native optional wrapper bundled without inlining its platform packages', async () => {
+      const result = await new ExternalsResolver({
+        baseDir: basicApp,
+        inline: ['@cnpmjs/packument'],
+      }).resolve();
+      expect(result['@cnpmjs/packument']).toBeUndefined();
+      expect(result['@cnpmjs/packument-linux-x64-gnu']).toBe('@cnpmjs/packument-linux-x64-gnu');
+      expect(result['@cnpmjs/packument-darwin-x64']).toBe('@cnpmjs/packument-darwin-x64');
     });
 
     it('force wins over inline when both reference the same package', async () => {

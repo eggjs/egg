@@ -259,6 +259,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       include: files,
       exclude: ['**/test/fixtures/**', '**/test/node_modules/**', '**/node_modules/**'],
       testTimeout: flags.timeout,
+      hookTimeout: flags.timeout,
       testNamePattern: flags.grep,
       bail: flags.bail ? 1 : 0,
       setupFiles,

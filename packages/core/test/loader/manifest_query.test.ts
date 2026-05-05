@@ -30,6 +30,18 @@ describe('ManifestStore query APIs', () => {
       }
     });
 
+    it('should return extension data collected during startup', () => {
+      const baseDir = setupBaseDir();
+      const extension = { moduleReferences: [{ name: 'runtimeModule', path: '/tmp/runtimeModule' }] };
+      try {
+        const store = ManifestStore.createCollector(baseDir);
+        store.setExtension('tegg', extension);
+        assert.deepStrictEqual(store.getExtension('tegg'), extension);
+      } finally {
+        fs.rmSync(baseDir, { recursive: true, force: true });
+      }
+    });
+
     it('should return undefined for unknown extension', async () => {
       const baseDir = setupBaseDir();
       try {

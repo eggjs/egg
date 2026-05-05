@@ -53,11 +53,15 @@ CommonJS artifact from an Egg application.
 - Explicit `externals.force` entries are external, and `ExternalsResolver`
   auto-detects root `peerDependencies`, root `optionalDependencies`, root
   dependency packages with native addons, root dependency packages whose optional
-  peer dependencies cannot be resolved, and the names of those missing optional
-  peer packages as external.
+  peer dependencies cannot be resolved, the missing optional peer package names
+  themselves as `extraExternals`, and native optional platform packages as
+  external.
 - `externals.inline` removes an auto-detected external unless the same package
   name is also listed in `externals.force`.
 - ESM-only packages, `egg`, `@swc/helpers`, and `@eggjs/*` packages are bundled
-  by default unless force-external or dependency/native-addon rules apply.
-- `BundlerConfig.tegg` is accepted but not applied by the current implementation
-  yet.
+  by default unless `externals.force` or dependency metadata applies. If a
+  wrapper around native optional platform packages cannot be loaded through
+  `createRequire`, the wrapper stays bundled and the platform packages are kept
+  external.
+- `BundlerConfig.tegg` is accepted but intentionally not wired into the current
+  implementation yet.
