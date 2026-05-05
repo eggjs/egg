@@ -1,5 +1,7 @@
 # Wiki Log
 
+Dates use the workspace-local Asia/Shanghai calendar date.
+
 ## [2026-05-06] package | sync bundled runtime support changes
 
 - sources touched: `tools/egg-bundler/src/lib/ExternalsResolver.ts`, `packages/utils/src/import.ts`, `plugins/onerror/src/lib/onerror.ts`

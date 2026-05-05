@@ -15,14 +15,14 @@ status: active
 # Onerror Plugin
 
 `@eggjs/onerror` is the default Egg error-handling plugin. It installs
-`ctx.onerror` and supports configurable handlers for HTML, text, JSON, JSONP,
-redirect, and catch-all error responses.
+`ctx.onerror` and supports configurable handlers for HTML, text, JSON, JS
+(JSONP), redirect, and catch-all error responses.
 
 ## Public Configuration
 
 - `errorPageUrl` redirects production HTML requests after unexpected errors.
 - `accepts` customizes content negotiation.
-- `all`, `html`, `text`, `json`, and `jsonp` customize response handling for
+- `all`, `html`, `text`, `json`, and `js` customize response handling for
   specific response types.
 - `appErrorFilter` can suppress logging for selected errors.
 

@@ -123,6 +123,9 @@ status: seed|active|stale
 
 Use lowercase kebab-case filenames and keep one topic per page.
 
+Use the workspace-local Asia/Shanghai calendar date for wiki log headings and
+frontmatter `updated_at` values.
+
 ## Citation And Freshness Rules
 
 - every nontrivial wiki claim should be traceable to raw sources
