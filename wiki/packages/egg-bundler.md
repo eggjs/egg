@@ -6,9 +6,10 @@ source_files:
   - tools/egg-bundler/src/index.ts
   - tools/egg-bundler/src/lib/Bundler.ts
   - tools/egg-bundler/src/lib/EntryGenerator.ts
+  - tools/egg-bundler/src/lib/ExternalsResolver.ts
   - tools/egg-bin/src/commands/bundle.ts
   - tools/egg-bundler/docs/output-structure.md
-updated_at: 2026-05-03
+updated_at: 2026-05-06
 status: active
 ---
 

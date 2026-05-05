@@ -19,7 +19,9 @@ Read this file before exploring raw sources.
 ## Packages
 
 - [Egg Bundler](./packages/egg-bundler.md) - Tooling package that bundles Egg applications and backs `egg-bin bundle`.
+- [Onerror Plugin](./packages/onerror.md) - Default Egg error-handling plugin and configurable response negotiation layer.
 - [Typings Package](./packages/typings.md) - Shared TypeScript type surface for cross-package Egg typings.
+- [Utils Package](./packages/utils.md) - Shared utility package for module loading and bundled module-loader integration.
 
 ## Sources
 
