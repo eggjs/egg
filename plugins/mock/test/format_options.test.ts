@@ -151,14 +151,45 @@ describe('test/format_options.test.ts', () => {
     mm(process.env, 'EGG_SERVER_ENV', 'default');
     formatOptions();
     assert.equal(process.env.HOME, baseDir);
+    assert.equal(process.env.EGG_HOME, baseDir);
 
     mm(process.env, 'EGG_SERVER_ENV', 'test');
     formatOptions();
     assert.equal(process.env.HOME, baseDir);
+    assert.equal(process.env.EGG_HOME, baseDir);
 
     mm(process.env, 'EGG_SERVER_ENV', 'prod');
     formatOptions();
     assert.equal(process.env.HOME, baseDir);
+    assert.equal(process.env.EGG_HOME, baseDir);
+
+    mm.restore();
+    mm(process.env, 'NODE_ENV', 'test');
+    formatOptions();
+    assert.equal(process.env.HOME, baseDir);
+    assert.equal(process.env.EGG_HOME, baseDir);
+
+    mm.restore();
+    mm(process.env, 'EGG_SERVER_ENV', 'unittest');
+    mm(process.env, 'NODE_ENV', 'test');
+    formatOptions();
+    assert.equal(process.env.HOME, baseDir);
+    assert.equal(process.env.EGG_HOME, baseDir);
+  });
+
+  it('should preserve existing process.env.EGG_HOME', () => {
+    const baseDir = process.cwd();
+    const eggHome = path.join(baseDir, '.custom-egg-home');
+    mm(process.env, 'EGG_SERVER_ENV', 'default');
+    process.env.EGG_HOME = eggHome;
+    try {
+      formatOptions();
+
+      assert.equal(process.env.HOME, baseDir);
+      assert.equal(process.env.EGG_HOME, eggHome);
+    } finally {
+      delete process.env.EGG_HOME;
+    }
   });
 
   // FIXME: flaky test

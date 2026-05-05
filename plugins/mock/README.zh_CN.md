@@ -260,6 +260,14 @@ mm.app({
 
 如果是通过 ava 等并行测试框架进行测试，需要手动在执行测试前进行统一的日志清理，不能通过 mm 来处理，设置 `clean` 为 `false`。
 
+#### port {Number}
+
+`mm.cluster` 使用的应用服务端口。默认会从当前进程隔离的端口范围中分配，降低并行测试中的端口冲突。
+
+#### clusterPort {Number}
+
+`mm.cluster` 使用的 cluster-client leader 端口。默认会从当前进程隔离的端口范围中分配，降低并行测试中的 watcher leader 冲突。
+
 ### app.mockLog([logger]) and app.expectLog(str[, logger]), app.notExpectLog(str[, logger])
 
 断言指定的字符串记录在指定的日志中。

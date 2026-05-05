@@ -9,6 +9,23 @@ import type { MockOptions, MockApplicationOptions } from './types.ts';
 import { getSourceDirname } from './utils.ts';
 
 const debug = debuglog('egg/mock/lib/format_options');
+const MOCK_HOME_ENVS = new Set(['default', 'test', 'prod']);
+
+export function shouldMockProcessHome(): boolean {
+  return MOCK_HOME_ENVS.has(process.env.EGG_SERVER_ENV ?? '') || process.env.NODE_ENV === 'test';
+}
+
+export function mockProcessHome(baseDir: string): void {
+  if (!shouldMockProcessHome()) {
+    return;
+  }
+  if (!isMocked(process.env, 'HOME')) {
+    mm(process.env, 'HOME', baseDir);
+  }
+  if (!isMocked(process.env, 'EGG_HOME') && process.env.EGG_HOME === undefined) {
+    mm(process.env, 'EGG_HOME', baseDir);
+  }
+}
 
 /**
  * format the options
@@ -76,11 +93,8 @@ export function formatOptions(initOptions?: MockOptions): MockApplicationOptions
     }
   }
 
-  // mock HOME as baseDir, but ignore if it has been mocked
-  const env = process.env.EGG_SERVER_ENV;
-  if (!isMocked(process.env, 'HOME') && (env === 'default' || env === 'test' || env === 'prod')) {
-    mm(process.env, 'HOME', options.baseDir);
-  }
+  // mock HOME/EGG_HOME as baseDir for test-like envs, but ignore explicit mocks.
+  mockProcessHome(options.baseDir);
 
   // disable cache after call mm.env(),
   // otherwise it will use cache and won't load again.

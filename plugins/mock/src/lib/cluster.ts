@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { debuglog } from 'node:util';
+import { threadId } from 'node:worker_threads';
 
 import { Coffee } from 'coffee';
 import { Ready } from 'get-ready';
@@ -15,13 +16,31 @@ import type { MockClusterOptions, MockClusterApplicationOptions } from './types.
 import { sleep, rimrafSync } from './utils.ts';
 
 const debug = debuglog('egg/mock/lib/cluster');
+const MOCK_APP_PORT_START = 10000;
+const MOCK_APP_PORT_RANGE_SIZE = 6000;
+const MOCK_CLUSTER_PORT_START = 17000;
+const MOCK_CLUSTER_PORT_WINDOW_SIZE = 100;
+const MOCK_CLUSTER_PORT_WINDOWS = 480;
 
 const clusters = new Map();
 declare global {
   // define the global variable to avoid the port conflict in parallel process mode
   var eggMockMasterPort: number;
+  var eggMockClusterPort: number;
 }
-globalThis.eggMockMasterPort = 17000 + (process.pid % 1000);
+function getMockAppPortStart(pid: number = process.pid, workerThreadId: number = threadId): number {
+  return MOCK_APP_PORT_START + ((pid * 31 + workerThreadId * 37) % MOCK_APP_PORT_RANGE_SIZE);
+}
+
+export function getMockClusterPortStart(pid: number = process.pid, workerThreadId: number = threadId): number {
+  return (
+    MOCK_CLUSTER_PORT_START +
+    ((pid * 31 + workerThreadId * 37) % MOCK_CLUSTER_PORT_WINDOWS) * MOCK_CLUSTER_PORT_WINDOW_SIZE
+  );
+}
+
+globalThis.eggMockMasterPort = getMockAppPortStart();
+globalThis.eggMockClusterPort = getMockClusterPortStart();
 
 let serverBin = path.join(import.meta.dirname, 'start-cluster.js');
 if (!existsSync(serverBin)) {
@@ -83,6 +102,7 @@ export class ClusterApplication extends Coffee {
 
     // incremental port
     options.port = options.port ?? ++globalThis.eggMockMasterPort;
+    options.clusterPort = options.clusterPort ?? ++globalThis.eggMockClusterPort;
     // Set 1 worker when test
     if (!options.workers) {
       options.workers = 1;
@@ -119,6 +139,18 @@ export class ClusterApplication extends Coffee {
             // data: { port: 17703, address: 'http://127.0.0.1:17703', protocol: 'http' }
             debug('on message egg-ready %o', msg);
             this._address = msg.data.address;
+            if (this._address) {
+              try {
+                const { port } = new URL(this._address);
+                if (port) {
+                  this.port = Number(port);
+                }
+              } catch {
+                // Unix socket addresses are valid app addresses, but not URLs.
+              }
+            } else if (msg.data.port) {
+              this.port = msg.data.port;
+            }
             this.emit('close', 0);
             break;
           case 'app-worker-died':
@@ -263,7 +295,7 @@ export class ClusterApplication extends Coffee {
     return supertestRequest(this);
   }
 
-  _callFunctionOnAppWorker(method: string, args: any[] = [], property: any = undefined, needResult = false): any {
+  _callFunctionOnAppWorker(method: string, args: any[] = [], property?: any, needResult = false): any {
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
       if (typeof arg === 'function') {

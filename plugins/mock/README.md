@@ -253,6 +253,14 @@ Clean all logs directory, default is true.
 
 If you are using `ava`, disable it.
 
+#### port {Number}
+
+The app server port used by `mm.cluster`. By default it is assigned from a process-scoped range to reduce conflicts in parallel tests.
+
+#### clusterPort {Number}
+
+The cluster-client leader port used by `mm.cluster`. By default it is assigned from a process-scoped range to reduce watcher leader conflicts in parallel tests.
+
 ### app.mockLog([logger]) and app.expectLog(str[, logger]), app.notExpectLog(str[, logger])
 
 Assert some string value in the logger instance.
