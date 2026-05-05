@@ -1,5 +1,6 @@
 import type { Context, Application } from 'egg';
-import type { OnerrorError } from 'koa-onerror';
+
+import type { OnerrorError } from './onerror.ts';
 
 export function detectErrorMessage(ctx: Context, err: OnerrorError): string {
   // detect json parse error

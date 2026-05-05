@@ -6,10 +6,10 @@ import util from 'node:util';
 
 import { parse } from 'cookie';
 import type { Context } from 'egg';
-import type { OnerrorError } from 'koa-onerror';
 import Mustache from 'mustache';
 import stackTrace, { type StackFrame } from 'stack-trace';
 
+import type { OnerrorError } from './onerror.ts';
 import { detectErrorMessage } from './utils.ts';
 
 const startingSlashRegex = /\\|\//;

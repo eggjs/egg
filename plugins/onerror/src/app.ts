@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import http from 'node:http';
 
 import type { ILifecycleBoot, Application, Context } from 'egg';
-import { onerror, type OnerrorOptions, type OnerrorError } from 'koa-onerror';
 
 import type { OnerrorConfig } from './config/config.default.ts';
 import { ErrorView } from './lib/error_view.ts';
+import { onerror, type OnerrorOptions, type OnerrorError } from './lib/onerror.ts';
 import { isProd, detectStatus, detectErrorMessage, accepts } from './lib/utils.ts';
 
 export interface OnerrorErrorWithCode extends OnerrorError {
