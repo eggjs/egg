@@ -81,10 +81,11 @@ export class LoaderUtil {
     if (exports === undefined) {
       try {
         exports = await import(filePath);
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.trace('[tegg/loader] loadFile %s error:', filePath);
         console.error(e);
-        throw new Error(`[tegg/loader] load ${filePath} failed: ${e.message}`, {
+        const message = e instanceof Error ? e.message : String(e);
+        throw new Error(`[tegg/loader] load ${filePath} failed: ${message}`, {
           cause: e,
         });
       }
