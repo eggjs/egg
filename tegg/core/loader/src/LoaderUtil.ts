@@ -8,6 +8,12 @@ import { isClass } from 'is-type-of';
 // Guard against poorly mocked module constructors.
 const Module = globalThis.module?.constructor?.length > 1 ? globalThis.module.constructor : BuiltinModule;
 
+type BundleModuleLoader = (filepath: string) => unknown;
+
+type BundleModuleGlobalThis = typeof globalThis & {
+  __EGG_BUNDLE_MODULE_LOADER__?: BundleModuleLoader;
+};
+
 interface LoaderUtilConfig {
   extraFilePattern?: string[];
 }
@@ -64,20 +70,24 @@ export class LoaderUtil {
 
   static async loadFile(filePath: string): Promise<EggProtoImplClass[]> {
     const originalFilePath = filePath;
+    let exports: any = (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__?.(
+      originalFilePath.split('\\').join('/'),
+    );
     if (process.platform === 'win32') {
       // convert to file:// url
       // avoid windows path issue: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
       filePath = pathToFileURL(filePath).toString();
     }
-    let exports;
-    try {
-      exports = await import(filePath);
-    } catch (e: any) {
-      console.trace('[tegg/loader] loadFile %s error:', filePath);
-      console.error(e);
-      throw new Error(`[tegg/loader] load ${filePath} failed: ${e.message}`, {
-        cause: e,
-      });
+    if (exports === undefined) {
+      try {
+        exports = await import(filePath);
+      } catch (e: any) {
+        console.trace('[tegg/loader] loadFile %s error:', filePath);
+        console.error(e);
+        throw new Error(`[tegg/loader] load ${filePath} failed: ${e.message}`, {
+          cause: e,
+        });
+      }
     }
     const clazzList: EggProtoImplClass[] = [];
     const exportNames = Object.keys(exports);

@@ -28,7 +28,15 @@ interface TeggModuleDescriptor {
   decoratedFiles?: string[];
 }
 
+interface TeggModuleReference {
+  name: string;
+  path: string;
+  optional?: boolean;
+  loaderType?: string;
+}
+
 interface TeggManifestExtension {
+  moduleReferences?: TeggModuleReference[];
   moduleDescriptors?: TeggModuleDescriptor[];
 }
 
@@ -401,33 +409,46 @@ export class ManifestLoader {
   ): Promise<Record<string, unknown>> {
     const result: Record<string, unknown> = { ...extensions };
     const tegg = extensions?.tegg as TeggManifestExtension | undefined;
-    if (tegg?.moduleDescriptors) {
-      result.tegg = {
-        ...tegg,
-        moduleDescriptors: await Promise.all(
-          tegg.moduleDescriptors.map(async (desc) => {
-            if (!path.isAbsolute(desc.unitPath)) return desc;
-            const real = await this.#realpath(desc.unitPath);
-            let best: ModuleMapEntry | undefined;
-            for (const entry of moduleMap) {
-              if (real === entry.realDir || real.startsWith(entry.realDir + path.sep)) {
-                best = entry;
-                break;
-              }
-            }
-            if (!best) {
-              // keep as relative-to-baseDir form so runtime can resolve via #resolveFromBase
-              const rel = path.relative(this.#baseDir, real).replaceAll(path.sep, '/');
-              return { ...desc, unitPath: rel };
-            }
-            const rest = real === best.realDir ? '' : real.slice(best.realDir.length + 1);
-            const unitPath = [best.normalizedDir, rest].filter(Boolean).join('/').replaceAll(path.sep, '/');
-            return { ...desc, unitPath };
-          }),
-        ),
-      };
+    if (tegg?.moduleReferences || tegg?.moduleDescriptors) {
+      const normalizedTegg: TeggManifestExtension = { ...tegg };
+      if (tegg.moduleReferences) {
+        normalizedTegg.moduleReferences = await Promise.all(
+          tegg.moduleReferences.map(async (ref) => ({
+            ...ref,
+            path: await this.#normalizeTeggUnitPath(ref.path, moduleMap),
+          })),
+        );
+      }
+      if (tegg.moduleDescriptors) {
+        normalizedTegg.moduleDescriptors = await Promise.all(
+          tegg.moduleDescriptors.map(async (desc) => ({
+            ...desc,
+            unitPath: await this.#normalizeTeggUnitPath(desc.unitPath, moduleMap),
+          })),
+        );
+      }
+      result.tegg = normalizedTegg;
     }
     return result;
+  }
+
+  async #normalizeTeggUnitPath(unitPath: string, moduleMap: ModuleMapEntry[]): Promise<string> {
+    if (!path.isAbsolute(unitPath)) return unitPath;
+    const real = await this.#realpath(unitPath);
+    let best: ModuleMapEntry | undefined;
+    for (const entry of moduleMap) {
+      if (real === entry.realDir || real.startsWith(entry.realDir + path.sep)) {
+        best = entry;
+        break;
+      }
+    }
+    if (!best) {
+      // Keep local app modules relative to baseDir so bundled runtime can
+      // resolve them under outputDir, and keep descriptor/reference keys equal.
+      return path.relative(this.#baseDir, real).replaceAll(path.sep, '/');
+    }
+    const rest = real === best.realDir ? '' : real.slice(best.realDir.length + 1);
+    return [best.normalizedDir, rest].filter(Boolean).join('/').replaceAll(path.sep, '/');
   }
 
   async #findPackageJsonFromNodeModules(name: string, startDir: string): Promise<string | undefined> {

@@ -152,6 +152,38 @@ describe('EntryGenerator', () => {
     ]);
   });
 
+  it('includes app/port controller decorated files from tegg manifest descriptors', async () => {
+    const manifest = makeManifest({
+      extensions: {
+        tegg: {
+          moduleReferences: [
+            {
+              name: 'appPort',
+              path: 'app/port',
+            },
+          ],
+          moduleDescriptors: [
+            {
+              unitPath: 'app/port',
+              decoratedFiles: ['controller/HomeController.ts', 'manager/UserRoleManager.ts'],
+            },
+          ],
+        },
+      },
+    });
+
+    const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
+    const result = await gen.generate();
+    const worker = await fs.readFile(result.workerEntry, 'utf8');
+
+    expect(extractImports(worker).map((i) => i.specifier)).toEqual([
+      '../../app/port/controller/HomeController.ts',
+      '../../app/port/manager/UserRoleManager.ts',
+    ]);
+    expect(worker).toContain('"moduleReferences"');
+    expect(worker).toContain('"path": "app/port"');
+  });
+
   it('skips resolveCache entries whose value is null', async () => {
     const manifest = makeManifest({
       resolveCache: {

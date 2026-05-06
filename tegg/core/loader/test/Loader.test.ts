@@ -1,12 +1,21 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
+import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { EggLoadUnitType } from '@eggjs/metadata';
-import { describe, it } from 'vitest';
+import { afterEach, describe, it } from 'vitest';
 
 import { LoaderFactory, LoaderUtil } from '../src/index.ts';
 
+type BundleModuleGlobalThis = typeof globalThis & {
+  __EGG_BUNDLE_MODULE_LOADER__?: (filepath: string) => unknown;
+};
+
 describe('core/loader/test/Loader.test.ts', () => {
+  afterEach(() => {
+    delete (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__;
+  });
+
   describe('module loader', () => {
     it('should load module', async () => {
       const repoModulePath = path.join(__dirname, './fixtures/modules/module-for-loader');
@@ -36,6 +45,24 @@ describe('core/loader/test/Loader.test.ts', () => {
       const loader = LoaderFactory.createLoader(repoModulePath, EggLoadUnitType.MODULE);
       const prototypes = await loader.load();
       assert.equal(prototypes.length, 1);
+    });
+
+    it('should load pre-bundled files through the bundle module loader', async () => {
+      class BundledService {}
+      SingletonProto()(BundledService);
+      const bundledFile = '/bundle/app/port/manager/UserRoleManager.ts';
+      (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__ = (filepath) => {
+        assert.equal(filepath, bundledFile);
+        return { BundledService };
+      };
+
+      const prototypes = await LoaderUtil.loadFile(bundledFile);
+
+      assert.deepEqual(
+        prototypes.map((proto) => proto.name),
+        ['BundledService'],
+      );
+      assert.equal(PrototypeUtil.getFilePath(BundledService), bundledFile);
     });
   });
 
