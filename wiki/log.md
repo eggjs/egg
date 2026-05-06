@@ -1,5 +1,13 @@
 # Wiki Log
 
+Dates use the workspace-local Asia/Shanghai calendar date.
+
+## [2026-05-06] package | sync bundled runtime support changes
+
+- sources touched: `tools/egg-bundler/src/lib/ExternalsResolver.ts`, `packages/utils/src/import.ts`, `plugins/onerror/src/lib/onerror.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/egg-bundler.md`, `wiki/packages/utils.md`, `wiki/packages/onerror.md`
+- note: Recorded native optional platform package externalization, the opaque native dynamic import fallback used by bundled `importModule()`, and the local `@eggjs/onerror` implementation that avoids `koa-onerror` template reads.
+
 ## [2026-05-03] package | record egg bundler runtime path mapping
 
 - sources touched: `tools/egg-bundler/src/lib/EntryGenerator.ts`, `tools/egg-bundler/docs/output-structure.md`

@@ -26,7 +26,7 @@ Default error handling plugin for egg.
 - `html: Function` - customize html error handler.
 - `text: Function` - customize text error handler.
 - `json: Function` - customize json error handler.
-- `jsonp: Function` - customize jsonp error handler.
+- `js: Function` - customize JSONP error handler.
 
 ```ts
 // config/config.default.ts
