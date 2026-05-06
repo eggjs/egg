@@ -14,6 +14,7 @@ type BundleModuleGlobalThis = typeof globalThis & {
 describe('core/loader/test/Loader.test.ts', () => {
   afterEach(() => {
     delete (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__;
+    LoaderUtil.setConfig({});
   });
 
   describe('module loader', () => {
@@ -74,6 +75,24 @@ describe('core/loader/test/Loader.test.ts', () => {
       assert.deepEqual(
         prototypes.map((proto) => proto.name),
         ['AppRepo', 'AppRepo2'],
+      );
+    });
+
+    it('should wrap bundle module loader errors', async () => {
+      const bundledFile = '/bundle/app/service.ts';
+      (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__ = () => {
+        throw 'bundle loader failed';
+      };
+
+      await assert.rejects(
+        async () => {
+          await LoaderUtil.loadFile(bundledFile);
+        },
+        (err: Error & { cause?: unknown }) => {
+          assert.equal(err.message, '[tegg/loader] load /bundle/app/service.ts failed: bundle loader failed');
+          assert.equal(err.cause, 'bundle loader failed');
+          return true;
+        },
       );
     });
   });
