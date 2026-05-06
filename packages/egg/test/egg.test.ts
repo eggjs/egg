@@ -291,11 +291,19 @@ describe.sequential('test/egg.test.ts', () => {
       assertFile(path.join(runDir, 'router.json'));
     });
 
-    it('should use the default worker start timeout when config is missing', () => {
+    it('should use the default worker start timeout when config is missing or invalid', () => {
       const originalWorkerStartTimeout = app.config.workerStartTimeout;
-      Reflect.set(app.config, 'workerStartTimeout', undefined);
       try {
+        Reflect.set(app.config, 'workerStartTimeout', undefined);
         assert.equal((app as any).getWorkerStartTimeout(), 10 * 60 * 1000);
+        Reflect.set(app.config, 'workerStartTimeout', 0);
+        assert.equal((app as any).getWorkerStartTimeout(), 10 * 60 * 1000);
+        Reflect.set(app.config, 'workerStartTimeout', -1);
+        assert.equal((app as any).getWorkerStartTimeout(), 10 * 60 * 1000);
+        Reflect.set(app.config, 'workerStartTimeout', Number.POSITIVE_INFINITY);
+        assert.equal((app as any).getWorkerStartTimeout(), 10 * 60 * 1000);
+        Reflect.set(app.config, 'workerStartTimeout', 1);
+        assert.equal((app as any).getWorkerStartTimeout(), 1);
       } finally {
         Reflect.set(app.config, 'workerStartTimeout', originalWorkerStartTimeout);
       }

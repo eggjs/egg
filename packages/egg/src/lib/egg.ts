@@ -569,9 +569,7 @@ export class EggApplicationCore extends EggCore {
   dumpConfig(): void {
     const rundir = this.getRuntimeRundir();
     try {
-      if (!fs.existsSync(rundir)) {
-        fs.mkdirSync(rundir, { recursive: true });
-      }
+      fs.mkdirSync(rundir, { recursive: true });
 
       // get dumped object
       const { config, meta } = this.dumpConfigToObject();
@@ -592,9 +590,7 @@ export class EggApplicationCore extends EggCore {
     try {
       const items = this.timing.toJSON();
       const rundir = this.getRuntimeRundir();
-      if (!fs.existsSync(rundir)) {
-        fs.mkdirSync(rundir, { recursive: true });
-      }
+      fs.mkdirSync(rundir, { recursive: true });
       const dumpFile = path.join(rundir, `${this.type}_timing_${process.pid}.json`);
       fs.writeFileSync(dumpFile, CircularJSON.stringify(items, null, 2));
       this.coreLogger.info(this.timing.toString());
@@ -678,7 +674,7 @@ export class EggApplicationCore extends EggCore {
 
   private getWorkerStartTimeout(): number {
     const workerStartTimeout = this.config.workerStartTimeout;
-    if (typeof workerStartTimeout === 'number' && Number.isFinite(workerStartTimeout)) {
+    if (typeof workerStartTimeout === 'number' && Number.isFinite(workerStartTimeout) && workerStartTimeout > 0) {
       return workerStartTimeout;
     }
     return DEFAULT_WORKER_START_TIMEOUT;
