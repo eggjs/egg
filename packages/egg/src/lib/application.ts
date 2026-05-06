@@ -200,9 +200,12 @@ export class Application extends EggApplicationCore {
     super.dumpConfig();
 
     // dump routers to router.json
-    const rundir = this.config.rundir;
+    const rundir = this.getRuntimeRundir();
     const FULLPATH = this.loader.FileLoader.FULLPATH;
     try {
+      if (!fs.existsSync(rundir)) {
+        fs.mkdirSync(rundir, { recursive: true });
+      }
       const dumpRouterFile = path.join(rundir, 'router.json');
       const routers = [];
       for (const layer of this.router.stack) {

@@ -38,6 +38,8 @@ import { convertObject, createTransparentProxy } from './core/utils.ts';
 import type { EggApplicationLoader } from './loader/index.ts';
 import type { EggAppConfig } from './types.ts';
 
+const DEFAULT_WORKER_START_TIMEOUT = 10 * 60 * 1000;
+
 export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir'> {
   mode?: 'cluster' | 'single';
   clusterPort?: number;
@@ -565,10 +567,10 @@ export class EggApplicationCore extends EggCore {
    * @private
    */
   dumpConfig(): void {
-    const rundir = this.config.rundir;
+    const rundir = this.getRuntimeRundir();
     try {
       if (!fs.existsSync(rundir)) {
-        fs.mkdirSync(rundir);
+        fs.mkdirSync(rundir, { recursive: true });
       }
 
       // get dumped object
@@ -589,7 +591,10 @@ export class EggApplicationCore extends EggCore {
   dumpTiming(): void {
     try {
       const items = this.timing.toJSON();
-      const rundir = this.config.rundir;
+      const rundir = this.getRuntimeRundir();
+      if (!fs.existsSync(rundir)) {
+        fs.mkdirSync(rundir, { recursive: true });
+      }
       const dumpFile = path.join(rundir, `${this.type}_timing_${process.pid}.json`);
       fs.writeFileSync(dumpFile, CircularJSON.stringify(items, null, 2));
       this.coreLogger.info(this.timing.toString());
@@ -641,9 +646,10 @@ export class EggApplicationCore extends EggCore {
   }
 
   #setupTimeoutTimer(): void {
+    const workerStartTimeout = this.getWorkerStartTimeout();
     const startTimeoutTimer = setTimeout(() => {
       this.coreLogger.error(this.timing.toString());
-      this.coreLogger.error(`${this.type} still doesn't ready after ${this.config.workerStartTimeout} ms.`);
+      this.coreLogger.error(`${this.type} still doesn't ready after ${workerStartTimeout} ms.`);
       // log unfinished
       const items = this.timing.toJSON();
       for (const item of items) {
@@ -658,8 +664,24 @@ export class EggApplicationCore extends EggCore {
       this.emit('startTimeout');
       this.dumpConfig();
       this.dumpTiming();
-    }, this.config.workerStartTimeout);
+    }, workerStartTimeout);
     this.ready(() => clearTimeout(startTimeoutTimer));
+  }
+
+  protected getRuntimeRundir(): string {
+    const rundir = this.config.rundir;
+    if (typeof rundir === 'string' && rundir.length > 0) {
+      return rundir;
+    }
+    return path.join(this.baseDir, 'run');
+  }
+
+  private getWorkerStartTimeout(): number {
+    const workerStartTimeout = this.config.workerStartTimeout;
+    if (typeof workerStartTimeout === 'number' && Number.isFinite(workerStartTimeout)) {
+      return workerStartTimeout;
+    }
+    return DEFAULT_WORKER_START_TIMEOUT;
   }
 
   get config() {

@@ -263,6 +263,45 @@ describe.sequential('test/egg.test.ts', () => {
     });
   });
 
+  describe('runtime diagnostics fallback config', () => {
+    const baseDir = getFilepath('apps/dumpconfig');
+    const runDir = path.join(baseDir, 'run');
+    let app: MockApplication;
+
+    beforeAll(async () => {
+      app = createApp('apps/dumpconfig');
+      await app.ready();
+    });
+
+    afterAll(() => app.close());
+
+    it('should dump config and timing to baseDir/run when rundir is missing', () => {
+      fs.rmSync(runDir, { recursive: true, force: true });
+      const originalRundir = app.config.rundir;
+      Reflect.set(app.config, 'rundir', undefined);
+      try {
+        app.dumpConfig();
+        app.dumpTiming();
+      } finally {
+        Reflect.set(app.config, 'rundir', originalRundir);
+      }
+
+      assertFile(path.join(runDir, 'application_config.json'));
+      assertFile(path.join(runDir, `application_timing_${process.pid}.json`));
+      assertFile(path.join(runDir, 'router.json'));
+    });
+
+    it('should use the default worker start timeout when config is missing', () => {
+      const originalWorkerStartTimeout = app.config.workerStartTimeout;
+      Reflect.set(app.config, 'workerStartTimeout', undefined);
+      try {
+        assert.equal((app as any).getWorkerStartTimeout(), 10 * 60 * 1000);
+      } finally {
+        Reflect.set(app.config, 'workerStartTimeout', originalWorkerStartTimeout);
+      }
+    });
+  });
+
   describe('custom config from env', () => {
     let app: MockApplication;
     let baseDir: string;
