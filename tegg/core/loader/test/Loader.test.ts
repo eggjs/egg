@@ -64,6 +64,18 @@ describe('core/loader/test/Loader.test.ts', () => {
       );
       assert.equal(PrototypeUtil.getFilePath(BundledService), bundledFile);
     });
+
+    it('should fall back to dynamic import when the bundle module loader returns null', async () => {
+      const appRepoFile = path.join(__dirname, './fixtures/modules/module-for-loader/AppRepo.ts');
+      (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__ = () => null;
+
+      const prototypes = await LoaderUtil.loadFile(appRepoFile);
+
+      assert.deepEqual(
+        prototypes.map((proto) => proto.name),
+        ['AppRepo', 'AppRepo2'],
+      );
+    });
   });
 
   describe('file has tsc error', () => {

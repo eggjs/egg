@@ -78,7 +78,7 @@ export class LoaderUtil {
       // avoid windows path issue: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
       filePath = pathToFileURL(filePath).toString();
     }
-    if (exports === undefined) {
+    if (exports == null) {
       try {
         exports = await import(filePath);
       } catch (e: unknown) {
