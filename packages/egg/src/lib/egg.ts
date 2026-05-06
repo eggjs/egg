@@ -652,11 +652,8 @@ export class EggApplicationCore extends EggCore {
         if (item.end) continue;
         this.coreLogger.error(`unfinished timing item: ${CircularJSON.stringify(item)}`);
       }
-      this.coreLogger.error(
-        '[egg][setupTimeoutTimer] check run/%s_timing_%s.json for more details.',
-        this.type,
-        process.pid,
-      );
+      const dumpTimingFile = path.join(this.getRuntimeRundir(), `${this.type}_timing_${process.pid}.json`);
+      this.coreLogger.error('[egg][setupTimeoutTimer] check %s for more details.', dumpTimingFile);
       this.emit('startTimeout');
       this.dumpConfig();
       this.dumpTiming();
