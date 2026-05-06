@@ -193,7 +193,7 @@ export class Application extends EggApplicationCore {
   }
 
   /**
-   * save routers to `run/router.json`
+   * save routers to `${rundir}/router.json`
    * @private
    */
   dumpConfig(): void {

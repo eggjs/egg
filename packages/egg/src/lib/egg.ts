@@ -563,7 +563,7 @@ export class EggApplicationCore extends EggCore {
   }
 
   /**
-   * save app.config to `run/${type}_config.json`
+   * save app.config to `${rundir}/${type}_config.json`
    * @private
    */
   dumpConfig(): void {
