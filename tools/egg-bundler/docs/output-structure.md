@@ -14,6 +14,8 @@ the chunks.
 ├── _root-of-the-server___<hash>.js.map
 ├── _turbopack__runtime.js             # @utoo/pack runtime shim
 ├── _turbopack__runtime.js.map
+├── app/port/binary.html               # app runtime asset copied from <baseDir>/app/port/binary.html
+├── app/port/login.html                # app runtime asset copied from <baseDir>/app/port/login.html
 ├── tsconfig.json                      # written by PackRunner; SWC reads decorator options from here
 ├── package.json                       # written by PackRunner; `{ "type": "commonjs" }` so node parses *.js as CJS
 └── bundle-manifest.json               # written by Bundler; reference / debug metadata
@@ -39,6 +41,20 @@ the deploy output directory separate from the original app paths: the bundle map
 is keyed by relKey, output-dir absolute paths, precomputed original app absolute
 paths, and manifest `resolveCache` request aliases. Application code and plugins
 may still use `fs` for resources such as config, views, or assets.
+
+## Runtime assets
+
+The bundler copies application runtime assets from `<baseDir>/app` into the
+same relative path under `outputDir`, excluding manifest-known module files and
+source-like files such as `.js`, `.ts`, `.mjs`, and `.cjs` outside static asset
+directories. For example, `<baseDir>/app/port/binary.html` is emitted as
+`<outputDir>/app/port/binary.html`. Since bundled workers start Egg with
+`baseDir: outputDir`, existing reads such as
+`fs.readFile(path.join(app.config.baseDir, 'app/port/binary.html'))` resolve to
+the copied file in bundle mode and continue to resolve to the original file in
+non-bundle mode. Static asset directories such as `app/public`, `app/assets`,
+and `app/static` are copied verbatim so frontend `.js` and `.css` files remain
+servable from the bundled app.
 
 ## `bundle-manifest.json`
 

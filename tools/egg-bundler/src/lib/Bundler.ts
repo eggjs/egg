@@ -39,6 +39,9 @@ const TURBOPACK_IMPORT_META_OBJECT =
 const LINE_SOURCE_MAP_URL = /(?:\r?\n)?\/\/# sourceMappingURL=([^\r\n]*)\s*$/;
 const BLOCK_SOURCE_MAP_URL = /(?:\r?\n)?\/\*# sourceMappingURL=([\s\S]*?)\*\/\s*$/;
 const UNSAFE_ALIAS_SPECIFIERS = new Set(['__proto__', 'constructor', 'prototype']);
+const RUNTIME_ASSET_ROOTS = ['app'];
+const FORCE_COPY_RUNTIME_ASSET_DIRS = ['app/public', 'app/assets', 'app/static'];
+const BUNDLED_SOURCE_EXTENSIONS = new Set(['.cjs', '.cts', '.js', '.jsx', '.mjs', '.mts', '.ts', '.tsx']);
 
 type JsonRecord = Record<string, unknown>;
 
@@ -259,6 +262,11 @@ export class Bundler {
       patchResult.deletedMapCount,
     );
 
+    const runtimeAssets = await wrapStep('runtime asset copy', () =>
+      this.#copyRuntimeAssets(absBaseDir, absOutputDir, manifestLoader),
+    );
+    debug('copied %d runtime assets', runtimeAssets.length);
+
     // Merge project name into output package.json so the framework's
     // getAppname() finds it (it reads baseDir/package.json).
     const outputPkgPath = path.join(absOutputDir, 'package.json');
@@ -282,14 +290,14 @@ export class Bundler {
       framework,
       entries: [{ name: 'worker', source: entries.workerEntry }],
       externals: Object.keys(externalsMap).sort((a, b) => a.localeCompare(b)),
-      chunks: patchResult.outputFiles,
+      chunks: Array.from(new Set([...patchResult.outputFiles, ...runtimeAssets])).sort((a, b) => a.localeCompare(b)),
     };
     await wrapStep('write bundle-manifest', () =>
       fs.writeFile(manifestPathAbs, JSON.stringify(bundleManifest, null, 2)),
     );
 
     // Re-enumerate files so bundle-manifest.json is included in the result.
-    const finalRelFiles = new Set<string>(patchResult.outputFiles);
+    const finalRelFiles = new Set<string>(bundleManifest.chunks);
     finalRelFiles.add(BUNDLE_MANIFEST_FILENAME);
     const files = Array.from(finalRelFiles)
       .map((rel) => path.join(absOutputDir, rel))
@@ -300,6 +308,80 @@ export class Bundler {
       files,
       manifestPath: manifestPathAbs,
     };
+  }
+
+  async #copyRuntimeAssets(
+    baseDir: string,
+    outputDir: string,
+    manifestLoader: ManifestLoader,
+  ): Promise<readonly string[]> {
+    const copied = new Set<string>();
+    const bundledSourceFiles = new Set<string>();
+    for (const filepath of manifestLoader.getAllDiscoveredFiles()) {
+      bundledSourceFiles.add(filepath);
+    }
+    for (const filepath of manifestLoader.getTeggDecoratedFiles()) {
+      bundledSourceFiles.add(filepath);
+    }
+    for (const value of Object.values(manifestLoader.manifest.resolveCache)) {
+      if (typeof value === 'string') bundledSourceFiles.add(path.resolve(baseDir, value));
+    }
+
+    for (const root of RUNTIME_ASSET_ROOTS) {
+      const absRoot = path.join(baseDir, root);
+      await this.#copyRuntimeAssetsUnderRoot(baseDir, outputDir, absRoot, bundledSourceFiles, copied);
+    }
+
+    return Array.from(copied).sort((a, b) => a.localeCompare(b));
+  }
+
+  async #copyRuntimeAssetsUnderRoot(
+    baseDir: string,
+    outputDir: string,
+    dir: string,
+    bundledSourceFiles: ReadonlySet<string>,
+    copied: Set<string>,
+  ): Promise<void> {
+    let entries: import('node:fs').Dirent[];
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code === 'ENOENT') return;
+      throw err;
+    }
+
+    entries.sort((a, b) => a.name.localeCompare(b.name));
+    for (const entry of entries) {
+      const filepath = path.join(dir, entry.name);
+      if (this.#isInsideDir(outputDir, filepath)) continue;
+      // Dirent flags from withFileTypes are not followed here; symlinked app
+      // assets are skipped so a link cannot escape baseDir/app during copying.
+      if (entry.isSymbolicLink()) continue;
+      if (this.#shouldSkipRuntimeAssetEntry(entry.name)) continue;
+
+      if (entry.isDirectory()) {
+        await this.#copyRuntimeAssetsUnderRoot(baseDir, outputDir, filepath, bundledSourceFiles, copied);
+        continue;
+      }
+
+      if (!entry.isFile()) continue;
+      const rel = this.#sanitizeOutputRelativePath(path.relative(baseDir, filepath));
+      if (bundledSourceFiles.has(filepath) || !this.#shouldCopyRuntimeAsset(rel)) continue;
+
+      const target = path.join(outputDir, rel);
+      await fs.mkdir(path.dirname(target), { recursive: true });
+      await fs.copyFile(filepath, target);
+      copied.add(rel);
+    }
+  }
+
+  #shouldSkipRuntimeAssetEntry(name: string): boolean {
+    return name === 'node_modules' || name.startsWith('.');
+  }
+
+  #shouldCopyRuntimeAsset(rel: string): boolean {
+    if (FORCE_COPY_RUNTIME_ASSET_DIRS.some((dir) => rel === dir || rel.startsWith(`${dir}/`))) return true;
+    return !BUNDLED_SOURCE_EXTENSIONS.has(path.posix.extname(rel));
   }
 
   async #patchImportMetaOutput(
