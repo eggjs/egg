@@ -27,6 +27,7 @@ import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
+const LOADER_MANIFEST_EXTENSION = 'eggLoader';
 const CONVENTIONAL_MANIFEST_LOADS = [
   { type: 'resolve', path: ['agent'] },
   { type: 'resolve', path: ['app'] },
@@ -64,6 +65,20 @@ export type EggDirInfoType = 'app' | 'plugin' | 'framework';
 export interface EggDirInfo {
   path: string;
   type: EggDirInfoType;
+}
+
+interface LoaderManifestPluginInfo {
+  path?: string;
+  package?: string;
+  dependencies?: string[];
+  optionalDependencies?: string[];
+  env?: string[];
+  version?: string;
+}
+
+interface LoaderManifestExtension {
+  eggPaths?: string[];
+  plugins?: Record<string, LoaderManifestPluginInfo>;
 }
 
 export class EggLoader {
@@ -379,6 +394,20 @@ export class EggLoader {
         eggPaths.unshift(realpath);
       }
     }
+
+    const bundleStore = ManifestStore.getBundleStore();
+    const extension =
+      bundleStore?.baseDir === this.options.baseDir
+        ? (bundleStore.getExtension(LOADER_MANIFEST_EXTENSION) as LoaderManifestExtension | undefined)
+        : undefined;
+    if (extension?.eggPaths?.length) {
+      return Array.from(
+        new Set([
+          ...extension.eggPaths.map((eggPath) => this.#toManifestAbsolute(eggPath)),
+          ...eggPaths.filter((eggPath) => !this.#isBundleOutputRootPath(eggPath)),
+        ]),
+      );
+    }
     return eggPaths;
   }
 
@@ -450,6 +479,7 @@ export class EggLoader {
     this.#extendPlugins(this.allPlugins, this.eggPlugins);
     this.#extendPlugins(this.allPlugins, this.appPlugins);
     this.#extendPlugins(this.allPlugins, this.customPlugins);
+    this.#applyManifestPluginInfo(this.allPlugins);
 
     const enabledPluginNames: string[] = []; // enabled plugins that configured explicitly
     const plugins: Record<string, EggPluginInfo> = {};
@@ -498,6 +528,7 @@ export class EggLoader {
      * @since 1.0.0
      */
     this.plugins = enablePlugins;
+    this.#collectLoaderManifestExtension();
     this.timing.end('Load Plugin');
   }
 
@@ -923,6 +954,68 @@ export class EggLoader {
         Reflect.set(targetPlugin, prop, value);
       }
     }
+  }
+
+  #applyManifestPluginInfo(allPlugins: Record<string, EggPluginInfo>): void {
+    // getEggPaths reads ManifestStore.getBundleStore in the constructor before this.manifest is assigned.
+    const extension = this.manifest.getExtension(LOADER_MANIFEST_EXTENSION) as LoaderManifestExtension | undefined;
+    const plugins = extension?.plugins;
+    if (!plugins) return;
+
+    for (const [name, manifestPlugin] of Object.entries(plugins)) {
+      const plugin = allPlugins[name];
+      if (!plugin) continue;
+
+      if (manifestPlugin.path && (!plugin.path || this.#isBundleOutputRootPath(plugin.path))) {
+        plugin.path = this.#toManifestAbsolute(manifestPlugin.path);
+      }
+      if (manifestPlugin.package && !plugin.package) {
+        plugin.package = manifestPlugin.package;
+      }
+      for (const key of ['dependencies', 'optionalDependencies', 'env'] as const) {
+        const values = manifestPlugin[key];
+        if (Array.isArray(values) && !plugin[key]?.length) {
+          plugin[key] = [...values];
+        }
+      }
+      if (manifestPlugin.version && !plugin.version) {
+        plugin.version = manifestPlugin.version;
+      }
+    }
+  }
+
+  #collectLoaderManifestExtension(): void {
+    if (this.manifest === ManifestStore.getBundleStore()) return;
+
+    const plugins: Record<string, LoaderManifestPluginInfo> = {};
+    for (const [name, plugin] of Object.entries(this.allPlugins)) {
+      plugins[name] = {
+        path: plugin.path ? this.#toManifestRelative(plugin.path) : undefined,
+        package: plugin.package,
+        dependencies: plugin.dependencies ? [...plugin.dependencies] : undefined,
+        optionalDependencies: plugin.optionalDependencies ? [...plugin.optionalDependencies] : undefined,
+        env: plugin.env ? [...plugin.env] : undefined,
+        version: plugin.version,
+      };
+    }
+    this.manifest.setExtension(LOADER_MANIFEST_EXTENSION, {
+      eggPaths: this.eggPaths.map((eggPath) => this.#toManifestRelative(eggPath)),
+      plugins,
+    } satisfies LoaderManifestExtension);
+  }
+
+  #toManifestAbsolute(filepath: string): string {
+    return path.isAbsolute(filepath) ? filepath : path.join(this.options.baseDir, filepath);
+  }
+
+  #toManifestRelative(filepath: string): string {
+    return path.isAbsolute(filepath)
+      ? path.relative(this.options.baseDir, filepath).replaceAll(path.sep, '/')
+      : filepath;
+  }
+
+  #isBundleOutputRootPath(filepath: string): boolean {
+    return path.resolve(this.options.baseDir, filepath) === path.resolve(this.options.baseDir);
   }
   /** end Plugin loader */
 
