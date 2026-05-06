@@ -3,13 +3,10 @@ import path from 'node:path';
 
 import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { EggLoadUnitType } from '@eggjs/metadata';
+import type { BundleModuleGlobalThis } from '@eggjs/typings';
 import { afterEach, describe, it } from 'vitest';
 
 import { LoaderFactory, LoaderUtil } from '../src/index.ts';
-
-type BundleModuleGlobalThis = typeof globalThis & {
-  __EGG_BUNDLE_MODULE_LOADER__?: (filepath: string) => unknown;
-};
 
 describe('core/loader/test/Loader.test.ts', () => {
   afterEach(() => {
@@ -52,7 +49,7 @@ describe('core/loader/test/Loader.test.ts', () => {
       class BundledService {}
       SingletonProto()(BundledService);
       const bundledFile = '/bundle/app/port/manager/UserRoleManager.ts';
-      (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__ = (filepath) => {
+      (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__ = (filepath: string) => {
         assert.equal(filepath, bundledFile);
         return { BundledService };
       };

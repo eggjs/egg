@@ -3,6 +3,7 @@
 import path from 'node:path';
 
 import { ManifestStore } from '@eggjs/core';
+import type { BundleModuleGlobalThis } from '@eggjs/typings';
 import { startEgg } from "egg";
 import * as __frameworkModule from "egg";
 
@@ -98,9 +99,7 @@ for (const [appAbsRequest, targetRel] of __APP_RESOLVE_CACHE_ALIASES) {
   }
 }
 
-const __bundleGlobalThis = globalThis as typeof globalThis & {
-  __EGG_BUNDLE_MODULE_LOADER__?: (filepath: string) => unknown;
-};
+const __bundleGlobalThis = globalThis as BundleModuleGlobalThis;
 ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA as any, __outputDir));
 __bundleGlobalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath) => {
   return __getBundleMap(filepath);
