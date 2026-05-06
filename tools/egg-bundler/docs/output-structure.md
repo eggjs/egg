@@ -54,7 +54,17 @@ directories. For example, `<baseDir>/app/port/binary.html` is emitted as
 the copied file in bundle mode and continue to resolve to the original file in
 non-bundle mode. Static asset directories such as `app/public`, `app/assets`,
 and `app/static` are copied verbatim so frontend `.js` and `.css` files remain
-servable from the bundled app.
+servable from the bundled app. Applications may replace those force-copy
+directories with `bundle.runtimeAssets.forceCopyDirs` in `module.yml`, for
+example:
+
+```yaml
+bundle:
+  runtimeAssets:
+    forceCopyDirs:
+      - app/port
+      - app/public
+```
 
 ## `bundle-manifest.json`
 

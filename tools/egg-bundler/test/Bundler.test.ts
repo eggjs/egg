@@ -242,6 +242,25 @@ describe('Bundler', () => {
     ).rejects.toThrow(/module\.yml bundle config load failed: .*bundle\.pack\.resolve\.alias\.invalid-target/);
   });
 
+  it('throws a clear error when module.yml runtime asset force-copy dirs config is invalid', async () => {
+    await fs.writeFile(
+      path.join(tmpApp, 'module.yml'),
+      ['bundle:', '  runtimeAssets:', '    forceCopyDirs:', '      - ../secret'].join('\n'),
+    );
+
+    await expect(
+      bundle({
+        baseDir: tmpApp,
+        outputDir: tmpOutput,
+        pack: {
+          buildFunc: async () => {
+            await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// worker\n');
+          },
+        },
+      }),
+    ).rejects.toThrow(/module\.yml bundle config load failed: .*bundle\.runtimeAssets\.forceCopyDirs/);
+  });
+
   it('rejects prototype-polluting module.yml bundle alias specifiers', async () => {
     await fs.writeFile(
       path.join(tmpApp, 'module.yml'),

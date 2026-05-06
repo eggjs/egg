@@ -498,6 +498,41 @@ const __dirname = "/generated/shadow";
       '<html>binary</html>\n',
     );
   });
+
+  it('uses module.yml bundle.runtimeAssets.forceCopyDirs to force-copy source-like assets', async () => {
+    await fs.writeFile(
+      path.join(tmpApp, 'module.yml'),
+      ['bundle:', '  runtimeAssets:', '    forceCopyDirs:', '      - app/port'].join('\n'),
+    );
+    await fs.mkdir(path.join(tmpApp, 'app/port'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'app/port/helper.ts'), 'export const helper = true;\n');
+    await fs.writeFile(path.join(tmpApp, 'app/port/binary.html'), '<html>binary</html>\n');
+    await fs.mkdir(path.join(tmpApp, 'app/public'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'app/public/client.js'), 'globalThis.clientAsset = true;\n');
+
+    const result = await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: { buildFunc: makeMockBuild() },
+    });
+
+    await expect(fs.readFile(path.join(tmpOutput, 'app/port/helper.ts'), 'utf8')).resolves.toBe(
+      'export const helper = true;\n',
+    );
+    await expect(fs.readFile(path.join(tmpOutput, 'app/port/binary.html'), 'utf8')).resolves.toBe(
+      '<html>binary</html>\n',
+    );
+    await expect(fs.stat(path.join(tmpOutput, 'app/public/client.js'))).rejects.toMatchObject({ code: 'ENOENT' });
+
+    const bm = JSON.parse(await fs.readFile(result.manifestPath, 'utf8')) as { chunks: string[] };
+    expect(bm.chunks).toEqual(expect.arrayContaining(['app/port/binary.html', 'app/port/helper.ts']));
+    expect(result.files).toEqual(
+      expect.arrayContaining([
+        path.join(tmpOutput, 'app/port/binary.html'),
+        path.join(tmpOutput, 'app/port/helper.ts'),
+      ]),
+    );
+  });
 });
 
 describe('bundle() integration — minimal-app (Phase 2: real @utoo/pack)', () => {

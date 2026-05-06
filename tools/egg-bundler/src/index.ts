@@ -30,6 +30,11 @@ export interface BundlerPackConfig {
   readonly resolve?: PackRunnerResolveConfig;
 }
 
+export interface BundlerRuntimeAssetsConfig {
+  /** Relative directories whose files should be copied even when they use source-like extensions. */
+  readonly forceCopyDirs?: readonly string[];
+}
+
 export interface BundlerConfig {
   /** Application root directory. Required. */
   readonly baseDir: string;
@@ -45,6 +50,8 @@ export interface BundlerConfig {
   readonly externals?: BundlerExternalsConfig;
   /** @utoo/pack tuning. */
   readonly pack?: BundlerPackConfig;
+  /** Runtime asset copy tuning. */
+  readonly runtimeAssets?: BundlerRuntimeAssetsConfig;
   /** Enable tegg decoratedFile collection. Defaults to `true`. */
   readonly tegg?: boolean;
 }
