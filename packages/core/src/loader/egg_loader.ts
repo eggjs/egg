@@ -13,7 +13,7 @@ import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } fr
 import { homedir } from 'node-homedir';
 import { now, diff } from 'performance-ms';
 import { register as tsconfigPathsRegister } from 'tsconfig-paths';
-import { getParamNames, readJSONSync, exists } from 'utility';
+import { getParamNames, exists } from 'utility';
 
 import type { BaseContextClass } from '../base_context_class.ts';
 import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
@@ -107,7 +107,7 @@ export class EggLoader {
      * @see {@link AppInfo#pkg}
      * @since 1.0.0
      */
-    this.pkg = readJSONSync(path.join(this.options.baseDir, 'package.json'));
+    this.pkg = this.loaderFS.readJSON(path.join(this.options.baseDir, 'package.json'));
     this.outDir = this.#resolveOutDir();
 
     // auto require('tsconfig-paths/register') on typescript app
@@ -645,7 +645,7 @@ export class EggLoader {
     let eggPluginConfig: any;
     const pluginPackage = path.join(plugin.path as string, 'package.json');
     if (this.loaderFS.exists(pluginPackage)) {
-      pkg = await this.loaderFS.readJSON(pluginPackage);
+      pkg = this.loaderFS.readJSON(pluginPackage);
       eggPluginConfig = pkg.eggPlugin;
       if (pkg.version) {
         plugin.version = pkg.version;

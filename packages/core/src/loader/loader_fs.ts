@@ -1,7 +1,7 @@
 import fs, { type Stats } from 'node:fs';
 
 import globby from 'globby';
-import { readJSON } from 'utility';
+import { readJSONSync } from 'utility';
 
 import utils from '../utils/index.ts';
 
@@ -14,7 +14,7 @@ export interface LoaderFS {
   exists(filepath: string): boolean;
   stat(filepath: string): Stats;
   realpath(filepath: string): string;
-  readJSON<T = unknown>(filepath: string): Promise<T>;
+  readJSON<T = unknown>(filepath: string): T;
   glob(patterns: string | string[], options?: LoaderFSGlobOptions): string[];
   loadFile(filepath: string): Promise<any>;
 }
@@ -32,8 +32,8 @@ export class RealLoaderFS implements LoaderFS {
     return fs.realpathSync(filepath);
   }
 
-  async readJSON<T = unknown>(filepath: string): Promise<T> {
-    return readJSON(filepath) as Promise<T>;
+  readJSON<T = unknown>(filepath: string): T {
+    return readJSONSync(filepath) as T;
   }
 
   glob(patterns: string | string[], options?: LoaderFSGlobOptions): string[] {

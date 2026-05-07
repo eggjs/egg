@@ -61,6 +61,8 @@ export interface FileLoaderParseItem {
   exports: object | Fun;
 }
 
+type NormalizedFileLoaderOptions = FileLoaderOptions & Required<Pick<FileLoaderOptions, 'caseStyle' | 'loaderFS'>>;
+
 function getDefaultFileLoaderMatch(): string[] {
   return isSupportTypeScript() ? ['**/*.(js|ts)', '!**/*.d.ts'] : ['**/*.js'];
 }
@@ -82,7 +84,7 @@ export class FileLoader {
     return getDefaultFileLoaderMatch();
   }
 
-  readonly options: FileLoaderOptions & Required<Pick<FileLoaderOptions, 'caseStyle' | 'loaderFS'>>;
+  readonly options: NormalizedFileLoaderOptions;
 
   /**
    * @class
@@ -268,8 +270,8 @@ function getProperties(filepath: string, caseStyle: CaseStyle | CaseStyleFunctio
 
 // Get exports from filepath
 // If exports is null/undefined, it will be ignored
-async function getExports(fullpath: string, options: FileLoaderOptions, pathName: string): Promise<any> {
-  let exports = await (options.loaderFS ?? new RealLoaderFS()).loadFile(fullpath);
+async function getExports(fullpath: string, options: NormalizedFileLoaderOptions, pathName: string): Promise<any> {
+  let exports = await options.loaderFS.loadFile(fullpath);
   // process exports as you like
   if (options.initializer) {
     exports = options.initializer(exports, { path: fullpath, pathName });
