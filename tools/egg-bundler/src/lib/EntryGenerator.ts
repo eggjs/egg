@@ -274,6 +274,27 @@ const __framework = ${frameworkSpec};
 const MANIFEST_DATA = ${manifestJson} as const;
 const __APP_ABSOLUTE_ALIASES: Array<[string, string]> = ${appAbsoluteAliases};
 const __APP_RESOLVE_CACHE_ALIASES: Array<[string, string]> = ${appResolveCacheAliases};
+const __restoreBundleRuntimePath = (filepath: string) => {
+  if (!filepath || path.isAbsolute(filepath)) return filepath;
+  return path.resolve(__outputDir, filepath);
+};
+const __restoreBundleManifest = (manifest: typeof MANIFEST_DATA) => {
+  const restored = JSON.parse(JSON.stringify(manifest));
+  const tegg = restored.extensions?.tegg;
+  if (tegg?.moduleReferences) {
+    tegg.moduleReferences = tegg.moduleReferences.map((ref) => ({
+      ...ref,
+      path: __restoreBundleRuntimePath(ref.path),
+    }));
+  }
+  if (tegg?.moduleDescriptors) {
+    tegg.moduleDescriptors = tegg.moduleDescriptors.map((desc) => ({
+      ...desc,
+      unitPath: __restoreBundleRuntimePath(desc.unitPath),
+    }));
+  }
+  return restored;
+};
 
 const __BUNDLE_MAP_REL: Record<string, unknown> = {
 ${mapLines.join('\n')}
@@ -315,7 +336,8 @@ for (const [appAbsRequest, targetRel] of __APP_RESOLVE_CACHE_ALIASES) {
   }
 }
 
-ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA as any, __outputDir));
+const __RUNTIME_MANIFEST_DATA = __restoreBundleManifest(MANIFEST_DATA);
+ManifestStore.setBundleStore(ManifestStore.fromBundle(__RUNTIME_MANIFEST_DATA as any, __outputDir));
 globalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath) => {
   return __getBundleMap(filepath);
 };

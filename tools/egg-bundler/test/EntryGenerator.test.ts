@@ -226,7 +226,7 @@ describe('EntryGenerator', () => {
 
     expect(worker).toContain("import { ManifestStore } from '@eggjs/core'");
     expect(worker).toContain('import { startEgg } from "egg"');
-    expect(worker).toContain('ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA');
+    expect(worker).toContain('ManifestStore.setBundleStore(ManifestStore.fromBundle(__RUNTIME_MANIFEST_DATA');
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain('__setBundleMap(__framework, __frameworkModule)');
     expect(worker).not.toContain('__frameworkImport');
@@ -364,6 +364,155 @@ export async function startEgg(options) {
     expect(runtimeResult.frameworkResolved).toBe('bundled-framework');
     expect(runtimeResult.frameworkStartEggMatches).toBe(true);
     expect(runtimeResult.controllerResolved).toBe('bundled-controller');
+  });
+
+  it('restores tegg manifest paths so bundled controller/service/repository modules load by runtime path', async () => {
+    const resultFile = path.join(tmpDir, 'runtime-result.json');
+    const moduleDir = path.join(tmpDir, 'modules/foo');
+    await fs.writeFile(path.join(tmpDir, 'package.json'), JSON.stringify({ type: 'module' }));
+    await fs.mkdir(moduleDir, { recursive: true });
+    await fs.writeFile(
+      path.join(moduleDir, 'package.json'),
+      JSON.stringify({ type: 'module', eggModule: { name: 'foo' } }),
+    );
+    await fs.writeFile(
+      path.join(moduleDir, 'FooRepository.ts'),
+      `
+export class FooRepository {
+  static publicPrototype = { kind: 'repository', accessLevel: 'PUBLIC' };
+}
+`,
+    );
+    await fs.writeFile(
+      path.join(moduleDir, 'FooService.ts'),
+      `
+import { FooRepository } from './FooRepository.ts';
+
+export class FooService {
+  static publicPrototype = { kind: 'service', accessLevel: 'PUBLIC' };
+  static dependencies = [FooRepository.publicPrototype.kind];
+}
+`,
+    );
+    await fs.writeFile(
+      path.join(moduleDir, 'FooController.ts'),
+      `
+import { FooService } from './FooService.ts';
+
+export class FooController {
+  static decoratedController = { path: '/foo', serviceAccess: FooService.publicPrototype.accessLevel };
+}
+`,
+    );
+    await writePackage(
+      path.join(tmpDir, 'node_modules/@eggjs/core'),
+      `
+export const ManifestStore = {
+  fromBundle(manifest, baseDir) {
+    return { manifest, baseDir };
+  },
+  setBundleStore(store) {
+    globalThis.__manifestStore = store;
+  },
+};
+`,
+    );
+    await writePackage(
+      path.join(tmpDir, 'node_modules/@runtime/framework'),
+      `
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+export async function startEgg() {
+  const loader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
+  const manifest = globalThis.__manifestStore.manifest;
+  const tegg = manifest.extensions.tegg;
+  const desc = tegg.moduleDescriptors[0];
+  const runtimeFiles = desc.decoratedFiles.map((file) => path.join(desc.unitPath, file));
+  const runtimeModules = runtimeFiles.map((file) => loader(file));
+  const originalServiceFile = path.join(process.env.ORIGINAL_BASE_DIR, 'modules/foo/FooService.ts');
+  const originalServiceModule = loader(originalServiceFile);
+  await fs.writeFile(process.env.EGG_RUNTIME_RESULT, JSON.stringify({
+    manifestBaseDir: globalThis.__manifestStore.baseDir,
+    moduleReferencePath: tegg.moduleReferences[0].path,
+    descriptorUnitPath: desc.unitPath,
+    decoratedFiles: desc.decoratedFiles,
+    runtimeModuleNames: runtimeModules.flatMap((mod) => Object.keys(mod)),
+    serviceAccessLevel: runtimeModules[1].FooService.publicPrototype.accessLevel,
+    repositoryDependency: runtimeModules[1].FooService.dependencies[0],
+    controllerServiceAccess: runtimeModules[2].FooController.decoratedController.serviceAccess,
+    originalAbsoluteAliasAccessLevel: originalServiceModule.FooService.publicPrototype.accessLevel,
+  }, null, 2));
+  return {
+    config: { cluster: { listen: { port: 0 } } },
+    listen(_port, callback) {
+      callback();
+    },
+  };
+}
+`,
+    );
+
+    const manifest = makeManifest({
+      extensions: {
+        tegg: {
+          moduleReferences: [
+            {
+              name: 'foo',
+              path: 'modules/foo',
+            },
+          ],
+          moduleDescriptors: [
+            {
+              name: 'foo',
+              unitPath: 'modules/foo',
+              decoratedFiles: ['FooRepository.ts', 'FooService.ts', 'FooController.ts'],
+            },
+          ],
+        },
+      },
+    });
+    const outputDir = path.join(tmpDir, 'dist');
+    const gen = new EntryGenerator({
+      baseDir: tmpDir,
+      outputDir,
+      framework: '@runtime/framework',
+      manifestLoader: createFakeLoader(manifest),
+    });
+    const result = await gen.generate();
+
+    await execaNode(result.workerEntry, [], {
+      cwd: tmpDir,
+      env: {
+        ...process.env,
+        EGG_RUNTIME_RESULT: resultFile,
+        ORIGINAL_BASE_DIR: tmpDir,
+      },
+      nodeOptions: ['--experimental-strip-types'],
+      timeout: 5_000,
+    });
+
+    const runtimeResult = JSON.parse(await fs.readFile(resultFile, 'utf8')) as {
+      manifestBaseDir: string;
+      moduleReferencePath: string;
+      descriptorUnitPath: string;
+      decoratedFiles: string[];
+      runtimeModuleNames: string[];
+      serviceAccessLevel: string;
+      repositoryDependency: string;
+      controllerServiceAccess: string;
+      originalAbsoluteAliasAccessLevel: string;
+    };
+    const runtimeModuleDir = path.join(outputDir, 'modules/foo');
+    expect(runtimeResult.manifestBaseDir).toBe(outputDir);
+    expect(runtimeResult.moduleReferencePath).toBe(runtimeModuleDir);
+    expect(runtimeResult.descriptorUnitPath).toBe(runtimeModuleDir);
+    expect(runtimeResult.decoratedFiles).toEqual(['FooRepository.ts', 'FooService.ts', 'FooController.ts']);
+    expect(runtimeResult.runtimeModuleNames).toEqual(['FooRepository', 'FooService', 'FooController']);
+    expect(runtimeResult.serviceAccessLevel).toBe('PUBLIC');
+    expect(runtimeResult.repositoryDependency).toBe('repository');
+    expect(runtimeResult.controllerServiceAccess).toBe('PUBLIC');
+    expect(runtimeResult.originalAbsoluteAliasAccessLevel).toBe('PUBLIC');
   });
 
   it('loads externalized package files via createRequire instead of static imports', async () => {
