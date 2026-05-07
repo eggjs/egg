@@ -26,7 +26,7 @@ trying to polyfill the full Node.js `fs` module.
 
 `RealLoaderFS` is the default implementation. It preserves normal non-bundled
 runtime behavior by delegating to `fs.existsSync`, `fs.statSync`,
-`fs.realpathSync`, `utility.readJSON`, `globby.sync`, and the existing
+`fs.realpathSync`, `utility.readJSONSync`, `globby.sync`, and the existing
 `utils.loadFile()` helper.
 
 `EggLoaderOptions`, `FileLoaderOptions`, and `ContextLoaderOptions` can carry a
