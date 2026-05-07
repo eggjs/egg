@@ -33,6 +33,17 @@ Applications can also provide stable bundle configuration in
 
 ```yaml
 bundle:
+  runtimeAssets:
+    # Optional. When omitted, defaults to app.
+    # When present, this list replaces the default runtime asset scan roots.
+    roots:
+      - app
+    # Optional. When omitted, defaults to app/public, app/assets, and app/static.
+    # When present, this list replaces the default force-copy directories.
+    forceCopyDirs:
+      - app/public
+      - app/assets
+      - app/static
   pack:
     resolve:
       alias:
@@ -42,7 +53,11 @@ bundle:
 Dot-relative alias targets are resolved from `baseDir`; package-style and
 absolute targets are passed through. Aliases supplied directly through the
 programmatic `pack.resolve.alias` option override aliases with the same key from
-`module.yml`.
+`module.yml`. `runtimeAssets.forceCopyDirs` entries are bundle-output relative
+paths that are copied even when their files use source-like extensions such as
+`.js` or `.ts`. `runtimeAssets.roots` entries are baseDir-relative directories
+that are scanned for runtime assets and preserve that same relative path in the
+bundle output.
 
 If the startup manifest is missing, the bundler generates it by starting the app
 with `metadataOnly: true`. In that mode Egg skips the agent and normal boot
@@ -52,19 +67,21 @@ not run.
 
 ## Options
 
-| Option               | Description                                                                     |
-| -------------------- | ------------------------------------------------------------------------------- |
-| `baseDir`            | Application root directory. Required.                                           |
-| `outputDir`          | Output directory for the bundled artifact. Required.                            |
-| `manifestPath`       | Path to `manifest.json`. Defaults to `<baseDir>/.egg/manifest.json`.            |
-| `framework`          | Framework package specifier. Defaults to `egg`; absolute paths are unsupported. |
-| `mode`               | Build mode, `production` or `development`. Defaults to `production`.            |
-| `tegg`               | Accepted by `BundlerConfig`, but not applied by the current implementation yet. |
-| `externals.force`    | Package names to always keep external.                                          |
-| `externals.inline`   | Package names to force inline even if auto-detected as external.                |
-| `pack.buildFunc`     | Test hook for replacing the real `@utoo/pack` build entry.                      |
-| `pack.rootPath`      | Override the monorepo workspace root used by `@utoo/pack`.                      |
-| `pack.resolve.alias` | Application-supplied `@utoo/pack` resolve aliases; overrides `module.yml`.      |
+| Option                        | Description                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------------- |
+| `baseDir`                     | Application root directory. Required.                                           |
+| `outputDir`                   | Output directory for the bundled artifact. Required.                            |
+| `manifestPath`                | Path to `manifest.json`. Defaults to `<baseDir>/.egg/manifest.json`.            |
+| `framework`                   | Framework package specifier. Defaults to `egg`; absolute paths are unsupported. |
+| `mode`                        | Build mode, `production` or `development`. Defaults to `production`.            |
+| `tegg`                        | Accepted by `BundlerConfig`, but not applied by the current implementation yet. |
+| `externals.force`             | Package names to always keep external.                                          |
+| `externals.inline`            | Package names to force inline even if auto-detected as external.                |
+| `runtimeAssets.roots`         | BaseDir-relative runtime asset scan roots; overrides `module.yml`.              |
+| `runtimeAssets.forceCopyDirs` | Relative dirs copied even for source-like files; overrides `module.yml`.        |
+| `pack.buildFunc`              | Test hook for replacing the real `@utoo/pack` build entry.                      |
+| `pack.rootPath`               | Override the monorepo workspace root used by `@utoo/pack`.                      |
+| `pack.resolve.alias`          | Application-supplied `@utoo/pack` resolve aliases; overrides `module.yml`.      |
 
 ## Result
 

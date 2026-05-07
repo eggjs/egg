@@ -39,8 +39,21 @@ const TURBOPACK_IMPORT_META_OBJECT =
 const LINE_SOURCE_MAP_URL = /(?:\r?\n)?\/\/# sourceMappingURL=([^\r\n]*)\s*$/;
 const BLOCK_SOURCE_MAP_URL = /(?:\r?\n)?\/\*# sourceMappingURL=([\s\S]*?)\*\/\s*$/;
 const UNSAFE_ALIAS_SPECIFIERS = new Set(['__proto__', 'constructor', 'prototype']);
+const DEFAULT_RUNTIME_ASSET_ROOTS = ['app'];
+const DEFAULT_FORCE_COPY_RUNTIME_ASSET_DIRS = ['app/public', 'app/assets', 'app/static'];
+const BUNDLED_SOURCE_EXTENSIONS = new Set(['.cjs', '.cts', '.js', '.jsx', '.mjs', '.mts', '.ts', '.tsx']);
 
 type JsonRecord = Record<string, unknown>;
+
+interface ModuleBundleConfig {
+  readonly pack?: BundlerConfig['pack'];
+  readonly runtimeAssets?: BundlerConfig['runtimeAssets'];
+}
+
+interface ResolvedRuntimeAssetsConfig {
+  readonly roots: readonly string[];
+  readonly forceCopyDirs: readonly string[];
+}
 
 interface BundleManifest {
   readonly version: number;
@@ -82,7 +95,43 @@ function validateModulePackAliasSpecifier(filepath: string, specifier: string): 
   }
 }
 
-function parseModuleBundlePackConfig(filepath: string, baseDir: string, rawConfig: unknown): BundlerConfig['pack'] {
+function normalizeRuntimeAssetDir(filepath: string, configPath: string, dir: string): string {
+  let rel: string;
+  try {
+    rel = sanitizeBundleOutputRelativePath(dir);
+  } catch (err) {
+    throw new Error(
+      `Invalid bundle config in ${filepath}: ${configPath} contains unsafe path ${JSON.stringify(dir)}.`,
+      { cause: err },
+    );
+  }
+  if (rel.endsWith('/')) {
+    throw new Error(`Invalid bundle config in ${filepath}: ${configPath} contains ${dir}.`);
+  }
+  return rel;
+}
+
+function normalizeRuntimeAssetRoot(filepath: string, root: string): string {
+  return normalizeRuntimeAssetDir(filepath, 'bundle.runtimeAssets.roots', root);
+}
+
+function normalizeRuntimeAssetRoots(filepath: string, roots: readonly string[]): readonly string[] {
+  return Array.from(new Set(roots.map((root) => normalizeRuntimeAssetRoot(filepath, root))));
+}
+
+function normalizeRuntimeAssetForceCopyDir(filepath: string, dir: string): string {
+  return normalizeRuntimeAssetDir(filepath, 'bundle.runtimeAssets.forceCopyDirs', dir);
+}
+
+function normalizeRuntimeAssetForceCopyDirs(filepath: string, dirs: readonly string[]): readonly string[] {
+  return Array.from(new Set(dirs.map((dir) => normalizeRuntimeAssetForceCopyDir(filepath, dir))));
+}
+
+function parseModuleBundleConfig(
+  filepath: string,
+  baseDir: string,
+  rawConfig: unknown,
+): ModuleBundleConfig | undefined {
   if (rawConfig == null) return undefined;
   if (!isRecord(rawConfig)) {
     throw new Error(`Invalid bundle config in ${filepath}: module.yml must contain an object.`);
@@ -94,6 +143,17 @@ function parseModuleBundlePackConfig(filepath: string, baseDir: string, rawConfi
     throw new Error(`Invalid bundle config in ${filepath}: bundle must be an object.`);
   }
 
+  return {
+    pack: parseModuleBundlePackConfig(filepath, baseDir, bundleConfig),
+    runtimeAssets: parseModuleBundleRuntimeAssetsConfig(filepath, bundleConfig),
+  };
+}
+
+function parseModuleBundlePackConfig(
+  filepath: string,
+  baseDir: string,
+  bundleConfig: JsonRecord,
+): BundlerConfig['pack'] {
   const packConfig = bundleConfig.pack;
   if (packConfig == null) return undefined;
   if (!isRecord(packConfig)) {
@@ -126,7 +186,57 @@ function parseModuleBundlePackConfig(filepath: string, baseDir: string, rawConfi
   return Object.keys(alias).length > 0 ? { resolve: { alias } } : undefined;
 }
 
-async function loadModuleBundlePackConfig(baseDir: string): Promise<BundlerConfig['pack']> {
+function parseModuleBundleRuntimeAssetsConfig(
+  filepath: string,
+  bundleConfig: JsonRecord,
+): BundlerConfig['runtimeAssets'] {
+  const runtimeAssetsConfig = bundleConfig.runtimeAssets;
+  if (runtimeAssetsConfig == null) return undefined;
+  if (!isRecord(runtimeAssetsConfig)) {
+    throw new Error(`Invalid bundle config in ${filepath}: bundle.runtimeAssets must be an object.`);
+  }
+
+  const rootsConfig = runtimeAssetsConfig.roots;
+  let roots: readonly string[] | undefined;
+  if (rootsConfig != null) {
+    if (!Array.isArray(rootsConfig)) {
+      throw new Error(`Invalid bundle config in ${filepath}: bundle.runtimeAssets.roots must be an array.`);
+    }
+    roots = rootsConfig.map((root, index) => {
+      if (typeof root !== 'string' || root.length === 0) {
+        throw new Error(
+          `Invalid bundle config in ${filepath}: bundle.runtimeAssets.roots[${index}] must be a non-empty string.`,
+        );
+      }
+      return normalizeRuntimeAssetRoot(filepath, root);
+    });
+  }
+
+  const forceCopyDirsConfig = runtimeAssetsConfig.forceCopyDirs;
+  let forceCopyDirs: readonly string[] | undefined;
+  if (forceCopyDirsConfig != null) {
+    if (!Array.isArray(forceCopyDirsConfig)) {
+      throw new Error(`Invalid bundle config in ${filepath}: bundle.runtimeAssets.forceCopyDirs must be an array.`);
+    }
+    forceCopyDirs = forceCopyDirsConfig.map((dir, index) => {
+      if (typeof dir !== 'string' || dir.length === 0) {
+        throw new Error(
+          `Invalid bundle config in ${filepath}: bundle.runtimeAssets.forceCopyDirs[${index}] must be a non-empty string.`,
+        );
+      }
+      return normalizeRuntimeAssetForceCopyDir(filepath, dir);
+    });
+  }
+
+  if (roots == null && forceCopyDirs == null) return undefined;
+
+  return {
+    ...(roots == null ? {} : { roots: normalizeRuntimeAssetRoots(filepath, roots) }),
+    ...(forceCopyDirs == null ? {} : { forceCopyDirs: normalizeRuntimeAssetForceCopyDirs(filepath, forceCopyDirs) }),
+  };
+}
+
+async function loadModuleBundleConfig(baseDir: string): Promise<ModuleBundleConfig | undefined> {
   const filepath = path.join(baseDir, 'module.yml');
   let content: string;
   try {
@@ -145,7 +255,7 @@ async function loadModuleBundlePackConfig(baseDir: string): Promise<BundlerConfi
     throw new Error(`Unable to parse ${filepath}: ${getErrorMessage(err)}`, { cause: err });
   }
 
-  return parseModuleBundlePackConfig(filepath, baseDir, rawConfig);
+  return parseModuleBundleConfig(filepath, baseDir, rawConfig);
 }
 
 function mergePackConfig(
@@ -166,6 +276,20 @@ function mergePackConfig(
   return {
     ...explicitPack,
     ...(Object.keys(resolve).length > 0 ? { resolve } : {}),
+  };
+}
+
+function mergeRuntimeAssetsConfig(
+  moduleRuntimeAssets: BundlerConfig['runtimeAssets'],
+  explicitRuntimeAssets: BundlerConfig['runtimeAssets'],
+): ResolvedRuntimeAssetsConfig {
+  const roots = explicitRuntimeAssets?.roots ?? moduleRuntimeAssets?.roots ?? DEFAULT_RUNTIME_ASSET_ROOTS;
+  const forceCopyDirs =
+    explicitRuntimeAssets?.forceCopyDirs ?? moduleRuntimeAssets?.forceCopyDirs ?? DEFAULT_FORCE_COPY_RUNTIME_ASSET_DIRS;
+
+  return {
+    roots: normalizeRuntimeAssetRoots('BundlerConfig', roots),
+    forceCopyDirs: normalizeRuntimeAssetForceCopyDirs('BundlerConfig', forceCopyDirs),
   };
 }
 
@@ -201,16 +325,16 @@ export class Bundler {
       mode = 'production',
       externals,
       pack,
+      runtimeAssets,
     } = this.#config;
 
     const absBaseDir = path.resolve(baseDir);
     const absOutputDir = path.resolve(absBaseDir, rawOutputDir);
     assertFrameworkPackageSpecifier(framework);
     debug('bundle start: baseDir=%s outputDir=%s framework=%s mode=%s', absBaseDir, absOutputDir, framework, mode);
-    const mergedPack = mergePackConfig(
-      await wrapStep('module.yml bundle config load', () => loadModuleBundlePackConfig(absBaseDir)),
-      pack,
-    );
+    const moduleConfig = await wrapStep('module.yml bundle config load', () => loadModuleBundleConfig(absBaseDir));
+    const mergedPack = mergePackConfig(moduleConfig?.pack, pack);
+    const mergedRuntimeAssets = mergeRuntimeAssetsConfig(moduleConfig?.runtimeAssets, runtimeAssets);
 
     const manifestLoader = new ManifestLoader({
       baseDir: absBaseDir,
@@ -259,6 +383,11 @@ export class Bundler {
       patchResult.deletedMapCount,
     );
 
+    const copiedRuntimeAssets = await wrapStep('runtime asset copy', () =>
+      this.#copyRuntimeAssets(absBaseDir, absOutputDir, manifestLoader, mergedRuntimeAssets),
+    );
+    debug('copied %d runtime assets', copiedRuntimeAssets.length);
+
     // Merge project name into output package.json so the framework's
     // getAppname() finds it (it reads baseDir/package.json).
     const outputPkgPath = path.join(absOutputDir, 'package.json');
@@ -282,14 +411,16 @@ export class Bundler {
       framework,
       entries: [{ name: 'worker', source: entries.workerEntry }],
       externals: Object.keys(externalsMap).sort((a, b) => a.localeCompare(b)),
-      chunks: patchResult.outputFiles,
+      chunks: Array.from(new Set([...patchResult.outputFiles, ...copiedRuntimeAssets])).sort((a, b) =>
+        a.localeCompare(b),
+      ),
     };
     await wrapStep('write bundle-manifest', () =>
       fs.writeFile(manifestPathAbs, JSON.stringify(bundleManifest, null, 2)),
     );
 
     // Re-enumerate files so bundle-manifest.json is included in the result.
-    const finalRelFiles = new Set<string>(patchResult.outputFiles);
+    const finalRelFiles = new Set<string>(bundleManifest.chunks);
     finalRelFiles.add(BUNDLE_MANIFEST_FILENAME);
     const files = Array.from(finalRelFiles)
       .map((rel) => path.join(absOutputDir, rel))
@@ -300,6 +431,96 @@ export class Bundler {
       files,
       manifestPath: manifestPathAbs,
     };
+  }
+
+  async #copyRuntimeAssets(
+    baseDir: string,
+    outputDir: string,
+    manifestLoader: ManifestLoader,
+    runtimeAssetsConfig: ResolvedRuntimeAssetsConfig,
+  ): Promise<readonly string[]> {
+    const copied = new Set<string>();
+    const bundledSourceFiles = new Set<string>();
+    for (const filepath of manifestLoader.getAllDiscoveredFiles()) {
+      bundledSourceFiles.add(filepath);
+    }
+    for (const filepath of manifestLoader.getTeggDecoratedFiles()) {
+      bundledSourceFiles.add(filepath);
+    }
+    for (const value of Object.values(manifestLoader.manifest.resolveCache)) {
+      if (typeof value === 'string') bundledSourceFiles.add(path.resolve(baseDir, value));
+    }
+
+    for (const root of runtimeAssetsConfig.roots) {
+      const absRoot = path.join(baseDir, root);
+      await this.#copyRuntimeAssetsUnderRoot(
+        baseDir,
+        outputDir,
+        absRoot,
+        bundledSourceFiles,
+        copied,
+        runtimeAssetsConfig,
+      );
+    }
+
+    return Array.from(copied).sort((a, b) => a.localeCompare(b));
+  }
+
+  async #copyRuntimeAssetsUnderRoot(
+    baseDir: string,
+    outputDir: string,
+    dir: string,
+    bundledSourceFiles: ReadonlySet<string>,
+    copied: Set<string>,
+    runtimeAssetsConfig: ResolvedRuntimeAssetsConfig,
+  ): Promise<void> {
+    let entries: import('node:fs').Dirent[];
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code === 'ENOENT') return;
+      throw err;
+    }
+
+    entries.sort((a, b) => a.name.localeCompare(b.name));
+    for (const entry of entries) {
+      const filepath = path.join(dir, entry.name);
+      if (this.#isInsideDir(outputDir, filepath)) continue;
+      // Dirent flags from withFileTypes are not followed here; symlinked app
+      // assets are skipped so a link cannot escape baseDir/app during copying.
+      if (entry.isSymbolicLink()) continue;
+      if (this.#shouldSkipRuntimeAssetEntry(entry.name)) continue;
+
+      if (entry.isDirectory()) {
+        await this.#copyRuntimeAssetsUnderRoot(
+          baseDir,
+          outputDir,
+          filepath,
+          bundledSourceFiles,
+          copied,
+          runtimeAssetsConfig,
+        );
+        continue;
+      }
+
+      if (!entry.isFile()) continue;
+      const rel = this.#sanitizeOutputRelativePath(path.relative(baseDir, filepath));
+      if (bundledSourceFiles.has(filepath) || !this.#shouldCopyRuntimeAsset(rel, runtimeAssetsConfig)) continue;
+
+      const target = path.join(outputDir, rel);
+      await fs.mkdir(path.dirname(target), { recursive: true });
+      await fs.copyFile(filepath, target);
+      copied.add(rel);
+    }
+  }
+
+  #shouldSkipRuntimeAssetEntry(name: string): boolean {
+    return name === 'node_modules' || name.startsWith('.');
+  }
+
+  #shouldCopyRuntimeAsset(rel: string, runtimeAssetsConfig: ResolvedRuntimeAssetsConfig): boolean {
+    if (runtimeAssetsConfig.forceCopyDirs.some((dir) => rel === dir || rel.startsWith(`${dir}/`))) return true;
+    return !BUNDLED_SOURCE_EXTENSIONS.has(path.posix.extname(rel));
   }
 
   async #patchImportMetaOutput(

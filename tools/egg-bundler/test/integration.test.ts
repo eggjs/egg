@@ -433,6 +433,148 @@ const __dirname = "/generated/shadow";
     expect(entrySource).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(entrySource).toContain('startEgg');
   });
+
+  it('copies app runtime assets next to the bundle while preserving baseDir-relative readFile paths', async () => {
+    await fs.mkdir(path.join(tmpApp, 'app/port'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'app/port/binary.html'), '<html>binary</html>\n');
+    await fs.writeFile(path.join(tmpApp, 'app/port/login.html'), '<html>login</html>\n');
+    await fs.writeFile(path.join(tmpApp, 'app/port/helper.ts'), 'export const helper = true;\n');
+    await fs.mkdir(path.join(tmpApp, 'app/public'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'app/public/client.js'), 'globalThis.clientAsset = true;\n');
+    await fs.writeFile(path.join(tmpApp, 'app/public/app.ts'), 'export const publicAsset = true;\n');
+    await fs.mkdir(path.join(tmpApp, 'app/controller'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'app/controller/home.ts'), 'export {};\n');
+    await fs.mkdir(path.join(tmpApp, 'app/public/node_modules/ignored'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'app/.env'), 'TOKEN=secret\n');
+    await fs.writeFile(path.join(tmpApp, 'app/public/.hidden'), 'secret\n');
+    await fs.writeFile(path.join(tmpApp, 'app/public/node_modules/ignored/client.js'), 'globalThis.ignored = true;\n');
+
+    const result = await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: { buildFunc: makeMockBuild() },
+    });
+
+    await expect(fs.readFile(path.join(tmpOutput, 'app/port/binary.html'), 'utf8')).resolves.toBe(
+      '<html>binary</html>\n',
+    );
+    await expect(fs.readFile(path.join(tmpOutput, 'app/port/login.html'), 'utf8')).resolves.toBe(
+      '<html>login</html>\n',
+    );
+    await expect(fs.readFile(path.join(tmpOutput, 'app/public/client.js'), 'utf8')).resolves.toBe(
+      'globalThis.clientAsset = true;\n',
+    );
+    await expect(fs.readFile(path.join(tmpOutput, 'app/public/app.ts'), 'utf8')).resolves.toBe(
+      'export const publicAsset = true;\n',
+    );
+    await expect(fs.stat(path.join(tmpOutput, 'app/controller/home.ts'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(fs.stat(path.join(tmpOutput, 'app/port/helper.ts'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(fs.stat(path.join(tmpOutput, 'app/.env'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(fs.stat(path.join(tmpOutput, 'app/public/.hidden'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(fs.stat(path.join(tmpOutput, 'app/public/node_modules'))).rejects.toMatchObject({ code: 'ENOENT' });
+
+    const bm = JSON.parse(await fs.readFile(result.manifestPath, 'utf8')) as { chunks: string[] };
+    expect(bm.chunks).toEqual(
+      expect.arrayContaining([
+        'app/port/binary.html',
+        'app/port/login.html',
+        'app/public/app.ts',
+        'app/public/client.js',
+      ]),
+    );
+    expect(result.files).toEqual(
+      expect.arrayContaining([
+        path.join(tmpOutput, 'app/port/binary.html'),
+        path.join(tmpOutput, 'app/port/login.html'),
+        path.join(tmpOutput, 'app/public/app.ts'),
+        path.join(tmpOutput, 'app/public/client.js'),
+      ]),
+    );
+
+    // Non-bundle mode keeps using the original app baseDir; bundle mode uses
+    // outputDir as baseDir, and the copied asset keeps the same relative path.
+    await expect(fs.readFile(path.join(tmpApp, 'app/port/binary.html'), 'utf8')).resolves.toBe('<html>binary</html>\n');
+    await expect(fs.readFile(path.join(tmpOutput, 'app/port/binary.html'), 'utf8')).resolves.toBe(
+      '<html>binary</html>\n',
+    );
+  });
+
+  it('uses module.yml bundle.runtimeAssets.forceCopyDirs to force-copy source-like assets', async () => {
+    await fs.writeFile(
+      path.join(tmpApp, 'module.yml'),
+      ['bundle:', '  runtimeAssets:', '    forceCopyDirs:', '      - app/port'].join('\n'),
+    );
+    await fs.mkdir(path.join(tmpApp, 'app/port'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'app/port/helper.ts'), 'export const helper = true;\n');
+    await fs.writeFile(path.join(tmpApp, 'app/port/binary.html'), '<html>binary</html>\n');
+    await fs.mkdir(path.join(tmpApp, 'app/public'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'app/public/client.js'), 'globalThis.clientAsset = true;\n');
+
+    const result = await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: { buildFunc: makeMockBuild() },
+    });
+
+    await expect(fs.readFile(path.join(tmpOutput, 'app/port/helper.ts'), 'utf8')).resolves.toBe(
+      'export const helper = true;\n',
+    );
+    await expect(fs.readFile(path.join(tmpOutput, 'app/port/binary.html'), 'utf8')).resolves.toBe(
+      '<html>binary</html>\n',
+    );
+    await expect(fs.stat(path.join(tmpOutput, 'app/public/client.js'))).rejects.toMatchObject({ code: 'ENOENT' });
+
+    const bm = JSON.parse(await fs.readFile(result.manifestPath, 'utf8')) as { chunks: string[] };
+    expect(bm.chunks).toEqual(expect.arrayContaining(['app/port/binary.html', 'app/port/helper.ts']));
+    expect(result.files).toEqual(
+      expect.arrayContaining([
+        path.join(tmpOutput, 'app/port/binary.html'),
+        path.join(tmpOutput, 'app/port/helper.ts'),
+      ]),
+    );
+  });
+
+  it('uses module.yml bundle.runtimeAssets.roots to choose runtime asset scan roots', async () => {
+    await fs.writeFile(
+      path.join(tmpApp, 'module.yml'),
+      [
+        'bundle:',
+        '  runtimeAssets:',
+        '    roots:',
+        '      - resources',
+        '    forceCopyDirs:',
+        '      - resources/port',
+      ].join('\n'),
+    );
+    await fs.mkdir(path.join(tmpApp, 'resources/port'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'resources/port/login.html'), '<html>login</html>\n');
+    await fs.writeFile(path.join(tmpApp, 'resources/port/helper.ts'), 'export const helper = true;\n');
+    await fs.mkdir(path.join(tmpApp, 'app/port'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'app/port/binary.html'), '<html>binary</html>\n');
+
+    const result = await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: { buildFunc: makeMockBuild() },
+    });
+
+    await expect(fs.readFile(path.join(tmpOutput, 'resources/port/login.html'), 'utf8')).resolves.toBe(
+      '<html>login</html>\n',
+    );
+    await expect(fs.readFile(path.join(tmpOutput, 'resources/port/helper.ts'), 'utf8')).resolves.toBe(
+      'export const helper = true;\n',
+    );
+    await expect(fs.stat(path.join(tmpOutput, 'app/port/binary.html'))).rejects.toMatchObject({ code: 'ENOENT' });
+
+    const bm = JSON.parse(await fs.readFile(result.manifestPath, 'utf8')) as { chunks: string[] };
+    expect(bm.chunks).toEqual(expect.arrayContaining(['resources/port/helper.ts', 'resources/port/login.html']));
+    expect(result.files).toEqual(
+      expect.arrayContaining([
+        path.join(tmpOutput, 'resources/port/helper.ts'),
+        path.join(tmpOutput, 'resources/port/login.html'),
+      ]),
+    );
+  });
 });
 
 describe('bundle() integration — minimal-app (Phase 2: real @utoo/pack)', () => {
