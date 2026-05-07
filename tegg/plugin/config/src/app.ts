@@ -4,7 +4,7 @@ import { debuglog } from 'node:util';
 
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
-import { TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
+import { restoreManifestModulePath, restoreTeggManifestExtension, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import type { Application, ILifecycleBoot } from 'egg';
 
@@ -40,7 +40,7 @@ export default class App implements ILifecycleBoot {
 
     let moduleReferences: readonly ModuleReference[];
     if (manifestTegg?.moduleReferences?.length) {
-      moduleReferences = manifestTegg.moduleReferences;
+      moduleReferences = restoreTeggManifestExtension(manifestTegg, this.app.baseDir).moduleReferences;
       debug('load moduleReferences from manifest: %o', moduleReferences);
     } else {
       // Auto-exclude outDir (e.g. dist/) from module scanning to avoid
@@ -69,7 +69,7 @@ export default class App implements ILifecycleBoot {
     this.app.moduleConfigs = {};
     for (const reference of this.app.moduleReferences) {
       const absoluteRef: ModuleReference = {
-        path: ModuleConfigUtil.resolveModuleDir(reference.path, this.app.baseDir),
+        path: restoreManifestModulePath(reference.path, this.app.baseDir),
         name: reference.name,
         optional: reference.optional,
       };

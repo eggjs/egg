@@ -1,6 +1,6 @@
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
-import { LoaderFactory, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
+import { LoaderFactory, restoreTeggManifestExtension, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import type { ModuleReference } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
@@ -38,7 +38,10 @@ export class EggModuleLoader {
     // Pass manifest data to LoaderFactory if available
     const manifest = this.app.loader.manifest;
     const manifestTegg = manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined;
-    const loadAppManifest = manifestTegg?.moduleDescriptors?.length ? manifestTegg : undefined;
+    const restoredManifestTegg = manifestTegg
+      ? restoreTeggManifestExtension(manifestTegg, this.app.baseDir)
+      : undefined;
+    const loadAppManifest = restoredManifestTegg?.moduleDescriptors?.length ? restoredManifestTegg : undefined;
 
     const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest);
 
