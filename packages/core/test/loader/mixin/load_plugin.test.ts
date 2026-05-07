@@ -5,7 +5,7 @@ import path from 'node:path';
 import { mm } from 'mm';
 import { describe, it, afterEach } from 'vitest';
 
-import { EggCore, EggLoader } from '../../../src/index.js';
+import { EggCore, EggLoader, ManifestStore, type StartupManifest } from '../../../src/index.js';
 import { createApp, getFilepath, type Application } from '../../helper.js';
 
 // windows path is case-insensitive, the equal assert will fail
@@ -14,6 +14,7 @@ describe.skipIf(process.platform === 'win32')('test/loader/mixin/load_plugin.tes
 
   afterEach(async () => {
     mm.restore();
+    ManifestStore.setBundleStore(undefined);
     if (app) {
       await app.close();
     }
@@ -39,6 +40,57 @@ describe.skipIf(process.platform === 'win32')('test/loader/mixin/load_plugin.tes
     assert('customPlugins' in loader);
     assert('eggPlugins' in loader);
     assert(loader.plugins.a.enable);
+  });
+
+  it('should apply bundled loader manifest eggPaths and plugin paths', async () => {
+    const baseDir = getFilepath('plugin');
+    const manifest: StartupManifest = {
+      version: 1,
+      generatedAt: '2026-01-01T00:00:00.000Z',
+      invalidation: {
+        lockfileFingerprint: 'bundle-test',
+        configFingerprint: 'bundle-test',
+        serverEnv: 'unittest',
+        serverScope: '',
+        typescriptEnabled: true,
+      },
+      extensions: {
+        eggLoader: {
+          eggPaths: ['node_modules/egg'],
+          plugins: {
+            virtual: {
+              path: 'node_modules/virtual-plugin',
+            },
+          },
+        },
+      },
+      resolveCache: {},
+      fileDiscovery: {},
+    };
+    const bundleStore = ManifestStore.fromBundle(manifest, baseDir);
+    ManifestStore.setBundleStore(bundleStore);
+
+    app = createApp('plugin');
+    const loader = app.loader;
+    assert.deepEqual(loader.eggPaths, [path.join(baseDir, 'node_modules/egg'), getFilepath('egg-esm')]);
+    mm(loader, 'loadEggPlugins', async () => ({
+      virtual: {
+        enable: true,
+        name: 'virtual',
+        path: baseDir,
+        dependencies: [],
+        optionalDependencies: [],
+        env: [],
+        from: path.join(baseDir, 'config/plugin.js'),
+      },
+    }));
+    mm(loader, 'loadAppPlugins', async () => ({}));
+    mm(loader, 'loadCustomPlugins', () => ({}));
+
+    await loader.loadPlugin();
+
+    assert.equal(loader.allPlugins.virtual.path, path.join(baseDir, 'node_modules/virtual-plugin'));
+    assert.deepEqual(bundleStore.getExtension('eggLoader'), manifest.extensions.eggLoader);
   });
 
   it('should loadConfig all plugins', async () => {

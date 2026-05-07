@@ -12,6 +12,7 @@ const debug = debuglog('egg/bundler/manifest-loader');
 const SUPPORTED_MANIFEST_VERSION = 1;
 const FRAMEWORK_DEFAULT = 'egg';
 const PACKAGE_ENTRY_ACTIVE_CONDITIONS = new Set(['import', 'node', 'default']);
+const LOADER_MANIFEST_EXTENSION = 'eggLoader';
 
 export interface ManifestLoaderOptions {
   baseDir: string;
@@ -43,6 +44,17 @@ interface TeggManifestExtension {
 interface ModuleMapEntry {
   realDir: string;
   normalizedDir: string;
+}
+
+interface LoaderManifestPluginInfo {
+  path?: string;
+  [key: string]: unknown;
+}
+
+interface LoaderManifestExtension {
+  eggPaths?: string[];
+  plugins?: Record<string, LoaderManifestPluginInfo>;
+  [key: string]: unknown;
 }
 
 export class ManifestLoader {
@@ -428,6 +440,28 @@ export class ManifestLoader {
         );
       }
       result.tegg = normalizedTegg;
+    }
+    const eggLoader = extensions?.[LOADER_MANIFEST_EXTENSION] as LoaderManifestExtension | undefined;
+    if (eggLoader) {
+      result[LOADER_MANIFEST_EXTENSION] = {
+        ...eggLoader,
+        eggPaths: eggLoader.eggPaths
+          ? await Promise.all(eggLoader.eggPaths.map((eggPath) => this.#normalizeRelKey(eggPath, moduleMap)))
+          : undefined,
+        plugins: eggLoader.plugins
+          ? Object.fromEntries(
+              await Promise.all(
+                Object.entries(eggLoader.plugins).map(async ([name, plugin]) => [
+                  name,
+                  {
+                    ...plugin,
+                    path: plugin.path ? await this.#normalizeRelKey(plugin.path, moduleMap) : undefined,
+                  },
+                ]),
+              ),
+            )
+          : undefined,
+      };
     }
     return result;
   }

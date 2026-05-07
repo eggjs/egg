@@ -291,7 +291,48 @@ const __setBundleAliases = (rel: string, mod: unknown) => {
     __setBundleMap(path.resolve(__outputDir, rel), mod);
   }
 };
+const __packageName = (specifier: string) => {
+  const parts = specifier.split('/');
+  return specifier.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
+};
+const __packageRoot = (specifier: string) => path.join(__outputDir, 'node_modules', ...__packageName(specifier).split('/'));
+const __toOutputPath = (filepath: string) => (path.isAbsolute(filepath) ? filepath : path.resolve(__outputDir, filepath));
+const __loaderEggPaths = (
+  ((MANIFEST_DATA.extensions as { eggLoader?: { eggPaths?: unknown[] } }).eggLoader?.eggPaths ?? []).filter(
+    (filepath): filepath is string => typeof filepath === 'string',
+  )
+).map(__toOutputPath);
+const __fallbackFrameworkPaths = [
+  __packageRoot(__framework),
+  __framework === 'egg' ? undefined : __packageRoot('egg'),
+].filter((filepath): filepath is string => typeof filepath === 'string');
+const __frameworkPaths = Array.from(
+  new Set(__loaderEggPaths.length > 0 ? __loaderEggPaths : __fallbackFrameworkPaths),
+);
+const __isOutputRootPath = (filepath: unknown) =>
+  typeof filepath === 'string' && path.resolve(__outputDir, filepath) === path.resolve(__outputDir);
+const __patchFrameworkPaths = (Clazz: unknown) => {
+  const proto = (Clazz as { prototype?: Record<string, unknown> } | undefined)?.prototype;
+  if (!proto) return;
+  const original = proto.customEggPaths;
+  const descriptor = Object.getOwnPropertyDescriptor(proto, 'customEggPaths');
+  if (descriptor && !descriptor.configurable && !descriptor.writable) return;
+  Object.defineProperty(proto, 'customEggPaths', {
+    configurable: descriptor?.configurable ?? true,
+    enumerable: descriptor?.enumerable ?? false,
+    writable: descriptor?.writable ?? true,
+    value: function (this: unknown) {
+      const originalPaths = typeof original === 'function' ? original.call(this) : [];
+      const preservedPaths = Array.isArray(originalPaths)
+        ? originalPaths.filter((p: unknown) => !__isOutputRootPath(p))
+        : [];
+      return Array.from(new Set([...__frameworkPaths, ...preservedPaths]));
+    },
+  });
+};
 __setBundleMap(__framework, __frameworkModule);
+__patchFrameworkPaths(__frameworkModule.Application);
+__patchFrameworkPaths(__frameworkModule.Agent);
 for (const [rel, mod] of Object.entries(__BUNDLE_MAP_REL)) {
   __setBundleAliases(rel, mod);
 }

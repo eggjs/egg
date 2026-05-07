@@ -250,6 +250,18 @@ describe('ManifestLoader', () => {
               },
             ],
           },
+          eggLoader: {
+            eggPaths: [directRoot],
+            plugins: {
+              direct: {
+                path: directRoot,
+                dependencies: [],
+              },
+              transitive: {
+                path: transitiveRoot,
+              },
+            },
+          },
         },
       }),
     );
@@ -265,13 +277,27 @@ describe('ManifestLoader', () => {
       'node_modules/direct/node_modules/transitive/entry': 'node_modules/direct/node_modules/transitive/lib/svc.ts',
       'node_modules/optional-native/entry': 'node_modules/optional-native/index.ts',
     });
-    expect(loaded.extensions.tegg).toEqual({
-      moduleDescriptors: [
-        {
-          unitPath: 'node_modules/direct/node_modules/transitive',
-          decoratedFiles: ['lib/svc.ts'],
+    expect(loaded.extensions).toEqual({
+      tegg: {
+        moduleDescriptors: [
+          {
+            unitPath: 'node_modules/direct/node_modules/transitive',
+            decoratedFiles: ['lib/svc.ts'],
+          },
+        ],
+      },
+      eggLoader: {
+        eggPaths: ['node_modules/direct'],
+        plugins: {
+          direct: {
+            path: 'node_modules/direct',
+            dependencies: [],
+          },
+          transitive: {
+            path: 'node_modules/direct/node_modules/transitive',
+          },
         },
-      ],
+      },
     });
     expect(loader.getAllDiscoveredFiles()).toEqual([transitiveFile]);
     expect(loader.getTeggDecoratedFiles()).toEqual([transitiveFile]);
