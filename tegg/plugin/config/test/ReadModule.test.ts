@@ -1,9 +1,10 @@
 import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, beforeAll, expect } from 'vitest';
+import { describe, it, afterAll, beforeAll, expect, vi } from 'vitest';
 
 import AppBootHook from '../src/app.ts';
+import { ModuleScanner } from '../src/lib/ModuleScanner.ts';
 import { getFixtures } from './utils.ts';
 
 describe('plugin/config/test/ReadModule.test.ts', () => {
@@ -94,5 +95,45 @@ describe('plugin/config/test/ReadModule.test.ts', () => {
       },
     ]);
     expect((fakeApp as any).moduleConfigs.moduleA.reference.path).toBe(modulePath);
+  });
+
+  it('should resolve relative module reference paths from config directory', async () => {
+    const baseDir = getFixtures('apps/app-with-relative-module');
+    const fakeApp = {
+      baseDir,
+      config: {
+        tegg: {
+          readModuleOptions: {},
+        },
+      },
+      loader: {
+        getTypeFiles() {
+          return ['module'];
+        },
+        manifest: {
+          getExtension() {
+            return undefined;
+          },
+        },
+      },
+    };
+    const loadModuleReferences = vi.spyOn(ModuleScanner.prototype, 'loadModuleReferences').mockReturnValue([
+      {
+        optional: undefined,
+        name: 'relativeModule',
+        path: 'relative-module',
+      },
+    ]);
+
+    try {
+      await new AppBootHook(fakeApp as any).loadMetadata();
+    } finally {
+      loadModuleReferences.mockRestore();
+    }
+
+    const modulePath = path.join(baseDir, 'config/relative-module');
+    expect((fakeApp as any).moduleConfigs.relativeModule.reference.path).toBe(modulePath);
+    expect((fakeApp as any).moduleConfigs.relativeModule.name).toBe('relativeModule');
+    expect((fakeApp as any).moduleConfigs.relativeModule.config).toEqual({});
   });
 });
