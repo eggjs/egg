@@ -4,13 +4,30 @@ import { debuglog } from 'node:util';
 
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
-import { restoreManifestModulePath, restoreTeggManifestExtension, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
+import { TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { ModuleScanner } from './lib/ModuleScanner.ts';
 
 const debug = debuglog('egg/tegg/plugin/config/app');
+
+function restoreManifestModulePath(modulePath: string, baseDir: string): string {
+  return path.isAbsolute(modulePath) ? modulePath : path.join(baseDir, modulePath);
+}
+
+function restoreTeggManifestExtension(manifest: TeggManifestExtension, baseDir: string): TeggManifestExtension {
+  return {
+    moduleReferences: manifest.moduleReferences.map((ref) => ({
+      ...ref,
+      path: restoreManifestModulePath(ref.path, baseDir),
+    })),
+    moduleDescriptors: manifest.moduleDescriptors.map((desc) => ({
+      ...desc,
+      unitPath: restoreManifestModulePath(desc.unitPath, baseDir),
+    })),
+  };
+}
 
 export default class App implements ILifecycleBoot {
   private readonly app: Application;

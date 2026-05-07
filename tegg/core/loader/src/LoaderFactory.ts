@@ -1,5 +1,3 @@
-import path from 'node:path';
-
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { ModuleDescriptor } from '@eggjs/metadata';
 import {
@@ -37,23 +35,6 @@ export const TEGG_MANIFEST_KEY = 'tegg';
 
 export interface LoadAppManifest {
   moduleDescriptors: ManifestModuleDescriptor[];
-}
-
-export function restoreManifestModulePath(modulePath: string, baseDir: string): string {
-  return path.isAbsolute(modulePath) ? modulePath : path.join(baseDir, modulePath);
-}
-
-export function restoreTeggManifestExtension(manifest: TeggManifestExtension, baseDir: string): TeggManifestExtension {
-  return {
-    moduleReferences: manifest.moduleReferences.map((ref) => ({
-      ...ref,
-      path: restoreManifestModulePath(ref.path, baseDir),
-    })),
-    moduleDescriptors: manifest.moduleDescriptors.map((desc) => ({
-      ...desc,
-      unitPath: restoreManifestModulePath(desc.unitPath, baseDir),
-    })),
-  };
 }
 
 export class LoaderFactory {

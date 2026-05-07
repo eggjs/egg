@@ -4,7 +4,7 @@ import path from 'node:path';
 import { ModuleDescriptorDumper } from '@eggjs/metadata';
 import { describe, it } from 'vitest';
 
-import { LoaderFactory, restoreTeggManifestExtension } from '../src/index.ts';
+import { LoaderFactory } from '../src/index.ts';
 import type { LoadAppManifest, ManifestModuleDescriptor } from '../src/index.ts';
 
 describe('core/loader/test/LoaderFactoryManifest.test.ts', () => {
@@ -92,19 +92,16 @@ describe('core/loader/test/LoaderFactoryManifest.test.ts', () => {
     const baseDir = path.dirname(repoModulePath);
     const normalDescs = await LoaderFactory.loadApp([moduleRef]);
     const decoratedFiles = ModuleDescriptorDumper.getDecoratedFiles(normalDescs[0]);
-    const manifest = restoreTeggManifestExtension(
-      {
-        moduleReferences: [{ name: 'module-for-loader', path: path.basename(repoModulePath) }],
-        moduleDescriptors: [
-          {
-            name: 'module-for-loader',
-            unitPath: path.basename(repoModulePath),
-            decoratedFiles,
-          },
-        ],
-      },
-      baseDir,
-    );
+    const manifest = {
+      moduleReferences: [{ name: 'module-for-loader', path: path.join(baseDir, path.basename(repoModulePath)) }],
+      moduleDescriptors: [
+        {
+          name: 'module-for-loader',
+          unitPath: path.join(baseDir, path.basename(repoModulePath)),
+          decoratedFiles,
+        },
+      ],
+    };
 
     assert.equal(manifest.moduleReferences[0].path, repoModulePath);
     assert.equal(manifest.moduleDescriptors[0].unitPath, repoModulePath);
