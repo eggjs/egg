@@ -3,7 +3,7 @@ import { pathToFileURL } from 'node:url';
 
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import type { BundleModuleGlobalThis } from '@eggjs/typings';
+import type {} from '@eggjs/typings/global';
 import { isClass } from 'is-type-of';
 
 // Guard against poorly mocked module constructors.
@@ -74,9 +74,7 @@ export class LoaderUtil {
     const originalFilePath = filePath;
     let exports: any;
     try {
-      exports = (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__?.(
-        originalFilePath.split('\\').join('/'),
-      );
+      exports = globalThis.__EGG_BUNDLE_MODULE_LOADER__?.(originalFilePath.split('\\').join('/'));
     } catch (e: unknown) {
       throw createLoadError(originalFilePath, e);
     }

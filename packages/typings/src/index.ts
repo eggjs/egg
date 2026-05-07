@@ -4,7 +4,3 @@
  * standard import path.
  */
 export type BundleModuleLoader = (filepath: string) => unknown;
-
-export type BundleModuleGlobalThis = typeof globalThis & {
-  __EGG_BUNDLE_MODULE_LOADER__?: BundleModuleLoader;
-};

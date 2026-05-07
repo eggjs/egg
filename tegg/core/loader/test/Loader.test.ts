@@ -3,14 +3,14 @@ import path from 'node:path';
 
 import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { EggLoadUnitType } from '@eggjs/metadata';
-import type { BundleModuleGlobalThis } from '@eggjs/typings';
+import type {} from '@eggjs/typings/global';
 import { afterEach, describe, it } from 'vitest';
 
 import { LoaderFactory, LoaderUtil } from '../src/index.ts';
 
 describe('core/loader/test/Loader.test.ts', () => {
   afterEach(() => {
-    delete (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__;
+    globalThis.__EGG_BUNDLE_MODULE_LOADER__ = undefined;
     LoaderUtil.setConfig({});
   });
 
@@ -49,7 +49,7 @@ describe('core/loader/test/Loader.test.ts', () => {
       class BundledService {}
       SingletonProto()(BundledService);
       const bundledFile = '/bundle/app/port/manager/UserRoleManager.ts';
-      (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__ = (filepath: string) => {
+      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath: string) => {
         assert.equal(filepath, bundledFile);
         return { BundledService };
       };
@@ -65,7 +65,7 @@ describe('core/loader/test/Loader.test.ts', () => {
 
     it('should fall back to dynamic import when the bundle module loader returns null', async () => {
       const appRepoFile = path.join(__dirname, './fixtures/modules/module-for-loader/AppRepo.ts');
-      (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__ = () => null;
+      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = () => null;
 
       const prototypes = await LoaderUtil.loadFile(appRepoFile);
 
@@ -77,7 +77,7 @@ describe('core/loader/test/Loader.test.ts', () => {
 
     it('should wrap bundle module loader errors', async () => {
       const bundledFile = '/bundle/app/service.ts';
-      (globalThis as BundleModuleGlobalThis).__EGG_BUNDLE_MODULE_LOADER__ = () => {
+      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = () => {
         throw 'bundle loader failed';
       };
 

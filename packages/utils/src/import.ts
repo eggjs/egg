@@ -5,6 +5,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url';
 import { debuglog } from 'node:util';
 
 import type { BundleModuleLoader } from '@eggjs/typings';
+import type {} from '@eggjs/typings/global';
 
 import { ImportResolveError } from './error/index.ts';
 
@@ -422,12 +423,6 @@ export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
 
 export type { BundleModuleLoader } from '@eggjs/typings';
 
-type BundleModuleGlobalThis = typeof globalThis & {
-  __EGG_BUNDLE_MODULE_LOADER__: BundleModuleLoader | undefined;
-};
-
-const bundleModuleGlobalThis = globalThis as BundleModuleGlobalThis;
-
 function normalizeBundleModulePath(filepath: string): string {
   return filepath.split(path.win32.sep).join(path.posix.sep);
 }
@@ -443,11 +438,11 @@ function normalizeBundleModulePath(filepath: string): string {
  * compatibility.
  */
 export function setBundleModuleLoader(loader: BundleModuleLoader | undefined): void {
-  bundleModuleGlobalThis.__EGG_BUNDLE_MODULE_LOADER__ = loader;
+  globalThis.__EGG_BUNDLE_MODULE_LOADER__ = loader;
 }
 
 export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
-  const _bundleModuleLoader = bundleModuleGlobalThis.__EGG_BUNDLE_MODULE_LOADER__;
+  const _bundleModuleLoader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
   if (_bundleModuleLoader) {
     const hit = _bundleModuleLoader(normalizeBundleModulePath(filepath));
     if (hit !== undefined) {
