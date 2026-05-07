@@ -533,6 +533,48 @@ const __dirname = "/generated/shadow";
       ]),
     );
   });
+
+  it('uses module.yml bundle.runtimeAssets.roots to choose runtime asset scan roots', async () => {
+    await fs.writeFile(
+      path.join(tmpApp, 'module.yml'),
+      [
+        'bundle:',
+        '  runtimeAssets:',
+        '    roots:',
+        '      - resources',
+        '    forceCopyDirs:',
+        '      - resources/port',
+      ].join('\n'),
+    );
+    await fs.mkdir(path.join(tmpApp, 'resources/port'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'resources/port/login.html'), '<html>login</html>\n');
+    await fs.writeFile(path.join(tmpApp, 'resources/port/helper.ts'), 'export const helper = true;\n');
+    await fs.mkdir(path.join(tmpApp, 'app/port'), { recursive: true });
+    await fs.writeFile(path.join(tmpApp, 'app/port/binary.html'), '<html>binary</html>\n');
+
+    const result = await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: { buildFunc: makeMockBuild() },
+    });
+
+    await expect(fs.readFile(path.join(tmpOutput, 'resources/port/login.html'), 'utf8')).resolves.toBe(
+      '<html>login</html>\n',
+    );
+    await expect(fs.readFile(path.join(tmpOutput, 'resources/port/helper.ts'), 'utf8')).resolves.toBe(
+      'export const helper = true;\n',
+    );
+    await expect(fs.stat(path.join(tmpOutput, 'app/port/binary.html'))).rejects.toMatchObject({ code: 'ENOENT' });
+
+    const bm = JSON.parse(await fs.readFile(result.manifestPath, 'utf8')) as { chunks: string[] };
+    expect(bm.chunks).toEqual(expect.arrayContaining(['resources/port/helper.ts', 'resources/port/login.html']));
+    expect(result.files).toEqual(
+      expect.arrayContaining([
+        path.join(tmpOutput, 'resources/port/helper.ts'),
+        path.join(tmpOutput, 'resources/port/login.html'),
+      ]),
+    );
+  });
 });
 
 describe('bundle() integration — minimal-app (Phase 2: real @utoo/pack)', () => {

@@ -31,6 +31,8 @@ export interface BundlerPackConfig {
 }
 
 export interface BundlerRuntimeAssetsConfig {
+  /** BaseDir-relative directories scanned for runtime assets. Defaults to `['app']`. */
+  readonly roots?: readonly string[];
   /** Relative directories whose files should be copied even when they use source-like extensions. */
   readonly forceCopyDirs?: readonly string[];
 }

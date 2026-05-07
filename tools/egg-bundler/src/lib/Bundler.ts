@@ -39,7 +39,7 @@ const TURBOPACK_IMPORT_META_OBJECT =
 const LINE_SOURCE_MAP_URL = /(?:\r?\n)?\/\/# sourceMappingURL=([^\r\n]*)\s*$/;
 const BLOCK_SOURCE_MAP_URL = /(?:\r?\n)?\/\*# sourceMappingURL=([\s\S]*?)\*\/\s*$/;
 const UNSAFE_ALIAS_SPECIFIERS = new Set(['__proto__', 'constructor', 'prototype']);
-const RUNTIME_ASSET_ROOTS = ['app'];
+const DEFAULT_RUNTIME_ASSET_ROOTS = ['app'];
 const DEFAULT_FORCE_COPY_RUNTIME_ASSET_DIRS = ['app/public', 'app/assets', 'app/static'];
 const BUNDLED_SOURCE_EXTENSIONS = new Set(['.cjs', '.cts', '.js', '.jsx', '.mjs', '.mts', '.ts', '.tsx']);
 
@@ -51,6 +51,7 @@ interface ModuleBundleConfig {
 }
 
 interface ResolvedRuntimeAssetsConfig {
+  readonly roots: readonly string[];
   readonly forceCopyDirs: readonly string[];
 }
 
@@ -94,20 +95,32 @@ function validateModulePackAliasSpecifier(filepath: string, specifier: string): 
   }
 }
 
-function normalizeRuntimeAssetForceCopyDir(filepath: string, dir: string): string {
+function normalizeRuntimeAssetDir(filepath: string, configPath: string, dir: string): string {
   let rel: string;
   try {
     rel = sanitizeBundleOutputRelativePath(dir);
   } catch (err) {
     throw new Error(
-      `Invalid bundle config in ${filepath}: bundle.runtimeAssets.forceCopyDirs contains unsafe path ${JSON.stringify(dir)}.`,
+      `Invalid bundle config in ${filepath}: ${configPath} contains unsafe path ${JSON.stringify(dir)}.`,
       { cause: err },
     );
   }
   if (rel.endsWith('/')) {
-    throw new Error(`Invalid bundle config in ${filepath}: bundle.runtimeAssets.forceCopyDirs contains ${dir}.`);
+    throw new Error(`Invalid bundle config in ${filepath}: ${configPath} contains ${dir}.`);
   }
   return rel;
+}
+
+function normalizeRuntimeAssetRoot(filepath: string, root: string): string {
+  return normalizeRuntimeAssetDir(filepath, 'bundle.runtimeAssets.roots', root);
+}
+
+function normalizeRuntimeAssetRoots(filepath: string, roots: readonly string[]): readonly string[] {
+  return Array.from(new Set(roots.map((root) => normalizeRuntimeAssetRoot(filepath, root))));
+}
+
+function normalizeRuntimeAssetForceCopyDir(filepath: string, dir: string): string {
+  return normalizeRuntimeAssetDir(filepath, 'bundle.runtimeAssets.forceCopyDirs', dir);
 }
 
 function normalizeRuntimeAssetForceCopyDirs(filepath: string, dirs: readonly string[]): readonly string[] {
@@ -183,22 +196,44 @@ function parseModuleBundleRuntimeAssetsConfig(
     throw new Error(`Invalid bundle config in ${filepath}: bundle.runtimeAssets must be an object.`);
   }
 
-  const forceCopyDirsConfig = runtimeAssetsConfig.forceCopyDirs;
-  if (forceCopyDirsConfig == null) return undefined;
-  if (!Array.isArray(forceCopyDirsConfig)) {
-    throw new Error(`Invalid bundle config in ${filepath}: bundle.runtimeAssets.forceCopyDirs must be an array.`);
+  const rootsConfig = runtimeAssetsConfig.roots;
+  let roots: readonly string[] | undefined;
+  if (rootsConfig != null) {
+    if (!Array.isArray(rootsConfig)) {
+      throw new Error(`Invalid bundle config in ${filepath}: bundle.runtimeAssets.roots must be an array.`);
+    }
+    roots = rootsConfig.map((root, index) => {
+      if (typeof root !== 'string' || root.length === 0) {
+        throw new Error(
+          `Invalid bundle config in ${filepath}: bundle.runtimeAssets.roots[${index}] must be a non-empty string.`,
+        );
+      }
+      return normalizeRuntimeAssetRoot(filepath, root);
+    });
   }
 
-  const forceCopyDirs = forceCopyDirsConfig.map((dir, index) => {
-    if (typeof dir !== 'string' || dir.length === 0) {
-      throw new Error(
-        `Invalid bundle config in ${filepath}: bundle.runtimeAssets.forceCopyDirs[${index}] must be a non-empty string.`,
-      );
+  const forceCopyDirsConfig = runtimeAssetsConfig.forceCopyDirs;
+  let forceCopyDirs: readonly string[] | undefined;
+  if (forceCopyDirsConfig != null) {
+    if (!Array.isArray(forceCopyDirsConfig)) {
+      throw new Error(`Invalid bundle config in ${filepath}: bundle.runtimeAssets.forceCopyDirs must be an array.`);
     }
-    return normalizeRuntimeAssetForceCopyDir(filepath, dir);
-  });
+    forceCopyDirs = forceCopyDirsConfig.map((dir, index) => {
+      if (typeof dir !== 'string' || dir.length === 0) {
+        throw new Error(
+          `Invalid bundle config in ${filepath}: bundle.runtimeAssets.forceCopyDirs[${index}] must be a non-empty string.`,
+        );
+      }
+      return normalizeRuntimeAssetForceCopyDir(filepath, dir);
+    });
+  }
 
-  return { forceCopyDirs: normalizeRuntimeAssetForceCopyDirs(filepath, forceCopyDirs) };
+  if (roots == null && forceCopyDirs == null) return undefined;
+
+  return {
+    ...(roots == null ? {} : { roots: normalizeRuntimeAssetRoots(filepath, roots) }),
+    ...(forceCopyDirs == null ? {} : { forceCopyDirs: normalizeRuntimeAssetForceCopyDirs(filepath, forceCopyDirs) }),
+  };
 }
 
 async function loadModuleBundleConfig(baseDir: string): Promise<ModuleBundleConfig | undefined> {
@@ -248,10 +283,12 @@ function mergeRuntimeAssetsConfig(
   moduleRuntimeAssets: BundlerConfig['runtimeAssets'],
   explicitRuntimeAssets: BundlerConfig['runtimeAssets'],
 ): ResolvedRuntimeAssetsConfig {
+  const roots = explicitRuntimeAssets?.roots ?? moduleRuntimeAssets?.roots ?? DEFAULT_RUNTIME_ASSET_ROOTS;
   const forceCopyDirs =
     explicitRuntimeAssets?.forceCopyDirs ?? moduleRuntimeAssets?.forceCopyDirs ?? DEFAULT_FORCE_COPY_RUNTIME_ASSET_DIRS;
 
   return {
+    roots: normalizeRuntimeAssetRoots('BundlerConfig', roots),
     forceCopyDirs: normalizeRuntimeAssetForceCopyDirs('BundlerConfig', forceCopyDirs),
   };
 }
@@ -414,7 +451,7 @@ export class Bundler {
       if (typeof value === 'string') bundledSourceFiles.add(path.resolve(baseDir, value));
     }
 
-    for (const root of RUNTIME_ASSET_ROOTS) {
+    for (const root of runtimeAssetsConfig.roots) {
       const absRoot = path.join(baseDir, root);
       await this.#copyRuntimeAssetsUnderRoot(
         baseDir,

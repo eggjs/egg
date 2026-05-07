@@ -44,11 +44,11 @@ may still use `fs` for resources such as config, views, or assets.
 
 ## Runtime assets
 
-The bundler copies application runtime assets from `<baseDir>/app` into the
-same relative path under `outputDir`, excluding manifest-known module files and
-source-like files such as `.js`, `.ts`, `.mjs`, and `.cjs` outside static asset
-directories. For example, `<baseDir>/app/port/binary.html` is emitted as
-`<outputDir>/app/port/binary.html`. Since bundled workers start Egg with
+The bundler copies application runtime assets from `<baseDir>/app` by default
+into the same relative path under `outputDir`, excluding manifest-known module
+files and source-like files such as `.js`, `.ts`, `.mjs`, and `.cjs` outside
+static asset directories. For example, `<baseDir>/app/port/binary.html` is
+emitted as `<outputDir>/app/port/binary.html`. Since bundled workers start Egg with
 `baseDir: outputDir`, existing reads such as
 `fs.readFile(path.join(app.config.baseDir, 'app/port/binary.html'))` resolve to
 the copied file in bundle mode and continue to resolve to the original file in
@@ -61,10 +61,16 @@ example:
 ```yaml
 bundle:
   runtimeAssets:
+    roots:
+      - app
     forceCopyDirs:
       - app/port
       - app/public
 ```
+
+Applications may also replace the scanned roots with
+`bundle.runtimeAssets.roots`. Root entries are baseDir-relative directories, and
+the output keeps the same baseDir-relative path.
 
 ## `bundle-manifest.json`
 
