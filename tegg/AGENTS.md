@@ -114,12 +114,9 @@ utoo install                          # Install all dependencies using catalog v
 utoo run --workspaces --if-present typecheck
 utoo run --workspace @eggjs/tegg-runtime typecheck
 
-# Build specific packages
+# Build specific packages through the root tsdown script
 utoo run build -- --workspace ./tegg/core/metadata
 utoo run build -- --workspace ./tegg/core/runtime
-
-# Clean package build artifacts where a clean script exists
-utoo run --workspace @eggjs/tegg-runtime --if-present clean
 ```
 
 **Note:** Individual tegg packages don't have test scripts in their package.json. Tests are run via the monorepo root vitest configuration.
