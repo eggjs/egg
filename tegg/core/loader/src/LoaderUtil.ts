@@ -3,10 +3,18 @@ import { pathToFileURL } from 'node:url';
 
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
+import type {} from '@eggjs/typings/global';
 import { isClass } from 'is-type-of';
 
 // Guard against poorly mocked module constructors.
 const Module = globalThis.module?.constructor?.length > 1 ? globalThis.module.constructor : BuiltinModule;
+
+function createLoadError(filePath: string, e: unknown): Error {
+  const message = e instanceof Error ? e.message : String(e);
+  return new Error(`[tegg/loader] load ${filePath} failed: ${message}`, {
+    cause: e,
+  });
+}
 
 interface LoaderUtilConfig {
   extraFilePattern?: string[];
@@ -64,20 +72,23 @@ export class LoaderUtil {
 
   static async loadFile(filePath: string): Promise<EggProtoImplClass[]> {
     const originalFilePath = filePath;
-    if (process.platform === 'win32') {
-      // convert to file:// url
-      // avoid windows path issue: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
-      filePath = pathToFileURL(filePath).toString();
-    }
-    let exports;
+    let exports: any;
     try {
-      exports = await import(filePath);
-    } catch (e: any) {
-      console.trace('[tegg/loader] loadFile %s error:', filePath);
-      console.error(e);
-      throw new Error(`[tegg/loader] load ${filePath} failed: ${e.message}`, {
-        cause: e,
-      });
+      exports = globalThis.__EGG_BUNDLE_MODULE_LOADER__?.(originalFilePath.split('\\').join('/'));
+    } catch (e: unknown) {
+      throw createLoadError(originalFilePath, e);
+    }
+    if (exports == null) {
+      if (process.platform === 'win32') {
+        // convert to file:// url
+        // avoid windows path issue: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
+        filePath = pathToFileURL(filePath).toString();
+      }
+      try {
+        exports = await import(filePath);
+      } catch (e: unknown) {
+        throw createLoadError(filePath, e);
+      }
     }
     const clazzList: EggProtoImplClass[] = [];
     const exportNames = Object.keys(exports);

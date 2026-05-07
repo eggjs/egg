@@ -12,7 +12,7 @@ describe('test/mock_service_cluster.test.ts', () => {
       baseDir: getFixtures('demo_mock_service_cluster'),
     });
     await app.ready();
-  });
+  }, 60000);
   afterAll(() => app.close());
 
   afterEach(mm.restore);

@@ -1,12 +1,19 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
+import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { EggLoadUnitType } from '@eggjs/metadata';
-import { describe, it } from 'vitest';
+import type {} from '@eggjs/typings/global';
+import { afterEach, describe, it } from 'vitest';
 
 import { LoaderFactory, LoaderUtil } from '../src/index.ts';
 
 describe('core/loader/test/Loader.test.ts', () => {
+  afterEach(() => {
+    globalThis.__EGG_BUNDLE_MODULE_LOADER__ = undefined;
+    LoaderUtil.setConfig({});
+  });
+
   describe('module loader', () => {
     it('should load module', async () => {
       const repoModulePath = path.join(__dirname, './fixtures/modules/module-for-loader');
@@ -36,6 +43,54 @@ describe('core/loader/test/Loader.test.ts', () => {
       const loader = LoaderFactory.createLoader(repoModulePath, EggLoadUnitType.MODULE);
       const prototypes = await loader.load();
       assert.equal(prototypes.length, 1);
+    });
+
+    it('should load pre-bundled files through the bundle module loader', async () => {
+      class BundledService {}
+      SingletonProto()(BundledService);
+      const bundledFile = '/bundle/app/port/manager/UserRoleManager.ts';
+      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath: string) => {
+        assert.equal(filepath, bundledFile);
+        return { BundledService };
+      };
+
+      const prototypes = await LoaderUtil.loadFile(bundledFile);
+
+      assert.deepEqual(
+        prototypes.map((proto) => proto.name),
+        ['BundledService'],
+      );
+      assert.equal(PrototypeUtil.getFilePath(BundledService), bundledFile);
+    });
+
+    it('should fall back to dynamic import when the bundle module loader returns null', async () => {
+      const appRepoFile = path.join(__dirname, './fixtures/modules/module-for-loader/AppRepo.ts');
+      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = () => null;
+
+      const prototypes = await LoaderUtil.loadFile(appRepoFile);
+
+      assert.deepEqual(
+        prototypes.map((proto) => proto.name),
+        ['AppRepo', 'AppRepo2'],
+      );
+    });
+
+    it('should wrap bundle module loader errors', async () => {
+      const bundledFile = '/bundle/app/service.ts';
+      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = () => {
+        throw 'bundle loader failed';
+      };
+
+      await assert.rejects(
+        async () => {
+          await LoaderUtil.loadFile(bundledFile);
+        },
+        (err: Error & { cause?: unknown }) => {
+          assert.equal(err.message, '[tegg/loader] load /bundle/app/service.ts failed: bundle loader failed');
+          assert.equal(err.cause, 'bundle loader failed');
+          return true;
+        },
+      );
     });
   });
 

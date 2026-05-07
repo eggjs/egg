@@ -278,6 +278,68 @@ describe('ManifestLoader', () => {
     expect(loader.store.data).toBe(loaded);
   });
 
+  it('normalizes tegg moduleReferences and moduleDescriptors to matching app-relative paths', async () => {
+    const baseDir = createTempApp();
+    const portRoot = path.join(baseDir, 'app/port');
+    const controllerFile = path.join(portRoot, 'controller/HomeController.ts');
+    const managerFile = path.join(portRoot, 'manager/UserRoleManager.ts');
+    fs.mkdirSync(path.dirname(controllerFile), { recursive: true });
+    fs.mkdirSync(path.dirname(managerFile), { recursive: true });
+    writeJson(path.join(baseDir, 'package.json'), {});
+    writeJson(path.join(portRoot, 'package.json'), {
+      name: 'app-port',
+      eggModule: {
+        name: 'appPort',
+      },
+    });
+    fs.writeFileSync(controllerFile, 'export class HomeController {}\n');
+    fs.writeFileSync(managerFile, 'export class UserRoleManager {}\n');
+
+    const manifestPath = path.join(baseDir, '.egg/manifest.json');
+    writeJson(
+      manifestPath,
+      manifest({
+        extensions: {
+          tegg: {
+            moduleReferences: [
+              {
+                name: 'appPort',
+                path: portRoot,
+              },
+            ],
+            moduleDescriptors: [
+              {
+                name: 'appPort',
+                unitPath: portRoot,
+                decoratedFiles: ['controller/HomeController.ts', 'manager/UserRoleManager.ts'],
+              },
+            ],
+          },
+        },
+      }),
+    );
+
+    const loader = new ManifestLoader({ baseDir, manifestPath, autoGenerate: false });
+    const loaded = await loader.load();
+
+    expect(loaded.extensions.tegg).toEqual({
+      moduleReferences: [
+        {
+          name: 'appPort',
+          path: 'app/port',
+        },
+      ],
+      moduleDescriptors: [
+        {
+          name: 'appPort',
+          unitPath: 'app/port',
+          decoratedFiles: ['controller/HomeController.ts', 'manager/UserRoleManager.ts'],
+        },
+      ],
+    });
+    expect(loader.getTeggDecoratedFiles()).toEqual([controllerFile, managerFile]);
+  });
+
   it('merges file discovery entries that normalize to the same package path', async () => {
     const baseDir = createTempApp();
     const directLib = path.join(baseDir, 'node_modules/direct/lib');

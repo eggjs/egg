@@ -44,6 +44,7 @@
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
+    "@eggjs/typings": "workspace:*",
     "globby": "catalog:",
     "is-type-of": "catalog:"
   },
