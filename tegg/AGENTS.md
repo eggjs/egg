@@ -8,7 +8,7 @@ Tegg is a modular IoC (Inversion of Control) framework for Egg.js, providing dep
 
 **Requirements:**
 
-- Node.js >= 22.18.0
+- Follow the repo-wide Node.js requirement from the root `package.json` `engines.node` field
 - ESM only (no CommonJS)
 - egg >= 4.1.0
 
@@ -55,7 +55,7 @@ standalone/    # 1 standalone package - standalone runtime without Egg.js
 
 ## Development Commands
 
-**Note:** All commands below should be run from the **monorepo root** (`../egg`), not from the tegg directory.
+**Note:** All commands below should be run from the **repository root**, not from the tegg directory.
 
 ### Build & Clean
 
@@ -88,7 +88,7 @@ utoo run fmtcheck            # Check code formatting with oxfmt
 
 ### Version Management
 
-**Note:** Run these commands from the monorepo root (`../egg`).
+**Note:** Run these commands from the repository root.
 
 ```bash
 utoo run version:patch       # Bump patch version (0.0.X)
@@ -110,11 +110,11 @@ utoo run version:rc          # Bump prerelease rc version
 # Install dependencies
 utoo install                          # Install all dependencies using catalog versions
 
-# Type check specific packages
-utoo run --workspaces --if-present typecheck
+# Type check a specific package
 utoo run --workspace @eggjs/tegg-runtime typecheck
 
-# Build specific packages through the root tsdown script
+# Build specific packages through the root tsdown script.
+# The -- --workspace flags are forwarded to tsdown, not parsed by Utoo.
 utoo run build -- --workspace ./tegg/core/metadata
 utoo run build -- --workspace ./tegg/core/runtime
 ```
