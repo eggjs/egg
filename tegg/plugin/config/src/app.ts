@@ -85,8 +85,11 @@ export default class App implements ILifecycleBoot {
   #loadModuleConfigs(): void {
     this.app.moduleConfigs = {};
     for (const reference of this.app.moduleReferences) {
+      const modulePath = path.isAbsolute(reference.path)
+        ? reference.path
+        : ModuleConfigUtil.resolveModuleDir(this.app.baseDir, reference.path);
       const absoluteRef: ModuleReference = {
-        path: restoreManifestModulePath(reference.path, this.app.baseDir),
+        path: modulePath,
         name: reference.name,
         optional: reference.optional,
       };
