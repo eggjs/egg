@@ -13,7 +13,7 @@ import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } fr
 import { homedir } from 'node-homedir';
 import { now, diff } from 'performance-ms';
 import { register as tsconfigPathsRegister } from 'tsconfig-paths';
-import { getParamNames, readJSONSync, readJSON, exists } from 'utility';
+import { getParamNames, readJSONSync, exists } from 'utility';
 
 import type { BaseContextClass } from '../base_context_class.ts';
 import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
@@ -24,6 +24,7 @@ import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
+import { RealLoaderFS, type LoaderFS } from './loader_fs.ts';
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
@@ -57,6 +58,8 @@ export interface EggLoaderOptions {
   plugins?: Record<string, EggPluginInfo>;
   /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
   metadataOnly?: boolean;
+  /** Loader-facing filesystem abstraction */
+  loaderFS?: LoaderFS;
 }
 
 export type EggDirInfoType = 'app' | 'plugin' | 'framework';
@@ -79,6 +82,7 @@ export class EggLoader {
   dirs?: EggDirInfo[];
   /** Startup manifest — loaded from cache or collecting for generation */
   readonly manifest: ManifestStore;
+  readonly loaderFS: LoaderFS;
 
   /**
    * @class
@@ -91,7 +95,8 @@ export class EggLoader {
    */
   constructor(options: EggLoaderOptions) {
     this.options = options;
-    assert(fs.existsSync(this.options.baseDir), `${this.options.baseDir} not exists`);
+    this.loaderFS = this.options.loaderFS ?? new RealLoaderFS();
+    assert(this.loaderFS.exists(this.options.baseDir), `${this.options.baseDir} not exists`);
     assert(this.options.app, 'options.app is required');
     assert(this.options.logger, 'options.logger is required');
 
@@ -110,7 +115,7 @@ export class EggLoader {
     if (process.env.EGG_TYPESCRIPT === 'true' || (this.pkg.egg && this.pkg.egg.typescript)) {
       // skip require tsconfig-paths if tsconfig.json not exists
       const tsConfigFile = path.join(this.options.baseDir, 'tsconfig.json');
-      if (fs.existsSync(tsConfigFile)) {
+      if (this.loaderFS.exists(tsConfigFile)) {
         // @ts-expect-error only cwd is required
         tsconfigPathsRegister({ cwd: this.options.baseDir });
       } else {
@@ -373,8 +378,8 @@ export class EggLoader {
         );
       }
       assert(typeof eggPath === 'string', "Symbol.for('egg#eggPath') should be string");
-      assert(fs.existsSync(eggPath), `${eggPath} not exists`);
-      const realpath = fs.realpathSync(eggPath);
+      assert(this.loaderFS.exists(eggPath), `${eggPath} not exists`);
+      const realpath = this.loaderFS.realpath(eggPath);
       if (!eggPaths.includes(realpath)) {
         eggPaths.unshift(realpath);
       }
@@ -589,7 +594,7 @@ export class EggLoader {
         continue;
       }
 
-      const config: Record<string, EggPluginInfo> = await utils.loadFile(filepath);
+      const config: Record<string, EggPluginInfo> = await this.loaderFS.loadFile(filepath);
       for (const name in config) {
         this.#normalizePluginConfig(config, name, filepath);
       }
@@ -639,8 +644,8 @@ export class EggLoader {
     let pkg: any;
     let eggPluginConfig: any;
     const pluginPackage = path.join(plugin.path as string, 'package.json');
-    if (await utils.existsPath(pluginPackage)) {
-      pkg = await readJSON(pluginPackage);
+    if (this.loaderFS.exists(pluginPackage)) {
+      pkg = await this.loaderFS.readJSON(pluginPackage);
       eggPluginConfig = pkg.eggPlugin;
       if (pkg.version) {
         plugin.version = pkg.version;
@@ -1580,7 +1585,7 @@ export class EggLoader {
   async requireFile(filepath: string): Promise<any> {
     const timingKey = `Require(${this.#requiredCount++}) ${utils.getResolvedFilename(filepath, this.options.baseDir)}`;
     this.timing.start(timingKey);
-    const mod = await utils.loadFile(filepath);
+    const mod = await this.loaderFS.loadFile(filepath);
     this.timing.end(timingKey);
     return mod;
   }
@@ -1653,6 +1658,7 @@ export class EggLoader {
       target,
       inject: this.app,
       manifest: this.manifest,
+      loaderFS: options?.loaderFS ?? this.loaderFS,
     };
 
     const timingKey = `Load "${String(property)}" to Application`;
@@ -1679,6 +1685,7 @@ export class EggLoader {
       property,
       inject: this.app,
       manifest: this.manifest,
+      loaderFS: options?.loaderFS ?? this.loaderFS,
     };
 
     const timingKey = `Load "${String(property)}" to Context`;
