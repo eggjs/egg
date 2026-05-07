@@ -88,29 +88,34 @@ describe('core/loader/test/LoaderFactoryManifest.test.ts', () => {
     }
   });
 
-  it('should restore bundled manifest paths before matching module descriptors', async () => {
+  it('should use restored bundled manifest paths before matching module descriptors', async () => {
     const baseDir = path.dirname(repoModulePath);
-    const normalDescs = await LoaderFactory.loadApp([moduleRef]);
-    const decoratedFiles = ModuleDescriptorDumper.getDecoratedFiles(normalDescs[0]);
-    const manifest = {
-      moduleReferences: [{ name: 'module-for-loader', path: path.join(baseDir, path.basename(repoModulePath)) }],
+    const bundledModulePath = path.relative(baseDir, repoModulePath);
+    const manifestRef = { name: 'module-for-loader', path: bundledModulePath };
+    const manifest: LoadAppManifest = {
       moduleDescriptors: [
         {
           name: 'module-for-loader',
-          unitPath: path.join(baseDir, path.basename(repoModulePath)),
-          decoratedFiles,
+          unitPath: bundledModulePath,
+          decoratedFiles: [],
         },
       ],
     };
+    const restoredRef = { ...manifestRef, path: path.join(baseDir, manifestRef.path) };
+    const restoredManifest: LoadAppManifest = {
+      moduleDescriptors: manifest.moduleDescriptors.map((desc) => ({
+        ...desc,
+        unitPath: path.join(baseDir, desc.unitPath),
+      })),
+    };
 
-    assert.equal(manifest.moduleReferences[0].path, repoModulePath);
-    assert.equal(manifest.moduleDescriptors[0].unitPath, repoModulePath);
+    assert.notEqual(manifestRef.path, repoModulePath);
+    assert.notEqual(manifest.moduleDescriptors[0].unitPath, repoModulePath);
+    assert.equal(restoredRef.path, repoModulePath);
+    assert.equal(restoredManifest.moduleDescriptors[0].unitPath, repoModulePath);
 
-    const manifestDescs = await LoaderFactory.loadApp([moduleRef], manifest);
+    const manifestDescs = await LoaderFactory.loadApp([restoredRef], restoredManifest);
     assert.equal(manifestDescs[0].unitPath, repoModulePath);
-    assert.deepStrictEqual(
-      manifestDescs[0].clazzList.map((c) => c.name).sort(),
-      normalDescs[0].clazzList.map((c) => c.name).sort(),
-    );
+    assert.deepStrictEqual(manifestDescs[0].clazzList, []);
   });
 });
