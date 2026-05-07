@@ -5,10 +5,7 @@ import { readJSONSync } from 'utility';
 
 import utils from '../utils/index.ts';
 
-export interface LoaderFSGlobOptions {
-  cwd?: string;
-  [key: string]: unknown;
-}
+export type LoaderFSGlobOptions = globby.GlobbyOptions;
 
 export interface LoaderFS {
   exists(filepath: string): boolean;
@@ -37,7 +34,7 @@ export class RealLoaderFS implements LoaderFS {
   }
 
   glob(patterns: string | string[], options?: LoaderFSGlobOptions): string[] {
-    return globby.sync(patterns, options as any) as unknown as string[];
+    return globby.sync(patterns, options);
   }
 
   async loadFile(filepath: string): Promise<any> {
