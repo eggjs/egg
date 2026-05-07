@@ -19,6 +19,7 @@ exports[`should expose properties 1`] = `
   "KoaResponse",
   "Lifecycle",
   "ManifestStore",
+  "RealLoaderFS",
   "Request",
   "Response",
   "Router",
