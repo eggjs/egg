@@ -6,7 +6,7 @@ import { getPlugins } from '@eggjs/utils';
 import { mm } from 'mm';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
-import { EggLoader, RealLoaderFS } from '../../src/index.js';
+import { ContextLoader, EggLoader, FileLoader, RealLoaderFS } from '../../src/index.js';
 import { createApp, getFilepath, type Application } from '../helper.js';
 
 describe('test/loader/egg_loader.test.ts', () => {
@@ -110,26 +110,8 @@ describe('test/loader/egg_loader.test.ts', () => {
   });
 
   it('should pass loaderFS to loadToApp and loadToContext', async () => {
-    class MockLoaderFS extends RealLoaderFS {
-      glob(): string[] {
-        return ['user.js'];
-      }
-
-      stat(): any {
-        return {
-          isFile: () => true,
-        };
-      }
-
-      async loadFile(filepath: string): Promise<any> {
-        return {
-          filepath,
-        };
-      }
-    }
-
     const baseDir = getFilepath('load_to_app');
-    const loaderFS = new MockLoaderFS();
+    const loaderFS = new RealLoaderFS();
     const app: any = { context: {} };
     const loader = new EggLoader({
       baseDir,
@@ -137,12 +119,25 @@ describe('test/loader/egg_loader.test.ts', () => {
       logger: console,
       loaderFS,
     } as any);
+    const passedLoaderFS: any[] = [];
 
-    await loader.loadToApp('/virtual/app/model', 'model');
-    await loader.loadToContext('/virtual/app/service', 'service');
+    mm(FileLoader.prototype, 'load', async function (this: FileLoader) {
+      passedLoaderFS.push(this.options.loaderFS);
+      return {};
+    });
+    mm(ContextLoader.prototype, 'load', async function (this: ContextLoader) {
+      passedLoaderFS.push(this.options.loaderFS);
+      return {};
+    });
 
-    assert.equal(app.model.user.filepath, path.join('/virtual/app/model', 'user.js'));
-    assert.equal(app.context.service.user.filepath, path.join('/virtual/app/service', 'user.js'));
+    try {
+      await loader.loadToApp(path.join(baseDir, 'app/model'), 'model');
+      await loader.loadToContext(path.join(baseDir, 'app/service'), 'service');
+
+      assert.deepEqual(passedLoaderFS, [loaderFS, loaderFS]);
+    } finally {
+      mm.restore();
+    }
   });
 
   describe('resolveModule with outDir', () => {

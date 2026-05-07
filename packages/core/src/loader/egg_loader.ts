@@ -13,7 +13,7 @@ import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } fr
 import { homedir } from 'node-homedir';
 import { now, diff } from 'performance-ms';
 import { register as tsconfigPathsRegister } from 'tsconfig-paths';
-import { getParamNames, exists } from 'utility';
+import { getParamNames, readJSONSync, readJSON, exists } from 'utility';
 
 import type { BaseContextClass } from '../base_context_class.ts';
 import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
@@ -96,7 +96,7 @@ export class EggLoader {
   constructor(options: EggLoaderOptions) {
     this.options = options;
     this.loaderFS = this.options.loaderFS ?? new RealLoaderFS();
-    assert(this.loaderFS.exists(this.options.baseDir), `${this.options.baseDir} not exists`);
+    assert(fs.existsSync(this.options.baseDir), `${this.options.baseDir} not exists`);
     assert(this.options.app, 'options.app is required');
     assert(this.options.logger, 'options.logger is required');
 
@@ -107,7 +107,7 @@ export class EggLoader {
      * @see {@link AppInfo#pkg}
      * @since 1.0.0
      */
-    this.pkg = this.loaderFS.readJSON(path.join(this.options.baseDir, 'package.json'));
+    this.pkg = readJSONSync(path.join(this.options.baseDir, 'package.json'));
     this.outDir = this.#resolveOutDir();
 
     // auto require('tsconfig-paths/register') on typescript app
@@ -115,7 +115,7 @@ export class EggLoader {
     if (process.env.EGG_TYPESCRIPT === 'true' || (this.pkg.egg && this.pkg.egg.typescript)) {
       // skip require tsconfig-paths if tsconfig.json not exists
       const tsConfigFile = path.join(this.options.baseDir, 'tsconfig.json');
-      if (this.loaderFS.exists(tsConfigFile)) {
+      if (fs.existsSync(tsConfigFile)) {
         // @ts-expect-error only cwd is required
         tsconfigPathsRegister({ cwd: this.options.baseDir });
       } else {
@@ -378,8 +378,8 @@ export class EggLoader {
         );
       }
       assert(typeof eggPath === 'string', "Symbol.for('egg#eggPath') should be string");
-      assert(this.loaderFS.exists(eggPath), `${eggPath} not exists`);
-      const realpath = this.loaderFS.realpath(eggPath);
+      assert(fs.existsSync(eggPath), `${eggPath} not exists`);
+      const realpath = fs.realpathSync(eggPath);
       if (!eggPaths.includes(realpath)) {
         eggPaths.unshift(realpath);
       }
@@ -594,7 +594,7 @@ export class EggLoader {
         continue;
       }
 
-      const config: Record<string, EggPluginInfo> = await this.loaderFS.loadFile(filepath);
+      const config: Record<string, EggPluginInfo> = await utils.loadFile(filepath);
       for (const name in config) {
         this.#normalizePluginConfig(config, name, filepath);
       }
@@ -644,8 +644,8 @@ export class EggLoader {
     let pkg: any;
     let eggPluginConfig: any;
     const pluginPackage = path.join(plugin.path as string, 'package.json');
-    if (this.loaderFS.exists(pluginPackage)) {
-      pkg = this.loaderFS.readJSON(pluginPackage);
+    if (await utils.existsPath(pluginPackage)) {
+      pkg = await readJSON(pluginPackage);
       eggPluginConfig = pkg.eggPlugin;
       if (pkg.version) {
         plugin.version = pkg.version;
@@ -1585,7 +1585,7 @@ export class EggLoader {
   async requireFile(filepath: string): Promise<any> {
     const timingKey = `Require(${this.#requiredCount++}) ${utils.getResolvedFilename(filepath, this.options.baseDir)}`;
     this.timing.start(timingKey);
-    const mod = await this.loaderFS.loadFile(filepath);
+    const mod = await utils.loadFile(filepath);
     this.timing.end(timingKey);
     return mod;
   }
