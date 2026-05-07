@@ -60,7 +60,8 @@ describe('plugin/config/test/ReadModule.test.ts', () => {
           return ['module'];
         },
         manifest: {
-          getExtension() {
+          getExtension(key: string) {
+            if (key !== 'tegg') return undefined;
             return {
               moduleReferences: [
                 {

@@ -1014,8 +1014,18 @@ export class EggLoader {
       : filepath;
   }
 
+  #toRealpath(filepath: string): string {
+    try {
+      return fs.realpathSync(filepath);
+    } catch {
+      return filepath;
+    }
+  }
+
   #isBundleOutputRootPath(filepath: string): boolean {
-    return path.resolve(this.options.baseDir, filepath) === path.resolve(this.options.baseDir);
+    const resolvedBaseDir = path.resolve(this.options.baseDir);
+    const resolvedFilepath = path.resolve(this.options.baseDir, filepath);
+    return this.#toRealpath(resolvedFilepath) === this.#toRealpath(resolvedBaseDir);
   }
   /** end Plugin loader */
 

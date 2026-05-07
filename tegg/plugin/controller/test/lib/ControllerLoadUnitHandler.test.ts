@@ -2,8 +2,8 @@ import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { CONTROLLER_LOAD_UNIT } from '../../src/lib/ControllerLoadUnit.ts';
-import { ControllerLoadUnitHandler } from '../../src/lib/ControllerLoadUnitHandler.ts';
+import { CONTROLLER_LOAD_UNIT } from '../../src/lib/ControllerLoadUnit.js';
+import { ControllerLoadUnitHandler } from '../../src/lib/ControllerLoadUnitHandler.js';
 
 describe('plugin/controller/test/lib/ControllerLoadUnitHandler.test.ts', () => {
   it('should fall back to app.baseDir when config.baseDir is not restored yet', async () => {

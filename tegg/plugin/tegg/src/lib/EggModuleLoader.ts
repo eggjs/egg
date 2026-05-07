@@ -15,11 +15,11 @@ function restoreManifestModulePath(modulePath: string, baseDir: string): string 
 
 function restoreTeggManifestExtension(manifest: TeggManifestExtension, baseDir: string): TeggManifestExtension {
   return {
-    moduleReferences: manifest.moduleReferences.map((ref) => ({
+    moduleReferences: (manifest.moduleReferences ?? []).map((ref) => ({
       ...ref,
       path: restoreManifestModulePath(ref.path, baseDir),
     })),
-    moduleDescriptors: manifest.moduleDescriptors.map((desc) => ({
+    moduleDescriptors: (manifest.moduleDescriptors ?? []).map((desc) => ({
       ...desc,
       unitPath: restoreManifestModulePath(desc.unitPath, baseDir),
     })),
