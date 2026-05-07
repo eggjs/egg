@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-05-08] package | record bundler runtime assets and tegg manifest path normalization
+
+- sources touched: `tools/egg-bundler/src/lib/Bundler.ts`, `tools/egg-bundler/src/lib/ManifestLoader.ts`, `tools/egg-bundler/src/lib/EntryGenerator.ts`, `tegg/core/loader/src/LoaderUtil.ts`, `tools/egg-bundler/README.md`, `tools/egg-bundler/docs/output-structure.md`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Recorded default/configurable runtime asset copying, bundle manifest chunk inclusion for copied assets, tegg module reference/descriptor path normalization, and tegg loader use of the bundle module loader before dynamic import fallback.
+
 ## [2026-05-06] package | sync bundled runtime support changes
 
 - sources touched: `tools/egg-bundler/src/lib/ExternalsResolver.ts`, `packages/utils/src/import.ts`, `plugins/onerror/src/lib/onerror.ts`

@@ -9,7 +9,7 @@ source_files:
   - tools/egg-bundler/src/lib/ExternalsResolver.ts
   - tools/egg-bin/src/commands/bundle.ts
   - tools/egg-bundler/docs/output-structure.md
-updated_at: 2026-05-06
+updated_at: 2026-05-08
 status: active
 ---
 
@@ -34,7 +34,8 @@ CommonJS artifact from an Egg application.
 3. `EntryGenerator` writes a synthetic worker entry that installs the bundle
    manifest/module loader before starting Egg.
 4. `PackRunner` invokes `@utoo/pack`.
-5. `Bundler` writes `bundle-manifest.json` and returns absolute output paths.
+5. `Bundler` copies configured runtime assets into the output directory.
+6. `Bundler` writes `bundle-manifest.json` and returns absolute output paths.
 
 ## Current Behavior
 
@@ -45,12 +46,24 @@ CommonJS artifact from an Egg application.
   lifecycle, runs `loadMetadata()` hooks, and the manifest generation child
   process exits after writing the manifest, so registered `beforeClose` hooks do
   not run.
+- Applications may configure `bundle.runtimeAssets` in `module.yml` or
+  `BundlerConfig`. By default, the bundler scans `app` for runtime assets and
+  force-copies `app/public`, `app/assets`, and `app/static`, preserving
+  baseDir-relative output paths. Source-like files such as `.js`, `.ts`, `.mjs`,
+  and `.cjs` are skipped outside force-copy directories, and manifest-known
+  module files are not copied as assets.
 - The generated app runs in Egg single-process mode. Its worker entry treats the
   deploy output directory as the runtime Egg `baseDir`, passes the framework
   specifier explicitly to `startEgg`, maps that specifier to the already bundled
   framework module, and precomputes original app absolute aliases so bundled
   module lookup can serve relKeys, output-dir absolute paths, original app
   absolute paths, and manifest `resolveCache` request aliases.
+- `ManifestLoader` normalizes tegg `moduleReferences` and `moduleDescriptors`
+  through the same module map so descriptors and references use matching
+  app-relative or package-normalized paths in the bundle manifest. Decorated
+  files from those descriptors are imported by the worker entry, and tegg loader
+  file loading can use `globalThis.__EGG_BUNDLE_MODULE_LOADER__` before falling
+  back to dynamic import.
 - Explicit `externals.force` entries are external, and `ExternalsResolver`
   auto-detects root `peerDependencies`, root `optionalDependencies`, root
   dependency packages with native addons, root dependency packages whose optional
