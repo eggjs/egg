@@ -13,7 +13,7 @@ export interface LoaderFS {
   realpath(filepath: string): string;
   readJSON<T = unknown>(filepath: string): T;
   glob(patterns: string | string[], options?: LoaderFSGlobOptions): string[];
-  loadFile(filepath: string): Promise<any>;
+  loadFile(filepath: string): Promise<unknown>;
 }
 
 export class RealLoaderFS implements LoaderFS {
@@ -37,7 +37,7 @@ export class RealLoaderFS implements LoaderFS {
     return globby.sync(patterns, options);
   }
 
-  async loadFile(filepath: string): Promise<any> {
+  async loadFile(filepath: string): Promise<unknown> {
     return utils.loadFile(filepath);
   }
 }

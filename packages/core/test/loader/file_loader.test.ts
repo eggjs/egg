@@ -27,7 +27,7 @@ class RecordingLoaderFS extends RealLoaderFS {
     return super.stat(filepath);
   }
 
-  async loadFile(filepath: string): Promise<any> {
+  async loadFile(filepath: string): Promise<unknown> {
     this.loadFileCalls.push(filepath);
     return super.loadFile(filepath);
   }
@@ -422,7 +422,7 @@ describe('test/loader/file_loader.test.ts', () => {
   });
 
   it('should use loaderFS for discovery, stat and loadFile', async () => {
-    const target: Record<string, any> = {};
+    const target: Record<string, unknown> = {};
     const loaderFS = new RecordingLoaderFS();
     await new FileLoader({
       directory: path.join(dirBase, 'services'),

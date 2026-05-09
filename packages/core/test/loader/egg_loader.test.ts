@@ -6,7 +6,14 @@ import { getPlugins } from '@eggjs/utils';
 import { mm } from 'mm';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
-import { ContextLoader, EggLoader, FileLoader, RealLoaderFS } from '../../src/index.js';
+import {
+  ContextLoader,
+  EggLoader,
+  FileLoader,
+  RealLoaderFS,
+  type EggLoaderOptions,
+  type LoaderFS,
+} from '../../src/index.js';
 import { createApp, getFilepath, type Application } from '../helper.js';
 
 describe('test/loader/egg_loader.test.ts', () => {
@@ -112,14 +119,15 @@ describe('test/loader/egg_loader.test.ts', () => {
   it('should pass loaderFS to loadToApp and loadToContext', async () => {
     const baseDir = getFilepath('load_to_app');
     const loaderFS = new RealLoaderFS();
-    const app: any = { context: {} };
+    const loaderApp = { context: {} } as EggLoaderOptions['app'];
     const loader = new EggLoader({
+      env: 'unittest',
       baseDir,
-      app,
-      logger: console,
+      app: loaderApp,
+      logger: app.logger,
       loaderFS,
-    } as any);
-    const passedLoaderFS: any[] = [];
+    });
+    const passedLoaderFS: LoaderFS[] = [];
 
     mm(FileLoader.prototype, 'load', async function (this: FileLoader) {
       passedLoaderFS.push(this.options.loaderFS);

@@ -5,7 +5,7 @@ import { debuglog } from 'node:util';
 import { isSupportTypeScript } from '@eggjs/utils';
 import { isClass, isGeneratorFunction, isAsyncFunction, isPrimitive } from 'is-type-of';
 
-import utils, { type Fun } from '../utils/index.ts';
+import utils from '../utils/index.ts';
 import { RealLoaderFS, type LoaderFS } from './loader_fs.ts';
 import type { ManifestStore } from './manifest.ts';
 
@@ -58,7 +58,7 @@ export interface FileLoaderOptions {
 export interface FileLoaderParseItem {
   fullpath: string;
   properties: string[];
-  exports: object | Fun;
+  exports: unknown;
 }
 
 type NormalizedFileLoaderOptions = FileLoaderOptions & Required<Pick<FileLoaderOptions, 'caseStyle' | 'loaderFS'>>;
@@ -270,7 +270,7 @@ function getProperties(filepath: string, caseStyle: CaseStyle | CaseStyleFunctio
 
 // Get exports from filepath
 // If exports is null/undefined, it will be ignored
-async function getExports(fullpath: string, options: NormalizedFileLoaderOptions, pathName: string): Promise<any> {
+async function getExports(fullpath: string, options: NormalizedFileLoaderOptions, pathName: string): Promise<unknown> {
   let exports = await options.loaderFS.loadFile(fullpath);
   // process exports as you like
   if (options.initializer) {
@@ -297,7 +297,8 @@ async function getExports(fullpath: string, options: NormalizedFileLoaderOptions
   //   return {};
   // }
   if (options.call && typeof exports === 'function') {
-    exports = exports(options.inject);
+    const callableExports = exports as (inject?: FileLoaderOptions['inject']) => unknown;
+    exports = callableExports(options.inject);
     if (exports !== null && exports !== undefined) {
       return exports;
     }
