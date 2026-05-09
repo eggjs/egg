@@ -68,7 +68,7 @@ CommonJS artifact from an Egg application.
   absolute paths, and manifest `resolveCache` request aliases.
 - `ManifestLoader` normalizes tegg `moduleReferences[].path` and
   `moduleDescriptors[].unitPath` to the same bundle-relative form so the bundled
-  worker can match tegg decorated files. During runtime, tegg's `LoaderUtil`
+  worker can match tegg-decorated files. During runtime, tegg's `LoaderUtil`
   checks `globalThis.__EGG_BUNDLE_MODULE_LOADER__` before falling back to
   dynamic `import()`.
 - Explicit `externals.force` entries are external, and `ExternalsResolver`
