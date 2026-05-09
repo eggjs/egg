@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-05-10] package | sync egg bundler runtime asset and tegg notes
+
+- sources touched: `tools/egg-bundler/src/lib/Bundler.ts`, `tools/egg-bundler/src/lib/ManifestLoader.ts`, `tools/egg-bundler/src/lib/EntryGenerator.ts`, `tegg/core/loader/src/LoaderUtil.ts`, `tools/egg-bundler/README.md`, `tools/egg-bundler/docs/output-structure.md`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Recorded `module.yml` bundle config, runtime asset copy roots/force-copy directories, tegg manifest path normalization, and tegg loader use of the global bundle module loader.
+
 ## [2026-05-06] package | sync bundled runtime support changes
 
 - sources touched: `tools/egg-bundler/src/lib/ExternalsResolver.ts`, `packages/utils/src/import.ts`, `plugins/onerror/src/lib/onerror.ts`
