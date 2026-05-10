@@ -94,6 +94,11 @@ export class EggLoader {
   constructor(options: EggLoaderOptions) {
     this.options = options;
     this.loaderFS = this.options.loaderFS ?? new RealLoaderFS();
+    const bundleManifest = !this.options.loaderFS ? ManifestStore.getBundleStore() : undefined;
+    const earlyManifest = bundleManifest?.baseDir === this.options.baseDir ? bundleManifest : undefined;
+    if (earlyManifest) {
+      this.loaderFS = new ManifestLoaderFS(this.options.baseDir, earlyManifest, this.loaderFS);
+    }
     assert(this.loaderFS.exists(this.options.baseDir), `${this.options.baseDir} not exists`);
     assert(this.options.app, 'options.app is required');
     assert(this.options.logger, 'options.logger is required');
@@ -172,9 +177,10 @@ export class EggLoader {
 
     // Load pre-computed manifest or create a collector for future generation
     this.manifest =
+      earlyManifest ??
       ManifestStore.load(this.options.baseDir, this.serverEnv, this.serverScope) ??
       ManifestStore.createCollector(this.options.baseDir);
-    if (!this.options.loaderFS) {
+    if (!this.options.loaderFS && !earlyManifest) {
       this.loaderFS = new ManifestLoaderFS(this.options.baseDir, this.manifest, this.loaderFS);
     }
   }

@@ -56,11 +56,14 @@ export class ManifestLoaderFS implements LoaderFS {
   readonly #baseDir: string;
   readonly #manifest: ManifestStore;
   readonly #delegate: LoaderFS;
+  readonly #knownFiles = new Set<string>();
+  readonly #knownDirs = new Set<string>();
 
   constructor(baseDir: string, manifest: ManifestStore, delegate: LoaderFS = new RealLoaderFS()) {
     this.#baseDir = baseDir;
     this.#manifest = manifest;
     this.#delegate = delegate;
+    this.#indexManifestPaths();
   }
 
   exists(filepath: string): boolean {
@@ -84,7 +87,7 @@ export class ManifestLoaderFS implements LoaderFS {
   readFile(filepath: string, encoding?: BufferEncoding): Buffer | string {
     const text = this.#bundleFileText(filepath);
     if (text !== undefined) {
-      return encoding ? text : Buffer.from(text);
+      return encoding ? Buffer.from(text).toString(encoding) : Buffer.from(text);
     }
     return encoding ? this.#delegate.readFile(filepath, encoding) : this.#delegate.readFile(filepath);
   }
@@ -105,7 +108,9 @@ export class ManifestLoaderFS implements LoaderFS {
     if (bundleHit !== undefined) return this.#unwrapDefault(bundleHit);
 
     const text = this.#bundleFileText(filepath);
-    if (text !== undefined) return Buffer.from(text);
+    if (text !== undefined) {
+      return path.extname(filepath) === '.json' ? JSON.parse(text) : Buffer.from(text);
+    }
 
     return this.#delegate.loadFile(filepath);
   }
@@ -113,7 +118,12 @@ export class ManifestLoaderFS implements LoaderFS {
   #bundleFileText(filepath: string): string | undefined {
     const loader = globalThis.__EGG_BUNDLE_FILE_LOADER__;
     if (!loader) return;
-    return loader(this.#normalize(filepath));
+    const normalized = this.#normalize(filepath);
+    const direct = loader(normalized);
+    if (direct !== undefined) return direct;
+
+    const rel = this.#toRelative(filepath);
+    return rel === normalized ? undefined : loader(rel);
   }
 
   #isManifestKnown(filepath: string): boolean {
@@ -121,20 +131,35 @@ export class ManifestLoaderFS implements LoaderFS {
   }
 
   #manifestEntryType(filepath: string): 'file' | 'directory' | undefined {
+    if (this.#bundleFileText(filepath) !== undefined) return 'file';
+
     const rel = this.#toRelative(filepath);
-    if (rel === '' || this.#manifest.data.fileDiscovery[rel]) return 'directory';
-
-    for (const [dir, files] of Object.entries(this.#manifest.data.fileDiscovery)) {
-      if (files.includes(path.posix.relative(dir, rel))) return 'file';
-    }
-
-    for (const value of Object.values(this.#manifest.data.resolveCache)) {
-      if (value && this.#normalize(value) === rel) return 'file';
-    }
+    if (this.#knownDirs.has(rel)) return 'directory';
+    if (this.#knownFiles.has(rel)) return 'file';
   }
 
   #syntheticStats(type: 'file' | 'directory'): Stats {
+    const mode = type === 'directory' ? 0o040755 : 0o100644;
+    const time = new Date(0);
     return {
+      dev: 0,
+      ino: 0,
+      mode,
+      nlink: 1,
+      uid: 0,
+      gid: 0,
+      rdev: 0,
+      size: 0,
+      blksize: 4096,
+      blocks: 0,
+      atimeMs: 0,
+      mtimeMs: 0,
+      ctimeMs: 0,
+      birthtimeMs: 0,
+      atime: time,
+      mtime: time,
+      ctime: time,
+      birthtime: time,
       isFile: () => type === 'file',
       isDirectory: () => type === 'directory',
       isBlockDevice: () => false,
@@ -143,6 +168,42 @@ export class ManifestLoaderFS implements LoaderFS {
       isFIFO: () => false,
       isSocket: () => false,
     } as Stats;
+  }
+
+  #indexManifestPaths(): void {
+    this.#addKnownDir('');
+
+    for (const [dir, files] of Object.entries(this.#manifest.data.fileDiscovery)) {
+      const normalizedDir = this.#normalize(dir);
+      this.#addKnownDir(normalizedDir);
+      for (const file of files) {
+        this.#addKnownFile(path.posix.join(normalizedDir, this.#normalize(file)));
+      }
+    }
+
+    for (const value of Object.values(this.#manifest.data.resolveCache)) {
+      if (value) this.#addKnownFile(this.#normalize(value));
+    }
+  }
+
+  #addKnownFile(rel: string): void {
+    this.#knownFiles.add(rel);
+    this.#addKnownDir(path.posix.dirname(rel));
+  }
+
+  #addKnownDir(rel: string): void {
+    if (rel === '.' || rel === '/') rel = '';
+
+    let current = rel;
+    while (true) {
+      this.#knownDirs.add(current);
+      const parent = path.posix.dirname(current);
+      if (parent === current || parent === '.') {
+        this.#knownDirs.add('');
+        break;
+      }
+      current = parent;
+    }
   }
 
   #toRelative(filepath: string): string {

@@ -10,9 +10,11 @@ import {
   ContextLoader,
   EggLoader,
   FileLoader,
+  ManifestStore,
   RealLoaderFS,
   type EggLoaderOptions,
   type LoaderFS,
+  type StartupManifest,
 } from '../../src/index.js';
 import { createApp, getFilepath, type Application } from '../helper.js';
 
@@ -108,6 +110,46 @@ describe('test/loader/egg_loader.test.ts', () => {
 
       assert.deepEqual(ret, [1, 2]);
       assert(calls.some((filepath) => filepath.endsWith(path.join('load_file', 'function.js'))));
+    });
+
+    it('should initialize bundle manifest loader before package metadata reads', () => {
+      const baseDir = '/bundle/app';
+      const originalStore = ManifestStore.getBundleStore();
+      const originalFileLoader = globalThis.__EGG_BUNDLE_FILE_LOADER__;
+      const manifest: StartupManifest = {
+        version: 1,
+        generatedAt: '2026-05-10T00:00:00.000Z',
+        invalidation: {
+          lockfileFingerprint: '',
+          configFingerprint: '',
+          serverEnv: 'prod',
+          serverScope: '',
+          typescriptEnabled: false,
+        },
+        extensions: {},
+        resolveCache: {},
+        fileDiscovery: {},
+      };
+
+      ManifestStore.setBundleStore(ManifestStore.fromBundle(manifest, baseDir));
+      globalThis.__EGG_BUNDLE_FILE_LOADER__ = (rel) => {
+        if (rel === 'package.json') return '{"name":"bundle-app"}';
+      };
+
+      try {
+        const loader = new EggLoader({
+          env: 'prod',
+          baseDir,
+          app: {},
+          logger: console,
+        } as any);
+
+        assert.equal(loader.pkg.name, 'bundle-app');
+        assert.equal(loader.manifest.baseDir, baseDir);
+      } finally {
+        ManifestStore.setBundleStore(originalStore);
+        globalThis.__EGG_BUNDLE_FILE_LOADER__ = originalFileLoader;
+      }
     });
   });
 

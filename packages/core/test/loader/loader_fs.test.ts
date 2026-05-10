@@ -70,10 +70,54 @@ describe('test/loader/loader_fs.test.ts', () => {
     );
 
     assert.equal(manifestFS.exists('/bundle/app/app/controller'), true);
+    assert.equal(manifestFS.exists('/bundle/app/app'), true);
+    assert.equal(manifestFS.stat('/bundle/app/app').isDirectory(), true);
     assert.equal(manifestFS.stat('/bundle/app/app/controller').isDirectory(), true);
     assert.equal(manifestFS.exists('/bundle/app/app/controller/home.js'), true);
-    assert.equal(manifestFS.stat('/bundle/app/app/controller/home.js').isFile(), true);
+    const fileStat = manifestFS.stat('/bundle/app/app/controller/home.js');
+    assert.equal(fileStat.isFile(), true);
+    assert.equal(typeof fileStat.mode, 'number');
+    assert(fileStat.mtime instanceof Date);
     assert.equal(manifestFS.exists('/bundle/app/config/plugin.js'), true);
     assert.equal(manifestFS.stat('/bundle/app/config/plugin.js').isFile(), true);
+  });
+
+  it('should preserve bundled text file read/load behavior', async () => {
+    const originalFileLoader = globalThis.__EGG_BUNDLE_FILE_LOADER__;
+    globalThis.__EGG_BUNDLE_FILE_LOADER__ = (rel) => {
+      if (rel === 'config/app.json') return '{"name":"egg"}';
+    };
+    const manifestFS = new ManifestLoaderFS(
+      '/bundle/app',
+      ManifestStore.fromBundle(
+        {
+          version: 1,
+          generatedAt: '2026-05-10T00:00:00.000Z',
+          invalidation: {
+            lockfileFingerprint: '',
+            configFingerprint: '',
+            serverEnv: 'prod',
+            serverScope: '',
+            typescriptEnabled: false,
+          },
+          extensions: {},
+          resolveCache: {},
+          fileDiscovery: {},
+        },
+        '/bundle/app',
+      ),
+    );
+
+    try {
+      assert.equal(manifestFS.exists('/bundle/app/config/app.json'), true);
+      assert.equal(manifestFS.stat('/bundle/app/config/app.json').isFile(), true);
+      assert.equal(
+        manifestFS.readFile('/bundle/app/config/app.json', 'base64'),
+        Buffer.from('{"name":"egg"}').toString('base64'),
+      );
+      assert.deepEqual(await manifestFS.loadFile('/bundle/app/config/app.json'), { name: 'egg' });
+    } finally {
+      globalThis.__EGG_BUNDLE_FILE_LOADER__ = originalFileLoader;
+    }
   });
 });
