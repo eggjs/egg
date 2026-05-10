@@ -14,7 +14,7 @@ import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } fr
 import { homedir } from 'node-homedir';
 import { now, diff } from 'performance-ms';
 import { register as tsconfigPathsRegister } from 'tsconfig-paths';
-import { getParamNames, readJSONSync, readJSON, exists } from 'utility';
+import { getParamNames, readJSONSync } from 'utility';
 
 import type { BaseContextClass } from '../base_context_class.ts';
 import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
@@ -25,6 +25,7 @@ import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
+import { ManifestLoaderFS } from './loader_fs.ts';
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
@@ -95,7 +96,10 @@ export class EggLoader {
    */
   constructor(options: EggLoaderOptions) {
     this.options = options;
-    this.loaderFS = this.options.loaderFS ?? new RealLoaderFS();
+    const bundleStore = ManifestStore.getBundleStore();
+    this.loaderFS =
+      this.options.loaderFS ??
+      (bundleStore?.baseDir === this.options.baseDir ? new ManifestLoaderFS(bundleStore) : new RealLoaderFS());
     assert(fs.existsSync(this.options.baseDir), `${this.options.baseDir} not exists`);
     assert(this.options.app, 'options.app is required');
     assert(this.options.logger, 'options.logger is required');
@@ -176,6 +180,9 @@ export class EggLoader {
     this.manifest =
       ManifestStore.load(this.options.baseDir, this.serverEnv, this.serverScope) ??
       ManifestStore.createCollector(this.options.baseDir);
+    if (!this.options.loaderFS && !(this.loaderFS instanceof ManifestLoaderFS)) {
+      this.loaderFS = new ManifestLoaderFS(this.manifest, this.loaderFS);
+    }
   }
 
   get app(): EggCore {
@@ -644,8 +651,8 @@ export class EggLoader {
     let pkg: any;
     let eggPluginConfig: any;
     const pluginPackage = path.join(plugin.path as string, 'package.json');
-    if (await utils.existsPath(pluginPackage)) {
-      pkg = await readJSON(pluginPackage);
+    if (this.loaderFS.exists(pluginPackage)) {
+      pkg = this.loaderFS.readJSON(pluginPackage);
       eggPluginConfig = pkg.eggPlugin;
       if (pkg.version) {
         plugin.version = pkg.version;
@@ -848,7 +855,7 @@ export class EggLoader {
       } else if (exports.require) {
         realPluginPath = path.join(pluginPath, exports.require);
       }
-      if (exports.typescript && isSupportTypeScript() && !(await exists(realPluginPath))) {
+      if (exports.typescript && isSupportTypeScript() && !this.loaderFS.exists(realPluginPath)) {
         // if require/import path not exists, use typescript path for development stage
         realPluginPath = path.join(pluginPath, exports.typescript);
         debug('[formatPluginPathFromPackageJSON] use typescript path %o', realPluginPath);
@@ -1796,6 +1803,7 @@ export class EggLoader {
    */
   #collectConventionalDynamicFiles(manifest: StartupManifest): void {
     for (const unit of this.getLoadUnits()) {
+      this.#collectConventionFile(manifest, path.join(unit.path, 'package.json'));
       for (const load of CONVENTIONAL_MANIFEST_LOADS) {
         const target = path.join(unit.path, ...load.path);
         if (load.type === 'resolve') {
@@ -1836,6 +1844,19 @@ export class EggLoader {
         ? globby.sync(FileLoader.getDefaultMatch(), { cwd: directory }).sort()
         : [];
     return manifest.fileDiscovery[dirKey];
+  }
+
+  #collectConventionFile(manifest: StartupManifest, filepath: string): void {
+    const fileKey = this.#toManifestRel(filepath);
+    if (Object.values(manifest.resolveCache).includes(fileKey)) return;
+    if (!fs.existsSync(filepath) || !fs.statSync(filepath).isFile()) return;
+
+    const dirKey = this.#toManifestRel(path.dirname(filepath));
+    const basename = path.basename(filepath);
+    const files = manifest.fileDiscovery[dirKey] ?? [];
+    if (!files.includes(basename)) {
+      manifest.fileDiscovery[dirKey] = [...files, basename].sort();
+    }
   }
 
   #toManifestRel(filepath: string): string {
