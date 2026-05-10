@@ -7,7 +7,7 @@ import { importModule } from '@eggjs/utils';
 import globby from 'globby';
 import { readJSONSync } from 'utility';
 
-const debug = debuglog('egg/core/utils');
+const debug = debuglog('egg/loader-fs');
 
 type CommonJSModuleConstructor = {
   _extensions?: Record<string, unknown>;
@@ -17,7 +17,7 @@ type CommonJSModuleConstructor = {
 const Module = typeof module !== 'undefined' && module.constructor.length > 1 ? module.constructor : BuiltinModule;
 
 const extensions = (Module as unknown as CommonJSModuleConstructor)._extensions ?? {};
-const extensionNames = Object.keys(extensions).concat(['.cjs', '.mjs']);
+const extensionNames = Object.keys(extensions).concat(['.js', '.cjs', '.mjs']);
 
 export type LoaderFSGlobOptions = globby.GlobbyOptions;
 
@@ -62,9 +62,9 @@ export class RealLoaderFS implements LoaderFS {
     } catch (e) {
       if (!(e instanceof Error)) {
         console.trace(e);
-        throw e;
       }
-      const err = new Error(`[egg/core] load file: ${filepath}, error: ${e.message}`);
+      const message = e instanceof Error ? e.message : String(e);
+      const err = new Error(`[@eggjs/loader-fs] load file: ${filepath}, error: ${message}`);
       err.cause = e;
       debug('[loadFile] handle %s error: %s', filepath, e);
       throw err;
