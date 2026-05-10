@@ -21,6 +21,9 @@
       "path": "./packages/core"
     },
     {
+      "path": "./packages/loader-fs"
+    },
+    {
       "path": "./packages/errors"
     },
     {

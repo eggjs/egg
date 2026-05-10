@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
+import { RealLoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
 import { isClass } from 'is-type-of';
 import yaml from 'js-yaml';
 import { describe, it, expect } from 'vitest';
 
 import { FileLoader, CaseStyle } from '../../src/loader/file_loader.ts';
-import { RealLoaderFS, type LoaderFSGlobOptions } from '../../src/loader/loader_fs.ts';
 import { ManifestStore } from '../../src/loader/manifest.ts';
 import { getFilepath } from '../helper.ts';
 

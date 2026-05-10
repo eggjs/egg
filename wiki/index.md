@@ -20,6 +20,7 @@ Read this file before exploring raw sources.
 
 - [Core Package](./packages/core.md) - Loader, lifecycle, and application core primitives used by Egg runtime packages.
 - [Egg Bundler](./packages/egg-bundler.md) - Tooling package that bundles Egg applications and backs `egg-bin bundle`.
+- [Loader FS Package](./packages/loader-fs.md) - Shared loader-facing filesystem boundary and default real filesystem implementation.
 - [Onerror Plugin](./packages/onerror.md) - Default Egg error-handling plugin and configurable response negotiation layer.
 - [Typings Package](./packages/typings.md) - Shared TypeScript type surface for cross-package Egg typings.
 - [Utils Package](./packages/utils.md) - Shared utility package for module loading and bundled module-loader integration.

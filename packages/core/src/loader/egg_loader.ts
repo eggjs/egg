@@ -5,6 +5,7 @@ import { debuglog, inspect } from 'node:util';
 
 import { extend } from '@eggjs/extend2';
 import { Request, Response, Application, Context as KoaContext } from '@eggjs/koa';
+import { RealLoaderFS, type LoaderFS } from '@eggjs/loader-fs';
 import { pathMatching, type PathMatchingOptions } from '@eggjs/path-matching';
 import { isESM, isSupportTypeScript } from '@eggjs/utils';
 import type { Logger } from 'egg-logger';
@@ -24,7 +25,6 @@ import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
-import { RealLoaderFS, type LoaderFS } from './loader_fs.ts';
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');

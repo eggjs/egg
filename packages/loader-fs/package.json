@@ -1,0 +1,51 @@
+{
+  "name": "@eggjs/loader-fs",
+  "version": "1.0.0-beta.9",
+  "description": "Loader-facing filesystem boundary for Egg loaders",
+  "keywords": [
+    "egg",
+    "filesystem",
+    "loader"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/loader-fs",
+  "license": "MIT",
+  "author": "fengmk2 <fengmk2@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "packages/loader-fs"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/utils": "workspace:*",
+    "globby": "catalog:",
+    "utility": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/tsconfig": "workspace:*",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

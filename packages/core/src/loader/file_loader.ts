@@ -2,11 +2,11 @@ import assert from 'node:assert';
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
+import { RealLoaderFS, type LoaderFS } from '@eggjs/loader-fs';
 import { isSupportTypeScript } from '@eggjs/utils';
 import { isClass, isGeneratorFunction, isAsyncFunction, isPrimitive } from 'is-type-of';
 
 import utils from '../utils/index.ts';
-import { RealLoaderFS, type LoaderFS } from './loader_fs.ts';
 import type { ManifestStore } from './manifest.ts';
 
 const debug = debuglog('egg/core/file_loader');

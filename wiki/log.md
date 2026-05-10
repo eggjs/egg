@@ -2,9 +2,15 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-05-10] package | extract LoaderFS package boundary
+
+- sources touched: `packages/loader-fs/src/index.ts`, `packages/core/src/index.ts`, `packages/core/src/loader/file_loader.ts`, `packages/core/src/loader/context_loader.ts`, `packages/core/src/loader/egg_loader.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/core.md`, `wiki/packages/loader-fs.md`
+- note: Moved `LoaderFS` and `RealLoaderFS` into `@eggjs/loader-fs` so core, tegg, and bundled runtimes can share the loader-facing boundary without a core dependency.
+
 ## [2026-05-07] package | document core LoaderFS boundary
 
-- sources touched: `packages/core/src/index.ts`, `packages/core/src/loader/loader_fs.ts`, `packages/core/src/loader/file_loader.ts`, `packages/core/src/loader/context_loader.ts`, `packages/core/src/loader/egg_loader.ts`
+- sources touched: `packages/core/src/index.ts`, `packages/core/src/loader/file_loader.ts`, `packages/core/src/loader/context_loader.ts`, `packages/core/src/loader/egg_loader.ts`
 - pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/core.md`
 - note: Recorded `LoaderFS` as the minimal loader filesystem boundary and `RealLoaderFS` as the default implementation for existing non-bundled behavior.
 
