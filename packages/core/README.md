@@ -214,11 +214,6 @@ export default async (ctx: Context) => {
 };
 ```
 
-`LoaderOptions` accepts a `loaderFS` option for advanced loader integrations.
-The value must implement the exported `LoaderFS` interface. When omitted,
-`@eggjs/core` uses `RealLoaderFS`, which keeps the default Node.js filesystem,
-glob, JSON, and file-loading behavior.
-
 #### async loadExtend(name, target)
 
 Loader app/extend/xx.ts to target, For example,
@@ -229,11 +224,17 @@ await this.loadExtend('application', app);
 
 ### LoaderOptions
 
+`LoaderOptions` accepts a `loaderFS` option for advanced loader integrations.
+The value must implement the exported `LoaderFS` interface. When omitted by
+`loadToApp` or `loadToContext`, it reuses the current loader's `loaderFS`
+instance. `EggLoader` defaults that instance to `RealLoaderFS`, the default
+`@eggjs/core` loader filesystem implementation.
+
 | Param       | Type              | Description                                                                                                                                                        |
-| ----------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| ----------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | directory   | `String/Array`    | directories to be loaded                                                                                                                                           |
 | target      | `Object`          | attach the target object from loaded files                                                                                                                         |
-| match       | `String/Array`    | match the files when load, default to `**/*.js`(if process.env.EGG\*TYPESCRIPT was true, default to `[ '\*\*/\_.(js                                                | ts)', '!\*_/_.d.ts' ]`) |
+| match       | `String/Array`    | match the files when load, default to `**/*.js` (if TypeScript support is enabled, default to <code>['**/*.(js&#124;ts)', '!**/*.d.ts']</code>)                    |
 | ignore      | `String/Array`    | ignore the files when load                                                                                                                                         |
 | initializer | `Function`        | custom file exports, receive two parameters, first is the inject object(if not js file, will be content buffer), second is an `options` object that contain `path` |
 | caseStyle   | `String/Function` | set property's case when converting a filepath to property list.                                                                                                   |
@@ -241,7 +242,7 @@ await this.loadExtend('application', app);
 | call        | `Boolean`         | determine whether invoke when exports is function                                                                                                                  |
 | inject      | `Object`          | an object that be the argument when invoke the function                                                                                                            |
 | filter      | `Function`        | a function that filter the exports which can be loaded                                                                                                             |
-| loaderFS    | `LoaderFS`        | custom loader-facing filesystem implementation, default is `RealLoaderFS`                                                                                          |
+| loaderFS    | `LoaderFS`        | custom loader-facing filesystem implementation, defaults to the loader's `loaderFS`                                                                                |
 
 ## Timing
 
