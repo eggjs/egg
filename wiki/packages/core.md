@@ -7,7 +7,7 @@ source_files:
   - packages/core/src/loader/file_loader.ts
   - packages/core/src/loader/context_loader.ts
   - packages/core/src/loader/egg_loader.ts
-updated_at: 2026-05-07
+updated_at: 2026-05-10
 status: active
 ---
 
