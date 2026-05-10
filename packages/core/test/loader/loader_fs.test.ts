@@ -5,7 +5,7 @@ import path from 'node:path';
 import globby from 'globby';
 import { describe, it } from 'vitest';
 
-import { ManifestLoaderFS, RealLoaderFS } from '../../src/loader/loader_fs.ts';
+import { ManifestLoaderFS, RealLoaderFS, readFileWithLoaderFS, type LoaderFS } from '../../src/loader/loader_fs.ts';
 import { ManifestStore, type StartupManifest } from '../../src/loader/manifest.ts';
 import utils from '../../src/utils/index.ts';
 import { getFilepath } from '../helper.ts';
@@ -33,6 +33,19 @@ describe('test/loader/loader_fs.test.ts', () => {
       await loaderFS.loadFile(path.join(baseDir, 'object.js')),
       await utils.loadFile(path.join(baseDir, 'object.js')),
     );
+  });
+
+  it('should allow custom loaderFS implementations without readFile', () => {
+    const compatLoaderFS: LoaderFS = {
+      exists: loaderFS.exists.bind(loaderFS),
+      stat: loaderFS.stat.bind(loaderFS),
+      realpath: loaderFS.realpath.bind(loaderFS),
+      readJSON: loaderFS.readJSON.bind(loaderFS),
+      glob: loaderFS.glob.bind(loaderFS),
+      loadFile: loaderFS.loadFile.bind(loaderFS),
+    };
+
+    assert(readFileWithLoaderFS(compatLoaderFS, path.join(baseDir, 'package.json'), 'utf8').includes('"type"'));
   });
 
   it('should answer manifest-backed file stats without touching the delegate filesystem', () => {

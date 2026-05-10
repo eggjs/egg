@@ -13,11 +13,24 @@ export interface LoaderFS {
   exists(filepath: string): boolean;
   stat(filepath: string): Stats;
   realpath(filepath: string): string;
-  readFile(filepath: string): Buffer;
-  readFile(filepath: string, encoding: BufferEncoding): string;
+  readFile?: LoaderFSReadFile;
   readJSON<T = unknown>(filepath: string): T;
   glob(patterns: string | string[], options?: LoaderFSGlobOptions): string[];
   loadFile(filepath: string): Promise<unknown>;
+}
+
+export interface LoaderFSReadFile {
+  (filepath: string): Buffer;
+  (filepath: string, encoding: BufferEncoding): string;
+}
+
+export function readFileWithLoaderFS(loaderFS: LoaderFS, filepath: string): Buffer;
+export function readFileWithLoaderFS(loaderFS: LoaderFS, filepath: string, encoding: BufferEncoding): string;
+export function readFileWithLoaderFS(loaderFS: LoaderFS, filepath: string, encoding?: BufferEncoding): Buffer | string {
+  if (loaderFS.readFile) {
+    return encoding ? loaderFS.readFile(filepath, encoding) : loaderFS.readFile(filepath);
+  }
+  return encoding ? fs.readFileSync(filepath, encoding) : fs.readFileSync(filepath);
 }
 
 export class RealLoaderFS implements LoaderFS {
@@ -89,7 +102,9 @@ export class ManifestLoaderFS implements LoaderFS {
     if (text !== undefined) {
       return encoding ? Buffer.from(text).toString(encoding) : Buffer.from(text);
     }
-    return encoding ? this.#delegate.readFile(filepath, encoding) : this.#delegate.readFile(filepath);
+    return encoding
+      ? readFileWithLoaderFS(this.#delegate, filepath, encoding)
+      : readFileWithLoaderFS(this.#delegate, filepath);
   }
 
   readJSON<T = unknown>(filepath: string): T {

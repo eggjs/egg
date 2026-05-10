@@ -22,7 +22,7 @@ import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
-import { ManifestLoaderFS, RealLoaderFS, type LoaderFS } from './loader_fs.ts';
+import { ManifestLoaderFS, RealLoaderFS, readFileWithLoaderFS, type LoaderFS } from './loader_fs.ts';
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
@@ -209,7 +209,7 @@ export class EggLoader {
 
     const envPath = path.join(this.options.baseDir, 'config/env');
     if (!serverEnv && this.loaderFS.exists(envPath)) {
-      serverEnv = this.loaderFS.readFile(envPath, 'utf8').trim();
+      serverEnv = readFileWithLoaderFS(this.loaderFS, envPath, 'utf8').trim();
     }
 
     if (!serverEnv && process.env.EGG_SERVER_ENV) {
@@ -1758,7 +1758,7 @@ export class EggLoader {
     const tsConfigFile = path.join(this.options.baseDir, 'tsconfig.json');
     if (this.loaderFS.exists(tsConfigFile)) {
       try {
-        const tsConfig = JSON.parse(this.loaderFS.readFile(tsConfigFile, 'utf-8'));
+        const tsConfig = JSON.parse(readFileWithLoaderFS(this.loaderFS, tsConfigFile, 'utf-8'));
         if (tsConfig.compilerOptions?.outDir) {
           debug('[resolveOutDir] use tsconfig.json compilerOptions.outDir: %o', tsConfig.compilerOptions.outDir);
           return tsConfig.compilerOptions.outDir;

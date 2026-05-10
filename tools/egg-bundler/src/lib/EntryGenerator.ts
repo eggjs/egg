@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -75,7 +74,7 @@ export class EntryGenerator {
 
     const workerEntry = path.join(this.#outputDir, 'worker.entry.ts');
 
-    await fs.writeFile(workerEntry, this.#renderWorkerEntry(entries, manifest));
+    await fs.writeFile(workerEntry, await this.#renderWorkerEntry(entries, manifest));
 
     return {
       workerEntry,
@@ -116,16 +115,18 @@ export class EntryGenerator {
     });
   }
 
-  #collectBundleTextFiles(manifest: StartupManifest): BundleTextFile[] {
+  async #collectBundleTextFiles(manifest: StartupManifest): Promise<BundleTextFile[]> {
     const keys = new Set<string>();
     for (const value of Object.values(manifest.resolveCache)) {
       if (value && this.#isTextFileEntry(value)) keys.add(value.replaceAll(path.sep, '/'));
     }
 
-    return [...keys].sort().map((relKey) => ({
-      relKey,
-      text: readFileSync(this.#absFromRelKey(relKey), 'utf8'),
-    }));
+    return Promise.all(
+      [...keys].sort().map(async (relKey) => ({
+        relKey,
+        text: await fs.readFile(this.#absFromRelKey(relKey), 'utf8'),
+      })),
+    );
   }
 
   #isTextFileEntry(relKey: string): boolean {
@@ -236,11 +237,11 @@ export class EntryGenerator {
     return unique;
   }
 
-  #renderWorkerEntry(entries: BundleEntry[], manifest: StartupManifest): string {
+  async #renderWorkerEntry(entries: BundleEntry[], manifest: StartupManifest): Promise<string> {
     const importLines: string[] = [];
     const mapLines: string[] = [];
     const externalSpecs: Array<[string, string]> = [];
-    const textFiles = this.#collectBundleTextFiles(manifest);
+    const textFiles = await this.#collectBundleTextFiles(manifest);
 
     let internalIdx = 0;
     for (const entry of entries) {
