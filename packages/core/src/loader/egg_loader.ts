@@ -24,6 +24,7 @@ import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
+import { RealLoaderFS, type LoaderFS } from './loader_fs.ts';
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
@@ -57,6 +58,8 @@ export interface EggLoaderOptions {
   plugins?: Record<string, EggPluginInfo>;
   /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
   metadataOnly?: boolean;
+  /** Loader-facing filesystem abstraction */
+  loaderFS?: LoaderFS;
 }
 
 export type EggDirInfoType = 'app' | 'plugin' | 'framework';
@@ -79,6 +82,7 @@ export class EggLoader {
   dirs?: EggDirInfo[];
   /** Startup manifest — loaded from cache or collecting for generation */
   readonly manifest: ManifestStore;
+  readonly loaderFS: LoaderFS;
 
   /**
    * @class
@@ -91,6 +95,7 @@ export class EggLoader {
    */
   constructor(options: EggLoaderOptions) {
     this.options = options;
+    this.loaderFS = this.options.loaderFS ?? new RealLoaderFS();
     assert(fs.existsSync(this.options.baseDir), `${this.options.baseDir} not exists`);
     assert(this.options.app, 'options.app is required');
     assert(this.options.logger, 'options.logger is required');
@@ -1653,6 +1658,7 @@ export class EggLoader {
       target,
       inject: this.app,
       manifest: this.manifest,
+      loaderFS: options?.loaderFS ?? this.loaderFS,
     };
 
     const timingKey = `Load "${String(property)}" to Application`;
@@ -1679,6 +1685,7 @@ export class EggLoader {
       property,
       inject: this.app,
       manifest: this.manifest,
+      loaderFS: options?.loaderFS ?? this.loaderFS,
     };
 
     const timingKey = `Load "${String(property)}" to Context`;

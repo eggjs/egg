@@ -11,6 +11,7 @@ export * from './singleton.ts';
 export * from './loader/egg_loader.ts';
 export * from './loader/file_loader.ts';
 export * from './loader/context_loader.ts';
+export * from './loader/loader_fs.ts';
 export * from './loader/manifest.ts';
 export * from './utils/sequencify.ts';
 export * from './utils/timing.ts';

@@ -6,7 +6,14 @@ import { getPlugins } from '@eggjs/utils';
 import { mm } from 'mm';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
-import { EggLoader } from '../../src/index.js';
+import {
+  ContextLoader,
+  EggLoader,
+  FileLoader,
+  RealLoaderFS,
+  type EggLoaderOptions,
+  type LoaderFS,
+} from '../../src/index.js';
 import { createApp, getFilepath, type Application } from '../helper.js';
 
 describe('test/loader/egg_loader.test.ts', () => {
@@ -107,6 +114,38 @@ describe('test/loader/egg_loader.test.ts', () => {
     } as any);
     await loader.loadToContext(directory, prop);
     assert(Reflect.get(app.context, prop).user);
+  });
+
+  it('should pass loaderFS to loadToApp and loadToContext', async () => {
+    const baseDir = getFilepath('load_to_app');
+    const loaderFS = new RealLoaderFS();
+    const loaderApp = { context: {} } as EggLoaderOptions['app'];
+    const loader = new EggLoader({
+      env: 'unittest',
+      baseDir,
+      app: loaderApp,
+      logger: app.logger,
+      loaderFS,
+    });
+    const passedLoaderFS: LoaderFS[] = [];
+
+    mm(FileLoader.prototype, 'load', async function (this: FileLoader) {
+      passedLoaderFS.push(this.options.loaderFS);
+      return {};
+    });
+    mm(ContextLoader.prototype, 'load', async function (this: ContextLoader) {
+      passedLoaderFS.push(this.options.loaderFS);
+      return {};
+    });
+
+    try {
+      await loader.loadToApp(path.join(baseDir, 'app/model'), 'model');
+      await loader.loadToContext(path.join(baseDir, 'app/service'), 'service');
+
+      assert.deepEqual(passedLoaderFS, [loaderFS, loaderFS]);
+    } finally {
+      mm.restore();
+    }
   });
 
   describe('resolveModule with outDir', () => {
