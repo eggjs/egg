@@ -1,17 +1,19 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import { RealLoaderFS } from '@eggjs/loader-fs';
 import globby from 'globby';
 import { describe, it } from 'vitest';
 
-import utils from '../../src/utils/index.ts';
-import { getFilepath } from '../helper.ts';
+import { RealLoaderFS } from '../src/index.ts';
 
-describe('test/loader/loader_fs.test.ts', () => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+describe('test/loader_fs.test.ts', () => {
   const loaderFS = new RealLoaderFS();
-  const baseDir = getFilepath('loadfile');
+  const baseDir = path.join(__dirname, 'fixtures/loadfile');
 
   it('should wrap exists/stat/realpath with node fs behavior', () => {
     const filepath = path.join(baseDir, 'object.js');
@@ -25,12 +27,11 @@ describe('test/loader/loader_fs.test.ts', () => {
   it('should wrap readJSON/glob/loadFile with current loader behavior', async () => {
     const packagePath = path.join(baseDir, 'package.json');
     const patterns = ['*.js', '!null.js'];
+    const yamlPath = path.join(baseDir, 'plain.yml');
 
-    assert.deepEqual(await loaderFS.readJSON(packagePath), JSON.parse(fs.readFileSync(packagePath, 'utf8')));
+    assert.deepEqual(loaderFS.readJSON(packagePath), JSON.parse(fs.readFileSync(packagePath, 'utf8')));
     assert.deepEqual(loaderFS.glob(patterns, { cwd: baseDir }).sort(), globby.sync(patterns, { cwd: baseDir }).sort());
-    assert.deepEqual(
-      await loaderFS.loadFile(path.join(baseDir, 'object.js')),
-      await utils.loadFile(path.join(baseDir, 'object.js')),
-    );
+    assert.deepEqual(await loaderFS.loadFile(path.join(baseDir, 'object.js')), { a: 1 });
+    assert.deepEqual(await loaderFS.loadFile(yamlPath), fs.readFileSync(yamlPath));
   });
 });

@@ -41,6 +41,7 @@
   "dependencies": {
     "@eggjs/extend2": "workspace:*",
     "@eggjs/koa": "workspace:*",
+    "@eggjs/loader-fs": "workspace:*",
     "@eggjs/path-matching": "workspace:*",
     "@eggjs/router": "workspace:*",
     "@eggjs/typings": "workspace:*",
