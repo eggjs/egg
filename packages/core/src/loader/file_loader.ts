@@ -1,13 +1,12 @@
 import assert from 'node:assert';
-import fs from 'node:fs';
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
 import { isSupportTypeScript } from '@eggjs/utils';
-import globby from 'globby';
 import { isClass, isGeneratorFunction, isAsyncFunction, isPrimitive } from 'is-type-of';
 
-import utils, { type Fun } from '../utils/index.ts';
+import utils from '../utils/index.ts';
+import { RealLoaderFS, type LoaderFS } from './loader_fs.ts';
 import type { ManifestStore } from './manifest.ts';
 
 const debug = debuglog('egg/core/file_loader');
@@ -52,13 +51,17 @@ export interface FileLoaderOptions {
   lowercaseFirst?: boolean;
   /** Startup manifest for caching globby scans and collecting results */
   manifest?: ManifestStore;
+  /** Loader-facing filesystem abstraction */
+  loaderFS?: LoaderFS;
 }
 
 export interface FileLoaderParseItem {
   fullpath: string;
   properties: string[];
-  exports: object | Fun;
+  exports: unknown;
 }
+
+type NormalizedFileLoaderOptions = FileLoaderOptions & Required<Pick<FileLoaderOptions, 'caseStyle' | 'loaderFS'>>;
 
 function getDefaultFileLoaderMatch(): string[] {
   return isSupportTypeScript() ? ['**/*.(js|ts)', '!**/*.d.ts'] : ['**/*.js'];
@@ -81,7 +84,7 @@ export class FileLoader {
     return getDefaultFileLoaderMatch();
   }
 
-  readonly options: FileLoaderOptions & Required<Pick<FileLoaderOptions, 'caseStyle'>>;
+  readonly options: NormalizedFileLoaderOptions;
 
   /**
    * @class
@@ -108,6 +111,7 @@ export class FileLoader {
       caseStyle: CaseStyle.camel,
       call: true,
       override: false,
+      loaderFS: new RealLoaderFS(),
       ...options,
     };
 
@@ -210,12 +214,12 @@ export class FileLoader {
     for (const directory of directories) {
       const manifest = this.options.manifest;
       const filepaths = manifest
-        ? manifest.globFiles(directory, () => globby.sync(files, { cwd: directory }))
-        : globby.sync(files, { cwd: directory });
+        ? manifest.globFiles(directory, () => this.options.loaderFS.glob(files, { cwd: directory }))
+        : this.options.loaderFS.glob(files, { cwd: directory });
       debug('[parse] files: %o, cwd: %o => %o', files, directory, filepaths);
       for (const filepath of filepaths) {
         const fullpath = path.join(directory, filepath);
-        if (!fs.statSync(fullpath).isFile()) continue;
+        if (!this.options.loaderFS.stat(fullpath).isFile()) continue;
         if (filepath.endsWith('.js')) {
           const filepathTs = filepath.replace(/\.js$/, '.ts');
           if (filepaths.includes(filepathTs)) {
@@ -266,8 +270,8 @@ function getProperties(filepath: string, caseStyle: CaseStyle | CaseStyleFunctio
 
 // Get exports from filepath
 // If exports is null/undefined, it will be ignored
-async function getExports(fullpath: string, options: FileLoaderOptions, pathName: string): Promise<any> {
-  let exports = await utils.loadFile(fullpath);
+async function getExports(fullpath: string, options: NormalizedFileLoaderOptions, pathName: string): Promise<unknown> {
+  let exports = await options.loaderFS.loadFile(fullpath);
   // process exports as you like
   if (options.initializer) {
     exports = options.initializer(exports, { path: fullpath, pathName });
@@ -293,7 +297,8 @@ async function getExports(fullpath: string, options: FileLoaderOptions, pathName
   //   return {};
   // }
   if (options.call && typeof exports === 'function') {
-    exports = exports(options.inject);
+    const callableExports = exports as (inject?: FileLoaderOptions['inject']) => unknown;
+    exports = callableExports(options.inject);
     if (exports !== null && exports !== undefined) {
       return exports;
     }

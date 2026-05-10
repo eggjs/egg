@@ -6,9 +6,32 @@ import yaml from 'js-yaml';
 import { describe, it, expect } from 'vitest';
 
 import { FileLoader, CaseStyle } from '../../src/loader/file_loader.ts';
+import { RealLoaderFS, type LoaderFSGlobOptions } from '../../src/loader/loader_fs.ts';
+import { ManifestStore } from '../../src/loader/manifest.ts';
 import { getFilepath } from '../helper.ts';
 
 const dirBase = getFilepath('load_dirs');
+
+class RecordingLoaderFS extends RealLoaderFS {
+  readonly globCalls: Array<{ patterns: string | string[]; cwd: string | undefined }> = [];
+  readonly statCalls: string[] = [];
+  readonly loadFileCalls: string[] = [];
+
+  glob(patterns: string | string[], options?: LoaderFSGlobOptions): string[] {
+    this.globCalls.push({ patterns, cwd: options?.cwd ? String(options.cwd) : undefined });
+    return super.glob(patterns, options);
+  }
+
+  stat(filepath: string) {
+    this.statCalls.push(filepath);
+    return super.stat(filepath);
+  }
+
+  async loadFile(filepath: string): Promise<unknown> {
+    this.loadFileCalls.push(filepath);
+    return super.loadFile(filepath);
+  }
+}
 
 describe('test/loader/file_loader.test.ts', () => {
   it('should load files with package.json#exports', async () => {
@@ -396,5 +419,21 @@ describe('test/loader/file_loader.test.ts', () => {
       },
     }).load();
     assert.deepEqual(Object.keys(target), ['arr', 'class']);
+  });
+
+  it('should use loaderFS for discovery, stat and loadFile', async () => {
+    const target: Record<string, unknown> = {};
+    const loaderFS = new RecordingLoaderFS();
+    await new FileLoader({
+      directory: path.join(dirBase, 'services'),
+      target,
+      loaderFS,
+      manifest: ManifestStore.createCollector(dirBase),
+    }).load();
+
+    assert(target.fooService);
+    assert(loaderFS.globCalls.some((call) => call.cwd === path.join(dirBase, 'services')));
+    assert(loaderFS.statCalls.some((filepath) => filepath.endsWith(path.join('services', 'foo_service.js'))));
+    assert(loaderFS.loadFileCalls.some((filepath) => filepath.endsWith(path.join('services', 'foo_service.js'))));
   });
 });
