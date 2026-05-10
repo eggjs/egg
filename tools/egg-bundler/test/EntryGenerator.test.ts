@@ -202,6 +202,29 @@ describe('EntryGenerator', () => {
     expect(imports.some((i) => i.specifier.includes('is-null-entry'))).toBe(false);
   });
 
+  it('emits package.json resolve targets through the bundled text file loader', async () => {
+    await fs.mkdir(path.join(tmpDir, 'node_modules/fake-plugin'), { recursive: true });
+    await fs.writeFile(
+      path.join(tmpDir, 'node_modules/fake-plugin/package.json'),
+      JSON.stringify({ name: 'fake-plugin', version: '1.0.0' }),
+    );
+    const manifest = makeManifest({
+      resolveCache: {
+        'node_modules/fake-plugin/package.json': 'node_modules/fake-plugin/package.json',
+      },
+    });
+
+    const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
+    const result = await gen.generate();
+    const worker = await fs.readFile(result.workerEntry, 'utf8');
+
+    expect(extractImports(worker)).toEqual([]);
+    expect(worker).toContain('__EGG_BUNDLE_FILE_LOADER__');
+    expect(worker).toContain('__BUNDLE_TEXT_FILE_REL');
+    expect(worker).toContain('"node_modules/fake-plugin/package.json"');
+    expect(worker).toContain('\\"version\\":\\"1.0.0\\"');
+  });
+
   it('deduplicates entries that appear in both fileDiscovery and resolveCache', async () => {
     const manifest = makeManifest({
       fileDiscovery: { 'app/controller': ['home.ts'] },

@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -33,6 +34,11 @@ interface BundleEntry {
   external?: boolean;
   /** bare package specifier with subpath for runtime require(), e.g. "@eggjs/onerror/config/config.default" */
   bareSpecifier?: string;
+}
+
+interface BundleTextFile {
+  relKey: string;
+  text: string;
 }
 
 interface TeggModuleDescriptor {
@@ -89,7 +95,7 @@ export class EntryGenerator {
 
     // 2. Every non-null resolveCache target (extensions, plugin app.ts, middlewares…)
     for (const value of Object.values(manifest.resolveCache)) {
-      if (value) this.#addEntry(map, value);
+      if (value && !this.#isTextFileEntry(value)) this.#addEntry(map, value);
     }
 
     // 3. Tegg decorated files (unitPath is either absolute or node_modules-normalized)
@@ -108,6 +114,22 @@ export class EntryGenerator {
       if (a.relKey > b.relKey) return 1;
       return 0;
     });
+  }
+
+  #collectBundleTextFiles(manifest: StartupManifest): BundleTextFile[] {
+    const keys = new Set<string>();
+    for (const value of Object.values(manifest.resolveCache)) {
+      if (value && this.#isTextFileEntry(value)) keys.add(value.replaceAll(path.sep, '/'));
+    }
+
+    return [...keys].sort().map((relKey) => ({
+      relKey,
+      text: readFileSync(this.#absFromRelKey(relKey), 'utf8'),
+    }));
+  }
+
+  #isTextFileEntry(relKey: string): boolean {
+    return relKey.endsWith('/package.json') || relKey === 'package.json';
   }
 
   #addEntry(map: Map<string, BundleEntry>, relKey: string): void {
@@ -218,6 +240,7 @@ export class EntryGenerator {
     const importLines: string[] = [];
     const mapLines: string[] = [];
     const externalSpecs: Array<[string, string]> = [];
+    const textFiles = this.#collectBundleTextFiles(manifest);
 
     let internalIdx = 0;
     for (const entry of entries) {
@@ -238,6 +261,12 @@ export class EntryGenerator {
       ),
     );
     const appResolveCacheAliases = JSON.stringify(this.#collectResolveCacheAliases(manifest));
+    const appTextFileAliases = JSON.stringify(
+      this.#uniqueAliasPairs(
+        textFiles.flatMap((file) => this.#absoluteAliasKeys(file.relKey).map((abs) => [abs, file.relKey])),
+      ),
+    );
+    const textFileMap = JSON.stringify(Object.fromEntries(textFiles.map((file) => [file.relKey, file.text])));
     const frameworkSpec = JSON.stringify(this.#framework);
 
     const externalBlock =
@@ -274,17 +303,24 @@ const __framework = ${frameworkSpec};
 const MANIFEST_DATA = ${manifestJson} as const;
 const __APP_ABSOLUTE_ALIASES: Array<[string, string]> = ${appAbsoluteAliases};
 const __APP_RESOLVE_CACHE_ALIASES: Array<[string, string]> = ${appResolveCacheAliases};
+const __APP_TEXT_FILE_ALIASES: Array<[string, string]> = ${appTextFileAliases};
 
 const __BUNDLE_MAP_REL: Record<string, unknown> = {
 ${mapLines.join('\n')}
 };
+const __BUNDLE_TEXT_FILE_REL: Record<string, string> = ${textFileMap};
 ${externalBlock}
 const __BUNDLE_MAP: Record<string, unknown> = {};
+const __BUNDLE_TEXT_FILE: Record<string, string> = {};
 const __normalizeBundleKey = (filepath: string) => filepath.split(path.sep).join('/');
 const __setBundleMap = (filepath: string, mod: unknown) => {
   __BUNDLE_MAP[__normalizeBundleKey(filepath)] = mod;
 };
 const __getBundleMap = (filepath: string) => __BUNDLE_MAP[__normalizeBundleKey(filepath)];
+const __setBundleTextFile = (filepath: string, text: string) => {
+  __BUNDLE_TEXT_FILE[__normalizeBundleKey(filepath)] = text;
+};
+const __getBundleTextFile = (filepath: string) => __BUNDLE_TEXT_FILE[__normalizeBundleKey(filepath)];
 const __setBundleAliases = (rel: string, mod: unknown) => {
   __setBundleMap(rel, mod);
   if (!path.isAbsolute(rel)) {
@@ -294,6 +330,12 @@ const __setBundleAliases = (rel: string, mod: unknown) => {
 __setBundleMap(__framework, __frameworkModule);
 for (const [rel, mod] of Object.entries(__BUNDLE_MAP_REL)) {
   __setBundleAliases(rel, mod);
+}
+for (const [rel, text] of Object.entries(__BUNDLE_TEXT_FILE_REL)) {
+  __setBundleTextFile(rel, text);
+  if (!path.isAbsolute(rel)) {
+    __setBundleTextFile(path.resolve(__outputDir, rel), text);
+  }
 }
 for (const [appAbs, targetRel] of __APP_ABSOLUTE_ALIASES) {
   const mod = __getBundleMap(targetRel);
@@ -314,8 +356,17 @@ for (const [appAbsRequest, targetRel] of __APP_RESOLVE_CACHE_ALIASES) {
     __setBundleMap(appAbsRequest, mod);
   }
 }
+for (const [appAbs, targetRel] of __APP_TEXT_FILE_ALIASES) {
+  const text = __getBundleTextFile(targetRel);
+  if (text !== undefined) {
+    __setBundleTextFile(appAbs, text);
+  }
+}
 
 ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA as any, __outputDir));
+globalThis.__EGG_BUNDLE_FILE_LOADER__ = (filepath) => {
+  return __getBundleTextFile(filepath);
+};
 globalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath) => {
   return __getBundleMap(filepath);
 };

@@ -1,5 +1,4 @@
 import assert from 'node:assert';
-import fs from 'node:fs';
 import path from 'node:path';
 import { debuglog, inspect } from 'node:util';
 
@@ -8,12 +7,11 @@ import { Request, Response, Application, Context as KoaContext } from '@eggjs/ko
 import { pathMatching, type PathMatchingOptions } from '@eggjs/path-matching';
 import { isESM, isSupportTypeScript } from '@eggjs/utils';
 import type { Logger } from 'egg-logger';
-import globby from 'globby';
 import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } from 'is-type-of';
 import { homedir } from 'node-homedir';
 import { now, diff } from 'performance-ms';
 import { register as tsconfigPathsRegister } from 'tsconfig-paths';
-import { getParamNames, readJSONSync, readJSON, exists } from 'utility';
+import { getParamNames } from 'utility';
 
 import type { BaseContextClass } from '../base_context_class.ts';
 import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
@@ -24,7 +22,7 @@ import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
-import { RealLoaderFS, type LoaderFS } from './loader_fs.ts';
+import { ManifestLoaderFS, RealLoaderFS, type LoaderFS } from './loader_fs.ts';
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
@@ -82,7 +80,7 @@ export class EggLoader {
   dirs?: EggDirInfo[];
   /** Startup manifest — loaded from cache or collecting for generation */
   readonly manifest: ManifestStore;
-  readonly loaderFS: LoaderFS;
+  loaderFS: LoaderFS;
 
   /**
    * @class
@@ -96,7 +94,7 @@ export class EggLoader {
   constructor(options: EggLoaderOptions) {
     this.options = options;
     this.loaderFS = this.options.loaderFS ?? new RealLoaderFS();
-    assert(fs.existsSync(this.options.baseDir), `${this.options.baseDir} not exists`);
+    assert(this.loaderFS.exists(this.options.baseDir), `${this.options.baseDir} not exists`);
     assert(this.options.app, 'options.app is required');
     assert(this.options.logger, 'options.logger is required');
 
@@ -107,7 +105,7 @@ export class EggLoader {
      * @see {@link AppInfo#pkg}
      * @since 1.0.0
      */
-    this.pkg = readJSONSync(path.join(this.options.baseDir, 'package.json'));
+    this.pkg = this.loaderFS.readJSON(path.join(this.options.baseDir, 'package.json'));
     this.outDir = this.#resolveOutDir();
 
     // auto require('tsconfig-paths/register') on typescript app
@@ -115,7 +113,7 @@ export class EggLoader {
     if (process.env.EGG_TYPESCRIPT === 'true' || (this.pkg.egg && this.pkg.egg.typescript)) {
       // skip require tsconfig-paths if tsconfig.json not exists
       const tsConfigFile = path.join(this.options.baseDir, 'tsconfig.json');
-      if (fs.existsSync(tsConfigFile)) {
+      if (this.loaderFS.exists(tsConfigFile)) {
         // @ts-expect-error only cwd is required
         tsconfigPathsRegister({ cwd: this.options.baseDir });
       } else {
@@ -176,6 +174,9 @@ export class EggLoader {
     this.manifest =
       ManifestStore.load(this.options.baseDir, this.serverEnv, this.serverScope) ??
       ManifestStore.createCollector(this.options.baseDir);
+    if (!this.options.loaderFS) {
+      this.loaderFS = new ManifestLoaderFS(this.options.baseDir, this.manifest, this.loaderFS);
+    }
   }
 
   get app(): EggCore {
@@ -201,8 +202,8 @@ export class EggLoader {
     let serverEnv = this.options.env;
 
     const envPath = path.join(this.options.baseDir, 'config/env');
-    if (!serverEnv && fs.existsSync(envPath)) {
-      serverEnv = fs.readFileSync(envPath, 'utf8').trim();
+    if (!serverEnv && this.loaderFS.exists(envPath)) {
+      serverEnv = this.loaderFS.readFile(envPath, 'utf8').trim();
     }
 
     if (!serverEnv && process.env.EGG_SERVER_ENV) {
@@ -378,8 +379,8 @@ export class EggLoader {
         );
       }
       assert(typeof eggPath === 'string', "Symbol.for('egg#eggPath') should be string");
-      assert(fs.existsSync(eggPath), `${eggPath} not exists`);
-      const realpath = fs.realpathSync(eggPath);
+      assert(this.loaderFS.exists(eggPath), `${eggPath} not exists`);
+      const realpath = this.loaderFS.realpath(eggPath);
       if (!eggPaths.includes(realpath)) {
         eggPaths.unshift(realpath);
       }
@@ -594,7 +595,10 @@ export class EggLoader {
         continue;
       }
 
-      const config: Record<string, EggPluginInfo> = await utils.loadFile(filepath);
+      const config: Record<string, EggPluginInfo> = (await this.loaderFS.loadFile(filepath)) as Record<
+        string,
+        EggPluginInfo
+      >;
       for (const name in config) {
         this.#normalizePluginConfig(config, name, filepath);
       }
@@ -643,9 +647,9 @@ export class EggLoader {
   async #mergePluginConfig(plugin: EggPluginInfo): Promise<void> {
     let pkg: any;
     let eggPluginConfig: any;
-    const pluginPackage = path.join(plugin.path as string, 'package.json');
-    if (await utils.existsPath(pluginPackage)) {
-      pkg = await readJSON(pluginPackage);
+    const pluginPackage = this.resolveModule(path.join(plugin.path as string, 'package.json'));
+    if (pluginPackage && this.loaderFS.exists(pluginPackage)) {
+      pkg = this.loaderFS.readJSON(pluginPackage);
       eggPluginConfig = pkg.eggPlugin;
       if (pkg.version) {
         plugin.version = pkg.version;
@@ -848,7 +852,7 @@ export class EggLoader {
       } else if (exports.require) {
         realPluginPath = path.join(pluginPath, exports.require);
       }
-      if (exports.typescript && isSupportTypeScript() && !(await exists(realPluginPath))) {
+      if (exports.typescript && isSupportTypeScript() && !this.loaderFS.exists(realPluginPath)) {
         // if require/import path not exists, use typescript path for development stage
         realPluginPath = path.join(pluginPath, exports.typescript);
         debug('[formatPluginPathFromPackageJSON] use typescript path %o', realPluginPath);
@@ -1585,7 +1589,7 @@ export class EggLoader {
   async requireFile(filepath: string): Promise<any> {
     const timingKey = `Require(${this.#requiredCount++}) ${utils.getResolvedFilename(filepath, this.options.baseDir)}`;
     this.timing.start(timingKey);
-    const mod = await utils.loadFile(filepath);
+    const mod = await this.loaderFS.loadFile(filepath);
     this.timing.end(timingKey);
     return mod;
   }
@@ -1746,9 +1750,9 @@ export class EggLoader {
     }
     // 2. Auto-detect from tsconfig.json compilerOptions.outDir
     const tsConfigFile = path.join(this.options.baseDir, 'tsconfig.json');
-    if (fs.existsSync(tsConfigFile)) {
+    if (this.loaderFS.exists(tsConfigFile)) {
       try {
-        const tsConfig = JSON.parse(fs.readFileSync(tsConfigFile, 'utf-8'));
+        const tsConfig = JSON.parse(this.loaderFS.readFile(tsConfigFile, 'utf-8'));
         if (tsConfig.compilerOptions?.outDir) {
           debug('[resolveOutDir] use tsconfig.json compilerOptions.outDir: %o', tsConfig.compilerOptions.outDir);
           return tsConfig.compilerOptions.outDir;
@@ -1766,7 +1770,7 @@ export class EggLoader {
     const relativePath = path.relative(baseDir, filepath);
     for (const ext of ['.js', '.mjs']) {
       const outDirPath = path.join(baseDir, this.outDir, relativePath + ext);
-      if (fs.existsSync(outDirPath)) {
+      if (this.loaderFS.exists(outDirPath)) {
         debug('[resolveModule:outDir] %o => %o', filepath, outDirPath);
         return outDirPath;
       }
@@ -1832,8 +1836,8 @@ export class EggLoader {
     if (Object.hasOwn(manifest.fileDiscovery, dirKey)) return manifest.fileDiscovery[dirKey];
 
     manifest.fileDiscovery[dirKey] =
-      fs.existsSync(directory) && fs.statSync(directory).isDirectory()
-        ? globby.sync(FileLoader.getDefaultMatch(), { cwd: directory }).sort()
+      this.loaderFS.exists(directory) && this.loaderFS.stat(directory).isDirectory()
+        ? this.loaderFS.glob(FileLoader.getDefaultMatch(), { cwd: directory }).sort()
         : [];
     return manifest.fileDiscovery[dirKey];
   }

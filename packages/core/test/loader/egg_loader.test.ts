@@ -86,6 +86,29 @@ describe('test/loader/egg_loader.test.ts', () => {
       assert.equal(ret[0], 1);
       assert.equal(ret[1], 2);
     });
+
+    it('should load resolved files through loaderFS', async () => {
+      const baseDir = getFilepath('load_file');
+      const calls: string[] = [];
+      class RecordingLoaderFS extends RealLoaderFS {
+        async loadFile(filepath: string) {
+          calls.push(filepath);
+          return super.loadFile(filepath);
+        }
+      }
+      const loader = new EggLoader({
+        env: 'unittest',
+        baseDir,
+        app: {},
+        logger: console,
+        loaderFS: new RecordingLoaderFS(),
+      } as any);
+
+      const ret = await loader.loadFile(path.join(baseDir, 'function.js'), 1, 2);
+
+      assert.deepEqual(ret, [1, 2]);
+      assert(calls.some((filepath) => filepath.endsWith(path.join('load_file', 'function.js'))));
+    });
   });
 
   it('should be loaded by loadToApp, support symbol property', async () => {
