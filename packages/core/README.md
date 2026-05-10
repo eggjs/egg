@@ -214,6 +214,11 @@ export default async (ctx: Context) => {
 };
 ```
 
+`LoaderOptions` accepts a `loaderFS` option for advanced loader integrations.
+The value must implement the exported `LoaderFS` interface. When omitted,
+`@eggjs/core` uses `RealLoaderFS`, which keeps the default Node.js filesystem,
+glob, JSON, and file-loading behavior.
+
 #### async loadExtend(name, target)
 
 Loader app/extend/xx.ts to target, For example,
@@ -236,6 +241,7 @@ await this.loadExtend('application', app);
 | call        | `Boolean`         | determine whether invoke when exports is function                                                                                                                  |
 | inject      | `Object`          | an object that be the argument when invoke the function                                                                                                            |
 | filter      | `Function`        | a function that filter the exports which can be loaded                                                                                                             |
+| loaderFS    | `LoaderFS`        | custom loader-facing filesystem implementation, default is `RealLoaderFS`                                                                                          |
 
 ## Timing
 
