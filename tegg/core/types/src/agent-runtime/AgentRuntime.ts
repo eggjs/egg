@@ -87,6 +87,30 @@ export interface CreateRunInput {
   metadata?: Record<string, unknown>;
 }
 
+// ===== Thread input =====
+
+/**
+ * Options for {@link AgentRuntime.createThread}.
+ *
+ * `metadata` is forwarded verbatim to {@link AgentStore.createThread} so callers
+ * can persist additional business semantics on the thread record (e.g. the
+ * resolved agent name, owning sandbox id, trace id). It is stored once at
+ * creation time and never overwritten by subsequent runs on the same thread.
+ */
+export interface CreateThreadOptions {
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Options consumed by `AgentRuntime.ensureThread` when it has to auto-create
+ * a thread because no `threadId` was supplied. When a `threadId` is already
+ * present the options are ignored — resume must never mutate existing thread
+ * metadata, even if the caller passes a different value.
+ */
+export interface EnsureThreadOptions {
+  metadata?: Record<string, unknown>;
+}
+
 // ===== Message delta =====
 
 export interface MessageDeltaObject {
