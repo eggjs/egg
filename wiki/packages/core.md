@@ -3,12 +3,15 @@ title: Core Package
 type: package
 summary: Loader, lifecycle, and application core primitives used by Egg runtime packages.
 source_files:
+  - packages/core/README.md
   - packages/core/src/index.ts
   - packages/core/src/loader/loader_fs.ts
   - packages/core/src/loader/file_loader.ts
   - packages/core/src/loader/context_loader.ts
   - packages/core/src/loader/egg_loader.ts
-updated_at: 2026-05-07
+  - site/docs/advanced/loader.md
+  - site/docs/zh-CN/advanced/loader.md
+updated_at: 2026-05-13
 status: active
 ---
 
@@ -33,3 +36,6 @@ runtime behavior by delegating to `fs.existsSync`, `fs.statSync`,
 custom `loaderFS`. `EggLoader` passes its loader FS into `loadToApp()` and
 `loadToContext()` so later bundled loaders can replace file discovery and module
 loading without changing the public loader call sites.
+
+The public loader docs now list `loaderFS` with the other `LoaderOptions` so
+custom loader filesystem implementations are discoverable for advanced users.
