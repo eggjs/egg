@@ -502,7 +502,7 @@ app.loader.loadToApp(directory, 'model', {
 
 #### loaderFS [LoaderFS]
 
-自定义 `loadToApp` 和 `loadToContext` 使用的文件系统边界，用于文件发现、文件状态读取和模块加载。
+自定义 `loadToApp` 和 `loadToContext` 使用的文件系统边界，用于文件发现、文件状态读取、JSON 读取和模块加载。
 默认使用 `RealLoaderFS`，它会委托给本地文件系统，以保持现有运行时行为。
 
 ## CustomLoader

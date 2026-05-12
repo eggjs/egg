@@ -497,7 +497,7 @@ Loading different files uses different configurations:
 
 #### `loaderFS [LoaderFS]`
 
-Customize the filesystem boundary used by `loadToApp` and `loadToContext` for file discovery, file stats, and module loading.
+Customize the filesystem boundary used by `loadToApp` and `loadToContext` for file discovery, file stats, JSON reads, and module loading.
 By default, Egg uses `RealLoaderFS`, which delegates to the local filesystem and keeps the existing runtime behavior.
 
 ## CustomLoader

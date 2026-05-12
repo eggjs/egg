@@ -4,7 +4,7 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 
 ## [2026-05-13] docs | sync LoaderFS loader option docs
 
-- sources touched: `packages/core/src/loader/loader_fs.ts`, `packages/core/src/loader/file_loader.ts`, `packages/core/src/loader/egg_loader.ts`
+- sources referenced: `packages/core/src/loader/loader_fs.ts`, `packages/core/src/loader/file_loader.ts`, `packages/core/src/loader/egg_loader.ts`
 - pages updated: `packages/core/README.md`, `site/docs/advanced/loader.md`, `site/docs/zh-CN/advanced/loader.md`, `wiki/packages/core.md`, `wiki/log.md`
 - note: Added the public `loaderFS` LoaderOptions entry to core and site loader docs, and refreshed the core wiki page to point at those docs.
 
