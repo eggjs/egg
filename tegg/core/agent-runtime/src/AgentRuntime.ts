@@ -1,7 +1,6 @@
 import type {
   CreateRunInput,
   CreateThreadOptions,
-  EnsureThreadOptions,
   ThreadObject,
   ThreadObjectWithMessages,
   RunObject,
@@ -83,24 +82,19 @@ export class AgentRuntime {
 
   /**
    * Resolve the thread for a run. If the caller provided a `threadId` we reuse
-   * it as-is — explicitly ignoring `options.metadata` so resume calls cannot
-   * overwrite the metadata captured when the thread was first created. When no
-   * `threadId` is present we auto-create a thread and forward `metadata` to the
-   * store so business identifiers (e.g. agentName) survive across resumes.
+   * it as-is. When no `threadId` is present we auto-create an empty thread.
+   * Run metadata belongs to the run record and must not be copied to the thread.
    */
-  private async ensureThread(
-    input: CreateRunInput,
-    options?: EnsureThreadOptions,
-  ): Promise<{ threadId: string; input: CreateRunInput }> {
+  private async ensureThread(input: CreateRunInput): Promise<{ threadId: string; input: CreateRunInput }> {
     if (input.threadId) {
       return { threadId: input.threadId, input };
     }
-    const thread = await this.store.createThread(options?.metadata);
+    const thread = await this.store.createThread();
     return { threadId: thread.id, input: { ...input, threadId: thread.id } };
   }
 
   async syncRun(input: CreateRunInput, signal?: AbortSignal): Promise<RunObject> {
-    const { threadId, input: resolvedInput } = await this.ensureThread(input, { metadata: input.metadata });
+    const { threadId, input: resolvedInput } = await this.ensureThread(input);
     input = resolvedInput;
 
     const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
@@ -171,7 +165,7 @@ export class AgentRuntime {
   }
 
   async asyncRun(input: CreateRunInput): Promise<RunObject> {
-    const { threadId, input: resolvedInput } = await this.ensureThread(input, { metadata: input.metadata });
+    const { threadId, input: resolvedInput } = await this.ensureThread(input);
     input = resolvedInput;
 
     const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
@@ -246,7 +240,7 @@ export class AgentRuntime {
     const abortController = new AbortController();
     writer.onClose(() => abortController.abort());
 
-    const { threadId, input: resolvedInput } = await this.ensureThread(input, { metadata: input.metadata });
+    const { threadId, input: resolvedInput } = await this.ensureThread(input);
     input = resolvedInput;
 
     const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);

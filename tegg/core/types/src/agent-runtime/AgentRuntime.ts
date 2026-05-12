@@ -101,16 +101,6 @@ export interface CreateThreadOptions {
   metadata?: Record<string, unknown>;
 }
 
-/**
- * Options consumed by `AgentRuntime.ensureThread` when it has to auto-create
- * a thread because no `threadId` was supplied. When a `threadId` is already
- * present the options are ignored — resume must never mutate existing thread
- * metadata, even if the caller passes a different value.
- */
-export interface EnsureThreadOptions {
-  metadata?: Record<string, unknown>;
-}
-
 // ===== Message delta =====
 
 export interface MessageDeltaObject {

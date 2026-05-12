@@ -1,19 +1,32 @@
 import assert from 'node:assert/strict';
 
-import { AgentObjectType, MessageRole, RunStatus } from '@eggjs/tegg-types/agent-runtime';
-import type { AgentStreamMessage, CreateRunInput } from '@eggjs/tegg-types/agent-runtime';
+import { AgentObjectType, AgentSSEEvent, MessageRole, RunStatus } from '@eggjs/tegg-types/agent-runtime';
+import type { AgentStreamMessage, CreateRunInput, RunObject } from '@eggjs/tegg-types/agent-runtime';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { AgentRuntime } from '../src/AgentRuntime.ts';
 import type { AgentExecutor, AgentRuntimeOptions } from '../src/AgentRuntime.ts';
 import { OSSAgentStore } from '../src/OSSAgentStore.ts';
+import type { SSEWriter } from '../src/SSEWriter.ts';
 import { MapStorageClient } from './helpers.ts';
 
-/**
- * Cover the full metadata pass-through from createRun input → ensureThread →
- * AgentStore.createThread, so business callers (e.g. chair-sandbox-ai-use)
- * can persist agentName on the auto-created thread for later resume lookups.
- */
+class MockSSEWriter implements SSEWriter {
+  events: Array<{ event: string; data: unknown }> = [];
+  closed = false;
+
+  writeEvent(event: string, data: unknown): void {
+    this.events.push({ event, data });
+  }
+
+  end(): void {
+    this.closed = true;
+  }
+
+  onClose(): void {
+    /* noop */
+  }
+}
+
 describe('test/AgentRuntime.metadata.test.ts', () => {
   let runtime: AgentRuntime;
   let store: OSSAgentStore;
@@ -64,8 +77,8 @@ describe('test/AgentRuntime.metadata.test.ts', () => {
     });
   });
 
-  describe('syncRun → ensureThread metadata pass-through', () => {
-    it('should forward input.metadata to the auto-created thread when threadId is omitted', async () => {
+  describe('syncRun metadata handling', () => {
+    it('should keep input.metadata on the run and not copy it to an auto-created thread', async () => {
       const meta = { agentName: 'bar', sandboxId: 's-42' };
       const result = await runtime.syncRun({
         input: { messages: [{ role: 'user', content: 'Hi' }] },
@@ -76,9 +89,8 @@ describe('test/AgentRuntime.metadata.test.ts', () => {
       assert.deepEqual(result.metadata, meta);
       assert.equal(result.status, RunStatus.Completed);
 
-      // The auto-created thread should also receive the metadata
       const thread = await store.getThread(result.threadId);
-      assert.deepEqual(thread.metadata, meta);
+      assert.deepEqual(thread.metadata, {});
     });
 
     it('should NOT overwrite metadata of an existing thread (resume path)', async () => {
@@ -101,8 +113,8 @@ describe('test/AgentRuntime.metadata.test.ts', () => {
     });
   });
 
-  describe('asyncRun → ensureThread metadata pass-through', () => {
-    it('should forward input.metadata to the auto-created thread', async () => {
+  describe('asyncRun metadata handling', () => {
+    it('should keep input.metadata on the run and not copy it to an auto-created thread', async () => {
       const meta = { agentName: 'baz' };
       const result = await runtime.asyncRun({
         input: { messages: [{ role: 'user', content: 'Hi' }] },
@@ -110,8 +122,31 @@ describe('test/AgentRuntime.metadata.test.ts', () => {
       });
       await runtime.waitForPendingTasks();
 
+      assert.deepEqual(result.metadata, meta);
       const thread = await store.getThread(result.threadId);
-      assert.deepEqual(thread.metadata, meta);
+      assert.deepEqual(thread.metadata, {});
+    });
+  });
+
+  describe('streamRun metadata handling', () => {
+    it('should keep input.metadata on the run and not copy it to an auto-created thread', async () => {
+      const meta = { agentName: 'stream', source: 'sse' };
+      const writer = new MockSSEWriter();
+
+      await runtime.streamRun(
+        {
+          input: { messages: [{ role: 'user', content: 'Hi' }] },
+          metadata: meta,
+        },
+        writer,
+      );
+
+      const runCreatedEvent = writer.events.find((e) => e.event === AgentSSEEvent.ThreadRunCreated);
+      const run = runCreatedEvent!.data as RunObject;
+
+      assert.deepEqual(run.metadata, meta);
+      const thread = await store.getThread(run.threadId);
+      assert.deepEqual(thread.metadata, {});
     });
   });
 });
