@@ -21,12 +21,18 @@ import type { Request } from './request.ts';
 function formatRedirectUrl(url: string): string {
   if (url.startsWith('https://') || url.startsWith('http://')) {
     // formatting url again avoid security escapes
-    return new URL(url).toString();
+    try {
+      return new URL(url).toString();
+    } catch {
+      return url;
+    }
   }
   if (url.startsWith('/\\')) {
     return `/%5C${url.slice(2)}`;
   }
-  if (/^[\\/]{2,}/.test(url)) {
+  const firstChar = url[0];
+  const secondChar = url[1];
+  if ((firstChar === '/' || firstChar === '\\') && (secondChar === '/' || secondChar === '\\')) {
     return `/%2F${url.slice(2)}`;
   }
   if (url.startsWith('\\')) {

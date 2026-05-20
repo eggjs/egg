@@ -42,6 +42,20 @@ describe('ctx.redirect(url)', () => {
     assert.equal(ctx.status, 302);
   });
 
+  it('should not redirect to double-backslash URLs', () => {
+    const ctx = context();
+    ctx.redirect(String.raw`\\evil.com`);
+    assert.equal(ctx.response.header.location, '/%2Fevil.com');
+    assert.equal(ctx.status, 302);
+  });
+
+  it('should not throw on malformed absolute URLs', () => {
+    const ctx = context();
+    ctx.redirect('http://[invalid');
+    assert.equal(ctx.response.header.location, 'http://[invalid');
+    assert.equal(ctx.status, 302);
+  });
+
   it('should auto fix not encode url', async () => {
     const app = new Koa();
 
