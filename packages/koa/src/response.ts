@@ -18,6 +18,23 @@ import type { Application } from './application.ts';
 import type { Context } from './context.ts';
 import type { Request } from './request.ts';
 
+function formatRedirectUrl(url: string): string {
+  if (url.startsWith('https://') || url.startsWith('http://')) {
+    // formatting url again avoid security escapes
+    return new URL(url).toString();
+  }
+  if (url.startsWith('/\\')) {
+    return `/%5C${url.slice(2)}`;
+  }
+  if (/^[\\/]{2,}/.test(url)) {
+    return `/%2F${url.slice(2)}`;
+  }
+  if (url.startsWith('\\')) {
+    return `/%5C${url.slice(1)}`;
+  }
+  return url;
+}
+
 export class Response {
   [key: symbol]: unknown;
   app: Application;
@@ -250,10 +267,7 @@ export class Response {
     if (url === 'back') {
       url = this._getBackReferrer() || alt || '/';
     }
-    if (url.startsWith('https://') || url.startsWith('http://')) {
-      // formatting url again avoid security escapes
-      url = new URL(url).toString();
-    }
+    url = formatRedirectUrl(url);
     this.set('Location', encodeUrl(url));
 
     // status

@@ -21,6 +21,27 @@ describe('ctx.redirect(url)', () => {
     assert.equal(ctx.status, 302);
   });
 
+  it('should not redirect to protocol-relative URLs', () => {
+    const ctx = context();
+    ctx.redirect('//evil.com');
+    assert.equal(ctx.response.header.location, '/%2Fevil.com');
+    assert.equal(ctx.status, 302);
+  });
+
+  it('should not redirect to backslash-prefixed URLs', () => {
+    const ctx = context();
+    ctx.redirect(String.raw`/\evil.com`);
+    assert.equal(ctx.response.header.location, '/%5Cevil.com');
+    assert.equal(ctx.status, 302);
+  });
+
+  it('should not redirect to slash and backslash variants', () => {
+    const ctx = context();
+    ctx.redirect(String.raw`\//evil.com`);
+    assert.equal(ctx.response.header.location, '/%2F/evil.com');
+    assert.equal(ctx.status, 302);
+  });
+
   it('should auto fix not encode url', async () => {
     const app = new Koa();
 
