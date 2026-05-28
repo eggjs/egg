@@ -12,6 +12,7 @@ import { LoaderFactory } from '../src/index.ts';
 
 describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
   const repoModulePath = path.join(__dirname, './fixtures/modules/module-for-loader');
+  const toBundlePath = (file: string) => file.split('\\').join('/');
 
   afterEach(() => {
     globalThis.__EGG_BUNDLE_MODULE_LOADER__ = undefined;
@@ -88,7 +89,7 @@ describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
     const prototypes = await loader.load();
 
     assert.deepEqual(prototypes.map((proto) => proto.name).sort(), ['BundledRepo', 'BundledService']);
-    assert.deepEqual(requestedFiles, [serviceFile, repoFile]);
+    assert.deepEqual(requestedFiles, [serviceFile, repoFile].map(toBundlePath));
     assert.equal(PrototypeUtil.getFilePath(BundledService), serviceFile);
     assert.equal(PrototypeUtil.getFilePath(BundledRepo), repoFile);
   });

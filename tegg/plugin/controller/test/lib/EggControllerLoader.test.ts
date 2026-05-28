@@ -5,7 +5,7 @@ import { afterEach, describe, it, expect } from 'vitest';
 import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';
 import { getFixtures } from '../utils.ts';
 
-describe('plugin/controller/test/lib/EggModuleLoader.test.ts', () => {
+describe('plugin/controller/test/lib/EggControllerLoader.test.ts', () => {
   afterEach(() => {
     (globalThis as any).__EGG_BUNDLE_MODULE_LOADER__ = undefined;
   });
