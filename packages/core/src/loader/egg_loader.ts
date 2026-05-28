@@ -25,7 +25,6 @@ import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
 import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
-import { ManifestLoaderFS } from './loader_fs.ts';
 import { ManifestStore, type StartupManifest } from './manifest.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
@@ -96,10 +95,7 @@ export class EggLoader {
    */
   constructor(options: EggLoaderOptions) {
     this.options = options;
-    const bundleStore = ManifestStore.getBundleStore();
-    this.loaderFS =
-      this.options.loaderFS ??
-      (bundleStore?.baseDir === this.options.baseDir ? new ManifestLoaderFS(bundleStore) : new RealLoaderFS());
+    this.loaderFS = this.options.loaderFS ?? new RealLoaderFS();
     assert(fs.existsSync(this.options.baseDir), `${this.options.baseDir} not exists`);
     assert(this.options.app, 'options.app is required');
     assert(this.options.logger, 'options.logger is required');
@@ -180,9 +176,6 @@ export class EggLoader {
     this.manifest =
       ManifestStore.load(this.options.baseDir, this.serverEnv, this.serverScope) ??
       ManifestStore.createCollector(this.options.baseDir);
-    if (!this.options.loaderFS && !(this.loaderFS instanceof ManifestLoaderFS)) {
-      this.loaderFS = new ManifestLoaderFS(this.manifest, this.loaderFS);
-    }
   }
 
   get app(): EggCore {
@@ -1802,14 +1795,17 @@ export class EggLoader {
    * generation time.
    */
   #collectConventionalDynamicFiles(manifest: StartupManifest): void {
+    const resolveCacheTargets = new Set(
+      Object.values(manifest.resolveCache).filter((target): target is string => typeof target === 'string'),
+    );
     for (const unit of this.getLoadUnits()) {
-      this.#collectConventionFile(manifest, path.join(unit.path, 'package.json'));
+      this.#collectConventionFile(manifest, path.join(unit.path, 'package.json'), resolveCacheTargets);
       for (const load of CONVENTIONAL_MANIFEST_LOADS) {
         const target = path.join(unit.path, ...load.path);
         if (load.type === 'resolve') {
-          this.#collectConventionResolve(manifest, target);
+          this.#collectConventionResolve(manifest, target, resolveCacheTargets);
         } else if ('extensionlessResolve' in load && load.extensionlessResolve) {
-          this.#collectConventionFileResolves(manifest, target);
+          this.#collectConventionFileResolves(manifest, target, resolveCacheTargets);
         } else {
           this.#collectConventionFileDiscovery(manifest, target);
         }
@@ -1817,21 +1813,25 @@ export class EggLoader {
     }
   }
 
-  #collectConventionResolve(manifest: StartupManifest, request: string): void {
+  #collectConventionResolve(manifest: StartupManifest, request: string, resolveCacheTargets: Set<string>): void {
     const requestKey = this.#toManifestRel(request);
     if (Object.hasOwn(manifest.resolveCache, requestKey)) return;
 
     const resolved = this.#doResolveModule(request);
-    manifest.resolveCache[requestKey] = resolved ? this.#toManifestRel(resolved) : null;
+    const resolvedKey = resolved ? this.#toManifestRel(resolved) : null;
+    manifest.resolveCache[requestKey] = resolvedKey;
+    if (resolvedKey !== null) {
+      resolveCacheTargets.add(resolvedKey);
+    }
   }
 
-  #collectConventionFileResolves(manifest: StartupManifest, directory: string): void {
+  #collectConventionFileResolves(manifest: StartupManifest, directory: string, resolveCacheTargets: Set<string>): void {
     const files = this.#collectConventionFileDiscovery(manifest, directory);
     for (const file of files) {
       const ext = path.extname(file);
       if (!ext) continue;
       const request = path.join(directory, file.slice(0, -ext.length));
-      this.#collectConventionResolve(manifest, request);
+      this.#collectConventionResolve(manifest, request, resolveCacheTargets);
     }
   }
 
@@ -1846,9 +1846,9 @@ export class EggLoader {
     return manifest.fileDiscovery[dirKey];
   }
 
-  #collectConventionFile(manifest: StartupManifest, filepath: string): void {
+  #collectConventionFile(manifest: StartupManifest, filepath: string, resolveCacheTargets: Set<string>): void {
     const fileKey = this.#toManifestRel(filepath);
-    if (Object.values(manifest.resolveCache).includes(fileKey)) return;
+    if (resolveCacheTargets.has(fileKey)) return;
     if (!fs.existsSync(filepath) || !fs.statSync(filepath).isFile()) return;
 
     const dirKey = this.#toManifestRel(path.dirname(filepath));

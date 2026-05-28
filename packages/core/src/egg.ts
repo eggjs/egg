@@ -16,6 +16,7 @@ import type { ReadyFunctionArg } from 'get-ready';
 import { BaseContextClass } from './base_context_class.ts';
 import { Lifecycle } from './lifecycle.ts';
 import { EggLoader } from './loader/egg_loader.ts';
+import type { LoaderFS } from './loader/loader_fs.ts';
 import { Singleton, type SingletonCreateMethod, type SingletonOptions } from './singleton.ts';
 import type { EggAppConfig } from './types.ts';
 import utils, { type Fun } from './utils/index.ts';
@@ -33,6 +34,8 @@ export interface EggCoreOptions {
   env?: string;
   /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
   metadataOnly?: boolean;
+  /** Loader-facing filesystem abstraction */
+  loaderFS?: LoaderFS;
   /**
    * When true, lifecycle stops after the `configWillLoad` phase.
    * `configDidLoad`, `didLoad`, `willReady`, `didReady`, and `serverDidReady`
@@ -230,6 +233,7 @@ export class EggCore extends KoaApplication {
       env: options.env ?? '',
       EggCoreClass: EggCore,
       metadataOnly: options.metadataOnly,
+      loaderFS: options.loaderFS,
     });
   }
 

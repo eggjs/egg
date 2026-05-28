@@ -224,13 +224,17 @@ describe('EntryGenerator', () => {
     const result = await gen.generate();
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
-    expect(worker).toContain("import { ManifestStore } from '@eggjs/core'");
+    expect(worker).toContain("import { ManifestLoaderFS, ManifestStore } from '@eggjs/core'");
     expect(worker).toContain('import { startEgg } from "egg"');
-    expect(worker).toContain('ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA');
+    expect(worker).toContain('const __bundleManifestStore = ManifestStore.fromBundle(MANIFEST_DATA');
+    expect(worker).toContain('const __loaderFS = new ManifestLoaderFS(__bundleManifestStore)');
+    expect(worker).toContain('ManifestStore.setBundleStore(__bundleManifestStore)');
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain('__setBundleMap(__framework, __frameworkModule)');
     expect(worker).not.toContain('__frameworkImport');
-    expect(worker).toContain("startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single' })");
+    expect(worker).toContain(
+      "startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single', loaderFS: __loaderFS })",
+    );
   });
 
   it('builds a BUNDLE_MAP keyed by relKey, output absolute, original app absolute, and resolveCache aliases', async () => {
@@ -296,6 +300,11 @@ export const ManifestStore = {
     globalThis.__manifestStore = store;
   },
 };
+export class ManifestLoaderFS {
+  constructor(store) {
+    this.store = store;
+  }
+}
 `,
     );
     await writePackage(
@@ -315,6 +324,8 @@ export async function startEgg(options) {
     frameworkResolved: resolvedFramework?.frameworkMarker,
     frameworkStartEggMatches: resolvedFramework?.startEgg === startEgg,
     controllerResolved: resolvedController?.controllerMarker,
+    loaderFSBaseDir: options.loaderFS?.store?.baseDir,
+    loaderFSUsesManifestStore: options.loaderFS?.store === globalThis.__manifestStore,
   }, null, 2));
   return {
     config: { cluster: { listen: { port: 0 } } },
@@ -349,21 +360,31 @@ export async function startEgg(options) {
     });
 
     const runtimeResult = JSON.parse(await fs.readFile(resultFile, 'utf8')) as {
-      options: { baseDir: string; framework: string; mode: string };
+      options: { baseDir: string; framework: string; mode: string; loaderFS: unknown };
       manifestBaseDir: string;
       frameworkResolved: string;
       frameworkStartEggMatches: boolean;
       controllerResolved: string;
+      loaderFSBaseDir: string;
+      loaderFSUsesManifestStore: boolean;
     };
     expect(runtimeResult.options).toEqual({
       baseDir: outputDir,
       framework: '@runtime/framework',
       mode: 'single',
+      loaderFS: {
+        store: {
+          manifest,
+          baseDir: outputDir,
+        },
+      },
     });
     expect(runtimeResult.manifestBaseDir).toBe(outputDir);
     expect(runtimeResult.frameworkResolved).toBe('bundled-framework');
     expect(runtimeResult.frameworkStartEggMatches).toBe(true);
     expect(runtimeResult.controllerResolved).toBe('bundled-controller');
+    expect(runtimeResult.loaderFSBaseDir).toBe(outputDir);
+    expect(runtimeResult.loaderFSUsesManifestStore).toBe(true);
   });
 
   it('loads externalized package files via createRequire instead of static imports', async () => {
@@ -416,7 +437,9 @@ export async function startEgg(options) {
     const worker = await fs.readFile(result.workerEntry, 'utf8');
 
     expect(extractImports(worker).length).toBe(0);
-    expect(worker).toContain("startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single' })");
+    expect(worker).toContain(
+      "startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single', loaderFS: __loaderFS })",
+    );
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain('ManifestStore.setBundleStore');
   });
