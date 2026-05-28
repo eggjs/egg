@@ -5,6 +5,7 @@ import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { RealLoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
 import { EggLoadUnitType } from '@eggjs/metadata';
 import type {} from '@eggjs/typings/global';
+import { importModule } from '@eggjs/utils';
 import { afterEach, describe, it } from 'vitest';
 
 import { LoaderFactory, LoaderUtil } from '../src/index.ts';
@@ -20,7 +21,7 @@ class RecordingLoaderFS extends RealLoaderFS {
 
   override async loadFile(filepath: string): Promise<unknown> {
     this.loadFileCalls.push(filepath);
-    return await import(filepath);
+    return await importModule(filepath);
   }
 }
 

@@ -21,6 +21,10 @@ import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister.ts';
 import { middlewareGraphHook } from './lib/MiddlewareGraphHook.ts';
 import { RootProtoManager } from './lib/RootProtoManager.ts';
 
+function isMissingDirectoryError(error: unknown): boolean {
+  return (error as NodeJS.ErrnoException).code === 'ENOENT';
+}
+
 // Load Controller process
 // 1. await add load unit is ready, controller may depend other load unit
 // 2. load ${app_base_dir}app/controller file
@@ -54,13 +58,17 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     this.app.eggObjectFactory.registerEggObjectCreateMethod(AgentControllerProto, AgentControllerObject.createObject);
     this.app.loaderFactory.registerLoader(CONTROLLER_LOAD_UNIT, (unitPath) => {
       const filePattern = LoaderUtil.filePattern();
-      const files = this.app.loader.manifest.globFiles(unitPath, () => {
+      const discoverFiles = () => {
         try {
           return LoaderUtil.globFiles(filePattern, { cwd: unitPath });
-        } catch {
-          return [];
+        } catch (error) {
+          if (isMissingDirectoryError(error)) {
+            return [];
+          }
+          throw error;
         }
-      });
+      };
+      const files = this.app.loader.manifest?.globFiles(unitPath, discoverFiles) ?? discoverFiles();
       return new EggControllerLoader(unitPath, files);
     });
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.HTTP, HTTPControllerRegister.create);

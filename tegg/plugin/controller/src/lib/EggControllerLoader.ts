@@ -4,6 +4,14 @@ import type { EggProtoImplClass } from '@eggjs/core-decorator';
 import { LoaderUtil } from '@eggjs/tegg-loader';
 import type { Loader } from '@eggjs/tegg-types';
 
+function isMissingDirectoryError(error: unknown): boolean {
+  return (error as NodeJS.ErrnoException).code === 'ENOENT';
+}
+
+function resolveControllerFile(controllerDir: string, file: string): string {
+  return path.normalize(path.isAbsolute(file) ? file : path.join(controllerDir, file));
+}
+
 export class EggControllerLoader implements Loader {
   private readonly controllerDir: string;
   private readonly precomputedFiles?: string[];
@@ -17,15 +25,17 @@ export class EggControllerLoader implements Loader {
     const filePattern = LoaderUtil.filePattern();
     let files: string[];
     if (this.precomputedFiles) {
-      files = this.precomputedFiles.map((file) => (path.isAbsolute(file) ? file : path.join(this.controllerDir, file)));
+      files = this.precomputedFiles.map((file) => resolveControllerFile(this.controllerDir, file));
     } else {
       try {
         files = LoaderUtil.globFiles(filePattern, { cwd: this.controllerDir }).map((file) =>
-          path.join(this.controllerDir, file),
+          resolveControllerFile(this.controllerDir, file),
         );
-      } catch {
+      } catch (error) {
+        if (!isMissingDirectoryError(error)) {
+          throw error;
+        }
         files = [];
-        // app/controller dir not exists
       }
     }
     const protoClassList: EggProtoImplClass[] = [];
