@@ -13,10 +13,33 @@ export type { LoaderFS, LoaderFSGlobOptions };
 export class ManifestLoaderFS implements LoaderFS {
   readonly #manifest: ManifestStore;
   readonly #fallback: LoaderFS;
+  readonly #manifestFiles: Set<string>;
+  readonly #manifestDirectories: Set<string>;
+  readonly #resolveCacheTargets: Set<string>;
 
   constructor(manifest: ManifestStore, fallback: LoaderFS = new RealLoaderFS()) {
     this.#manifest = manifest;
     this.#fallback = fallback;
+    this.#resolveCacheTargets = new Set(
+      Object.values(manifest.data.resolveCache).filter((target): target is string => typeof target === 'string'),
+    );
+
+    const manifestFiles = new Set<string>();
+    const manifestDirectories = new Set<string>();
+    for (const [dir, files] of Object.entries(manifest.data.fileDiscovery)) {
+      addManifestDirectory(manifestDirectories, dir);
+      for (const file of files) {
+        const fullRel = path.posix.join(dir, file);
+        manifestFiles.add(fullRel);
+        addManifestDirectory(manifestDirectories, path.posix.dirname(fullRel));
+      }
+    }
+    for (const target of this.#resolveCacheTargets) {
+      manifestFiles.add(target);
+      addManifestDirectory(manifestDirectories, path.posix.dirname(target));
+    }
+    this.#manifestFiles = manifestFiles;
+    this.#manifestDirectories = manifestDirectories;
   }
 
   exists(filepath: string): boolean {
@@ -125,15 +148,10 @@ export class ManifestLoaderFS implements LoaderFS {
   }
 
   #resolveFromFileDiscovery(rel: string): string | undefined {
-    let matchedDir: string | undefined;
-    for (const dir of Object.keys(this.#manifest.data.fileDiscovery)) {
-      if ((rel === dir || rel.startsWith(dir + '/')) && (!matchedDir || dir.length > matchedDir.length)) {
-        matchedDir = dir;
-      }
-    }
-    if (!matchedDir || rel === matchedDir) return;
+    const matchedDir = this.#nearestManifestDiscoveryDir(rel);
+    if (matchedDir === undefined || rel === matchedDir) return;
 
-    const request = rel.slice(matchedDir.length + 1);
+    const request = matchedDir === '' ? rel : rel.slice(matchedDir.length + 1);
     for (const file of this.#manifest.data.fileDiscovery[matchedDir]) {
       if (file === request) {
         return path.posix.join(matchedDir, file);
@@ -149,42 +167,24 @@ export class ManifestLoaderFS implements LoaderFS {
     }
   }
 
-  #isManifestFile(rel: string): boolean {
-    for (const [dir, files] of Object.entries(this.#manifest.data.fileDiscovery)) {
-      const file = relativeFileUnderDir(dir, rel);
-      if (file !== undefined && files.includes(file)) {
-        return true;
+  #nearestManifestDiscoveryDir(rel: string): string | undefined {
+    let current = path.posix.dirname(rel);
+    while (true) {
+      const dir = current === '.' ? '' : current;
+      if (Object.hasOwn(this.#manifest.data.fileDiscovery, dir)) {
+        return dir;
       }
+      if (dir === '') return;
+      current = path.posix.dirname(dir);
     }
-    return Object.values(this.#manifest.data.resolveCache).includes(rel);
+  }
+
+  #isManifestFile(rel: string): boolean {
+    return this.#manifestFiles.has(rel);
   }
 
   #isManifestDirectory(rel: string): boolean {
-    if (rel === '') {
-      return this.#hasManifestData();
-    }
-    if (Object.hasOwn(this.#manifest.data.fileDiscovery, rel)) {
-      return true;
-    }
-
-    for (const [dir, files] of Object.entries(this.#manifest.data.fileDiscovery)) {
-      if (dir.startsWith(rel + '/')) {
-        return true;
-      }
-      for (const file of files) {
-        const fullRel = path.posix.join(dir, file);
-        if (path.posix.dirname(fullRel) === rel || fullRel.startsWith(rel + '/')) {
-          return true;
-        }
-      }
-    }
-
-    for (const target of Object.values(this.#manifest.data.resolveCache)) {
-      if (target && (path.posix.dirname(target) === rel || target.startsWith(rel + '/'))) {
-        return true;
-      }
-    }
-    return false;
+    return this.#manifestDirectories.has(rel);
   }
 
   #listManifestFilesUnder(cwdRel: string): string[] | undefined {
@@ -226,13 +226,6 @@ export class ManifestLoaderFS implements LoaderFS {
     return [...new Set([rel, normalizePath(abs)])];
   }
 
-  #hasManifestData(): boolean {
-    return (
-      Object.keys(this.#manifest.data.fileDiscovery).length > 0 ||
-      Object.keys(this.#manifest.data.resolveCache).some((key) => this.#manifest.data.resolveCache[key] !== null)
-    );
-  }
-
   #toRelative(filepath: string): string {
     const rel = path.relative(this.#manifest.baseDir, path.resolve(filepath));
     return normalizePath(rel);
@@ -254,15 +247,20 @@ function normalizePath(filepath: string): string {
   return filepath.replaceAll(path.sep, '/');
 }
 
+function addManifestDirectory(directories: Set<string>, dir: string): void {
+  let current = dir === '.' ? '' : dir;
+  while (true) {
+    directories.add(current);
+    if (current === '') return;
+    const parent = path.posix.dirname(current);
+    current = parent === '.' ? '' : parent;
+  }
+}
+
 function relativePrefix(cwdRel: string, dirRel: string): string | undefined {
   if (cwdRel === '') return dirRel;
   if (dirRel === cwdRel) return '';
   if (dirRel.startsWith(cwdRel + '/')) return dirRel.slice(cwdRel.length + 1);
-}
-
-function relativeFileUnderDir(dirRel: string, fileRel: string): string | undefined {
-  if (dirRel === '') return fileRel;
-  if (fileRel.startsWith(dirRel + '/')) return fileRel.slice(dirRel.length + 1);
 }
 
 function filterManifestGlob(files: string[], patterns: string | string[], options?: LoaderFSGlobOptions): string[] {

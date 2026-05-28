@@ -258,7 +258,7 @@ for (const [key, spec] of __EXTERNAL_SPECS) {
 /* eslint-disable */
 import path from 'node:path';
 
-import { ManifestStore } from '@eggjs/core';
+import { ManifestLoaderFS, ManifestStore } from '@eggjs/core';
 import type {} from '@eggjs/typings/global';
 import { startEgg } from ${frameworkSpec};
 import * as __frameworkModule from ${frameworkSpec};
@@ -315,12 +315,14 @@ for (const [appAbsRequest, targetRel] of __APP_RESOLVE_CACHE_ALIASES) {
   }
 }
 
-ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA as any, __outputDir));
+const __bundleManifestStore = ManifestStore.fromBundle(MANIFEST_DATA as any, __outputDir);
+const __loaderFS = new ManifestLoaderFS(__bundleManifestStore);
+ManifestStore.setBundleStore(__bundleManifestStore);
 globalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath) => {
   return __getBundleMap(filepath);
 };
 
-startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single' }).then((app) => {
+startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single', loaderFS: __loaderFS }).then((app) => {
   const port = process.env.PORT || app.config.cluster?.listen?.port || 7001;
   app.listen(port, () => {
     // eslint-disable-next-line no-console
