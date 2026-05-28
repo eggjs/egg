@@ -35,4 +35,5 @@ loading without changing the public loader call sites.
 `exists`, `stat`, `realpath`, and `glob` from `fileDiscovery` and `resolveCache`
 manifest data when possible, loads bundled modules through
 `globalThis.__EGG_BUNDLE_MODULE_LOADER__`, unwraps default exports for JSON and
-file loads, and falls back to `RealLoaderFS` when a path is outside the manifest.
+file loads, and falls back to the configured fallback loader FS, defaulting to
+`RealLoaderFS`, when a path is outside the manifest.
