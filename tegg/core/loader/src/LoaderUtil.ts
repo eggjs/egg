@@ -1,9 +1,10 @@
 import BuiltinModule from 'node:module';
-import { pathToFileURL } from 'node:url';
 
 import { PrototypeUtil } from '@eggjs/core-decorator';
+import { RealLoaderFS, type LoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import type {} from '@eggjs/typings/global';
+import { importModule } from '@eggjs/utils';
 import { isClass } from 'is-type-of';
 
 // Guard against poorly mocked module constructors.
@@ -18,12 +19,25 @@ function createLoadError(filePath: string, e: unknown): Error {
 
 interface LoaderUtilConfig {
   extraFilePattern?: string[];
+  loaderFS?: LoaderFS;
+}
+
+class TeggLoaderFS extends RealLoaderFS {
+  override async loadFile(filepath: string): Promise<unknown> {
+    return await importModule(filepath);
+  }
 }
 
 export class LoaderUtil {
   static config: LoaderUtilConfig = {};
+  static #defaultLoaderFS = new TeggLoaderFS();
+
   static setConfig(config: LoaderUtilConfig): void {
     this.config = config;
+  }
+
+  static get loaderFS(): LoaderFS {
+    return this.config.loaderFS ?? this.#defaultLoaderFS;
   }
 
   static supportExtensions(): string[] {
@@ -70,30 +84,28 @@ export class LoaderUtil {
     return filePattern;
   }
 
+  static globFiles(patterns: string | string[], options?: LoaderFSGlobOptions): string[] {
+    return this.loaderFS.glob(patterns, options);
+  }
+
   static async loadFile(filePath: string): Promise<EggProtoImplClass[]> {
     const originalFilePath = filePath;
-    let exports: any;
+    let exports: unknown;
     try {
-      exports = globalThis.__EGG_BUNDLE_MODULE_LOADER__?.(originalFilePath.split('\\').join('/'));
+      exports = await this.loaderFS.loadFile(originalFilePath);
     } catch (e: unknown) {
       throw createLoadError(originalFilePath, e);
     }
-    if (exports == null) {
-      if (process.platform === 'win32') {
-        // convert to file:// url
-        // avoid windows path issue: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
-        filePath = pathToFileURL(filePath).toString();
-      }
-      try {
-        exports = await import(filePath);
-      } catch (e: unknown) {
-        throw createLoadError(filePath, e);
-      }
-    }
+
     const clazzList: EggProtoImplClass[] = [];
-    const exportNames = Object.keys(exports);
-    for (const exportName of exportNames) {
-      const clazz = exports[exportName];
+    const candidates =
+      exports && (typeof exports === 'object' || typeof exports === 'function') ? Object.values(exports) : [];
+
+    if (exports && isClass(exports)) {
+      candidates.push(exports);
+    }
+
+    for (const clazz of candidates) {
       const isEggProto =
         isClass(clazz) && (PrototypeUtil.isEggPrototype(clazz) || PrototypeUtil.isEggMultiInstancePrototype(clazz));
       if (!isEggProto) {

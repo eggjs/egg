@@ -2,11 +2,27 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
+import { RealLoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
 import { EggLoadUnitType } from '@eggjs/metadata';
 import type {} from '@eggjs/typings/global';
 import { afterEach, describe, it } from 'vitest';
 
 import { LoaderFactory, LoaderUtil } from '../src/index.ts';
+
+class RecordingLoaderFS extends RealLoaderFS {
+  readonly globCalls: Array<{ patterns: string | string[]; cwd: string | undefined }> = [];
+  readonly loadFileCalls: string[] = [];
+
+  override glob(patterns: string | string[], options?: LoaderFSGlobOptions): string[] {
+    this.globCalls.push({ patterns, cwd: options?.cwd ? String(options.cwd) : undefined });
+    return super.glob(patterns, options);
+  }
+
+  override async loadFile(filepath: string): Promise<unknown> {
+    this.loadFileCalls.push(filepath);
+    return await import(filepath);
+  }
+}
 
 describe('core/loader/test/Loader.test.ts', () => {
   afterEach(() => {
@@ -45,6 +61,20 @@ describe('core/loader/test/Loader.test.ts', () => {
       assert.equal(prototypes.length, 1);
     });
 
+    it('should use configured LoaderFS for file discovery and loading', async () => {
+      const loaderFS = new RecordingLoaderFS();
+      LoaderUtil.setConfig({ loaderFS });
+      const repoModulePath = path.join(__dirname, './fixtures/modules/module-for-loader');
+      const loader = LoaderFactory.createLoader(repoModulePath, EggLoadUnitType.MODULE);
+
+      const prototypes = await loader.load();
+
+      assert.equal(prototypes.length, 4);
+      assert.equal(loaderFS.globCalls.length, 1);
+      assert.equal(loaderFS.globCalls[0].cwd, repoModulePath);
+      assert(loaderFS.loadFileCalls.some((file) => file.endsWith('AppRepo.ts')));
+    });
+
     it('should load pre-bundled files through the bundle module loader', async () => {
       class BundledService {}
       SingletonProto()(BundledService);
@@ -63,9 +93,8 @@ describe('core/loader/test/Loader.test.ts', () => {
       assert.equal(PrototypeUtil.getFilePath(BundledService), bundledFile);
     });
 
-    it('should fall back to dynamic import when the bundle module loader returns null', async () => {
+    it('should load regular files when no bundle module loader is registered', async () => {
       const appRepoFile = path.join(__dirname, './fixtures/modules/module-for-loader/AppRepo.ts');
-      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = () => null;
 
       const prototypes = await LoaderUtil.loadFile(appRepoFile);
 

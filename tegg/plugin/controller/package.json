@@ -107,7 +107,6 @@
     "await-event": "catalog:",
     "content-type": "catalog:",
     "egg-errors": "catalog:",
-    "globby": "catalog:",
     "koa-compose": "catalog:",
     "path-to-regexp": "catalog:path-to-regexp1",
     "raw-body": "^2.5.2",

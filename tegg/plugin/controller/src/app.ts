@@ -2,6 +2,7 @@ import assert from 'node:assert';
 
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/controller-decorator';
 import { GlobalGraph, type LoadUnitLifecycleContext } from '@eggjs/metadata';
+import { LoaderUtil } from '@eggjs/tegg-loader';
 import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
 import { AGENT_CONTROLLER_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
@@ -52,7 +53,15 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.controllerPrototypeHook);
     this.app.eggObjectFactory.registerEggObjectCreateMethod(AgentControllerProto, AgentControllerObject.createObject);
     this.app.loaderFactory.registerLoader(CONTROLLER_LOAD_UNIT, (unitPath) => {
-      return new EggControllerLoader(unitPath);
+      const filePattern = LoaderUtil.filePattern();
+      const files = this.app.loader.manifest.globFiles(unitPath, () => {
+        try {
+          return LoaderUtil.globFiles(filePattern, { cwd: unitPath });
+        } catch {
+          return [];
+        }
+      });
+      return new EggControllerLoader(unitPath, files);
     });
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.HTTP, HTTPControllerRegister.create);
     this.app.loadUnitFactory.registerLoadUnitCreator(

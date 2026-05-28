@@ -42,10 +42,11 @@
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/loader-fs": "workspace:*",
     "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "@eggjs/typings": "workspace:*",
-    "globby": "catalog:",
+    "@eggjs/utils": "workspace:*",
     "is-type-of": "catalog:"
   },
   "devDependencies": {

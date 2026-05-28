@@ -3,26 +3,30 @@ import path from 'node:path';
 import type { EggProtoImplClass } from '@eggjs/core-decorator';
 import { LoaderUtil } from '@eggjs/tegg-loader';
 import type { Loader } from '@eggjs/tegg-types';
-import globby from 'globby';
 
 export class EggControllerLoader implements Loader {
   private readonly controllerDir: string;
+  private readonly precomputedFiles?: string[];
 
-  constructor(controllerDir: string) {
+  constructor(controllerDir: string, precomputedFiles?: string[]) {
     this.controllerDir = controllerDir;
+    this.precomputedFiles = precomputedFiles;
   }
 
   async load(): Promise<EggProtoImplClass[]> {
     const filePattern = LoaderUtil.filePattern();
     let files: string[];
-    try {
-      const httpControllers = (await globby(filePattern, { cwd: this.controllerDir })).map((file) =>
-        path.join(this.controllerDir, file),
-      );
-      files = httpControllers;
-    } catch {
-      files = [];
-      // app/controller dir not exists
+    if (this.precomputedFiles) {
+      files = this.precomputedFiles.map((file) => (path.isAbsolute(file) ? file : path.join(this.controllerDir, file)));
+    } else {
+      try {
+        files = LoaderUtil.globFiles(filePattern, { cwd: this.controllerDir }).map((file) =>
+          path.join(this.controllerDir, file),
+        );
+      } catch {
+        files = [];
+        // app/controller dir not exists
+      }
     }
     const protoClassList: EggProtoImplClass[] = [];
     for (const file of files) {
