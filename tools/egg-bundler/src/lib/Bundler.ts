@@ -388,20 +388,6 @@ export class Bundler {
     );
     debug('copied %d runtime assets', copiedRuntimeAssets.length);
 
-    // Merge project name into output package.json so the framework's
-    // getAppname() finds it (it reads baseDir/package.json).
-    const outputPkgPath = path.join(absOutputDir, 'package.json');
-    await wrapStep('patch output package.json', async () => {
-      const srcPkg = JSON.parse(await fs.readFile(path.join(absBaseDir, 'package.json'), 'utf8')) as {
-        name?: string;
-      };
-      if (srcPkg.name) {
-        const outPkg = JSON.parse(await fs.readFile(outputPkgPath, 'utf8')) as Record<string, unknown>;
-        outPkg.name = srcPkg.name;
-        await fs.writeFile(outputPkgPath, JSON.stringify(outPkg, null, 2));
-      }
-    });
-
     const manifestPathAbs = path.join(absOutputDir, BUNDLE_MANIFEST_FILENAME);
     const bundleManifest: BundleManifest = {
       version: BUNDLE_MANIFEST_VERSION,

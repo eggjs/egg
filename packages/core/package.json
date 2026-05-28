@@ -50,6 +50,7 @@
     "get-ready": "catalog:",
     "globby": "catalog:",
     "is-type-of": "catalog:",
+    "multimatch": "catalog:",
     "node-homedir": "catalog:",
     "performance-ms": "catalog:",
     "ready-callback": "catalog:",

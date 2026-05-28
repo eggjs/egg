@@ -31,6 +31,7 @@ describe('test/loader_fs.test.ts', () => {
 
     assert.deepEqual(loaderFS.readJSON(packagePath), JSON.parse(fs.readFileSync(packagePath, 'utf8')));
     assert.deepEqual(loaderFS.glob(patterns, { cwd: baseDir }).sort(), globby.sync(patterns, { cwd: baseDir }).sort());
+    assert.deepEqual(await loaderFS.loadFile(packagePath), JSON.parse(fs.readFileSync(packagePath, 'utf8')));
     assert.deepEqual(await loaderFS.loadFile(path.join(baseDir, 'object.js')), { a: 1 });
     assert.deepEqual(await loaderFS.loadFile(yamlPath), fs.readFileSync(yamlPath));
   });
