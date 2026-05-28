@@ -1,15 +1,21 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
+import { Prototype, PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { RealLoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
 import { EggLoadUnitType } from '@eggjs/metadata';
-import { describe, it } from 'vitest';
+import type {} from '@eggjs/typings/global';
+import { afterEach, describe, it } from 'vitest';
 
 import { ModuleLoader } from '../src/impl/ModuleLoader.ts';
 import { LoaderFactory } from '../src/index.ts';
 
 describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
   const repoModulePath = path.join(__dirname, './fixtures/modules/module-for-loader');
+
+  afterEach(() => {
+    globalThis.__EGG_BUNDLE_MODULE_LOADER__ = undefined;
+  });
 
   it('should load only precomputed files when provided', async () => {
     const loader = new ModuleLoader(repoModulePath, ['AppRepo.ts']);
@@ -59,6 +65,32 @@ describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
 
     assert.equal(prototypes.length, 4);
     assert.deepEqual(loaderFS.globCalls, [{ cwd: repoModulePath }]);
+  });
+
+  it('should load bundled service and repository files from manifest paths', async () => {
+    class BundledService {}
+    SingletonProto()(BundledService);
+    class BundledRepo {}
+    Prototype()(BundledRepo);
+
+    const bundledModuleDir = '/bundle/modules/order';
+    const serviceFile = path.join(bundledModuleDir, 'BundledService.ts');
+    const repoFile = path.join(bundledModuleDir, 'repository/BundledRepo.ts');
+    const requestedFiles: string[] = [];
+    globalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath: string) => {
+      requestedFiles.push(filepath);
+      if (filepath === serviceFile) return { BundledService };
+      if (filepath === repoFile) return { BundledRepo };
+      return undefined;
+    };
+    const loader = new ModuleLoader(bundledModuleDir, ['BundledService.ts', 'repository/BundledRepo.ts']);
+
+    const prototypes = await loader.load();
+
+    assert.deepEqual(prototypes.map((proto) => proto.name).sort(), ['BundledRepo', 'BundledService']);
+    assert.deepEqual(requestedFiles, [serviceFile, repoFile]);
+    assert.equal(PrototypeUtil.getFilePath(BundledService), serviceFile);
+    assert.equal(PrototypeUtil.getFilePath(BundledRepo), repoFile);
   });
 });
 
