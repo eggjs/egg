@@ -77,11 +77,13 @@ describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
     const bundledModuleDir = '/bundle/modules/order';
     const serviceFile = path.join(bundledModuleDir, 'BundledService.ts');
     const repoFile = path.join(bundledModuleDir, 'repository/BundledRepo.ts');
+    const normalizedServiceFile = toBundlePath(serviceFile);
+    const normalizedRepoFile = toBundlePath(repoFile);
     const requestedFiles: string[] = [];
     globalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath: string) => {
       requestedFiles.push(filepath);
-      if (filepath === serviceFile) return { BundledService };
-      if (filepath === repoFile) return { BundledRepo };
+      if (filepath === normalizedServiceFile) return { BundledService };
+      if (filepath === normalizedRepoFile) return { BundledRepo };
       return undefined;
     };
     const loader = new ModuleLoader(bundledModuleDir, ['BundledService.ts', 'repository/BundledRepo.ts']);
@@ -89,7 +91,7 @@ describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
     const prototypes = await loader.load();
 
     assert.deepEqual(prototypes.map((proto) => proto.name).sort(), ['BundledRepo', 'BundledService']);
-    assert.deepEqual(requestedFiles, [serviceFile, repoFile].map(toBundlePath));
+    assert.deepEqual(requestedFiles, [normalizedServiceFile, normalizedRepoFile]);
     assert.equal(PrototypeUtil.getFilePath(BundledService), serviceFile);
     assert.equal(PrototypeUtil.getFilePath(BundledRepo), repoFile);
   });
