@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-05-10] package | extract shared LoaderFS package
+
+- sources touched: `packages/loader-fs/src/index.ts`, `packages/loader-fs/package.json`, `packages/core/src/index.ts`, `packages/core/src/loader/file_loader.ts`, `packages/core/src/loader/egg_loader.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/core.md`, `wiki/packages/loader-fs.md`
+- note: Moved the loader-facing `LoaderFS` / `RealLoaderFS` boundary into `@eggjs/loader-fs` while keeping `@eggjs/core` as a consumer and re-exporter.
+
 ## [2026-05-07] package | document core LoaderFS boundary
 
 - sources touched: `packages/core/src/index.ts`, `packages/core/src/loader/loader_fs.ts`, `packages/core/src/loader/file_loader.ts`, `packages/core/src/loader/context_loader.ts`, `packages/core/src/loader/egg_loader.ts`
