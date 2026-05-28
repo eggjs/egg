@@ -94,6 +94,30 @@ describe('core/loader/test/Loader.test.ts', () => {
       assert.equal(PrototypeUtil.getFilePath(BundledService), bundledFile);
     });
 
+    it('should load a direct class export from the bundle module loader', async () => {
+      class DirectBundledService {}
+      SingletonProto()(DirectBundledService);
+      const bundledFile = '/bundle/app/service.ts';
+      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = () => DirectBundledService;
+
+      const prototypes = await LoaderUtil.loadFile(bundledFile);
+
+      assert.deepEqual(
+        prototypes.map((proto) => proto.name),
+        ['DirectBundledService'],
+      );
+    });
+
+    it('should ignore non-egg classes from loaded modules', async () => {
+      class PlainClass {}
+      const bundledFile = '/bundle/app/plain.ts';
+      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = () => ({ PlainClass });
+
+      const prototypes = await LoaderUtil.loadFile(bundledFile);
+
+      assert.deepEqual(prototypes, []);
+    });
+
     it('should load regular files when no bundle module loader is registered', async () => {
       const appRepoFile = path.join(__dirname, './fixtures/modules/module-for-loader/AppRepo.ts');
 
