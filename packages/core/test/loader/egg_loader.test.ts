@@ -113,6 +113,54 @@ describe('test/loader/egg_loader.test.ts', () => {
         await fs.rm(baseDir, { recursive: true, force: true });
       }
     });
+
+    it('should load plugin package metadata through loaderFS loadFile', async () => {
+      const baseDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-loader-plugin-package-fs-'));
+      const appPackagePath = path.join(baseDir, 'package.json');
+      const pluginPath = path.join(baseDir, 'plugins/manifest-plugin');
+      const pluginPackagePath = path.join(pluginPath, 'package.json');
+      const loaderFS = new PackageMetadataLoaderFS(
+        appPackagePath,
+        { name: 'manifest-app' },
+        {
+          [pluginPackagePath]: {
+            name: 'manifest-plugin',
+            version: '1.2.3',
+            eggPlugin: { name: 'manifestPlugin' },
+          },
+        },
+      );
+
+      try {
+        await fs.mkdir(pluginPath, { recursive: true });
+        const loader = new EggLoader({
+          env: 'unittest',
+          baseDir,
+          app: {} as EggLoaderOptions['app'],
+          logger: app.logger,
+          loaderFS,
+          plugins: {
+            manifestPlugin: {
+              name: 'manifestPlugin',
+              enable: true,
+              dependencies: [],
+              optionalDependencies: [],
+              env: [],
+              from: '<egg_loader.test.ts>',
+              path: pluginPath,
+            },
+          },
+        });
+
+        await loader.loadPlugin();
+
+        assert.equal(loader.plugins.manifestPlugin.version, '1.2.3');
+        assert.deepEqual(loaderFS.loadFileCalls, [pluginPackagePath]);
+        await assert.rejects(fs.access(pluginPackagePath), { code: 'ENOENT' });
+      } finally {
+        await fs.rm(baseDir, { recursive: true, force: true });
+      }
+    });
   });
 
   it('should be loaded by loadToApp, support symbol property', async () => {
@@ -259,20 +307,40 @@ describe('test/loader/egg_loader.test.ts', () => {
 
 class PackageMetadataLoaderFS extends RealLoaderFS {
   readonly readJSONCalls: string[] = [];
-  readonly #packagePath: string;
-  readonly #packageMetadata: Record<string, unknown>;
+  readonly loadFileCalls: string[] = [];
+  readonly #packageMetadataByPath: Map<string, Record<string, unknown>>;
 
-  constructor(packagePath: string, packageMetadata: Record<string, unknown>) {
+  constructor(
+    packagePath: string,
+    packageMetadata: Record<string, unknown>,
+    extraPackageMetadata: Record<string, Record<string, unknown>> = {},
+  ) {
     super();
-    this.#packagePath = packagePath;
-    this.#packageMetadata = packageMetadata;
+    this.#packageMetadataByPath = new Map([[packagePath, packageMetadata], ...Object.entries(extraPackageMetadata)]);
+  }
+
+  exists(filepath: string): boolean {
+    if (this.#packageMetadataByPath.has(filepath)) {
+      return true;
+    }
+    return super.exists(filepath);
   }
 
   readJSON<T = unknown>(filepath: string): T {
     this.readJSONCalls.push(filepath);
-    if (filepath === this.#packagePath) {
-      return this.#packageMetadata as T;
+    const metadata = this.#packageMetadataByPath.get(filepath);
+    if (metadata) {
+      return metadata as T;
     }
     return super.readJSON<T>(filepath);
+  }
+
+  async loadFile(filepath: string): Promise<unknown> {
+    this.loadFileCalls.push(filepath);
+    const metadata = this.#packageMetadataByPath.get(filepath);
+    if (metadata) {
+      return metadata;
+    }
+    return super.loadFile(filepath);
   }
 }

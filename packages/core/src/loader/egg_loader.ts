@@ -652,7 +652,7 @@ export class EggLoader {
     let eggPluginConfig: any;
     const pluginPackage = path.join(plugin.path as string, 'package.json');
     if (this.loaderFS.exists(pluginPackage)) {
-      pkg = this.loaderFS.readJSON(pluginPackage);
+      pkg = await this.loaderFS.loadFile(pluginPackage);
       eggPluginConfig = pkg.eggPlugin;
       if (pkg.version) {
         plugin.version = pkg.version;
