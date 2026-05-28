@@ -14,7 +14,7 @@ import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } fr
 import { homedir } from 'node-homedir';
 import { now, diff } from 'performance-ms';
 import { register as tsconfigPathsRegister } from 'tsconfig-paths';
-import { getParamNames, readJSONSync } from 'utility';
+import { getParamNames } from 'utility';
 
 import type { BaseContextClass } from '../base_context_class.ts';
 import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
@@ -111,7 +111,7 @@ export class EggLoader {
      * @see {@link AppInfo#pkg}
      * @since 1.0.0
      */
-    this.pkg = readJSONSync(path.join(this.options.baseDir, 'package.json'));
+    this.pkg = this.loaderFS.readJSON<Record<string, unknown>>(path.join(this.options.baseDir, 'package.json'));
     this.outDir = this.#resolveOutDir();
 
     // auto require('tsconfig-paths/register') on typescript app

@@ -137,6 +137,17 @@ describe('bundle() integration — minimal-app (Phase 1: mocked @utoo/pack)', ()
     expect(JSON.parse(pkgAtBuildTime!)).toEqual({ type: 'commonjs' });
   });
 
+  it('leaves output package.json as the pack runtime package instead of patching app metadata into it', async () => {
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: { buildFunc: makeMockBuild() },
+    });
+
+    const outputPkg = JSON.parse(await fs.readFile(path.join(tmpOutput, 'package.json'), 'utf8'));
+    expect(outputPkg).toEqual({ type: 'commonjs' });
+  });
+
   it('writes a bundle-manifest.json whose schema matches docs/output-structure.md', async () => {
     const result = await bundle({
       baseDir: tmpApp,

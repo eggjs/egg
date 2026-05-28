@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -85,6 +86,32 @@ describe('test/loader/egg_loader.test.ts', () => {
       ret = await loader.loadFile(getFilepath('load_file/function'), 1, 2);
       assert.equal(ret[0], 1);
       assert.equal(ret[1], 2);
+    });
+
+    it('should read app package metadata through loaderFS', async () => {
+      const baseDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-loader-package-fs-'));
+      const packagePath = path.join(baseDir, 'package.json');
+      const loaderFS = new PackageMetadataLoaderFS(packagePath, {
+        name: 'manifest-app',
+        egg: { outDir: 'bundle-dist' },
+      });
+
+      try {
+        const loader = new EggLoader({
+          env: 'unittest',
+          baseDir,
+          app: {} as EggLoaderOptions['app'],
+          logger: app.logger,
+          loaderFS,
+        });
+
+        assert.equal(loader.getAppname(), 'manifest-app');
+        assert.equal(loader.outDir, 'bundle-dist');
+        assert.deepEqual(loaderFS.readJSONCalls, [packagePath]);
+        await assert.rejects(fs.access(packagePath), { code: 'ENOENT' });
+      } finally {
+        await fs.rm(baseDir, { recursive: true, force: true });
+      }
     });
   });
 
@@ -229,3 +256,23 @@ describe('test/loader/egg_loader.test.ts', () => {
     });
   });
 });
+
+class PackageMetadataLoaderFS extends RealLoaderFS {
+  readonly readJSONCalls: string[] = [];
+  readonly #packagePath: string;
+  readonly #packageMetadata: Record<string, unknown>;
+
+  constructor(packagePath: string, packageMetadata: Record<string, unknown>) {
+    super();
+    this.#packagePath = packagePath;
+    this.#packageMetadata = packageMetadata;
+  }
+
+  readJSON<T = unknown>(filepath: string): T {
+    this.readJSONCalls.push(filepath);
+    if (filepath === this.#packagePath) {
+      return this.#packageMetadata as T;
+    }
+    return super.readJSON<T>(filepath);
+  }
+}

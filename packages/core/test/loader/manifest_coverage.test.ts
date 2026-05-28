@@ -176,6 +176,10 @@ describe('ManifestStore coverage: FileLoader getter auto-injects manifest', () =
         'security middleware should be included in manifest fileDiscovery',
       );
       assert.ok(
+        manifest.fileDiscovery['']?.includes('package.json'),
+        'app package metadata should be included in manifest fileDiscovery',
+      );
+      assert.ok(
         manifest.fileDiscovery['node_modules/@eggjs/security']?.includes('package.json'),
         'plugin package metadata should be included in manifest fileDiscovery',
       );
