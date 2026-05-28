@@ -4,6 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import type {} from '@eggjs/typings/global';
+import { importModule } from '@eggjs/utils';
 import { isClass } from 'is-type-of';
 
 // Guard against poorly mocked module constructors.
@@ -79,21 +80,20 @@ export class LoaderUtil {
       throw createLoadError(originalFilePath, e);
     }
     if (exports == null) {
-      if (process.platform === 'win32') {
-        // convert to file:// url
-        // avoid windows path issue: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
-        filePath = pathToFileURL(filePath).toString();
-      }
       try {
-        exports = await import(filePath);
+        exports =
+          globalThis.__EGG_BUNDLE_MODULE_LOADER__ === undefined
+            ? await importModule(filePath, { importDefaultOnly: false })
+            : await importFallback(filePath);
       } catch (e: unknown) {
         throw createLoadError(filePath, e);
       }
     }
+    const normalizedExports = normalizeExports(exports);
     const clazzList: EggProtoImplClass[] = [];
-    const exportNames = Object.keys(exports);
+    const exportNames = Object.keys(normalizedExports);
     for (const exportName of exportNames) {
-      const clazz = exports[exportName];
+      const clazz = normalizedExports[exportName];
       const isEggProto =
         isClass(clazz) && (PrototypeUtil.isEggPrototype(clazz) || PrototypeUtil.isEggMultiInstancePrototype(clazz));
       if (!isEggProto) {
@@ -107,4 +107,23 @@ export class LoaderUtil {
     }
     return clazzList;
   }
+}
+
+async function importFallback(filePath: string): Promise<unknown> {
+  if (process.platform === 'win32') {
+    // convert to file:// url
+    // avoid windows path issue: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
+    filePath = pathToFileURL(filePath).toString();
+  }
+  return await import(filePath);
+}
+
+function normalizeExports(exports: unknown): Record<string, unknown> {
+  if (exports !== null && (typeof exports === 'object' || typeof exports === 'function')) {
+    if (isClass(exports)) {
+      return { default: exports };
+    }
+    return exports as Record<string, unknown>;
+  }
+  return {};
 }

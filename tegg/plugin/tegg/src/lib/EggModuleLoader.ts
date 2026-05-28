@@ -40,7 +40,9 @@ export class EggModuleLoader {
     const manifestTegg = manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined;
     const loadAppManifest = manifestTegg?.moduleDescriptors?.length ? manifestTegg : undefined;
 
-    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest);
+    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest, {
+      loaderFS: this.app.loader.loaderFS,
+    });
 
     // Collect manifest data when not loaded from manifest
     if (!loadAppManifest) {
@@ -96,7 +98,9 @@ export class EggModuleLoader {
     const moduleConfigList = this.globalGraph.moduleConfigList;
     for (const moduleConfig of moduleConfigList) {
       const modulePath = moduleConfig.path;
-      const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
+      const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, {
+        loaderFS: this.app.loader.loaderFS,
+      });
       const loadUnit = await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
       this.app.moduleHandler.loadUnits.push(loadUnit);
     }

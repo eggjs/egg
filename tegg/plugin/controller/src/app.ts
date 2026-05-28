@@ -52,7 +52,10 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.controllerPrototypeHook);
     this.app.eggObjectFactory.registerEggObjectCreateMethod(AgentControllerProto, AgentControllerObject.createObject);
     this.app.loaderFactory.registerLoader(CONTROLLER_LOAD_UNIT, (unitPath) => {
-      return new EggControllerLoader(unitPath);
+      return new EggControllerLoader(unitPath, {
+        loaderFS: this.app.loader.loaderFS,
+        manifest: this.app.loader.manifest,
+      });
     });
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.HTTP, HTTPControllerRegister.create);
     this.app.loadUnitFactory.registerLoadUnitCreator(

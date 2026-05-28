@@ -75,6 +75,17 @@ describe('core/loader/test/Loader.test.ts', () => {
       );
     });
 
+    it('should load cjs default exported prototype class', async () => {
+      const cjsDefaultRepoFile = path.join(__dirname, './fixtures/modules/module-with-cjs-default/CjsDefaultRepo.cjs');
+
+      const prototypes = await LoaderUtil.loadFile(cjsDefaultRepoFile);
+
+      assert.deepEqual(
+        prototypes.map((proto) => proto.name),
+        ['CjsDefaultRepo'],
+      );
+    });
+
     it('should wrap bundle module loader errors', async () => {
       const bundledFile = '/bundle/app/service.ts';
       globalThis.__EGG_BUNDLE_MODULE_LOADER__ = () => {

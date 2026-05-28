@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
+import { RealLoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
 import { ModuleDescriptorDumper } from '@eggjs/metadata';
 import { describe, it } from 'vitest';
 
@@ -87,4 +88,23 @@ describe('core/loader/test/LoaderFactoryManifest.test.ts', () => {
       assert.deepStrictEqual(secondNames, firstNames);
     }
   });
+
+  it('should pass loaderFS to module loaders', async () => {
+    const loaderFS = new RecordingLoaderFS();
+
+    const descriptors = await LoaderFactory.loadApp([moduleRef], undefined, { loaderFS });
+
+    assert.equal(descriptors.length, 1);
+    assert(descriptors[0].clazzList.length > 0);
+    assert.deepEqual(loaderFS.globCalls, [{ cwd: repoModulePath }]);
+  });
 });
+
+class RecordingLoaderFS extends RealLoaderFS {
+  readonly globCalls: Array<{ cwd: string | undefined }> = [];
+
+  glob(patterns: string | string[], options?: LoaderFSGlobOptions): string[] {
+    this.globCalls.push({ cwd: options?.cwd ? String(options.cwd) : undefined });
+    return super.glob(patterns, options);
+  }
+}

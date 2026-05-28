@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
+import { RealLoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
 import { EggLoadUnitType } from '@eggjs/metadata';
 import { describe, it } from 'vitest';
 
@@ -49,4 +50,23 @@ describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
     const second = await loader.load();
     assert.strictEqual(first, second);
   });
+
+  it('should use loaderFS for file discovery', async () => {
+    const loaderFS = new RecordingLoaderFS();
+    const loader = new ModuleLoader(repoModulePath, undefined, loaderFS);
+
+    const prototypes = await loader.load();
+
+    assert.equal(prototypes.length, 4);
+    assert.deepEqual(loaderFS.globCalls, [{ cwd: repoModulePath }]);
+  });
 });
+
+class RecordingLoaderFS extends RealLoaderFS {
+  readonly globCalls: Array<{ cwd: string | undefined }> = [];
+
+  glob(patterns: string | string[], options?: LoaderFSGlobOptions): string[] {
+    this.globCalls.push({ cwd: options?.cwd ? String(options.cwd) : undefined });
+    return super.glob(patterns, options);
+  }
+}
