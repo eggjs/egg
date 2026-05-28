@@ -55,6 +55,9 @@ export class RealLoaderFS implements LoaderFS {
     debug('[loadFile:start] filepath: %s', filepath);
     try {
       const extname = path.extname(filepath);
+      if (extname === '.json') {
+        return JSON.parse(await fs.promises.readFile(filepath, 'utf8'));
+      }
       if (extname && !extensionNames.includes(extname) && extname !== '.ts') {
         return fs.readFileSync(filepath);
       }
