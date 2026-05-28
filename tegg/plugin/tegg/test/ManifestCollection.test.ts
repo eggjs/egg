@@ -1,17 +1,50 @@
 import assert from 'node:assert/strict';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
+import { LoaderFactory, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
-import { describe, it, afterEach, afterAll, beforeAll } from 'vitest';
+import { describe, it, afterEach, afterAll, beforeAll, vi } from 'vitest';
 
+import TeggAppBoot from '../src/app.ts';
 import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/ManifestCollection.test.ts', () => {
   let app: MockApplication;
 
   afterEach(async () => {
+    vi.restoreAllMocks();
     return mm.restore();
+  });
+
+  it('should pass app loaderFS when collecting metadata only manifest', async () => {
+    const loaderFS = {};
+    const moduleReferences = [
+      {
+        name: 'mock-module',
+        path: '/mock/modules/mock-module',
+        optional: false,
+        loaderType: undefined,
+      },
+    ];
+    const manifestData: Record<string, unknown> = {};
+    const app = {
+      moduleReferences,
+      loader: {
+        loaderFS,
+        manifest: {
+          setExtension(key: string, value: unknown) {
+            manifestData[key] = value;
+          },
+        },
+      },
+    };
+    const loadApp = vi.spyOn(LoaderFactory, 'loadApp').mockResolvedValue([]);
+
+    await new TeggAppBoot(app as any).loadMetadata();
+
+    assert.equal(loadApp.mock.calls.length, 1);
+    assert.deepEqual(loadApp.mock.calls[0], [moduleReferences, undefined, { loaderFS }]);
+    assert.deepEqual((manifestData[TEGG_MANIFEST_KEY] as TeggManifestExtension).moduleReferences, moduleReferences);
   });
 
   describe('manifest collection on app startup', () => {
