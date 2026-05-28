@@ -7,7 +7,8 @@ source_files:
   - packages/core/src/loader/file_loader.ts
   - packages/core/src/loader/context_loader.ts
   - packages/core/src/loader/egg_loader.ts
-updated_at: 2026-05-10
+  - packages/core/src/loader/loader_fs.ts
+updated_at: 2026-05-29
 status: active
 ---
 
@@ -20,7 +21,8 @@ support, lifecycle, and base context classes.
 ## LoaderFS
 
 `@eggjs/core` consumes and re-exports `LoaderFS` and `RealLoaderFS` from
-`@eggjs/loader-fs`. The abstraction remains the minimal filesystem boundary for
+`@eggjs/loader-fs`, and also exports the core-owned `ManifestLoaderFS` runtime
+implementation. The abstraction remains the minimal filesystem boundary for
 loader-facing file access: `exists`, `stat`, `realpath`, `readJSON`, `glob`, and
 `loadFile`, without trying to polyfill the full Node.js `fs` module.
 
@@ -28,3 +30,9 @@ loader-facing file access: `exists`, `stat`, `realpath`, `readJSON`, `glob`, and
 custom `loaderFS`. `EggLoader` passes its loader FS into `loadToApp()` and
 `loadToContext()` so later bundled loaders can replace file discovery and module
 loading without changing the public loader call sites.
+
+`ManifestLoaderFS` wraps a `ManifestStore` plus a fallback loader FS. It answers
+`exists`, `stat`, `realpath`, and `glob` from `fileDiscovery` and `resolveCache`
+manifest data when possible, loads bundled modules through
+`globalThis.__EGG_BUNDLE_MODULE_LOADER__`, unwraps default exports for JSON and
+file loads, and falls back to `RealLoaderFS` when a path is outside the manifest.

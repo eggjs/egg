@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-05-29] package | sync manifest-backed bundled loader FS
+
+- sources touched: `packages/core/src/loader/loader_fs.ts`, `packages/core/src/loader/egg_loader.ts`, `packages/core/src/egg.ts`, `tools/egg-bundler/src/lib/EntryGenerator.ts`
+- pages updated: `tools/egg-bundler/README.md`, `tools/egg-bundler/docs/output-structure.md`, `wiki/log.md`, `wiki/packages/core.md`, `wiki/packages/egg-bundler.md`
+- note: Recorded `ManifestLoaderFS` as the bundle-aware loader filesystem and documented that generated workers pass it into `startEgg()` while serving manifest paths through the inlined bundle module loader.
+
 ## [2026-05-10] package | extract shared LoaderFS package
 
 - sources touched: `packages/loader-fs/src/index.ts`, `packages/loader-fs/package.json`, `packages/core/src/index.ts`, `packages/core/src/loader/file_loader.ts`, `packages/core/src/loader/egg_loader.ts`

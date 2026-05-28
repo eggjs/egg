@@ -9,7 +9,7 @@ source_files:
   - tools/egg-bundler/src/lib/ExternalsResolver.ts
   - tools/egg-bin/src/commands/bundle.ts
   - tools/egg-bundler/docs/output-structure.md
-updated_at: 2026-05-06
+updated_at: 2026-05-29
 status: active
 ---
 
@@ -48,9 +48,11 @@ CommonJS artifact from an Egg application.
 - The generated app runs in Egg single-process mode. Its worker entry treats the
   deploy output directory as the runtime Egg `baseDir`, passes the framework
   specifier explicitly to `startEgg`, maps that specifier to the already bundled
-  framework module, and precomputes original app absolute aliases so bundled
-  module lookup can serve relKeys, output-dir absolute paths, original app
-  absolute paths, and manifest `resolveCache` request aliases.
+  framework module, creates `ManifestLoaderFS` from the bundle manifest, and
+  passes that loader FS into `startEgg` so loader file discovery and module
+  loading consult the bundle map before falling back to the real filesystem. The
+  bundle map can serve relKeys, output-dir absolute paths, original app absolute
+  paths, and manifest `resolveCache` request aliases.
 - Explicit `externals.force` entries are external, and `ExternalsResolver`
   auto-detects root `peerDependencies`, root `optionalDependencies`, root
   dependency packages with native addons, root dependency packages whose optional
