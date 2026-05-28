@@ -170,6 +170,29 @@ describe('test/loader/manifest_loader_fs.test.ts', () => {
     assert.throws(() => loaderFS.readJSON(missingPath), /ENOENT/);
     await assert.rejects(() => loaderFS.loadFile(missingPath), /ENOENT/);
   });
+
+  it('passes common globby matching options to manifest glob matching', async () => {
+    const baseDir = await createTempDir(createdDirs, 'egg-manifest-loader-fs-glob-options-');
+    const serviceDir = path.join(baseDir, 'app/service');
+    const store = ManifestStore.fromBundle(
+      createManifest({
+        fileDiscovery: {
+          'app/service': ['.hidden.ts', 'User.TS', 'user.ts'],
+        },
+      }),
+      baseDir,
+    );
+    const loaderFS = new ManifestLoaderFS(store, new ThrowingGlobLoaderFS());
+
+    assert.deepEqual(loaderFS.glob('**/*.ts', { cwd: serviceDir }), ['user.ts']);
+    assert.deepEqual(loaderFS.glob('**/*.ts', { cwd: serviceDir, dot: true }), ['.hidden.ts', 'user.ts']);
+    assert.deepEqual(loaderFS.glob('**/*.ts', { cwd: serviceDir, caseSensitiveMatch: false }), ['User.TS', 'user.ts']);
+    assert.deepEqual(loaderFS.glob('**/*.ts', { cwd: serviceDir, dot: true, caseSensitiveMatch: false }), [
+      '.hidden.ts',
+      'User.TS',
+      'user.ts',
+    ]);
+  });
 });
 
 class ThrowingGlobLoaderFS extends RealLoaderFS {

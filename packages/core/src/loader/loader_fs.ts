@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { RealLoaderFS, type LoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
 import type {} from '@eggjs/typings/global';
-import multimatch from 'multimatch';
+import multimatch, { type Options as MultimatchOptions } from 'multimatch';
 
 import type { ManifestStore } from './manifest.ts';
 
@@ -277,7 +277,18 @@ function filterManifestGlob(files: string[], patterns: string | string[], option
   const normalizedPatterns = patternList
     .map(normalizeAlternationGroups)
     .concat(ignoreList.map((pattern) => `!${normalizeAlternationGroups(pattern)}`));
-  return multimatch(files, normalizedPatterns);
+  return multimatch(files, normalizedPatterns, toMultimatchOptions(options));
+}
+
+function toMultimatchOptions(options?: LoaderFSGlobOptions): MultimatchOptions {
+  return {
+    ...(options?.dot !== undefined ? { dot: options.dot } : {}),
+    ...(options?.caseSensitiveMatch !== undefined ? { nocase: !options.caseSensitiveMatch } : {}),
+    ...(options?.braceExpansion !== undefined ? { nobrace: !options.braceExpansion } : {}),
+    ...(options?.extglob !== undefined ? { noext: !options.extglob } : {}),
+    ...(options?.globstar !== undefined ? { noglobstar: !options.globstar } : {}),
+    ...(options?.baseNameMatch !== undefined ? { matchBase: options.baseNameMatch } : {}),
+  };
 }
 
 function normalizeAlternationGroups(pattern: string): string {
