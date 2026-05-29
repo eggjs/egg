@@ -101,7 +101,8 @@ node worker.js
 ```
 
 The generated worker entry runs the app in Egg's single-process mode and serves
-framework file discovery/module resolution from the inlined bundle map.
+framework file discovery/module resolution from the inlined bundle map through
+Egg's manifest-backed loader filesystem.
 
 See [output-structure.md](./docs/output-structure.md) for artifact layout,
 externals behavior, and current limitations.
