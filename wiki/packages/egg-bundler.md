@@ -9,7 +9,7 @@ source_files:
   - tools/egg-bundler/src/lib/ExternalsResolver.ts
   - tools/egg-bin/src/commands/bundle.ts
   - tools/egg-bundler/docs/output-structure.md
-updated_at: 2026-05-06
+updated_at: 2026-06-02
 status: active
 ---
 
@@ -32,7 +32,8 @@ CommonJS artifact from an Egg application.
    `<baseDir>/.egg/manifest.json`.
 2. `ExternalsResolver` classifies packages that should stay external.
 3. `EntryGenerator` writes a synthetic worker entry that installs the bundle
-   manifest/module loader before starting Egg.
+   manifest/module loader, creates a `ManifestLoaderFS`, and passes it into
+   `startEgg()`.
 4. `PackRunner` invokes `@utoo/pack`.
 5. `Bundler` writes `bundle-manifest.json` and returns absolute output paths.
 
@@ -47,10 +48,11 @@ CommonJS artifact from an Egg application.
   not run.
 - The generated app runs in Egg single-process mode. Its worker entry treats the
   deploy output directory as the runtime Egg `baseDir`, passes the framework
-  specifier explicitly to `startEgg`, maps that specifier to the already bundled
-  framework module, and precomputes original app absolute aliases so bundled
-  module lookup can serve relKeys, output-dir absolute paths, original app
-  absolute paths, and manifest `resolveCache` request aliases.
+  specifier and manifest-backed `loaderFS` explicitly to `startEgg`, maps that
+  specifier to the already bundled framework module, and precomputes original
+  app absolute aliases so bundled module lookup can serve relKeys, output-dir
+  absolute paths, original app absolute paths, and manifest `resolveCache`
+  request aliases.
 - Explicit `externals.force` entries are external, and `ExternalsResolver`
   auto-detects root `peerDependencies`, root `optionalDependencies`, root
   dependency packages with native addons, root dependency packages whose optional

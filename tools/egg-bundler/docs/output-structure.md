@@ -33,14 +33,17 @@ node worker.js
 ```
 
 The worker entry installs `ManifestStore.setBundleStore(...)` and
-`globalThis.__EGG_BUNDLE_MODULE_LOADER__` before calling
-`startEgg({ baseDir: outputDir, framework, mode: 'single' })`, so framework
-specifier lookup is served by the already imported bundled framework module,
-without adding framework path aliases. Runtime lookup keeps
-the deploy output directory separate from the original app paths: the bundle map
-is keyed by relKey, output-dir absolute paths, precomputed original app absolute
-paths, and manifest `resolveCache` request aliases. Application code and plugins
-may still use `fs` for resources such as config, views, or assets.
+`globalThis.__EGG_BUNDLE_MODULE_LOADER__`, creates a `ManifestLoaderFS` from the
+startup manifest, then calls
+`startEgg({ baseDir: outputDir, framework, mode: 'single', loaderFS })`.
+Framework specifier lookup is served by the already imported bundled framework
+module, without adding framework path aliases. Runtime lookup keeps the deploy
+output directory separate from the original app paths: the bundle map is keyed
+by relKey, output-dir absolute paths, precomputed original app absolute paths,
+and manifest `resolveCache` request aliases. Loader file discovery, JSON reads,
+and module loading use the manifest-backed loader filesystem first and fall back
+to the real filesystem when a path is outside the manifest. Application code and
+plugins may still use `fs` for resources such as config, views, or assets.
 
 ## Runtime assets
 

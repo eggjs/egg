@@ -100,8 +100,10 @@ cd dist-bundle
 node worker.js
 ```
 
-The generated worker entry runs the app in Egg's single-process mode and serves
-framework file discovery/module resolution from the inlined bundle map.
+The generated worker entry runs the app in Egg's single-process mode with a
+manifest-backed loader filesystem, so framework file discovery and module
+resolution are served from the inlined bundle map before falling back to the
+real filesystem.
 
 See [output-structure.md](./docs/output-structure.md) for artifact layout,
 externals behavior, and current limitations.

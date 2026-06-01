@@ -1,11 +1,11 @@
 ---
 title: Loader FS Package
 type: package
-summary: Shared loader-facing filesystem boundary for Egg loaders and future bundled runtimes.
+summary: Shared loader-facing filesystem boundary for Egg loaders and bundled runtimes.
 source_files:
   - packages/loader-fs/src/index.ts
   - packages/loader-fs/package.json
-updated_at: 2026-05-10
+updated_at: 2026-06-02
 status: active
 ---
 
@@ -25,5 +25,7 @@ discovery to `globby.sync`, and module loading to the same `@eggjs/utils`
 
 `@eggjs/core` depends on this package and re-exports its public API so existing
 core consumers can still import the loader filesystem boundary from core while
-tegg and later bundled runtime packages can depend on the smaller package
-directly.
+tegg and bundled runtime packages can depend on the smaller package directly.
+The manifest-backed implementation used by bundle workers lives in
+`@eggjs/core` as `ManifestLoaderFS`; this package remains the shared interface
+and real-filesystem implementation.
