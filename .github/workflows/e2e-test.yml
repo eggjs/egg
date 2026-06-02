@@ -144,17 +144,6 @@ jobs:
       - name: Install utoo
         uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
 
-      - name: Install pnpm (for `pnpm -r pack`)
-        # utoo's `ut pm-pack` does not resolve `workspace:` / `catalog:`
-        # protocols inside the packed manifests, so downstream `npm install`
-        # in the ecosystem-ci projects fails with EUNSUPPORTEDPROTOCOL.
-        # Keep pnpm available just for the pack step. The explicit `version`
-        # is required because `packageManager` in package.json now points at
-        # utoo, so the action can't infer the pnpm version itself.
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
-        with:
-          version: 10
-
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
@@ -165,6 +154,20 @@ jobs:
 
       - name: Build all packages
         run: ut run build
+
+      - name: Install pnpm (for `pnpm -r pack`)
+        # utoo's `ut pm-pack` does not resolve `workspace:` / `catalog:`
+        # protocols inside the packed manifests, so downstream `npm install`
+        # in the ecosystem-ci projects fails with EUNSUPPORTEDPROTOCOL.
+        # Keep pnpm available just for the pack step. The explicit `version`
+        # is required because `packageManager` in package.json now points at
+        # utoo, so the action can't infer the pnpm version itself.
+        # Setup must come AFTER `ut install`: action-setup exports PNPM_HOME,
+        # which makes utoo's install path read pnpm config and crash with
+        # exit 141 (SIGPIPE).
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+        with:
+          version: 10
 
       - name: Pack packages into tgz
         # `pnpm -r pack` resolves workspace:/catalog: deps in the emitted
