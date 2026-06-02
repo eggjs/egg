@@ -14,8 +14,9 @@ status: active
 
 # Local CI
 
-The repository's GitHub CI test job installs dependencies and runs `pnpm run ci`
-for the main test matrix. It does not build packages before running tests.
+The repository's GitHub CI test job installs dependencies with
+`ut install --from pnpm` and runs tests with `ut run ci` for the main test
+matrix. It does not build packages before running tests.
 
 Local validation should follow the same shape for unit tests: run tests from
 clean source files, and build separately when validating generated output,

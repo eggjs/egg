@@ -33,8 +33,8 @@ pnpm run build
 ```
 
 Run unit tests from a clean source tree, not immediately after `pnpm run build`.
-The main CI test job installs dependencies and runs `pnpm run ci`; it does not run
-`build` before tests.
+The main CI test job installs dependencies with `ut install --from pnpm` and
+runs tests with `ut run ci`; it does not run `build` before tests.
 
 ## Monorepo Structure
 
