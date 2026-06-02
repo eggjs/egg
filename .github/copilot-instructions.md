@@ -61,7 +61,7 @@ ut run lint
 
 - `ut run test` - **Run all tests (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
 - `ut run test:cov` - **Run tests with coverage (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
-- `ut run ci` - **Run test coverage + build (~2.1 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
+- `ut run ci` - **Run tests with coverage (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
 
 ### Linting Commands
 
@@ -69,8 +69,8 @@ ut run lint
 
 ### Documentation Commands
 
-- `ut run site:dev` - Start documentation dev server at http://localhost:8000
-- `cd site && ut run build` - **Build documentation site (~24 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
+- `ut run site:dev` - Start documentation dev server (defaults to VitePress port 5173)
+- `ut run site:build` - **Build documentation site (~24 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
 
 ### Example Applications (Currently Not Working)
 
@@ -219,7 +219,7 @@ After making changes, always verify:
 
 1. **Build Success**: `ut run build` completes without errors
 2. **Linting Passes**: `ut run lint` shows no new errors
-3. **Documentation Loads**: `ut run site:dev` starts successfully and site loads at http://localhost:8000
+3. **Documentation Loads**: `ut run site:dev` starts successfully and the printed VitePress URL responds
 4. **Tests Run**: `ut run test` executes (some failures expected, focus on your changes)
 
 **Remember**: This is a complex enterprise framework. Always build first, validate incrementally, and focus on the core packages (`egg`, `core`, `utils`) for most development work.

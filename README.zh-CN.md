@@ -26,6 +26,7 @@
 ## 快速开始
 
 ```bash
+corepack enable utoo
 mkdir showcase && cd showcase
 ut create egg@beta
 ut install

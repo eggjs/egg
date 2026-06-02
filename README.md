@@ -27,6 +27,7 @@ English | [简体中文](./README.zh-CN.md)
 Follow the commands listed below.
 
 ```bash
+$ corepack enable utoo
 $ mkdir showcase && cd showcase
 $ ut create egg@beta
 $ ut install

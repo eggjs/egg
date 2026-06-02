@@ -21,6 +21,7 @@
 Follow the commands listed below.
 
 ```bash
+$ corepack enable utoo
 $ mkdir showcase && cd showcase
 $ npm init egg --type=simple # Optionally ut create egg --type=simple
 $ ut install
