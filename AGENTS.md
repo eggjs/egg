@@ -25,6 +25,20 @@ Egg is maintained as a pnpm monorepo.
 - `pnpm run typecheck` runs TypeScript checking.
 - use filtered commands for focused work, for example `pnpm --filter=egg run test` or `pnpm --filter=site run dev`.
 
+### Local CI
+
+Run tests **without building first**. The CI workflow (`ut install → ut run ci`) never runs `build` before tests. If `dist/` directories exist from a prior build, tegg plugin tests will fail with `duplicate proto` errors because globby scans both `src/*.ts` and `dist/*.js`, loading the same decorated class twice.
+
+When you see `duplicate proto` failures locally:
+
+```bash
+find tegg packages plugins tools -name dist -type d \
+  -not -path '*/node_modules/*' -not -path '*/test/*' -not -path '*/fixtures/*' \
+  -exec rm -rf {} +
+```
+
+Then re-run tests.
+
 ## Coding Conventions
 
 - prefer existing repo patterns over inventing new ones
