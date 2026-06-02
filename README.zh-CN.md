@@ -27,9 +27,9 @@
 
 ```bash
 mkdir showcase && cd showcase
-utoo create egg@beta
-utoo install
-utoo run dev
+ut create egg@beta
+ut install
+ut run dev
 
 open http://localhost:7001
 ```

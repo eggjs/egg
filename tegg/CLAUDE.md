@@ -60,8 +60,8 @@ standalone/    # 1 standalone package - standalone runtime without Egg.js
 ### Build & Clean
 
 ```bash
-utoo run build               # Build all packages including tegg (runs build in all workspaces)
-utoo run clean               # Clean all build artifacts including tegg (removes dist, tsbuildinfo)
+ut run build               # Build all packages including tegg (runs build in all workspaces)
+ut run clean-dist          # Clean all build artifacts including tegg (removes dist, tsbuildinfo)
 ```
 
 ### Testing
@@ -69,9 +69,9 @@ utoo run clean               # Clean all build artifacts including tegg (removes
 All tegg packages use **Vitest** for testing and are integrated with the main Egg.js monorepo test suite.
 
 ```bash
-utoo test                    # Run vitest tests for all packages (from monorepo root)
-utoo run test:cov            # Run tests with coverage
-utoo run ci                  # Full CI: vitest with coverage and bail on first failure
+ut test                    # Run vitest tests for all packages (from monorepo root)
+ut run test:cov            # Run tests with coverage
+ut run ci                  # Full CI: vitest with coverage and bail on first failure
 ```
 
 **Note:** Tests are configured in the monorepo root `vitest.config.ts` which includes all tegg packages (`tegg/core/*`, `tegg/plugin/*`, `tegg/standalone/*`).
@@ -79,9 +79,9 @@ utoo run ci                  # Full CI: vitest with coverage and bail on first f
 ### Type Checking & Linting
 
 ```bash
-utoo run typecheck           # Clean and type check all workspaces (including tegg)
-utoo run lint                # Run oxlint with type-aware checking on all packages
-utoo run fmtcheck            # Check code formatting with oxfmt
+ut run typecheck           # Clean and type check all workspaces (including tegg)
+ut run lint                # Run oxlint with type-aware checking on all packages
+ut run fmtcheck            # Check code formatting with oxfmt
 ```
 
 **Note:** oxlint automatically runs with `--type-aware` flag for enhanced TypeScript checking.
@@ -91,15 +91,15 @@ utoo run fmtcheck            # Check code formatting with oxfmt
 **Note:** Run these commands from the monorepo root (`../egg`).
 
 ```bash
-utoo run version:patch       # Bump patch version (0.0.X)
-utoo run version:minor       # Bump minor version (0.X.0)
-utoo run version:major       # Bump major version (X.0.0)
-utoo run version:prepatch    # Bump to next prerelease patch version
-utoo run version:preminor    # Bump to next prerelease minor version
-utoo run version:premajor    # Bump to next prerelease major version
-utoo run version:alpha       # Bump prerelease alpha version
-utoo run version:beta        # Bump prerelease beta version
-utoo run version:rc          # Bump prerelease rc version
+ut run version:patch       # Bump patch version (0.0.X)
+ut run version:minor       # Bump minor version (0.X.0)
+ut run version:major       # Bump major version (X.0.0)
+ut run version:prepatch    # Bump to next prerelease patch version
+ut run version:preminor    # Bump to next prerelease minor version
+ut run version:premajor    # Bump to next prerelease major version
+ut run version:alpha       # Bump prerelease alpha version
+ut run version:beta        # Bump prerelease beta version
+ut run version:rc          # Bump prerelease rc version
 ```
 
 ### Working with Individual Packages
@@ -108,18 +108,18 @@ utoo run version:rc          # Bump prerelease rc version
 
 ```bash
 # Install dependencies
-utoo install                          # Install all dependencies using catalog versions
+ut install                          # Install all dependencies using catalog versions
 
 # Type check specific packages
-utoo -r run typecheck                 # Type check all packages recursively
-utoo --filter @eggjs/tegg-runtime run typecheck
+ut -r run typecheck                 # Type check all packages recursively
+ut --filter @eggjs/tegg-runtime run typecheck
 
 # Build specific packages
-utoo --filter @eggjs/metadata run build
-utoo --filter @eggjs/tegg-runtime run build
+ut --filter @eggjs/metadata run build
+ut --filter @eggjs/tegg-runtime run build
 
 # Clean specific package
-utoo --filter @eggjs/tegg-runtime run clean
+ut --filter @eggjs/tegg-runtime run clean
 ```
 
 **Note:** Individual tegg packages don't have test scripts in their package.json. Tests are run via the monorepo root vitest configuration.

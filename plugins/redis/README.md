@@ -268,7 +268,7 @@ docker compose -f docker-compose.yml up -d
 Run the unit tests
 
 ```bash
-utoo test
+ut test
 ```
 
 Stop test redis service

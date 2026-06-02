@@ -22,9 +22,9 @@ Follow the commands listed below.
 
 ```bash
 $ mkdir showcase && cd showcase
-$ npm init egg --type=simple # Optionally utoo create egg --type=simple
-$ utoo install
-$ utoo run dev
+$ npm init egg --type=simple # Optionally ut create egg --type=simple
+$ ut install
+$ ut run dev
 $ open http://localhost:7001
 ```
 

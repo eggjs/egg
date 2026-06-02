@@ -19,12 +19,12 @@ Egg is maintained as a utoo monorepo.
 ## Core Commands
 
 - `corepack enable utoo` enables the pinned utoo version on a clean machine.
-- `utoo install` hydrates the workspace.
-- `utoo run build` builds all packages.
-- `utoo run test` runs the main test suite.
-- `utoo run lint` runs linting.
-- `utoo run typecheck` runs TypeScript checking.
-- use filtered commands for focused work, for example `utoo --filter=egg run test` or `utoo --filter=site run dev`.
+- `ut install` hydrates the workspace.
+- `ut run build` builds all packages.
+- `ut run test` runs the main test suite.
+- `ut run lint` runs linting.
+- `ut run typecheck` runs TypeScript checking.
+- use filtered commands for focused work, for example `ut --filter=egg run test` or `ut --filter=site run dev`.
 
 ### Local CI
 

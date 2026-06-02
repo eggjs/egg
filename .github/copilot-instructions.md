@@ -23,13 +23,13 @@ This is a **utoo monorepo** with multiple packages using utoo workspaces and cat
 corepack enable utoo
 
 # 2. Install all dependencies - takes ~63 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
-utoo install
+ut install
 
 # 3. Build all packages - takes ~14 seconds. NEVER CANCEL. Set timeout to 60+ seconds.
-utoo run build
+ut run build
 
 # 4. Run linting (optional but recommended) - takes ~2 seconds
-utoo run lint
+ut run lint
 ```
 
 ## Monorepo Structure
@@ -54,45 +54,45 @@ utoo run lint
 
 ### Build Commands
 
-- `utoo run build` - **Build all packages (~14 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
-- `utoo run clean` - Clean all dist directories
+- `ut run build` - **Build all packages (~14 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
+- `ut run clean-dist` - Clean all dist directories
 
 ### Testing Commands
 
-- `utoo run test` - **Run all tests (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
-- `utoo run test:cov` - **Run tests with coverage (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
-- `utoo run ci` - **Run test coverage + build (~2.1 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
+- `ut run test` - **Run all tests (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
+- `ut run test:cov` - **Run tests with coverage (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
+- `ut run ci` - **Run test coverage + build (~2.1 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
 
 ### Linting Commands
 
-- `utoo run lint` - Run oxlint across all packages (~2 seconds)
+- `ut run lint` - Run oxlint across all packages (~2 seconds)
 
 ### Documentation Commands
 
-- `utoo run site:dev` - Start documentation dev server at http://localhost:8000
-- `cd site && utoo run build:skip` - **Build documentation site (~24 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
+- `ut run site:dev` - Start documentation dev server at http://localhost:8000
+- `cd site && ut run build` - **Build documentation site (~24 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
 
 ### Example Applications (Currently Not Working)
 
-- `utoo run example:commonjs` - Start CommonJS example (has runtime issues)
-- `utoo run example:typescript` - Start TypeScript example (has runtime issues)
+- `ut run example:dev:commonjs` - Start CommonJS example (has runtime issues)
+- `ut run example:dev:typescript` - Start TypeScript example (has runtime issues)
 
 ## Package-Specific Commands
 
-Run commands for specific packages using `utoo --filter=<package>`:
+Run commands for specific packages using `ut --filter=<package>`:
 
 ```bash
 # Examples
-utoo --filter=egg run test
-utoo --filter=@eggjs/core run build
-utoo --filter=site run dev
+ut --filter=egg run test
+ut --filter=@eggjs/core run build
+ut --filter=site run dev
 ```
 
 ## Development Workflow
 
 ### 1. Making Changes
 
-- Always build packages first: `utoo run build`
+- Always build packages first: `ut run build`
 - Work primarily in `packages/egg/src/` for core framework features
 - Use TypeScript throughout - all packages are TypeScript-based
 - Follow the existing directory conventions in `packages/egg/src/`:
@@ -108,16 +108,16 @@ utoo --filter=site run dev
 
 ```bash
 # 1. Build all packages (required)
-utoo run build
+ut run build
 
 # 2. Run linting
-utoo run lint
+ut run lint
 
 # 3. Run tests (some failures are expected in fresh environment)
-utoo run test
+ut run test
 
 # 4. Test documentation site
-utoo run site:dev
+ut run site:dev
 ```
 
 ### 3. Testing Strategy
@@ -179,7 +179,7 @@ utoo run site:dev
 
 ### Build Issues
 
-- Always run `utoo run build` after making changes
+- Always run `ut run build` after making changes
 - TypeScript compilation errors will show clearly
 - Build warnings are generally acceptable
 
@@ -217,10 +217,10 @@ utoo run site:dev
 
 After making changes, always verify:
 
-1. **Build Success**: `utoo run build` completes without errors
-2. **Linting Passes**: `utoo run lint` shows no new errors
-3. **Documentation Loads**: `utoo run site:dev` starts successfully and site loads at http://localhost:8000
-4. **Tests Run**: `utoo run test` executes (some failures expected, focus on your changes)
+1. **Build Success**: `ut run build` completes without errors
+2. **Linting Passes**: `ut run lint` shows no new errors
+3. **Documentation Loads**: `ut run site:dev` starts successfully and site loads at http://localhost:8000
+4. **Tests Run**: `ut run test` executes (some failures expected, focus on your changes)
 
 **Remember**: This is a complex enterprise framework. Always build first, validate incrementally, and focus on the core packages (`egg`, `core`, `utils`) for most development work.
 

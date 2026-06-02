@@ -3,7 +3,7 @@
 /**
  * Resilient per-package publish script.
  *
- * Unlike `utoo -r publish`, this script:
+ * Unlike `ut -r publish`, this script:
  * - Skips packages that are already published on npm (safe for retries)
  * - Publishes each package individually so one failure doesn't block others
  * - Retries failed packages once
@@ -54,7 +54,7 @@ function isPublished(name, version) {
 }
 
 /**
- * Publish a single package by running `utoo publish` from the package
+ * Publish a single package by running `ut publish` from the package
  * directory. utoo's publish only documents --tag/--dry-run/--otp, so we
  * keep the npm-standard --access/--provenance flags (forwarded to npm)
  * and drop pnpm-only flags (--filter, --no-git-checks).
@@ -64,7 +64,7 @@ function publishOne(pkg) {
   if (useProvenance) publishArgs.push('--provenance');
   if (isDryRun) publishArgs.push('--dry-run');
 
-  execFileSync('utoo', publishArgs, {
+  execFileSync('ut', publishArgs, {
     cwd: path.join(baseDir, pkg.directory, pkg.folder),
     stdio: 'inherit',
     env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose' },
