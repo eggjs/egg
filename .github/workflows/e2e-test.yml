@@ -173,10 +173,15 @@ jobs:
         # `pnpm -r pack` resolves workspace:/catalog: deps in the emitted
         # manifests, which `ut pm-pack` does not yet do. pnpm refuses to
         # run when `packageManager` points at another tool, so disable
-        # that strict check for just this step.
+        # that strict check for just this step. pnpm needs its own
+        # node_modules layout to resolve `workspace:` versions, so run
+        # `pnpm install --no-frozen-lockfile` first (cheap on top of the
+        # ut install since the deps are already in the global store).
         env:
           NPM_CONFIG_PACKAGE_MANAGER_STRICT: 'false'
-        run: pnpm -r pack
+        run: |
+          pnpm install --no-frozen-lockfile --ignore-scripts
+          pnpm -r pack
 
       - name: Override dependencies from tgz in ${{ matrix.project.name }}
         working-directory: ecosystem-ci/${{ matrix.project.name }}
