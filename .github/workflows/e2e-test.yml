@@ -175,7 +175,7 @@ jobs:
         # run when `packageManager` points at another tool, so disable
         # that strict check for just this step.
         env:
-          PNPM_PACKAGE_MANAGER_STRICT: 'false'
+          NPM_CONFIG_PACKAGE_MANAGER_STRICT: 'false'
         run: pnpm -r pack
 
       - name: Override dependencies from tgz in ${{ matrix.project.name }}
