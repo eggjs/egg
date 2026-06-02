@@ -3,7 +3,7 @@
 /**
  * Resilient per-package publish script.
  *
- * Unlike `pnpm -r publish`, this script:
+ * Unlike `utoo -r publish`, this script:
  * - Skips packages that are already published on npm (safe for retries)
  * - Publishes each package individually so one failure doesn't block others
  * - Retries failed packages once
@@ -54,7 +54,7 @@ function isPublished(name, version) {
 }
 
 /**
- * Publish a single package using pnpm --filter (preserves workspace context
+ * Publish a single package using utoo --filter (preserves workspace context
  * so that workspace: protocol references are properly resolved).
  */
 function publishOne(pkg) {
@@ -62,7 +62,7 @@ function publishOne(pkg) {
   if (useProvenance) publishArgs.push('--provenance');
   if (isDryRun) publishArgs.push('--dry-run');
 
-  execFileSync('pnpm', publishArgs, {
+  execFileSync('utoo', publishArgs, {
     cwd: baseDir,
     stdio: 'inherit',
     env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose' },

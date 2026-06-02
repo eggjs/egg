@@ -6,7 +6,7 @@ If another agent-specific file exists, it should import or defer to this file fo
 
 ## Project Map
 
-Egg is maintained as a pnpm monorepo.
+Egg is maintained as a utoo monorepo.
 
 - `packages/` contains core framework packages and shared internals.
 - `plugins/` contains optional Egg integrations.
@@ -18,12 +18,12 @@ Egg is maintained as a pnpm monorepo.
 
 ## Core Commands
 
-- `pnpm install` hydrates the workspace.
-- `pnpm run build` builds all packages.
-- `pnpm run test` runs the main test suite.
-- `pnpm run lint` runs linting.
-- `pnpm run typecheck` runs TypeScript checking.
-- use filtered commands for focused work, for example `pnpm --filter=egg run test` or `pnpm --filter=site run dev`.
+- `utoo install` hydrates the workspace.
+- `utoo run build` builds all packages.
+- `utoo run test` runs the main test suite.
+- `utoo run lint` runs linting.
+- `utoo run typecheck` runs TypeScript checking.
+- use filtered commands for focused work, for example `utoo --filter=egg run test` or `utoo --filter=site run dev`.
 
 ### Local CI
 
@@ -65,7 +65,7 @@ Then re-run tests.
 
 - review `SECURITY.md` before handling vulnerability-related work
 - do not commit secrets, credentials, or local-only URLs
-- keep local Node.js and pnpm versions aligned with the repository configuration
+- keep local Node.js and utoo versions aligned with the repository configuration
 
 ## Shared Knowledge Workflow
 

@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import yaml from 'js-yaml';
 
-// Get all publishable packages from pnpm workspace
+// Get all publishable packages from utoo workspace
 
 export function getPublishablePackages(baseDir) {
   const workspaceFile = path.join(baseDir, 'pnpm-workspace.yaml');

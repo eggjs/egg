@@ -62,8 +62,8 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GIT_TOKEN }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+      - name: Setup utoo
+        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
 
       - name: Setup Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
@@ -72,7 +72,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: ut install --from pnpm
 
       - name: Configure Git
         run: |
@@ -149,7 +149,7 @@ jobs:
           git push origin ${{ github.event.inputs.branch }} --tags
 
       - name: Run build
-        run: pnpm build
+        run: ut run build
 
       - name: Publish packages (dry run)
         if: ${{ github.event.inputs.dry_run == 'true' }}

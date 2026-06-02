@@ -27,10 +27,10 @@ With Yarn:
 yarn create egg
 ```
 
-With PNPM:
+With utoo:
 
 ```bash
-pnpm create egg
+utoo create egg
 ```
 
 Then follow the prompts!
@@ -44,8 +44,8 @@ npm create egg@latest my-egg-app -- --template tegg
 # yarn
 yarn create egg my-egg-app --template tegg
 
-# pnpm
-pnpm create egg my-egg-app --template tegg
+# utoo
+utoo create egg my-egg-app --template tegg
 ```
 
 Currently supported template presets include:

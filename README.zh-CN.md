@@ -27,9 +27,9 @@
 
 ```bash
 mkdir showcase && cd showcase
-pnpm create egg@beta
-pnpm install
-pnpm run dev
+utoo create egg@beta
+utoo install
+utoo run dev
 
 open http://localhost:7001
 ```

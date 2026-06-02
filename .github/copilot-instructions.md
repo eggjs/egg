@@ -6,12 +6,12 @@
 
 Eggjs is a progressive Node.js framework for building enterprise-class server-side applications. Built on top of Koa.js, it provides a plugin system, conventions over configuration, and enterprise-grade features like clustering, logging, and security.
 
-This is a **pnpm monorepo** with multiple packages using pnpm workspaces and catalog mode for centralized dependency management.
+This is a **utoo monorepo** with multiple packages using utoo workspaces and catalog mode for centralized dependency management.
 
 ## Prerequisites and Environment Setup
 
 - **Node.js >= 20.19.0 required** - This is a hard requirement
-- Enable pnpm first: `corepack enable pnpm` (installs pnpm v10.16.0)
+- Enable utoo first: `corepack enable utoo` (installs utoo v10.16.0)
 - **NEVER CANCEL** any build or test commands - they can take several minutes to complete
 
 ## Bootstrap and Build Process
@@ -19,17 +19,17 @@ This is a **pnpm monorepo** with multiple packages using pnpm workspaces and cat
 **Always run these commands in sequence after fresh clone:**
 
 ```bash
-# 1. Enable pnpm (required first)
-corepack enable pnpm
+# 1. Enable utoo (required first)
+corepack enable utoo
 
 # 2. Install all dependencies - takes ~63 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
-pnpm install
+utoo install
 
 # 3. Build all packages - takes ~14 seconds. NEVER CANCEL. Set timeout to 60+ seconds.
-pnpm run build
+utoo run build
 
 # 4. Run linting (optional but recommended) - takes ~2 seconds
-pnpm run lint
+utoo run lint
 ```
 
 ## Monorepo Structure
@@ -54,45 +54,45 @@ pnpm run lint
 
 ### Build Commands
 
-- `pnpm run build` - **Build all packages (~14 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
-- `pnpm run clean` - Clean all dist directories
+- `utoo run build` - **Build all packages (~14 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
+- `utoo run clean` - Clean all dist directories
 
 ### Testing Commands
 
-- `pnpm run test` - **Run all tests (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
-- `pnpm run test:cov` - **Run tests with coverage (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
-- `pnpm run ci` - **Run test coverage + build (~2.1 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
+- `utoo run test` - **Run all tests (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
+- `utoo run test:cov` - **Run tests with coverage (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
+- `utoo run ci` - **Run test coverage + build (~2.1 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
 
 ### Linting Commands
 
-- `pnpm run lint` - Run oxlint across all packages (~2 seconds)
+- `utoo run lint` - Run oxlint across all packages (~2 seconds)
 
 ### Documentation Commands
 
-- `pnpm run site:dev` - Start documentation dev server at http://localhost:8000
-- `cd site && pnpm run build:skip` - **Build documentation site (~24 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
+- `utoo run site:dev` - Start documentation dev server at http://localhost:8000
+- `cd site && utoo run build:skip` - **Build documentation site (~24 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
 
 ### Example Applications (Currently Not Working)
 
-- `pnpm run example:commonjs` - Start CommonJS example (has runtime issues)
-- `pnpm run example:typescript` - Start TypeScript example (has runtime issues)
+- `utoo run example:commonjs` - Start CommonJS example (has runtime issues)
+- `utoo run example:typescript` - Start TypeScript example (has runtime issues)
 
 ## Package-Specific Commands
 
-Run commands for specific packages using `pnpm --filter=<package>`:
+Run commands for specific packages using `utoo --filter=<package>`:
 
 ```bash
 # Examples
-pnpm --filter=egg run test
-pnpm --filter=@eggjs/core run build
-pnpm --filter=site run dev
+utoo --filter=egg run test
+utoo --filter=@eggjs/core run build
+utoo --filter=site run dev
 ```
 
 ## Development Workflow
 
 ### 1. Making Changes
 
-- Always build packages first: `pnpm run build`
+- Always build packages first: `utoo run build`
 - Work primarily in `packages/egg/src/` for core framework features
 - Use TypeScript throughout - all packages are TypeScript-based
 - Follow the existing directory conventions in `packages/egg/src/`:
@@ -108,16 +108,16 @@ pnpm --filter=site run dev
 
 ```bash
 # 1. Build all packages (required)
-pnpm run build
+utoo run build
 
 # 2. Run linting
-pnpm run lint
+utoo run lint
 
 # 3. Run tests (some failures are expected in fresh environment)
-pnpm run test
+utoo run test
 
 # 4. Test documentation site
-pnpm run site:dev
+utoo run site:dev
 ```
 
 ### 3. Testing Strategy
@@ -162,7 +162,7 @@ pnpm run site:dev
 - **All sub-project tsconfig.json files MUST extend from root:** `"extends": "../../tsconfig.json"`
 - Root tsconfig.json includes all packages in `references` array
 
-## pnpm Workspace & Catalog Dependencies
+## utoo Workspace & Catalog Dependencies
 
 - Dependencies defined in `pnpm-workspace.yaml` catalog section
 - Reference catalog entries: `"package-name": "catalog:"`
@@ -179,7 +179,7 @@ pnpm run site:dev
 
 ### Build Issues
 
-- Always run `pnpm run build` after making changes
+- Always run `utoo run build` after making changes
 - TypeScript compilation errors will show clearly
 - Build warnings are generally acceptable
 
@@ -217,10 +217,10 @@ pnpm run site:dev
 
 After making changes, always verify:
 
-1. **Build Success**: `pnpm run build` completes without errors
-2. **Linting Passes**: `pnpm run lint` shows no new errors
-3. **Documentation Loads**: `pnpm run site:dev` starts successfully and site loads at http://localhost:8000
-4. **Tests Run**: `pnpm run test` executes (some failures expected, focus on your changes)
+1. **Build Success**: `utoo run build` completes without errors
+2. **Linting Passes**: `utoo run lint` shows no new errors
+3. **Documentation Loads**: `utoo run site:dev` starts successfully and site loads at http://localhost:8000
+4. **Tests Run**: `utoo run test` executes (some failures expected, focus on your changes)
 
 **Remember**: This is a complex enterprise framework. Always build first, validate incrementally, and focus on the core packages (`egg`, `core`, `utils`) for most development work.
 

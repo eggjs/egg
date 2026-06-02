@@ -15,7 +15,7 @@ status: active
 
 # Repository Map
 
-This repo is a pnpm monorepo centered on the Egg.js framework and related packages.
+This repo is a utoo monorepo centered on the Egg.js framework and related packages.
 
 ## Main Areas
 

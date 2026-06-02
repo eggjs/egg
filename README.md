@@ -28,9 +28,9 @@ Follow the commands listed below.
 
 ```bash
 $ mkdir showcase && cd showcase
-$ pnpm create egg@beta
-$ pnpm install
-$ pnpm run dev
+$ utoo create egg@beta
+$ utoo install
+$ utoo run dev
 $ open http://localhost:7001
 ```
 
@@ -38,31 +38,31 @@ $ open http://localhost:7001
 
 ## Monorepo Structure
 
-This project is structured as a pnpm monorepo with the following packages:
+This project is structured as a utoo monorepo with the following packages:
 
 - `packages/egg` - Main Eggjs framework
 - `examples/helloworld-commonjs` - CommonJS example application
 - `examples/helloworld-typescript` - TypeScript example application
 - `site` - Documentation website
 
-The monorepo uses **pnpm catalog mode** for centralized dependency management, ensuring consistent versions across all packages.
+The monorepo uses **utoo catalog mode** for centralized dependency management, ensuring consistent versions across all packages.
 
 ### Development Commands
 
 ```bash
 # Install dependencies for all packages
-pnpm install
+utoo install
 
 # Build all packages
-pnpm run build
+utoo run build
 
 # Test all packages
-pnpm run test
+utoo run test
 
 # Run specific package commands
-pnpm --filter=egg run test
-pnpm --filter=@examples/helloworld-typescript run dev
-pnpm --filter=site run dev
+utoo --filter=egg run test
+utoo --filter=@examples/helloworld-typescript run dev
+utoo --filter=site run dev
 ```
 
 ### Local External Services

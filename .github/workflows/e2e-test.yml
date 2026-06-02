@@ -141,8 +141,8 @@ jobs:
         with:
           ecosystem-ci-project: ${{ matrix.project.name }}
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+      - name: Install utoo
+        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
 
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
@@ -150,19 +150,19 @@ jobs:
           node-version: ${{ matrix.project.node-version }}
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: ut install --from pnpm
 
       - name: Build all packages
         env:
-          # publint pack defaults to npm (main CI env has no pnpm); in E2E we
-          # already have pnpm installed and npm pack against pnpm's symlinked
-          # node_modules is ~10x slower, so prefer pnpm pack here
-          PUBLINT_PACK: pnpm
-        run: pnpm build
+          # publint pack defaults to npm (main CI env has no utoo); in E2E we
+          # already have utoo installed and npm pack against utoo's symlinked
+          # node_modules is ~10x slower, so prefer utoo pack here
+          PUBLINT_PACK: utoo
+        run: ut run build
 
       - name: Pack packages into tgz
         run: |
-          pnpm -r pack
+          utoo -r pack
 
       - name: Override dependencies from tgz in ${{ matrix.project.name }}
         working-directory: ecosystem-ci/${{ matrix.project.name }}
