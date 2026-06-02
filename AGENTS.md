@@ -18,6 +18,7 @@ Egg is maintained as a utoo monorepo.
 
 ## Core Commands
 
+- `corepack enable utoo` enables the pinned utoo version on a clean machine.
 - `utoo install` hydrates the workspace.
 - `utoo run build` builds all packages.
 - `utoo run test` runs the main test suite.

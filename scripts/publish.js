@@ -54,16 +54,18 @@ function isPublished(name, version) {
 }
 
 /**
- * Publish a single package using utoo --filter (preserves workspace context
- * so that workspace: protocol references are properly resolved).
+ * Publish a single package by running `utoo publish` from the package
+ * directory. utoo's publish only documents --tag/--dry-run/--otp, so we
+ * keep the npm-standard --access/--provenance flags (forwarded to npm)
+ * and drop pnpm-only flags (--filter, --no-git-checks).
  */
 function publishOne(pkg) {
-  const publishArgs = ['--filter', pkg.name, 'publish', '--no-git-checks', '--access', 'public', '--tag', npmTag];
+  const publishArgs = ['publish', '--access', 'public', '--tag', npmTag];
   if (useProvenance) publishArgs.push('--provenance');
   if (isDryRun) publishArgs.push('--dry-run');
 
   execFileSync('utoo', publishArgs, {
-    cwd: baseDir,
+    cwd: path.join(baseDir, pkg.directory, pkg.folder),
     stdio: 'inherit',
     env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose' },
     timeout: 120000,
