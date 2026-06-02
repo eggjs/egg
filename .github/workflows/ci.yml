@@ -37,7 +37,8 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
-        run: ut install --from pnpm
+        # Retry to absorb transient `exit 141` (SIGPIPE) from `ut install`.
+        run: ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
 
       - name: Run lint
         run: ut run lint
@@ -160,7 +161,7 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: ut install --from pnpm
+        run: ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
 
       - name: Run tests
         run: ut run ci
@@ -204,7 +205,7 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: ut install --from pnpm
+        run: ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
 
       - name: Run tests
         run: |
@@ -245,7 +246,7 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: ut install --from pnpm
+        run: ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
 
       - name: Run tests
         run: |

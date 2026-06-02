@@ -150,7 +150,7 @@ jobs:
           node-version: ${{ matrix.project.node-version }}
 
       - name: Install dependencies
-        run: ut install --from pnpm
+        run: ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
 
       - name: Build all packages
         run: ut run build
