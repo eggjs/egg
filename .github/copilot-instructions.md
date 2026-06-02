@@ -25,7 +25,7 @@ corepack enable pnpm
 # 2. Install all dependencies - takes ~63 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
 pnpm install
 
-# 3. Run linting (optional but recommended) - takes ~2 seconds
+# 3. Run pnpm run lint to check code quality across all packages - takes ~2 seconds
 pnpm run lint
 
 # 4. Build all packages when validating build output - takes ~14 seconds. NEVER CANCEL. Set timeout to 60+ seconds.
@@ -111,7 +111,7 @@ pnpm --filter=site run dev
 **Always perform these validation steps after making changes:**
 
 ```bash
-# 1. Run linting
+# 1. Run pnpm run lint to check code quality across all packages
 pnpm run lint
 
 # 2. Run tests from a clean tree (some failures are expected in fresh environment)
