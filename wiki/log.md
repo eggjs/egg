@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-06-03] workflow | document local CI artifact cleanup
+
+- sources touched: `AGENTS.md`, `.github/workflows/ci.yml`, `package.json`, `tegg/core/loader/src/impl/ModuleLoader.ts`, `tegg/core/metadata/src/model/graph/GlobalGraph.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/workflows/local-ci.md`
+- note: Recorded that local unit tests should run from clean sources, because stale built `dist/` files can be scanned alongside tegg TypeScript sources and trigger `duplicate proto` failures.
+
 ## [2026-05-10] package | extract shared LoaderFS package
 
 - sources touched: `packages/loader-fs/src/index.ts`, `packages/loader-fs/package.json`, `packages/core/src/index.ts`, `packages/core/src/loader/file_loader.ts`, `packages/core/src/loader/egg_loader.ts`

@@ -11,6 +11,7 @@ Read this file before exploring raw sources.
 ## Workflows
 
 - [Docs and API Updates](./workflows/docs-and-api-updates.md) - How to handle changes that affect user-facing docs or durable project understanding.
+- [Local CI](./workflows/local-ci.md) - Local validation should run tests from clean sources and avoid stale build artifacts before tegg tests.
 
 ## Decisions
 
