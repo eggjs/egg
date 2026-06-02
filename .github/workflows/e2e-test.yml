@@ -156,8 +156,7 @@ jobs:
         run: ut run build
 
       - name: Pack packages into tgz
-        run: |
-          utoo -r pack
+        run: node scripts/pack-all.js
 
       - name: Override dependencies from tgz in ${{ matrix.project.name }}
         working-directory: ecosystem-ci/${{ matrix.project.name }}
