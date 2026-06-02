@@ -168,7 +168,11 @@ jobs:
 
       - name: Pack packages into tgz
         # `pnpm -r pack` resolves workspace:/catalog: deps in the emitted
-        # manifests, which `ut pm-pack` does not yet do.
+        # manifests, which `ut pm-pack` does not yet do. pnpm refuses to
+        # run when `packageManager` points at another tool, so disable
+        # that strict check for just this step.
+        env:
+          PNPM_PACKAGE_MANAGER_STRICT: 'false'
         run: pnpm -r pack
 
       - name: Override dependencies from tgz in ${{ matrix.project.name }}
