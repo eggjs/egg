@@ -69,7 +69,7 @@ ut run clean-dist          # Clean all build artifacts including tegg (removes d
 All tegg packages use **Vitest** for testing and are integrated with the main Egg.js monorepo test suite.
 
 ```bash
-ut test                    # Run vitest tests for all packages (from monorepo root)
+ut run test                # Run vitest tests for all packages (from monorepo root)
 ut run test:cov            # Run tests with coverage
 ut run ci                  # Full CI: vitest with coverage and bail on first failure
 ```

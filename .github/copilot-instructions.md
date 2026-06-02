@@ -48,7 +48,7 @@ ut run lint
 ### Supporting Directories
 
 - **`examples/`** - Two example apps: `helloworld-commonjs` and `helloworld-typescript` (currently have runtime issues)
-- **`site/`** - Documentation website built with Dumi
+- **`site/`** - Documentation website built with VitePress
 
 ## Essential Commands and Timing
 
