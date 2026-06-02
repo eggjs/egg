@@ -144,6 +144,13 @@ jobs:
       - name: Install utoo
         uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
 
+      - name: Install pnpm (for `pnpm -r pack`)
+        # utoo's `ut pm-pack` does not resolve `workspace:` / `catalog:`
+        # protocols inside the packed manifests, so downstream `npm install`
+        # in the ecosystem-ci projects fails with EUNSUPPORTEDPROTOCOL.
+        # Keep pnpm available just for the pack step.
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
@@ -156,7 +163,9 @@ jobs:
         run: ut run build
 
       - name: Pack packages into tgz
-        run: node scripts/pack-all.js
+        # `pnpm -r pack` resolves workspace:/catalog: deps in the emitted
+        # manifests, which `ut pm-pack` does not yet do.
+        run: pnpm -r pack
 
       - name: Override dependencies from tgz in ${{ matrix.project.name }}
         working-directory: ecosystem-ci/${{ matrix.project.name }}
