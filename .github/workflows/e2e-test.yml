@@ -153,11 +153,6 @@ jobs:
         run: ut install --from pnpm
 
       - name: Build all packages
-        env:
-          # publint pack defaults to npm (main CI env has no utoo); in E2E we
-          # already have utoo installed and npm pack against utoo's symlinked
-          # node_modules is ~10x slower, so prefer utoo pack here
-          PUBLINT_PACK: utoo
         run: ut run build
 
       - name: Pack packages into tgz

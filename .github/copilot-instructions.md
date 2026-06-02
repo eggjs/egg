@@ -10,8 +10,8 @@ This is a **utoo monorepo** with multiple packages using utoo workspaces and cat
 
 ## Prerequisites and Environment Setup
 
-- **Node.js >= 20.19.0 required** - This is a hard requirement
-- Enable utoo first: `corepack enable utoo` (installs utoo v10.16.0)
+- **Node.js >= 22.18.0 required** - This is a hard requirement
+- Enable utoo first: `corepack enable utoo` (installs utoo v1.0.28)
 - **NEVER CANCEL** any build or test commands - they can take several minutes to complete
 
 ## Bootstrap and Build Process
