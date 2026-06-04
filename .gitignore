@@ -120,3 +120,8 @@ ecosystem-ci/examples
 pnpm-lock.yaml
 .utoo.toml
 .claude/
+
+# benchmark output directories
+benchmark/ci-test/baseline*
+benchmark/ci-test/run*
+benchmark/ci-test/2*

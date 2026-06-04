@@ -18,11 +18,20 @@ permissions:
   actions: write
 
 jobs:
-  typecheck:
+  # Static-analysis / build checks. Each check runs as its own parallel job
+  # (instead of serial steps) so the slowest one — not their sum — bounds the
+  # wall time. Goal: keep each ≤ 60s.
+  quality:
+    strategy:
+      fail-fast: false
+      matrix:
+        check: ['lint', 'typecheck', 'fmtcheck', 'build', 'site']
+
+    name: Quality (${{ matrix.check }})
     runs-on: ubuntu-latest
 
     concurrency:
-      group: typecheck-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+      group: quality-${{ matrix.check }}-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
       cancel-in-progress: true
     steps:
       - name: Checkout repository
@@ -41,40 +50,151 @@ jobs:
         run: ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
 
       - name: Run lint
+        if: ${{ matrix.check == 'lint' }}
         run: ut run lint
 
       - name: Run typecheck
+        if: ${{ matrix.check == 'typecheck' }}
         run: ut run typecheck
 
       - name: Run format check
+        if: ${{ matrix.check == 'fmtcheck' }}
         run: ut run fmtcheck
 
       - name: Run build
+        if: ${{ matrix.check == 'build' }}
         run: ut run build
 
       - name: Run site build
+        if: ${{ matrix.check == 'site' }}
         run: ut run site:build
 
   test:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
+        # ubuntu-latest runs the fine-grained shards: fork-heavy packages are
+        # split into vitest --shard slices and the light remainder into
+        # weight-balanced rest-* shards (see scripts/run-shard.js). Sized so each
+        # shard's `vitest run` step stays ≤ ~60s on ubuntu-latest, where runner
+        # concurrency is high enough to run them all in parallel.
+        os: ['ubuntu-latest']
         node: ['22', '24']
+        shard:
+          - cluster-1
+          - cluster-2
+          - cluster-3
+          - egg-1
+          - egg-2
+          - mock-1
+          - mock-2
+          - schedule-1
+          - schedule-2
+          - schedule-3
+          - schedule-4
+          - development
+          - security-1
+          - security-2
+          - redis
+          - multipart
+          - rest-1
+          - rest-2
+          - rest-3
+          - rest-4
+          - rest-5
+          - rest-6
+          - rest-7
+          - rest-8
+        # macOS/Windows whole-suite compatibility runs live in `test-compat`,
+        # which only runs at merge time (merge_group / push to next) — not on
+        # every PR — because those runners are slow (~13-25min whole-suite) and
+        # macOS has only ~5 concurrent slots, so they would dominate the PR wall.
+        # The PR critical path is this ubuntu fan-out, every shard ≤60s.
 
-    name: Test (${{ matrix.os }}, ${{ matrix.node }})
+    name: Test (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shard }})
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
+      group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shard }})
       cancel-in-progress: true
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Start Redis (MacOS or Linux)
-        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
+      - name: Start Redis
+        uses: shogo82148/actions-setup-redis@cff708d63a30aebc0bfaa7276fb709d173f36cb6 # v1
+        with:
+          redis-version: '7'
+          auto-start: 'true'
+
+      - name: Start MySQL
+        uses: shogo82148/actions-setup-mysql@27e74fac04c136a9f4c2dc2ed457df57331b3e0c # v1
+        with:
+          mysql-version: '8'
+          auto-start: 'true'
+      - name: Init DB
+        run: |
+          mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
+
+      - name: Setup utoo
+        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies
+        run: ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
+
+      - name: Prepare test fixtures (clean dist + db)
+        # Mirrors the original `preci` (pretest) step: clears stale dist so tegg
+        # plugin tests don't double-load src+dist, and runs per-workspace
+        # pretest (e.g. orm DB table init). The shard runner invokes vitest
+        # directly, bypassing the npm `preci` lifecycle, so do it explicitly.
+        run: ut run pretest
+
+      - name: Run tests (shard ${{ matrix.shard }})
+        run: node scripts/run-shard.js ${{ matrix.shard }} -- --coverage
+
+      - name: Run example tests
+        # Run once (on the rest-1 shard) to avoid duplication across shards.
+        if: ${{ matrix.shard == 'rest-1' }}
+        run: |
+          ut run example:test:all
+
+      - name: Code Coverage
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
+        with:
+          use_oidc: true
+
+  # macOS / Windows whole-suite compatibility runs. These are slow (~13-25min)
+  # and macOS has only ~5 concurrent runner slots, so they would dominate the
+  # PR wall. They run only at merge time (merge_group) and on push to next, so
+  # the PR critical path stays the ubuntu `test` fan-out (each shard ≤60s) while
+  # cross-platform coverage is still enforced before code lands.
+  test-compat:
+    if: ${{ github.event_name != 'pull_request' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['macos-latest', 'windows-latest']
+        node: ['22', '24']
+
+    name: Test compat (${{ matrix.os }}, ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+      group: test-compat-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Start Redis (macOS)
+        if: ${{ matrix.os == 'macos-latest' }}
         uses: shogo82148/actions-setup-redis@cff708d63a30aebc0bfaa7276fb709d173f36cb6 # v1
         with:
           redis-version: '7'
@@ -130,15 +250,14 @@ jobs:
 
           Write-Host "Memurai is ready on 127.0.0.1:6379"
 
-      # install and start MySQL (will automatically start mysqld)
-      - name: Start MySQL (macOS or Linux)
-        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
+      - name: Start MySQL (macOS)
+        if: ${{ matrix.os == 'macos-latest' }}
         uses: shogo82148/actions-setup-mysql@27e74fac04c136a9f4c2dc2ed457df57331b3e0c # v1
         with:
           mysql-version: '8'
           auto-start: 'true'
-      - name: Init DB (macOS or Linux)
-        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
+      - name: Init DB (macOS)
+        if: ${{ matrix.os == 'macos-latest' }}
         run: |
           mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
 
@@ -148,8 +267,6 @@ jobs:
         run: |
           choco install -y mysql
           refreshenv
-          # MySQL default root has no password, set a password and create database/user
-          # & mysqladmin -u root password root
           & mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
 
       - name: Setup utoo
@@ -163,26 +280,29 @@ jobs:
       - name: Install dependencies
         run: ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
 
-      - name: Run tests
-        run: ut run ci
+      - name: Prepare test fixtures (clean dist + db)
+        run: ut run pretest
 
-      - name: Run example tests
-        if: ${{ matrix.os != 'windows-latest' }}
+      - name: Set HOME on Windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: pwsh
+        run: echo "HOME=$env:USERPROFILE" >> $env:GITHUB_ENV
+
+      - name: Run tests (whole suite)
+        run: node scripts/run-shard.js all -- --coverage
+
+      - name: Run egg-bin tests
+        # egg-bin has its own vitest project (built first); cover it on
+        # macos/windows here so the PR-fast egg-bin job can stay ubuntu-only.
         run: |
-          ut run example:test:all
-
-      - name: Code Coverage
-        # skip on windows, it will hangup on codecov
-        if: ${{ matrix.os != 'windows-latest' }}
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
-        with:
-          use_oidc: true
+          ut run build -- --workspace ./tools/egg-bin
+          ut run test --workspace @eggjs/bin
 
   test-egg-bin:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-latest']
+        os: ['ubuntu-latest']
         node: ['24']
 
     name: Test bin (${{ matrix.os }}, ${{ matrix.node }})
@@ -207,17 +327,19 @@ jobs:
       - name: Install dependencies
         run: ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
 
+      - name: Set HOME on Windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: pwsh
+        run: echo "HOME=$env:USERPROFILE" >> $env:GITHUB_ENV
+
       - name: Run tests
+        # `ci` (vitest --coverage) adds ~50s of instrumentation on egg-bin's
+        # fork-heavy suite, pushing it past 60s. Run without coverage (`test`)
+        # to keep the job ≤60s; egg-bin's fork tests can't be sharded (they
+        # depend on cross-file shared state under isolate:false).
         run: |
           ut run build -- --workspace ./tools/egg-bin
-          ut run ci --workspace @eggjs/bin
-
-      - name: Code Coverage
-        # skip on windows, it will hangup on codecov https://github.com/codecov/codecov-action/issues/1787
-        if: ${{ matrix.os != 'windows-latest' }}
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
-        with:
-          use_oidc: true
+          ut run test --workspace @eggjs/bin
 
   test-egg-scripts:
     strategy:
@@ -263,9 +385,12 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - test
+      - test-compat
       - test-egg-bin
       - test-egg-scripts
-      - typecheck
+      - quality
     steps:
       - run: exit 1
+        # test-compat is skipped on pull_request (result 'skipped'), which does
+        # not trip this gate — only real failures/cancellations do.
         if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) }}

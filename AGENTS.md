@@ -28,9 +28,15 @@ Egg is maintained as a utoo monorepo.
 
 ### Local CI
 
-Run tests **without building first**. The CI workflow (`ut install → ut run ci`) never runs `build` before tests. If `dist/` directories exist from a prior build, tegg plugin tests will fail with `duplicate proto` errors because globby scans both `src/*.ts` and `dist/*.js`, loading the same decorated class twice.
+Run tests **without building first**. The CI test jobs run `ut run pretest`
+(clean dist + per-workspace pretest) then a vitest shard; they never `build`
+before tests. If `dist/` directories exist from a prior build, tegg plugin tests
+will fail with `duplicate proto` errors because globby scans both `src/*.ts` and
+`dist/*.js`, loading the same decorated class twice. `scripts/clean-dist.js`
+(run by `ut run clean-dist`) removes every `dist/` for you.
 
-When you see `duplicate proto` failures locally:
+When you see `duplicate proto` failures locally, run `ut run clean-dist` (or the
+equivalent find below) and re-run:
 
 ```bash
 find tegg packages plugins tools -name dist -type d \
@@ -38,7 +44,38 @@ find tegg packages plugins tools -name dist -type d \
   -exec rm -rf {} +
 ```
 
+### Aggregator scripts (avoid `ut run <x> --workspaces` recursion)
+
+The root `typecheck` / `pretest` aggregate per-workspace scripts via
+`node scripts/run-workspaces.js <script>`, **not** `ut run <script> --workspaces`.
+With utoo, `--workspaces` includes the monorepo root, so a root script that calls
+`ut run <same-name> --workspaces` recurses infinitely. `run-workspaces.js`
+enumerates real workspace dirs, runs each script body against the root-hoisted
+`node_modules/.bin` (so root-only CLIs like `tsgo` resolve even where a stale
+local bin shim exists), and runs them concurrently to bound wall time.
+
 Then re-run tests.
+
+### CI test sharding
+
+CI splits the test suite across parallel runners via `scripts/run-shard.js`
+(`node scripts/run-shard.js <shard>`). Each heavy fork-based package
+(`cluster`, `egg`, `mock`, `development`, `schedule-a`/`schedule-b`) runs on its
+own runner with a `--maxWorkers` cap so forked egg cluster child processes do
+not oversubscribe the CPU and time out; `rest-a`/`rest-b` split everything else
+with full parallelism. The goal is to keep each shard's `vitest run` wall time
+under ~60s. To reproduce one shard locally: `node scripts/run-shard.js cluster`.
+Use `node scripts/run-shard.js all` for the unsharded full suite.
+
+Cluster/mock/schedule tests fork real OS processes that bind ports. If a run is
+killed mid-flight, orphaned `start-cluster`/`app_worker`/`agent_worker`
+processes can linger and hold ports (e.g. 17001), causing later runs to fail
+with `EADDRINUSE`/`app.ready()` timeouts. Kill them before re-running:
+
+```bash
+ps aux | grep -E "[s]tart-cluster|[c]luster/src/(app|agent)_worker" \
+  | awk '{print $2}' | xargs kill -9
+```
 
 ## Coding Conventions
 
