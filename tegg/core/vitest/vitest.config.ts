@@ -20,6 +20,8 @@ export default defineConfig({
     ],
   },
   test: {
+    pool: 'threads',
+    isolate: false,
     environment: 'node',
     include: ['test/**/*.test.ts'],
     // Register TS loader (ts-node) before tests so Egg can load .ts via Module._extensions.
