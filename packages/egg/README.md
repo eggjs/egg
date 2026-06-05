@@ -23,7 +23,9 @@ Follow the commands listed below.
 ```bash
 $ corepack enable utoo
 $ mkdir showcase && cd showcase
-$ npm init egg --type=simple # Optionally ut create egg --type=simple
+$ ut create egg@beta
+# Or with npm:
+$ npm init egg --type=simple
 $ ut install
 $ ut run dev
 $ open http://localhost:7001
