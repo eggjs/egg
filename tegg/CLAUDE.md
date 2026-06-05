@@ -111,7 +111,7 @@ ut run version:rc          # Bump prerelease rc version
 ut install --from pnpm              # Install all dependencies from pnpm workspace files
 
 # Type check specific packages
-ut -r run typecheck                 # Type check all packages recursively
+ut run typecheck                    # Type check all packages
 ut --filter @eggjs/tegg-runtime run typecheck
 
 # Build specific packages
