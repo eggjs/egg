@@ -72,7 +72,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
+        run: |
+          ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
+          git diff --exit-code -- package.json
 
       - name: Configure Git
         run: |
