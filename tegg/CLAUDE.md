@@ -119,7 +119,7 @@ ut --filter @eggjs/metadata run build
 ut --filter @eggjs/tegg-runtime run build
 
 # Clean specific package
-node -e "fs.rmSync('tegg/core/runtime/dist', { recursive: true, force: true })"
+node -e "require('fs').rmSync('tegg/core/runtime/dist', { recursive: true, force: true })"
 ```
 
 **Note:** Individual tegg packages don't have test scripts in their package.json. Tests are run via the monorepo root vitest configuration.
