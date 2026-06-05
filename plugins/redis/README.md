@@ -265,10 +265,10 @@ Run docker compose to start test redis service
 docker compose -f docker-compose.yml up -d
 ```
 
-Run the unit tests
+Run the unit tests from the monorepo root
 
 ```bash
-ut test
+ut run test
 ```
 
 Stop test redis service

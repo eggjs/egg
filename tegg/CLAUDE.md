@@ -119,7 +119,7 @@ ut --filter @eggjs/metadata run build
 ut --filter @eggjs/tegg-runtime run build
 
 # Clean specific package
-ut --filter @eggjs/tegg-runtime run clean
+rm -rf tegg/core/runtime/dist
 ```
 
 **Note:** Individual tegg packages don't have test scripts in their package.json. Tests are run via the monorepo root vitest configuration.
