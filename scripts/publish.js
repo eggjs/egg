@@ -30,6 +30,7 @@ if (tagArg) {
 
 const baseDir = path.join(import.meta.dirname, '..');
 const packages = getPublishablePackages(baseDir);
+const utBin = process.platform === 'win32' ? 'ut.cmd' : 'ut';
 
 console.log(
   `📦 Publishing ${packages.length} packages (tag: ${npmTag}${isDryRun ? ', dry-run' : ''}${useProvenance ? ', provenance' : ''})`,
@@ -64,7 +65,7 @@ function publishOne(pkg) {
   if (useProvenance) publishArgs.push('--provenance');
   if (isDryRun) publishArgs.push('--dry-run');
 
-  execFileSync('ut', publishArgs, {
+  execFileSync(utBin, publishArgs, {
     cwd: path.join(baseDir, pkg.directory, pkg.folder),
     stdio: 'inherit',
     env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose' },
