@@ -90,18 +90,5 @@
   "optionalDependencies": {
     "@utoo/utoo-mingw64_nt-10.0-26100-x64": "npm:@utoo/utoo-win32-x64@1.0.28"
   },
-  "packageManager": "pnpm@10.28.0",
-  "workspaces": [
-    "packages/*",
-    "plugins/*",
-    "examples/*",
-    "tools/*",
-    "site",
-    "tegg/core/*",
-    "tegg/plugin/*",
-    "tegg/standalone/*"
-  ],
-  "overrides": {
-    "vite": "npm:rolldown-vite@^7.1.13"
-  }
+  "packageManager": "pnpm@10.28.0"
 }

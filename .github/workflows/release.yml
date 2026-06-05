@@ -74,6 +74,7 @@ jobs:
       - name: Install dependencies
         run: |
           ut install --from pnpm || (sleep 5 && ut install --from pnpm) || (sleep 10 && ut install --from pnpm)
+          git restore package.json
           git diff --exit-code -- package.json
 
       - name: Configure Git
