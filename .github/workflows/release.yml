@@ -124,7 +124,7 @@ jobs:
         run: |
           echo "🧪 Running version bump in dry-run mode..."
           if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-            node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs/prerelease_tag }} --dry-run
+            node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }} --dry-run
           else
             node scripts/version.js ${{ github.event.inputs.version_type }} --dry-run
           fi
@@ -155,7 +155,7 @@ jobs:
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
           if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-            node scripts/publish.js --tag=${{ github.event.inputs/prerelease_tag }} --dry-run
+            node scripts/publish.js --tag=${{ github.event.inputs.prerelease_tag }} --dry-run
           else
             node scripts/publish.js --tag=latest --dry-run
           fi
@@ -164,7 +164,7 @@ jobs:
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
           if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-            node scripts/publish.js --tag=${{ github.event.inputs/prerelease_tag }} --provenance
+            node scripts/publish.js --tag=${{ github.event.inputs.prerelease_tag }} --provenance
           else
             node scripts/publish.js --tag=latest --provenance
           fi
@@ -182,7 +182,7 @@ jobs:
             try {
               const existing = await github.rest.repos.getReleaseByTag({
                 owner: context.repo.owner,
-                repo: context.repo,
+                repo: context.repo.repo,
                 tag: tag,
               });
               core.info(`Release already exists: ${existing.data.html_url}`);
@@ -199,7 +199,7 @@ jobs:
 
             const fs = require('fs');
             const packagesDirs = ['./packages', './tools', './plugins', './tegg/core', './tegg/plugin', './tegg/standalone'];
-            for (const packagesDir�of packagesDirs) {
+            for (const packagesDir of packagesDirs) {
               if (!fs.existsSync(packagesDir)) continue;
               const packageFolders = fs.readdirSync(packagesDir);
               for (const folder of packageFolders) {
@@ -240,7 +240,7 @@ jobs:
           echo "## 🎉 Release Summary" >> $GITHUB_STEP_SUMMARY
 
           if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
-            echo "### 🇪 Dry Run Completed" >> $GITHUB_STEP_SUMMARY
+            echo "### 🧪 Dry Run Completed" >> $GITHUB_STEP_SUMMARY
             echo "- Version bump: **${{ github.event.inputs.version_type }}**" >> $GITHUB_STEP_SUMMARY
             echo "- Branch: **${{ github.event.inputs.branch }}**" >> $GITHUB_STEP_SUMMARY
             if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
