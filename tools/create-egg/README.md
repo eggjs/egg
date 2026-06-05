@@ -13,7 +13,7 @@
 ## Scaffolding Your First Egg.js Project
 
 > **Compatibility Note:**
-> Egg.js requires [Node.js](https://nodejs.org/) version 20.19+. However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
+> Egg.js requires [Node.js](https://nodejs.org/) version 22.18+. However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
 
 With NPM:
 
