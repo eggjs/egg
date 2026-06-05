@@ -19,7 +19,7 @@ Egg is maintained as a utoo monorepo.
 ## Core Commands
 
 - `corepack enable utoo` enables utoo on a clean machine.
-- `ut install` hydrates the workspace.
+- `ut install --from pnpm` hydrates the workspace from the pnpm lock/workspace files.
 - `ut run build` builds all packages.
 - `ut run test` runs the main test suite.
 - `ut run lint` runs linting.
@@ -28,7 +28,7 @@ Egg is maintained as a utoo monorepo.
 
 ### Local CI
 
-Run tests **without building first**. The CI workflow (`ut install → ut run ci`) never runs `build` before tests. If `dist/` directories exist from a prior build, tegg plugin tests will fail with `duplicate proto` errors because globby scans both `src/*.ts` and `dist/*.js`, loading the same decorated class twice.
+Run tests **without building first**. The CI workflow (`ut install --from pnpm → ut run ci`) never runs `build` before tests. If `dist/` directories exist from a prior build, tegg plugin tests will fail with `duplicate proto` errors because globby scans both `src/*.ts` and `dist/*.js`, loading the same decorated class twice.
 
 When you see `duplicate proto` failures locally:
 

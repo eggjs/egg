@@ -23,7 +23,7 @@ This is a **utoo monorepo** with multiple packages using utoo workspaces and cat
 corepack enable utoo
 
 # 2. Install all dependencies - takes ~63 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
-ut install
+ut install --from pnpm
 
 # 3. Build all packages - takes ~14 seconds. NEVER CANCEL. Set timeout to 60+ seconds.
 ut run build

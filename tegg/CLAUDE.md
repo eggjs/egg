@@ -108,7 +108,7 @@ ut run version:rc          # Bump prerelease rc version
 
 ```bash
 # Install dependencies
-ut install                          # Install all dependencies using catalog versions
+ut install --from pnpm              # Install all dependencies from pnpm workspace files
 
 # Type check specific packages
 ut -r run typecheck                 # Type check all packages recursively
@@ -119,7 +119,7 @@ ut --filter @eggjs/metadata run build
 ut --filter @eggjs/tegg-runtime run build
 
 # Clean specific package
-node -e "require('fs').rmSync('tegg/core/runtime/dist', { recursive: true, force: true })"
+node -e "require('node:fs').rmSync('tegg/core/runtime/dist', { recursive: true, force: true })"
 ```
 
 **Note:** Individual tegg packages don't have test scripts in their package.json. Tests are run via the monorepo root vitest configuration.

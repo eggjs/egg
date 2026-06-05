@@ -52,7 +52,7 @@ The monorepo uses **utoo catalog mode** for centralized dependency management, e
 
 ```bash
 # Install dependencies for all packages
-ut install
+ut install --from pnpm
 
 # Build all packages
 ut run build
