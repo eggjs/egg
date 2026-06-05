@@ -87,6 +87,20 @@ export interface CreateRunInput {
   metadata?: Record<string, unknown>;
 }
 
+// ===== Thread input =====
+
+/**
+ * Options for {@link AgentRuntime.createThread}.
+ *
+ * `metadata` is forwarded verbatim to {@link AgentStore.createThread} so callers
+ * can persist additional business semantics on the thread record (e.g. the
+ * resolved agent name, owning sandbox id, trace id). It is stored once at
+ * creation time and never overwritten by subsequent runs on the same thread.
+ */
+export interface CreateThreadOptions {
+  metadata?: Record<string, unknown>;
+}
+
 // ===== Message delta =====
 
 export interface MessageDeltaObject {

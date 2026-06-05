@@ -1,5 +1,6 @@
 import type {
   CreateRunInput,
+  CreateThreadOptions,
   ThreadObject,
   ThreadObjectWithMessages,
   RunObject,
@@ -58,8 +59,8 @@ export class AgentRuntime {
     this.runningTasks = new Map();
   }
 
-  async createThread(): Promise<ThreadObject> {
-    const thread = await this.store.createThread();
+  async createThread(options?: CreateThreadOptions): Promise<ThreadObject> {
+    const thread = await this.store.createThread(options?.metadata);
     return {
       id: thread.id,
       object: AgentObjectType.Thread,
@@ -79,6 +80,11 @@ export class AgentRuntime {
     };
   }
 
+  /**
+   * Resolve the thread for a run. If the caller provided a `threadId` we reuse
+   * it as-is. When no `threadId` is present we auto-create an empty thread.
+   * Run metadata belongs to the run record and must not be copied to the thread.
+   */
   private async ensureThread(input: CreateRunInput): Promise<{ threadId: string; input: CreateRunInput }> {
     if (input.threadId) {
       return { threadId: input.threadId, input };
