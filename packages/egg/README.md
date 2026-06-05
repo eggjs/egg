@@ -31,7 +31,7 @@ $ ut run dev
 $ open http://localhost:7001
 ```
 
-> Node.js >= 20.19.0 required, [supports `require(esm)` by default](https://nodejs.org/en/blog/release/v20.19.0).
+> Node.js >= 22.18.0 required.
 
 ## Documentations
 

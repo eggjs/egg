@@ -58,7 +58,8 @@ function isPublished(name, version) {
  * Publish a single package by running `ut publish` from the package
  * directory. utoo's publish only documents --tag/--dry-run/--otp, so we
  * keep the npm-standard --access/--provenance flags (forwarded to npm)
- * and drop pnpm-only flags (--filter, --no-git-checks).
+ * and configure npm to skip git checks because the release workflow builds
+ * gitignored dist outputs before publishing.
  */
 function publishOne(pkg) {
   const publishArgs = ['publish', '--access', 'public', '--tag', npmTag];
@@ -68,7 +69,7 @@ function publishOne(pkg) {
   execFileSync(utBin, publishArgs, {
     cwd: path.join(baseDir, pkg.directory, pkg.folder),
     stdio: 'inherit',
-    env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose' },
+    env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose', NPM_CONFIG_GIT_CHECKS: 'false' },
     timeout: 120000,
   });
 }
