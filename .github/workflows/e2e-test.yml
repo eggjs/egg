@@ -160,8 +160,7 @@ jobs:
         # protocols inside the packed manifests, so downstream `npm install`
         # in the ecosystem-ci projects fails with EUNSUPPORTEDPROTOCOL.
         # Keep pnpm available just for the pack step. The explicit `version`
-        # is required because `packageManager` in package.json now points at
-        # utoo, so the action can't infer the pnpm version itself.
+        # keeps this action decoupled from future packageManager metadata.
         # Setup must come AFTER `ut install`: action-setup exports PNPM_HOME,
         # which makes utoo's install path read pnpm config and crash with
         # exit 141 (SIGPIPE).
@@ -171,9 +170,7 @@ jobs:
 
       - name: Pack packages into tgz
         # `pnpm -r pack` resolves workspace:/catalog: deps in the emitted
-        # manifests, which `ut pm-pack` does not yet do. pnpm refuses to
-        # run when `packageManager` points at another tool, so disable
-        # that strict check for just this step. pnpm needs its own
+        # manifests, which `ut pm-pack` does not yet do. pnpm needs its own
         # node_modules layout to resolve `workspace:` versions, so run
         # `pnpm install --no-frozen-lockfile` first (cheap on top of the
         # ut install since the deps are already in the global store).
