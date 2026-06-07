@@ -55,6 +55,12 @@ try {
   // If import.meta is not available, it's likely CJS
   isESM = false;
 }
+// Remember the auto-detected module format. `setSnapshotModuleLoader` flips
+// `isESM` to false while a snapshot loader is active; clearing the loader must
+// restore this value so consumers running later in the same realm are not left
+// stuck in CJS mode. This matters under vitest `isolate: false`, where module
+// state persists across test files.
+const detectedIsESM = isESM;
 const nodeMajorVersion = parseInt(process.versions.node.split('.', 1)[0], 10);
 const supportImportMetaResolve = nodeMajorVersion >= 18;
 
@@ -415,10 +421,15 @@ let _snapshotModuleLoader: SnapshotModuleLoader | undefined;
  *
  * Also sets `isESM = false` because the snapshot bundle is CJS and
  * esbuild's `import.meta` polyfill causes incorrect ESM detection.
+ *
+ * Pass `undefined` to clear the loader and restore the auto-detected `isESM`
+ * value. Always clear it once snapshot mode is no longer needed (e.g. in test
+ * teardown) so the module-level state does not leak into other files when
+ * vitest runs with `isolate: false`.
  */
-export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
+export function setSnapshotModuleLoader(loader: SnapshotModuleLoader | undefined): void {
   _snapshotModuleLoader = loader;
-  isESM = false;
+  isESM = loader ? false : detectedIsESM;
 }
 
 export type { BundleModuleLoader } from '@eggjs/typings';
