@@ -7,6 +7,7 @@ Read this file before exploring raw sources.
 ## Concepts
 
 - [Repository Map](./concepts/repository-map.md) - High-level map of the main repository areas and where to look first.
+- [Vitest isolate:false state leaks](./concepts/vitest-isolate-false-state-leaks.md) - Why pool:threads + isolate:false exposes cross-file/cross-project state leaks, the concrete leaks (import.ts snapshot loader, mock mockContext), and how to triage them.
 
 ## Workflows
 
