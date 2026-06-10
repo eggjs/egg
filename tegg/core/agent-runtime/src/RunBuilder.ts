@@ -1,6 +1,10 @@
-import type { MessageObject, RunObject, RunRecord, AgentRunConfig } from '@eggjs/tegg-types/agent-runtime';
-import { RunStatus, AgentErrorCode, AgentObjectType } from '@eggjs/tegg-types/agent-runtime';
-import { InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
+import type { RunObject, RunRecord, AgentRunConfig } from '@eggjs/tegg-types/agent-runtime';
+import {
+  RunStatus,
+  AgentErrorCode,
+  AgentObjectType,
+  InvalidRunStateTransitionError,
+} from '@eggjs/tegg-types/agent-runtime';
 
 import { nowUnix } from './AgentStoreUtils.ts';
 
@@ -29,7 +33,6 @@ export class RunBuilder {
   private failedAt?: number;
   private lastError?: { code: string; message: string } | null;
   private usage?: RunUsage;
-  private output?: MessageObject[];
 
   private constructor(
     id: string,
@@ -60,7 +63,6 @@ export class RunBuilder {
     rb.cancelledAt = run.cancelledAt ?? undefined;
     rb.failedAt = run.failedAt ?? undefined;
     rb.lastError = run.lastError ?? undefined;
-    rb.output = run.output;
     if (run.usage) {
       rb.usage = { ...run.usage };
     }
@@ -78,25 +80,33 @@ export class RunBuilder {
   }
 
   /** in_progress -> completed. Returns store update. */
-  complete(output: MessageObject[], usage?: RunUsage): Partial<RunRecord> {
+  complete(usage?: RunUsage): Partial<RunRecord> {
     if (this.status !== RunStatus.InProgress) {
       throw new InvalidRunStateTransitionError(this.status, RunStatus.Completed);
     }
     this.status = RunStatus.Completed;
     this.completedAt = nowUnix();
-    this.output = output;
     this.usage = usage;
     return {
       status: this.status,
-      output,
       usage,
       completedAt: this.completedAt,
     };
   }
 
-  /** queued/in_progress -> failed. Returns store update. */
+  /**
+   * queued/in_progress/cancelling -> failed. Returns store update.
+   *
+   * `cancelling -> failed` covers the case where AgentRuntime has initiated
+   * a cancel but the watchdog times out before the executor commits — the
+   * run is treated as a failed startup rather than a successful cancel.
+   */
   fail(error: Error): Partial<RunRecord> {
-    if (this.status !== RunStatus.InProgress && this.status !== RunStatus.Queued) {
+    if (
+      this.status !== RunStatus.InProgress &&
+      this.status !== RunStatus.Queued &&
+      this.status !== RunStatus.Cancelling
+    ) {
       throw new InvalidRunStateTransitionError(this.status, RunStatus.Failed);
     }
     this.status = RunStatus.Failed;
@@ -149,7 +159,6 @@ export class RunBuilder {
       failedAt: this.failedAt ?? null,
       usage: this.usage ?? null,
       metadata: this.metadata,
-      output: this.output,
       config: this.config,
     };
   }

@@ -1,183 +1,185 @@
 import assert from 'node:assert';
 
-import type { AgentStreamMessage, AgentStreamMessagePayload } from '@eggjs/tegg-types/agent-runtime';
-import { MessageRole, MessageStatus, AgentObjectType, ContentBlockType } from '@eggjs/tegg-types/agent-runtime';
+import type { AgentMessage, InputMessage, SDKResultMessage } from '@eggjs/tegg-types/agent-runtime';
 import { describe, it } from 'vitest';
 
 import { MessageConverter } from '../src/MessageConverter.ts';
 
 describe('test/MessageConverter.test.ts', () => {
-  describe('toContentBlocks', () => {
-    it('should return empty array for falsy payload', () => {
-      const result = MessageConverter.toContentBlocks(undefined as unknown as AgentStreamMessagePayload);
-      assert.deepStrictEqual(result, []);
-    });
-
-    it('should convert string content to a single text block', () => {
-      const payload: AgentStreamMessagePayload = { content: 'hello world' };
-      const result = MessageConverter.toContentBlocks(payload);
-      assert.equal(result.length, 1);
-      assert.equal(result[0].type, ContentBlockType.Text);
-      assert.equal(result[0].text.value, 'hello world');
-      assert.deepStrictEqual(result[0].text.annotations, []);
-    });
-
-    it('should convert array content parts to text blocks', () => {
-      const payload: AgentStreamMessagePayload = {
-        content: [
-          { type: 'text', text: 'part1' },
-          { type: 'text', text: 'part2' },
-        ],
-      };
-      const result = MessageConverter.toContentBlocks(payload);
-      assert.equal(result.length, 2);
-      assert.equal(result[0].text.value, 'part1');
-      assert.equal(result[1].text.value, 'part2');
-    });
-
-    it('should filter out non-text content parts', () => {
-      const payload: AgentStreamMessagePayload = {
-        content: [
-          { type: 'text', text: 'keep' },
-          { type: 'image' as 'text', text: 'discard' },
-        ],
-      };
-      const result = MessageConverter.toContentBlocks(payload);
-      assert.equal(result.length, 1);
-      assert.equal(result[0].text.value, 'keep');
-    });
-
-    it('should return empty array for non-string non-array content', () => {
-      const payload = { content: 123 } as unknown as AgentStreamMessagePayload;
-      const result = MessageConverter.toContentBlocks(payload);
-      assert.deepStrictEqual(result, []);
-    });
-  });
-
-  describe('toMessageObject', () => {
-    it('should create a completed assistant message', () => {
-      const payload: AgentStreamMessagePayload = { content: 'reply' };
-      const msg = MessageConverter.toMessageObject(payload, 'run_1');
-
-      assert.ok(msg.id.startsWith('msg_'));
-      assert.equal(msg.object, AgentObjectType.ThreadMessage);
-      assert.equal(msg.runId, 'run_1');
-      assert.equal(msg.role, MessageRole.Assistant);
-      assert.equal(msg.status, MessageStatus.Completed);
-      assert.equal(typeof msg.createdAt, 'number');
-      const content = msg.content;
-      assert.equal(content.length, 1);
-      assert.equal(content[0].text.value, 'reply');
-    });
-
-    it('should work without runId', () => {
-      const payload: AgentStreamMessagePayload = { content: 'test' };
-      const msg = MessageConverter.toMessageObject(payload);
-      assert.equal(msg.runId, undefined);
-    });
-  });
-
-  describe('createStreamMessage', () => {
-    it('should create an in-progress message with empty content', () => {
-      const msg = MessageConverter.createStreamMessage('msg_abc', 'run_1');
-
-      assert.equal(msg.id, 'msg_abc');
-      assert.equal(msg.object, AgentObjectType.ThreadMessage);
-      assert.equal(msg.runId, 'run_1');
-      assert.equal(msg.role, MessageRole.Assistant);
-      assert.equal(msg.status, MessageStatus.InProgress);
-      assert.deepStrictEqual(msg.content, []);
-      assert.equal(typeof msg.createdAt, 'number');
-    });
-  });
-
-  describe('extractFromStreamMessages', () => {
-    it('should extract messages and accumulate usage', () => {
-      const messages: AgentStreamMessage[] = [
-        { message: { content: 'chunk1' }, usage: { promptTokens: 10, completionTokens: 5 } },
-        { message: { content: 'chunk2' }, usage: { promptTokens: 0, completionTokens: 8 } },
+  describe('extractUsage', () => {
+    it('should return undefined when no result messages', () => {
+      const messages: AgentMessage[] = [
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] } },
+        { type: 'user', message: { role: 'user', content: 'hello' } },
       ];
-      const { output, usage } = MessageConverter.extractFromStreamMessages(messages, 'run_1');
+      const usage = MessageConverter.extractUsage(messages);
+      assert.equal(usage, undefined);
+    });
 
-      assert.equal(output.length, 2);
-      assert.equal(output[0].content[0].text.value, 'chunk1');
-      assert.equal(output[1].content[0].text.value, 'chunk2');
+    it('should extract usage from a single result message', () => {
+      const messages: AgentMessage[] = [
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] } },
+        {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 10, output_tokens: 5 },
+        } as SDKResultMessage,
+      ];
+      const usage = MessageConverter.extractUsage(messages);
       assert.ok(usage);
       assert.equal(usage.promptTokens, 10);
-      assert.equal(usage.completionTokens, 13);
-      assert.equal(usage.totalTokens, 23);
+      assert.equal(usage.completionTokens, 5);
+      assert.equal(usage.totalTokens, 15);
     });
 
-    it('should return undefined usage when no usage info', () => {
-      const messages: AgentStreamMessage[] = [{ message: { content: 'data' } }];
-      const { output, usage } = MessageConverter.extractFromStreamMessages(messages);
-      assert.equal(output.length, 1);
-      assert.equal(usage, undefined);
-    });
-
-    it('should handle messages without message payload (usage only)', () => {
-      const messages: AgentStreamMessage[] = [{ usage: { promptTokens: 5, completionTokens: 3 } }];
-      const { output, usage } = MessageConverter.extractFromStreamMessages(messages);
-      assert.equal(output.length, 0);
+    it('should accumulate usage from multiple result messages', () => {
+      const messages: AgentMessage[] = [
+        {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 10, output_tokens: 5 },
+        } as SDKResultMessage,
+        {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 20, output_tokens: 8 },
+        } as SDKResultMessage,
+      ];
+      const usage = MessageConverter.extractUsage(messages);
       assert.ok(usage);
-      assert.equal(usage.totalTokens, 8);
+      assert.equal(usage.promptTokens, 30);
+      assert.equal(usage.completionTokens, 13);
+      assert.equal(usage.totalTokens, 43);
     });
 
-    it('should handle empty message array', () => {
-      const { output, usage } = MessageConverter.extractFromStreamMessages([]);
-      assert.equal(output.length, 0);
+    it('should handle result message without usage field', () => {
+      const messages: AgentMessage[] = [{ type: 'result', subtype: 'success' } as SDKResultMessage];
+      const usage = MessageConverter.extractUsage(messages);
       assert.equal(usage, undefined);
+    });
+
+    it('should handle empty messages array', () => {
+      const usage = MessageConverter.extractUsage([]);
+      assert.equal(usage, undefined);
+    });
+
+    it('should handle partial usage fields (missing output_tokens)', () => {
+      const messages: AgentMessage[] = [
+        {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 10 },
+        } as SDKResultMessage,
+      ];
+      const usage = MessageConverter.extractUsage(messages);
+      assert.ok(usage);
+      assert.equal(usage.promptTokens, 10);
+      assert.equal(usage.completionTokens, 0);
+      assert.equal(usage.totalTokens, 10);
+    });
+
+    it('should handle cache-related usage fields', () => {
+      const messages: AgentMessage[] = [
+        {
+          type: 'result',
+          subtype: 'success',
+          usage: {
+            input_tokens: 100,
+            output_tokens: 50,
+            cache_creation_input_tokens: 200,
+            cache_read_input_tokens: 80,
+          },
+        } as SDKResultMessage,
+      ];
+      const usage = MessageConverter.extractUsage(messages);
+      assert.ok(usage);
+      assert.equal(usage.promptTokens, 100);
+      assert.equal(usage.completionTokens, 50);
+      assert.equal(usage.totalTokens, 150);
     });
   });
 
-  describe('toInputMessageObjects', () => {
-    it('should convert user and assistant messages', () => {
-      const messages = [
-        { role: MessageRole.User as MessageRole, content: 'hi' },
-        { role: MessageRole.Assistant as MessageRole, content: 'hello' },
+  describe('filterForStorage', () => {
+    it('should filter out stream_event messages', () => {
+      const messages: AgentMessage[] = [
+        { type: 'system', subtype: 'init', session_id: 'sess-1' },
+        { type: 'user', message: { role: 'user', content: 'hello' } },
+        { type: 'stream_event', event: { type: 'content_block_delta' }, session_id: 'sess-1' },
+        { type: 'stream_event', event: { type: 'content_block_delta' }, session_id: 'sess-1' },
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] } },
+        { type: 'result', subtype: 'success', usage: { input_tokens: 10, output_tokens: 5 } } as SDKResultMessage,
       ];
-      const result = MessageConverter.toInputMessageObjects(messages, 'thread_1');
+      const result = MessageConverter.filterForStorage(messages);
+      assert.equal(result.length, 4);
+      assert.equal(result[0].type, 'system');
+      assert.equal(result[1].type, 'user');
+      assert.equal(result[2].type, 'assistant');
+      assert.equal(result[3].type, 'result');
+    });
 
+    it('should return all messages when no stream_event present', () => {
+      const messages: AgentMessage[] = [
+        { type: 'user', message: { role: 'user', content: 'hello' } },
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] } },
+      ];
+      const result = MessageConverter.filterForStorage(messages);
       assert.equal(result.length, 2);
-      assert.equal(result[0].role, MessageRole.User);
-      assert.equal(result[0].threadId, 'thread_1');
-      assert.equal(result[1].role, MessageRole.Assistant);
+    });
 
-      const content0 = result[0].content;
-      assert.equal(content0[0].text.value, 'hi');
+    it('should handle empty array', () => {
+      const result = MessageConverter.filterForStorage([]);
+      assert.deepStrictEqual(result, []);
+    });
+  });
+
+  describe('toAgentMessages', () => {
+    it('should convert user messages to AgentMessage format', () => {
+      const messages: InputMessage[] = [{ role: 'user', content: 'hello' }];
+      const result = MessageConverter.toAgentMessages(messages);
+      assert.equal(result.length, 1);
+      assert.equal(result[0].type, 'user');
+      assert.deepStrictEqual((result[0] as any).message, { role: 'user', content: 'hello' });
     });
 
     it('should filter out system messages', () => {
-      const messages = [
-        { role: MessageRole.System as MessageRole, content: 'you are a bot' },
-        { role: MessageRole.User as MessageRole, content: 'hi' },
+      const messages: InputMessage[] = [
+        { role: 'system', content: 'you are a bot' },
+        { role: 'user', content: 'hello' },
       ];
-      const result = MessageConverter.toInputMessageObjects(messages);
+      const result = MessageConverter.toAgentMessages(messages);
       assert.equal(result.length, 1);
-      assert.equal(result[0].role, MessageRole.User);
+      assert.equal(result[0].type, 'user');
     });
 
-    it('should handle array content parts', () => {
-      const messages = [
+    it('should handle array content', () => {
+      const messages: InputMessage[] = [
         {
-          role: MessageRole.User as MessageRole,
+          role: 'user',
           content: [
-            { type: 'text' as const, text: 'part1' },
-            { type: 'text' as const, text: 'part2' },
+            { type: 'text', text: 'part1' },
+            { type: 'text', text: 'part2' },
           ],
         },
       ];
-      const result = MessageConverter.toInputMessageObjects(messages);
-      const content = result[0].content;
-      assert.equal(content.length, 2);
-      assert.equal(content[0].text.value, 'part1');
-      assert.equal(content[1].text.value, 'part2');
+      const result = MessageConverter.toAgentMessages(messages);
+      assert.equal(result.length, 1);
+      assert.deepStrictEqual((result[0] as any).message.content, [
+        { type: 'text', text: 'part1' },
+        { type: 'text', text: 'part2' },
+      ]);
     });
 
-    it('should work without threadId', () => {
-      const messages = [{ role: MessageRole.User as MessageRole, content: 'hi' }];
-      const result = MessageConverter.toInputMessageObjects(messages);
-      assert.equal(result[0].threadId, undefined);
+    it('should handle empty array', () => {
+      const result = MessageConverter.toAgentMessages([]);
+      assert.deepStrictEqual(result, []);
+    });
+
+    it('should preserve assistant role messages with correct type', () => {
+      const messages: InputMessage[] = [{ role: 'assistant', content: 'I said something' }];
+      const result = MessageConverter.toAgentMessages(messages);
+      assert.equal(result.length, 1);
+      assert.equal(result[0].type, 'assistant');
+      assert.deepStrictEqual((result[0] as any).message.role, 'assistant');
     });
   });
 });
