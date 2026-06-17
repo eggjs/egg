@@ -87,4 +87,35 @@ describe('core/loader/test/LoaderFactoryManifest.test.ts', () => {
       assert.deepStrictEqual(secondNames, firstNames);
     }
   });
+
+  it('should use restored bundled manifest paths before matching module descriptors', async () => {
+    const baseDir = path.dirname(repoModulePath);
+    const bundledModulePath = path.relative(baseDir, repoModulePath);
+    const manifestRef = { name: 'module-for-loader', path: bundledModulePath };
+    const manifest: LoadAppManifest = {
+      moduleDescriptors: [
+        {
+          name: 'module-for-loader',
+          unitPath: bundledModulePath,
+          decoratedFiles: [],
+        },
+      ],
+    };
+    const restoredRef = { ...manifestRef, path: path.join(baseDir, manifestRef.path) };
+    const restoredManifest: LoadAppManifest = {
+      moduleDescriptors: manifest.moduleDescriptors.map((desc) => ({
+        ...desc,
+        unitPath: path.join(baseDir, desc.unitPath),
+      })),
+    };
+
+    assert.notEqual(manifestRef.path, repoModulePath);
+    assert.notEqual(manifest.moduleDescriptors[0].unitPath, repoModulePath);
+    assert.equal(restoredRef.path, repoModulePath);
+    assert.equal(restoredManifest.moduleDescriptors[0].unitPath, repoModulePath);
+
+    const manifestDescs = await LoaderFactory.loadApp([restoredRef], restoredManifest);
+    assert.equal(manifestDescs[0].unitPath, repoModulePath);
+    assert.deepStrictEqual(manifestDescs[0].clazzList, []);
+  });
 });

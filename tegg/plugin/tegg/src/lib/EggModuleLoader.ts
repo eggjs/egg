@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
 import { LoaderFactory, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
@@ -6,6 +8,23 @@ import type { ModuleReference } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 
 import { EggAppLoader } from './EggAppLoader.ts';
+
+function restoreManifestModulePath(modulePath: string, baseDir: string): string {
+  return path.isAbsolute(modulePath) ? modulePath : path.join(baseDir, modulePath);
+}
+
+function restoreTeggManifestExtension(manifest: TeggManifestExtension, baseDir: string): TeggManifestExtension {
+  return {
+    moduleReferences: (manifest.moduleReferences ?? []).map((ref) => ({
+      ...ref,
+      path: restoreManifestModulePath(ref.path, baseDir),
+    })),
+    moduleDescriptors: (manifest.moduleDescriptors ?? []).map((desc) => ({
+      ...desc,
+      unitPath: restoreManifestModulePath(desc.unitPath, baseDir),
+    })),
+  };
+}
 
 export class EggModuleLoader {
   app: Application;
@@ -38,7 +57,10 @@ export class EggModuleLoader {
     // Pass manifest data to LoaderFactory if available
     const manifest = this.app.loader.manifest;
     const manifestTegg = manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined;
-    const loadAppManifest = manifestTegg?.moduleDescriptors?.length ? manifestTegg : undefined;
+    const restoredManifestTegg = manifestTegg
+      ? restoreTeggManifestExtension(manifestTegg, this.app.baseDir)
+      : undefined;
+    const loadAppManifest = restoredManifestTegg?.moduleDescriptors?.length ? restoredManifestTegg : undefined;
 
     const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest);
 

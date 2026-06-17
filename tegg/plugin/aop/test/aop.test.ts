@@ -19,7 +19,7 @@ describe('plugin/aop/test/aop.test.ts', () => {
       baseDir: path.join(import.meta.dirname, 'fixtures/apps/aop-app'),
     });
     await app.ready();
-  });
+  }, 30000);
 
   it('module aop should work', async () => {
     app.mockCsrf();

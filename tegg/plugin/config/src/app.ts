@@ -12,6 +12,23 @@ import { ModuleScanner } from './lib/ModuleScanner.ts';
 
 const debug = debuglog('egg/tegg/plugin/config/app');
 
+function restoreManifestModulePath(modulePath: string, baseDir: string): string {
+  return path.isAbsolute(modulePath) ? modulePath : path.join(baseDir, modulePath);
+}
+
+function restoreTeggManifestExtension(manifest: TeggManifestExtension, baseDir: string): TeggManifestExtension {
+  return {
+    moduleReferences: (manifest.moduleReferences ?? []).map((ref) => ({
+      ...ref,
+      path: restoreManifestModulePath(ref.path, baseDir),
+    })),
+    moduleDescriptors: (manifest.moduleDescriptors ?? []).map((desc) => ({
+      ...desc,
+      unitPath: restoreManifestModulePath(desc.unitPath, baseDir),
+    })),
+  };
+}
+
 export default class App implements ILifecycleBoot {
   private readonly app: Application;
 
@@ -40,7 +57,7 @@ export default class App implements ILifecycleBoot {
 
     let moduleReferences: readonly ModuleReference[];
     if (manifestTegg?.moduleReferences?.length) {
-      moduleReferences = manifestTegg.moduleReferences;
+      moduleReferences = restoreTeggManifestExtension(manifestTegg, this.app.baseDir).moduleReferences;
       debug('load moduleReferences from manifest: %o', moduleReferences);
     } else {
       // Auto-exclude outDir (e.g. dist/) from module scanning to avoid
@@ -68,8 +85,11 @@ export default class App implements ILifecycleBoot {
   #loadModuleConfigs(): void {
     this.app.moduleConfigs = {};
     for (const reference of this.app.moduleReferences) {
+      const modulePath = path.isAbsolute(reference.path)
+        ? reference.path
+        : ModuleConfigUtil.resolveModuleDir(reference.path, this.app.baseDir);
       const absoluteRef: ModuleReference = {
-        path: ModuleConfigUtil.resolveModuleDir(reference.path, this.app.baseDir),
+        path: modulePath,
         name: reference.name,
         optional: reference.optional,
       };

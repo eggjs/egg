@@ -231,6 +231,7 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('ManifestStore.setBundleStore(__bundleManifestStore)');
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain('__setBundleMap(__framework, __frameworkModule)');
+    expect(worker).toContain('__patchFrameworkPaths(__frameworkModule.Application)');
     expect(worker).not.toContain('__frameworkImport');
     expect(worker).toContain(
       "startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single', loaderFS: __loaderFS })",
@@ -385,6 +386,104 @@ export async function startEgg(options) {
     expect(runtimeResult.controllerResolved).toBe('bundled-controller');
     expect(runtimeResult.loaderFSBaseDir).toBe(outputDir);
     expect(runtimeResult.loaderFSUsesManifestStore).toBe(true);
+  });
+
+  it('virtualizes framework eggPaths under node_modules before startEgg runs', async () => {
+    const resultFile = path.join(tmpDir, 'framework-paths.json');
+    await fs.writeFile(path.join(tmpDir, 'package.json'), JSON.stringify({ type: 'module' }));
+    await writePackage(
+      path.join(tmpDir, 'node_modules/@eggjs/core'),
+      `
+export const ManifestStore = {
+  fromBundle(manifest, baseDir) {
+    return { manifest, baseDir };
+  },
+  setBundleStore() {},
+};
+`,
+    );
+    const frameworkDir = path.join(tmpDir, 'node_modules/@runtime/framework');
+    await fs.mkdir(frameworkDir, { recursive: true });
+    await fs.writeFile(
+      path.join(frameworkDir, 'package.json'),
+      JSON.stringify({ type: 'module', exports: { './subpath': './subpath.js' } }),
+    );
+    await fs.writeFile(
+      path.join(frameworkDir, 'subpath.js'),
+      `
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+const outputDir = () => path.dirname(path.resolve(process.argv[1]));
+
+export class Application {
+  customEggPaths() {
+    return [outputDir(), path.join(outputDir(), 'preserved-framework')];
+  }
+}
+
+export class Agent extends Application {}
+
+export async function startEgg(options) {
+  await fs.writeFile(process.env.EGG_RUNTIME_RESULT, JSON.stringify({
+    appPaths: new Application().customEggPaths(),
+    agentPaths: new Agent().customEggPaths(),
+    appDescriptor: Object.getOwnPropertyDescriptor(Application.prototype, 'customEggPaths'),
+    agentDescriptor: Object.getOwnPropertyDescriptor(Agent.prototype, 'customEggPaths'),
+  }, null, 2));
+  return {
+    config: { cluster: { listen: { port: 0 } } },
+    listen(_port, callback) {
+      callback();
+    },
+  };
+}
+`,
+    );
+
+    const outputDir = path.join(tmpDir, 'dist');
+    const gen = new EntryGenerator({
+      baseDir: tmpDir,
+      outputDir,
+      framework: '@runtime/framework/subpath',
+      manifestLoader: createFakeLoader(
+        makeManifest({
+          extensions: {
+            eggLoader: {
+              eggPaths: ['node_modules/@runtime/root-framework', 'node_modules/@runtime/framework', 'node_modules/egg'],
+            },
+          },
+        }),
+      ),
+    });
+    const result = await gen.generate();
+
+    await execaNode(result.workerEntry, [], {
+      cwd: tmpDir,
+      env: {
+        ...process.env,
+        EGG_RUNTIME_RESULT: resultFile,
+      },
+      nodeOptions: ['--experimental-strip-types'],
+      timeout: 5_000,
+    });
+
+    const runtimeResult = JSON.parse(await fs.readFile(resultFile, 'utf8')) as {
+      appPaths: string[];
+      agentPaths: string[];
+      appDescriptor: PropertyDescriptor;
+      agentDescriptor: PropertyDescriptor;
+    };
+    const expected = [
+      path.join(outputDir, 'node_modules/@runtime/root-framework'),
+      path.join(outputDir, 'node_modules/@runtime/framework'),
+      path.join(outputDir, 'node_modules/egg'),
+      path.join(outputDir, 'preserved-framework'),
+    ];
+    expect(runtimeResult.appPaths).toEqual(expected);
+    expect(runtimeResult.agentPaths).toEqual(expected);
+    expect(runtimeResult.appDescriptor).toMatchObject({ configurable: true, enumerable: false, writable: true });
+    expect(runtimeResult.agentDescriptor).toMatchObject({ configurable: true, enumerable: false, writable: true });
   });
 
   it('loads externalized package files via createRequire instead of static imports', async () => {

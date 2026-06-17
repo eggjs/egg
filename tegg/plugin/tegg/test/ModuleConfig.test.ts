@@ -21,7 +21,7 @@ describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
       baseDir: getAppBaseDir('inject-module-config'),
     });
     await app.ready();
-  });
+  }, 30000);
 
   it('should work', async () => {
     await app

@@ -18,7 +18,7 @@ export class ControllerLoadUnitHandler extends Base {
   }
 
   async _init(): Promise<void> {
-    const controllerDir = path.join(this.app.config.baseDir, 'app/controller');
+    const controllerDir = path.join(this.app.config.baseDir ?? this.app.baseDir, 'app/controller');
     const loader = this.app.loaderFactory.createLoader(controllerDir, CONTROLLER_LOAD_UNIT as EggLoadUnitType);
     this.controllerLoadUnit = await this.app.loadUnitFactory.createLoadUnit(
       controllerDir,
