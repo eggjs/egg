@@ -11,9 +11,12 @@ export function createServer(app: any): Server {
     if (!app.server) {
       app.server = server;
     }
-    // emit server event just like egg-cluster does
-    // https://github.com/eggjs/egg-cluster/blob/master/lib/app_worker.js#L52
-    app.emit('server', server);
   }
+  // NOTE: don't emit the `server` event here. egg core registers its
+  // `once('server', ...)` listener inside `Application.load()` (during
+  // `app.ready()`), so emitting at server-creation time (before ready) would be
+  // missed and `onServer` (clientError logging / graceful / timeout / websocket)
+  // never runs. The caller emits `server` after `app.ready()` instead — just
+  // like @eggjs/cluster, which emits it after the app is ready.
   return server;
 }

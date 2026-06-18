@@ -79,6 +79,30 @@ describe.sequential('test/app.test.ts', () => {
     await app.close();
   });
 
+  it('should run onServer after ready (server event not lost)', async () => {
+    // @eggjs/mock emits the `server` event before `app.ready()`, while egg core
+    // registers its `once("server", ...)` listener inside Application.load()
+    // (during app.ready()). egg core re-emits `server` after the listener is
+    // registered so onServer still runs and wires up the `clientError` handler
+    // (plus graceful shutdown / server timeout / websocket). Regression guard:
+    // assert the clientError listener is wired after ready.
+    const baseDir = getFixtures('server');
+    const app = mm.app({
+      baseDir,
+      cache: false,
+    });
+    try {
+      await app.ready();
+      assert(app.server, 'app.server not exists');
+      assert(
+        app.server.listenerCount('clientError') > 0,
+        'onServer should have attached a clientError listener after ready',
+      );
+    } finally {
+      await app.close();
+    }
+  });
+
   it('support options.beforeInit', async () => {
     const baseDir = getFixtures('app');
     const app = mm.app({
