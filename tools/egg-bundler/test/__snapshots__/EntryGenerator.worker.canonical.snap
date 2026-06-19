@@ -99,6 +99,27 @@ for (const [appAbsRequest, targetRel] of __APP_RESOLVE_CACHE_ALIASES) {
   }
 }
 
+// Tegg module reference / descriptor paths are stored relative to baseDir in the
+// manifest. Resolve them to absolute paths under the runtime output dir so every
+// tegg loader consumer (ModuleConfigUtil, EggAppLoader, LoaderFactory.loadApp
+// matching) sees the same absolute-path contract as a non-bundle run. The bundler
+// copies each module's package.json under __outputDir, so these resolve correctly.
+const __teggExt: any = (MANIFEST_DATA as any).extensions?.tegg;
+if (__teggExt) {
+  const __toAbs = (p: unknown) =>
+    typeof p === 'string' ? (path.isAbsolute(p) ? p : path.resolve(__outputDir, p)) : p;
+  if (Array.isArray(__teggExt.moduleReferences)) {
+    for (const __ref of __teggExt.moduleReferences) {
+      if (__ref) __ref.path = __toAbs(__ref.path);
+    }
+  }
+  if (Array.isArray(__teggExt.moduleDescriptors)) {
+    for (const __desc of __teggExt.moduleDescriptors) {
+      if (__desc) __desc.unitPath = __toAbs(__desc.unitPath);
+    }
+  }
+}
+
 const __bundleManifestStore = ManifestStore.fromBundle(MANIFEST_DATA as any, __outputDir);
 const __loaderFS = new ManifestLoaderFS(__bundleManifestStore);
 ManifestStore.setBundleStore(__bundleManifestStore);
