@@ -373,6 +373,17 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
     }
   }
 
+  // In bundle mode a module's source may not exist on disk (it is inlined into the
+  // bundle). After on-disk resolution has failed, if the registered bundle module
+  // loader recognizes the path, treat it as already resolved and return it as the
+  // canonical key, mirroring importModule. This must run before import.meta.resolve
+  // (which is unavailable in the bundled runtime).
+  const bundleModuleLoader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
+  if (bundleModuleLoader && bundleModuleLoader(normalizeBundleModulePath(filepath)) !== undefined) {
+    debug('[importResolve:bundle] %o => %o', filepath, filepath);
+    return filepath;
+  }
+
   const extname = path.extname(filepath);
   if ((!isAbsolute && extname === '.json') || !isESM) {
     moduleFilePath = getRequire().resolve(filepath, {
