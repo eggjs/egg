@@ -17,7 +17,7 @@ catalog:
   '@eggjs/redis': ^3.0.0
   '@eggjs/scripts': ^4.0.0
   '@fengmk2/ps-tree': ^2.0.1
-  '@oclif/core': ^4.2.0
+  '@oclif/core': 4.11.4
   '@oxc-node/core': ^0.0.35
   '@swc-node/register': ^1.11.1
   '@swc/core': ^1.15.1
