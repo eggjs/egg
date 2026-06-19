@@ -47,20 +47,18 @@ export class MockParallelApplication extends Base {
 
     // egg-mock plugin need to override egg context
     Object.assign(app.context, context);
-    setCustomLoader(app);
 
     debug('app instantiate');
     this.__APP_INIT__ = true;
     debug('this[APP_INIT] = true');
     this.#bindEvents();
     debug('http server instantiate');
-    createServer(app);
+    const server = createServer(app);
     await app.ready();
     // emit `server` after ready so egg core's onServer listener (registered in
     // Application.load()) is wired up; createServer no longer emits it.
-    if (app.server) {
-      app.emit('server', app.server);
-    }
+    app.emit('server', server);
+    setCustomLoader(app);
 
     const msg = {
       action: 'egg-ready',

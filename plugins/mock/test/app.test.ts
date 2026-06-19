@@ -3,6 +3,7 @@ import { strict as assert } from 'node:assert';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import mm, { type MockApplication } from '../src/index.ts';
+import { createApp as createParallelApp } from '../src/lib/parallel/app.ts';
 import { getFixtures } from './helper.ts';
 
 describe.sequential('test/app.test.ts', () => {
@@ -98,6 +99,33 @@ describe.sequential('test/app.test.ts', () => {
         app.server.listenerCount('clientError') > 0,
         'onServer should have attached a clientError listener after ready',
       );
+    } finally {
+      await app.close();
+    }
+  });
+
+  it('should emit server after ready in parallel app', async () => {
+    const baseDir = getFixtures('server');
+    let emittedServer: unknown;
+    let emittedAfterReady = false;
+    const app = createParallelApp({
+      baseDir,
+      framework: getFixtures('parallel-framework'),
+      cache: false,
+      clean: false,
+      beforeInit: async (parallelApp) => {
+        parallelApp.options.clusterPort = 1;
+      },
+    });
+    app.once('server', (server: unknown) => {
+      emittedServer = server;
+      emittedAfterReady = app.readyAt === true;
+    });
+    try {
+      await app.ready();
+      assert(app.server, 'app.server not exists');
+      assert.equal(emittedServer, app.server);
+      assert.equal(emittedAfterReady, true);
     } finally {
       await app.close();
     }

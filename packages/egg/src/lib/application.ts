@@ -148,40 +148,28 @@ export class Application extends EggApplicationCore {
   onServer(server: http.Server): void {
     // expose app.server
     this.server = server;
+    // set ignore code
+    const serverGracefulIgnoreCode = this.config.serverGracefulIgnoreCode || [];
 
-    // `graceful` installs a process-wide `uncaughtException` handler that takes
-    // over process shutdown (close servers, then `process.exit`). That is right
-    // for a real production worker, but harmful under unittest: when an app is
-    // booted via `@eggjs/mock` (e.g. egg-bin forks a child process per test),
-    // graceful's shutdown path keeps the forked child from exiting cleanly. On
-    // Windows — which has no real POSIX signals and slower named-pipe/socket
-    // handle teardown — the child then hangs until a kill timeout instead of
-    // exiting promptly, so every egg-bin test times out. Skip graceful in
-    // unittest; the clientError logging / serverTimeout below still apply.
-    if (this.config.env !== 'unittest') {
-      // set ignore code
-      const serverGracefulIgnoreCode = this.config.serverGracefulIgnoreCode || [];
-
-      graceful({
-        server: [server],
-        error: (err: Error, throwErrorCount: number) => {
-          const originMessage = err.message;
-          if (originMessage) {
-            // shouldjs will override error property but only getter
-            // https://github.com/shouldjs/should.js/blob/889e22ebf19a06bc2747d24cf34b25cc00b37464/lib/assertion-error.js#L26
-            Object.defineProperty(err, 'message', {
-              get() {
-                return `${originMessage} (uncaughtException throw ${throwErrorCount} times on pid: ${process.pid})`;
-              },
-              configurable: true,
-              enumerable: false,
-            });
-          }
-          this.coreLogger.error(err);
-        },
-        ignoreCode: serverGracefulIgnoreCode,
-      });
-    }
+    graceful({
+      server: [server],
+      error: (err: Error, throwErrorCount: number) => {
+        const originMessage = err.message;
+        if (originMessage) {
+          // shouldjs will override error property but only getter
+          // https://github.com/shouldjs/should.js/blob/889e22ebf19a06bc2747d24cf34b25cc00b37464/lib/assertion-error.js#L26
+          Object.defineProperty(err, 'message', {
+            get() {
+              return `${originMessage} (uncaughtException throw ${throwErrorCount} times on pid: ${process.pid})`;
+            },
+            configurable: true,
+            enumerable: false,
+          });
+        }
+        this.coreLogger.error(err);
+      },
+      ignoreCode: serverGracefulIgnoreCode,
+    });
 
     server.on('clientError', (err, socket) => this.onClientError(err, socket as Socket));
 
