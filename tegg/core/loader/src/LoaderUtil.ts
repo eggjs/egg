@@ -28,8 +28,24 @@ export class LoaderUtil {
 
   static supportExtensions(): string[] {
     const extensions = Object.keys((Module as any)._extensions);
-    if (process.env.VITEST === 'true' && !extensions.includes('.ts')) {
-      extensions.push('.ts');
+    // TypeScript loaders such as tsx and Node's native type stripping register
+    // via ESM loader hooks rather than `Module._extensions`, so `_extensions`
+    // may not list `.ts` even when TS files are loadable (e.g. during manifest
+    // generation under tsx). Mirror `@eggjs/utils.isSupportTypeScript()` so the
+    // glob pattern still discovers `.ts`/`.mts`/`.cts` source files in those
+    // environments.
+    const nodeMajorVersion = parseInt(process.versions.node.split('.', 1)[0], 10);
+    const supportTypeScript =
+      process.env.EGG_TS_ENABLE !== 'false' &&
+      (extensions.includes('.ts') ||
+        process.env.VITEST === 'true' ||
+        process.env.EGG_TS_ENABLE === 'true' ||
+        // Node.js >= 22 supports native TypeScript type stripping.
+        nodeMajorVersion >= 22);
+    if (supportTypeScript) {
+      for (const ext of ['.ts', '.mts', '.cts']) {
+        if (!extensions.includes(ext)) extensions.push(ext);
+      }
     }
     // Respect EGG_TS_ENABLE=false to disable TypeScript file loading
     // (e.g., production deployment with compiled .js files)
