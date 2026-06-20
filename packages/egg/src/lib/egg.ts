@@ -130,6 +130,7 @@ export class EggApplicationCore extends EggCore {
 
   #httpClient?: HttpClient;
   #loggers?: EggLoggers;
+  #startTimeoutTimer?: ReturnType<typeof setTimeout>;
   #clusterClients: any[] = [];
   #loadFinishedResolve!: () => void;
   #loadFinishedReject!: (err: unknown) => void;
@@ -272,6 +273,7 @@ export class EggApplicationCore extends EggCore {
     // descriptors (loggers) do not leak across files, then stop: there is
     // nothing left to load for a torn-down app.
     if (!registered) {
+      this.#clearStartTimeoutTimer();
       process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
       this.messenger.close();
       if (this.#loggers) {
@@ -658,8 +660,15 @@ export class EggApplicationCore extends EggCore {
     return [path.dirname(import.meta.dirname), ...super.customEggPaths()];
   }
 
+  #clearStartTimeoutTimer(): void {
+    if (this.#startTimeoutTimer) {
+      clearTimeout(this.#startTimeoutTimer);
+      this.#startTimeoutTimer = undefined;
+    }
+  }
+
   #setupTimeoutTimer(): void {
-    const startTimeoutTimer = setTimeout(() => {
+    this.#startTimeoutTimer = setTimeout(() => {
       this.coreLogger.error(this.timing.toString());
       this.coreLogger.error(`${this.type} still doesn't ready after ${this.config.workerStartTimeout} ms.`);
       // log unfinished
@@ -677,7 +686,7 @@ export class EggApplicationCore extends EggCore {
       this.dumpConfig();
       this.dumpTiming();
     }, this.config.workerStartTimeout);
-    this.ready(() => clearTimeout(startTimeoutTimer));
+    this.ready(() => this.#clearStartTimeoutTimer());
   }
 
   get config() {
