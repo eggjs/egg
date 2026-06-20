@@ -51,19 +51,42 @@ describe('PackRunner', () => {
     });
   }
 
-  it('writes the output tsconfig.json with decorator metadata flags set before invoking the build', async () => {
-    let tsconfigAtBuildTime: string | undefined;
+  it('writes the compiler tsconfig.json into the PROJECT dir (where @utoo/pack resolves it) with decorator metadata flags before invoking the build', async () => {
+    let projectTsconfig: string | undefined;
+    let outputHasTsconfig = true;
     const buildFunc: BuildFunc = async () => {
-      tsconfigAtBuildTime = await fs.readFile(path.join(tmpDir, 'out', 'tsconfig.json'), 'utf8');
+      // @utoo/pack reads tsconfig from the project dir, not the output dir.
+      projectTsconfig = await fs.readFile(path.join(tmpDir, 'tsconfig.json'), 'utf8');
+      outputHasTsconfig = await fs
+        .stat(path.join(tmpDir, 'out', 'tsconfig.json'))
+        .then(() => true)
+        .catch(() => false);
     };
 
     await makeRunner({ buildFunc }).run();
 
-    expect(tsconfigAtBuildTime).toBeDefined();
-    const parsed = JSON.parse(tsconfigAtBuildTime!);
+    expect(projectTsconfig).toBeDefined();
+    const parsed = JSON.parse(projectTsconfig!);
     expect(parsed.compilerOptions.experimentalDecorators).toBe(true);
     expect(parsed.compilerOptions.emitDecoratorMetadata).toBe(true);
     expect(parsed.compilerOptions.target).toBe('es2022');
+    // The output dir tsconfig is gone — it never governed compilation.
+    expect(outputHasTsconfig).toBe(false);
+  });
+
+  it('writes useDefineForClassFields:false into the project tsconfig so declared-but-uninitialized class fields are not emitted as shadowing own fields', async () => {
+    let projectTsconfig: string | undefined;
+    const buildFunc: BuildFunc = async () => {
+      projectTsconfig = await fs.readFile(path.join(tmpDir, 'tsconfig.json'), 'utf8');
+    };
+
+    await makeRunner({ buildFunc }).run();
+
+    const parsed = JSON.parse(projectTsconfig!);
+    // With target es2022, TS/SWC default this to true, which would emit own
+    // class fields that shadow ORM prototype accessors (leoric Bone models),
+    // silently dropping columns on INSERT. Must be explicitly disabled.
+    expect(parsed.compilerOptions.useDefineForClassFields).toBe(false);
   });
 
   it('writes package.json { "type": "commonjs" } into the output dir so @utoo/pack CJS output parses correctly', async () => {
@@ -165,18 +188,23 @@ describe('PackRunner', () => {
 
   it('defaults rootPath to projectPath when the caller omits rootPath', async () => {
     const buildFunc = vi.fn<BuildFunc>(async () => {});
-    await makeRunner({ buildFunc, projectPath: '/custom/project' }).run();
+    // PackRunner writes the compiler tsconfig into projectPath, so it must be a
+    // real, writable directory.
+    const customProject = path.join(tmpDir, 'custom-project');
+    await makeRunner({ buildFunc, projectPath: customProject }).run();
     const [, projectPath, rootPath] = buildFunc.mock.calls[0]!;
-    expect(projectPath).toBe('/custom/project');
-    expect(rootPath).toBe('/custom/project');
+    expect(projectPath).toBe(customProject);
+    expect(rootPath).toBe(customProject);
   });
 
   it('forwards a distinct rootPath when the caller provides it', async () => {
     const buildFunc = vi.fn<BuildFunc>(async () => {});
-    await makeRunner({ buildFunc, projectPath: '/proj', rootPath: '/monorepo/root' }).run();
+    const proj = path.join(tmpDir, 'proj');
+    const monorepoRoot = path.join(tmpDir, 'monorepo-root');
+    await makeRunner({ buildFunc, projectPath: proj, rootPath: monorepoRoot }).run();
     const [, projectPath, rootPath] = buildFunc.mock.calls[0]!;
-    expect(projectPath).toBe('/proj');
-    expect(rootPath).toBe('/monorepo/root');
+    expect(projectPath).toBe(proj);
+    expect(rootPath).toBe(monorepoRoot);
   });
 
   it('returns the outputDir and a sorted list of files that @utoo/pack produced', async () => {
@@ -191,8 +219,9 @@ describe('PackRunner', () => {
     const result = await makeRunner({ buildFunc }).run();
 
     expect(result.outputDir).toBe(outputDir);
-    // tsconfig.json + package.json are pre-written, then buildFunc adds worker/agent/nested/chunk
-    const expected = ['agent.js', path.join('nested', 'chunk.js'), 'package.json', 'tsconfig.json', 'worker.js'].sort();
+    // package.json is pre-written into the output dir (the compiler tsconfig now
+    // goes into the project dir, not the output), then buildFunc adds the chunks.
+    const expected = ['agent.js', path.join('nested', 'chunk.js'), 'package.json', 'worker.js'].sort();
     expect([...result.files]).toEqual(expected);
   });
 

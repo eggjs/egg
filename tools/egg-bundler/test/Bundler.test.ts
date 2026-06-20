@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({
   manifestLoaderOptions: [] as unknown[],
   manifestLoad: vi.fn(async () => undefined),
   externalsResolve: vi.fn(async () => ({})),
-  entryGenerate: vi.fn(async () => ({ workerEntry: '/tmp/worker.entry.ts' })),
+  entryGenerate: vi.fn(async () => ({ workerEntry: '/tmp/worker.entry.ts', entryDir: '/tmp' })),
 }));
 
 vi.mock('../src/lib/ManifestLoader.ts', () => ({
@@ -72,6 +72,13 @@ describe('Bundler', () => {
     tmpApp = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-unit-app-'));
     tmpOutput = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-unit-out-'));
     await fs.writeFile(path.join(tmpApp, 'package.json'), JSON.stringify({ name: 'unit-app' }));
+    // PackRunner writes the compiler tsconfig into the entry dir (= projectPath),
+    // so it must be a real, writable directory under the app temp dir.
+    const entryDir = path.join(tmpApp, '.egg-bundle', 'entries');
+    mocks.entryGenerate.mockResolvedValue({
+      workerEntry: path.join(entryDir, 'worker.entry.ts'),
+      entryDir,
+    });
   });
 
   afterEach(async () => {
