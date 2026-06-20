@@ -89,13 +89,17 @@ signature of this class of bug, not flaky tests per se.
    (here `plugins/session/.../session.test.ts:18`), failing an unrelated file.
    The error message "Can't find viewEngine" / "app has been closed" naming a
    foreign app/plugin is the tell that the rejection leaked from another file.
-   **Fix:** `registerBeforeClose()` now **skips (no-op + debug log) when already
-   closed** instead of throwing — a hook registered after close would never fire
-   anyway, so the assert was a flaky liability, not a useful invariant. `load()`
-   additionally short-circuits when `lifecycle.isClosed` is already true: it
-   removes the `unhandledRejection` listener it just added (so it does not leak
-   across files) and returns without loading a torn-down app. A new
-   `Lifecycle.isClosed` getter exposes the state for these guards.
+   **Fix:** `registerBeforeClose()` now **refuses (returns `false`, no throw)
+   when the app is closing or closed** instead of asserting — a hook registered
+   then would never fire anyway, so the assert was a flaky liability, not a
+   useful invariant. The guard covers close _in progress_ too (a `#isClosing`
+   flag set at the top of `close()`, before the close-callback snapshot is
+   taken), so a hook registered mid-close is not silently stranded. `load()`
+   checks the return value: when registration is refused it cleans up the
+   resources it already created — the `unhandledRejection` listener, the
+   messenger (IPC listeners) and any lazily-created loggers (file descriptors) —
+   so they do not leak across files, then returns without loading a torn-down
+   app. New `Lifecycle.isClosed` / `isClosing` getters expose the state.
 
 ## Not isolate bugs (do not chase as such)
 

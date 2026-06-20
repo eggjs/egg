@@ -243,18 +243,8 @@ export class EggApplicationCore extends EggCore {
     this._unhandledRejectionHandler = this._unhandledRejectionHandler.bind(this);
     process.on('unhandledRejection', this._unhandledRejectionHandler);
 
-    // Teardown may race ahead of this in-flight load (common on slow/Windows CI
-    // under vitest `isolate: false`). If `close()` already finished, the close
-    // hook below would never run: undo the process listener we just added so it
-    // does not leak across files, and stop — there is nothing left to load for a
-    // closed app.
-    if (this.lifecycle.isClosed) {
-      process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
-      return;
-    }
-
     // register close function
-    this.lifecycle.registerBeforeClose(async () => {
+    const registered = this.lifecycle.registerBeforeClose(async () => {
       // close all cluster clients
       for (const clusterClient of this.#clusterClients) {
         await closeClusterClient(clusterClient);
@@ -273,6 +263,24 @@ export class EggApplicationCore extends EggCore {
       this.messenger.close();
       process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
     });
+
+    // Teardown may race ahead of this in-flight load (common on slow/Windows CI
+    // under vitest `isolate: false`). When close() is already running/finished,
+    // registerBeforeClose() refuses the hook above (returns false) — it would
+    // never fire. Clean up the resources this load already created so their
+    // process-level listeners (unhandledRejection, messenger IPC) and file
+    // descriptors (loggers) do not leak across files, then stop: there is
+    // nothing left to load for a torn-down app.
+    if (!registered) {
+      process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
+      this.messenger.close();
+      if (this.#loggers) {
+        for (const logger of this.#loggers.values()) {
+          logger.close();
+        }
+      }
+      return;
+    }
 
     await this.loader.load();
   }

@@ -105,6 +105,7 @@ export class Lifecycle extends EventEmitter {
   #bootHooks: (BootImplClass | ILifecycleBoot)[];
   #boots: ILifecycleBoot[];
   #isClosed: boolean;
+  #isClosing: boolean;
   #metadataOnly: boolean;
   #snapshotBuilding: boolean;
   #closeFunctionSet: Set<FunWithFullPath>;
@@ -122,6 +123,7 @@ export class Lifecycle extends EventEmitter {
     this.#boots = [];
     this.#closeFunctionSet = new Set();
     this.#isClosed = false;
+    this.#isClosing = false;
     this.#metadataOnly = false;
     this.#snapshotBuilding = false;
     this.#init = false;
@@ -174,6 +176,16 @@ export class Lifecycle extends EventEmitter {
    */
   get isClosed(): boolean {
     return this.#isClosed;
+  }
+
+  /**
+   * Whether `close()` is currently running (started but not yet finished). A
+   * close hook registered during this window would be added after the close
+   * callback snapshot is taken and would never run, so `registerBeforeClose()`
+   * also refuses registration while closing.
+   */
+  get isClosing(): boolean {
+    return this.#isClosing;
   }
 
   get logger(): EggConsoleLogger {
@@ -251,27 +263,39 @@ export class Lifecycle extends EventEmitter {
     });
   }
 
-  registerBeforeClose(fn: FunWithFullPath, fullPath?: string): void {
+  /**
+   * Register a function to run during `close()`. Returns `false` when the
+   * registration is refused because the app/agent is already closing or closed
+   * (the hook would never run); `true` otherwise.
+   */
+  registerBeforeClose(fn: FunWithFullPath, fullPath?: string): boolean {
     assert(typeof fn === 'function', 'argument should be function');
-    // A close hook may be registered after the app/agent was already closed when
-    // teardown races an in-flight load — common under vitest `isolate: false` on
-    // slow/Windows CI, where lazy logger creation (`coreLogger` access during
-    // `dumpTiming` or the unhandledRejection handler) reaches here post-close.
-    // Throwing "app has been closed" turned a benign late call into an unhandled
-    // rejection that failed an unrelated test. The close already ran, so a new
-    // hook would never fire — skip it instead of crashing.
-    if (this.#isClosed) {
-      debug('%s skip registerBeforeClose at %o, app has been closed', this.app.type, fullPath);
-      return;
+    // A close hook may be registered after the app/agent has started closing
+    // when teardown races an in-flight load — common under vitest `isolate:
+    // false` on slow/Windows CI, where lazy logger creation (`coreLogger` access
+    // during `dumpTiming` or the unhandledRejection handler) reaches here while
+    // close is running or already done. Throwing "app has been closed" turned a
+    // benign late call into an unhandled rejection that failed an unrelated test.
+    // Once closing has begun the close-callback snapshot is fixed, so a new hook
+    // would never fire — refuse it (returning false) instead of crashing, and
+    // let the caller clean up its own resources.
+    if (this.#isClosing || this.#isClosed) {
+      debug('%s skip registerBeforeClose at %o, app is closing or has been closed', this.app.type, fullPath);
+      return false;
     }
     if (fullPath) {
       fn.fullPath = fullPath;
     }
     this.#closeFunctionSet.add(fn);
     debug('%s register beforeClose at %o, count: %d', this.app.type, fullPath, this.#closeFunctionSet.size);
+    return true;
   }
 
   async close(): Promise<void> {
+    // Mark closing before the close-callback snapshot is taken, so any hook
+    // registered while close() is in flight (e.g. an in-flight load racing
+    // teardown) is refused by registerBeforeClose() instead of being stranded.
+    this.#isClosing = true;
     if (this.#metadataOnly || this.#snapshotBuilding) {
       debug('%s skip beforeClose functions in early-exit lifecycle mode', this.app.type);
       this.#closeFunctionSet.clear();
