@@ -657,6 +657,29 @@ export class EggApplicationCore extends EggCore {
   }
 
   protected override customEggPaths(): string[] {
+    const bundleStore = ManifestStore.getBundleStore();
+    // Only rebase when the active bundle store belongs to *this* app. A global
+    // bundle store (shared via globalThis across @eggjs/core copies) may have
+    // been registered for a different app; mirror `ManifestStore.load()`'s
+    // `bundleStore.baseDir === baseDir` gate so an unrelated store never
+    // redirects this app's framework paths.
+    if (bundleStore && path.resolve(bundleStore.baseDir) === path.resolve(this.baseDir)) {
+      // In bundle mode `import.meta.dirname` is rewritten by the bundler to the
+      // bundle output directory, not the egg package directory, so it can no
+      // longer locate the framework `config/*` files. Rebase the framework dir
+      // under the output baseDir (`<output>/node_modules/egg/dist`) so the
+      // manifest-backed loader fs (keyed relative to the output baseDir)
+      // resolves the bundled framework config files.
+      const bundledFrameworkDir = path.join(bundleStore.baseDir, 'node_modules', 'egg', 'dist');
+      // Guard on existence: a real bundler output physically copies egg here, but
+      // a bundle-mode app booted without the copied framework (e.g. integration
+      // tests that only inject a manifest-backed loaderFS) does not. In that case
+      // fall back to `import.meta.dirname`, which — when not actually rewritten by
+      // a bundler — still points at the real egg package dir.
+      if (fs.existsSync(bundledFrameworkDir)) {
+        return [bundledFrameworkDir, ...super.customEggPaths()];
+      }
+    }
     return [path.dirname(import.meta.dirname), ...super.customEggPaths()];
   }
 
