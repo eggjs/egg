@@ -9,7 +9,9 @@ source_files:
   - plugins/mock/src/app/extend/application.ts
   - plugins/mock/src/lib/mock_agent.ts
   - plugins/multipart/test/file-mode.test.ts
-updated_at: 2026-06-08
+  - packages/core/src/lifecycle.ts
+  - packages/egg/src/lib/egg.ts
+updated_at: 2026-06-20
 status: active
 ---
 
@@ -71,6 +73,33 @@ signature of this class of bug, not flaky tests per se.
    (`__globalDispatcher`, `__mockAgent`) and `__globalDispatcher` is captured
    once and never cleared. Mitigated in practice by the global
    `afterEach(mock.restore)` in `setup_vitest.ts`; noted as a latent risk.
+
+4. **Teardown / in-flight-load race surfacing as a cross-file unhandled
+   rejection** (the Windows-flaky `@eggjs/session` failure). `mm.app()` loads an
+   app **and** an agent; `load()` runs as a `registerBeforeStart` hook on
+   `process.nextTick`, so it can still be in flight when `close()` runs (slow
+   Windows fs widens the window). `Lifecycle.close()` does **not** wait for the
+   in-flight load, so it flips `#isClosed = true` while `load()` is mid-flight.
+   The still-loading code then calls `Lifecycle.registerBeforeClose()` —
+   directly (`egg.ts` `load()`) or lazily via `coreLogger` →
+   `createLoggers()` reached from `dumpTiming` or `_unhandledRejectionHandler` —
+   which `assert(#isClosed === false)` turned into a thrown "app has been
+   closed". That throw became a **process-level unhandled rejection**, which
+   under `isolate:false` is attributed to whatever test is currently running
+   (here `plugins/session/.../session.test.ts:18`), failing an unrelated file.
+   The error message "Can't find viewEngine" / "app has been closed" naming a
+   foreign app/plugin is the tell that the rejection leaked from another file.
+   **Fix:** `registerBeforeClose()` now **refuses (returns `false`, no throw)
+   when the app is closing or closed** instead of asserting — a hook registered
+   then would never fire anyway, so the assert was a flaky liability, not a
+   useful invariant. The guard covers close _in progress_ too (a `#isClosing`
+   flag set at the top of `close()`, before the close-callback snapshot is
+   taken), so a hook registered mid-close is not silently stranded. `load()`
+   checks the return value: when registration is refused it cleans up the
+   resources it already created — the `unhandledRejection` listener, the
+   messenger (IPC listeners) and any lazily-created loggers (file descriptors) —
+   so they do not leak across files, then returns without loading a torn-down
+   app. New `Lifecycle.isClosed` / `isClosing` getters expose the state.
 
 ## Not isolate bugs (do not chase as such)
 

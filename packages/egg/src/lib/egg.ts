@@ -130,6 +130,7 @@ export class EggApplicationCore extends EggCore {
 
   #httpClient?: HttpClient;
   #loggers?: EggLoggers;
+  #startTimeoutTimer?: ReturnType<typeof setTimeout>;
   #clusterClients: any[] = [];
   #loadFinishedResolve!: () => void;
   #loadFinishedReject!: (err: unknown) => void;
@@ -244,7 +245,7 @@ export class EggApplicationCore extends EggCore {
     process.on('unhandledRejection', this._unhandledRejectionHandler);
 
     // register close function
-    this.lifecycle.registerBeforeClose(async () => {
+    const registered = this.lifecycle.registerBeforeClose(async () => {
       // close all cluster clients
       for (const clusterClient of this.#clusterClients) {
         await closeClusterClient(clusterClient);
@@ -263,6 +264,25 @@ export class EggApplicationCore extends EggCore {
       this.messenger.close();
       process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
     });
+
+    // Teardown may race ahead of this in-flight load (common on slow/Windows CI
+    // under vitest `isolate: false`). When close() is already running/finished,
+    // registerBeforeClose() refuses the hook above (returns false) — it would
+    // never fire. Clean up the resources this load already created so their
+    // process-level listeners (unhandledRejection, messenger IPC) and file
+    // descriptors (loggers) do not leak across files, then stop: there is
+    // nothing left to load for a torn-down app.
+    if (!registered) {
+      this.#clearStartTimeoutTimer();
+      process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
+      this.messenger.close();
+      if (this.#loggers) {
+        for (const logger of this.#loggers.values()) {
+          logger.close();
+        }
+      }
+      return;
+    }
 
     await this.loader.load();
   }
@@ -640,8 +660,15 @@ export class EggApplicationCore extends EggCore {
     return [path.dirname(import.meta.dirname), ...super.customEggPaths()];
   }
 
+  #clearStartTimeoutTimer(): void {
+    if (this.#startTimeoutTimer) {
+      clearTimeout(this.#startTimeoutTimer);
+      this.#startTimeoutTimer = undefined;
+    }
+  }
+
   #setupTimeoutTimer(): void {
-    const startTimeoutTimer = setTimeout(() => {
+    this.#startTimeoutTimer = setTimeout(() => {
       this.coreLogger.error(this.timing.toString());
       this.coreLogger.error(`${this.type} still doesn't ready after ${this.config.workerStartTimeout} ms.`);
       // log unfinished
@@ -659,7 +686,7 @@ export class EggApplicationCore extends EggCore {
       this.dumpConfig();
       this.dumpTiming();
     }, this.config.workerStartTimeout);
-    this.ready(() => clearTimeout(startTimeoutTimer));
+    this.ready(() => this.#clearStartTimeoutTimer());
   }
 
   get config() {
