@@ -40,6 +40,10 @@ export default class App implements ILifecycleBoot {
 
     let moduleReferences: readonly ModuleReference[];
     if (manifestTegg?.moduleReferences?.length) {
+      // Keep manifest reference paths as-is (relative to baseDir) so they match
+      // the manifest `moduleDescriptors[].unitPath` keys used by
+      // `LoaderFactory.loadApp`. Path resolution to an absolute directory is done
+      // in `#loadModuleConfigs` below.
       moduleReferences = manifestTegg.moduleReferences;
       debug('load moduleReferences from manifest: %o', moduleReferences);
     } else {
@@ -68,8 +72,14 @@ export default class App implements ILifecycleBoot {
   #loadModuleConfigs(): void {
     this.app.moduleConfigs = {};
     for (const reference of this.app.moduleReferences) {
+      // Module reference paths from the manifest / ModuleScanner are absolute or
+      // relative to baseDir. `ModuleConfigUtil.resolveModuleDir` resolves a
+      // relative path against `baseDir/config` (the `config/module.json`
+      // convention), which is wrong here, so resolve against baseDir directly. In
+      // bundle mode baseDir is the output dir where the bundler copied each
+      // module's package.json.
       const absoluteRef: ModuleReference = {
-        path: ModuleConfigUtil.resolveModuleDir(reference.path, this.app.baseDir),
+        path: path.isAbsolute(reference.path) ? reference.path : path.resolve(this.app.baseDir, reference.path),
         name: reference.name,
         optional: reference.optional,
       };
