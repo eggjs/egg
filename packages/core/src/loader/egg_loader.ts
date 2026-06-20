@@ -780,7 +780,7 @@ export class EggLoader {
 
   // Get the real plugin path
   protected getPluginPath(plugin: EggPluginInfo): string {
-    if (plugin.path) {
+    if (plugin.path && !this.#isBundlePluginPathArtifact(plugin.path)) {
       return plugin.path;
     }
 
@@ -790,7 +790,75 @@ export class EggLoader {
         `plugin ${plugin.name} invalid, use 'path' instead of package: "${plugin.package}"`,
       );
     }
+
+    // In bundle mode, a plugin declared via `definePluginFactory({ path: import.meta.dirname })`
+    // had its `path` rewritten by the bundler to the bundle output dir (= baseDir). The original
+    // value was the directory of the plugin package's entry module (e.g. `<pkg>/dist`), not the
+    // package root, so re-resolve to the entry module's directory rather than the package.json dir.
+    if (plugin.path && this.#isBundlePluginPathArtifact(plugin.path)) {
+      return this.#resolveBundlePluginPath(plugin);
+    }
+
     return this.#resolvePluginPath(plugin);
+  }
+
+  /**
+   * In bundle mode a plugin declared via `definePluginFactory({ path: import.meta.dirname })`
+   * carries a `path` rewritten by the bundler to the bundle output directory (= baseDir),
+   * which does not contain the plugin's own files. Detect that case so the plugin is
+   * re-resolved by package name instead.
+   */
+  #isBundlePluginPathArtifact(pluginPath: string): boolean {
+    const bundleStore = ManifestStore.getBundleStore();
+    // Only treat a path as a bundle artifact when the active bundle store belongs
+    // to this app. The store is shared via globalThis across @eggjs/core copies,
+    // so one registered for a different app must not reinterpret this app's plugin
+    // paths — mirror `ManifestStore.load()`'s `bundleStore.baseDir === baseDir` gate.
+    if (!bundleStore || path.resolve(bundleStore.baseDir) !== path.resolve(this.options.baseDir)) {
+      return false;
+    }
+    return path.resolve(pluginPath) === path.resolve(this.options.baseDir);
+  }
+
+  /**
+   * Re-resolve a bundle-artifact plugin path to the directory of the plugin package's entry
+   * module — the same directory `definePluginFactory` captured via `import.meta.dirname` at
+   * build time. Built-in framework plugins only carry a `name` (no `package`), so fall back to
+   * the conventional `@eggjs/<name>` package name in addition to the bare name.
+   */
+  #resolveBundlePluginPath(plugin: EggPluginInfo): string {
+    const candidates = plugin.package
+      ? [plugin.package]
+      : plugin.name.includes('/')
+        ? [plugin.name]
+        : [plugin.name, `@eggjs/${plugin.name}`];
+    let lastErr: unknown;
+    for (const name of candidates) {
+      try {
+        // Resolve the package entry module (not package.json) so the returned directory matches
+        // the plugin package's runtime entry directory (e.g. `<pkg>/dist`).
+        const entry = utils.resolvePath(name, { paths: [...this.lookupDirs] });
+        const realDir = path.dirname(entry);
+        // Rebase under the bundle output baseDir so the manifest-backed loader fs
+        // (keyed relative to baseDir) resolves the bundled plugin config/extend/app
+        // files, mirroring how the framework eggPaths are rebased. Match the last
+        // `node_modules` by path segment (not a substring) so directories like
+        // `my_node_modules` are not mistaken for the package root marker.
+        const segments = realDir.split(/[/\\]/);
+        const nmIdx = segments.lastIndexOf('node_modules');
+        if (nmIdx !== -1) {
+          return path.join(this.options.baseDir, ...segments.slice(nmIdx));
+        }
+        return realDir;
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+    const name = plugin.package || plugin.name;
+    debug('[resolveBundlePluginPath] error: %o, plugin info: %o', lastErr, plugin);
+    throw new Error(`Can not find plugin ${name} in "${[...this.lookupDirs].join(', ')}"`, {
+      cause: lastErr,
+    });
   }
 
   #resolvePluginPath(plugin: EggPluginInfo): string {
