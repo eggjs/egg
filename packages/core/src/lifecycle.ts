@@ -168,6 +168,14 @@ export class Lifecycle extends EventEmitter {
     return this.options.app;
   }
 
+  /**
+   * Whether `close()` has finished. Useful to guard lazy work (logger creation,
+   * close-hook registration) that may run after the app/agent was torn down.
+   */
+  get isClosed(): boolean {
+    return this.#isClosed;
+  }
+
   get logger(): EggConsoleLogger {
     return this.options.logger;
   }
@@ -245,7 +253,17 @@ export class Lifecycle extends EventEmitter {
 
   registerBeforeClose(fn: FunWithFullPath, fullPath?: string): void {
     assert(typeof fn === 'function', 'argument should be function');
-    assert(this.#isClosed === false, 'app has been closed');
+    // A close hook may be registered after the app/agent was already closed when
+    // teardown races an in-flight load — common under vitest `isolate: false` on
+    // slow/Windows CI, where lazy logger creation (`coreLogger` access during
+    // `dumpTiming` or the unhandledRejection handler) reaches here post-close.
+    // Throwing "app has been closed" turned a benign late call into an unhandled
+    // rejection that failed an unrelated test. The close already ran, so a new
+    // hook would never fire — skip it instead of crashing.
+    if (this.#isClosed) {
+      debug('%s skip registerBeforeClose at %o, app has been closed', this.app.type, fullPath);
+      return;
+    }
     if (fullPath) {
       fn.fullPath = fullPath;
     }

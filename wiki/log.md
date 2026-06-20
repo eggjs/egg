@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-06-20] concept | fix Windows-flaky session test (teardown close/load race)
+
+- sources touched: `packages/core/src/lifecycle.ts`, `packages/egg/src/lib/egg.ts`, `packages/core/test/lifecycle.test.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/concepts/vitest-isolate-false-state-leaks.md`
+- note: Windows CI flakily failed `@eggjs/session` `session.test.ts` with "app has been closed" / "Can't find viewEngine". Root cause: a still-loading `mm.app()` app/agent (load runs on `process.nextTick` as a `registerBeforeStart` hook) calls `Lifecycle.registerBeforeClose()` after `close()` already set `#isClosed`, directly in `egg.ts` `load()` or lazily via `coreLogger`→`createLoggers()` from `dumpTiming` / `_unhandledRejectionHandler`. The `assert(#isClosed === false)` threw, becoming a process unhandled rejection that `isolate:false` attributes to whatever file is running. Fix: `registerBeforeClose()` now skips (no-op + debug) when already closed instead of throwing; `load()` short-circuits when `lifecycle.isClosed` (removes the just-added unhandledRejection listener, returns); added `Lifecycle.isClosed` getter + regression test. Continuation of the isolate:false work (root cause #4 on the concept page).
+
 ## [2026-06-08] concept | vitest isolate:false state leaks diagnosed and fixed
 
 - sources touched: `packages/utils/src/import.ts`, `packages/utils/test/snapshot-import.test.ts`, `plugins/mock/src/app/extend/application.ts`

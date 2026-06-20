@@ -243,6 +243,16 @@ export class EggApplicationCore extends EggCore {
     this._unhandledRejectionHandler = this._unhandledRejectionHandler.bind(this);
     process.on('unhandledRejection', this._unhandledRejectionHandler);
 
+    // Teardown may race ahead of this in-flight load (common on slow/Windows CI
+    // under vitest `isolate: false`). If `close()` already finished, the close
+    // hook below would never run: undo the process listener we just added so it
+    // does not leak across files, and stop — there is nothing left to load for a
+    // closed app.
+    if (this.lifecycle.isClosed) {
+      process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
+      return;
+    }
+
     // register close function
     this.lifecycle.registerBeforeClose(async () => {
       // close all cluster clients
