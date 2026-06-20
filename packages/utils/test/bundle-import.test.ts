@@ -164,7 +164,7 @@ describe('test/bundle-import.test.ts', () => {
     });
 
     const resolved = importResolve(getFilepath('esm'));
-    assert.ok(resolved.endsWith('/fixtures/esm/index.js'));
+    assert.match(resolved, /[\\/]fixtures[\\/]esm[\\/]index\.js$/);
     assert.equal(called, false);
   });
 
