@@ -102,6 +102,9 @@ class MockApplicationWorker extends Base {
     debug('http server instantiate');
     createServer(app);
     await app.ready();
+    // VERIFY-REVERT: mock change fully reverted to `next` behaviour (no
+    // post-ready `server` emit / clientError wiring) to confirm Windows
+    // `Test bin` is green (~11s cluster-client) without it.
     // work for config ready
     setCustomLoader(app);
 
