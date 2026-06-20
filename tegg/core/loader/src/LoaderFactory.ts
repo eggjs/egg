@@ -1,4 +1,5 @@
 import { PrototypeUtil } from '@eggjs/core-decorator';
+import type { LoaderFS } from '@eggjs/loader-fs';
 import type { ModuleDescriptor } from '@eggjs/metadata';
 import {
   EggLoadUnitType,
@@ -8,7 +9,7 @@ import {
   type ModuleReference,
 } from '@eggjs/tegg-types';
 
-export type LoaderCreator = (unitPath: string) => Loader;
+export type LoaderCreator = (unitPath: string, loaderFS?: LoaderFS) => Loader;
 
 export interface ManifestModuleReference {
   name: string;
@@ -40,12 +41,12 @@ export interface LoadAppManifest {
 export class LoaderFactory {
   private static loaderCreatorMap: Map<EggLoadUnitTypeLike, LoaderCreator> = new Map();
 
-  static createLoader(unitPath: string, type: EggLoadUnitTypeLike): Loader {
+  static createLoader(unitPath: string, type: EggLoadUnitTypeLike, loaderFS?: LoaderFS): Loader {
     const creator = this.loaderCreatorMap.get(type);
     if (!creator) {
       throw new Error(`not find creator for loader type ${type}`);
     }
-    return creator(unitPath);
+    return creator(unitPath, loaderFS);
   }
 
   static registerLoader(type: EggLoadUnitTypeLike, creator: LoaderCreator): void {
@@ -55,6 +56,7 @@ export class LoaderFactory {
   static async loadApp(
     moduleReferences: readonly ModuleReference[],
     manifest?: LoadAppManifest,
+    loaderFS?: LoaderFS,
   ): Promise<ModuleDescriptor[]> {
     const result: ModuleDescriptor[] = [];
     const multiInstanceClazzList: EggProtoImplClass[] = [];
@@ -79,9 +81,12 @@ export class LoaderFactory {
 
       let loader: Loader;
       if (manifestDesc && ModuleLoaderClass && loaderType === EggLoadUnitType.MODULE) {
-        loader = new ModuleLoaderClass(moduleReference.path, manifestDesc.decoratedFiles);
+        loader = new ModuleLoaderClass(moduleReference.path, {
+          precomputedFiles: manifestDesc.decoratedFiles,
+          loaderFS,
+        });
       } else {
-        loader = LoaderFactory.createLoader(moduleReference.path, loaderType);
+        loader = LoaderFactory.createLoader(moduleReference.path, loaderType, loaderFS);
       }
 
       const res: ModuleDescriptor = {

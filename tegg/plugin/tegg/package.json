@@ -101,6 +101,7 @@
     "sdk-base": "catalog:"
   },
   "devDependencies": {
+    "@eggjs/core": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",

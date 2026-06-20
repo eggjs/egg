@@ -40,7 +40,10 @@ export class EggModuleLoader {
     const manifestTegg = manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined;
     const loadAppManifest = manifestTegg?.moduleDescriptors?.length ? manifestTegg : undefined;
 
-    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest);
+    // Reuse egg-core's loader fs so discovery goes through the shared VFS:
+    // RealLoaderFS in normal mode (zero behavior change), ManifestLoaderFS in bundle mode.
+    const loaderFS = this.app.loader.loaderFS;
+    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest, loaderFS);
 
     // Collect manifest data when not loaded from manifest
     if (!loadAppManifest) {
@@ -94,9 +97,10 @@ export class EggModuleLoader {
     this.globalGraph.build();
     this.globalGraph.sort();
     const moduleConfigList = this.globalGraph.moduleConfigList;
+    const loaderFS = this.app.loader.loaderFS;
     for (const moduleConfig of moduleConfigList) {
       const modulePath = moduleConfig.path;
-      const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
+      const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, loaderFS);
       const loadUnit = await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
       this.app.moduleHandler.loadUnits.push(loadUnit);
     }
