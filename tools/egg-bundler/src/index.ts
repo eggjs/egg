@@ -54,8 +54,6 @@ export interface BundlerConfig {
   readonly pack?: BundlerPackConfig;
   /** Runtime asset copy tuning. */
   readonly runtimeAssets?: BundlerRuntimeAssetsConfig;
-  /** Enable tegg decoratedFile collection. Defaults to `true`. */
-  readonly tegg?: boolean;
 }
 
 export interface BundleResult {

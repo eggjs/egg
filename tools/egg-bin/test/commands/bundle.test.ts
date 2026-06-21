@@ -33,7 +33,6 @@ describe('test/commands/bundle.test.ts', () => {
       manifestPath: undefined,
       framework: 'aliyun-egg',
       mode: 'production',
-      tegg: true,
       externals: {
         force: [],
         inline: [],
@@ -51,7 +50,6 @@ describe('test/commands/bundle.test.ts', () => {
       '.egg/custom-manifest.json',
       '--mode',
       'development',
-      '--no-tegg',
       '--force-external',
       '@scope/foo',
       '--force-external',
@@ -67,7 +65,6 @@ describe('test/commands/bundle.test.ts', () => {
       manifestPath: path.join(baseDir, '.egg/custom-manifest.json'),
       framework: 'aliyun-egg',
       mode: 'development',
-      tegg: false,
       externals: {
         force: ['@scope/foo', 'bar'],
         inline: ['baz'],
@@ -92,7 +89,6 @@ describe('test/commands/bundle.test.ts', () => {
       manifestPath: undefined,
       framework: 'aliyun-egg',
       mode: 'production',
-      tegg: true,
       externals: {
         force: [],
         inline: [],
@@ -118,7 +114,6 @@ describe('test/commands/bundle.test.ts', () => {
       manifestPath: undefined,
       framework: '@my-org/framework',
       mode: 'production',
-      tegg: true,
       externals: {
         force: [],
         inline: [],
