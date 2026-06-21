@@ -1,23 +1,31 @@
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
+import { RealLoaderFS, type LoaderFS } from '@eggjs/loader-fs';
 import type { EggProtoImplClass, Loader } from '@eggjs/tegg-types';
-import globby from 'globby';
 
 import { LoaderFactory } from '../LoaderFactory.ts';
 import { LoaderUtil } from '../LoaderUtil.ts';
 
 const debug = debuglog('egg/tegg/loader/impl/ModuleLoader');
 
+export interface ModuleLoaderOptions {
+  /** Pre-computed file list from manifest (only decorated files) */
+  precomputedFiles?: string[];
+  /** File system abstraction used for discovery; manifest-backed in bundle mode */
+  loaderFS?: LoaderFS;
+}
+
 export class ModuleLoader implements Loader {
   private readonly moduleDir: string;
   private protoClazzList: EggProtoImplClass[];
-  /** Pre-computed file list from manifest (only decorated files) */
   private readonly precomputedFiles?: string[];
+  private readonly loaderFS: LoaderFS;
 
-  constructor(moduleDir: string, precomputedFiles?: string[]) {
+  constructor(moduleDir: string, options: ModuleLoaderOptions = {}) {
     this.moduleDir = moduleDir;
-    this.precomputedFiles = precomputedFiles;
+    this.precomputedFiles = options.precomputedFiles;
+    this.loaderFS = options.loaderFS ?? new RealLoaderFS();
   }
 
   async load(): Promise<EggProtoImplClass[]> {
@@ -33,7 +41,7 @@ export class ModuleLoader implements Loader {
       debug('load from manifest, files: %o, moduleDir: %o', files, this.moduleDir);
     } else {
       const filePattern = LoaderUtil.filePattern();
-      files = await globby(filePattern, { cwd: this.moduleDir });
+      files = this.loaderFS.glob(filePattern, { cwd: this.moduleDir });
       debug('load files: %o, filePattern: %o, moduleDir: %o', files, filePattern, this.moduleDir);
     }
     for (const file of files) {
@@ -47,8 +55,8 @@ export class ModuleLoader implements Loader {
     return this.protoClazzList;
   }
 
-  static createModuleLoader(path: string): ModuleLoader {
-    return new ModuleLoader(path);
+  static createModuleLoader(path: string, loaderFS?: LoaderFS): ModuleLoader {
+    return new ModuleLoader(path, { loaderFS });
   }
 }
 

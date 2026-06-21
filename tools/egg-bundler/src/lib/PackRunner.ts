@@ -30,19 +30,46 @@ export interface PackRunnerResult {
   readonly files: readonly string[];
 }
 
-// SWC decorator compilation picks up tsconfig from the OUTPUT dir, not the
-// project. Without this, tegg decorator metadata silently drops. (T0 blocker.)
-const OUTPUT_TSCONFIG = {
+// @utoo/pack (Turbopack) resolves the tsconfig that governs compilation from the
+// PROJECT directory (the `projectPath` passed to `build()`), NOT the output dir and
+// NOT via per-file find-up to the nearest tsconfig. Verified against @utoo/pack
+// 1.4.13/1.4.14: a tsconfig in the output dir is ignored, and a tsconfig nearer the
+// source than projectPath is ignored — only `projectPath/tsconfig.json` wins.
+//
+// So PackRunner writes this tsconfig into `projectPath`. The Bundler points
+// `projectPath` at the generated entry dir (a build-managed `.egg-bundle/entries`
+// directory) with `rootPath` at the app baseDir, so this config governs the whole
+// build without touching the application's own tsconfig.
+//
+// `experimentalDecorators` / `emitDecoratorMetadata`: required so tegg decorator
+// metadata is emitted (design:type).
+//
+// `useDefineForClassFields: false` matches how Egg apps compile (target <= ES2021):
+// declared-but-uninitialized TypeScript class fields (e.g. `createdAt: Date;` on a
+// leoric `Bone` model) must NOT become native own class fields. At `target: es2022`
+// TS/SWC default this to `true`, emitting own `undefined` properties that shadow the
+// getter/setter accessors ORMs like leoric install on the prototype for decorated
+// attributes — silently breaking attribute writes (observed as omitted columns such
+// as `gmt_create` on INSERT). With this tsconfig in the resolved location the bare
+// field declarations are erased, so no output post-processing is needed.
+const COMPILER_TSCONFIG = {
   compilerOptions: {
     experimentalDecorators: true,
     emitDecoratorMetadata: true,
     target: 'es2022',
+    useDefineForClassFields: false,
   },
 };
 
 // @utoo/pack emits CJS files; a nested `type: commonjs` package.json
 // prevents the parent ESM package from forcing these into ESM parse mode.
 const OUTPUT_PACKAGE_JSON = { type: 'commonjs' };
+
+// A directory egg-bundler owns and may freely write the compiler tsconfig into
+// (the generated entry dir lives under `.egg-bundle`).
+function isBuildManaged(dir: string): boolean {
+  return dir.split(path.sep).includes('.egg-bundle');
+}
 
 const require = createRequire(import.meta.url);
 
@@ -75,8 +102,28 @@ export class PackRunner {
     } = this.#options;
 
     await fs.mkdir(outputDir, { recursive: true });
-    await fs.writeFile(path.join(outputDir, 'tsconfig.json'), JSON.stringify(OUTPUT_TSCONFIG, null, 2));
     await fs.writeFile(path.join(outputDir, 'package.json'), JSON.stringify(OUTPUT_PACKAGE_JSON, null, 2));
+
+    // Write the compiler tsconfig into the PROJECT dir, where @utoo/pack resolves
+    // it (see COMPILER_TSCONFIG). projectPath must be a build-managed directory
+    // (the Bundler passes the generated `.egg-bundle/entries` dir). Guard against
+    // an API misuse that points projectPath at a real project: never silently
+    // overwrite a tsconfig.json egg-bundler did not create.
+    const projectTsconfigPath = path.join(projectPath, 'tsconfig.json');
+    const desiredTsconfig = JSON.stringify(COMPILER_TSCONFIG, null, 2);
+    if (!isBuildManaged(projectPath)) {
+      const existing = await fs.readFile(projectTsconfigPath, 'utf8').catch(() => undefined);
+      // Overwrite only what we produced ourselves (idempotent re-runs); never
+      // clobber a different, user-authored tsconfig.
+      if (existing !== undefined && existing !== desiredTsconfig) {
+        throw new Error(
+          `PackRunner: refusing to overwrite an existing tsconfig.json at ${projectPath}. ` +
+            'projectPath must be a build-managed directory (e.g. the generated .egg-bundle/entries dir).',
+        );
+      }
+    }
+    await fs.mkdir(projectPath, { recursive: true });
+    await fs.writeFile(projectTsconfigPath, desiredTsconfig);
 
     // UMD-form externals ({ commonjs, root }) make @utoo/pack's standalone
     // output emit a `require(name)` branch under `typeof exports === 'object'`,

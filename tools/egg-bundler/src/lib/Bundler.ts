@@ -365,8 +365,16 @@ export class Bundler {
       entries: [{ name: 'worker', filepath: entries.workerEntry }],
       outputDir: absOutputDir,
       externals: externalsMap,
-      projectPath: absBaseDir,
-      rootPath: mergedPack?.rootPath,
+      // Use the generated entry dir as the project root so PackRunner's
+      // compiler tsconfig (useDefineForClassFields:false, decorator metadata)
+      // is the one @utoo/pack resolves — Turbopack reads tsconfig from the
+      // project dir, not the output dir or the app's own tsconfig. rootPath
+      // stays at the app baseDir (or a caller-supplied monorepo root) so the
+      // app sources and node_modules above the entry dir still resolve.
+      projectPath: entries.entryDir,
+      // Resolve a caller-supplied rootPath against absBaseDir so a relative value
+      // does not depend on cwd; default to the app baseDir.
+      rootPath: mergedPack?.rootPath ? path.resolve(absBaseDir, mergedPack.rootPath) : absBaseDir,
       mode,
       buildFunc: mergedPack?.buildFunc,
       resolve: mergedPack?.resolve,

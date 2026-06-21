@@ -184,6 +184,53 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('"path": "app/port"');
   });
 
+  it('emits a runtime block that resolves relative tegg manifest paths to absolute output-dir paths', async () => {
+    // Mirror a bundle artifact whose tegg module paths are stored relative to
+    // baseDir (as normalized by ManifestLoader). The generated worker must
+    // re-absolutize both moduleReferences[].path and moduleDescriptors[].unitPath
+    // against __outputDir so LoaderFactory.loadApp matches them by exact equality
+    // and the precomputed controller/repository decorated files flow into it.
+    const manifest = makeManifest({
+      extensions: {
+        tegg: {
+          moduleReferences: [
+            {
+              name: 'appBiz',
+              path: 'app/biz',
+            },
+          ],
+          moduleDescriptors: [
+            {
+              name: 'appBiz',
+              unitPath: 'app/biz',
+              decoratedFiles: ['controller/HomeController.ts', 'repository/UserRepository.ts'],
+            },
+          ],
+        },
+      },
+    });
+
+    const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
+    const result = await gen.generate();
+    const worker = await fs.readFile(result.workerEntry, 'utf8');
+
+    // Controller + repository decorated files are collected as imports.
+    expect(extractImports(worker).map((i) => i.specifier)).toEqual([
+      '../../app/biz/controller/HomeController.ts',
+      '../../app/biz/repository/UserRepository.ts',
+    ]);
+
+    // Manifest keeps the matching relative keys so both sides resolve equally.
+    expect(worker).toContain('"path": "app/biz"');
+    expect(worker).toContain('"unitPath": "app/biz"');
+
+    // The absolutization block is emitted with the isAbsolute/resolve contract
+    // that maps both moduleReferences and moduleDescriptors onto __outputDir.
+    expect(worker).toContain('path.isAbsolute(p) ? p : path.resolve(__outputDir, p)');
+    expect(worker).toContain('if (__ref) __ref.path = __toAbs(__ref.path);');
+    expect(worker).toContain('if (__desc) __desc.unitPath = __toAbs(__desc.unitPath);');
+  });
+
   it('skips resolveCache entries whose value is null', async () => {
     const manifest = makeManifest({
       resolveCache: {

@@ -76,10 +76,6 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
       options: [...bundleModes],
       default: 'production',
     }),
-    'no-tegg': Flags.boolean({
-      description: 'disable tegg decoratedFile collection',
-      default: false,
-    }),
     'force-external': Flags.string({
       description: 'package name to always mark as external (repeatable)',
       multiple: true,
@@ -107,14 +103,7 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
         : path.join(baseDir, flags.manifest)
       : undefined;
 
-    debug(
-      'bundle: baseDir=%s, outputDir=%s, framework=%s, mode=%s, tegg=%s',
-      baseDir,
-      outputDir,
-      flags.framework,
-      flags.mode,
-      !flags['no-tegg'],
-    );
+    debug('bundle: baseDir=%s, outputDir=%s, framework=%s, mode=%s', baseDir, outputDir, flags.framework, flags.mode);
 
     const { bundle } = await import('@eggjs/egg-bundler');
     const packAlias = parsePackAliases(flags['pack-alias'], baseDir);
@@ -124,7 +113,6 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
       manifestPath,
       framework: await getBundleFrameworkSpecifier(baseDir, flags.framework),
       mode: getBundleMode(flags.mode),
-      tegg: !flags['no-tegg'],
       externals: {
         force: flags['force-external'],
         inline: flags['inline-external'],

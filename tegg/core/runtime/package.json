@@ -48,6 +48,7 @@
     "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
+    "@eggjs/loader-fs": "workspace:*",
     "@eggjs/module-test-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@types/node": "catalog:",

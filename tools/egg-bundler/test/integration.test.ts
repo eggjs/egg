@@ -97,13 +97,13 @@ describe('bundle() integration — minimal-app (Phase 1: mocked @utoo/pack)', ()
     expect(result.outputDir).toBe(tmpOutput);
     expect(result.manifestPath).toBe(path.join(tmpOutput, 'bundle-manifest.json'));
     // files must include all mock chunks + PackRunner pre-writes + bundle-manifest
+    // (the compiler tsconfig now goes into the project dir, not the output dir)
     expect(result.files).toEqual(
       expect.arrayContaining([
         path.join(tmpOutput, 'worker.js'),
         path.join(tmpOutput, 'worker.js.map'),
         path.join(tmpOutput, '_turbopack__runtime.js'),
         path.join(tmpOutput, '_root-of-the-server___abc123.js'),
-        path.join(tmpOutput, 'tsconfig.json'),
         path.join(tmpOutput, 'package.json'),
         path.join(tmpOutput, 'bundle-manifest.json'),
       ]),
@@ -112,11 +112,14 @@ describe('bundle() integration — minimal-app (Phase 1: mocked @utoo/pack)', ()
     expect([...result.files]).toEqual(sortStrings(result.files));
   });
 
-  it('PackRunner pre-writes tsconfig.json (with decorator flags) and package.json (type: commonjs) BEFORE the build step runs', async () => {
+  it('pre-writes the compiler tsconfig.json into the project (entry) dir and package.json into the output dir BEFORE the build step runs', async () => {
+    // @utoo/pack resolves tsconfig from the project dir (the generated entry dir),
+    // not the output dir, so PackRunner writes it there.
+    const entryTsconfigPath = path.join(tmpApp, '.egg-bundle', 'entries', 'tsconfig.json');
     let tsconfigAtBuildTime: string | undefined;
     let pkgAtBuildTime: string | undefined;
     const buildFunc: BuildFunc = async () => {
-      tsconfigAtBuildTime = await fs.readFile(path.join(tmpOutput, 'tsconfig.json'), 'utf8');
+      tsconfigAtBuildTime = await fs.readFile(entryTsconfigPath, 'utf8');
       pkgAtBuildTime = await fs.readFile(path.join(tmpOutput, 'package.json'), 'utf8');
       await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// mock\n');
     };
@@ -132,9 +135,28 @@ describe('bundle() integration — minimal-app (Phase 1: mocked @utoo/pack)', ()
     expect(tsconfig.compilerOptions.experimentalDecorators).toBe(true);
     expect(tsconfig.compilerOptions.emitDecoratorMetadata).toBe(true);
     expect(tsconfig.compilerOptions.target).toBe('es2022');
+    expect(tsconfig.compilerOptions.useDefineForClassFields).toBe(false);
 
     expect(pkgAtBuildTime).toBeDefined();
     expect(JSON.parse(pkgAtBuildTime!)).toEqual({ type: 'commonjs' });
+  });
+
+  it('builds with projectPath = the generated entry dir (not the app baseDir) so the compiler tsconfig governs without touching the app tsconfig', async () => {
+    let projectPathAtBuild: string | undefined;
+    let rootPathAtBuild: string | undefined;
+    const buildFunc: BuildFunc = async (_wrapped, projectPath, rootPath) => {
+      projectPathAtBuild = projectPath;
+      rootPathAtBuild = rootPath;
+      await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// mock\n');
+    };
+
+    await bundle({ baseDir: tmpApp, outputDir: tmpOutput, pack: { buildFunc } });
+
+    // projectPath must be the build-managed entry dir (where PackRunner wrote the
+    // useDefineForClassFields:false tsconfig), NOT the app baseDir — otherwise the
+    // app's own tsconfig would govern (bug) or be overwritten (pollution).
+    expect(projectPathAtBuild).toBe(path.join(tmpApp, '.egg-bundle', 'entries'));
+    expect(rootPathAtBuild).toBe(tmpApp);
   });
 
   it('leaves output package.json as the pack runtime package instead of patching app metadata into it', async () => {
@@ -170,7 +192,6 @@ describe('bundle() integration — minimal-app (Phase 1: mocked @utoo/pack)', ()
     // chunks should be sorted and contain worker.js
     expect([...bm.chunks]).toEqual(sortStrings(bm.chunks));
     expect(bm.chunks).toContain('worker.js');
-    expect(bm.chunks).toContain('tsconfig.json');
     expect(bm.chunks).toContain('package.json');
   });
 
