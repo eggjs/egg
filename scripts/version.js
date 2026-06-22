@@ -135,9 +135,13 @@ try {
 
 ${updatedVersions.map((pkg) => `- ${pkg.name}@${pkg.newVersion}`).join('\n')}`;
 
-  // Commit changes
+  // Commit changes.
+  // Use --no-verify to skip git hooks: this commit only bumps version numbers in
+  // package.json files, which has nothing to lint. Running the husky pre-commit
+  // hook (lint-staged -> `oxlint --type-aware`) on a package.json-only changeset
+  // makes oxlint exit non-zero ("0 files" but failed), which aborts the release.
   console.log('\n💾 Creating version commit...');
-  execSync(`git commit -m "${commitMessage}"`, { stdio: 'inherit' });
+  execSync(`git commit --no-verify -m "${commitMessage}"`, { stdio: 'inherit' });
 
   // Create tag using the main egg version
   const tagName = `v${eggVersion}`;
