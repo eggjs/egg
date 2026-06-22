@@ -81,7 +81,7 @@
   "lint-staged": {
     "*": [
       "oxfmt --no-error-on-unmatched-pattern",
-      "oxlint --type-aware --fix"
+      "oxlint --type-aware --fix --no-error-on-unmatched-pattern"
     ]
   },
   "engines": {
