@@ -3,6 +3,7 @@ import { strict as assert } from 'node:assert';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import mm, { type MockApplication } from '../src/index.ts';
+import { createApp as createParallelApp } from '../src/lib/parallel/app.ts';
 import { getFixtures } from './helper.ts';
 
 describe.sequential('test/app.test.ts', () => {
@@ -77,6 +78,58 @@ describe.sequential('test/app.test.ts', () => {
     assert(app.emitServer, 'app.emitServer not exists');
     assert(app.server, 'app.server not exists');
     await app.close();
+  });
+
+  it('should run onServer after ready (server event not lost)', async () => {
+    // @eggjs/mock emits the `server` event before `app.ready()`, while egg core
+    // registers its `once("server", ...)` listener inside Application.load()
+    // (during app.ready()). egg core re-emits `server` after the listener is
+    // registered so onServer still runs and wires up the `clientError` handler
+    // (plus graceful shutdown / server timeout / websocket). Regression guard:
+    // assert the clientError listener is wired after ready.
+    const baseDir = getFixtures('server');
+    const app = mm.app({
+      baseDir,
+      cache: false,
+    });
+    try {
+      await app.ready();
+      assert(app.server, 'app.server not exists');
+      assert(
+        app.server.listenerCount('clientError') > 0,
+        'onServer should have attached a clientError listener after ready',
+      );
+    } finally {
+      await app.close();
+    }
+  });
+
+  it('should emit server after ready in parallel app', async () => {
+    // cover the parallel app worker's post-ready `server` emit (lib/parallel/app.ts)
+    const baseDir = getFixtures('server');
+    let emittedServer: unknown;
+    let emittedAfterReady = false;
+    const app = createParallelApp({
+      baseDir,
+      framework: getFixtures('parallel-framework'),
+      cache: false,
+      clean: false,
+      beforeInit: async (parallelApp) => {
+        parallelApp.options.clusterPort = 1;
+      },
+    });
+    app.once('server', (server: unknown) => {
+      emittedServer = server;
+      emittedAfterReady = (app as any).readyAt === true;
+    });
+    try {
+      await app.ready();
+      assert(app.server, 'app.server not exists');
+      assert.equal(emittedServer, app.server);
+      assert.equal(emittedAfterReady, true);
+    } finally {
+      await app.close();
+    }
   });
 
   it('support options.beforeInit', async () => {
