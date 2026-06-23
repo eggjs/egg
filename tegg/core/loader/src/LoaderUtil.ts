@@ -99,7 +99,9 @@ export class LoaderUtil {
     // same instance the test file imports. See `ModuleImporter` in @eggjs/typings.
     if (exports == null && typeof globalThis.__EGG_MODULE_IMPORTER__ === 'function') {
       try {
-        exports = await globalThis.__EGG_MODULE_IMPORTER__(originalFilePath);
+        // Pass a POSIX-normalized path, mirroring __EGG_BUNDLE_MODULE_LOADER__,
+        // so importers behave consistently across platforms (e.g. on Windows).
+        exports = await globalThis.__EGG_MODULE_IMPORTER__(originalFilePath.split('\\').join('/'));
       } catch (e: unknown) {
         throw createLoadError(originalFilePath, e);
       }
