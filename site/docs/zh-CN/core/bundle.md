@@ -13,13 +13,13 @@ $ egg-bin bundle
 
 默认产物输出到 `./dist-bundle`。常用参数：
 
-| 参数                | 说明                                                       |
-| ------------------- | ---------------------------------------------------------- |
-| `--output <dir>`    | 输出目录，默认 `./dist-bundle`。                           |
-| `--mode <mode>`     | `production`（默认）或 `development`。                     |
-| `--framework <pkg>` | 框架包名，默认 `egg`（或读取 `pkg.egg.framework`）。      |
-| `--force-external`  | 始终保持为 external 的包名（可重复）。                     |
-| `--inline-external` | 即使被自动识别为 external 也强制内联的包名。              |
+| 参数                | 说明                                                 |
+| ------------------- | ---------------------------------------------------- |
+| `--output <dir>`    | 输出目录，默认 `./dist-bundle`。                     |
+| `--mode <mode>`     | `production`（默认）或 `development`。               |
+| `--framework <pkg>` | 框架包名，默认 `egg`（或读取 `pkg.egg.framework`）。 |
+| `--force-external`  | 始终保持为 external 的包名（可重复）。               |
+| `--inline-external` | 即使被自动识别为 external 也强制内联的包名。         |
 
 大多数应用无需任何 `--force-external`：打包器会自动识别必须保持 external 的包（原生
 addon、可选平台包、带原生绑定的包、无法解析的可选 peer 依赖），并内联其余所有内容，
