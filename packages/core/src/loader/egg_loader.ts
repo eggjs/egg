@@ -863,7 +863,17 @@ export class EggLoader {
         const segments = realDir.split(/[/\\]/);
         const nmIdx = segments.lastIndexOf('node_modules');
         if (nmIdx !== -1) {
-          return path.join(this.options.baseDir, ...segments.slice(nmIdx));
+          const rebased = path.join(this.options.baseDir, ...segments.slice(nmIdx));
+          // In a real bundle the externals are installed under the output baseDir's
+          // `node_modules`, so the rebased dir exists and holds the files the manifest
+          // keyed. When a bundle store is registered over a source checkout — e.g. an
+          // integration test that consumes a normally-collected manifest, or a dev
+          // bundle whose externals still resolve from the workspace — that rebased dir
+          // may not exist; fall back to the real resolved dir so the plugin's
+          // config/extend/app files still load.
+          if (fs.existsSync(rebased)) {
+            return rebased;
+          }
         }
         return realDir;
       } catch (err) {
