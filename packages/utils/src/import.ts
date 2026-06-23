@@ -68,7 +68,9 @@ const nodeMajorVersion = parseInt(process.versions.node.split('.', 1)[0], 10);
 // calling it throws. Detecting the actual capability lets us fall back to
 // `require.resolve` in the bundled CommonJS runtime.
 const supportImportMetaResolve =
-  nodeMajorVersion >= 18 && typeof (import.meta as { resolve?: unknown }).resolve === 'function';
+  nodeMajorVersion >= 18 &&
+  typeof import.meta !== 'undefined' &&
+  typeof (import.meta as { resolve?: unknown }).resolve === 'function';
 
 let _customRequire: NodeRequire;
 export function getRequire(): NodeRequire {

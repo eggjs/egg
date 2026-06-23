@@ -684,7 +684,8 @@ export class EggApplicationCore extends EggCore {
       // Integration tests that inject a manifest-backed loaderFS while running from
       // source keep a non-rewritten `import.meta.dirname` (the real egg dir), so they
       // fall through to the import.meta.dirname branch below unchanged.
-      const importMetaRewritten = path.resolve(import.meta.dirname) === path.resolve(bundleStore.baseDir);
+      const importMetaRewritten =
+        !!import.meta.dirname && path.resolve(import.meta.dirname) === path.resolve(bundleStore.baseDir);
       if (fs.existsSync(bundledFrameworkDir) || importMetaRewritten) {
         return [bundledFrameworkDir, ...super.customEggPaths()];
       }
