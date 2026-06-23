@@ -1,4 +1,5 @@
 import { MCPControllerRegister } from '@eggjs/controller-plugin/lib/impl/mcp/MCPControllerRegister';
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 
 import { MCPProxyHook } from './index.ts';
@@ -11,7 +12,10 @@ export default class AppHook {
   }
 
   configWillLoad(): void {
-    MCPControllerRegister.addHook(MCPProxyHook);
+    // hooks is per-app (scope-backed); register into this app's scope.
+    TeggScope.run(this.agent._teggScopeBag, () => {
+      MCPControllerRegister.addHook(MCPProxyHook);
+    });
   }
 
   async didLoad(): Promise<void> {

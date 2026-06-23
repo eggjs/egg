@@ -10,6 +10,7 @@ import type {
   NpmModuleReferenceConfig,
   ReadModuleReferenceOptions,
 } from '@eggjs/tegg-types';
+import { TeggScope } from '@eggjs/tegg-types';
 import { importResolve } from '@eggjs/utils';
 import { extend } from 'extend2';
 import globby from 'globby';
@@ -33,8 +34,20 @@ const DEFAULT_READ_MODULE_REF_OPTS = {
   deep: 10,
 };
 
+const CONFIG_NAMES_SLOT = Symbol('tegg:common-util:moduleConfigNames');
+
 export class ModuleConfigUtil {
-  static configNames: string[] | undefined;
+  // Per-app/per-Runner: each standalone Runner (and app) has distinct config
+  // names (env-based); a process-global static races across them (the standalone
+  // "should work with env" ordering bug). Backed by TeggScope; with no active
+  // scope it uses the single process-default bag (single-app / config-plugin boot).
+  static get configNames(): string[] | undefined {
+    return TeggScope.getOr(CONFIG_NAMES_SLOT, () => undefined, 'ModuleConfigUtil.configNames');
+  }
+
+  static set configNames(configNames: string[] | undefined) {
+    TeggScope.set(CONFIG_NAMES_SLOT, configNames);
+  }
 
   public static setConfigNames(configNames: string[] | undefined): void {
     ModuleConfigUtil.configNames = configNames;

@@ -1,3 +1,4 @@
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { EventbusLoadUnitHook } from './lib/EventbusLoadUnitHook.ts';
@@ -18,17 +19,25 @@ export default class EventbusAppHook implements ILifecycleBoot {
   }
 
   configDidLoad(): void {
-    this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eventbusProtoHook);
-    this.app.loadUnitLifecycleUtil.registerLifecycle(this.eventbusLoadUnitHook);
+    TeggScope.run(this.app._teggScopeBag, () => {
+      this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eventbusProtoHook);
+      this.app.loadUnitLifecycleUtil.registerLifecycle(this.eventbusLoadUnitHook);
+    });
   }
 
   async didLoad(): Promise<void> {
     await this.app.moduleHandler.ready();
-    await this.eventHandlerProtoManager.register();
+    // register() resolves the per-app EventHandler/EventContext singletons and
+    // installs the per-app context creator — must run in this app's scope.
+    await TeggScope.run(this.app._teggScopeBag, async () => {
+      await this.eventHandlerProtoManager.register();
+    });
   }
 
   async beforeClose(): Promise<void> {
-    this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.eventbusProtoHook);
-    this.app.loadUnitLifecycleUtil.deleteLifecycle(this.eventbusLoadUnitHook);
+    await TeggScope.run(this.app._teggScopeBag, async () => {
+      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.eventbusProtoHook);
+      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.eventbusLoadUnitHook);
+    });
   }
 }

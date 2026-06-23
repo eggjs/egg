@@ -10,6 +10,7 @@ import {
   ObjectInitType,
   type ProtoDescriptor,
   type QualifierInfo,
+  TeggScope,
 } from '@eggjs/tegg-types';
 
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors.ts';
@@ -19,6 +20,8 @@ import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder.ts';
 import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.ts';
 
 const debug = debuglog('tegg/core/metadata/model/graph/GlobalGraph');
+
+const GLOBAL_GRAPH_SLOT = Symbol('tegg:metadata:globalGraph');
 
 export interface GlobalGraphOptions {
   // TODO next major version refactor to force strict
@@ -67,9 +70,22 @@ export class GlobalGraph {
   private buildHooks: GlobalGraphBuildHook[];
 
   /**
-   * The global instance used in ModuleLoadUnit
+   * The per-app graph instance used in ModuleLoadUnit, backed by TeggScope.
+   * In a scope, the active app's bag is the source of truth (undefined until the
+   * loader assigns it during boot); with no scope, falls back to a module-level
+   * legacy var (single-app / metadata-only paths). Call sites stay unchanged.
    */
-  static instance?: GlobalGraph;
+  static #legacyInstance?: GlobalGraph;
+
+  static get instance(): GlobalGraph | undefined {
+    return TeggScope.getOr<GlobalGraph>(GLOBAL_GRAPH_SLOT, () => GlobalGraph.#legacyInstance, 'GlobalGraph.instance');
+  }
+
+  static set instance(value: GlobalGraph | undefined) {
+    if (!TeggScope.set(GLOBAL_GRAPH_SLOT, value)) {
+      GlobalGraph.#legacyInstance = value;
+    }
+  }
 
   constructor(options?: GlobalGraphOptions) {
     this.moduleGraph = new Graph<GlobalModuleNode, ModuleDependencyMeta>();

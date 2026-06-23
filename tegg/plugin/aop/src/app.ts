@@ -9,6 +9,7 @@ import {
   pointCutGraphHook,
 } from '@eggjs/aop-runtime';
 import { GlobalGraph } from '@eggjs/metadata';
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { AopContextHook } from './lib/AopContextHook.ts';
@@ -30,24 +31,30 @@ export default class AopAppHook implements ILifecycleBoot {
   }
 
   configDidLoad(): void {
-    this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eggPrototypeCrossCutHook);
-    this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitAopHook);
-    this.app.eggObjectLifecycleUtil.registerLifecycle(this.eggObjectAopHook);
+    TeggScope.run(this.app._teggScopeBag, () => {
+      this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eggPrototypeCrossCutHook);
+      this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitAopHook);
+      this.app.eggObjectLifecycleUtil.registerLifecycle(this.eggObjectAopHook);
+    });
   }
 
   async didLoad(): Promise<void> {
     await this.app.moduleHandler.ready();
-    assert(GlobalGraph.instance, 'GlobalGraph.instance is not set');
-    GlobalGraph.instance.registerBuildHook(crossCutGraphHook);
-    GlobalGraph.instance.registerBuildHook(pointCutGraphHook);
-    this.aopContextHook = new AopContextHook(this.app.moduleHandler);
-    this.app.eggContextLifecycleUtil.registerLifecycle(this.aopContextHook);
+    await TeggScope.run(this.app._teggScopeBag, async () => {
+      assert(GlobalGraph.instance, 'GlobalGraph.instance is not set');
+      GlobalGraph.instance.registerBuildHook(crossCutGraphHook);
+      GlobalGraph.instance.registerBuildHook(pointCutGraphHook);
+      this.aopContextHook = new AopContextHook(this.app.moduleHandler);
+      this.app.eggContextLifecycleUtil.registerLifecycle(this.aopContextHook);
+    });
   }
 
   async beforeClose(): Promise<void> {
-    this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.eggPrototypeCrossCutHook);
-    this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitAopHook);
-    this.app.eggObjectLifecycleUtil.deleteLifecycle(this.eggObjectAopHook);
-    this.app.eggContextLifecycleUtil.deleteLifecycle(this.aopContextHook);
+    await TeggScope.run(this.app._teggScopeBag, async () => {
+      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.eggPrototypeCrossCutHook);
+      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitAopHook);
+      this.app.eggObjectLifecycleUtil.deleteLifecycle(this.eggObjectAopHook);
+      this.app.eggContextLifecycleUtil.deleteLifecycle(this.aopContextHook);
+    });
   }
 }

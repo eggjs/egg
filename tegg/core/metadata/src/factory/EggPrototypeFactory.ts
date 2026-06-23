@@ -1,17 +1,43 @@
 import { FrameworkErrorFormatter } from '@eggjs/errors';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import { AccessLevel } from '@eggjs/tegg-types';
-import type { EggPrototypeName, EggPrototype, LoadUnit, QualifierInfo } from '@eggjs/tegg-types';
+import { AccessLevel, TeggScope } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, EggPrototypeName, EggPrototype, LoadUnit, QualifierInfo } from '@eggjs/tegg-types';
 
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors.ts';
 
+const EGG_PROTOTYPE_FACTORY_SLOT = Symbol('tegg:metadata:eggPrototypeFactory');
+
 export class EggPrototypeFactory {
-  public static instance: EggPrototypeFactory = new EggPrototypeFactory();
+  /**
+   * Per-app prototype registry, resolved from the active TeggScope bag (lazily
+   * created on first access), or the process-default bag in single-app mode.
+   * Call sites stay unchanged — `EggPrototypeFactory.instance` now returns the
+   * current app's registry instead of one process-global singleton.
+   */
+  public static get instance(): EggPrototypeFactory {
+    return TeggScope.resolve(
+      EGG_PROTOTYPE_FACTORY_SLOT,
+      () => new EggPrototypeFactory(),
+      'EggPrototypeFactory.instance',
+    );
+  }
 
   // Map<EggObjectInitTypeLike, Map<protoName, EggPrototype>>
   private publicProtoMap: Map<EggPrototypeName, EggPrototype[]> = new Map();
 
+  /**
+   * Per-app class → prototype map. The global `PrototypeUtil.getClazzProto()`
+   * stores ONE proto per class on the class itself, so under CONCURRENT multi-app
+   * boot two apps overwrite each other (last writer wins). This per-app map lets
+   * `getEggObject(clazz)` resolve the CURRENT app's proto regardless.
+   */
+  private clazzProtoMap: WeakMap<EggProtoImplClass, EggPrototype> = new WeakMap();
+
   public registerPrototype(proto: EggPrototype, loadUnit: LoadUnit): void {
+    const clazz = (proto as unknown as { clazz?: EggProtoImplClass }).clazz;
+    if (clazz) {
+      this.clazzProtoMap.set(clazz, proto);
+    }
     if (proto.accessLevel === AccessLevel.PUBLIC) {
       const protoList = MapUtil.getOrStore(this.publicProtoMap, proto.name, []);
       protoList.push(proto);
@@ -20,6 +46,10 @@ export class EggPrototypeFactory {
   }
 
   public deletePrototype(proto: EggPrototype, loadUnit: LoadUnit): void {
+    const clazz = (proto as unknown as { clazz?: EggProtoImplClass }).clazz;
+    if (clazz) {
+      this.clazzProtoMap.delete(clazz);
+    }
     if (proto.accessLevel === AccessLevel.PUBLIC) {
       const protos = this.publicProtoMap.get(proto.name);
       if (protos) {
@@ -31,6 +61,14 @@ export class EggPrototypeFactory {
     }
 
     loadUnit.deletePrototype(proto);
+  }
+
+  /**
+   * Resolve a prototype by its class from THIS app's registry. Preferred over
+   * the global `PrototypeUtil.getClazzProto()` in multi-app scenarios.
+   */
+  public getPrototypeByClazz(clazz: EggProtoImplClass): EggPrototype | undefined {
+    return this.clazzProtoMap.get(clazz);
   }
 
   public getPrototype(name: PropertyKey, loadUnit?: LoadUnit, qualifiers?: QualifierInfo[]): EggPrototype {

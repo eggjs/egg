@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/controller-decorator';
 import { GlobalGraph, type LoadUnitLifecycleContext } from '@eggjs/metadata';
 import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
-import { AGENT_CONTROLLER_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
+import { AGENT_CONTROLLER_PROTO_IMPL_TYPE, TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { AgentControllerObject } from './lib/AgentControllerObject.ts';
@@ -48,6 +48,14 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   configWillLoad(): void {
+    // Controller boot registers lifecycle hooks and a per-app-capturing load-unit
+    // creator, all of which must land in this app's TeggScope.
+    TeggScope.run(this.app._teggScopeBag, () => {
+      this.doConfigWillLoad();
+    });
+  }
+
+  private doConfigWillLoad(): void {
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitHook);
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.controllerPrototypeHook);
     this.app.eggObjectFactory.registerEggObjectCreateMethod(AgentControllerProto, AgentControllerObject.createObject);
@@ -140,31 +148,40 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
 
   async didLoad(): Promise<void> {
     await this.app.moduleHandler.ready();
-    this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
-    await this.controllerLoadUnitHandler.ready();
+    // ControllerLoadUnitHandler extends sdk-base (its ctor kicks off async _init
+    // that touches the per-app factories), and the HTTP/MCP registers below are
+    // per-app — run the whole flow inside this app's scope.
+    await TeggScope.run(this.app._teggScopeBag, async () => {
+      this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
+      await this.controllerLoadUnitHandler.ready();
 
-    // The real register HTTP controller/method.
-    // HTTP method should sort by priority
-    // The HTTPControllerRegister will collect all the methods
-    // and register methods after collect is done.
-    HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
+      // The real register HTTP controller/method.
+      // HTTP method should sort by priority
+      // The HTTPControllerRegister will collect all the methods
+      // and register methods after collect is done.
+      HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
 
-    this.app.config.mcp.hooks = MCPControllerRegister.hooks;
+      this.app.config.mcp.hooks = MCPControllerRegister.hooks;
+    });
   }
 
   configDidLoad(): void {
-    GlobalGraph.instance?.registerBuildHook(middlewareGraphHook);
+    TeggScope.run(this.app._teggScopeBag, () => {
+      GlobalGraph.instance?.registerBuildHook(middlewareGraphHook);
+    });
   }
 
   async willReady(): Promise<void> {
     if (this.mcpEnable()) {
-      await MCPControllerRegister.connectStatelessStreamTransport();
-      const names = MCPControllerRegister.instance?.mcpConfig.getMultipleServerNames();
-      if (names && names.length > 0) {
-        for (const name of names) {
-          await MCPControllerRegister.connectStatelessStreamTransport(name);
+      await TeggScope.run(this.app._teggScopeBag, async () => {
+        await MCPControllerRegister.connectStatelessStreamTransport();
+        const names = MCPControllerRegister.instance?.mcpConfig.getMultipleServerNames();
+        if (names && names.length > 0) {
+          for (const name of names) {
+            await MCPControllerRegister.connectStatelessStreamTransport(name);
+          }
         }
-      }
+      });
     }
   }
 
@@ -173,13 +190,15 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   async beforeClose(): Promise<void> {
-    if (this.controllerLoadUnitHandler) {
-      await this.controllerLoadUnitHandler.destroy();
-    }
-    this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitHook);
-    this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
-    ControllerMetadataManager.instance.clear();
-    HTTPControllerRegister.clean();
-    MCPControllerRegister.clean();
+    await TeggScope.run(this.app._teggScopeBag, async () => {
+      if (this.controllerLoadUnitHandler) {
+        await this.controllerLoadUnitHandler.destroy();
+      }
+      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitHook);
+      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
+      ControllerMetadataManager.instance.clear();
+      HTTPControllerRegister.clean();
+      MCPControllerRegister.clean();
+    });
   }
 }

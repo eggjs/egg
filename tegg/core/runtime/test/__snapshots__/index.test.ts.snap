@@ -8,13 +8,13 @@ exports[`should export stable 1`] = `
   "ContextObjectGraph": [Function],
   "EggAlwaysNewObjectContainer": [Function],
   "EggContainerFactory": [Function],
-  "EggContextLifecycleUtil": LifecycleUtil {
+  "EggContextLifecycleUtil": bound LifecycleUtil {
     "lifecycleSet": Set {},
     "objLifecycleSet": Map {},
   },
   "EggObjectFactory": [Function],
   "EggObjectImpl": [Function],
-  "EggObjectLifecycleUtil": LifecycleUtil {
+  "EggObjectLifecycleUtil": bound LifecycleUtil {
     "lifecycleSet": Set {},
     "objLifecycleSet": Map {},
   },
@@ -27,7 +27,7 @@ exports[`should export stable 1`] = `
   },
   "EggObjectUtil": [Function],
   "LoadUnitInstanceFactory": [Function],
-  "LoadUnitInstanceLifecycleUtil": LifecycleUtil {
+  "LoadUnitInstanceLifecycleUtil": bound LifecycleUtil {
     "lifecycleSet": Set {},
     "objLifecycleSet": Map {},
   },

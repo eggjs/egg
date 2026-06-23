@@ -16,7 +16,7 @@ exports[`should export stable 1`] = `
   "EggPrototypeCreatorFactory": [Function],
   "EggPrototypeFactory": [Function],
   "EggPrototypeImpl": [Function],
-  "EggPrototypeLifecycleUtil": LifecycleUtil {
+  "EggPrototypeLifecycleUtil": bound LifecycleUtil {
     "lifecycleSet": Set {},
     "objLifecycleSet": Map {},
   },
@@ -31,7 +31,7 @@ exports[`should export stable 1`] = `
   "GlobalModuleNodeBuilder": [Function],
   "IncompatibleProtoInject": [Function],
   "LoadUnitFactory": [Function],
-  "LoadUnitLifecycleUtil": LifecycleUtil {
+  "LoadUnitLifecycleUtil": bound LifecycleUtil {
     "lifecycleSet": Set {},
     "objLifecycleSet": Map {},
   },

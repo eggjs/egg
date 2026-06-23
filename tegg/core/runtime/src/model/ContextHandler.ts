@@ -1,20 +1,53 @@
 import assert from 'node:assert';
 
+import { TeggScope } from '@eggjs/tegg-types';
 import type { EggRuntimeContext } from '@eggjs/tegg-types';
 
 type runInContextCallback<R = any> = (context: EggRuntimeContext, fn: () => Promise<R>) => Promise<R>;
 
+interface ContextCallbacks {
+  getContextCallback?: () => EggRuntimeContext | undefined;
+  runInContextCallback?: runInContextCallback;
+}
+
+const CONTEXT_CALLBACK_SLOT = Symbol('tegg:runtime:contextCallback');
+
+/**
+ * The per-app request-context callbacks (read + run bridges). Each app installs
+ * its own (capturing its ctxStorage / currentContext) into its TeggScope bag, so
+ * concurrent apps no longer clobber a single process-global pair. With no active
+ * scope it resolves to the single process-default bag (single-app / tests).
+ */
+function callbacks(): ContextCallbacks {
+  return TeggScope.resolve(CONTEXT_CALLBACK_SLOT, () => ({}) as ContextCallbacks, 'ContextHandler.callbacks');
+}
+
 export class ContextHandler {
-  static getContextCallback: () => EggRuntimeContext | undefined;
-  static runInContextCallback: runInContextCallback;
+  static get getContextCallback(): (() => EggRuntimeContext | undefined) | undefined {
+    return callbacks().getContextCallback;
+  }
+
+  static set getContextCallback(cb: () => EggRuntimeContext | undefined) {
+    callbacks().getContextCallback = cb;
+  }
+
+  static get runInContextCallback(): runInContextCallback | undefined {
+    return callbacks().runInContextCallback;
+  }
+
+  static set runInContextCallback(cb: runInContextCallback) {
+    callbacks().runInContextCallback = cb;
+  }
 
   static getContext(): EggRuntimeContext | undefined {
-    assert(this.getContextCallback, 'getContextCallback not set');
-    return this.getContextCallback ? this.getContextCallback() : undefined;
+    const cb = callbacks().getContextCallback;
+    assert(cb, 'getContextCallback not set');
+    return cb ? cb() : undefined;
   }
 
   static run<R = any>(context: EggRuntimeContext, fn: () => Promise<R>): Promise<R> {
-    assert(this.runInContextCallback, 'runInContextCallback not set');
-    return this.runInContextCallback(context, fn);
+    const cb = callbacks().runInContextCallback;
+    assert(cb, 'runInContextCallback not set');
+    return cb(context, fn);
   }
 }

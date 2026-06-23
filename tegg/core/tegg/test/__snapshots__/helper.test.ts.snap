@@ -13,7 +13,7 @@ exports[`should helper exports stable 1`] = `
   "ContextObjectGraph": [Function],
   "EggAlwaysNewObjectContainer": [Function],
   "EggContainerFactory": [Function],
-  "EggContextLifecycleUtil": LifecycleUtil {
+  "EggContextLifecycleUtil": bound LifecycleUtil {
     "lifecycleSet": Set {},
     "objLifecycleSet": Map {},
   },
@@ -24,7 +24,7 @@ exports[`should helper exports stable 1`] = `
   },
   "EggObjectFactory": [Function],
   "EggObjectImpl": [Function],
-  "EggObjectLifecycleUtil": LifecycleUtil {
+  "EggObjectLifecycleUtil": bound LifecycleUtil {
     "lifecycleSet": Set {},
     "objLifecycleSet": Map {},
   },
@@ -40,7 +40,7 @@ exports[`should helper exports stable 1`] = `
   "EggPrototypeCreatorFactory": [Function],
   "EggPrototypeFactory": [Function],
   "EggPrototypeImpl": [Function],
-  "EggPrototypeLifecycleUtil": LifecycleUtil {
+  "EggPrototypeLifecycleUtil": bound LifecycleUtil {
     "lifecycleSet": Set {},
     "objLifecycleSet": Map {},
   },
@@ -60,11 +60,11 @@ exports[`should helper exports stable 1`] = `
   "IncompatibleProtoInject": [Function],
   "LoadUnitFactory": [Function],
   "LoadUnitInstanceFactory": [Function],
-  "LoadUnitInstanceLifecycleUtil": LifecycleUtil {
+  "LoadUnitInstanceLifecycleUtil": bound LifecycleUtil {
     "lifecycleSet": Set {},
     "objLifecycleSet": Map {},
   },
-  "LoadUnitLifecycleUtil": LifecycleUtil {
+  "LoadUnitLifecycleUtil": bound LifecycleUtil {
     "lifecycleSet": Set {},
     "objLifecycleSet": Map {},
   },

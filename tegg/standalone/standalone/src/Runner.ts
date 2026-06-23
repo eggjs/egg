@@ -45,6 +45,8 @@ import {
   LoadUnitInstanceFactory,
   ModuleLoadUnitInstance,
 } from '@eggjs/tegg-runtime';
+import { TeggScope } from '@eggjs/tegg-types';
+import type { TeggScopeBag } from '@eggjs/tegg-types';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
 import { StandaloneUtil, type MainRunner } from '@eggjs/tegg/standalone';
 
@@ -95,13 +97,25 @@ export class Runner {
   loadUnitInstances: LoadUnitInstance[] = [];
   innerObjects: Record<string, InnerObject[]>;
 
+  // This Runner's own per-app TeggScope bag — all factories/managers/graph/config
+  // names resolve here, so multiple Runners in one process stay isolated.
+  readonly scopeBag: TeggScopeBag;
+
   constructor(cwd: string, options?: RunnerOptions) {
     this.cwd = cwd;
     this.env = options?.env;
     this.name = options?.name;
     this.options = options;
+    this.scopeBag = TeggScope.createBag();
+    TeggScope.registerScope();
     this.moduleReferences = Runner.getModuleReferences(this.cwd, options?.dependencies);
     this.moduleConfigs = {};
+    TeggScope.run(this.scopeBag, () => {
+      this.initInnerObjectsAndConfigs(options);
+    });
+  }
+
+  private initInnerObjectsAndConfigs(options?: RunnerOptions): void {
     this.innerObjects = {
       moduleConfigs: [
         {
@@ -170,25 +184,27 @@ export class Runner {
   }
 
   async load(): Promise<LoadUnit[]> {
-    StandaloneContextHandler.register();
-    LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
-      return new StandaloneLoadUnit(this.innerObjects);
-    });
-    LoadUnitInstanceFactory.registerLoadUnitInstanceClass(
-      StandaloneLoadUnitType,
-      ModuleLoadUnitInstance.createModuleLoadUnitInstance,
-    );
-    const standaloneLoadUnit = await LoadUnitFactory.createLoadUnit(
-      'MockStandaloneLoadUnitPath',
-      StandaloneLoadUnitType,
-      {
-        async load(): Promise<EggProtoImplClass[]> {
-          return [];
+    return TeggScope.run(this.scopeBag, async () => {
+      StandaloneContextHandler.register();
+      LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
+        return new StandaloneLoadUnit(this.innerObjects);
+      });
+      LoadUnitInstanceFactory.registerLoadUnitInstanceClass(
+        StandaloneLoadUnitType,
+        ModuleLoadUnitInstance.createModuleLoadUnitInstance,
+      );
+      const standaloneLoadUnit = await LoadUnitFactory.createLoadUnit(
+        'MockStandaloneLoadUnitPath',
+        StandaloneLoadUnitType,
+        {
+          async load(): Promise<EggProtoImplClass[]> {
+            return [];
+          },
         },
-      },
-    );
-    const loadUnits = await this.loadUnitLoader.load();
-    return [standaloneLoadUnit, ...loadUnits];
+      );
+      const loadUnits = await this.loadUnitLoader.load();
+      return [standaloneLoadUnit, ...loadUnits];
+    });
   }
 
   static getModuleReferences(cwd: string, dependencies?: RunnerOptions['dependencies']): readonly ModuleReference[] {
@@ -249,49 +265,60 @@ export class Runner {
   }
 
   async init(): Promise<void> {
-    await this.initLoaderInstance();
+    await TeggScope.run(this.scopeBag, async () => {
+      await this.initLoaderInstance();
 
-    this.loadUnits = await this.load();
-    const instances: LoadUnitInstance[] = [];
-    for (const loadUnit of this.loadUnits) {
-      const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
-      instances.push(instance);
-    }
-    this.loadUnitInstances = instances;
-    const runnerClass = StandaloneUtil.getMainRunner();
-    if (!runnerClass) {
-      throw new Error('not found runner class. Do you add @Runner decorator?');
-    }
-    const proto = PrototypeUtil.getClazzProto(runnerClass);
-    if (!proto) {
-      throw new Error(`can not get proto for clazz ${runnerClass.name}`);
-    }
-    this.runnerProto = proto as EggPrototype;
+      this.loadUnits = await this.load();
+      const instances: LoadUnitInstance[] = [];
+      for (const loadUnit of this.loadUnits) {
+        const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
+        instances.push(instance);
+      }
+      this.loadUnitInstances = instances;
+      const runnerClass = StandaloneUtil.getMainRunner();
+      if (!runnerClass) {
+        throw new Error('not found runner class. Do you add @Runner decorator?');
+      }
+      const proto = PrototypeUtil.getClazzProto(runnerClass);
+      if (!proto) {
+        throw new Error(`can not get proto for clazz ${runnerClass.name}`);
+      }
+      this.runnerProto = proto as EggPrototype;
+    });
   }
 
   async run<T>(aCtx?: EggContext): Promise<T> {
-    const lifecycle = {};
-    const ctx = aCtx || new StandaloneContext();
-    return await ContextHandler.run(ctx, async () => {
-      if (ctx.init) {
-        await ctx.init(lifecycle);
-      }
-      const eggObject = await EggContainerFactory.getOrCreateEggObject(this.runnerProto);
-      const runner = eggObject.obj as MainRunner<T>;
-      try {
-        return await runner.main();
-      } finally {
-        if (ctx.destroy) {
-          ctx.destroy(lifecycle).catch((e) => {
-            e.message = `[tegg/standalone] destroy tegg context failed: ${e.message}`;
-            console.warn(e);
-          });
+    return TeggScope.run(this.scopeBag, async () => {
+      const lifecycle = {};
+      const ctx = aCtx || new StandaloneContext();
+      return await ContextHandler.run(ctx, async () => {
+        if (ctx.init) {
+          await ctx.init(lifecycle);
         }
-      }
+        const eggObject = await EggContainerFactory.getOrCreateEggObject(this.runnerProto);
+        const runner = eggObject.obj as MainRunner<T>;
+        try {
+          return await runner.main();
+        } finally {
+          if (ctx.destroy) {
+            ctx.destroy(lifecycle).catch((e) => {
+              e.message = `[tegg/standalone] destroy tegg context failed: ${e.message}`;
+              console.warn(e);
+            });
+          }
+        }
+      });
     });
   }
 
   async destroy(): Promise<void> {
+    await TeggScope.run(this.scopeBag, async () => {
+      await this.doDestroy();
+    });
+    TeggScope.unregisterScope();
+  }
+
+  private async doDestroy(): Promise<void> {
     if (this.loadUnitInstances) {
       for (const instance of this.loadUnitInstances) {
         await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);

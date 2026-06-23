@@ -18,6 +18,7 @@ import {
   LoadUnitInstanceLifecycleUtil,
 } from '@eggjs/tegg-runtime';
 import type { RuntimeConfig } from '@eggjs/tegg-types';
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 
 export default class TEggPluginApplication {
@@ -98,19 +99,27 @@ export default class TEggPluginApplication {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [qualifiers];
     }
-    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(
-      clazz as EggProtoImplClass,
-      name,
-      qualifiers as QualifierInfo[],
-    );
-    return eggObject.obj as T;
+    const bag = (this as unknown as Application)._teggScopeBag;
+    const doWork = async (): Promise<T> => {
+      const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(
+        clazz as EggProtoImplClass,
+        name,
+        qualifiers as QualifierInfo[],
+      );
+      return eggObject.obj as T;
+    };
+    return bag ? TeggScope.run(bag, doWork) : doWork();
   }
 
   async getEggObjectFromName<T extends object>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T> {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [qualifiers];
     }
-    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
-    return eggObject.obj as T;
+    const bag = (this as unknown as Application)._teggScopeBag;
+    const doWork = async (): Promise<T> => {
+      const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
+      return eggObject.obj as T;
+    };
+    return bag ? TeggScope.run(bag, doWork) : doWork();
   }
 }

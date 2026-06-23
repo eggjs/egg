@@ -1,3 +1,4 @@
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, IBoot } from 'egg';
 
 import { BoundModelObjectHook } from './lib/boundModel/BoundModelObjectHook.ts';
@@ -21,17 +22,22 @@ export default class ModuleLangChainHook implements IBoot {
     this.#graphLoadUnitHook = new GraphLoadUnitHook(this.#app.eggPrototypeFactory as any);
     this.#boundModelObjectHook = new BoundModelObjectHook();
     this.#graphPrototypeHook = new GraphPrototypeHook();
-    this.#app.loadUnitLifecycleUtil.registerLifecycle(this.#graphLoadUnitHook);
+    // NOTE: graphLoadUnitHook registration moved to configWillLoad — the per-app
+    // TeggScope bag does not exist yet in the boot constructor.
   }
 
   configWillLoad(): void {
-    this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#graphObjectHook);
-    this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#boundModelObjectHook);
-    this.#app.eggObjectFactory.registerEggObjectCreateMethod(
-      CompiledStateGraphProto as any,
-      CompiledStateGraphObject.createObject,
-    );
-    this.#app.eggPrototypeLifecycleUtil.registerLifecycle(this.#graphPrototypeHook);
+    // Lifecycle-util registrations must land in THIS app's scope.
+    TeggScope.run(this.#app._teggScopeBag, () => {
+      this.#app.loadUnitLifecycleUtil.registerLifecycle(this.#graphLoadUnitHook);
+      this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#graphObjectHook);
+      this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#boundModelObjectHook);
+      this.#app.eggObjectFactory.registerEggObjectCreateMethod(
+        CompiledStateGraphProto as any,
+        CompiledStateGraphObject.createObject,
+      );
+      this.#app.eggPrototypeLifecycleUtil.registerLifecycle(this.#graphPrototypeHook);
+    });
   }
 
   configDidLoad(): void {
@@ -39,9 +45,11 @@ export default class ModuleLangChainHook implements IBoot {
   }
 
   async beforeClose(): Promise<void> {
-    this.#app.eggObjectLifecycleUtil.deleteLifecycle(this.#graphObjectHook);
-    this.#app.eggObjectLifecycleUtil.deleteLifecycle(this.#boundModelObjectHook);
-    this.#app.loadUnitLifecycleUtil.deleteLifecycle(this.#graphLoadUnitHook);
-    this.#app.eggPrototypeLifecycleUtil.deleteLifecycle(this.#graphPrototypeHook);
+    await TeggScope.run(this.#app._teggScopeBag, async () => {
+      this.#app.eggObjectLifecycleUtil.deleteLifecycle(this.#graphObjectHook);
+      this.#app.eggObjectLifecycleUtil.deleteLifecycle(this.#boundModelObjectHook);
+      this.#app.loadUnitLifecycleUtil.deleteLifecycle(this.#graphLoadUnitHook);
+      this.#app.eggPrototypeLifecycleUtil.deleteLifecycle(this.#graphPrototypeHook);
+    });
   }
 }

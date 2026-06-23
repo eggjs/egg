@@ -11,5 +11,6 @@ exports[`should export stable 1`] = `
   "LifecyclePreInject": [Function],
   "LifecyclePreLoad": [Function],
   "LifecycleUtil": [Function],
+  "createScopedLifecycleUtil": [Function],
 }
 `;

@@ -1,3 +1,4 @@
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { DalModuleLoadUnitHook } from './lib/DalModuleLoadUnitHook.ts';
@@ -21,23 +22,27 @@ export default class DalAppBootHook implements ILifecycleBoot {
     this.dalModuleLoadUnitHook = new DalModuleLoadUnitHook(this.app.config.env, this.app.moduleConfigs);
     this.dalTableEggPrototypeHook = new DalTableEggPrototypeHook(this.app.logger);
     this.transactionPrototypeHook = new TransactionPrototypeHook(this.app.moduleConfigs, this.app.logger);
-    this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.dalTableEggPrototypeHook);
-    this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.transactionPrototypeHook);
-    this.app.loadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
+    TeggScope.run(this.app._teggScopeBag, () => {
+      this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.dalTableEggPrototypeHook);
+      this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.transactionPrototypeHook);
+      this.app.loadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
+    });
   }
 
   async beforeClose(): Promise<void> {
-    if (this.dalTableEggPrototypeHook) {
-      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.dalTableEggPrototypeHook);
-    }
-    if (this.dalModuleLoadUnitHook) {
-      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.dalModuleLoadUnitHook);
-    }
-    if (this.transactionPrototypeHook) {
-      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.transactionPrototypeHook);
-    }
-    MysqlDataSourceManager.instance.clear();
-    SqlMapManager.instance.clear();
-    TableModelManager.instance.clear();
+    await TeggScope.run(this.app._teggScopeBag, async () => {
+      if (this.dalTableEggPrototypeHook) {
+        this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.dalTableEggPrototypeHook);
+      }
+      if (this.dalModuleLoadUnitHook) {
+        this.app.loadUnitLifecycleUtil.deleteLifecycle(this.dalModuleLoadUnitHook);
+      }
+      if (this.transactionPrototypeHook) {
+        this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.transactionPrototypeHook);
+      }
+      MysqlDataSourceManager.instance.clear();
+      SqlMapManager.instance.clear();
+      TableModelManager.instance.clear();
+    });
   }
 }

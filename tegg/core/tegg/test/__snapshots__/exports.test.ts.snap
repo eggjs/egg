@@ -232,6 +232,7 @@ exports[`should export stable 1`] = `
       "NAME": "NAME",
     },
   },
+  "createScopedLifecycleUtil": [Function],
   "orm": {
     "Attribute": [Function],
     "AttributeMeta": [Function],

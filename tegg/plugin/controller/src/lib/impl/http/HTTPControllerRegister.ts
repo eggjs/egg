@@ -9,14 +9,33 @@ import {
 } from '@eggjs/controller-decorator';
 import type { EggPrototype } from '@eggjs/metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, Router } from 'egg';
 
 import type { ControllerRegister } from '../../ControllerRegister.ts';
 import { RootProtoManager } from '../../RootProtoManager.ts';
 import { HTTPMethodRegister } from './HTTPMethodRegister.ts';
 
+const HTTP_CONTROLLER_REGISTER_SLOT = Symbol('tegg:controller:httpControllerRegister');
+
 export class HTTPControllerRegister implements ControllerRegister {
-  static instance?: HTTPControllerRegister;
+  // Per-app: the register accumulates protos and binds to one app's router, so
+  // it must be per-app (resolved from the active TeggScope bag).
+  static #legacyInstance?: HTTPControllerRegister;
+
+  static get instance(): HTTPControllerRegister | undefined {
+    return TeggScope.getOr(
+      HTTP_CONTROLLER_REGISTER_SLOT,
+      () => HTTPControllerRegister.#legacyInstance,
+      'HTTPControllerRegister.instance',
+    );
+  }
+
+  static set instance(value: HTTPControllerRegister | undefined) {
+    if (!TeggScope.set(HTTP_CONTROLLER_REGISTER_SLOT, value)) {
+      HTTPControllerRegister.#legacyInstance = value;
+    }
+  }
 
   private readonly router: Router;
   private readonly checkRouters: Map<string, Router>;
