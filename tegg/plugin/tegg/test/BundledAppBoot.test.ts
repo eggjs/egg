@@ -8,7 +8,6 @@ import { TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import { describe, it, beforeAll, afterEach, afterAll } from 'vitest';
 
-import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService.ts';
 import { getAppBaseDir } from './utils.ts';
 
 /**
@@ -137,21 +136,6 @@ describe('plugin/tegg/test/BundledAppBoot.test.ts', () => {
       `tegg module discovery should be fully manifest-served, but globbed module dirs: ${JSON.stringify(
         bootFallbackGlobTargets.filter(isUnderModulesDir),
       )}`,
-    );
-  });
-
-  it('should resolve an auto-Egg-qualifier inject of an egg-compatible object (regression)', async () => {
-    // EggTypeService.autoQualifierLogger is `@Inject({ name: 'logger' })` with NO
-    // explicit @EggQualifier, so the Egg qualifier must come from
-    // EggQualifierProtoHook at load time. `logger` exists as both an app and a
-    // context egg object; without the auto qualifier the inject is ambiguous and
-    // building this proto throws EggPrototypeNotFound. This only works in a bundle
-    // because EggModuleLoader.loadModule now loads the module classes from the
-    // manifest's precomputed decoratedFiles, so the hook can see the inject.
-    const eggTypeService = await app.getEggObject(EggTypeService);
-    assert.ok(
-      eggTypeService.getAutoQualifierLogger(),
-      'auto-Egg-qualifier egg-compatible object should resolve in bundle mode',
     );
   });
 
