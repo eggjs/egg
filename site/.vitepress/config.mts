@@ -313,6 +313,7 @@ function sidebarCore(): DefaultTheme.SidebarItem[] {
         { text: 'View Template', link: 'view' },
         { text: 'Security', link: 'security' },
         { text: 'Startup Manifest', link: 'manifest' },
+        { text: 'Bundle Deployment', link: 'bundle' },
       ],
     },
   ];
@@ -424,6 +425,7 @@ function sidebarCoreZhCN(): DefaultTheme.SidebarItem[] {
         { text: '模板渲染', link: 'view' },
         { text: '安全', link: 'security' },
         { text: '启动清单', link: 'manifest' },
+        { text: '打包部署', link: 'bundle' },
       ],
     },
   ];
