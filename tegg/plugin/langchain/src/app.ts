@@ -1,4 +1,3 @@
-import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, IBoot } from 'egg';
 
 import { BoundModelObjectHook } from './lib/boundModel/BoundModelObjectHook.ts';
@@ -27,17 +26,16 @@ export default class ModuleLangChainHook implements IBoot {
   }
 
   configWillLoad(): void {
-    // Lifecycle-util registrations must land in THIS app's scope.
-    TeggScope.run(this.#app._teggScopeBag, () => {
-      this.#app.loadUnitLifecycleUtil.registerLifecycle(this.#graphLoadUnitHook);
-      this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#graphObjectHook);
-      this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#boundModelObjectHook);
-      this.#app.eggObjectFactory.registerEggObjectCreateMethod(
-        CompiledStateGraphProto as any,
-        CompiledStateGraphObject.createObject,
-      );
-      this.#app.eggPrototypeLifecycleUtil.registerLifecycle(this.#graphPrototypeHook);
-    });
+    // app.*LifecycleUtil getters are pinned to this app's scope bag, and
+    // registerEggObjectCreateMethod is a shared static registry — no run wrap needed.
+    this.#app.loadUnitLifecycleUtil.registerLifecycle(this.#graphLoadUnitHook);
+    this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#graphObjectHook);
+    this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#boundModelObjectHook);
+    this.#app.eggObjectFactory.registerEggObjectCreateMethod(
+      CompiledStateGraphProto as any,
+      CompiledStateGraphObject.createObject,
+    );
+    this.#app.eggPrototypeLifecycleUtil.registerLifecycle(this.#graphPrototypeHook);
   }
 
   configDidLoad(): void {
@@ -45,11 +43,9 @@ export default class ModuleLangChainHook implements IBoot {
   }
 
   async beforeClose(): Promise<void> {
-    await TeggScope.run(this.#app._teggScopeBag, async () => {
-      this.#app.eggObjectLifecycleUtil.deleteLifecycle(this.#graphObjectHook);
-      this.#app.eggObjectLifecycleUtil.deleteLifecycle(this.#boundModelObjectHook);
-      this.#app.loadUnitLifecycleUtil.deleteLifecycle(this.#graphLoadUnitHook);
-      this.#app.eggPrototypeLifecycleUtil.deleteLifecycle(this.#graphPrototypeHook);
-    });
+    this.#app.eggObjectLifecycleUtil.deleteLifecycle(this.#graphObjectHook);
+    this.#app.eggObjectLifecycleUtil.deleteLifecycle(this.#boundModelObjectHook);
+    this.#app.loadUnitLifecycleUtil.deleteLifecycle(this.#graphLoadUnitHook);
+    this.#app.eggPrototypeLifecycleUtil.deleteLifecycle(this.#graphPrototypeHook);
   }
 }

@@ -118,10 +118,16 @@ export class TeggScope {
    * consistent in both scoped and default modes.
    */
   static resolve<T>(slot: symbol, create: () => T, desc: string): T {
-    if (!als.getStore() && TeggScope.isMultiApp) {
+    // Single `getStore()`; the in-scope path (the common case) never reaches the
+    // escape check. Single-app never escapes (isMultiApp is false).
+    const bag = als.getStore();
+    if (bag) {
+      return TeggScope.#getOrCreate(bag, slot, create);
+    }
+    if (TeggScope.isMultiApp) {
       reportEscape(desc);
     }
-    return TeggScope.#getOrCreate(TeggScope.#activeBag(), slot, create);
+    return TeggScope.#getOrCreate((defaultBag ??= new Map()), slot, create);
   }
 
   /**
@@ -130,11 +136,15 @@ export class TeggScope {
    * source of truth; `legacy()` only supplies the initial value before any set.
    */
   static getOr<T>(slot: symbol, legacy: () => T | undefined, desc: string): T | undefined {
-    if (!als.getStore() && TeggScope.isMultiApp) {
+    const bag = als.getStore();
+    if (bag) {
+      return bag.has(slot) ? (bag.get(slot) as T) : legacy();
+    }
+    if (TeggScope.isMultiApp) {
       reportEscape(desc);
     }
-    const bag = TeggScope.#activeBag();
-    return bag.has(slot) ? (bag.get(slot) as T) : legacy();
+    const d = (defaultBag ??= new Map());
+    return d.has(slot) ? (d.get(slot) as T) : legacy();
   }
 
   /**

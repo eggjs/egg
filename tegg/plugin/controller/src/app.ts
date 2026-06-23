@@ -166,9 +166,8 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   configDidLoad(): void {
-    TeggScope.run(this.app._teggScopeBag, () => {
-      GlobalGraph.instance?.registerBuildHook(middlewareGraphHook);
-    });
+    // Pin to this app's graph (set later during didLoad) — no run wrap needed.
+    GlobalGraph.instanceFor(this.app._teggScopeBag)?.registerBuildHook(middlewareGraphHook);
   }
 
   async willReady(): Promise<void> {

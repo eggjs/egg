@@ -11,6 +11,7 @@ import {
   type ProtoDescriptor,
   type QualifierInfo,
   TeggScope,
+  type TeggScopeBag,
 } from '@eggjs/tegg-types';
 
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors.ts';
@@ -85,6 +86,14 @@ export class GlobalGraph {
     if (!TeggScope.set(GLOBAL_GRAPH_SLOT, value)) {
       GlobalGraph.#legacyInstance = value;
     }
+  }
+
+  /**
+   * Resolve a specific app's graph directly from its bag (no active scope needed).
+   * Used by plugins to register build hooks onto the owning app's graph.
+   */
+  static instanceFor(bag: TeggScopeBag): GlobalGraph | undefined {
+    return bag.get(GLOBAL_GRAPH_SLOT) as GlobalGraph | undefined;
   }
 
   constructor(options?: GlobalGraphOptions) {

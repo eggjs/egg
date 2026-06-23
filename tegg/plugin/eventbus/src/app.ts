@@ -1,4 +1,3 @@
-import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { EventbusLoadUnitHook } from './lib/EventbusLoadUnitHook.ts';
@@ -19,25 +18,20 @@ export default class EventbusAppHook implements ILifecycleBoot {
   }
 
   configDidLoad(): void {
-    TeggScope.run(this.app._teggScopeBag, () => {
-      this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eventbusProtoHook);
-      this.app.loadUnitLifecycleUtil.registerLifecycle(this.eventbusLoadUnitHook);
-    });
+    // app.*LifecycleUtil getters are pinned to this app's scope bag — no run wrap needed.
+    this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eventbusProtoHook);
+    this.app.loadUnitLifecycleUtil.registerLifecycle(this.eventbusLoadUnitHook);
   }
 
   async didLoad(): Promise<void> {
     await this.app.moduleHandler.ready();
-    // register() resolves the per-app EventHandler/EventContext singletons and
-    // installs the per-app context creator — must run in this app's scope.
-    await TeggScope.run(this.app._teggScopeBag, async () => {
-      await this.eventHandlerProtoManager.register();
-    });
+    // register() resolves the per-app singletons through app.getEggObject (which
+    // wraps in this app's scope itself), so no outer run wrap is needed.
+    await this.eventHandlerProtoManager.register();
   }
 
   async beforeClose(): Promise<void> {
-    await TeggScope.run(this.app._teggScopeBag, async () => {
-      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.eventbusProtoHook);
-      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.eventbusLoadUnitHook);
-    });
+    this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.eventbusProtoHook);
+    this.app.loadUnitLifecycleUtil.deleteLifecycle(this.eventbusLoadUnitHook);
   }
 }

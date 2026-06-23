@@ -13,7 +13,10 @@ export class EggContextEventBus implements ContextEventBus {
   private corkId?: string;
 
   constructor(ctx: Context) {
-    const proto = PrototypeUtil.getClazzProto(SingletonEventBus) as EggPrototype;
+    // Prefer this app's class->proto map (multi-app safe); the global
+    // PrototypeUtil.getClazzProto is shared and overwritten by concurrent apps.
+    const proto = (ctx.app.eggPrototypeFactory.getPrototypeByClazz(SingletonEventBus) ??
+      PrototypeUtil.getClazzProto(SingletonEventBus)) as EggPrototype;
     const eggObject = ctx.app.eggContainerFactory.getEggObject(proto, proto.name);
     this.context = ContextHandler.getContext()!;
     this.eventBus = eggObject.obj as SingletonEventBus;

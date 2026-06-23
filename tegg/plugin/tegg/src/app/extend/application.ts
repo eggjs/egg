@@ -4,8 +4,10 @@ import {
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
   EggPrototypeLifecycleUtil,
+  eggPrototypeLifecycleUtilFromBag,
   LoadUnitFactory,
   LoadUnitLifecycleUtil,
+  loadUnitLifecycleUtilFromBag,
 } from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import {
@@ -14,8 +16,11 @@ import {
   EggObjectFactory,
   LoadUnitInstanceFactory,
   EggContextLifecycleUtil,
+  eggContextLifecycleUtilFromBag,
   EggObjectLifecycleUtil,
+  eggObjectLifecycleUtilFromBag,
   LoadUnitInstanceLifecycleUtil,
+  loadUnitInstanceLifecycleUtilFromBag,
 } from '@eggjs/tegg-runtime';
 import type { RuntimeConfig } from '@eggjs/tegg-types';
 import { TeggScope } from '@eggjs/tegg-types';
@@ -35,7 +40,7 @@ export default class TEggPluginApplication {
   }
 
   get loadUnitLifecycleUtil(): typeof LoadUnitLifecycleUtil {
-    return LoadUnitLifecycleUtil;
+    return loadUnitLifecycleUtilFromBag((this as unknown as Application)._teggScopeBag);
   }
 
   get loadUnitFactory(): typeof LoadUnitFactory {
@@ -51,7 +56,7 @@ export default class TEggPluginApplication {
   }
 
   get loadUnitInstanceLifecycleUtil(): typeof LoadUnitInstanceLifecycleUtil {
-    return LoadUnitInstanceLifecycleUtil;
+    return loadUnitInstanceLifecycleUtilFromBag((this as unknown as Application)._teggScopeBag);
   }
 
   get eggContainerFactory(): typeof EggContainerFactory {
@@ -63,15 +68,15 @@ export default class TEggPluginApplication {
   }
 
   get eggPrototypeLifecycleUtil(): typeof EggPrototypeLifecycleUtil {
-    return EggPrototypeLifecycleUtil;
+    return eggPrototypeLifecycleUtilFromBag((this as unknown as Application)._teggScopeBag);
   }
 
   get eggContextLifecycleUtil(): typeof EggContextLifecycleUtil {
-    return EggContextLifecycleUtil;
+    return eggContextLifecycleUtilFromBag((this as unknown as Application)._teggScopeBag);
   }
 
   get eggObjectLifecycleUtil(): typeof EggObjectLifecycleUtil {
-    return EggObjectLifecycleUtil;
+    return eggObjectLifecycleUtilFromBag((this as unknown as Application)._teggScopeBag);
   }
 
   get abstractEggContext(): typeof AbstractEggContext {

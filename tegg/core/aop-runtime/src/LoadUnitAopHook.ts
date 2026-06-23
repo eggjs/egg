@@ -1,6 +1,6 @@
 import { AspectInfoUtil, AspectMetaBuilder, CrosscutAdviceFactory } from '@eggjs/aop-decorator';
 import { PrototypeUtil } from '@eggjs/core-decorator';
-import { TeggError } from '@eggjs/metadata';
+import { EggPrototypeFactory, TeggError } from '@eggjs/metadata';
 import type {
   EggPrototype,
   EggPrototypeWithClazz,
@@ -29,7 +29,9 @@ export class LoadUnitAopHook implements LifecycleHook<LoadUnitLifecycleContext, 
       AspectInfoUtil.setAspectList(aspectList, clazz);
       for (const aspect of aspectList) {
         for (const advice of aspect.adviceList) {
-          const adviceProto = PrototypeUtil.getClazzProto(advice.clazz);
+          // Prefer this app's class->proto map (multi-app safe) over the global one.
+          const adviceProto =
+            EggPrototypeFactory.instance.getPrototypeByClazz(advice.clazz) ?? PrototypeUtil.getClazzProto(advice.clazz);
           if (!adviceProto) {
             throw TeggError.create(`Aop Advice(${advice.clazz.name}) not found in loadUnits`, 'advice_not_found');
           }

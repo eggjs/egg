@@ -33,12 +33,11 @@ export default class OrmAppBootHook implements ILifecycleBoot {
   }
 
   configWillLoad(): void {
-    // Lifecycle-util registrations must land in THIS app's scope.
-    TeggScope.run(this.app._teggScopeBag, () => {
-      this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.modelProtoHook);
-      this.app.eggObjectFactory.registerEggObjectCreateMethod(SingletonModelProto, SingletonModelObject.createObject);
-      this.app.loadUnitLifecycleUtil.registerLifecycle(this.ormLoadUnitHook);
-    });
+    // app.*LifecycleUtil getters are pinned to this app's scope bag, and
+    // registerEggObjectCreateMethod is a shared static registry — no run wrap needed.
+    this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.modelProtoHook);
+    this.app.eggObjectFactory.registerEggObjectCreateMethod(SingletonModelProto, SingletonModelObject.createObject);
+    this.app.loadUnitLifecycleUtil.registerLifecycle(this.ormLoadUnitHook);
   }
 
   configDidLoad(): void {
@@ -60,8 +59,6 @@ export default class OrmAppBootHook implements ILifecycleBoot {
   }
 
   async beforeClose(): Promise<void> {
-    await TeggScope.run(this.app._teggScopeBag, async () => {
-      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.modelProtoHook);
-    });
+    this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.modelProtoHook);
   }
 }

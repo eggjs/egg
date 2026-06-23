@@ -233,6 +233,7 @@ exports[`should export stable 1`] = `
     },
   },
   "createScopedLifecycleUtil": [Function],
+  "lifecycleUtilFromBag": [Function],
   "orm": {
     "Attribute": [Function],
     "AttributeMeta": [Function],
