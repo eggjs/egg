@@ -671,12 +671,21 @@ export class EggApplicationCore extends EggCore {
       // manifest-backed loader fs (keyed relative to the output baseDir)
       // resolves the bundled framework config files.
       const bundledFrameworkDir = path.join(bundleStore.baseDir, 'node_modules', 'egg', 'dist');
-      // Guard on existence: a real bundler output physically copies egg here, but
-      // a bundle-mode app booted without the copied framework (e.g. integration
-      // tests that only inject a manifest-backed loaderFS) does not. In that case
-      // fall back to `import.meta.dirname`, which — when not actually rewritten by
-      // a bundler — still points at the real egg package dir.
-      if (fs.existsSync(bundledFrameworkDir)) {
+      // Use the rebased framework dir when EITHER:
+      //  - egg is physically copied next to the bundle output (a deploy that ran
+      //    `npm ci` into the output dir), OR
+      //  - `import.meta.dirname` was actually rewritten by the bundler to the bundle
+      //    output dir (it resolves to `bundleStore.baseDir` instead of the real egg
+      //    package dir). In a real bundle the framework files are inlined and served
+      //    by the manifest-backed loaderFS (keyed `node_modules/egg/dist/...`), so
+      //    they need not exist on disk — `path.dirname(import.meta.dirname)` would
+      //    otherwise point at the app's parent dir and the built-in framework plugins
+      //    (security, session, view, …) would never load.
+      // Integration tests that inject a manifest-backed loaderFS while running from
+      // source keep a non-rewritten `import.meta.dirname` (the real egg dir), so they
+      // fall through to the import.meta.dirname branch below unchanged.
+      const importMetaRewritten = path.resolve(import.meta.dirname) === path.resolve(bundleStore.baseDir);
+      if (fs.existsSync(bundledFrameworkDir) || importMetaRewritten) {
         return [bundledFrameworkDir, ...super.customEggPaths()];
       }
     }

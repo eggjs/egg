@@ -8,6 +8,7 @@ import { TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import { describe, it, beforeAll, afterEach, afterAll } from 'vitest';
 
+import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService.ts';
 import { getAppBaseDir } from './utils.ts';
 
 /**
@@ -113,18 +114,35 @@ describe('plugin/tegg/test/BundledAppBoot.test.ts', () => {
       `core discovery should be fully manifest-served, but globbed: ${JSON.stringify(nonModuleGlobs)}`,
     );
 
-    // The tegg module discovery that DOES run reaches the manifest VFS's fallback,
-    // which is only possible because EggModuleLoader now goes through
-    // app.loader.loaderFS (Theme F) — before, tegg used its own globby import.
-    assert.ok(
-      bootFallbackGlobTargets.some(isUnderModulesDir),
-      'tegg module discovery should route through the injected loaderFS',
+    // In consume mode EggModuleLoader.loadModule now reuses the manifest's
+    // precomputed tegg `decoratedFiles` instead of re-globbing each module dir,
+    // so tegg module discovery is fully manifest-served and NO fallback glob runs
+    // under a module dir either. This is what lets the load-unit lifecycle hooks
+    // (e.g. EggQualifierProtoHook) still see the real decorated classes via
+    // `ctx.loader.load()` in a bundle, where the module source files do not exist
+    // on disk for a glob to find.
+    assert.deepEqual(
+      bootFallbackGlobTargets.filter(isUnderModulesDir),
+      [],
+      `tegg module discovery should be fully manifest-served, but globbed module dirs: ${JSON.stringify(
+        bootFallbackGlobTargets.filter(isUnderModulesDir),
+      )}`,
     );
+  });
 
-    // KNOWN RESIDUAL: in consume mode EggModuleLoader.loadModule still re-globs each
-    // module dir (manifest stores tegg decoratedFiles, not module dirs in core
-    // fileDiscovery, and loadModule does not pass decoratedFiles). Pre-existing,
-    // out of Theme F scope. See [[bundle-startup-loadmodule-residual-glob]].
+  it('should resolve an auto-Egg-qualifier inject of an egg-compatible object (regression)', async () => {
+    // EggTypeService.autoQualifierLogger is `@Inject({ name: 'logger' })` with NO
+    // explicit @EggQualifier, so the Egg qualifier must come from
+    // EggQualifierProtoHook at load time. `logger` exists as both an app and a
+    // context egg object; without the auto qualifier the inject is ambiguous and
+    // building this proto throws EggPrototypeNotFound. This only works in a bundle
+    // because EggModuleLoader.loadModule now loads the module classes from the
+    // manifest's precomputed decoratedFiles, so the hook can see the inject.
+    const eggTypeService = await app.getEggObject(EggTypeService);
+    assert.ok(
+      eggTypeService.getAutoQualifierLogger(),
+      'auto-Egg-qualifier egg-compatible object should resolve in bundle mode',
+    );
   });
 
   it('should serve the full controller -> service -> cross-module repo DI chain over HTTP', async () => {
