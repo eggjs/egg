@@ -94,6 +94,16 @@ export class LoaderUtil {
     } catch (e: unknown) {
       throw createLoadError(originalFilePath, e);
     }
+    // Async module importer override (e.g. a Vitest runner that loads the module
+    // through its own module graph), so the proto class registered here is the
+    // same instance the test file imports. See `ModuleImporter` in @eggjs/typings.
+    if (exports == null && typeof globalThis.__EGG_MODULE_IMPORTER__ === 'function') {
+      try {
+        exports = await globalThis.__EGG_MODULE_IMPORTER__(originalFilePath);
+      } catch (e: unknown) {
+        throw createLoadError(originalFilePath, e);
+      }
+    }
     if (exports == null) {
       if (process.platform === 'win32') {
         // convert to file:// url
