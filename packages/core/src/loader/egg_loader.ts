@@ -792,10 +792,13 @@ export class EggLoader {
     }
 
     // In bundle mode, a plugin declared via `definePluginFactory({ path: import.meta.dirname })`
-    // had its `path` rewritten by the bundler to the bundle output dir (= baseDir). The original
-    // value was the directory of the plugin package's entry module (e.g. `<pkg>/dist`), not the
-    // package root, so re-resolve to the entry module's directory rather than the package.json dir.
-    if (plugin.path && this.#isBundlePluginPathArtifact(plugin.path)) {
+    // has its `path` either rewritten by the bundler to the bundle output dir (= baseDir), or
+    // dropped entirely when the bundler compiles `import.meta.dirname` to `undefined` (e.g.
+    // @utoo/pack emits `__TURBOPACK__import$2e$meta__.dirname`, which is undefined at runtime,
+    // leaving the plugin with no usable `path`). In both cases the plugin's files are served
+    // from the manifest-backed bundle store, so re-resolve the plugin by package name — the
+    // conventional `@eggjs/<name>` for built-in framework plugins — instead of the baked path.
+    if (this.#isBundleModeForThisApp() && (!plugin.path || this.#isBundlePluginPathArtifact(plugin.path))) {
       return this.#resolveBundlePluginPath(plugin);
     }
 
@@ -808,13 +811,18 @@ export class EggLoader {
    * which does not contain the plugin's own files. Detect that case so the plugin is
    * re-resolved by package name instead.
    */
-  #isBundlePluginPathArtifact(pluginPath: string): boolean {
+  /**
+   * Whether an active bundle store belongs to THIS app. The store is shared via globalThis
+   * across @eggjs/core copies, so one registered for a different app must not reinterpret this
+   * app's plugin paths — mirror `ManifestStore.load()`'s `bundleStore.baseDir === baseDir` gate.
+   */
+  #isBundleModeForThisApp(): boolean {
     const bundleStore = ManifestStore.getBundleStore();
-    // Only treat a path as a bundle artifact when the active bundle store belongs
-    // to this app. The store is shared via globalThis across @eggjs/core copies,
-    // so one registered for a different app must not reinterpret this app's plugin
-    // paths — mirror `ManifestStore.load()`'s `bundleStore.baseDir === baseDir` gate.
-    if (!bundleStore || path.resolve(bundleStore.baseDir) !== path.resolve(this.options.baseDir)) {
+    return !!bundleStore && path.resolve(bundleStore.baseDir) === path.resolve(this.options.baseDir);
+  }
+
+  #isBundlePluginPathArtifact(pluginPath: string): boolean {
+    if (!this.#isBundleModeForThisApp()) {
       return false;
     }
     return path.resolve(pluginPath) === path.resolve(this.options.baseDir);
@@ -836,9 +844,17 @@ export class EggLoader {
     for (const name of candidates) {
       try {
         // Resolve the package entry module (not package.json) so the returned directory matches
-        // the plugin package's runtime entry directory (e.g. `<pkg>/dist`).
-        const entry = utils.resolvePath(name, { paths: [...this.lookupDirs] });
-        const realDir = path.dirname(entry);
+        // the plugin package's runtime entry directory (e.g. `<pkg>/dist`) — this mirrors the
+        // `import.meta.dirname` a `definePluginFactory` plugin captured at manifest-build time.
+        // Old-style plugins (e.g. `egg-view-nunjucks`) ship `app.js`/`config/` at the package
+        // root and declare no `main`, so entry resolution throws; fall back to `package.json`,
+        // whose directory is the package root the manifest keyed those files under.
+        let realDir: string;
+        try {
+          realDir = path.dirname(utils.resolvePath(name, { paths: [...this.lookupDirs] }));
+        } catch {
+          realDir = path.dirname(utils.resolvePath(`${name}/package.json`, { paths: [...this.lookupDirs] }));
+        }
         // Rebase under the bundle output baseDir so the manifest-backed loader fs
         // (keyed relative to baseDir) resolves the bundled plugin config/extend/app
         // files, mirroring how the framework eggPaths are rebased. Match the last
@@ -847,7 +863,17 @@ export class EggLoader {
         const segments = realDir.split(/[/\\]/);
         const nmIdx = segments.lastIndexOf('node_modules');
         if (nmIdx !== -1) {
-          return path.join(this.options.baseDir, ...segments.slice(nmIdx));
+          const rebased = path.join(this.options.baseDir, ...segments.slice(nmIdx));
+          // In a real bundle the externals are installed under the output baseDir's
+          // `node_modules`, so the rebased dir exists and holds the files the manifest
+          // keyed. When a bundle store is registered over a source checkout — e.g. an
+          // integration test that consumes a normally-collected manifest, or a dev
+          // bundle whose externals still resolve from the workspace — that rebased dir
+          // may not exist; fall back to the real resolved dir so the plugin's
+          // config/extend/app files still load.
+          if (fs.existsSync(rebased)) {
+            return rebased;
+          }
         }
         return realDir;
       } catch (err) {

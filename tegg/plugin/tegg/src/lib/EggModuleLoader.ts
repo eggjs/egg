@@ -1,6 +1,6 @@
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
-import { LoaderFactory, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
+import { LoaderFactory, ModuleLoader, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import type { ModuleReference } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
@@ -11,6 +11,13 @@ export class EggModuleLoader {
   app: Application;
   globalGraph: GlobalGraph;
   private pendingBuildHooks: GlobalGraphBuildHook[] = [];
+  /**
+   * True when the app graph was built from a tegg manifest (bundle mode). In
+   * that case the module source files do not exist on disk, so module load
+   * units must reuse the manifest's precomputed decorated files instead of
+   * globbing the file system.
+   */
+  private loadedFromManifest = false;
 
   constructor(app: Application) {
     this.app = app;
@@ -39,6 +46,7 @@ export class EggModuleLoader {
     const manifest = this.app.loader.manifest;
     const manifestTegg = manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined;
     const loadAppManifest = manifestTegg?.moduleDescriptors?.length ? manifestTegg : undefined;
+    this.loadedFromManifest = !!loadAppManifest;
 
     // Reuse egg-core's loader fs so discovery goes through the shared VFS:
     // RealLoaderFS in normal mode (zero behavior change), ManifestLoaderFS in bundle mode.
@@ -98,9 +106,28 @@ export class EggModuleLoader {
     this.globalGraph.sort();
     const moduleConfigList = this.globalGraph.moduleConfigList;
     const loaderFS = this.app.loader.loaderFS;
+
+    // In bundle mode the module source files are not present on disk, so a
+    // globbing loader returns nothing. Reuse the manifest's precomputed
+    // decorated files (the same list buildAppGraph loaded the graph from) so
+    // load-unit lifecycle hooks such as EggQualifierProtoHook still see the
+    // real decorated classes via `ctx.loader.load()`.
+    const decoratedFilesMap = new Map<string, string[]>();
+    if (this.loadedFromManifest) {
+      const manifestTegg = this.app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as
+        | TeggManifestExtension
+        | undefined;
+      for (const desc of manifestTegg?.moduleDescriptors ?? []) {
+        decoratedFilesMap.set(desc.unitPath, desc.decoratedFiles);
+      }
+    }
+
     for (const moduleConfig of moduleConfigList) {
       const modulePath = moduleConfig.path;
-      const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, loaderFS);
+      const precomputedFiles = decoratedFilesMap.get(modulePath);
+      const loader = precomputedFiles
+        ? new ModuleLoader(modulePath, { precomputedFiles, loaderFS })
+        : LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, loaderFS);
       const loadUnit = await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
       this.app.moduleHandler.loadUnits.push(loadUnit);
     }
