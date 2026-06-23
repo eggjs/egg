@@ -21,7 +21,7 @@ export async function findNodeProcess(filterFn?: FilterFunction): Promise<NodePr
     .stdout!.toString()
     .split('\n')
     .reduce<NodeProcess[]>((arr, line) => {
-      if (!!line && !line.includes('/bin/sh') && line.includes('node')) {
+      if (!!line && !line.includes('/bin/sh') && (line.includes('node') || line.includes('egg-server'))) {
         const m = line.match(REGEX);
         if (m) {
           const item: NodeProcess = isWindows ? { pid: parseInt(m[2]), cmd: m[1] } : { pid: parseInt(m[1]), cmd: m[2] };
