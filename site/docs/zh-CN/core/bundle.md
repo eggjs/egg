@@ -77,18 +77,6 @@ $ node worker.js
 worker 入口会装载 bundle 的清单存储和模块加载器，然后以 `mode: 'single'` 启动 Egg，
 并将 `baseDir` 设为输出目录，因此 agent 与 worker 在同一进程内运行。
 
-## Tegg 应用
-
-打包支持 tegg 应用。由于打包产物中不存在模块源码文件，tegg 的模块发现会从清单记录的
-`decoratedFiles` 中获取，而不是 glob 扫描。这样可以在运行时保持完整的 tegg 依赖注入图，
-包括对 egg 兼容对象（如 `@Inject() httpClient`、`logger`、`config`）的自动注入解析——
-这些注入由框架的 load-unit 生命周期钩子完成消歧。
-
-::: tip
-打包 tegg 应用需要包含 bundle 启动路径修复的 `@eggjs/core`、`egg` 与
-`@eggjs/tegg-plugin` 版本，请使用最新发布版本。
-:::
-
 ## 限制
 
 - **仅单进程**：bundle 以 `mode: 'single'` 运行，agent 与 worker 同进程。暂不支持

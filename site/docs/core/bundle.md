@@ -90,20 +90,6 @@ The worker entry installs the bundle's manifest store and module loader, then
 starts Egg with `baseDir` set to the output directory in `mode: 'single'`, so the
 agent runs in-process with the worker.
 
-## Tegg applications
-
-Bundling supports tegg apps. Because the module source files do not exist on disk
-in a bundle, tegg module discovery is served from the manifest's recorded
-`decoratedFiles` instead of globbing. This keeps the full tegg dependency-injection
-graph intact at runtime, including auto-resolved injects of egg-compatible objects
-such as `@Inject() httpClient`, `logger`, and `config` (which are disambiguated by
-the framework's load-unit lifecycle hooks).
-
-::: tip
-Bundling a tegg app requires `@eggjs/core`, `egg`, and `@eggjs/tegg-plugin`
-versions that include the bundle-boot path fixes. Use the latest release.
-:::
-
 ## Limitations
 
 - **Single process only**: the bundle runs in `mode: 'single'`, so the agent runs
