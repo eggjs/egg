@@ -15,6 +15,7 @@ import {
 } from '@eggjs/dal-plugin';
 import {
   type EggPrototype,
+  EggPrototypeCreatorFactory,
   EggPrototypeLifecycleUtil,
   GlobalGraph,
   type LoadUnit,
@@ -40,6 +41,7 @@ import {
   ContextHandler,
   EggContainerFactory,
   type EggContext,
+  EggObjectFactory,
   EggObjectLifecycleUtil,
   type LoadUnitInstance,
   LoadUnitInstanceFactory,
@@ -47,6 +49,9 @@ import {
 } from '@eggjs/tegg-runtime';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
 import { StandaloneUtil, type MainRunner } from '@eggjs/tegg/standalone';
+
+import { AgentControllerObject } from '@eggjs/controller-plugin/lib/AgentControllerObject';
+import { AgentControllerProto } from '@eggjs/controller-plugin/lib/AgentControllerProto';
 
 import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook.ts';
 import { EggModuleLoader } from './EggModuleLoader.ts';
@@ -246,6 +251,17 @@ export class Runner {
     EggPrototypeLifecycleUtil.registerLifecycle(this.dalTableEggPrototypeHook);
     EggPrototypeLifecycleUtil.registerLifecycle(this.transactionPrototypeHook);
     LoadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
+
+    // AgentController support
+    EggPrototypeCreatorFactory.registerPrototypeCreator(
+      'AGENT_CONTROLLER_PROTO',
+      AgentControllerProto.createProto,
+    );
+    EggObjectFactory.registerEggObjectCreateMethod(
+      AgentControllerProto,
+      AgentControllerObject.createObject,
+    );
+    AgentControllerObject.setLogger(logger as any);
   }
 
   async init(): Promise<void> {
