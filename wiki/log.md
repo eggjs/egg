@@ -2,6 +2,11 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-06-22] package | egg-bundler CJS/ESM require interop fixed upstream in @utoo/pack (EGG-69)
+
+- sources touched: `pnpm-workspace.yaml`, `tools/egg-bundler/src/lib/Bundler.ts`, `tools/egg-bundler/test/Bundler.test.ts`, `tools/egg-bundler/test/cjsEsmInterop.realbuild.test.ts`
+- note: Bundled cnpmcore crashed at runtime with `<path>/tsconfig.json is malformed JSON5.parse is not a function`. Root cause: older `@utoo/pack` (Turbopack, target node) resolved a CJS `require('json5')` to json5's ESM `module` entry (`dist/index.mjs`, default-only), so `commonJsRequire` returned the `{ __esModule, default }` namespace and `JSON5.parse` was undefined. This is now **fixed upstream** (utooland/utoo#3185): `@utoo/pack` >= 1.4.16 resolves a CJS `require()` of such a dual package to its CommonJS `main`, matching Node's own CommonJS resolution. The earlier in-repo workaround (a post-build patch of `_turbopack__runtime.js` that unwrapped the lone `default`) is **removed** in favour of the upstream fix; the catalog `@utoo/pack` range is bumped to `^1.4.16`. Verified by a real `@utoo/pack` build over a json5-shaped dual fixture (`main`+`module`, ESM exports only `default`) required from authored CJS via a named member: the bundled worker runs the CJS implementation (`cjs:ok`) with no crash, confirming `require('pkg').member` resolves like Node. NB: the internal registry (`registry.antgroup-inc.cn`) still tops out at 1.4.14 (which lacks the fix); the OSS repo/CI uses the public registry where 1.4.16 is available.
+
 ## [2026-06-20] concept | fix Windows-flaky session test (teardown close/load race)
 
 - sources touched: `packages/core/src/lifecycle.ts`, `packages/egg/src/lib/egg.ts`, `packages/core/test/lifecycle.test.ts`
