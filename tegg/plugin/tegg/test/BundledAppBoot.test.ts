@@ -103,15 +103,25 @@ describe('plugin/tegg/test/BundledAppBoot.test.ts', () => {
       `expected ManifestLoaderFS, got ${app.loader.loaderFS?.constructor?.name}`,
     );
 
-    // Core/framework discovery is fully served from the manifest — nothing outside
-    // tegg module dirs ever falls back to a real-fs glob. Match the `modules` path
-    // segment exactly rather than a substring, to avoid similarly named dirs.
-    const isUnderModulesDir = (cwd: string): boolean => cwd.split(path.sep).includes('modules');
-    const nonModuleGlobs = bootFallbackGlobTargets.filter((cwd) => !isUnderModulesDir(cwd));
+    // The app's own (first-party) core discovery is fully served from the manifest:
+    // no directory under baseDir (outside tegg module dirs) falls back to a real-fs
+    // glob. Match the `modules`/`node_modules` path segments exactly rather than a
+    // substring, to avoid similarly named dirs.
+    //
+    // Third-party plugin dirs under `node_modules` are intentionally excluded: a
+    // plugin whose `app/service` (etc.) directory is empty produces an empty-result
+    // glob that the manifest does not cache, so it legitimately falls back. That is
+    // environment-dependent (only the pnpm/CI layout materializes those dirs next to
+    // the app) and orthogonal to what this test asserts.
+    const hasSegment = (cwd: string, seg: string): boolean => cwd.split(path.sep).includes(seg);
+    const isUnderModulesDir = (cwd: string): boolean => hasSegment(cwd, 'modules');
+    const firstPartyGlobs = bootFallbackGlobTargets.filter(
+      (cwd) => !isUnderModulesDir(cwd) && !hasSegment(cwd, 'node_modules'),
+    );
     assert.deepEqual(
-      nonModuleGlobs,
+      firstPartyGlobs,
       [],
-      `core discovery should be fully manifest-served, but globbed: ${JSON.stringify(nonModuleGlobs)}`,
+      `app's own discovery should be fully manifest-served, but globbed: ${JSON.stringify(firstPartyGlobs)}`,
     );
 
     // In consume mode EggModuleLoader.loadModule now reuses the manifest's
