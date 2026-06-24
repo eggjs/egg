@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/aop-runtime",
-  "version": "4.0.2-beta.12",
+  "version": "4.0.2-beta.13",
   "description": "tegg aop runtime",
   "keywords": [
     "aop",
