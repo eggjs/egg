@@ -75,4 +75,10 @@ export class SingletonHello {
   async helloEggObjectAop(): Promise<void> {
     this.logger.info('foo');
   }
+
+  // Keep SingletonHello structurally compatible with Hello (the controller assigns
+  // singletonHello to a `Hello`-typed variable).
+  async helloCross(name: string): Promise<string> {
+    return `helloCross ${name}`;
+  }
 }
