@@ -28,6 +28,11 @@ export class Hello {
   async helloEggObjectAop(): Promise<void> {
     this.logger.info('foo');
   }
+
+  // Crosscut from another module (aop-cross-module) to exercise cross-loadUnit weaving.
+  async helloCross(name: string): Promise<string> {
+    return `helloCross ${name}`;
+  }
 }
 
 @Crosscut({
