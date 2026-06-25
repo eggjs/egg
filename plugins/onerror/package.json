@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/onerror",
-  "version": "4.0.2-beta.13",
+  "version": "4.0.2-beta.14",
   "description": "error handler for egg",
   "keywords": [
     "egg",

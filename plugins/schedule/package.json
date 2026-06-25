@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/schedule",
-  "version": "6.0.2-beta.13",
+  "version": "6.0.2-beta.14",
   "description": "schedule plugin for egg, support corn job.",
   "keywords": [
     "cron",
