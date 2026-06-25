@@ -591,9 +591,19 @@ export class MCPControllerRegister implements ControllerRegister {
   // registration time. Safe to install during controller registration.
   composeGlobalMiddleware(mw: compose.Middleware<EggContext>): compose.Middleware<EggContext> {
     const self = this;
+    // Resolve + compose once on the first request, then reuse the composed chain
+    // (globalMiddlewares is static after it is built) to avoid re-composing per
+    // request.
+    let resolved = false;
+    let composed: compose.Middleware<EggContext> = mw;
     return async (ctx, next) => {
-      self.getGlobalMiddleware();
-      const composed = self.globalMiddlewares ? compose([mw, self.globalMiddlewares]) : mw;
+      if (!resolved) {
+        self.getGlobalMiddleware();
+        composed = (
+          self.globalMiddlewares ? compose([mw, self.globalMiddlewares]) : mw
+        ) as compose.Middleware<EggContext>;
+        resolved = true;
+      }
       return composed(ctx as any, next);
     };
   }

@@ -24,7 +24,7 @@ function createRegister(mcp: any, middlewares: any) {
   return { register, app };
 }
 
-describe('test/lib/MCPGlobalMiddleware.test.ts', () => {
+describe('plugin/controller/test/lib/MCPGlobalMiddleware.test.ts', () => {
   it('does not read app.middlewares at registration time', () => {
     // app.middlewares is still empty here, mirroring registration time.
     const { register } = createRegister({ middleware: ['trace'] }, {});
@@ -57,6 +57,24 @@ describe('test/lib/MCPGlobalMiddleware.test.ts', () => {
 
     assert.deepEqual(order, ['base', 'trace', 'handler']);
     assert.ok(register.globalMiddlewares, 'built and cached after first request');
+  });
+
+  it('resolves and composes the global chain once across requests', async () => {
+    const { register, app } = createRegister({ middleware: ['m'] }, {});
+    let factoryCalls = 0;
+    app.middlewares.m = () => {
+      factoryCalls++;
+      return async (_ctx: any, next: any) => next();
+    };
+    const base: any = async (_ctx: any, next: any) => next();
+    const wrapped = register.composeGlobalMiddleware(base);
+
+    await wrapped({} as any, async () => {});
+    await wrapped({} as any, async () => {});
+
+    // The middleware factory is only invoked on the first request; the composed
+    // chain is cached and reused afterwards.
+    assert.equal(factoryCalls, 1);
   });
 
   it('getGlobalMiddleware is idempotent (builds once)', () => {
