@@ -109,6 +109,8 @@ describe('plugin/controller/test/lib/MCPGlobalMiddleware.test.ts', () => {
     assert.doesNotThrow(() => register.mcpStatelessStreamServerInit());
     assert.doesNotThrow(() => register.mcpStreamServerInit());
     assert.doesNotThrow(() => register.mcpServerRegister());
+    // sseCtxStorageRun wires the same lazy wrapper per SSE connection.
+    assert.doesNotThrow(() => register.sseCtxStorageRun({} as any, {} as any, 'default'));
     // Still not resolved — deferred to the first request.
     assert.equal(register.globalMiddlewares, undefined);
   });
