@@ -92,6 +92,27 @@ describe('plugin/controller/test/lib/MCPGlobalMiddleware.test.ts', () => {
     assert.throws(() => register.getGlobalMiddleware(), /Middleware nope not found/);
   });
 
+  it('wires the lazy middleware into the MCP route setup without touching app.middlewares', () => {
+    // The route-setup methods run during registration (before loadMiddleware).
+    // They must install the lazy wrapper without resolving app.middlewares.
+    const app: any = {
+      eggContainerFactory: {},
+      router: { post() {}, get() {}, del() {}, all() {} },
+      middleware: {
+        teggCtxLifecycleMiddleware: () => async (_ctx: any, next: any) => next(),
+      },
+      config: { mcp: { middleware: ['trace'] } },
+      middlewares: {}, // 'trace' not loaded yet
+    };
+    const register = new (MCPControllerRegister as any)({}, {}, app);
+
+    assert.doesNotThrow(() => register.mcpStatelessStreamServerInit());
+    assert.doesNotThrow(() => register.mcpStreamServerInit());
+    assert.doesNotThrow(() => register.mcpServerRegister());
+    // Still not resolved — deferred to the first request.
+    assert.equal(register.globalMiddlewares, undefined);
+  });
+
   it('keeps koa-compose onion ordering for multiple global middlewares', async () => {
     const { register, app } = createRegister({ middleware: ['a', 'b'] }, {});
     const order: string[] = [];
