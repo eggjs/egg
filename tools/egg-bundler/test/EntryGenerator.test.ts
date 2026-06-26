@@ -280,8 +280,24 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('__setBundleMap(__framework, __frameworkModule)');
     expect(worker).not.toContain('__frameworkImport');
     expect(worker).toContain(
-      "startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single', loaderFS: __loaderFS })",
+      "const __startOptions = { baseDir: __outputDir, framework: __framework, mode: 'single' as const, loaderFS: __loaderFS }",
     );
+    expect(worker).toContain('startEgg(__startOptions)');
+    // 3-mode snapshot dispatch (normal / snapshot-build / restore-main)
+    expect(worker).toContain("import v8 from 'node:v8'");
+    expect(worker).toContain("if (process.env.EGG_BUNDLE_SNAPSHOT === 'build')");
+    expect(worker).toContain('startEgg({ ...__startOptions, snapshot: true })');
+    expect(worker).toContain('app.triggerSnapshotWillSerialize()');
+    expect(worker).toContain('v8.startupSnapshot.setDeserializeMainFunction(() =>');
+    // restore main must defer (ESM loader not ready) and route imports via require()
+    expect(worker).toContain('setImmediate(() =>');
+    expect(worker).toContain("process.getBuiltinModule('node:module')");
+    expect(worker).toContain("(0, eval)('require')('node:module')");
+    expect(worker).toContain('globalThis.__RUNTIME_REQUIRE =');
+    expect(worker).toContain('globalThis.__EGG_MODULE_IMPORTER__ = async (fp: string) => __req(fp)');
+    expect(worker).toContain('app.triggerSnapshotDidDeserialize()');
+    // daemon readiness over IPC for `egg-scripts start --snapshot-blob`
+    expect(worker).toContain("process.send({ action: 'egg-ready'");
   });
 
   it('builds a BUNDLE_MAP keyed by relKey, output absolute, original app absolute, and resolveCache aliases', async () => {
@@ -485,8 +501,9 @@ export async function startEgg(options) {
 
     expect(extractImports(worker).length).toBe(0);
     expect(worker).toContain(
-      "startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single', loaderFS: __loaderFS })",
+      "const __startOptions = { baseDir: __outputDir, framework: __framework, mode: 'single' as const, loaderFS: __loaderFS }",
     );
+    expect(worker).toContain('startEgg(__startOptions)');
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain('ManifestStore.setBundleStore');
   });

@@ -58,6 +58,7 @@ vi.mock('../src/lib/EntryGenerator.ts', () => ({
 }));
 
 import { bundle } from '../src/index.ts';
+import { SNAPSHOT_PRELUDE_MARKER } from '../src/lib/prelude.ts';
 
 describe('Bundler', () => {
   let tmpApp: string;
@@ -103,6 +104,103 @@ describe('Bundler', () => {
       framework: 'egg',
       autoGenerate: true,
     });
+  });
+
+  it('emits single-file output and prepends the snapshot prelude in snapshot mode', async () => {
+    let packConfig: { output?: { type?: string }; entry?: unknown[] } | undefined;
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      snapshot: true,
+      pack: {
+        buildFunc: async (wrapped) => {
+          packConfig = wrapped.config as typeof packConfig;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), '((__UTOOPACK__)=>{})([]);\n');
+        },
+      },
+    });
+
+    // snapshot implies single-file: `export` output + per-entry library.
+    expect(packConfig?.output?.type).toBe('export');
+    expect(packConfig?.entry).toContainEqual(expect.objectContaining({ library: { name: 'app' } }));
+
+    // prelude prepended before the bundle IIFE.
+    const worker = await fs.readFile(path.join(tmpOutput, 'worker.js'), 'utf8');
+    expect(worker).toContain(SNAPSHOT_PRELUDE_MARKER);
+    expect(worker.indexOf(SNAPSHOT_PRELUDE_MARKER)).toBeLessThan(worker.indexOf('__UTOOPACK__'));
+  });
+
+  it('skips the prelude when snapshot is disabled (single-file default unchanged)', async () => {
+    let outputType: string | undefined;
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: {
+        buildFunc: async (wrapped) => {
+          outputType = (wrapped.config as { output?: { type?: string } }).output?.type;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), '((__UTOOPACK__)=>{})([]);\n');
+        },
+      },
+    });
+
+    // single-file is the upstream default, so output stays `export` without snapshot.
+    expect(outputType).toBe('export');
+    const worker = await fs.readFile(path.join(tmpOutput, 'worker.js'), 'utf8');
+    expect(worker).not.toContain(SNAPSHOT_PRELUDE_MARKER);
+  });
+
+  it('honours pack.singleFile=false without snapshot (standalone, no prelude)', async () => {
+    let outputType: string | undefined;
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: {
+        singleFile: false,
+        buildFunc: async (wrapped) => {
+          outputType = (wrapped.config as { output?: { type?: string } }).output?.type;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// standalone\n');
+        },
+      },
+    });
+
+    expect(outputType).toBe('standalone');
+    const worker = await fs.readFile(path.join(tmpOutput, 'worker.js'), 'utf8');
+    expect(worker).not.toContain(SNAPSHOT_PRELUDE_MARKER);
+  });
+
+  it('fails fast in snapshot mode when the pack build produced no worker.js', async () => {
+    await expect(
+      bundle({
+        baseDir: tmpApp,
+        outputDir: tmpOutput,
+        snapshot: true,
+        pack: {
+          // buildFunc intentionally writes nothing, simulating a broken pack output.
+          buildFunc: async () => {},
+        },
+      }),
+    ).rejects.toThrow(/expected bundle entry "worker\.js" was not found/);
+  });
+
+  it('forces single-file output in snapshot mode even when pack.singleFile=false', async () => {
+    let outputType: string | undefined;
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      snapshot: true,
+      pack: {
+        singleFile: false,
+        buildFunc: async (wrapped) => {
+          outputType = (wrapped.config as { output?: { type?: string } }).output?.type;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), '((__UTOOPACK__)=>{})([]);\n');
+        },
+      },
+    });
+
+    // snapshot must override an explicit opt-out: V8 snapshots require single-file.
+    expect(outputType).toBe('export');
+    const worker = await fs.readFile(path.join(tmpOutput, 'worker.js'), 'utf8');
+    expect(worker).toContain(SNAPSHOT_PRELUDE_MARKER);
   });
 
   it.each([

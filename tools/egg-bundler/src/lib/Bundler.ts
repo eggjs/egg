@@ -10,6 +10,7 @@ import { ExternalsResolver } from './ExternalsResolver.ts';
 import { assertFrameworkPackageSpecifier } from './frameworkSpecifier.ts';
 import { ManifestLoader } from './ManifestLoader.ts';
 import { PackRunner } from './PackRunner.ts';
+import { prependSnapshotPrelude } from './prelude.ts';
 
 const debug = debuglog('egg/bundler/bundler');
 
@@ -326,6 +327,7 @@ export class Bundler {
       externals,
       pack,
       runtimeAssets,
+      snapshot = false,
     } = this.#config;
 
     const absBaseDir = path.resolve(baseDir);
@@ -335,6 +337,14 @@ export class Bundler {
     const moduleConfig = await wrapStep('module.yml bundle config load', () => loadModuleBundleConfig(absBaseDir));
     const mergedPack = mergePackConfig(moduleConfig?.pack, pack);
     const mergedRuntimeAssets = mergeRuntimeAssetsConfig(moduleConfig?.runtimeAssets, runtimeAssets);
+
+    // Single-file output is the PackRunner default. Snapshot artifacts must be a
+    // single self-contained worker.js (a V8 startup snapshot forbids user-land
+    // require of sibling chunks), so snapshot mode forces it on even when the app
+    // explicitly opted out via pack.singleFile === false. Otherwise honour the
+    // app's pack.singleFile (undefined keeps PackRunner's default).
+    const singleFile = snapshot ? true : mergedPack?.singleFile;
+    debug('snapshot=%s singleFile=%o', snapshot, singleFile);
 
     const manifestLoader = new ManifestLoader({
       baseDir: absBaseDir,
@@ -378,7 +388,7 @@ export class Bundler {
       mode,
       buildFunc: mergedPack?.buildFunc,
       resolve: mergedPack?.resolve,
-      singleFile: mergedPack?.singleFile,
+      singleFile,
     });
     const packResult = await wrapStep('pack build', () => packRunner.run());
     debug('pack produced %d files', packResult.files.length);
@@ -391,6 +401,15 @@ export class Bundler {
       patchResult.patchCount,
       patchResult.deletedMapCount,
     );
+
+    // In snapshot mode prepend the snapshot prelude to each entry's worker.js so it
+    // runs before the bundle IIFE (and therefore before any bundled module loads).
+    if (snapshot) {
+      const prependedEntries = await wrapStep('prepend snapshot prelude', () =>
+        this.#prependSnapshotPrelude(absOutputDir, ['worker']),
+      );
+      debug('prepended snapshot prelude to %d entry file(s)', prependedEntries.length);
+    }
 
     const copiedRuntimeAssets = await wrapStep('runtime asset copy', () =>
       this.#copyRuntimeAssets(absBaseDir, absOutputDir, manifestLoader, mergedRuntimeAssets),
@@ -426,6 +445,34 @@ export class Bundler {
       files,
       manifestPath: manifestPathAbs,
     };
+  }
+
+  async #prependSnapshotPrelude(outputDir: string, entryNames: readonly string[]): Promise<readonly string[]> {
+    const prepended: string[] = [];
+    for (const name of entryNames) {
+      const rel = this.#sanitizeOutputRelativePath(`${name}.js`);
+      const filepath = path.join(outputDir, rel);
+      // The entry file is required output; a missing worker.js means the pack
+      // build did not emit what we expect. Fail fast with a clear error instead
+      // of silently skipping the prelude (which would surface later as an
+      // obscure snapshot-build failure).
+      const content = await fs.readFile(filepath, 'utf8').catch((err: NodeJS.ErrnoException) => {
+        // Only a missing file means "broken pack output"; preserve the original
+        // error for permission / other I/O failures so they stay diagnosable.
+        if (err.code === 'ENOENT') {
+          throw new Error(`snapshot prelude: expected bundle entry "${rel}" was not found at ${filepath}`, {
+            cause: err,
+          });
+        }
+        throw err;
+      });
+      const next = prependSnapshotPrelude(content);
+      if (next !== content) {
+        await fs.writeFile(filepath, next);
+        prepended.push(rel);
+      }
+    }
+    return prepended;
   }
 
   async #copyRuntimeAssets(
