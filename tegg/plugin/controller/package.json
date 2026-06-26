@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/controller-plugin",
-  "version": "4.0.2-beta.15",
+  "version": "4.0.2-beta.16",
   "description": "controller decorator plugin for egg",
   "keywords": [
     "egg",
