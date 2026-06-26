@@ -153,9 +153,11 @@ export class PackRunner {
     // no sibling-chunk require — required for V8 startup snapshots. The default
     // `standalone` type emits a tiny loader plus sibling chunks instead.
     const config = {
-      entry: singleFile
-        ? entries.map((e) => ({ name: e.name, import: e.filepath, library: { name: 'app' } }))
-        : entries.map((e) => ({ name: e.name, import: e.filepath })),
+      entry: entries.map((e) => ({
+        name: e.name,
+        import: e.filepath,
+        ...(singleFile ? { library: { name: 'app' } } : {}),
+      })),
       target: 'node 22',
       platform: 'node',
       mode,
