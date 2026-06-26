@@ -62,7 +62,15 @@ try {
 // state persists across test files.
 const detectedIsESM = isESM;
 const nodeMajorVersion = parseInt(process.versions.node.split('.', 1)[0], 10);
-const supportImportMetaResolve = nodeMajorVersion >= 18;
+// Feature-detect instead of gating on the Node version: when the code is shipped
+// inside a bundle (e.g. @utoo/pack rewrites `import.meta` to a runtime shim that
+// lacks `.resolve`), `import.meta.resolve` is not a function even on Node >= 18, so
+// calling it throws. Detecting the actual capability lets us fall back to
+// `require.resolve` in the bundled CommonJS runtime.
+const supportImportMetaResolve =
+  nodeMajorVersion >= 18 &&
+  typeof import.meta !== 'undefined' &&
+  typeof (import.meta as { resolve?: unknown }).resolve === 'function';
 
 let _customRequire: NodeRequire;
 export function getRequire(): NodeRequire {
@@ -407,7 +415,10 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
         throw new TypeError(`Cannot find module ${filepath}, because ${moduleFilePath} does not exists`);
       }
     } else {
-      moduleFilePath = getRequire().resolve(filepath);
+      // Fallback when `import.meta.resolve` is unavailable (e.g. inside a bundle).
+      // Forward `paths` so package resolution still honours the caller's lookup
+      // dirs (the app baseDir / framework dirs), matching the on-disk attempts above.
+      moduleFilePath = getRequire().resolve(filepath, paths ? { paths } : undefined);
     }
   }
   debug('[importResolve:success] %o, options: %o => %o, isESM: %s', filepath, options, moduleFilePath, isESM);
@@ -486,6 +497,21 @@ export async function importModule(filepath: string, options?: ImportModuleOptio
       if (obj && typeof obj === 'object' && 'default' in obj) {
         obj = obj.default;
       }
+    }
+    return obj;
+  }
+
+  // Async module importer override (e.g. a Vitest runner that loads the module
+  // through its own module graph). Same `ModuleImporter` global the tegg loader
+  // uses, so app/boot files and tegg modules resolve via one realm under test.
+  const _moduleImporter = globalThis.__EGG_MODULE_IMPORTER__;
+  if (_moduleImporter) {
+    let obj = (await _moduleImporter(moduleFilePath)) as any;
+    if (obj && typeof obj === 'object' && obj.default?.__esModule === true && obj.default && 'default' in obj.default) {
+      obj = obj.default;
+    }
+    if (options?.importDefaultOnly && obj && typeof obj === 'object' && 'default' in obj) {
+      obj = obj.default;
     }
     return obj;
   }

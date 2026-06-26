@@ -38,11 +38,17 @@ export default class AopAppHook implements ILifecycleBoot {
   }
 
   async didLoad(): Promise<void> {
+    // Register the GlobalGraph build hooks BEFORE moduleHandler.ready(). ready()
+    // triggers EggModuleLoader.load() -> globalGraph.build(), which is what runs
+    // the registered build hooks. Registering on GlobalGraph.instance *after*
+    // ready() is too late — the build has already run — so cross-loadUnit
+    // crosscut/pointcut advice weaving silently never happens.
+    this.app.moduleHandler.registerGlobalGraphBuildHook(crossCutGraphHook);
+    this.app.moduleHandler.registerGlobalGraphBuildHook(pointCutGraphHook);
     await this.app.moduleHandler.ready();
-    const globalGraph = GlobalGraph.instanceFor(this.app._teggScopeBag);
-    assert(globalGraph, 'GlobalGraph.instance is not set');
-    globalGraph.registerBuildHook(crossCutGraphHook);
-    globalGraph.registerBuildHook(pointCutGraphHook);
+    // Build hooks are registered above (before ready()), so the graph already
+    // ran them during build. Resolve the per-app graph for the sanity assert.
+    assert(GlobalGraph.instanceFor(this.app._teggScopeBag), 'GlobalGraph.instance is not set');
     this.aopContextHook = new AopContextHook(this.app.moduleHandler);
     this.app.eggContextLifecycleUtil.registerLifecycle(this.aopContextHook);
   }

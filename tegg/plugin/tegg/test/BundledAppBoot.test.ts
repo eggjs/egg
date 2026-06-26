@@ -102,29 +102,41 @@ describe('plugin/tegg/test/BundledAppBoot.test.ts', () => {
       `expected ManifestLoaderFS, got ${app.loader.loaderFS?.constructor?.name}`,
     );
 
-    // Core/framework discovery is fully served from the manifest — nothing outside
-    // tegg module dirs ever falls back to a real-fs glob. Match the `modules` path
-    // segment exactly rather than a substring, to avoid similarly named dirs.
-    const isUnderModulesDir = (cwd: string): boolean => cwd.split(path.sep).includes('modules');
-    const nonModuleGlobs = bootFallbackGlobTargets.filter((cwd) => !isUnderModulesDir(cwd));
+    // The app's own (first-party) core discovery is fully served from the manifest:
+    // no directory under baseDir (outside tegg module dirs) falls back to a real-fs
+    // glob. Match the `modules`/`node_modules` path segments exactly rather than a
+    // substring, to avoid similarly named dirs.
+    //
+    // Third-party plugin dirs under `node_modules` are intentionally excluded: a
+    // plugin whose `app/service` (etc.) directory is empty produces an empty-result
+    // glob that the manifest does not cache, so it legitimately falls back. That is
+    // environment-dependent (only the pnpm/CI layout materializes those dirs next to
+    // the app) and orthogonal to what this test asserts.
+    const hasSegment = (cwd: string, seg: string): boolean => cwd.split(path.sep).includes(seg);
+    const isUnderModulesDir = (cwd: string): boolean => hasSegment(cwd, 'modules');
+    const firstPartyGlobs = bootFallbackGlobTargets.filter(
+      (cwd) => !isUnderModulesDir(cwd) && !hasSegment(cwd, 'node_modules'),
+    );
     assert.deepEqual(
-      nonModuleGlobs,
+      firstPartyGlobs,
       [],
-      `core discovery should be fully manifest-served, but globbed: ${JSON.stringify(nonModuleGlobs)}`,
+      `app's own discovery should be fully manifest-served, but globbed: ${JSON.stringify(firstPartyGlobs)}`,
     );
 
-    // The tegg module discovery that DOES run reaches the manifest VFS's fallback,
-    // which is only possible because EggModuleLoader now goes through
-    // app.loader.loaderFS (Theme F) — before, tegg used its own globby import.
-    assert.ok(
-      bootFallbackGlobTargets.some(isUnderModulesDir),
-      'tegg module discovery should route through the injected loaderFS',
+    // In consume mode EggModuleLoader.loadModule now reuses the manifest's
+    // precomputed tegg `decoratedFiles` instead of re-globbing each module dir,
+    // so tegg module discovery is fully manifest-served and NO fallback glob runs
+    // under a module dir either. This is what lets the load-unit lifecycle hooks
+    // (e.g. EggQualifierProtoHook) still see the real decorated classes via
+    // `ctx.loader.load()` in a bundle, where the module source files do not exist
+    // on disk for a glob to find.
+    assert.deepEqual(
+      bootFallbackGlobTargets.filter(isUnderModulesDir),
+      [],
+      `tegg module discovery should be fully manifest-served, but globbed module dirs: ${JSON.stringify(
+        bootFallbackGlobTargets.filter(isUnderModulesDir),
+      )}`,
     );
-
-    // KNOWN RESIDUAL: in consume mode EggModuleLoader.loadModule still re-globs each
-    // module dir (manifest stores tegg decoratedFiles, not module dirs in core
-    // fileDiscovery, and loadModule does not pass decoratedFiles). Pre-existing,
-    // out of Theme F scope. See [[bundle-startup-loadmodule-residual-glob]].
   });
 
   it('should serve the full controller -> service -> cross-module repo DI chain over HTTP', async () => {
