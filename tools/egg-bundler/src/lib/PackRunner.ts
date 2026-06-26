@@ -23,6 +23,19 @@ export interface PackRunnerOptions {
   readonly mode?: 'production' | 'development';
   readonly buildFunc?: BuildFunc;
   readonly resolve?: PackRunnerResolveConfig;
+  /**
+   * Emit a single self-contained file per entry. This is the DEFAULT (`true`).
+   *
+   * In single-file mode @utoo/pack inlines every module into one self-executing
+   * IIFE (`((__UTOOPACK__)=>{...})([...modules])`), so the output worker.js
+   * requires no sibling chunk and is V8 startup-snapshot eligible — a snapshot
+   * builder forbids the user-land require of sibling chunks.
+   *
+   * Set to `false` to fall back to @utoo/pack's legacy multi-chunk standalone
+   * output, where `worker.js` is a tiny loader that does
+   * `require("./_turbopack__runtime.js")` and pulls in sibling chunks at runtime.
+   */
+  readonly singleFile?: boolean;
 }
 
 export interface PackRunnerResult {
@@ -99,6 +112,7 @@ export class PackRunner {
       mode = 'production',
       buildFunc = DEFAULT_BUILD_FUNC,
       resolve,
+      singleFile = true,
     } = this.#options;
 
     await fs.mkdir(outputDir, { recursive: true });
@@ -136,14 +150,24 @@ export class PackRunner {
 
     const resolveConfig = this.#buildResolveConfig(resolve);
 
+    // Single-file mode (the default): @utoo/pack's `export` output type with a
+    // per-entry `library: { name }` inlines every module into one self-executing
+    // IIFE (`((__UTOOPACK__)=>{...})([...modules])`), so the emitted worker.js
+    // carries no sibling-chunk require — required for V8 startup snapshots. When
+    // `singleFile` is false the legacy `standalone` type emits a tiny loader plus
+    // sibling chunks instead.
     const config = {
-      entry: entries.map((e) => ({ name: e.name, import: e.filepath })),
+      entry: entries.map((e) => ({
+        name: e.name,
+        import: e.filepath,
+        ...(singleFile ? { library: { name: 'app' } } : {}),
+      })),
       target: 'node 22',
       platform: 'node',
       mode,
       output: {
         path: outputDir,
-        type: 'standalone',
+        type: singleFile ? 'export' : 'standalone',
       },
       externals: umdExternals,
       ...(resolveConfig ? { resolve: resolveConfig } : {}),
