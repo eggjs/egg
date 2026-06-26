@@ -6,7 +6,7 @@ If another agent-specific file exists, it should import or defer to this file fo
 
 ## Project Map
 
-Egg is maintained as a pnpm monorepo.
+Egg is maintained as a Utoo monorepo.
 
 - `packages/` contains core framework packages and shared internals.
 - `plugins/` contains optional Egg integrations.
@@ -18,12 +18,12 @@ Egg is maintained as a pnpm monorepo.
 
 ## Core Commands
 
-- `pnpm install` hydrates the workspace.
-- `pnpm run build` builds all packages.
-- `pnpm run test` runs the main test suite.
-- `pnpm run lint` runs linting.
-- `pnpm run typecheck` runs TypeScript checking.
-- use filtered commands for focused work, for example `pnpm --filter=egg run test` or `pnpm --filter=site run dev`.
+- `utoo install` hydrates the workspace.
+- `utoo run build` builds all packages.
+- `utoo run test` runs the main test suite.
+- `utoo run lint` runs linting.
+- `utoo run typecheck` runs TypeScript checking.
+- use workspace-filtered commands for focused work, for example `utoo run --workspace egg test` or `utoo run --workspace site dev`.
 
 ### Local CI
 
@@ -65,7 +65,7 @@ Then re-run tests.
 
 - review `SECURITY.md` before handling vulnerability-related work
 - do not commit secrets, credentials, or local-only URLs
-- keep local Node.js and pnpm versions aligned with the repository configuration
+- keep local Node.js and Utoo versions aligned with the repository configuration
 
 ## Shared Knowledge Workflow
 
@@ -99,7 +99,7 @@ The wiki lives under `wiki/` and stores durable synthesized knowledge.
 
 Shared workflow rules live here in `AGENTS.md`.
 
-Agent-specific files should stay thin and point back to this file instead of duplicating the schema.
+Agent-specific files such as `CLAUDE.md` should stay thin and point back to the nearest `AGENTS.md` instead of duplicating the schema.
 
 ## Wiki Layout
 
