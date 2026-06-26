@@ -97,20 +97,12 @@ class InnerSSEServerTransport extends SSEServerTransport {
 export class MCPControllerRegister implements ControllerRegister {
   // Per-app: holds this app's MCP transports/servers/timers, so it is resolved
   // from the active TeggScope bag rather than a process-global singleton.
-  static #legacyInstance?: MCPControllerRegister;
-
   static get instance(): MCPControllerRegister | undefined {
-    return TeggScope.getOr(
-      MCP_CONTROLLER_REGISTER_SLOT,
-      () => MCPControllerRegister.#legacyInstance,
-      'MCPControllerRegister.instance',
-    );
+    return TeggScope.getOr(MCP_CONTROLLER_REGISTER_SLOT, () => undefined, 'MCPControllerRegister.instance');
   }
 
   static set instance(value: MCPControllerRegister | undefined) {
-    if (!TeggScope.set(MCP_CONTROLLER_REGISTER_SLOT, value)) {
-      MCPControllerRegister.#legacyInstance = value;
-    }
+    TeggScope.set(MCP_CONTROLLER_REGISTER_SLOT, value);
   }
 
   readonly app: Application;

@@ -26,10 +26,14 @@ export default class TEggPluginContext {
     // Run within this app's scope so proto resolution uses the per-app class→proto
     // map (multi-app safe) and ContextHandler/factories resolve the right app —
     // even when called outside a request (e.g. the tegg-vitest runner).
-    return TeggScope.run(app._teggScopeBag, async () => {
+    const bag = app._teggScopeBag;
+    const doWork = async (): Promise<T> => {
       const eggObject = await app.eggContainerFactory.getOrCreateEggObjectFromClazz(clazz as EggProtoImplClass, name);
       return eggObject.obj as T;
-    });
+    };
+    // Defensive (consistent with application.ts): fall back to the ambient scope
+    // if the bag is not yet established.
+    return bag ? TeggScope.run(bag, doWork) : doWork();
   }
 
   async getEggObjectFromName<T>(this: Context, name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T> {
@@ -37,9 +41,11 @@ export default class TEggPluginContext {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [qualifiers];
     }
     const app = this.app;
-    return TeggScope.run(app._teggScopeBag, async () => {
+    const bag = app._teggScopeBag;
+    const doWork = async (): Promise<T> => {
       const eggObject = await app.eggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
       return eggObject.obj as T;
-    });
+    };
+    return bag ? TeggScope.run(bag, doWork) : doWork();
   }
 }

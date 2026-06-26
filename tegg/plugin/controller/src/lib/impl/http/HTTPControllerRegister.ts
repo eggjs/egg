@@ -21,20 +21,12 @@ const HTTP_CONTROLLER_REGISTER_SLOT = Symbol('tegg:controller:httpControllerRegi
 export class HTTPControllerRegister implements ControllerRegister {
   // Per-app: the register accumulates protos and binds to one app's router, so
   // it must be per-app (resolved from the active TeggScope bag).
-  static #legacyInstance?: HTTPControllerRegister;
-
   static get instance(): HTTPControllerRegister | undefined {
-    return TeggScope.getOr(
-      HTTP_CONTROLLER_REGISTER_SLOT,
-      () => HTTPControllerRegister.#legacyInstance,
-      'HTTPControllerRegister.instance',
-    );
+    return TeggScope.getOr(HTTP_CONTROLLER_REGISTER_SLOT, () => undefined, 'HTTPControllerRegister.instance');
   }
 
   static set instance(value: HTTPControllerRegister | undefined) {
-    if (!TeggScope.set(HTTP_CONTROLLER_REGISTER_SLOT, value)) {
-      HTTPControllerRegister.#legacyInstance = value;
-    }
+    TeggScope.set(HTTP_CONTROLLER_REGISTER_SLOT, value);
   }
 
   private readonly router: Router;

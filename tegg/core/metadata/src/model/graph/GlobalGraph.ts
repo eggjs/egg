@@ -71,21 +71,17 @@ export class GlobalGraph {
   private buildHooks: GlobalGraphBuildHook[];
 
   /**
-   * The per-app graph instance used in ModuleLoadUnit, backed by TeggScope.
-   * In a scope, the active app's bag is the source of truth (undefined until the
-   * loader assigns it during boot); with no scope, falls back to a module-level
-   * legacy var (single-app / metadata-only paths). Call sites stay unchanged.
+   * The per-app graph instance used in ModuleLoadUnit, backed by TeggScope: the
+   * active app's bag (or, with no scope, the sole-app / process-default bag) is
+   * the single source of truth — undefined until the loader assigns it during
+   * boot. Call sites stay unchanged.
    */
-  static #legacyInstance?: GlobalGraph;
-
   static get instance(): GlobalGraph | undefined {
-    return TeggScope.getOr<GlobalGraph>(GLOBAL_GRAPH_SLOT, () => GlobalGraph.#legacyInstance, 'GlobalGraph.instance');
+    return TeggScope.getOr<GlobalGraph>(GLOBAL_GRAPH_SLOT, () => undefined, 'GlobalGraph.instance');
   }
 
   static set instance(value: GlobalGraph | undefined) {
-    if (!TeggScope.set(GLOBAL_GRAPH_SLOT, value)) {
-      GlobalGraph.#legacyInstance = value;
-    }
+    TeggScope.set(GLOBAL_GRAPH_SLOT, value);
   }
 
   /**

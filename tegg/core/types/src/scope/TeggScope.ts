@@ -173,8 +173,15 @@ export class TeggScope {
   /**
    * Write a slot into the active bag (scoped, or the single process-default bag).
    * Always succeeds; returns true for symmetry with earlier call sites.
+   *
+   * Like {@link TeggScope.resolve} / {@link TeggScope.getOr}, a write that escapes
+   * to the process-default bag under multi-app mode is reported, so a missed
+   * scope wrap that silently mutates shared state is caught instead of leaking.
    */
   static set(slot: symbol, value: unknown): boolean {
+    if (!als.getStore() && TeggScope.isMultiApp) {
+      reportEscape(slot.toString());
+    }
     TeggScope.#activeBag().set(slot, value);
     return true;
   }
