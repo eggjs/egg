@@ -14,13 +14,13 @@ import { describe, it } from 'vitest';
 //
 // Constructing a real cluster-client in a unit test is heavy, so this pins the
 // exact language/build semantics the fix relies on, under the same toolchain the
-// published package is built with.
+// published package is built with. The base assigns `_client` dynamically (no
+// typed field) so the subclasses below own the declaration — mirroring how
+// cluster-client's APIClientBase sets it without a TS field.
 describe('plugin/mcp-proxy/test/client-field-shadow.test.ts', () => {
   class FakeAPIClientBase {
-    _client: unknown;
     constructor() {
-      // Mirror APIClientBase: the base sets _client in its constructor.
-      this._client = {
+      (this as { _client?: unknown })._client = {
         registerClient() {
           return true;
         },
@@ -40,7 +40,9 @@ describe('plugin/mcp-proxy/test/client-field-shadow.test.ts', () => {
       declare _client: unknown;
     }
     const client = new Declared()._client as { registerClient(): boolean } | undefined;
-    assert.ok(client, '_client must survive super(), not be shadowed to undefined');
-    assert.strictEqual(typeof client.registerClient, 'function');
+    assert.ok(
+      client && typeof client.registerClient === 'function',
+      '_client must survive super() with a working registerClient, not be shadowed to undefined',
+    );
   });
 });
