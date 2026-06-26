@@ -164,8 +164,7 @@ export class MCPControllerRegister implements ControllerRegister {
   mcpStatelessStreamServerInit(name?: string): void {
     const postRouterFunc = this.router.post;
     const self = this;
-    let mw = (self.app.middleware as any).teggCtxLifecycleMiddleware();
-    mw = self.composeGlobalMiddleware(mw);
+    const mw = self.composeGlobalMiddleware(() => (self.app.middleware as any).teggCtxLifecycleMiddleware());
     const initHandler = async (ctx: Context) => {
       // Create fresh transport and server per request
       // MCP SDK >= 1.26 requires stateless transports to be single-use
@@ -246,8 +245,7 @@ export class MCPControllerRegister implements ControllerRegister {
   mcpStreamServerInit(name?: string): void {
     const allRouterFunc = this.router.all;
     const self = this;
-    let mw = (self.app.middleware as any).teggCtxLifecycleMiddleware();
-    mw = self.composeGlobalMiddleware(mw);
+    const mw = self.composeGlobalMiddleware(() => (self.app.middleware as any).teggCtxLifecycleMiddleware());
     const initHandler = async (ctx: Context) => {
       ctx.respond = false;
       if (MCPControllerRegister.hooks.length > 0) {
@@ -441,8 +439,7 @@ export class MCPControllerRegister implements ControllerRegister {
 
   sseCtxStorageRun(ctx: Context, transport: SSEServerTransport, name?: string): void {
     const self = this;
-    let mw = (this.app.middleware as any).teggCtxLifecycleMiddleware();
-    mw = self.composeGlobalMiddleware(mw);
+    const mw = self.composeGlobalMiddleware(() => (this.app.middleware as any).teggCtxLifecycleMiddleware());
     const closeFunc = transport.onclose;
     transport.onclose = () => {
       closeFunc?.();
@@ -504,8 +501,7 @@ export class MCPControllerRegister implements ControllerRegister {
     const routerFunc = this.router.post;
     const self = this;
 
-    let mw = (self.app.middleware as any).teggCtxLifecycleMiddleware();
-    mw = self.composeGlobalMiddleware(mw);
+    const mw = self.composeGlobalMiddleware(() => (self.app.middleware as any).teggCtxLifecycleMiddleware());
     const messageHander = async (ctx: Context) => {
       const sessionId = ctx.query.sessionId as string;
 
@@ -586,18 +582,26 @@ export class MCPControllerRegister implements ControllerRegister {
     this.globalMiddlewares = compose(middlewares);
   }
 
-  // Wrap a base middleware so the configured global middlewares are resolved and
-  // composed on the first request (when `app.middlewares` is ready), not at
-  // registration time. Safe to install during controller registration.
-  composeGlobalMiddleware(mw: compose.Middleware<EggContext>): compose.Middleware<EggContext> {
+  // Wrap a base middleware so that both the base middleware itself and the
+  // configured global middlewares are resolved and composed on the first request
+  // (when `app.middleware`/`app.middlewares` are ready), not at registration time.
+  //
+  // The base middleware factory must be passed as a thunk rather than an already
+  // resolved middleware: `app.middleware.teggCtxLifecycleMiddleware` is loaded by
+  // egg's `loadMiddleware`, which runs *after* controller registration (the tegg
+  // load-unit init / postCreate). Calling it eagerly at registration time throws
+  // `teggCtxLifecycleMiddleware is not a function`. Deferring the call to the
+  // first request lets it bind once the middleware is loaded.
+  composeGlobalMiddleware(mwFactory: () => compose.Middleware<EggContext>): compose.Middleware<EggContext> {
     const self = this;
     // Resolve + compose once on the first request, then reuse the composed chain
     // (globalMiddlewares is static after it is built) to avoid re-composing per
     // request.
     let resolved = false;
-    let composed: compose.Middleware<EggContext> = mw;
+    let composed: compose.Middleware<EggContext>;
     return async (ctx, next) => {
       if (!resolved) {
+        const mw = mwFactory();
         self.getGlobalMiddleware();
         composed = (
           self.globalMiddlewares ? compose([mw, self.globalMiddlewares]) : mw

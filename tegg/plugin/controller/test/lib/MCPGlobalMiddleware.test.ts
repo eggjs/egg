@@ -32,7 +32,7 @@ describe('plugin/controller/test/lib/MCPGlobalMiddleware.test.ts', () => {
 
     // Wrapping the base middleware must not throw even though `trace` is not yet
     // available; resolution is deferred to the first request.
-    assert.doesNotThrow(() => register.composeGlobalMiddleware(base));
+    assert.doesNotThrow(() => register.composeGlobalMiddleware(() => base));
     assert.equal(register.globalMiddlewares, undefined);
   });
 
@@ -43,7 +43,7 @@ describe('plugin/controller/test/lib/MCPGlobalMiddleware.test.ts', () => {
       order.push('base');
       return next();
     };
-    const wrapped = register.composeGlobalMiddleware(base);
+    const wrapped = register.composeGlobalMiddleware(() => base);
 
     // app.middlewares is populated later by loadMiddleware.
     app.middlewares.trace = () => async (_ctx: any, next: any) => {
@@ -67,7 +67,7 @@ describe('plugin/controller/test/lib/MCPGlobalMiddleware.test.ts', () => {
       return async (_ctx: any, next: any) => next();
     };
     const base: any = async (_ctx: any, next: any) => next();
-    const wrapped = register.composeGlobalMiddleware(base);
+    const wrapped = register.composeGlobalMiddleware(() => base);
 
     await wrapped({} as any, async () => {});
     await wrapped({} as any, async () => {});
@@ -92,14 +92,44 @@ describe('plugin/controller/test/lib/MCPGlobalMiddleware.test.ts', () => {
     assert.throws(() => register.getGlobalMiddleware(), /Middleware nope not found/);
   });
 
+  it('defers the base middleware factory to the first request', async () => {
+    // `app.middleware.teggCtxLifecycleMiddleware` is loaded by egg's
+    // loadMiddleware, which runs *after* controller registration. The base
+    // middleware must therefore be acquired via a thunk on the first request,
+    // not eagerly — otherwise registration throws
+    // `teggCtxLifecycleMiddleware is not a function`.
+    const { register } = createRegister({ middleware: [] }, {});
+    let baseFactoryCalls = 0;
+    const base: any = async (_ctx: any, next: any) => next();
+    const wrapped = register.composeGlobalMiddleware(() => {
+      baseFactoryCalls++;
+      return base;
+    });
+
+    // Wrapping does not resolve the base middleware.
+    assert.equal(baseFactoryCalls, 0);
+
+    await wrapped({} as any, async () => {});
+    await wrapped({} as any, async () => {});
+
+    // Resolved exactly once, on the first request, then cached.
+    assert.equal(baseFactoryCalls, 1);
+  });
+
   it('wires the lazy middleware into the MCP route setup without touching app.middlewares', () => {
     // The route-setup methods run during registration (before loadMiddleware).
-    // They must install the lazy wrapper without resolving app.middlewares.
+    // They must install the lazy wrapper without resolving app.middlewares and
+    // without invoking the base teggCtxLifecycleMiddleware factory (which is not
+    // loaded onto app.middleware until after registration).
+    let baseMiddlewareCalls = 0;
     const app: any = {
       eggContainerFactory: {},
       router: { post() {}, get() {}, del() {}, all() {} },
       middleware: {
-        teggCtxLifecycleMiddleware: () => async (_ctx: any, next: any) => next(),
+        teggCtxLifecycleMiddleware: () => {
+          baseMiddlewareCalls++;
+          return async (_ctx: any, next: any) => next();
+        },
       },
       config: { mcp: { middleware: ['trace'] } },
       middlewares: {}, // 'trace' not loaded yet
@@ -111,8 +141,10 @@ describe('plugin/controller/test/lib/MCPGlobalMiddleware.test.ts', () => {
     assert.doesNotThrow(() => register.mcpServerRegister());
     // sseCtxStorageRun wires the same lazy wrapper per SSE connection.
     assert.doesNotThrow(() => register.sseCtxStorageRun({} as any, {} as any, 'default'));
-    // Still not resolved — deferred to the first request.
+    // Still not resolved — both the global middlewares and the base middleware
+    // are deferred to the first request.
     assert.equal(register.globalMiddlewares, undefined);
+    assert.equal(baseMiddlewareCalls, 0);
   });
 
   it('keeps koa-compose onion ordering for multiple global middlewares', async () => {
@@ -129,7 +161,7 @@ describe('plugin/controller/test/lib/MCPGlobalMiddleware.test.ts', () => {
       order.push('base');
       return next();
     };
-    const wrapped = register.composeGlobalMiddleware(base);
+    const wrapped = register.composeGlobalMiddleware(() => base);
     await wrapped({} as any, async () => order.push('handler'));
     assert.deepEqual(order, ['base', 'a:before', 'b:before', 'handler', 'b:after', 'a:after']);
     assert.equal(typeof compose, 'function');
