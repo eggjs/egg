@@ -35,6 +35,7 @@ describe('PackRunner', () => {
         alias?: Record<string, string>;
         [key: string]: unknown;
       };
+      singleFile?: boolean;
     } = {},
   ): PackRunner {
     const outputDir = overrides.outputDir ?? path.join(tmpDir, 'out');
@@ -47,6 +48,7 @@ describe('PackRunner', () => {
       ...(overrides.rootPath !== undefined ? { rootPath: overrides.rootPath } : {}),
       ...(overrides.mode !== undefined ? { mode: overrides.mode } : {}),
       ...(overrides.resolve !== undefined ? { resolve: overrides.resolve } : {}),
+      ...(overrides.singleFile !== undefined ? { singleFile: overrides.singleFile } : {}),
       buildFunc: overrides.buildFunc ?? (async () => {}),
     });
   }
@@ -135,6 +137,34 @@ describe('PackRunner', () => {
     expect(config.resolve).toBeUndefined();
     expect(projectPath).toBe(tmpDir);
     expect(rootPath).toBe(tmpDir);
+    // Default (standalone) mode does not attach a per-entry library.
+    expect(config.entry).not.toContainEqual(expect.objectContaining({ library: expect.anything() }));
+  });
+
+  it('emits export output with a per-entry library when singleFile is enabled', async () => {
+    const buildFunc = vi.fn<BuildFunc>(async () => {});
+    const entries: PackEntry[] = [
+      { name: 'worker', filepath: '/abs/worker.entry.ts' },
+      { name: 'agent', filepath: '/abs/agent.entry.ts' },
+    ];
+
+    await makeRunner({ entries, singleFile: true, buildFunc }).run();
+
+    const config = (buildFunc.mock.calls[0]![0] as { config: Record<string, unknown> }).config;
+    // `export` type + per-entry `library` makes @utoo/pack inline every module into
+    // one self-executing IIFE (no sibling-chunk require) — snapshot-eligible.
+    expect(config.output).toEqual({ path: path.join(tmpDir, 'out'), type: 'export' });
+    expect(config.entry).toEqual([
+      { name: 'worker', import: '/abs/worker.entry.ts', library: { name: 'app' } },
+      { name: 'agent', import: '/abs/agent.entry.ts', library: { name: 'app' } },
+    ]);
+  });
+
+  it('defaults to standalone output (no library) when singleFile is omitted', async () => {
+    const buildFunc = vi.fn<BuildFunc>(async () => {});
+    await makeRunner({ buildFunc }).run();
+    const config = (buildFunc.mock.calls[0]![0] as { config: Record<string, unknown> }).config;
+    expect((config.output as { type: string }).type).toBe('standalone');
   });
 
   it('passes application supplied resolve aliases through to the pack config', async () => {

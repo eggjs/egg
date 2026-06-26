@@ -23,6 +23,16 @@ export interface PackRunnerOptions {
   readonly mode?: 'production' | 'development';
   readonly buildFunc?: BuildFunc;
   readonly resolve?: PackRunnerResolveConfig;
+  /**
+   * Emit a single self-contained file per entry instead of @utoo/pack's default
+   * multi-chunk standalone output. A standalone `worker.js` is a tiny loader that
+   * does `require("./_turbopack__runtime.js")` and pulls in sibling chunks at
+   * runtime; that user-land require of sibling chunks is exactly what a V8 startup
+   * snapshot builder forbids. With single-file mode @utoo/pack inlines every module
+   * into one self-executing IIFE (`((__UTOOPACK__)=>{...})([...modules])`), so the
+   * output worker.js requires no sibling chunk and is snapshot-eligible.
+   */
+  readonly singleFile?: boolean;
 }
 
 export interface PackRunnerResult {
@@ -99,6 +109,7 @@ export class PackRunner {
       mode = 'production',
       buildFunc = DEFAULT_BUILD_FUNC,
       resolve,
+      singleFile = false,
     } = this.#options;
 
     await fs.mkdir(outputDir, { recursive: true });
@@ -136,14 +147,21 @@ export class PackRunner {
 
     const resolveConfig = this.#buildResolveConfig(resolve);
 
+    // Single-file mode: @utoo/pack's `export` output type with a per-entry
+    // `library: { name }` inlines every module into one self-executing IIFE
+    // (`((__UTOOPACK__)=>{...})([...modules])`), so the emitted worker.js carries
+    // no sibling-chunk require — required for V8 startup snapshots. The default
+    // `standalone` type emits a tiny loader plus sibling chunks instead.
     const config = {
-      entry: entries.map((e) => ({ name: e.name, import: e.filepath })),
+      entry: singleFile
+        ? entries.map((e) => ({ name: e.name, import: e.filepath, library: { name: 'app' } }))
+        : entries.map((e) => ({ name: e.name, import: e.filepath })),
       target: 'node 22',
       platform: 'node',
       mode,
       output: {
         path: outputDir,
-        type: 'standalone',
+        type: singleFile ? 'export' : 'standalone',
       },
       externals: umdExternals,
       ...(resolveConfig ? { resolve: resolveConfig } : {}),

@@ -28,6 +28,13 @@ export interface BundlerPackConfig {
   readonly rootPath?: string;
   /** @utoo/pack resolve tuning supplied by the application. */
   readonly resolve?: PackRunnerResolveConfig;
+  /**
+   * Emit a single self-contained worker.js (all modules inlined, zero sibling-chunk
+   * require) instead of the default multi-chunk standalone output. Required for V8
+   * startup snapshots, which forbid user-land require of sibling chunks. Defaults to
+   * `false`.
+   */
+  readonly singleFile?: boolean;
 }
 
 export interface BundlerRuntimeAssetsConfig {

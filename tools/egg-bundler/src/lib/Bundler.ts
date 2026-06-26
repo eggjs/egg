@@ -378,6 +378,7 @@ export class Bundler {
       mode,
       buildFunc: mergedPack?.buildFunc,
       resolve: mergedPack?.resolve,
+      singleFile: mergedPack?.singleFile,
     });
     const packResult = await wrapStep('pack build', () => packRunner.run());
     debug('pack produced %d files', packResult.files.length);
