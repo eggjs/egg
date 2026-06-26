@@ -8,16 +8,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const execFileAsync = promisify(execFile);
 
-// REAL @utoo/pack build regression test for single-file (library/export) output mode.
+// REAL @utoo/pack build regression test for single-file (library/export) output mode,
+// which is the DEFAULT output mode.
 //
-// The default `standalone` output emits a tiny `worker.js` loader that does
-// `require("./_turbopack__runtime.js")` and pulls in sibling chunks via `R.c(...)` at
-// runtime. A V8 startup snapshot builder forbids that user-land require of sibling
-// chunks, so single-file mode switches @utoo/pack to `output.type: "export"` with a
-// per-entry `library: { name }`, which inlines every module into one self-executing
-// IIFE (`((__UTOOPACK__)=>{...})([...modules])`). This is a real build because the
-// emitted shape is entirely a property of @utoo/pack's `export` codegen — a mock
-// cannot guard a @utoo/pack upgrade that regresses it.
+// The legacy `standalone` output (opt-in via `pack.singleFile: false`) emits a tiny
+// `worker.js` loader that does `require("./_turbopack__runtime.js")` and pulls in
+// sibling chunks via `R.c(...)` at runtime. A V8 startup snapshot builder forbids that
+// user-land require of sibling chunks, so the default single-file mode switches
+// @utoo/pack to `output.type: "export"` with a per-entry `library: { name }`, which
+// inlines every module into one self-executing IIFE (`((__UTOOPACK__)=>{...})([...modules])`).
+// This is a real build because the emitted shape is entirely a property of @utoo/pack's
+// `export` codegen — a mock cannot guard a @utoo/pack upgrade that regresses it.
 
 // ManifestLoader / ExternalsResolver / EntryGenerator are stubbed so the test can drive a
 // real @utoo/pack build over a hand-written worker entry. Only the build is exercised for real.
@@ -84,7 +85,7 @@ describe('single-file output mode — real @utoo/pack build', () => {
     await fs.rm(baseDir, { recursive: true, force: true });
   });
 
-  it('emits a single self-contained worker.js with no sibling-chunk require, runnable by node', async () => {
+  it('defaults to a single self-contained worker.js with no sibling-chunk require, runnable by node', async () => {
     await fs.writeFile(path.join(baseDir, 'package.json'), JSON.stringify({ name: 'single-file-app' }));
 
     // A small dependency graph forced across more than one source module so the
@@ -102,7 +103,8 @@ describe('single-file output mode — real @utoo/pack build', () => {
     mocks.entryDir = entryDir;
 
     const outputDir = path.join(baseDir, 'dist');
-    await bundle({ baseDir, outputDir, pack: { singleFile: true } });
+    // No `pack.singleFile` — single-file output is the default.
+    await bundle({ baseDir, outputDir });
 
     const workerPath = path.join(outputDir, 'worker.js');
     const worker = await fs.readFile(workerPath, 'utf8');

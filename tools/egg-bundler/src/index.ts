@@ -30,9 +30,9 @@ export interface BundlerPackConfig {
   readonly resolve?: PackRunnerResolveConfig;
   /**
    * Emit a single self-contained worker.js (all modules inlined, zero sibling-chunk
-   * require) instead of the default multi-chunk standalone output. Required for V8
-   * startup snapshots, which forbid user-land require of sibling chunks. Defaults to
-   * `false`.
+   * require). This is the default (`true`) and is required for V8 startup snapshots,
+   * which forbid user-land require of sibling chunks. Set to `false` to fall back to
+   * the legacy multi-chunk standalone output.
    */
   readonly singleFile?: boolean;
 }
