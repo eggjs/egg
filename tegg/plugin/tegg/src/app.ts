@@ -33,7 +33,7 @@ export default class TeggAppBoot implements ILifecycleBoot {
     // (controller/aop/dal/eventbus) boots, so their boot hooks can resolve the
     // per-app factories/managers from app._teggScopeBag.
     this.app._teggScopeBag = TeggScope.createBag();
-    TeggScope.registerScope();
+    TeggScope.registerScope(this.app._teggScopeBag);
     this.app.config.coreMiddleware.push('teggCtxLifecycleMiddleware');
   }
 
@@ -95,7 +95,7 @@ export default class TeggAppBoot implements ILifecycleBoot {
       LoadUnitMultiInstanceProtoHook.clear();
     });
     // The whole per-app scope (bag) is dropped with the app; release the scope
-    // counter so the strict-mode escape fuse reflects the live app count.
-    TeggScope.unregisterScope();
+    // so the strict-mode escape fuse reflects the live app count.
+    TeggScope.unregisterScope(this.app._teggScopeBag);
   }
 }

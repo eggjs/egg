@@ -40,8 +40,13 @@ export class ContextHandler {
   }
 
   static getContext(): EggRuntimeContext | undefined {
+    // No installed callback means there is no active app/request context to
+    // read (e.g. a singleton service or detached logger called outside any
+    // scope). That is a valid "no context" state, so resolve to undefined
+    // instead of throwing — matching the pre-scoping global behavior where the
+    // process-wide callback stayed set after boot. Multi-app escape detection
+    // is handled by the TeggScope fuse on `callbacks()`, not by this assert.
     const cb = callbacks().getContextCallback;
-    assert(cb, 'getContextCallback not set');
     return cb ? cb() : undefined;
   }
 

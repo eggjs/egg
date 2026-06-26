@@ -16,23 +16,29 @@ export type TeggScopeBag = Map<symbol, unknown>;
 const als = new AsyncLocalStorage<TeggScopeBag>();
 
 /**
- * Number of explicitly-established app scopes currently alive in the process.
- * Incremented by every tegg app/Runner at boot ({@link TeggScope.registerScope})
- * and decremented at close ({@link TeggScope.unregisterScope}).
+ * Bags of the app scopes currently alive in the process. Each tegg app/Runner
+ * adds its bag at boot ({@link TeggScope.registerScope}) and removes it at close
+ * ({@link TeggScope.unregisterScope}).
  *
- * Drives the strict-mode escape fuse: while MORE THAN ONE app is alive (true
- * multi-app), falling back to the process-default bag is treated as a scope
- * escape bug. With a single app (or none) the silent lazy default is kept so
- * existing single-app code and tests are unaffected.
+ * The set size is the live-app count that drives the strict-mode escape fuse:
+ * while MORE THAN ONE app is alive (true multi-app), falling back to the
+ * process-default bag is treated as a scope escape bug. When EXACTLY ONE app is
+ * alive, that app's bag is also the no-scope fallback (see {@link
+ * TeggScope.#fallbackBag}) — single-app code running outside an explicit
+ * {@link TeggScope.run} (direct singleton/ContextProto calls, detached loggers)
+ * resolves the very slots the app populated at boot, matching the pre-scoping
+ * process-global behavior. With a single app (or none) the silent lazy default
+ * is kept so existing single-app code and tests are unaffected.
  */
-let explicitScopeCount = 0;
+const liveScopeBags = new Set<TeggScopeBag>();
 
 /**
- * Process-wide default bag, used when no ALS scope is active. In single-app mode
- * this IS the app's effective storage (the lazy default). Created on demand so
- * every fallback slot lands in the SAME bag and stays cross-consistent (e.g. a
- * factory created in the default bag references the lifecycle util also in the
- * default bag). Tests may install/reset it explicitly.
+ * Process-wide default bag, used when NO app scope is the active/sole storage,
+ * i.e. zero apps alive (pure tegg-core unit tests / standalone helpers) or, under
+ * multi-app, the escape path. Created on demand so every fallback slot lands in
+ * the SAME bag and stays cross-consistent (e.g. a factory created in the default
+ * bag references the lifecycle util also in the default bag). Tests may
+ * install/reset it explicitly.
  */
 let defaultBag: TeggScopeBag | undefined;
 
@@ -83,26 +89,43 @@ export class TeggScope {
     return new Map();
   }
 
-  /** Mark that an explicit per-app scope has been established (boot). */
-  static registerScope(): void {
-    explicitScopeCount++;
+  /**
+   * Mark that an explicit per-app scope has been established (boot), tracking the
+   * app's bag so that — while it is the sole live app — no-scope access resolves
+   * to it instead of a separate process-default bag.
+   */
+  static registerScope(bag: TeggScopeBag): void {
+    liveScopeBags.add(bag);
   }
 
   /** Mark that a previously-established per-app scope has been torn down (close). */
-  static unregisterScope(): void {
-    if (explicitScopeCount > 0) {
-      explicitScopeCount--;
-    }
+  static unregisterScope(bag: TeggScopeBag): void {
+    liveScopeBags.delete(bag);
   }
 
   /** True when more than one app scope is alive — genuine multi-app mode. */
   static get isMultiApp(): boolean {
-    return explicitScopeCount > 1;
+    return liveScopeBags.size > 1;
   }
 
   /** Number of live explicit app scopes. */
   static get scopeCount(): number {
-    return explicitScopeCount;
+    return liveScopeBags.size;
+  }
+
+  /**
+   * The bag used when NO ALS scope is active. With exactly one app alive, that
+   * app's bag is the single-app effective storage, so out-of-scope access sees
+   * the slots boot populated. Zero apps (pure unit tests / standalone helpers) —
+   * or, under multi-app, the reported escape path — use the process-default bag.
+   */
+  static #fallbackBag(): TeggScopeBag {
+    if (liveScopeBags.size === 1) {
+      for (const bag of liveScopeBags) {
+        return bag;
+      }
+    }
+    return (defaultBag ??= new Map());
   }
 
   /**
@@ -127,7 +150,7 @@ export class TeggScope {
     if (TeggScope.isMultiApp) {
       reportEscape(desc);
     }
-    return TeggScope.#getOrCreate((defaultBag ??= new Map()), slot, create);
+    return TeggScope.#getOrCreate(TeggScope.#fallbackBag(), slot, create);
   }
 
   /**
@@ -143,7 +166,7 @@ export class TeggScope {
     if (TeggScope.isMultiApp) {
       reportEscape(desc);
     }
-    const d = (defaultBag ??= new Map());
+    const d = TeggScope.#fallbackBag();
     return d.has(slot) ? (d.get(slot) as T) : legacy();
   }
 
@@ -186,10 +209,7 @@ export class TeggScope {
     if (store) {
       return store;
     }
-    if (!defaultBag) {
-      defaultBag = new Map();
-    }
-    return defaultBag;
+    return TeggScope.#fallbackBag();
   }
 
   static #getOrCreate<T>(bag: TeggScopeBag, slot: symbol, create: () => T): T {

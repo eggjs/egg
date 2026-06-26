@@ -107,7 +107,7 @@ export class Runner {
     this.name = options?.name;
     this.options = options;
     this.scopeBag = TeggScope.createBag();
-    TeggScope.registerScope();
+    TeggScope.registerScope(this.scopeBag);
     this.moduleReferences = Runner.getModuleReferences(this.cwd, options?.dependencies);
     this.moduleConfigs = {};
     TeggScope.run(this.scopeBag, () => {
@@ -315,7 +315,7 @@ export class Runner {
     await TeggScope.run(this.scopeBag, async () => {
       await this.doDestroy();
     });
-    TeggScope.unregisterScope();
+    TeggScope.unregisterScope(this.scopeBag);
   }
 
   private async doDestroy(): Promise<void> {
