@@ -52,8 +52,7 @@
     "@eggjs/lifecycle": "workspace:*",
     "@eggjs/metadata": "workspace:*",
     "@eggjs/module-common": "workspace:*",
-    "@eggjs/tegg-runtime": "workspace:*",
-    "@eggjs/tegg-types": "workspace:*"
+    "@eggjs/tegg-runtime": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
