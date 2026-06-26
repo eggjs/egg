@@ -35,6 +35,7 @@ describe('PackRunner', () => {
         alias?: Record<string, string>;
         [key: string]: unknown;
       };
+      singleFile?: boolean;
     } = {},
   ): PackRunner {
     const outputDir = overrides.outputDir ?? path.join(tmpDir, 'out');
@@ -47,6 +48,7 @@ describe('PackRunner', () => {
       ...(overrides.rootPath !== undefined ? { rootPath: overrides.rootPath } : {}),
       ...(overrides.mode !== undefined ? { mode: overrides.mode } : {}),
       ...(overrides.resolve !== undefined ? { resolve: overrides.resolve } : {}),
+      ...(overrides.singleFile !== undefined ? { singleFile: overrides.singleFile } : {}),
       buildFunc: overrides.buildFunc ?? (async () => {}),
     });
   }
@@ -107,7 +109,7 @@ describe('PackRunner', () => {
     await expect(fs.stat(deepOut)).resolves.toBeTruthy();
   });
 
-  it('passes a pack config with entry[], target node 22, platform node, standalone output, and UMD-form externals through to buildFunc', async () => {
+  it('defaults to single-file export output with a per-entry library, target node 22, platform node, and UMD-form externals through to buildFunc', async () => {
     const buildFunc = vi.fn<BuildFunc>(async () => {});
     const entries: PackEntry[] = [
       { name: 'worker', filepath: '/abs/worker.entry.ts' },
@@ -120,21 +122,43 @@ describe('PackRunner', () => {
     expect(buildFunc).toHaveBeenCalledTimes(1);
     const [wrapped, projectPath, rootPath] = buildFunc.mock.calls[0]!;
     const config = (wrapped as { config: Record<string, unknown> }).config;
+    // Single-file is the default: `export` type + per-entry `library` makes
+    // @utoo/pack inline every module into one self-executing IIFE (no
+    // sibling-chunk require) — snapshot-eligible.
     expect(config.entry).toEqual([
-      { name: 'worker', import: '/abs/worker.entry.ts' },
-      { name: 'agent', import: '/abs/agent.entry.ts' },
+      { name: 'worker', import: '/abs/worker.entry.ts', library: { name: 'app' } },
+      { name: 'agent', import: '/abs/agent.entry.ts', library: { name: 'app' } },
     ]);
     expect(config.target).toBe('node 22');
     expect(config.platform).toBe('node');
-    expect(config.output).toEqual({ path: path.join(tmpDir, 'out'), type: 'standalone' });
-    // Externals must be UMD-form ({ commonjs, root }) so @utoo/pack standalone
-    // output emits `require(name)` for CJS runtime (not globalThis[name]).
+    expect(config.output).toEqual({ path: path.join(tmpDir, 'out'), type: 'export' });
+    // Externals must be UMD-form ({ commonjs, root }) so @utoo/pack output emits
+    // `require(name)` for the CJS runtime (not globalThis[name]).
     expect(config.externals).toEqual({
       '@eggjs/core': { commonjs: '@eggjs/core', root: '@eggjs/core' },
     });
     expect(config.resolve).toBeUndefined();
     expect(projectPath).toBe(tmpDir);
     expect(rootPath).toBe(tmpDir);
+  });
+
+  it('emits legacy multi-chunk standalone output (no per-entry library) when singleFile is explicitly disabled', async () => {
+    const buildFunc = vi.fn<BuildFunc>(async () => {});
+    const entries: PackEntry[] = [
+      { name: 'worker', filepath: '/abs/worker.entry.ts' },
+      { name: 'agent', filepath: '/abs/agent.entry.ts' },
+    ];
+
+    await makeRunner({ entries, singleFile: false, buildFunc }).run();
+
+    const config = (buildFunc.mock.calls[0]![0] as { config: Record<string, unknown> }).config;
+    expect(config.output).toEqual({ path: path.join(tmpDir, 'out'), type: 'standalone' });
+    expect(config.entry).toEqual([
+      { name: 'worker', import: '/abs/worker.entry.ts' },
+      { name: 'agent', import: '/abs/agent.entry.ts' },
+    ]);
+    // standalone mode must not attach a per-entry library.
+    expect(config.entry).not.toContainEqual(expect.objectContaining({ library: expect.anything() }));
   });
 
   it('passes application supplied resolve aliases through to the pack config', async () => {
