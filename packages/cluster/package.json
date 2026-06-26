@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/cluster",
-  "version": "4.0.2-beta.14",
+  "version": "4.0.2-beta.15",
   "description": "cluster manager for egg",
   "keywords": [
     "cluster",
