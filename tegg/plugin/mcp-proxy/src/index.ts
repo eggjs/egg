@@ -220,7 +220,11 @@ export const MCPProxyHook: MCPControllerHook = {
 };
 
 export class MCPProxyApiClient extends APIClientBase {
-  private _client: any;
+  // `declare`: APIClientBase's constructor assigns `this._client`. Without
+  // `declare`, this field declaration emits `this._client = undefined` after
+  // super() under useDefineForClassFields (target ES2022), masking the base
+  // value, so registerClient()/getClient() hit `undefined`.
+  declare private _client: any;
   private logger: EggLogger;
   private proxyHandlerMap: { [P in ProxyAction]?: StreamableHTTPServerTransport['handleRequest'] } = {};
   private port: number;
