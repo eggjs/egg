@@ -2,7 +2,15 @@ export { Bundler } from './lib/Bundler.ts';
 export { EntryGenerator, type EntryGeneratorOptions, type GeneratedEntries } from './lib/EntryGenerator.ts';
 export { ExternalsResolver, type ExternalsConfig, type ExternalsResolverOptions } from './lib/ExternalsResolver.ts';
 export { ManifestLoader, type ManifestLoaderOptions } from './lib/ManifestLoader.ts';
-export { renderSnapshotPrelude, prependSnapshotPrelude, SNAPSHOT_PRELUDE_MARKER } from './lib/prelude.ts';
+export {
+  renderSnapshotPrelude,
+  prependSnapshotPrelude,
+  injectExternalRequireLazyHook,
+  resolveSnapshotLazyModules,
+  SNAPSHOT_PRELUDE_MARKER,
+  DEFAULT_SNAPSHOT_LAZY_MODULES,
+  type ExternalRequireInjectionResult,
+} from './lib/prelude.ts';
 export {
   PackRunner,
   type BuildFunc,
