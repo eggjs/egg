@@ -474,6 +474,10 @@ export function setBundleModuleLoader(loader: BundleModuleLoader | undefined): v
   globalThis.__EGG_BUNDLE_MODULE_LOADER__ = loader;
 }
 
+// Shared promises for ESM imports that are currently in flight, keyed by file URL.
+// See the usage site in `importModule` for why this is needed.
+const _inflightImports = new Map<string, Promise<any>>();
+
 export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
   const _bundleModuleLoader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
   if (_bundleModuleLoader) {
@@ -525,7 +529,30 @@ export async function importModule(filepath: string, options?: ImportModuleOptio
     if (_bundleModuleLoader) {
       obj = await getNativeDynamicImport()(fileUrl);
     } else {
-      obj = await import(fileUrl);
+      // Dedupe concurrent in-flight imports of the same URL. The runtime TS
+      // transpile loaders (tsx, @oxc-node/core) recompile a module on every
+      // `import()` (tsx appends a cache-busting query), so when several apps boot
+      // concurrently in one process (e.g. tegg multi-app isolation) two loaders can
+      // trigger two simultaneous compiles of the SAME module and one may observe a
+      // partially-initialized namespace (an `undefined` default export) — surfacing
+      // downstream as `Cannot convert undefined or null to object` in `loadExtend`
+      // or a plugin that lost its `path`. Sharing a single `import()` per URL
+      // serializes those concurrent first-loads.
+      let pending = _inflightImports.get(fileUrl);
+      if (pending === undefined) {
+        pending = import(fileUrl);
+        _inflightImports.set(fileUrl, pending);
+        const clearInflight = () => {
+          if (_inflightImports.get(fileUrl) === pending) {
+            _inflightImports.delete(fileUrl);
+          }
+        };
+        // `then(clear, clear)` (not `finally`) so a failed import settles the
+        // cleanup chain without leaving an unhandled rejection — the awaiting
+        // caller below still observes and propagates the original error.
+        pending.then(clearInflight, clearInflight);
+      }
+      obj = await pending;
     }
     debug('[importModule:success] await import %o', fileUrl);
     // {

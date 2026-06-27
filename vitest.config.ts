@@ -47,10 +47,12 @@ const config: UserWorkspaceConfig = defineConfig({
     env: {
       // disable tegg plugins by default on unittest, make test speed up
       DISABLE_TEGG_PLUGINS: 'true',
-      // TODO: aop plugin required this flag, otherwise there will be a SyntaxError: Invalid or unexpected token
-      NODE_OPTIONS: '--import=tsx/esm',
-      // FIXME: TypeError: Cannot read properties of undefined (reading 'mode')
-      // NODE_OPTIONS: '--import=@oxc-node/core/register',
+      // Transpile runtime `import()` of .ts files (egg loader resolving
+      // fixtures/plugins/app code, and the workspace `src` exports under
+      // node_modules) with oxc-node — noticeably faster than tsx and it handles
+      // decorators correctly. Requires @oxc-node/core >= 0.1.0, which fixes the
+      // earlier "Cannot read properties of undefined (reading 'mode')" crash.
+      NODE_OPTIONS: '--import=@oxc-node/core/register',
     },
     // poolOptions: {
     //   forks: {

@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-06-27] concept | fix concurrent-import race in multi-app boot (oxc-node PR #5965)
+
+- sources touched: `packages/utils/src/import.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/vitest-isolate-false-state-leaks.md`
+- note: `tegg/plugin/tegg/test/MultiAppParallel.test.ts` ("…under concurrent boot") flaked ~12% (tsx) / ~24% (oxc-node) on macOS CI with `Can not find plugin watcher` or `Cannot convert undefined or null to object`. NOT caused by the tsx→oxc-node switch (both transpilers flake). Root cause: under `describe.concurrent`, multiple app loaders call `importModule()` on the same `.ts` module simultaneously; the transpile loaders recompile per-`import()` (tsx appends `?<ts>`, defeating Node's dedup) so a concurrent first-load can return a namespace whose `default` is `undefined` → empty framework `config/plugin` (watcher loses its `path`) or `Object.getOwnPropertyNames(undefined)` in `loadExtend`. Fix: `importModule` shares one in-flight `import()` per URL. 40/40 green under both transpilers after; full suite stays 527 files / 3430 tests, 0 failures. Heisenbug (instrumentation masks it); the `.egg/manifest.json` read/write race was a red herring. Recorded as root cause #5 on the concept page.
+
 ## [2026-06-27] workflow | CI surfaces single-run parallelism metrics for the isolate:false suite
 
 - sources touched: `vitest.config.ts`, `.github/workflows/ci.yml`, `scripts/ci-test-benchmark/{index,vitest-summary,report,cli,fs,environment}.js`, `benchmark/ci-test/README.md`, `.gitignore`, `packages/supertest/test/supertest.test.ts`
@@ -26,7 +32,7 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - sources touched: `packages/utils/src/import.ts`, `packages/utils/test/snapshot-import.test.ts`, `plugins/mock/src/app/extend/application.ts`
 - pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/concepts/vitest-isolate-false-state-leaks.md`
-- note: Under root `pool:threads` + `isolate:false`, two realm-global leaks caused nondeterministic cross-file/cross-project failures. (1) `setSnapshotModuleLoader` left module-level `_snapshotModuleLoader`/`isESM=false` set (no-op test teardown), poisoning module resolution for later files (`Can not find plugin …`). (2) `mock.mockContext()` reused `currentContext` from a different app, binding helpers to the wrong app config (surl/csrf failures). Fixed both at the source. Full Node-22 suite: 15 → 3 failing files (remaining 2 environmental MySQL/DNS; `multipart/file-mode` is a pre-existing load flake that also fails under `isolate:true`). Reproduce on Node 22/24 with a utoo install — not Node 26 / bare pnpm.
+- note: Under root `pool:threads` + `isolate:false`, two realm-global leaks caused nondeterministic cross-file/cross-project failures. (1) `setSnapshotModuleLoader` left module-level `_snapshotModuleLoader`/`isESM=false` set (no-op test teardown), poisoning module resolution for later files (`Can not find plugin …`). (2) `mockContext()` reused `currentContext` from a different app, binding helpers to the wrong app config (surl/csrf failures). Fixed both at the source. Full Node-22 suite: 15 → 3 failing files (remaining 2 environmental MySQL/DNS; `multipart/file-mode` is a pre-existing load flake that also fails under `isolate:true`). Reproduce on Node 22/24 with a utoo install — not Node 26 / bare pnpm.
 
 ## [2026-05-10] package | extract shared LoaderFS package
 
