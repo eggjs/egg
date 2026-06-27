@@ -231,7 +231,10 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     let isOxcCompiler = false;
     if (typescript) {
       flags.tscompiler = flags.tscompiler ?? '@oxc-node/core/register';
-      isOxcCompiler = flags.tscompiler.includes('@oxc-node/core');
+      // Match the package specifier precisely (exact entry or a `@oxc-node/core/`
+      // subpath) rather than a loose substring, so a similarly named compiler
+      // can't be misdetected as oxc.
+      isOxcCompiler = flags.tscompiler === '@oxc-node/core/register' || flags.tscompiler.startsWith('@oxc-node/core/');
       if (isOxcCompiler) {
         // `@oxc-node/core/register` is exported with an `import`-only condition
         // (no `require`), so it cannot be CJS-resolved nor `--require`d. Resolve
