@@ -524,32 +524,69 @@ export class EggApplicationCore extends EggCore {
 
   /**
    * Clean up non-serializable resources before V8 heap serialization.
-   * Closes messenger (IPC listeners), loggers (file descriptors),
-   * and removes the process-level unhandledRejection listener.
+   * Closes messenger (IPC listeners), logger streams and flush timers
+   * (file descriptors), and removes the process-level unhandledRejection
+   * listener.
+   *
+   * The `EggLoggers` instance is intentionally kept (not discarded): plugins
+   * such as `@eggjs/schedule` capture individual logger references during the
+   * load phase, before serialization. Replacing them with a fresh `EggLoggers`
+   * on restore would leave those captured references pointing at closed
+   * streams (`... log stream had been closed`). Instead, `snapshotDidDeserialize`
+   * reopens these same logger objects in place.
    */
   protected snapshotWillSerialize(): void {
     this.messenger.close();
     if (this.#loggers) {
       for (const logger of this.#loggers.values()) {
+        // close() releases the file descriptor and, for buffered transports,
+        // clears the flush interval. The objects themselves stay reachable.
         logger.close();
       }
-      this.#loggers = undefined;
     }
     process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
   }
 
   /**
    * Restore non-serializable resources after V8 heap deserialization.
-   * Recreates messenger, re-registers the egg-ready listener,
-   * and re-attaches the process-level unhandledRejection listener.
-   * Loggers are lazily re-created via the `loggers` getter.
+   * Recreates messenger, re-registers the egg-ready listener, reopens the
+   * logger streams closed during serialize, and re-attaches the process-level
+   * unhandledRejection listener.
    */
   protected snapshotDidDeserialize(): void {
     (this as { messenger: IMessenger }).messenger = createMessenger(this);
     this.messenger.once('egg-ready', () => {
       this.lifecycle.triggerServerDidReady();
     });
+    this.#reopenLoggers();
     process.on('unhandledRejection', this._unhandledRejectionHandler);
+  }
+
+  /**
+   * Reopen logger resources that `snapshotWillSerialize` released.
+   *
+   * `transport.reload()` reopens each `FileTransport` stream on the existing
+   * logger objects (so references captured before the snapshot keep working).
+   * `FileBufferTransport`, however, clears its flush interval in `close()` and
+   * does not restart it in `reload()`, so buffered logs would never flush after
+   * restore. Restart that interval explicitly to keep the willSerialize /
+   * didDeserialize resource pairing complete.
+   */
+  #reopenLoggers(): void {
+    if (!this.#loggers) return;
+    for (const logger of this.#loggers.values()) {
+      for (const transport of logger.values()) {
+        // No-op for ConsoleTransport; reopens the stream for file transports.
+        transport.reload();
+        const bufferTransport = transport as unknown as {
+          _timer?: NodeJS.Timeout | null;
+          _createInterval?: () => NodeJS.Timeout;
+        };
+        if (typeof bufferTransport._createInterval === 'function' && !bufferTransport._timer) {
+          bufferTransport._timer = bufferTransport._createInterval();
+        }
+      }
+    }
   }
 
   /**
