@@ -19,10 +19,21 @@ const __dirname = import.meta.dirname;
 // deterministically regardless of the host Node version (egg-scripts CI runs on
 // both Node 22 and 24). Returns a restorer.
 function pinNodeVersion(version: string): () => void {
-  const descriptor = Object.getOwnPropertyDescriptor(process.versions, 'node');
-  Object.defineProperty(process.versions, 'node', { value: version, configurable: true, writable: true });
+  // Redefine `process.versions` itself rather than its `node` property: in some
+  // runtimes `process.versions.node` is non-configurable and a direct
+  // defineProperty on it would throw.
+  const originalVersions = process.versions;
+  Object.defineProperty(process, 'versions', {
+    value: { ...originalVersions, node: version },
+    configurable: true,
+    writable: true,
+  });
   return () => {
-    if (descriptor) Object.defineProperty(process.versions, 'node', descriptor);
+    Object.defineProperty(process, 'versions', {
+      value: originalVersions,
+      configurable: true,
+      writable: true,
+    });
   };
 }
 

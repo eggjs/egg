@@ -128,7 +128,7 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
    */
   async #resolveSnapshotNodeMajor(command: string): Promise<number | undefined> {
     if (command === 'node' || command === process.execPath) {
-      return Number(process.versions.node.split('.', 1)[0]);
+      return parseInt(process.versions.node, 10);
     }
     try {
       const { stdout } = await execFile(command, ['--version']);

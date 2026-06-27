@@ -227,7 +227,7 @@ if (process.env.EGG_BUNDLE_SNAPSHOT === 'build') {
       // (egg-scripts start --snapshot-blob) already gates this before spawning,
       // so this is a defense-in-depth guard for a direct `node --snapshot-blob`
       // launch that managed to deserialize on an unsupported runtime.
-      const __nodeMajor = Number(process.versions.node.split('.', 1)[0]);
+      const __nodeMajor = parseInt(process.versions.node, 10);
       if (__nodeMajor < 24) {
         // eslint-disable-next-line no-console
         console.error('[egg-bundler] V8 snapshot restore requires Node.js >= 24, but this process is ' + process.version + '. Build works on Node.js >= 22; restore must run on Node.js >= 24.');

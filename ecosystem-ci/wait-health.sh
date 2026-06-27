@@ -9,6 +9,11 @@
 # curl-poll loop controls flow; callers wrap it in `if wait-health.sh ...; then`.
 set -uo pipefail
 
+if [ "$#" -lt 2 ]; then
+  echo "Usage: $0 <url> <response-file> [timeout-seconds] [sleep-seconds]" >&2
+  exit 1
+fi
+
 URL="$1"
 RESPONSE_FILE="$2"
 TIMEOUT="${3:-120}"
