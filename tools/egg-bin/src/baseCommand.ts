@@ -92,7 +92,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     }),
     tscompiler: Flags.string({
       helpGroup: 'GLOBAL',
-      summary: 'TypeScript compiler, like ts-node/register',
+      summary: 'TypeScript compiler, like @oxc-node/core/register',
       aliases: ['tsc'],
     }),
     // flag with no value (--typescript)
@@ -225,15 +225,31 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       throw new Error(`Cannot resolve '${specifier}' from ${findPaths.join(', ')}`);
     };
     this.isESM = pkg.type === 'module';
+    // oxc-node's register entry installs BOTH a CJS require hook (via pirates)
+    // and an ESM `module.register()` hook from a single `--import`, so when it is
+    // the active compiler an ESM app needs no separate `--loader` (see below).
+    let isOxcCompiler = false;
     if (typescript) {
-      flags.tscompiler = flags.tscompiler ?? 'ts-node/register';
-      const tsNodeRegister = cjsResolve(flags.tscompiler);
-      flags.tscompiler = tsNodeRegister;
-      // should require tsNodeRegister on current process, let it can require *.ts files
-      // e.g.: dev command will execute egg loader to find configs and plugins
-      // await importModule(tsNodeRegister);
-      // let child process auto require ts-node too
-      this.addNodeOptions(this.formatImportModule(tsNodeRegister));
+      flags.tscompiler = flags.tscompiler ?? '@oxc-node/core/register';
+      isOxcCompiler = flags.tscompiler.includes('@oxc-node/core');
+      if (isOxcCompiler) {
+        // `@oxc-node/core/register` is exported with an `import`-only condition
+        // (no `require`), so it cannot be CJS-resolved nor `--require`d. Resolve
+        // the package root through its main entry, then inject register.mjs as a
+        // single `--import` — this transpiles `.ts` for both CJS and ESM apps.
+        const oxcRegister = path.join(path.dirname(cjsResolve('@oxc-node/core')), 'register.mjs');
+        flags.tscompiler = oxcRegister;
+        this.addNodeOptions(`--import "${pathToFileURL(oxcRegister).href}"`);
+      } else {
+        // legacy compilers (ts-node, swc, esbuild) expose a CJS register entry
+        const tsNodeRegister = cjsResolve(flags.tscompiler);
+        flags.tscompiler = tsNodeRegister;
+        // should require tsNodeRegister on current process, let it can require *.ts files
+        // e.g.: dev command will execute egg loader to find configs and plugins
+        // await importModule(tsNodeRegister);
+        // let child process auto require ts-node too
+        this.addNodeOptions(this.formatImportModule(tsNodeRegister));
+      }
       // tell egg loader to load ts file
       // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L443
       this.env.EGG_TYPESCRIPT = 'true';
@@ -241,12 +257,14 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       process.env.EGG_TYPESCRIPT = 'true';
       // load files from tsconfig on startup
       this.env.TS_NODE_FILES = process.env.TS_NODE_FILES ?? 'true';
-      // keep same logic with egg-core, test cmd load files need it
+      // keep same logic with egg-core, test cmd load files need it.
+      // oxc-node does not resolve tsconfig `paths`, so tsconfig-paths/register
+      // is still required alongside every compiler.
       // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L49
       const tsConfigPathsRegister = cjsResolve('tsconfig-paths/register');
       this.addNodeOptions(this.formatImportModule(tsConfigPathsRegister));
     }
-    if (this.isESM) {
+    if (this.isESM && !isOxcCompiler) {
       // use ts-node/esm loader on esm
       let esmLoader = cjsResolve('ts-node/esm');
       // ES Module loading with absolute path fails on windows

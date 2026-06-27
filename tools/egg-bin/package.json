@@ -69,6 +69,7 @@
     "@eggjs/tegg-vitest": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "@oclif/core": "catalog:",
+    "@oxc-node/core": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "ci-parallel-vars": "catalog:",
     "detect-port": "catalog:",
