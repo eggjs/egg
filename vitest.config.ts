@@ -1,11 +1,19 @@
 import { defineConfig, type UserWorkspaceConfig } from 'vitest/config';
 
-const isWindowsCI = process.env.CI && process.platform === 'win32';
+const isCI = Boolean(process.env.CI);
+const isWindowsCI = isCI && process.platform === 'win32';
+
+// In CI, emit a Vitest JSON report next to the benchmark harness so the
+// "Report parallelism metrics" step can summarize the real gating run (isolate is
+// off, so tests run fully in parallel). Keep this path in sync with the metrics step
+// in .github/workflows/ci.yml. Locally we keep the default reporter only.
+const CI_VITEST_JSON = 'benchmark/ci-test/ci-run/vitest-results.json';
 
 const config: UserWorkspaceConfig = defineConfig({
   test: {
     pool: 'threads',
     isolate: false,
+    reporters: isCI ? ['default', ['json', { outputFile: CI_VITEST_JSON }]] : ['default'],
     ...(isWindowsCI
       ? {
           maxWorkers: 2,

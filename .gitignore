@@ -13,6 +13,9 @@ run
 .egg
 .husky/_
 
+# CI test benchmark run outputs (keep benchmark/ci-test/README.md)
+benchmark/ci-test/*/
+
 *-lock.json
 *-lock.yaml
 yarn.lock
