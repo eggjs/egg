@@ -1,21 +1,11 @@
-import { createScopedLifecycleUtil, lifecycleUtilFromBag, type LifecycleUtil } from '@eggjs/lifecycle';
-import type { EggPrototype, EggPrototypeLifecycleContext, TeggScopeBag } from '@eggjs/tegg-types';
-
-const EGG_PROTOTYPE_LIFECYCLE_UTIL_SLOT = Symbol('tegg:metadata:eggPrototypeLifecycleUtil');
+import { defineScopedLifecycleUtil } from '@eggjs/lifecycle';
+import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-types';
 
 /**
  * Per-app prototype lifecycle util, backed by TeggScope. Hooks registered during
  * one app's boot stay isolated to that app under concurrent multi-app.
  */
-export const EggPrototypeLifecycleUtil: LifecycleUtil<EggPrototypeLifecycleContext, EggPrototype> =
-  createScopedLifecycleUtil<EggPrototypeLifecycleContext, EggPrototype>(
-    EGG_PROTOTYPE_LIFECYCLE_UTIL_SLOT,
-    'EggPrototypeLifecycleUtil',
-  );
-
-/** Resolve this app's prototype lifecycle util directly from its bag (no active scope needed). */
-export function eggPrototypeLifecycleUtilFromBag(
-  bag: TeggScopeBag,
-): LifecycleUtil<EggPrototypeLifecycleContext, EggPrototype> {
-  return lifecycleUtilFromBag(bag, EGG_PROTOTYPE_LIFECYCLE_UTIL_SLOT);
-}
+export const [EggPrototypeLifecycleUtil, eggPrototypeLifecycleUtilFromBag] = defineScopedLifecycleUtil<
+  EggPrototypeLifecycleContext,
+  EggPrototype
+>(Symbol('tegg:metadata:eggPrototypeLifecycleUtil'), 'EggPrototypeLifecycleUtil');

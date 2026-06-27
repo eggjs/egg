@@ -53,9 +53,7 @@ export default class OrmAppBootHook implements ILifecycleBoot {
 
   async didLoad(): Promise<void> {
     await this.app.moduleHandler.ready();
-    await TeggScope.run(this.app._teggScopeBag, async () => {
-      await this.leoricRegister.register();
-    });
+    await TeggScope.run(this.app._teggScopeBag, () => this.leoricRegister.register());
   }
 
   async beforeClose(): Promise<void> {

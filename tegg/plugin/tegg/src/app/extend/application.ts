@@ -113,7 +113,7 @@ export default class TEggPluginApplication {
       );
       return eggObject.obj as T;
     };
-    return bag ? TeggScope.run(bag, doWork) : doWork();
+    return TeggScope.runMaybe(bag, doWork);
   }
 
   async getEggObjectFromName<T extends object>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T> {
@@ -125,6 +125,6 @@ export default class TEggPluginApplication {
       const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
       return eggObject.obj as T;
     };
-    return bag ? TeggScope.run(bag, doWork) : doWork();
+    return TeggScope.runMaybe(bag, doWork);
   }
 }

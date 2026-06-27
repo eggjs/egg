@@ -17,10 +17,6 @@ export class ControllerMetadataManager {
     );
   }
 
-  constructor() {
-    this.controllers = new Map();
-  }
-
   addController(metadata: ControllerMetadata): void {
     const typeControllers = MapUtil.getOrStore(this.controllers, metadata.type, []);
     // 1.check controller name

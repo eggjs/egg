@@ -69,3 +69,19 @@ export function createScopedLifecycleUtil<T extends LifecycleContext, R extends 
   };
   return facade as LifecycleUtil<T, R>;
 }
+
+/**
+ * Define a per-app scoped lifecycle util for `slot` in one call: returns a tuple
+ * of the scoped util facade and its `fromBag(bag)` resolver, both bound to the
+ * SAME slot. Collapses the per-package `declare slot` + `createScopedLifecycleUtil`
+ * + `lifecycleUtilFromBag` boilerplate to a single destructured export.
+ */
+export function defineScopedLifecycleUtil<T extends LifecycleContext, R extends LifecycleObject<T>>(
+  slot: symbol,
+  desc: string,
+): readonly [LifecycleUtil<T, R>, (bag: TeggScopeBag) => LifecycleUtil<T, R>] {
+  return [
+    createScopedLifecycleUtil<T, R>(slot, desc),
+    (bag: TeggScopeBag) => lifecycleUtilFromBag<T, R>(bag, slot),
+  ] as const;
+}

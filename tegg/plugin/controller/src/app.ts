@@ -110,9 +110,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
             this.app.config.mcp.sseMessagePath,
             this.app.config.mcp.streamPath,
             this.app.config.mcp.statelessStreamPath,
-            ...(Array.isArray(this.app.config.security.csrf.ignore)
-              ? this.app.config.security.csrf.ignore
-              : [this.app.config.security.csrf.ignore]),
+            ...this.app.config.security.csrf.ignore,
           ];
         }
       } else {
@@ -168,20 +166,6 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   configDidLoad(): void {
     // Pin to this app's graph (set later during didLoad) — no run wrap needed.
     GlobalGraph.instanceFor(this.app._teggScopeBag)?.registerBuildHook(middlewareGraphHook);
-  }
-
-  async willReady(): Promise<void> {
-    if (this.mcpEnable()) {
-      await TeggScope.run(this.app._teggScopeBag, async () => {
-        await MCPControllerRegister.connectStatelessStreamTransport();
-        const names = MCPControllerRegister.instance?.mcpConfig.getMultipleServerNames();
-        if (names && names.length > 0) {
-          for (const name of names) {
-            await MCPControllerRegister.connectStatelessStreamTransport(name);
-          }
-        }
-      });
-    }
   }
 
   mcpEnable(): boolean {

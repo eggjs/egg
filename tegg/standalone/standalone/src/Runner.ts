@@ -110,9 +110,12 @@ export class Runner {
     TeggScope.registerScope(this.scopeBag);
     this.moduleReferences = Runner.getModuleReferences(this.cwd, options?.dependencies);
     this.moduleConfigs = {};
-    TeggScope.run(this.scopeBag, () => {
-      this.initInnerObjectsAndConfigs(options);
-    });
+    this.runInScope(() => this.initInnerObjectsAndConfigs(options));
+  }
+
+  /** Run `fn` within THIS Runner's per-app scope so factories/managers resolve here. */
+  private runInScope<R>(fn: () => R): R {
+    return TeggScope.run(this.scopeBag, fn);
   }
 
   private initInnerObjectsAndConfigs(options?: RunnerOptions): void {
@@ -184,7 +187,7 @@ export class Runner {
   }
 
   async load(): Promise<LoadUnit[]> {
-    return TeggScope.run(this.scopeBag, async () => {
+    return this.runInScope(async () => {
       StandaloneContextHandler.register();
       LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
         return new StandaloneLoadUnit(this.innerObjects);
@@ -265,7 +268,7 @@ export class Runner {
   }
 
   async init(): Promise<void> {
-    await TeggScope.run(this.scopeBag, async () => {
+    await this.runInScope(async () => {
       await this.initLoaderInstance();
 
       this.loadUnits = await this.load();
@@ -288,7 +291,7 @@ export class Runner {
   }
 
   async run<T>(aCtx?: EggContext): Promise<T> {
-    return TeggScope.run(this.scopeBag, async () => {
+    return this.runInScope(async () => {
       const lifecycle = {};
       const ctx = aCtx || new StandaloneContext();
       return await ContextHandler.run(ctx, async () => {
@@ -312,9 +315,7 @@ export class Runner {
   }
 
   async destroy(): Promise<void> {
-    await TeggScope.run(this.scopeBag, async () => {
-      await this.doDestroy();
-    });
+    await this.runInScope(() => this.doDestroy());
     TeggScope.unregisterScope(this.scopeBag);
   }
 

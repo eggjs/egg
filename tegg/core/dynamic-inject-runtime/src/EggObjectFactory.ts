@@ -1,4 +1,4 @@
-import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
+import { SingletonProto } from '@eggjs/core-decorator';
 import { QualifierImplUtil } from '@eggjs/dynamic-inject';
 import { EggPrototypeFactory } from '@eggjs/metadata';
 import type { EggContainerFactory } from '@eggjs/tegg-runtime';
@@ -20,9 +20,7 @@ export class EggObjectFactory implements IEggObjectFactory {
     if (!implClazz) {
       throw new Error(`has no impl for ${abstractClazz.name} with qualifier ${qualifierValue}`);
     }
-    // Prefer this app's class->proto map (multi-app safe) over the global one.
-    const protoObj: any =
-      EggPrototypeFactory.instance.getPrototypeByClazz(implClazz) ?? PrototypeUtil.getClazzProto(implClazz);
+    const protoObj: any = EggPrototypeFactory.instance.getPrototypeByClazzOrGlobal(implClazz);
     if (!protoObj) {
       throw new Error(`can not get proto for clazz ${implClazz.name}`);
     }

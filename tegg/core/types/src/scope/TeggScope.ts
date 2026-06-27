@@ -84,6 +84,15 @@ export class TeggScope {
     return als.run(bag, fn);
   }
 
+  /**
+   * Run `fn` in `bag`'s scope when a bag is provided, otherwise run it directly
+   * in whatever scope is already active (the bag may not be established yet during
+   * very early boot). Centralizes the per-app `bag ? run(bag, fn) : fn()` idiom.
+   */
+  static runMaybe<R>(bag: TeggScopeBag | undefined, fn: () => R): R {
+    return bag ? als.run(bag, fn) : fn();
+  }
+
   /** Create a fresh, empty per-app bag. */
   static createBag(): TeggScopeBag {
     return new Map();
@@ -179,20 +188,16 @@ export class TeggScope {
    * scope wrap that silently mutates shared state is caught instead of leaking.
    */
   static set(slot: symbol, value: unknown): boolean {
-    if (!als.getStore() && TeggScope.isMultiApp) {
+    const bag = als.getStore();
+    if (bag) {
+      bag.set(slot, value);
+      return true;
+    }
+    if (TeggScope.isMultiApp) {
       reportEscape(slot.toString());
     }
-    TeggScope.#activeBag().set(slot, value);
+    TeggScope.#fallbackBag().set(slot, value);
     return true;
-  }
-
-  /**
-   * @internal Install an explicit process-default bag (test harnesses that run
-   * outside any {@link TeggScope.run}). Lets deprecated static accesses resolve
-   * to the same per-test bag.
-   */
-  static _setDefaultBag(bag: TeggScopeBag | undefined): void {
-    defaultBag = bag;
   }
 
   /** @internal Reset the process-default bag (e.g. between tests). */
@@ -203,20 +208,6 @@ export class TeggScope {
   /** @internal The current process-default bag, if any. */
   static _getDefaultBag(): TeggScopeBag | undefined {
     return defaultBag;
-  }
-
-  /**
-   * The active bag: the current ALS scope's bag, or the single lazily-created
-   * process-default bag when no scope is active. Routing every no-scope fallback
-   * (resolve / getOr / set / context callbacks) through ONE bag keeps all slots
-   * mutually consistent in single-app / test paths.
-   */
-  static #activeBag(): TeggScopeBag {
-    const store = als.getStore();
-    if (store) {
-      return store;
-    }
-    return TeggScope.#fallbackBag();
   }
 
   static #getOrCreate<T>(bag: TeggScopeBag, slot: symbol, create: () => T): T {

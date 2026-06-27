@@ -85,14 +85,10 @@ export class EggContainerFactory {
     name?: EggObjectName,
     qualifiers?: QualifierInfo[],
   ): Promise<EggObject> {
-    const isMultiInstance = PrototypeUtil.isEggMultiInstancePrototype(clazz as EggProtoImplClass);
-    // Prefer the CURRENT app's class→proto map over the global
-    // PrototypeUtil.getClazzProto(), which is shared across apps and overwritten
-    // by concurrent multi-app boot (last writer wins).
+    const isMultiInstance = PrototypeUtil.isEggMultiInstancePrototype(clazz);
     let proto: EggPrototype | undefined = isMultiInstance
       ? undefined
-      : (EggPrototypeFactory.instance.getPrototypeByClazz(clazz as EggProtoImplClass) ??
-        (PrototypeUtil.getClazzProto(clazz as EggProtoImplClass) as EggPrototype | undefined));
+      : EggPrototypeFactory.instance.getPrototypeByClazzOrGlobal(clazz);
     debug('getOrCreateEggObjectFromClazz:%o, isMultiInstance:%s, proto:%o', clazz.name, isMultiInstance, !!proto);
     if (isMultiInstance) {
       const defaultName = NameUtil.getClassName(clazz as EggProtoImplClass);

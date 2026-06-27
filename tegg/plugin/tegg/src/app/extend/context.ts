@@ -31,9 +31,7 @@ export default class TEggPluginContext {
       const eggObject = await app.eggContainerFactory.getOrCreateEggObjectFromClazz(clazz as EggProtoImplClass, name);
       return eggObject.obj as T;
     };
-    // Defensive (consistent with application.ts): fall back to the ambient scope
-    // if the bag is not yet established.
-    return bag ? TeggScope.run(bag, doWork) : doWork();
+    return TeggScope.runMaybe(bag, doWork);
   }
 
   async getEggObjectFromName<T>(this: Context, name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T> {
@@ -46,6 +44,6 @@ export default class TEggPluginContext {
       const eggObject = await app.eggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
       return eggObject.obj as T;
     };
-    return bag ? TeggScope.run(bag, doWork) : doWork();
+    return TeggScope.runMaybe(bag, doWork);
   }
 }

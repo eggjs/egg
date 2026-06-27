@@ -13,9 +13,7 @@ export default class AppHook {
 
   configWillLoad(): void {
     // hooks is per-app (scope-backed); register into this app's scope.
-    TeggScope.run(this.agent._teggScopeBag, () => {
-      MCPControllerRegister.addHook(MCPProxyHook);
-    });
+    TeggScope.run(this.agent._teggScopeBag, () => MCPControllerRegister.addHook(MCPProxyHook));
   }
 
   async didLoad(): Promise<void> {

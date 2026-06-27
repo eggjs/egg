@@ -1,7 +1,15 @@
+import { PrototypeUtil } from '@eggjs/core-decorator';
 import { FrameworkErrorFormatter } from '@eggjs/errors';
 import { MapUtil } from '@eggjs/tegg-common-util';
 import { AccessLevel, TeggScope } from '@eggjs/tegg-types';
-import type { EggProtoImplClass, EggPrototypeName, EggPrototype, LoadUnit, QualifierInfo } from '@eggjs/tegg-types';
+import type {
+  EggProtoImplClass,
+  EggPrototypeName,
+  EggPrototype,
+  EggPrototypeWithClazz,
+  LoadUnit,
+  QualifierInfo,
+} from '@eggjs/tegg-types';
 
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors.ts';
 
@@ -34,7 +42,7 @@ export class EggPrototypeFactory {
   private clazzProtoMap: WeakMap<EggProtoImplClass, EggPrototype> = new WeakMap();
 
   public registerPrototype(proto: EggPrototype, loadUnit: LoadUnit): void {
-    const clazz = (proto as unknown as { clazz?: EggProtoImplClass }).clazz;
+    const clazz = (proto as EggPrototypeWithClazz).clazz;
     if (clazz) {
       this.clazzProtoMap.set(clazz, proto);
     }
@@ -46,7 +54,7 @@ export class EggPrototypeFactory {
   }
 
   public deletePrototype(proto: EggPrototype, loadUnit: LoadUnit): void {
-    const clazz = (proto as unknown as { clazz?: EggProtoImplClass }).clazz;
+    const clazz = (proto as EggPrototypeWithClazz).clazz;
     if (clazz) {
       this.clazzProtoMap.delete(clazz);
     }
@@ -69,6 +77,16 @@ export class EggPrototypeFactory {
    */
   public getPrototypeByClazz(clazz: EggProtoImplClass): EggPrototype | undefined {
     return this.clazzProtoMap.get(clazz);
+  }
+
+  /**
+   * Resolve a proto by class from THIS app's registry, falling back to the
+   * process-global `PrototypeUtil.getClazzProto()` map. Centralizes the rule-4
+   * multi-app fallback so each call site does not re-implement (and risk
+   * forgetting) it.
+   */
+  public getPrototypeByClazzOrGlobal(clazz: EggProtoImplClass): EggPrototype | undefined {
+    return this.getPrototypeByClazz(clazz) ?? (PrototypeUtil.getClazzProto(clazz) as EggPrototype | undefined);
   }
 
   public getPrototype(name: PropertyKey, loadUnit?: LoadUnit, qualifiers?: QualifierInfo[]): EggPrototype {

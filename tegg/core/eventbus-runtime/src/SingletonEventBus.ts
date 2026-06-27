@@ -183,6 +183,6 @@ export class SingletonEventBus implements EventBus, EventWaiter {
         }
         this.doOnceEmit(event, args);
       });
-    await (bag ? TeggScope.run(bag, doRun) : doRun());
+    await TeggScope.runMaybe(bag, doRun);
   }
 }

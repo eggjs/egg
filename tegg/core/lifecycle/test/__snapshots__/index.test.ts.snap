@@ -12,6 +12,7 @@ exports[`should export stable 1`] = `
   "LifecyclePreLoad": [Function],
   "LifecycleUtil": [Function],
   "createScopedLifecycleUtil": [Function],
+  "defineScopedLifecycleUtil": [Function],
   "lifecycleUtilFromBag": [Function],
 }
 `;

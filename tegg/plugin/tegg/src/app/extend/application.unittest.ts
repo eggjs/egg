@@ -26,7 +26,7 @@ export default class TEggPluginApplicationUnittest {
       hasMockModuleContext = true;
       return ctx;
     };
-    return this._teggScopeBag ? TeggScope.run(this._teggScopeBag, doWork) : doWork();
+    return TeggScope.runMaybe(this._teggScopeBag, doWork);
   }
 
   async destroyModuleContext(this: Application, ctx: Context): Promise<void> {
@@ -42,7 +42,7 @@ export default class TEggPluginApplicationUnittest {
         await teggCtx.destroy(lifecycle);
       }
     };
-    return this._teggScopeBag ? TeggScope.run(this._teggScopeBag, doWork) : doWork();
+    return TeggScope.runMaybe(this._teggScopeBag, doWork);
   }
 
   async mockModuleContextScope<R = any>(this: Application, fn: (ctx: Context) => Promise<R>, data?: any): Promise<R> {
@@ -68,6 +68,6 @@ export default class TEggPluginApplicationUnittest {
     };
     // Run within this app's scope so app.module/ctx.module proxy resolution and
     // getEggObject read the correct per-app factories.
-    return this._teggScopeBag ? TeggScope.run(this._teggScopeBag, doWork) : doWork();
+    return TeggScope.runMaybe(this._teggScopeBag, doWork);
   }
 }
