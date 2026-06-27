@@ -14,18 +14,20 @@ import * as z from 'zod/v4';
 import { CompiledStateGraphProto } from './CompiledStateGraphProto.ts';
 
 export class GraphLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
-  private readonly eggPrototypeFactory: EggPrototypeFactory;
   clazzMap: Map<EggProtoImplClass, IGraphMetadata>;
   graphCompiledNameMap: Map<string, CompiledStateGraphProto> = new Map();
   tools: Map<EggProtoImplClass, IGraphToolMetadata>;
 
-  constructor(eggPrototypeFactory: EggPrototypeFactory) {
-    this.eggPrototypeFactory = eggPrototypeFactory;
+  constructor() {
     this.clazzMap = GraphInfoUtil.getAllGraphMetadata();
     this.tools = GraphToolInfoUtil.getAllGraphToolMetadata();
   }
 
   async preCreate(ctx: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
+    // preCreate fires inside this app's TeggScope (the tegg loadUnit init), so
+    // resolve the per-app factory lazily here rather than capturing it at
+    // construction (the boot constructor runs before any app scope exists).
+    const eggPrototypeFactory = EggPrototypeFactory.instance;
     const clazzList = await ctx.loader.load();
     for (const clazz of clazzList) {
       const meta = this.clazzMap.get(clazz as EggProtoImplClass);
@@ -39,7 +41,7 @@ export class GraphLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext
           protoName,
           graphMetadata,
         );
-        this.eggPrototypeFactory.registerPrototype(proto as any, loadUnit);
+        eggPrototypeFactory.registerPrototype(proto as any, loadUnit);
         this.graphCompiledNameMap.set(protoName, proto);
       }
       const toolMeta = this.tools.get(clazz as EggProtoImplClass);
@@ -50,7 +52,7 @@ export class GraphLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext
           unitPath: loadUnit.unitPath,
         }) as ClassProtoDescriptor;
         const proto = await EggPrototypeCreatorFactory.createProtoByDescriptor(protoDescriptor, loadUnit);
-        this.eggPrototypeFactory.registerPrototype(proto, loadUnit);
+        eggPrototypeFactory.registerPrototype(proto, loadUnit);
       }
     }
   }

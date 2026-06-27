@@ -18,7 +18,7 @@ export default class ModuleLangChainHook implements IBoot {
   constructor(app: Application) {
     this.#app = app;
     this.#graphObjectHook = new GraphObjectHook();
-    this.#graphLoadUnitHook = new GraphLoadUnitHook(this.#app.eggPrototypeFactory as any);
+    this.#graphLoadUnitHook = new GraphLoadUnitHook();
     this.#boundModelObjectHook = new BoundModelObjectHook();
     this.#graphPrototypeHook = new GraphPrototypeHook();
     // NOTE: graphLoadUnitHook registration moved to configWillLoad — the per-app

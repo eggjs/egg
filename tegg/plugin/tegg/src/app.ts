@@ -76,26 +76,30 @@ export default class TeggAppBoot implements ILifecycleBoot {
   }
 
   async beforeClose(): Promise<void> {
-    await TeggScope.run(this.app._teggScopeBag, async () => {
-      CompatibleUtil.clean();
-      await this.app.moduleHandler.destroy();
-      if (this.compatibleHook) {
-        this.app.eggContextLifecycleUtil.deleteLifecycle(this.compatibleHook);
-      }
-      if (this.eggQualifierProtoHook) {
-        this.app.loadUnitLifecycleUtil.deleteLifecycle(this.eggQualifierProtoHook);
-      }
-      if (this.configSourceEggPrototypeHook) {
-        this.app.loadUnitLifecycleUtil.deleteLifecycle(this.configSourceEggPrototypeHook);
-      }
-      if (this.loadUnitMultiInstanceProtoHook) {
-        this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitMultiInstanceProtoHook);
-      }
-      // per-app multi-instance proto set: cleared within this app's scope
-      LoadUnitMultiInstanceProtoHook.clear();
-    });
-    // The whole per-app scope (bag) is dropped with the app; release the scope
-    // so the strict-mode escape fuse reflects the live app count.
-    TeggScope.unregisterScope(this.app._teggScopeBag);
+    try {
+      await TeggScope.run(this.app._teggScopeBag, async () => {
+        CompatibleUtil.clean();
+        await this.app.moduleHandler.destroy();
+        if (this.compatibleHook) {
+          this.app.eggContextLifecycleUtil.deleteLifecycle(this.compatibleHook);
+        }
+        if (this.eggQualifierProtoHook) {
+          this.app.loadUnitLifecycleUtil.deleteLifecycle(this.eggQualifierProtoHook);
+        }
+        if (this.configSourceEggPrototypeHook) {
+          this.app.loadUnitLifecycleUtil.deleteLifecycle(this.configSourceEggPrototypeHook);
+        }
+        if (this.loadUnitMultiInstanceProtoHook) {
+          this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitMultiInstanceProtoHook);
+        }
+        // per-app multi-instance proto set: cleared within this app's scope
+        LoadUnitMultiInstanceProtoHook.clear();
+      });
+    } finally {
+      // The whole per-app scope (bag) is dropped with the app; release the scope
+      // so the strict-mode escape fuse reflects the live app count even if the
+      // cleanup above throws.
+      TeggScope.unregisterScope(this.app._teggScopeBag);
+    }
   }
 }

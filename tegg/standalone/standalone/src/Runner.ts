@@ -108,9 +108,16 @@ export class Runner {
     this.options = options;
     this.scopeBag = TeggScope.createBag();
     TeggScope.registerScope(this.scopeBag);
-    this.moduleReferences = Runner.getModuleReferences(this.cwd, options?.dependencies);
-    this.moduleConfigs = {};
-    this.runInScope(() => this.initInnerObjectsAndConfigs(options));
+    try {
+      this.moduleReferences = Runner.getModuleReferences(this.cwd, options?.dependencies);
+      this.moduleConfigs = {};
+      this.runInScope(() => this.initInnerObjectsAndConfigs(options));
+    } catch (e) {
+      // Construction failed after the scope was registered; release it so the
+      // never-returned Runner does not leak into liveScopeBags.
+      TeggScope.unregisterScope(this.scopeBag);
+      throw e;
+    }
   }
 
   /** Run `fn` within THIS Runner's per-app scope so factories/managers resolve here. */
@@ -315,8 +322,13 @@ export class Runner {
   }
 
   async destroy(): Promise<void> {
-    await this.runInScope(() => this.doDestroy());
-    TeggScope.unregisterScope(this.scopeBag);
+    try {
+      await this.runInScope(() => this.doDestroy());
+    } finally {
+      // Always release the scope, even if doDestroy rejects, so liveScopeBags
+      // (and thus isMultiApp / the sole-app fallback) never leaks a dead Runner.
+      TeggScope.unregisterScope(this.scopeBag);
+    }
   }
 
   private async doDestroy(): Promise<void> {
