@@ -92,7 +92,16 @@ jobs:
               # it via `egg-scripts start --snapshot-blob`, and assert it serves
               # `/-/ping` with HTTP 200. Restoring a V8 snapshot requires Node.js >= 24.
               export EGG_TS_ENABLE=false
-              export EGG_SERVER_ENV=unittest
+              # Snapshot under the production env: it loads only config.default (DB
+              # comes from CNPMCORE_DATABASE_* env vars) and does NOT pull in test-only
+              # plugins like @eggjs/mock, so the snapshot stays lean and production-like.
+              # (unittest would bake the mock plugin + config.unittest into the blob.)
+              export EGG_SERVER_ENV=prod
+              export CNPMCORE_DATABASE_NAME=cnpmcore
+              # cnpmcore's NFSClientAdapter throws under prod when the store is local fs
+              # unless this is set. The snapshot e2e only needs a working /-/ping, so allow
+              # the local-fs store instead of wiring up OSS/S3.
+              export CNPMCORE_FORCE_LOCAL_FS=true
 
               npm install --legacy-peer-deps
 
@@ -102,23 +111,30 @@ jobs:
               npm run tsc:prod
               cp -r dist/* .
               rm -rf dist
+              # Remove the now-redundant .ts sources so the bundler scans only .js. With
+              # both present, tegg's globby picks up the .ts AND .js of the same class as
+              # two modules (the "duplicate proto" hazard): a decorated class is bundled
+              # twice and only one copy's filePath is corrected, which breaks AOP advice
+              # resolution on restore (e.g. "Aop Advice(AsyncTimer) not found in loadUnits").
+              find app config -name '*.ts' ! -name '*.d.ts' -delete
 
-              # The snapshot app runs under EGG_SERVER_ENV=unittest, which resolves
-              # the DB name to cnpmcore_unittest (config/database.ts), so only that
-              # database is needed here.
+              # Under EGG_SERVER_ENV=prod the DB name comes from CNPMCORE_DATABASE_NAME
+              # (set to cnpmcore above), so prepare that database.
               echo "Preparing database..."
-              mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS cnpmcore_unittest"
-              CNPMCORE_DATABASE_NAME=cnpmcore_unittest bash ./prepare-database-mysql.sh
+              mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS cnpmcore"
+              bash ./prepare-database-mysql.sh
 
               # Build the V8 startup snapshot. Building works on Node.js >= 22 (CI runs
-              # on 24 here). leoric / @cnpmjs/packument / koa-onerror are kept external;
-              # the network stack stays lazy-external (no manual stubs) so the blob is
+              # on 24 here). leoric is auto-externalized (native optional DB drivers);
+              # @cnpmjs/packument / koa-onerror / undici / urllib are kept external. The
+              # network stack stays lazy-external (no manual stubs) so the blob is
               # restorable on Node.js >= 24.
               npx egg-bin snapshot build \
                 --output ./dist-bundle \
-                --force-external leoric \
                 --force-external @cnpmjs/packument \
-                --force-external koa-onerror
+                --force-external koa-onerror \
+                --force-external undici \
+                --force-external urllib
 
               # Restore the snapshot and verify it serves traffic. --no-sourcemap keeps
               # `--import source-map-support` out of the `node --snapshot-blob` process
