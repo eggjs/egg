@@ -72,3 +72,9 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - sources touched: `packages/typings/package.json`, `packages/typings/src/index.ts`, `packages/typings/src/global.ts`, `AGENTS.md`, `CLAUDE.md`
 - pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/typings.md`
 - note: Recorded `@eggjs/typings` as the shared home for cross-package global typing contracts.
+
+## [2026-06-27] api | formalize bundle/snapshot module-loader hooks
+
+- sources touched: `packages/utils/src/import.ts`, `packages/utils/README.md`, `packages/utils/test/module-importer.test.ts`, `packages/utils/test/fixtures/module-importer-require-esm/run.mjs`, `packages/typings/src/index.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/utils.md`
+- note: Documented the `__EGG_BUNDLE_MODULE_LOADER__` → snapshot loader (`setSnapshotModuleLoader`) → `__EGG_MODULE_IMPORTER__` → native priority as a formal contract (JSDoc on `BundleModuleLoader`/`ModuleImporter` + README). Added regression coverage for the V8 snapshot-restore path where `__EGG_MODULE_IMPORTER__ = require` loads ESM with no dynamic-import callback (inline sync-require test + spawned `node:vm` fixture). No load-semantics change — types/declarations already existed.
