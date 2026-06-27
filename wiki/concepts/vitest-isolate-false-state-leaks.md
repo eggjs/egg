@@ -11,7 +11,8 @@ source_files:
   - plugins/multipart/test/file-mode.test.ts
   - packages/core/src/lifecycle.ts
   - packages/egg/src/lib/egg.ts
-updated_at: 2026-06-20
+  - tegg/plugin/tegg/test/MultiAppParallel.test.ts
+updated_at: 2026-06-27
 status: active
 ---
 
@@ -100,6 +101,31 @@ signature of this class of bug, not flaky tests per se.
    messenger (IPC listeners) and any lazily-created loggers (file descriptors) —
    so they do not leak across files, then returns without loading a torn-down
    app. New `Lifecycle.isClosed` / `isClosing` getters expose the state.
+
+5. **Concurrent first-`import()` of the same module returns an `undefined`
+   namespace** (`@eggjs/utils` `importModule`). This is _not_ a state leak but a
+   concurrency race the same env exposes. When several apps boot **at the same
+   time** in one process (`describe.concurrent` in
+   `tegg/plugin/tegg/test/MultiAppParallel.test.ts`, or any concurrent `mm.app`),
+   multiple loaders call `importModule()` on the **same `.ts` file** simultaneously.
+   The runtime transpile loaders (`tsx`, `@oxc-node/core`) recompile on every
+   `import()` — tsx appends a cache-busting `?<ts>` query, so Node does not dedupe
+   the two compiles — and one caller can observe a partially-initialized namespace
+   whose `default` is `undefined`. It surfaced two ways, both order/timing
+   dependent: `Object.getOwnPropertyNames(undefined)` →
+   `Cannot convert undefined or null to object` in `loadExtend`, and a built-in
+   plugin loaded without its `path` → `Can not find plugin watcher` (the
+   framework `config/plugin` module came back empty, so `eggPlugins` was `{}` and
+   the only `watcher` left was the app's path-less `watcher: false` entry). Fails
+   under **both** transpilers (~12% tsx, ~24% oxc-node), so it is not transpiler
+   specific; it also affects real production concurrent multi-app boot, not just
+   tests. **Fix:** `importModule` shares a single in-flight `import()` per file URL
+   (`_inflightImports` map, cleared on settle via `then(clear, clear)`), serializing
+   concurrent first-loads. Note the long detour this took to find: instrumenting
+   the loader perturbs the timing enough to mask it (a Heisenbug), and the manifest
+   (`.egg/manifest.json`) read/write looked guilty but was a red herring (disabling
+   it entirely did not help). The decisive signal was a low-perturbation capture
+   showing `requireFile` returning `undefined` for a plugin's `app/extend` module.
 
 ## Not isolate bugs (do not chase as such)
 

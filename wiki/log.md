@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-06-27] concept | fix concurrent-import race in multi-app boot (oxc-node PR #5965)
+
+- sources touched: `packages/utils/src/import.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/vitest-isolate-false-state-leaks.md`
+- note: `tegg/plugin/tegg/test/MultiAppParallel.test.ts` ("…under concurrent boot") flaked ~12% (tsx) / ~24% (oxc-node) on macOS CI with `Can not find plugin watcher` or `Cannot convert undefined or null to object`. NOT caused by the tsx→oxc-node switch (both transpilers flake). Root cause: under `describe.concurrent`, multiple app loaders call `importModule()` on the same `.ts` module simultaneously; the transpile loaders recompile per-`import()` (tsx appends `?<ts>`, defeating Node's dedup) so a concurrent first-load can return a namespace whose `default` is `undefined` → empty framework `config/plugin` (watcher loses its `path`) or `Object.getOwnPropertyNames(undefined)` in `loadExtend`. Fix: `importModule` shares one in-flight `import()` per URL. 40/40 green under both transpilers after; full suite stays 527 files / 3430 tests, 0 failures. Heisenbug (instrumentation masks it); the `.egg/manifest.json` read/write race was a red herring. Recorded as root cause #5 on the concept page.
+
 ## [2026-06-27] workflow | CI surfaces single-run parallelism metrics for the isolate:false suite
 
 - sources touched: `vitest.config.ts`, `.github/workflows/ci.yml`, `scripts/ci-test-benchmark/{index,vitest-summary,report,cli,fs,environment}.js`, `benchmark/ci-test/README.md`, `.gitignore`, `packages/supertest/test/supertest.test.ts`
