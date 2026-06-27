@@ -39,7 +39,7 @@
     "@eggjs/bin": "beta",
     "@eggjs/mock": "beta",
     "@eggjs/tsconfig": "beta",
-    "@oxc-node/core": "^0.0.35",
+    "@oxc-node/core": "^0.1.0",
     "@types/node": "24",
     "@vitest/coverage-v8": "4",
     "cross-env": "10",
