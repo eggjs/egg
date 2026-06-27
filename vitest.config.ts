@@ -6,9 +6,12 @@ const config: UserWorkspaceConfig = defineConfig({
   test: {
     pool: 'threads',
     isolate: false,
+    // Windows CI is more contention-sensitive than posix, so we cap the thread
+    // pool. Use the full standard `windows-latest` runner (4 vCPU) instead of the
+    // previous hard cap of 2; the suite already retries flaky tests (--retry 2).
     ...(isWindowsCI
       ? {
-          maxWorkers: 2,
+          maxWorkers: 4,
         }
       : {}),
     projects: [
