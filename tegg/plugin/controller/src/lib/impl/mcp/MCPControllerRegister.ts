@@ -15,6 +15,7 @@ import type {
 } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import type { EggObject } from '@eggjs/tegg-runtime';
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
@@ -31,6 +32,9 @@ import getRawBody from 'raw-body';
 import type { ControllerRegister } from '../../ControllerRegister.ts';
 import { MCPConfig } from './MCPConfig.ts';
 import { MCPServerHelper } from './MCPServerHelper.ts';
+
+const MCP_CONTROLLER_REGISTER_SLOT = Symbol('tegg:controller:mcpControllerRegister');
+const MCP_HOOKS_SLOT = Symbol('tegg:controller:mcpControllerHooks');
 
 export interface MCPControllerHook {
   // SSE
@@ -67,6 +71,10 @@ interface ServerRegisterRecord<T> {
 }
 
 class InnerSSEServerTransport extends SSEServerTransport {
+  // Capture the owning per-app register so send() (driven by the MCP SDK, often
+  // outside any ALS frame) resolves the correct app's request map directly.
+  register?: MCPControllerRegister;
+
   async send(message: JSONRPCMessage): Promise<void> {
     let err: null | Error = null;
     try {
@@ -74,7 +82,7 @@ class InnerSSEServerTransport extends SSEServerTransport {
     } catch (e) {
       err = e as Error;
     } finally {
-      const map = MCPControllerRegister.instance?.sseTransportsRequestMap.get(this);
+      const map = this.register?.sseTransportsRequestMap.get(this);
       if (map && 'id' in message) {
         const { resolve, reject } = map[message.id!] ?? {};
         if (resolve) {
@@ -87,7 +95,16 @@ class InnerSSEServerTransport extends SSEServerTransport {
 }
 
 export class MCPControllerRegister implements ControllerRegister {
-  static instance?: MCPControllerRegister;
+  // Per-app: holds this app's MCP transports/servers/timers, so it is resolved
+  // from the active TeggScope bag rather than a process-global singleton.
+  static get instance(): MCPControllerRegister | undefined {
+    return TeggScope.getOr(MCP_CONTROLLER_REGISTER_SLOT, () => undefined, 'MCPControllerRegister.instance');
+  }
+
+  static set instance(value: MCPControllerRegister | undefined) {
+    TeggScope.set(MCP_CONTROLLER_REGISTER_SLOT, value);
+  }
+
   readonly app: Application;
   readonly eggContainerFactory: typeof EggContainerFactory;
   private readonly router: Router;
@@ -111,7 +128,14 @@ export class MCPControllerRegister implements ControllerRegister {
     >
   > = new Map();
 
-  static hooks: MCPControllerHook[] = [];
+  // Per-app hook list (mcp-proxy registers its hook here at agent boot). Each app
+  // gets its own list so concurrent apps do not accumulate each other's hooks.
+  static get hooks(): MCPControllerHook[] {
+    return TeggScope.resolve(MCP_HOOKS_SLOT, () => [], 'MCPControllerRegister.hooks');
+  }
+
+  // Optional: resolved + composed lazily on the first request (see
+  // `composeGlobalMiddleware`), so it stays undefined until then.
   globalMiddlewares?: compose.ComposedMiddleware<EggContext>;
 
   registerMap: Record<
@@ -397,6 +421,7 @@ export class MCPControllerRegister implements ControllerRegister {
     const self = this;
     const initHandler = async (ctx: Context) => {
       const transport = new InnerSSEServerTransport(self.mcpConfig.getSseMessagePath(name), ctx.res);
+      transport.register = self;
       const id = transport.sessionId;
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {

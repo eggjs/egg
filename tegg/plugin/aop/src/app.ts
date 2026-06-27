@@ -30,6 +30,8 @@ export default class AopAppHook implements ILifecycleBoot {
   }
 
   configDidLoad(): void {
+    // app.*LifecycleUtil getters are pinned to this app's scope bag, so hook
+    // registration does not need a TeggScope.run wrapper.
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eggPrototypeCrossCutHook);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitAopHook);
     this.app.eggObjectLifecycleUtil.registerLifecycle(this.eggObjectAopHook);
@@ -44,7 +46,9 @@ export default class AopAppHook implements ILifecycleBoot {
     this.app.moduleHandler.registerGlobalGraphBuildHook(crossCutGraphHook);
     this.app.moduleHandler.registerGlobalGraphBuildHook(pointCutGraphHook);
     await this.app.moduleHandler.ready();
-    assert(GlobalGraph.instance, 'GlobalGraph.instance is not set');
+    // Build hooks are registered above (before ready()), so the graph already
+    // ran them during build. Resolve the per-app graph for the sanity assert.
+    assert(GlobalGraph.instanceFor(this.app._teggScopeBag), 'GlobalGraph.instance is not set');
     this.aopContextHook = new AopContextHook(this.app.moduleHandler);
     this.app.eggContextLifecycleUtil.registerLifecycle(this.aopContextHook);
   }

@@ -1,14 +1,25 @@
 import { defineConfig, type UserWorkspaceConfig } from 'vitest/config';
 
-const isWindowsCI = process.env.CI && process.platform === 'win32';
+const isCI = Boolean(process.env.CI);
+const isWindowsCI = isCI && process.platform === 'win32';
+
+// In CI, emit a Vitest JSON report next to the benchmark harness so the
+// "Report parallelism metrics" step can summarize the real gating run (isolate is
+// off, so tests run fully in parallel). Keep this path in sync with the metrics step
+// in .github/workflows/ci.yml. Locally we keep the default reporter only.
+const CI_VITEST_JSON = 'benchmark/ci-test/ci-run/vitest-results.json';
 
 const config: UserWorkspaceConfig = defineConfig({
   test: {
     pool: 'threads',
     isolate: false,
+    reporters: isCI ? ['default', ['json', { outputFile: CI_VITEST_JSON }]] : ['default'],
+    // Windows CI is more contention-sensitive than posix, so we cap the thread
+    // pool. Use the full standard `windows-latest` runner (4 vCPU) instead of the
+    // previous hard cap of 2; the suite already retries flaky tests (--retry 2).
     ...(isWindowsCI
       ? {
-          maxWorkers: 2,
+          maxWorkers: 4,
         }
       : {}),
     projects: [
@@ -36,10 +47,12 @@ const config: UserWorkspaceConfig = defineConfig({
     env: {
       // disable tegg plugins by default on unittest, make test speed up
       DISABLE_TEGG_PLUGINS: 'true',
-      // TODO: aop plugin required this flag, otherwise there will be a SyntaxError: Invalid or unexpected token
-      NODE_OPTIONS: '--import=tsx/esm',
-      // FIXME: TypeError: Cannot read properties of undefined (reading 'mode')
-      // NODE_OPTIONS: '--import=@oxc-node/core/register',
+      // Transpile runtime `import()` of .ts files (egg loader resolving
+      // fixtures/plugins/app code, and the workspace `src` exports under
+      // node_modules) with oxc-node — noticeably faster than tsx and it handles
+      // decorators correctly. Requires @oxc-node/core >= 0.1.0, which fixes the
+      // earlier "Cannot read properties of undefined (reading 'mode')" crash.
+      NODE_OPTIONS: '--import=@oxc-node/core/register',
     },
     // poolOptions: {
     //   forks: {

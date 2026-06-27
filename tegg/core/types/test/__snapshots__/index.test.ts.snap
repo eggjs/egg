@@ -277,6 +277,7 @@ exports[`should export stable 1`] = `
     "UPDATE": "UPDATE",
   },
   "TRANSACTION_META_DATA": Symbol(EggPrototype#transaction#metaData),
+  "TeggScope": [Function],
   "Templates": {
     "BASE_DAO": "base_dao",
     "DAO": "dao",

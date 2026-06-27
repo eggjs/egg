@@ -73,6 +73,7 @@
     "@eggjs/module-common": "workspace:*",
     "@eggjs/orm-decorator": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
     "leoric": "catalog:",
     "sdk-base": "catalog:"
   },

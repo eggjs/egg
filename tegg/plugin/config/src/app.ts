@@ -6,29 +6,49 @@ import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
 import { TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
+import { TeggScope, type TeggScopeBag } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { ModuleScanner } from './lib/ModuleScanner.ts';
 
 const debug = debuglog('egg/tegg/plugin/config/app');
 
+// `_teggScopeBag` is declared by the tegg plugin's type augmentation, which this
+// (lower-layer) plugin does not import; carry the shape locally instead.
+type AppWithScope = Application & { _teggScopeBag?: TeggScopeBag };
+
 export default class App implements ILifecycleBoot {
-  private readonly app: Application;
+  private readonly app: AppWithScope;
 
   constructor(app: Application) {
-    this.app = app;
-    const configNames = this.app.loader.getTypeFiles('module');
-    ModuleConfigUtil.setConfigNames(configNames);
+    this.app = app as AppWithScope;
+    // teggConfig boots BEFORE the tegg plugin (tegg depends on teggConfig), so it
+    // is the FIRST tegg lifecycle to touch the per-app scoped `configNames`. The
+    // tegg plugin owns `app._teggScopeBag` but only creates it in its own
+    // configWillLoad — too late for the read in `#loadModuleConfigs` below. Create
+    // the bag here if absent (the tegg plugin reuses it via `??=`) and run every
+    // configNames access inside it; otherwise, under concurrent multi-app boot,
+    // the access escapes to the process-default bag and the strict-mode fuse
+    // throws (cross-talk between apps).
+    this.app._teggScopeBag ??= TeggScope.createBag();
+    TeggScope.run(this.app._teggScopeBag, () => {
+      const configNames = this.app.loader.getTypeFiles('module');
+      ModuleConfigUtil.setConfigNames(configNames);
+    });
   }
 
   configWillLoad(): void {
-    this.#scanModuleReferences();
-    this.#loadModuleConfigs();
+    TeggScope.runMaybe(this.app._teggScopeBag, () => {
+      this.#scanModuleReferences();
+      this.#loadModuleConfigs();
+    });
   }
 
   async loadMetadata(): Promise<void> {
-    this.#scanModuleReferences();
-    this.#loadModuleConfigs();
+    TeggScope.runMaybe(this.app._teggScopeBag, () => {
+      this.#scanModuleReferences();
+      this.#loadModuleConfigs();
+    });
   }
 
   #scanModuleReferences(): void {
@@ -113,6 +133,8 @@ export default class App implements ILifecycleBoot {
   }
 
   async beforeClose(): Promise<void> {
-    ModuleConfigUtil.setConfigNames(undefined);
+    TeggScope.runMaybe(this.app._teggScopeBag, () => {
+      ModuleConfigUtil.setConfigNames(undefined);
+    });
   }
 }

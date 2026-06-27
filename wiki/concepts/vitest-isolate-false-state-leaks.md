@@ -11,7 +11,8 @@ source_files:
   - plugins/multipart/test/file-mode.test.ts
   - packages/core/src/lifecycle.ts
   - packages/egg/src/lib/egg.ts
-updated_at: 2026-06-20
+  - tegg/plugin/tegg/test/MultiAppParallel.test.ts
+updated_at: 2026-06-27
 status: active
 ---
 
@@ -51,8 +52,8 @@ signature of this class of bug, not flaky tests per se.
    flipped the module-level `isESM` to `false`, with no way to unset it.
    `snapshot-import.test.ts` had a no-op `afterEach`, so after it ran, every
    later file in the worker resolved modules in CJS + snapshot mode and failed
-   with `Can not find plugin @eggjs/<x>` / `Cannot find module
-'@eggjs/<x>/package.json'`. This single leak caused most of the cross-project
+   with `Can not find plugin @eggjs/<x>` / `Cannot find module '@eggjs/<x>/package.json'`.
+   This single leak caused most of the cross-project
    failures (ajv-plugin, typebox-validate, view-nunjucks, standalone, …).
    **Fix:** `setSnapshotModuleLoader(undefined)` now clears the loader and
    restores the auto-detected `isESM`; the test clears it in `afterEach`.
@@ -101,6 +102,31 @@ signature of this class of bug, not flaky tests per se.
    so they do not leak across files, then returns without loading a torn-down
    app. New `Lifecycle.isClosed` / `isClosing` getters expose the state.
 
+5. **Concurrent first-`import()` of the same module returns an `undefined`
+   namespace** (`@eggjs/utils` `importModule`). This is _not_ a state leak but a
+   concurrency race the same env exposes. When several apps boot **at the same
+   time** in one process (`describe.concurrent` in
+   `tegg/plugin/tegg/test/MultiAppParallel.test.ts`, or any concurrent `mm.app`),
+   multiple loaders call `importModule()` on the **same `.ts` file** simultaneously.
+   The runtime transpile loaders (`tsx`, `@oxc-node/core`) recompile on every
+   `import()` — tsx appends a cache-busting `?<ts>` query, so Node does not dedupe
+   the two compiles — and one caller can observe a partially-initialized namespace
+   whose `default` is `undefined`. It surfaced two ways, both order/timing
+   dependent: `Object.getOwnPropertyNames(undefined)` →
+   `Cannot convert undefined or null to object` in `loadExtend`, and a built-in
+   plugin loaded without its `path` → `Can not find plugin watcher` (the
+   framework `config/plugin` module came back empty, so `eggPlugins` was `{}` and
+   the only `watcher` left was the app's path-less `watcher: false` entry). Fails
+   under **both** transpilers (~12% tsx, ~24% oxc-node), so it is not transpiler
+   specific; it also affects real production concurrent multi-app boot, not just
+   tests. **Fix:** `importModule` shares a single in-flight `import()` per file URL
+   (`_inflightImports` map, cleared on settle via `then(clear, clear)`), serializing
+   concurrent first-loads. Note the long detour this took to find: instrumenting
+   the loader perturbs the timing enough to mask it (a Heisenbug), and the manifest
+   (`.egg/manifest.json`) read/write looked guilty but was a red herring (disabling
+   it entirely did not help). The decisive signal was a low-perturbation capture
+   showing `requireFile` returning `undefined` for a plugin's `app/extend` module.
+
 ## Not isolate bugs (do not chase as such)
 
 - `orm-plugin` (`Table 'test.apps' doesn't exist`) needs MySQL; `redis` needs a
@@ -113,10 +139,22 @@ signature of this class of bug, not flaky tests per se.
   right after the save `pipeline()` resolves under load — a race in the multipart
   file-save path, not a state leak. It passes 100% as a single file. Treat as a
   pre-existing flaky test to fix in the multipart save path or test, separately
-  from the isolate:false work.
+  from the isolate:false work. The same load-sensitivity surfaces in
+  `multipart.test.ts` "whitelist" upload tests as `ECONNRESET` when a high-core box
+  over-saturates beyond CI's worker count; cap `--maxWorkers` to CI levels to avoid it.
+- `supertest` "should handle connection error" hardcodes `127.0.0.1:1234` and
+  asserted the exact `ECONNREFUSED` message. A local listener on that port (e.g. a
+  proxy like Surge) makes it `socket hang up` instead — environmental, not isolation
+  (fails alone too). Hardened to accept the connection-error family.
 
 ## Result
 
 Full Node-22 suite under `isolate:false`: 15 failing files → 3, of which 2 are
 environmental (MySQL/DNS, green in CI) and 1 (`multipart/file-mode`) is a
 pre-existing load flake independent of isolation.
+
+## Related
+
+Now that the suite runs `isolate:false` safely, CI surfaces _how parallel it
+actually ran_ (avg/peak concurrency, parallel efficiency, critical path) in the
+test job summary — see [CI parallel test metrics](../workflows/ci-parallel-test-metrics.md).

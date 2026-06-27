@@ -15,6 +15,7 @@ import {
 } from '@eggjs/dal-plugin';
 import {
   type EggPrototype,
+  EggPrototypeFactory,
   EggPrototypeLifecycleUtil,
   GlobalGraph,
   type LoadUnit,
@@ -24,7 +25,6 @@ import {
 } from '@eggjs/metadata';
 import {
   type EggProtoImplClass,
-  PrototypeUtil,
   type ModuleConfigHolder,
   ModuleConfigs,
   ConfigSourceQualifierAttribute,
@@ -45,6 +45,8 @@ import {
   LoadUnitInstanceFactory,
   ModuleLoadUnitInstance,
 } from '@eggjs/tegg-runtime';
+import { TeggScope } from '@eggjs/tegg-types';
+import type { TeggScopeBag } from '@eggjs/tegg-types';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
 import { StandaloneUtil, type MainRunner } from '@eggjs/tegg/standalone';
 
@@ -95,13 +97,35 @@ export class Runner {
   loadUnitInstances: LoadUnitInstance[] = [];
   innerObjects: Record<string, InnerObject[]>;
 
+  // This Runner's own per-app TeggScope bag — all factories/managers/graph/config
+  // names resolve here, so multiple Runners in one process stay isolated.
+  readonly scopeBag: TeggScopeBag;
+
   constructor(cwd: string, options?: RunnerOptions) {
     this.cwd = cwd;
     this.env = options?.env;
     this.name = options?.name;
     this.options = options;
-    this.moduleReferences = Runner.getModuleReferences(this.cwd, options?.dependencies);
-    this.moduleConfigs = {};
+    this.scopeBag = TeggScope.createBag();
+    TeggScope.registerScope(this.scopeBag);
+    try {
+      this.moduleReferences = Runner.getModuleReferences(this.cwd, options?.dependencies);
+      this.moduleConfigs = {};
+      this.runInScope(() => this.initInnerObjectsAndConfigs(options));
+    } catch (e) {
+      // Construction failed after the scope was registered; release it so the
+      // never-returned Runner does not leak into liveScopeBags.
+      TeggScope.unregisterScope(this.scopeBag);
+      throw e;
+    }
+  }
+
+  /** Run `fn` within THIS Runner's per-app scope so factories/managers resolve here. */
+  private runInScope<R>(fn: () => R): R {
+    return TeggScope.run(this.scopeBag, fn);
+  }
+
+  private initInnerObjectsAndConfigs(options?: RunnerOptions): void {
     this.innerObjects = {
       moduleConfigs: [
         {
@@ -170,25 +194,27 @@ export class Runner {
   }
 
   async load(): Promise<LoadUnit[]> {
-    StandaloneContextHandler.register();
-    LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
-      return new StandaloneLoadUnit(this.innerObjects);
-    });
-    LoadUnitInstanceFactory.registerLoadUnitInstanceClass(
-      StandaloneLoadUnitType,
-      ModuleLoadUnitInstance.createModuleLoadUnitInstance,
-    );
-    const standaloneLoadUnit = await LoadUnitFactory.createLoadUnit(
-      'MockStandaloneLoadUnitPath',
-      StandaloneLoadUnitType,
-      {
-        async load(): Promise<EggProtoImplClass[]> {
-          return [];
+    return this.runInScope(async () => {
+      StandaloneContextHandler.register();
+      LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
+        return new StandaloneLoadUnit(this.innerObjects);
+      });
+      LoadUnitInstanceFactory.registerLoadUnitInstanceClass(
+        StandaloneLoadUnitType,
+        ModuleLoadUnitInstance.createModuleLoadUnitInstance,
+      );
+      const standaloneLoadUnit = await LoadUnitFactory.createLoadUnit(
+        'MockStandaloneLoadUnitPath',
+        StandaloneLoadUnitType,
+        {
+          async load(): Promise<EggProtoImplClass[]> {
+            return [];
+          },
         },
-      },
-    );
-    const loadUnits = await this.loadUnitLoader.load();
-    return [standaloneLoadUnit, ...loadUnits];
+      );
+      const loadUnits = await this.loadUnitLoader.load();
+      return [standaloneLoadUnit, ...loadUnits];
+    });
   }
 
   static getModuleReferences(cwd: string, dependencies?: RunnerOptions['dependencies']): readonly ModuleReference[] {
@@ -249,49 +275,65 @@ export class Runner {
   }
 
   async init(): Promise<void> {
-    await this.initLoaderInstance();
+    await this.runInScope(async () => {
+      await this.initLoaderInstance();
 
-    this.loadUnits = await this.load();
-    const instances: LoadUnitInstance[] = [];
-    for (const loadUnit of this.loadUnits) {
-      const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
-      instances.push(instance);
-    }
-    this.loadUnitInstances = instances;
-    const runnerClass = StandaloneUtil.getMainRunner();
-    if (!runnerClass) {
-      throw new Error('not found runner class. Do you add @Runner decorator?');
-    }
-    const proto = PrototypeUtil.getClazzProto(runnerClass);
-    if (!proto) {
-      throw new Error(`can not get proto for clazz ${runnerClass.name}`);
-    }
-    this.runnerProto = proto as EggPrototype;
+      this.loadUnits = await this.load();
+      const instances: LoadUnitInstance[] = [];
+      for (const loadUnit of this.loadUnits) {
+        const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
+        instances.push(instance);
+      }
+      this.loadUnitInstances = instances;
+      const runnerClass = StandaloneUtil.getMainRunner();
+      if (!runnerClass) {
+        throw new Error('not found runner class. Do you add @Runner decorator?');
+      }
+      // Prefer the per-app scoped lookup so parallel Runners don't fall back to
+      // process-global class metadata when a per-scope prototype is registered.
+      const proto = EggPrototypeFactory.instance.getPrototypeByClazzOrGlobal(runnerClass);
+      if (!proto) {
+        throw new Error(`can not get proto for clazz ${runnerClass.name}`);
+      }
+      this.runnerProto = proto as EggPrototype;
+    });
   }
 
   async run<T>(aCtx?: EggContext): Promise<T> {
-    const lifecycle = {};
-    const ctx = aCtx || new StandaloneContext();
-    return await ContextHandler.run(ctx, async () => {
-      if (ctx.init) {
-        await ctx.init(lifecycle);
-      }
-      const eggObject = await EggContainerFactory.getOrCreateEggObject(this.runnerProto);
-      const runner = eggObject.obj as MainRunner<T>;
-      try {
-        return await runner.main();
-      } finally {
-        if (ctx.destroy) {
-          ctx.destroy(lifecycle).catch((e) => {
-            e.message = `[tegg/standalone] destroy tegg context failed: ${e.message}`;
-            console.warn(e);
-          });
+    return this.runInScope(async () => {
+      const lifecycle = {};
+      const ctx = aCtx || new StandaloneContext();
+      return await ContextHandler.run(ctx, async () => {
+        if (ctx.init) {
+          await ctx.init(lifecycle);
         }
-      }
+        const eggObject = await EggContainerFactory.getOrCreateEggObject(this.runnerProto);
+        const runner = eggObject.obj as MainRunner<T>;
+        try {
+          return await runner.main();
+        } finally {
+          if (ctx.destroy) {
+            ctx.destroy(lifecycle).catch((e) => {
+              e.message = `[tegg/standalone] destroy tegg context failed: ${e.message}`;
+              console.warn(e);
+            });
+          }
+        }
+      });
     });
   }
 
   async destroy(): Promise<void> {
+    try {
+      await this.runInScope(() => this.doDestroy());
+    } finally {
+      // Always release the scope, even if doDestroy rejects, so liveScopeBags
+      // (and thus isMultiApp / the sole-app fallback) never leaks a dead Runner.
+      TeggScope.unregisterScope(this.scopeBag);
+    }
+  }
+
+  private async doDestroy(): Promise<void> {
     if (this.loadUnitInstances) {
       for (const instance of this.loadUnitInstances) {
         await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);

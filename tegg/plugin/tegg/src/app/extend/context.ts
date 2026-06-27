@@ -1,7 +1,7 @@
-import { type EggProtoImplClass, PrototypeUtil, type QualifierInfo } from '@eggjs/core-decorator';
-import type { EggPrototype } from '@eggjs/metadata';
+import { type EggProtoImplClass, type QualifierInfo } from '@eggjs/core-decorator';
 import { TEGG_CONTEXT } from '@eggjs/module-common';
 import type { EggContext as TEggContext } from '@eggjs/tegg-runtime';
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Context } from 'egg';
 
 import { ctxLifecycleMiddleware } from '../../lib/ctx_lifecycle_middleware.ts';
@@ -22,23 +22,28 @@ export default class TEggPluginContext {
   }
 
   async getEggObject<T>(this: Context, clazz: EggProtoImplClass<T>, name?: string): Promise<T> {
-    const protoObj = PrototypeUtil.getClazzProto(clazz as EggProtoImplClass);
-    if (!protoObj) {
-      throw new Error(`can not get proto for clazz ${clazz.name}`);
-    }
-    const proto = protoObj as EggPrototype;
-    const eggObject = await this.app.eggContainerFactory.getOrCreateEggObject(proto, name ?? proto.name);
-    return eggObject.obj as T;
+    const app = this.app;
+    // Run within this app's scope so proto resolution uses the per-app class→proto
+    // map (multi-app safe) and ContextHandler/factories resolve the right app —
+    // even when called outside a request (e.g. the tegg-vitest runner).
+    const bag = app._teggScopeBag;
+    const doWork = async (): Promise<T> => {
+      const eggObject = await app.eggContainerFactory.getOrCreateEggObjectFromClazz(clazz as EggProtoImplClass, name);
+      return eggObject.obj as T;
+    };
+    return TeggScope.runMaybe(bag, doWork);
   }
 
   async getEggObjectFromName<T>(this: Context, name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T> {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [qualifiers];
     }
-    const eggObject = await this.app.eggContainerFactory.getOrCreateEggObjectFromName(
-      name,
-      qualifiers as QualifierInfo[],
-    );
-    return eggObject.obj as T;
+    const app = this.app;
+    const bag = app._teggScopeBag;
+    const doWork = async (): Promise<T> => {
+      const eggObject = await app.eggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
+      return eggObject.obj as T;
+    };
+    return TeggScope.runMaybe(bag, doWork);
   }
 }

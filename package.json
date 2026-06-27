@@ -52,6 +52,7 @@
   "devDependencies": {
     "@eggjs/bin": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
+    "@oxc-node/core": "catalog:",
     "@types/content-type": "catalog:",
     "@types/js-yaml": "catalog:",
     "@types/koa-compose": "catalog:",

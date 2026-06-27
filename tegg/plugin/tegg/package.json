@@ -102,6 +102,8 @@
   },
   "devDependencies": {
     "@eggjs/core": "workspace:*",
+    "@eggjs/eventbus-decorator": "workspace:*",
+    "@eggjs/eventbus-plugin": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",

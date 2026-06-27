@@ -10,6 +10,8 @@ import {
   ObjectInitType,
   type ProtoDescriptor,
   type QualifierInfo,
+  TeggScope,
+  type TeggScopeBag,
 } from '@eggjs/tegg-types';
 
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors.ts';
@@ -19,6 +21,8 @@ import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder.ts';
 import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.ts';
 
 const debug = debuglog('tegg/core/metadata/model/graph/GlobalGraph');
+
+const GLOBAL_GRAPH_SLOT = Symbol('tegg:metadata:globalGraph');
 
 export interface GlobalGraphOptions {
   // TODO next major version refactor to force strict
@@ -67,9 +71,26 @@ export class GlobalGraph {
   private buildHooks: GlobalGraphBuildHook[];
 
   /**
-   * The global instance used in ModuleLoadUnit
+   * The per-app graph instance used in ModuleLoadUnit, backed by TeggScope: the
+   * active app's bag (or, with no scope, the sole-app / process-default bag) is
+   * the single source of truth — undefined until the loader assigns it during
+   * boot. Call sites stay unchanged.
    */
-  static instance?: GlobalGraph;
+  static get instance(): GlobalGraph | undefined {
+    return TeggScope.getOr<GlobalGraph>(GLOBAL_GRAPH_SLOT, () => undefined, 'GlobalGraph.instance');
+  }
+
+  static set instance(value: GlobalGraph | undefined) {
+    TeggScope.set(GLOBAL_GRAPH_SLOT, value);
+  }
+
+  /**
+   * Resolve a specific app's graph directly from its bag (no active scope needed).
+   * Used by plugins to register build hooks onto the owning app's graph.
+   */
+  static instanceFor(bag: TeggScopeBag): GlobalGraph | undefined {
+    return bag.get(GLOBAL_GRAPH_SLOT) as GlobalGraph | undefined;
+  }
 
   constructor(options?: GlobalGraphOptions) {
     this.moduleGraph = new Graph<GlobalModuleNode, ModuleDependencyMeta>();
