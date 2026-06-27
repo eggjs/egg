@@ -106,12 +106,15 @@ describe('plugin/tegg/test/MultiApp.test.ts', () => {
   it('should not leak state between sequential app lifecycles', async () => {
     const app1 = mm.app({ baseDir: getAppBaseDir('multi-app-isolation') });
     await app1.ready();
-    const counter1 = await app1.getEggObject(CounterService);
-    counter1.increment();
-    counter1.increment();
-    counter1.increment();
-    assert.equal(counter1.getCount(), 3);
-    await app1.close();
+    try {
+      const counter1 = await app1.getEggObject(CounterService);
+      counter1.increment();
+      counter1.increment();
+      counter1.increment();
+      assert.equal(counter1.getCount(), 3);
+    } finally {
+      await app1.close();
+    }
 
     const app2 = mm.app({ baseDir: getAppBaseDir('multi-app-isolation') });
     await app2.ready();

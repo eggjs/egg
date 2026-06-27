@@ -18,6 +18,10 @@ export class BackgroundCounterService {
   schedule(times: number): void {
     const counterService = this.counterService;
     this.backgroundTaskHelper.run(async () => {
+      // Yield first so the increments run AFTER the scheduling context has
+      // exited — i.e. truly across the async/background boundary, which is what
+      // the multi-app background-task isolation test means to exercise.
+      await new Promise((resolve) => setImmediate(resolve));
       for (let i = 0; i < times; i++) {
         counterService.increment();
       }
