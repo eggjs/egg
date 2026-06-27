@@ -36,7 +36,17 @@ jobs:
         with:
           node-version: '24'
 
+      - name: Cache utoo package store
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/utoo-store
+          key: pkgstore-${{ runner.os }}-${{ hashFiles('pnpm-workspace.yaml', '**/package.json') }}
+          restore-keys: |
+            pkgstore-${{ runner.os }}-
+
       - name: Install dependencies
+        env:
+          UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
         run: ut install --from pnpm
 
       - name: Run lint
@@ -60,6 +70,18 @@ jobs:
       matrix:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
         node: ['22', '24']
+        coverage: [false]
+        # Replace (not duplicate) the ubuntu/24 leg with a coverage-enabled one.
+        # `include` cannot overwrite an existing matrix dimension, so the base
+        # coverage:false combo must be excluded first or ubuntu/24 would run twice.
+        exclude:
+          - os: 'ubuntu-latest'
+            node: '24'
+            coverage: false
+        include:
+          - os: 'ubuntu-latest'
+            node: '24'
+            coverage: true
 
     name: Test (${{ matrix.os }}, ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
@@ -159,17 +181,33 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - name: Cache utoo package store
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/utoo-store
+          key: pkgstore-${{ runner.os }}-${{ hashFiles('pnpm-workspace.yaml', '**/package.json') }}
+          restore-keys: |
+            pkgstore-${{ runner.os }}-
+
       - name: Install dependencies
+        env:
+          UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
         run: ut install --from pnpm
 
-      - name: Run tests
+      - name: Run tests (with coverage)
+        if: ${{ matrix.coverage }}
         run: ut run ci
 
+      - name: Run tests
+        if: ${{ !matrix.coverage }}
+        run: ut run test
+
       # Summarize how parallel the full-isolate-off suite actually ran. The gating
-      # `ut run ci` run above emits Vitest JSON (vitest.config.ts, CI only); this step
-      # turns it into avg/peak concurrency + efficiency metrics in the job summary. It
-      # is informational only (always() so failures still surface metrics) and never
-      # changes the gate — `ut run ci` already set the job's pass/fail above.
+      # test run above (`ut run ci` on the coverage leg, `ut run test` on the rest)
+      # emits Vitest JSON (vitest.config.ts, CI only); this step turns it into
+      # avg/peak concurrency + efficiency metrics in the job summary. It is
+      # informational only (always() so failures still surface metrics) and never
+      # changes the gate — the test run above already set the job's pass/fail.
       - name: Report parallelism metrics
         if: always()
         # Call node directly: `ut run <script> -- ...` re-serializes forwarded args into
@@ -182,8 +220,7 @@ jobs:
           ut run example:test:all
 
       - name: Code Coverage
-        # skip on windows, it will hangup on codecov
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ matrix.coverage }}
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
@@ -194,6 +231,15 @@ jobs:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
         node: ['24']
+        coverage: [false]
+        exclude:
+          - os: 'ubuntu-latest'
+            node: '24'
+            coverage: false
+        include:
+          - os: 'ubuntu-latest'
+            node: '24'
+            coverage: true
 
     name: Test bin (${{ matrix.os }}, ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
@@ -214,17 +260,33 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - name: Cache utoo package store
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/utoo-store
+          key: pkgstore-${{ runner.os }}-${{ hashFiles('pnpm-workspace.yaml', '**/package.json') }}
+          restore-keys: |
+            pkgstore-${{ runner.os }}-
+
       - name: Install dependencies
+        env:
+          UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
         run: ut install --from pnpm
 
-      - name: Run tests
+      - name: Run tests (with coverage)
+        if: ${{ matrix.coverage }}
         run: |
           ut run build -- --workspace ./tools/egg-bin
           ut run ci --workspace @eggjs/bin
 
+      - name: Run tests
+        if: ${{ !matrix.coverage }}
+        run: |
+          ut run build -- --workspace ./tools/egg-bin
+          ut run test --workspace @eggjs/bin
+
       - name: Code Coverage
-        # skip on windows, it will hangup on codecov https://github.com/codecov/codecov-action/issues/1787
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ matrix.coverage }}
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
@@ -235,6 +297,15 @@ jobs:
       matrix:
         os: ['ubuntu-latest']
         node: ['22', '24']
+        coverage: [false]
+        exclude:
+          - os: 'ubuntu-latest'
+            node: '24'
+            coverage: false
+        include:
+          - os: 'ubuntu-latest'
+            node: '24'
+            coverage: true
 
     name: Test scripts (${{ matrix.os }}, ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
@@ -255,16 +326,33 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - name: Cache utoo package store
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/utoo-store
+          key: pkgstore-${{ runner.os }}-${{ hashFiles('pnpm-workspace.yaml', '**/package.json') }}
+          restore-keys: |
+            pkgstore-${{ runner.os }}-
+
       - name: Install dependencies
+        env:
+          UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
         run: ut install --from pnpm
 
-      - name: Run tests
+      - name: Run tests (with coverage)
+        if: ${{ matrix.coverage }}
         run: |
           ut run build -- --workspace ./tools/scripts
           ut run ci --workspace tools/scripts
 
+      - name: Run tests
+        if: ${{ !matrix.coverage }}
+        run: |
+          ut run build -- --workspace ./tools/scripts
+          ut run test --workspace tools/scripts
+
       - name: Code Coverage
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ matrix.coverage }}
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
