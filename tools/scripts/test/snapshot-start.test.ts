@@ -7,10 +7,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Start from '../src/commands/start.ts';
 
 const spawnMock = vi.hoisted(() => vi.fn());
+// Callback-style execFile mock (the gate promisifies it). A custom `--node` path
+// is version-checked through it, so we can simulate any reported version.
+const execFileMock = vi.hoisted(() => vi.fn());
 
 vi.mock('node:child_process', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:child_process')>();
-  return { ...actual, spawn: spawnMock };
+  return { ...actual, spawn: spawnMock, execFile: execFileMock };
 });
 
 const __dirname = import.meta.dirname;
@@ -56,6 +59,12 @@ describe('test/snapshot-start.test.ts', () => {
       kill: vi.fn(),
       pid: 4242,
     }));
+    // Default execFile to an empty success; individual tests override it to
+    // simulate a specific `--node --version` output (or a spawn failure).
+    execFileMock.mockReset();
+    execFileMock.mockImplementation((_cmd: string, _args: string[], cb: (e: unknown, r?: { stdout: string }) => void) =>
+      cb(null, { stdout: '' }),
+    );
     // Snapshot restore requires Node >= 24; pin a supported version so the
     // argv-construction tests below do not trip the gate on a Node 22 host.
     restoreNodeVersion = pinNodeVersion('24.18.0');
@@ -118,5 +127,28 @@ describe('test/snapshot-start.test.ts', () => {
     await expect(Start.run(['--snapshot-blob', './snapshot.blob', baseDir])).rejects.toThrow(/Node\.js >= 24/);
     // Gated before spawning the doomed `node --snapshot-blob` child.
     expect(spawnMock).not.toHaveBeenCalled();
+  });
+
+  it('queries a custom --node binary and refuses an unsupported version', async () => {
+    // A custom `--node /path` is not this runtime, so the gate resolves its version
+    // by running `<path> --version` instead of reading process.versions.
+    execFileMock.mockImplementation((_cmd: string, _args: string[], cb: (e: unknown, r?: { stdout: string }) => void) =>
+      cb(null, { stdout: 'v22.4.1\n' }),
+    );
+    await expect(
+      Start.run(['--snapshot-blob', './snapshot.blob', '--node', '/opt/node22/bin/node', baseDir]),
+    ).rejects.toThrow(/Node\.js >= 24/);
+    expect(execFileMock).toHaveBeenCalledWith('/opt/node22/bin/node', ['--version'], expect.any(Function));
+    expect(spawnMock).not.toHaveBeenCalled();
+  });
+
+  it('proceeds (fails open) when a custom --node version cannot be determined', async () => {
+    // If `<path> --version` cannot run, the gate returns undefined and the launch
+    // proceeds rather than blocking on a version it could not read.
+    execFileMock.mockImplementation((_cmd: string, _args: string[], cb: (e: unknown) => void) =>
+      cb(new Error('spawn ENOENT')),
+    );
+    await Start.run(['--snapshot-blob', './snapshot.blob', '--node', '/no/such/node', baseDir]);
+    expect(spawnMock).toHaveBeenCalledTimes(1);
   });
 });
