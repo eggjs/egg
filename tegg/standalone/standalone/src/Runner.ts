@@ -15,6 +15,7 @@ import {
 } from '@eggjs/dal-plugin';
 import {
   type EggPrototype,
+  EggPrototypeFactory,
   EggPrototypeLifecycleUtil,
   GlobalGraph,
   type LoadUnit,
@@ -24,7 +25,6 @@ import {
 } from '@eggjs/metadata';
 import {
   type EggProtoImplClass,
-  PrototypeUtil,
   type ModuleConfigHolder,
   ModuleConfigs,
   ConfigSourceQualifierAttribute,
@@ -289,7 +289,9 @@ export class Runner {
       if (!runnerClass) {
         throw new Error('not found runner class. Do you add @Runner decorator?');
       }
-      const proto = PrototypeUtil.getClazzProto(runnerClass);
+      // Prefer the per-app scoped lookup so parallel Runners don't fall back to
+      // process-global class metadata when a per-scope prototype is registered.
+      const proto = EggPrototypeFactory.instance.getPrototypeByClazzOrGlobal(runnerClass);
       if (!proto) {
         throw new Error(`can not get proto for clazz ${runnerClass.name}`);
       }

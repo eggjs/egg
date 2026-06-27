@@ -1,11 +1,4 @@
-import {
-  EggLoadUnitType,
-  GlobalGraph,
-  type Loader,
-  type LoadUnit,
-  LoadUnitFactory,
-  ModuleDescriptorDumper,
-} from '@eggjs/metadata';
+import { EggLoadUnitType, GlobalGraph, type LoadUnit, LoadUnitFactory, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { Logger } from '@eggjs/tegg';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
 import { LoaderFactory } from '@eggjs/tegg-loader';
@@ -69,13 +62,12 @@ export class EggModuleLoader {
     // do not leak into the process-default bag or any concurrent Runner.
     await TeggScope.run(TeggScope.createBag(), async () => {
       const loadUnits: LoadUnit[] = [];
-      const loaderCache = new Map<string, Loader>();
       const globalGraph = (GlobalGraph.instance = await EggModuleLoader.generateAppGraph(moduleReferences, options));
       globalGraph.sort();
       const moduleConfigList = globalGraph.moduleConfigList;
       for (const moduleConfig of moduleConfigList) {
         const modulePath = moduleConfig.path;
-        const loader = loaderCache.get(modulePath)!;
+        const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
         const loadUnit = await LoadUnitFactory.createPreloadLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
         loadUnits.push(loadUnit);
       }
