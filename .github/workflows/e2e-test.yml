@@ -76,42 +76,67 @@ jobs:
               CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
 
               EGG_TS_ENABLE=false npx eggctl start --port=7001 --env=unittest --daemon
-              HEALTH_URL="http://127.0.0.1:7001/"
-              START_TIME=$(date +%s)
-              TIMEOUT=120
-              STATUS=""
-              READY=0
 
-              echo "Waiting for application to become healthy at ${HEALTH_URL} (timeout: ${TIMEOUT}s)..."
-              while true; do
-                # Capture response body and status code
-                STATUS=$(curl -s -o /tmp/cnpmcore-health-response -w "%{http_code}" "${HEALTH_URL}" || echo "000")
-                echo "Health check attempt at $(date): status=${STATUS}"
-
-                if [ "${STATUS}" = "200" ]; then
-                  echo "Health check succeeded with status 200"
-                  READY=1
-                  break
-                fi
-
-                NOW=$(date +%s)
-                ELAPSED=$((NOW - START_TIME))
-                if [ "${ELAPSED}" -ge "${TIMEOUT}" ]; then
-                  echo "Health check timed out after ${ELAPSED}s with last status ${STATUS}"
-                  break
-                fi
-
-                sleep 5
-              done
-
-              npx eggctl stop
-
-              if [ "${READY}" != "1" ]; then
-                echo "Health check failed; last HTTP status: ${STATUS}"
-                echo "Last health endpoint response body (if any):"
-                cat /tmp/cnpmcore-health-response 2>/dev/null || echo "<no response body captured>"
+              if bash ../wait-health.sh "http://127.0.0.1:7001/" /tmp/cnpmcore-health-response 120 5; then
+                npx eggctl stop
+              else
+                npx eggctl stop || true
                 echo "Recent error logs (if any):"
                 cat logs/cnpmcore/common-error.log 2>/dev/null || true
+                exit 1
+              fi
+          - name: cnpmcore-snapshot
+            node-version: 24
+            command: |
+              # V8 startup snapshot regression: build a snapshot of cnpmcore, restore
+              # it via `egg-scripts start --snapshot-blob`, and assert it serves
+              # `/-/ping` with HTTP 200. Restoring a V8 snapshot requires Node.js >= 24.
+              export EGG_TS_ENABLE=false
+              export EGG_SERVER_ENV=unittest
+
+              npm install --legacy-peer-deps
+
+              # Compile to JS and overlay onto source so the egg loader and tegg module
+              # scanner resolve .js at the expected paths (same approach as the cnpmcore
+              # job); the snapshot is built from the compiled app.
+              npm run tsc:prod
+              cp -r dist/* .
+              rm -rf dist
+
+              # The snapshot app runs under EGG_SERVER_ENV=unittest, which resolves
+              # the DB name to cnpmcore_unittest (config/database.ts), so only that
+              # database is needed here.
+              echo "Preparing database..."
+              mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS cnpmcore_unittest"
+              CNPMCORE_DATABASE_NAME=cnpmcore_unittest bash ./prepare-database-mysql.sh
+
+              # Build the V8 startup snapshot. Building works on Node.js >= 22 (CI runs
+              # on 24 here). leoric / @cnpmjs/packument / koa-onerror are kept external;
+              # the network stack stays lazy-external (no manual stubs) so the blob is
+              # restorable on Node.js >= 24.
+              npx egg-bin snapshot build \
+                --output ./dist-bundle \
+                --force-external leoric \
+                --force-external @cnpmjs/packument \
+                --force-external koa-onerror
+
+              # Restore the snapshot and verify it serves traffic. --no-sourcemap keeps
+              # `--import source-map-support` out of the `node --snapshot-blob` process
+              # (cnpmcore sets egg.typescript, which would otherwise auto-enable it).
+              npx egg-scripts start \
+                --snapshot-blob ./dist-bundle/snapshot.blob \
+                --port 7001 \
+                --no-sourcemap \
+                --daemon \
+                --title=egg-server-cnpmcore-snapshot
+
+              if bash ../wait-health.sh "http://127.0.0.1:7001/-/ping" /tmp/cnpmcore-snapshot-health-response 120 3; then
+                npx egg-scripts stop --title=egg-server-cnpmcore-snapshot
+              else
+                npx egg-scripts stop --title=egg-server-cnpmcore-snapshot || true
+                echo "Recent snapshot error logs (if any):"
+                cat dist-bundle/logs/cnpmcore/common-error.log 2>/dev/null || true
+                cat "${HOME}/logs/master-stderr.log" 2>/dev/null || true
                 exit 1
               fi
           - name: examples

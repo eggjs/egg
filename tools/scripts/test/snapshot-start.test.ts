@@ -15,9 +15,21 @@ vi.mock('node:child_process', async (importOriginal) => {
 
 const __dirname = import.meta.dirname;
 
+// Override process.versions.node so the snapshot Node >= 24 gate is exercised
+// deterministically regardless of the host Node version (egg-scripts CI runs on
+// both Node 22 and 24). Returns a restorer.
+function pinNodeVersion(version: string): () => void {
+  const descriptor = Object.getOwnPropertyDescriptor(process.versions, 'node');
+  Object.defineProperty(process.versions, 'node', { value: version, configurable: true, writable: true });
+  return () => {
+    if (descriptor) Object.defineProperty(process.versions, 'node', descriptor);
+  };
+}
+
 describe('test/snapshot-start.test.ts', () => {
   const baseDir = path.join(__dirname, 'fixtures/example');
   let homeDir: string;
+  let restoreNodeVersion: (() => void) | undefined;
 
   beforeEach(async () => {
     // Mock HOME (node-homedir honors MOCK_HOME_DIR) so the shared start pipeline's
@@ -33,9 +45,14 @@ describe('test/snapshot-start.test.ts', () => {
       kill: vi.fn(),
       pid: 4242,
     }));
+    // Snapshot restore requires Node >= 24; pin a supported version so the
+    // argv-construction tests below do not trip the gate on a Node 22 host.
+    restoreNodeVersion = pinNodeVersion('24.18.0');
   });
 
   afterEach(async () => {
+    restoreNodeVersion?.();
+    restoreNodeVersion = undefined;
     for (const signal of ['SIGINT', 'SIGQUIT', 'SIGTERM']) {
       process.removeAllListeners(signal);
     }
@@ -70,5 +87,25 @@ describe('test/snapshot-start.test.ts', () => {
     expect(args).toContain('--snapshot-blob');
     expect(args).toContain('/abs/app.blob');
     expect(options.env.PORT).toBe('8080');
+  });
+
+  it('accepts the --no-sourcemap negation (sourcemap flag has allowNo)', async () => {
+    // Regression guard: the cnpmcore-snapshot e2e job uses --no-sourcemap to keep
+    // `--import source-map-support` out of the `node --snapshot-blob` process.
+    // Without allowNo:true on the sourcemap flag, oclif rejects --no-sourcemap with
+    // NonExistentFlagsError and the start command never spawns.
+    await Start.run(['--snapshot-blob', './snapshot.blob', '--no-sourcemap', baseDir]);
+    const { args } = spawnArgs();
+    expect(args).not.toContain('--import');
+  });
+
+  it('refuses to restore on Node.js < 24 with a clear error', async () => {
+    // Override the supported-version pin from beforeEach. We can discard this
+    // restorer because afterEach's `restoreNodeVersion` (captured in beforeEach
+    // before any pin) restores the original host descriptor regardless.
+    pinNodeVersion('22.22.3');
+    await expect(Start.run(['--snapshot-blob', './snapshot.blob', baseDir])).rejects.toThrow(/Node\.js >= 24/);
+    // Gated before spawning the doomed `node --snapshot-blob` child.
+    expect(spawnMock).not.toHaveBeenCalled();
   });
 });

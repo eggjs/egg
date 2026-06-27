@@ -156,6 +156,18 @@ if (process.env.EGG_BUNDLE_SNAPSHOT === 'build') {
       // V8 runs this callback synchronously right after deserialization, before
       // the Node ESM loader is ready, so all real work is deferred to the next
       // tick via setImmediate.
+      //
+      // Restoring a V8 snapshot requires Node.js >= 24: Node.js 22 aborts while
+      // deserializing a non-trivial egg heap (V8 bug). The supported launcher
+      // (egg-scripts start --snapshot-blob) already gates this before spawning,
+      // so this is a defense-in-depth guard for a direct `node --snapshot-blob`
+      // launch that managed to deserialize on an unsupported runtime.
+      const __nodeMajor = Number(process.versions.node.split('.', 1)[0]);
+      if (__nodeMajor < 24) {
+        // eslint-disable-next-line no-console
+        console.error('[egg-bundler] V8 snapshot restore requires Node.js >= 24, but this process is ' + process.version + '. Build works on Node.js >= 22; restore must run on Node.js >= 24.');
+        process.exit(1);
+      }
       setImmediate(() => {
         // A restored snapshot process has no dynamic import() callback
         // (ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING). Route every egg loader import

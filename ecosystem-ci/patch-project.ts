@@ -91,8 +91,8 @@ async function patchPackageJSON(filePath: string, overrides: Record<string, stri
   fs.writeFileSync(filePath, packageJsonString);
 }
 
-async function patchCnpmcore(overrides: Record<string, string>): Promise<void> {
-  const packageJsonPath = join(projectDir, 'cnpmcore', 'package.json');
+async function patchProjectRoot(projectName: string, overrides: Record<string, string>): Promise<void> {
+  const packageJsonPath = join(projectDir, projectName, 'package.json');
   await patchPackageJSON(packageJsonPath, overrides);
 }
 
@@ -111,7 +111,10 @@ async function main(): Promise<void> {
 
   switch (project) {
     case 'cnpmcore':
-      await patchCnpmcore(overrides);
+    // cnpmcore-snapshot is a second checkout of the same cnpmcore repo used by
+    // the V8 snapshot e2e job; it patches its own package.json the same way.
+    case 'cnpmcore-snapshot':
+      await patchProjectRoot(project, overrides);
       break;
     case 'examples':
       await patchExamples(overrides);
