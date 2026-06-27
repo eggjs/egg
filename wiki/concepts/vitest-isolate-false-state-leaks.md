@@ -51,8 +51,8 @@ signature of this class of bug, not flaky tests per se.
    flipped the module-level `isESM` to `false`, with no way to unset it.
    `snapshot-import.test.ts` had a no-op `afterEach`, so after it ran, every
    later file in the worker resolved modules in CJS + snapshot mode and failed
-   with `Can not find plugin @eggjs/<x>` / `Cannot find module
-'@eggjs/<x>/package.json'`. This single leak caused most of the cross-project
+   with `Can not find plugin @eggjs/<x>` / `Cannot find module '@eggjs/<x>/package.json'`.
+   This single leak caused most of the cross-project
    failures (ajv-plugin, typebox-validate, view-nunjucks, standalone, …).
    **Fix:** `setSnapshotModuleLoader(undefined)` now clears the loader and
    restores the auto-detected `isESM`; the test clears it in `afterEach`.
