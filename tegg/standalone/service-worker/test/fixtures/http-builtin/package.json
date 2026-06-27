@@ -1,0 +1,6 @@
+{
+  "name": "http-builtin-app",
+  "eggModule": {
+    "name": "httpBuiltinApp"
+  }
+}

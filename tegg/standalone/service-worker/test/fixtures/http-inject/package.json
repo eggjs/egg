@@ -1,0 +1,6 @@
+{
+  "name": "http-inject-app",
+  "eggModule": {
+    "name": "httpInjectApp"
+  }
+}

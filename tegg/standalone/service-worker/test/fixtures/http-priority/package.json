@@ -1,0 +1,6 @@
+{
+  "name": "http-priority-app",
+  "eggModule": {
+    "name": "httpPriorityApp"
+  }
+}

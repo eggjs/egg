@@ -1,0 +1,6 @@
+{
+  "name": "http-app",
+  "eggModule": {
+    "name": "httpApp"
+  }
+}
