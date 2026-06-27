@@ -114,7 +114,7 @@ describe('Bundler snapshot lazy-external wiring', () => {
     const worker = await fs.readFile(path.join(tmpOutput, 'worker.js'), 'utf8');
     expect(worker).toContain(SNAPSHOT_PRELUDE_MARKER);
     expect(worker).toContain(
-      'if (globalThis.__LAZY_EXT && globalThis.__LAZY_EXT.has(id)) return globalThis.__makeLazyExt(id, thunk);',
+      'if (globalThis.__makeLazyExt && !globalThis.__RUNTIME_REQUIRE && (globalThis.__LAZY_EXT.has(id) || !globalThis.__isBuiltin(id))) return globalThis.__makeLazyExt(id, thunk);',
     );
     // prelude (with __LAZY_EXT) precedes the bundle IIFE — fail closed if either marker is absent
     const lazyExtIndex = worker.indexOf('globalThis.__LAZY_EXT = new Set(');
@@ -132,7 +132,7 @@ describe('Bundler snapshot lazy-external wiring', () => {
       '"use strict";',
       '// marker: @eggjs/egg-bundler:snapshot-prelude',
       'function externalRequire(id, thunk, esm = false) {',
-      '  if (globalThis.__LAZY_EXT && globalThis.__LAZY_EXT.has(id)) return globalThis.__makeLazyExt(id, thunk);',
+      '  if (globalThis.__makeLazyExt && !globalThis.__RUNTIME_REQUIRE && (globalThis.__LAZY_EXT.has(id) || !globalThis.__isBuiltin(id))) return globalThis.__makeLazyExt(id, thunk);',
       '  return thunk();',
       '}',
       '((__UTOOPACK__)=>{})([]);',

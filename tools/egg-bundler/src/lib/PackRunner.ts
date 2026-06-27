@@ -139,13 +139,23 @@ export class PackRunner {
     await fs.mkdir(projectPath, { recursive: true });
     await fs.writeFile(projectTsconfigPath, desiredTsconfig);
 
-    // UMD-form externals ({ commonjs, root }) make @utoo/pack's standalone
-    // output emit a `require(name)` branch under `typeof exports === 'object'`,
-    // which is what node picks. Plain string externals only emit the
-    // `globalThis[name]` branch, unusable for direct node execution.
-    const umdExternals: Record<string, { commonjs: string; root: string }> = {};
+    // External-config form depends on the output type:
+    //
+    // - standalone: UMD form ({ commonjs, root }) emits a
+    //   `typeof exports === 'object' ? require(name) : globalThis[name]` guard.
+    //   The standalone loader runs module factories with a real CommonJS
+    //   module/exports, so the guard picks `require(name)` — what node wants.
+    //
+    // - single-file (snapshot): the `export`/`library` output inlines every
+    //   factory into one IIFE with NO CommonJS module/exports in scope, so the
+    //   UMD guard falls through to `globalThis[name]` (undefined) and EVERY
+    //   external breaks. ExternalType `commonjs` instead emits a direct
+    //   `require(name)` (surfaced as the runtime `externalRequire` helper), which
+    //   the snapshot prelude's lazy hook can intercept. See the snapshot
+    //   lazy-external mechanism in prelude.ts.
+    const externalsConfig: Record<string, { commonjs: string; root: string } | { root: string; type: 'commonjs' }> = {};
     for (const [k, v] of Object.entries(externals)) {
-      umdExternals[k] = { commonjs: v, root: v };
+      externalsConfig[k] = singleFile ? { root: v, type: 'commonjs' } : { commonjs: v, root: v };
     }
 
     const resolveConfig = this.#buildResolveConfig(resolve);
@@ -169,7 +179,7 @@ export class PackRunner {
         path: outputDir,
         type: singleFile ? 'export' : 'standalone',
       },
-      externals: umdExternals,
+      externals: externalsConfig,
       ...(resolveConfig ? { resolve: resolveConfig } : {}),
       optimization: {
         treeShaking: false,

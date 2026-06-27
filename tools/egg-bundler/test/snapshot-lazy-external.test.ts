@@ -74,13 +74,21 @@ describe('snapshot lazy-external', () => {
   });
 
   describe('renderSnapshotPrelude (lazy body)', () => {
-    it('deletes Node lazy web globals with delete (not defineProperty)', () => {
+    it('stubs Node lazy web globals with defineProperty (not delete)', () => {
+      // delete would throw ReferenceError when a bundled module references the
+      // global; a referencable stub avoids that and never pulls in undici.
       const prelude = renderSnapshotPrelude();
-      expect(prelude).toContain('delete globalThis[');
-      expect(prelude).not.toContain('Object.defineProperty');
+      expect(prelude).toContain('Object.defineProperty(globalThis, __WEB_GLOBALS[__i]');
+      expect(prelude).not.toContain('delete globalThis[');
       for (const g of ['fetch', 'Headers', 'Request', 'Response', 'FormData', 'WebSocket', 'File', 'Blob']) {
         expect(prelude).toContain(JSON.stringify(g));
       }
+    });
+
+    it('stubs node:buffer File/Blob (which would otherwise pull in undici)', () => {
+      const prelude = renderSnapshotPrelude();
+      expect(prelude).toContain("process.getBuiltinModule('node:buffer')");
+      expect(prelude).toContain('["File","Blob"]');
     });
 
     it('installs __LAZY_EXT with every lazy id and the __makeLazyExt factory', () => {
@@ -91,12 +99,19 @@ describe('snapshot lazy-external', () => {
       expect(prelude).toContain('globalThis.__RUNTIME_REQUIRE');
     });
 
-    it('hardcodes http METHODS / STATUS_CODES / maxHeaderSize', () => {
+    it('inlines http METHODS / STATUS_CODES / maxHeaderSize read from the build Node', () => {
       const prelude = renderSnapshotPrelude();
+      expect(prelude).toContain('globalThis.__HTTP_CONSTS');
       expect(prelude).toContain('"GET"');
       expect(prelude).toContain('"POST"');
       expect(prelude).toContain('"200"');
       expect(prelude).toContain('16384');
+    });
+
+    it('injects __EXTERNAL_EXPORTS so the member proxy can build a full ESM namespace', () => {
+      const prelude = renderSnapshotPrelude(['urllib'], { urllib: ['HttpClient', 'request'] });
+      expect(prelude).toContain('globalThis.__EXTERNAL_EXPORTS');
+      expect(prelude).toContain('"HttpClient"');
     });
   });
 
@@ -106,7 +121,7 @@ describe('snapshot lazy-external', () => {
       const { content, injected } = injectExternalRequireLazyHook(src);
       expect(injected).toBe(1);
       expect(content).toContain(
-        'if (globalThis.__LAZY_EXT && globalThis.__LAZY_EXT.has(id)) return globalThis.__makeLazyExt(id, thunk);',
+        'if (globalThis.__makeLazyExt && !globalThis.__RUNTIME_REQUIRE && (globalThis.__LAZY_EXT.has(id) || !globalThis.__isBuiltin(id))) return globalThis.__makeLazyExt(id, thunk);',
       );
       expect(content.indexOf('__makeLazyExt')).toBeLessThan(content.indexOf('return thunk()'));
     });
@@ -115,7 +130,9 @@ describe('snapshot lazy-external', () => {
       const src = 'function externalRequire(a,b,c=false){return b();}';
       const { content, injected } = injectExternalRequireLazyHook(src);
       expect(injected).toBe(1);
-      expect(content).toContain('globalThis.__LAZY_EXT.has(a)) return globalThis.__makeLazyExt(a, b);');
+      expect(content).toContain(
+        '(globalThis.__LAZY_EXT.has(a) || !globalThis.__isBuiltin(a))) return globalThis.__makeLazyExt(a, b);',
+      );
     });
 
     it('injects into every externalRequire occurrence', () => {

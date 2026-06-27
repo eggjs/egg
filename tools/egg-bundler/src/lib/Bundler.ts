@@ -10,7 +10,12 @@ import { ExternalsResolver } from './ExternalsResolver.ts';
 import { assertFrameworkPackageSpecifier } from './frameworkSpecifier.ts';
 import { ManifestLoader } from './ManifestLoader.ts';
 import { PackRunner } from './PackRunner.ts';
-import { injectExternalRequireLazyHook, prependSnapshotPrelude, resolveSnapshotLazyModules } from './prelude.ts';
+import {
+  injectExternalRequireLazyHook,
+  prependSnapshotPrelude,
+  readExternalExports,
+  resolveSnapshotLazyModules,
+} from './prelude.ts';
 
 const debug = debuglog('egg/bundler/bundler');
 
@@ -420,8 +425,19 @@ export class Bundler {
     // externalRequire and prepend the prelude to each entry's worker.js so it runs
     // before the bundle IIFE (and therefore before any bundled module loads).
     if (snapshot) {
+      // Read each external's export names from the bundler process so the prelude's
+      // member proxy can present a full ESM namespace (`import { X } from 'pkg'`).
+      const externalExports = await wrapStep('read external exports', async () =>
+        readExternalExports(absBaseDir, Object.keys(externalsMap)),
+      );
       const applied = await wrapStep('apply snapshot prelude', () =>
-        this.#applySnapshotPrelude(absOutputDir, ['worker'], snapshotLazyModules, patchResult.outputFiles),
+        this.#applySnapshotPrelude(
+          absOutputDir,
+          ['worker'],
+          snapshotLazyModules,
+          patchResult.outputFiles,
+          externalExports,
+        ),
       );
       debug(
         'snapshot: prepended prelude to %d entry file(s), injected lazy hook into %d externalRequire(s)',
@@ -479,6 +495,7 @@ export class Bundler {
     entryNames: readonly string[],
     lazyModules: readonly string[],
     outputFiles: readonly string[],
+    externalExports: Readonly<Record<string, readonly string[]>> = {},
   ): Promise<{ prependedEntries: readonly string[]; injectedCount: number }> {
     const entrySet = new Set(entryNames.map((name) => this.#sanitizeOutputRelativePath(`${name}.js`)));
     const seenEntries = new Set<string>();
@@ -511,7 +528,7 @@ export class Bundler {
 
       let next = hooked.content;
       if (isEntry) {
-        next = prependSnapshotPrelude(next, lazyModules);
+        next = prependSnapshotPrelude(next, lazyModules, externalExports);
         seenEntries.add(rel);
         prependedEntries.push(rel);
       }

@@ -361,6 +361,30 @@ if (process.env.EGG_BUNDLE_SNAPSHOT === 'build') {
   // no servers/timers/connections), run the snapshotWillSerialize hooks to release
   // non-serializable resources, then register the deserialize main function that
   // V8 invokes when restoring from the blob.
+  //
+  // Install the egg loader module importer for the BUILD phase too: the loader
+  // loads config/app files, and under --build-snapshot Node dynamic import() is
+  // unavailable, so route through the bundle map / require() instead. Do NOT set
+  // __RUNTIME_REQUIRE here — that would make externals load for real and defeat
+  // the lazy snapshot stubs; __EGG_MODULE_IMPORTER__ only feeds app/config files.
+  {
+    const { createRequire: __cr } = process.getBuiltinModule('node:module');
+    const __buildReq = __cr(__outputDir + '/');
+    globalThis.__EGG_MODULE_IMPORTER__ = async (fp: string) => {
+      const bundled = __getBundleMap(fp);
+      if (bundled !== undefined) return bundled;
+      try {
+        return __buildReq(fp);
+      } catch (err) {
+        // A config/app file the manifest did not capture (e.g. an env-specific
+        // plugin config) cannot be ESM-required under --build-snapshot; let the
+        // loader skip it (it tolerates a missing config unit).
+        const code = (err as { code?: string } | undefined)?.code;
+        if (code === 'ERR_INTERNAL_ASSERTION' || code === 'MODULE_NOT_FOUND') return undefined;
+        throw err;
+      }
+    };
+  }
   startEgg({ ...__startOptions, snapshot: true }).then(async (app) => {
     if (app.agent) {
       await app.agent.triggerSnapshotWillSerialize();
