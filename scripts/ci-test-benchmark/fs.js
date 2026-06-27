@@ -1,4 +1,4 @@
-import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { access, appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 
 export async function ensureDir(dirPath) {
   await mkdir(dirPath, { recursive: true });
@@ -38,4 +38,8 @@ export async function writeJson(filePath, value) {
 
 export async function writeText(filePath, value) {
   await writeFile(filePath, value);
+}
+
+export async function appendText(filePath, value) {
+  await appendFile(filePath, value);
 }

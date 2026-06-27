@@ -113,10 +113,22 @@ signature of this class of bug, not flaky tests per se.
   right after the save `pipeline()` resolves under load — a race in the multipart
   file-save path, not a state leak. It passes 100% as a single file. Treat as a
   pre-existing flaky test to fix in the multipart save path or test, separately
-  from the isolate:false work.
+  from the isolate:false work. The same load-sensitivity surfaces in
+  `multipart.test.ts` "whitelist" upload tests as `ECONNRESET` when a high-core box
+  over-saturates beyond CI's worker count; cap `--maxWorkers` to CI levels to avoid it.
+- `supertest` "should handle connection error" hardcodes `127.0.0.1:1234` and
+  asserted the exact `ECONNREFUSED` message. A local listener on that port (e.g. a
+  proxy like Surge) makes it `socket hang up` instead — environmental, not isolation
+  (fails alone too). Hardened to accept the connection-error family.
 
 ## Result
 
 Full Node-22 suite under `isolate:false`: 15 failing files → 3, of which 2 are
 environmental (MySQL/DNS, green in CI) and 1 (`multipart/file-mode`) is a
 pre-existing load flake independent of isolation.
+
+## Related
+
+Now that the suite runs `isolate:false` safely, CI surfaces _how parallel it
+actually ran_ (avg/peak concurrency, parallel efficiency, critical path) in the
+test job summary — see [CI parallel test metrics](../workflows/ci-parallel-test-metrics.md).
