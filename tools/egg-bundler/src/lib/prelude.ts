@@ -222,6 +222,22 @@ export function renderSnapshotPrelude(
     var EXPORTS = (globalThis.__EXTERNAL_EXPORTS && globalThis.__EXTERNAL_EXPORTS[id]) || [];
     var isHttp = id === 'http' || id === 'node:http' || id === 'https' || id === 'node:https';
 
+    // Call args captured at build can themselves be member-proxies — e.g. a model column
+    // \`DataTypes.TEXT(LENGTH_VARIANTS.long)\` where LENGTH_VARIANTS is also a lazy export.
+    // They must be resolved to their real values before reaching the real callee, or the
+    // callee receives a Proxy and mishandles it (leoric coerces it to a string in an error
+    // template and throws "String.prototype.toString requires that 'this' be a String").
+    // A member-proxy returns its resolved value via the __MR symbol; anything else passes
+    // through unchanged.
+    var __MR = globalThis.__MEMBER_RESOLVE || (globalThis.__MEMBER_RESOLVE = Symbol.for('@eggjs/egg-bundler:memberResolve'));
+    var resolveArg = function (a) {
+      if (a && (typeof a === 'object' || typeof a === 'function')) {
+        try { var rv = a[__MR]; if (rv !== undefined) return rv; } catch (e) {}
+      }
+      return a;
+    };
+    var resolveArgs = function (args) { var out = []; for (var i = 0; i < args.length; i++) out.push(resolveArg(args[i])); return out; };
+
     // A member-proxy records the access path (get/apply/construct + call args)
     // taken at build time and replays it against the real module on restore, so
     // e.g. \`class X extends urllib.HttpClient\` (build: stub superclass; restore:
@@ -233,22 +249,37 @@ export function renderSnapshotPrelude(
           if (v == null) return undefined;
           var op = ops[i];
           if (op.t === 'g') { prev = v; v = v[op.k]; }
-          else if (op.t === 'a') { v = (typeof v === 'function') ? v.apply(prev, op.args) : undefined; prev = undefined; }
-          else if (op.t === 'c') { v = (typeof v === 'function') ? Reflect.construct(v, op.args) : undefined; prev = undefined; }
+          // Use Reflect.apply/construct (invoke [[Call]]/[[Construct]] directly) rather
+          // than v.apply(...): when an earlier step resolved to a member-proxy (a callable
+          // Proxy), \`typeof v === 'function'\` is true but \`v.apply\` is undefined, so
+          // \`v.apply(...)\` throws "v.apply is not a function" (hit by e.g. leoric's
+          // createType introspecting a proxied DataType). Reflect.apply works on any callable.
+          else if (op.t === 'a') { v = (typeof v === 'function') ? Reflect.apply(v, prev, resolveArgs(op.args)) : undefined; prev = undefined; }
+          else if (op.t === 'c') { v = (typeof v === 'function') ? Reflect.construct(v, resolveArgs(op.args)) : undefined; prev = undefined; }
         }
         return v;
       };
       var protoProxy = new Proxy({}, { get: function (t, p) { var r = resolve(); return r && r.prototype ? r.prototype[p] : undefined; } });
-      var member = new Proxy(function () {}, {
-        get: function (t, p) { if (p === 'prototype') return protoProxy; var r = resolve(); if (r != null) return r[p]; if (p === 'then') return undefined; if (typeof p === 'symbol') return undefined; return makeMember(ops.concat([{ t: 'g', k: p }])); },
-        apply: function (t, thisArg, args) { var r = resolve(); if (typeof r === 'function') return Reflect.apply(r, thisArg, args); return makeMember(ops.concat([{ t: 'a', args: args }])); },
-        construct: function (t, args, nt) { var r = resolve(); if (typeof r === 'function') return Reflect.construct(r, args, nt || r); return makeMember(ops.concat([{ t: 'c', args: args }])); }
+      // Pick the proxy target so \`typeof member\` matches what the resolved value will be:
+      // a call/construct RESULT is normally an instance (typeof 'object'), while a plain
+      // member access is usually a class/function (typeof 'function'). Libraries branch on
+      // \`typeof x === 'function'\` (e.g. leoric's createType: function ⇒ DataType class,
+      // object ⇒ DataType instance) — a uniformly-function proxy would take the wrong path.
+      // (A non-callable target makes the apply/construct traps dead, which is correct: a
+      // resolved instance is not meant to be called.)
+      var __lastOp = ops.length ? ops[ops.length - 1] : null;
+      var __target = __lastOp && (__lastOp.t === 'a' || __lastOp.t === 'c') ? {} : function () {};
+      var member = new Proxy(__target, {
+        get: function (t, p) { if (p === __MR) return resolve(); if (p === 'prototype') return protoProxy; var r = resolve(); if (r != null) return r[p]; if (p === 'then') return undefined; if (typeof p === 'symbol') return undefined; return makeMember(ops.concat([{ t: 'g', k: p }])); },
+        apply: function (t, thisArg, args) { var r = resolve(); if (typeof r === 'function') return Reflect.apply(r, thisArg, resolveArgs(args)); return makeMember(ops.concat([{ t: 'a', args: args }])); },
+        construct: function (t, args, nt) { var r = resolve(); if (typeof r === 'function') return Reflect.construct(r, resolveArgs(args), nt || r); return makeMember(ops.concat([{ t: 'c', args: args }])); }
       });
       return member;
     }
 
     var proxy = new Proxy(function () {}, {
       get: function (target, prop) {
+        if (prop === __MR) return realMod();
         if (prop === 'default') return proxy;
         var real = realMod();
         if (real != null) return real[prop];
@@ -261,8 +292,8 @@ export function renderSnapshotPrelude(
         if (prop === 'prototype' || prop === 'name' || prop === 'length') return Reflect.get(target, prop);
         return makeMember([{ t: 'g', k: prop }]);
       },
-      apply: function (target, thisArg, args) { var real = realMod(); if (typeof real === 'function') return Reflect.apply(real, thisArg, args); return undefined; },
-      construct: function (target, args, nt) { var real = realMod(); if (typeof real === 'function') return Reflect.construct(real, args, nt || real); return Object.create((nt && nt.prototype) || target.prototype); },
+      apply: function (target, thisArg, args) { var real = realMod(); if (typeof real === 'function') return Reflect.apply(real, thisArg, resolveArgs(args)); return undefined; },
+      construct: function (target, args, nt) { var real = realMod(); if (typeof real === 'function') return Reflect.construct(real, resolveArgs(args), nt || real); return Object.create((nt && nt.prototype) || target.prototype); },
       has: function (target, prop) { var real = realMod(); if (real != null) return prop in real; return true; },
       // Expose the external's real export names at build time (from
       // __EXTERNAL_EXPORTS, injected by the entry) so @utoo/pack's interopEsm —

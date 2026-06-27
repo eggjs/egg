@@ -136,7 +136,7 @@ describe('snapshot lazy-external — real @utoo/pack build', () => {
     expect(JSON.parse(built.stdout)).toEqual({
       methodsHasGet: true, // __HTTP_CONSTS.METHODS (read from build Node), real http never loaded
       maxHeaderSize: 16384, // __HTTP_CONSTS.maxHeaderSize, real http never loaded
-      createServerCall: 'function', // build: apply returns a chainable member-proxy (supports x.y(z).w)
+      createServerCall: 'object', // build: a call-result member-proxy uses an object target (typeof 'object', mirroring the real instance); still chainable for x.y(z).w
       restored: false,
     });
 

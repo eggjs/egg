@@ -178,6 +178,28 @@ export class EntryGenerator {
       .replaceAll(/\/+/g, '/');
   }
 
+  /**
+   * The baseDir-relative keys of every tegg decorated file, used at runtime to
+   * re-stamp the correct `filePath` on decorated classes (whose decorator-captured
+   * path is unreliable in a bundle — see the worker entry comment).
+   */
+  #collectDecoratedFileKeys(manifest: StartupManifest): string[] {
+    const tegg = manifest.extensions?.tegg as TeggManifestExtension | undefined;
+    const keys: string[] = [];
+    const seen = new Set<string>();
+    for (const desc of tegg?.moduleDescriptors ?? []) {
+      for (const rel of desc.decoratedFiles ?? []) {
+        const relKey = this.#teggRelKey(desc.unitPath, rel);
+        const normalized = relKey?.replaceAll(path.sep, '/');
+        if (normalized && !seen.has(normalized)) {
+          seen.add(normalized);
+          keys.push(normalized);
+        }
+      }
+    }
+    return keys;
+  }
+
   #collectResolveCacheAliases(manifest: StartupManifest): Array<[string, string]> {
     const aliases: Array<[string, string]> = [];
     for (const [requestRel, targetRel] of Object.entries(manifest.resolveCache)) {
@@ -238,6 +260,7 @@ export class EntryGenerator {
       ),
     );
     const appResolveCacheAliases = JSON.stringify(this.#collectResolveCacheAliases(manifest));
+    const decoratedFileKeys = JSON.stringify(this.#collectDecoratedFileKeys(manifest));
     const frameworkSpec = JSON.stringify(this.#framework);
 
     const externalBlock =
@@ -313,6 +336,47 @@ for (const [appAbsRequest, targetRel] of __APP_RESOLVE_CACHE_ALIASES) {
   const mod = __getBundleMap(targetRel);
   if (mod !== undefined) {
     __setBundleMap(appAbsRequest, mod);
+  }
+}
+
+// ── decorator file-path correction ──────────────────────────────────────────
+// tegg decorators (@SingletonProto/@HTTPController/@Advice/…) capture a class's
+// source path from the CALL STACK at module evaluation, via
+// StackUtil.getCalleeFromStack(depth) with a hardcoded frame index. In a bundle
+// every user frame collapses onto worker.js plus turbopack module wrappers, so a
+// decorator that uses a deeper index than the norm — notably @Advice's depth-5 vs
+// @SingletonProto's depth-4 — captures the runtime frame ("…/worker.js") instead
+// of its own source file. tegg then cannot match that proto to its load unit and
+// fails at restore with "Aop Advice(X) not found in loadUnits".
+//
+// The bundle DOES know each decorated file's real path (the manifest's tegg
+// decoratedFiles, surfaced here as __DECORATED_FILE_KEYS). Re-stamp the correct
+// path (outputDir + relKey, matching the format the well-behaved decorators get)
+// on every decorated export, overriding whatever the decorator captured. This runs
+// at build, so the corrected paths are baked into the snapshot the restore reads.
+const __DECORATED_FILE_KEYS: string[] = ${decoratedFileKeys};
+{
+  const __FILE_PATH_META = Symbol.for('EggPrototype.filePath');
+  const __reflect = Reflect as unknown as {
+    hasOwnMetadata?: (key: symbol, target: unknown) => boolean;
+    defineMetadata?: (key: symbol, value: unknown, target: unknown) => void;
+  };
+  if (typeof __reflect.hasOwnMetadata === 'function' && typeof __reflect.defineMetadata === 'function') {
+    for (const __rel of __DECORATED_FILE_KEYS) {
+      const __mod = __getBundleMap(__rel) as Record<string, unknown> | undefined;
+      if (!__mod || (typeof __mod !== 'object' && typeof __mod !== 'function')) continue;
+      const __abs = path.resolve(__outputDir, __rel);
+      for (const __k of Object.keys(__mod)) {
+        const __exported = __mod[__k];
+        if (
+          __exported &&
+          (typeof __exported === 'function' || typeof __exported === 'object') &&
+          __reflect.hasOwnMetadata(__FILE_PATH_META, __exported)
+        ) {
+          __reflect.defineMetadata(__FILE_PATH_META, __abs, __exported);
+        }
+      }
+    }
   }
 }
 
