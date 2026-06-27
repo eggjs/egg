@@ -378,15 +378,25 @@ export function readExternalExports(baseDir: string, ids: Iterable<string>): Rec
   } catch {
     isBuiltin = undefined;
   }
+  // Function/class internals that are own-properties but never real exports.
+  const FN_INTERNALS = new Set(['length', 'name', 'prototype', 'arguments', 'caller']);
   const collect = (mod: unknown): string[] => {
     const set = new Set<string>();
-    if (mod && (typeof mod === 'object' || typeof mod === 'function')) {
-      for (const k of Object.keys(mod as object)) set.add(k);
-      // CJS packages required as ESM expose named exports on `default`; merge them
-      // (e.g. leoric's `DataTypes`/`Bone` only show up under default via import).
-      const def = (mod as Record<string, unknown>).default;
-      if (def && typeof def === 'object') for (const k of Object.keys(def)) set.add(k);
-    }
+    const add = (o: unknown) => {
+      if (!o || (typeof o !== 'object' && typeof o !== 'function')) return;
+      // getOwnPropertyNames (not Object.keys) so NON-ENUMERABLE named exports are
+      // included — @utoo/pack's interopEsm enumerates getOwnPropertyNames(raw) to build
+      // the ESM namespace, so EXPORTS must match or `import { X }` would resolve to
+      // undefined for a non-enumerable X.
+      for (const k of Object.getOwnPropertyNames(o)) {
+        if (typeof o === 'function' && FN_INTERNALS.has(k)) continue;
+        set.add(k);
+      }
+    };
+    add(mod);
+    // CJS packages required as ESM expose named exports on `default`; merge them
+    // (e.g. leoric's `DataTypes`/`Bone` only show up under default via import).
+    if (mod && typeof mod === 'object') add((mod as Record<string, unknown>).default);
     return [...set];
   };
   const out: Record<string, string[]> = {};

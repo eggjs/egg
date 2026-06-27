@@ -184,6 +184,14 @@ which is exactly the cost a snapshot front-loads into build time.
   be kept external (`--force-external`) or implement the snapshot lifecycle hooks
   so its state is released before serialization and rebuilt after restore. Not
   every package is snapshot-safe out of the box.
+- **Web globals are no-op stubs after restore**: at build the prelude replaces the
+  undici-backed globals (`fetch`/`Headers`/`Request`/`Response`/`FormData`/`WebSocket`,
+  plus `Blob`/`File`) with no-op stubs, because touching them at build time pulls in
+  Node's built-in undici and its native http/http2 bindings (which a snapshot cannot
+  serialize). Node's native lazy getters are themselves not snapshot-serializable, so
+  they cannot be reinstated on restore. **In the restored process those globals stay
+  stubs** — a snapshotted app should use a lazy-loaded HTTP client (e.g. `urllib`/`undici`
+  via an external, loaded for real on restore) rather than `globalThis.fetch` directly.
 
 The supported surface is still evolving; the full list of known limitations and
 the design rationale are tracked in the project's V8 snapshot RFC.

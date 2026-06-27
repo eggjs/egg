@@ -432,19 +432,33 @@ if (process.env.EGG_BUNDLE_SNAPSHOT === 'build') {
   // __RUNTIME_REQUIRE here — that would make externals load for real and defeat
   // the lazy snapshot stubs; __EGG_MODULE_IMPORTER__ only feeds app/config files.
   {
-    const { createRequire: __cr } = process.getBuiltinModule('node:module');
+    // getBuiltinModule needs Node >= 22.3; fall back to an eval'd require for
+    // 22.0–22.2 (same opaque-specifier trick the restore branch uses below).
+    const { createRequire: __cr } =
+      typeof process.getBuiltinModule === 'function'
+        ? process.getBuiltinModule('node:module')
+        : (0, eval)('require')('node:module');
     const __buildReq = __cr(__outputDir + '/');
     globalThis.__EGG_MODULE_IMPORTER__ = async (fp: string) => {
       const bundled = __getBundleMap(fp);
       if (bundled !== undefined) return bundled;
+      // Only skip when fp ITSELF cannot be resolved (a manifest-miss config unit the
+      // loader tolerates). Resolving first separates that from a nested MODULE_NOT_FOUND
+      // raised while loading a resolved file, which is a genuine missing dependency that
+      // must surface rather than be silently swallowed.
+      let resolved: string;
       try {
-        return __buildReq(fp);
+        resolved = __buildReq.resolve(fp);
+      } catch {
+        return undefined;
+      }
+      try {
+        return __buildReq(resolved);
       } catch (err) {
-        // A config/app file the manifest did not capture (e.g. an env-specific
-        // plugin config) cannot be ESM-required under --build-snapshot; let the
-        // loader skip it (it tolerates a missing config unit).
-        const code = (err as { code?: string } | undefined)?.code;
-        if (code === 'ERR_INTERNAL_ASSERTION' || code === 'MODULE_NOT_FOUND') return undefined;
+        // A resolved ESM file cannot be require()'d under --build-snapshot (no ESM
+        // loader); skip it. Any other error — including a nested MODULE_NOT_FOUND from
+        // a real missing dependency — is genuine and propagates.
+        if ((err as { code?: string } | undefined)?.code === 'ERR_INTERNAL_ASSERTION') return undefined;
         throw err;
       }
     };
