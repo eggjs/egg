@@ -31,8 +31,11 @@ export default class TeggAppBoot implements ILifecycleBoot {
   configWillLoad(): void {
     // Establish this app's TeggScope BEFORE any dependent plugin
     // (controller/aop/dal/eventbus) boots, so their boot hooks can resolve the
-    // per-app factories/managers from app._teggScopeBag.
-    this.app._teggScopeBag = TeggScope.createBag();
+    // per-app factories/managers from app._teggScopeBag. The teggConfig plugin
+    // boots before us and may have already created the bag (it needs the scope
+    // for its own configNames loading) — reuse it rather than overwrite, so the
+    // configNames it wrote stays reachable.
+    this.app._teggScopeBag ??= TeggScope.createBag();
     TeggScope.registerScope(this.app._teggScopeBag);
     this.app.config.coreMiddleware.push('teggCtxLifecycleMiddleware');
   }
