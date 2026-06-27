@@ -19,6 +19,11 @@ export async function main<T = void>(cwd: string, options?: RunnerOptions): Prom
     if (e instanceof Error) {
       e.message = `[tegg/standalone] bootstrap tegg failed: ${e.message}`;
     }
+    // Boot failed and run()'s finally below is never reached, so tear down here
+    // to release this Runner's TeggScope so it does not leak into liveScopeBags.
+    await runner.destroy().catch(() => {
+      /* swallow: surface the original boot error */
+    });
     throw e;
   }
   try {

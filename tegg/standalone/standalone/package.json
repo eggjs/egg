@@ -50,7 +50,8 @@
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
-    "@eggjs/tegg-runtime": "workspace:*"
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/ajv-plugin": "workspace:*",

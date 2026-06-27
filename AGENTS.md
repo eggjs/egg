@@ -46,6 +46,13 @@ Then re-run tests.
 - keep file names lowercase with hyphens
 - keep public API changes deliberate and documented
 - use `oxfmt` and `oxlint --type-aware` conventions already present in the repo
+- **tegg multi-app isolation**: do NOT introduce new process-global mutable
+  runtime state in `tegg/`; per-app state must be backed by a `TeggScope` slot.
+  Hooks registered through the bag-pinned `app.*LifecycleUtil` getters need no
+  extra wrap; detached/escape-point access (timers, emitter listeners, proxy
+  handlers, module-level lifecycle-util statics) must run inside
+  `TeggScope.run(app._teggScopeBag, ...)`. See the "Multi-App Isolation
+  (TeggScope)" section in `tegg/CLAUDE.md` for the full rules.
 
 ## TypeScript Global Types
 

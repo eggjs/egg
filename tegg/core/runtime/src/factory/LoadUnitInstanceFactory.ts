@@ -1,5 +1,5 @@
 import { IdenticalUtil } from '@eggjs/lifecycle';
-import { ObjectInitType } from '@eggjs/tegg-types';
+import { ObjectInitType, TeggScope } from '@eggjs/tegg-types';
 import type {
   EggLoadUnitTypeLike,
   EggPrototype,
@@ -17,9 +17,18 @@ interface LoadUnitInstancePair {
   ctx: LoadUnitInstanceLifecycleContext;
 }
 
+const LOAD_UNIT_INSTANCE_MAP_SLOT = Symbol('tegg:runtime:loadUnitInstanceMap');
+
 export class LoadUnitInstanceFactory {
+  // type -> creator is class/type-keyed and registered at import/boot time with
+  // app-agnostic class refs, so it is safe to keep process-global (shared).
   private static creatorMap: Map<EggLoadUnitTypeLike, LoadUnitInstanceCreator> = new Map();
-  private static instanceMap: Map<string, LoadUnitInstancePair> = new Map();
+
+  // The live load-unit instance registry collides across apps (name-based
+  // instanceId), so it is per-app, resolved from the active TeggScope bag.
+  private static get instanceMap(): Map<string, LoadUnitInstancePair> {
+    return TeggScope.resolve(LOAD_UNIT_INSTANCE_MAP_SLOT, () => new Map(), 'LoadUnitInstanceFactory.instanceMap');
+  }
 
   static registerLoadUnitInstanceClass(type: EggLoadUnitTypeLike, creator: LoadUnitInstanceCreator): void {
     this.creatorMap.set(type, creator);
