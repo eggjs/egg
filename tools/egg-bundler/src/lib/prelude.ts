@@ -163,17 +163,26 @@ export function renderSnapshotPrelude(
 /* eslint-disable */
 (function eggBundlerSnapshotPrelude() {
   'use strict';
-  // Replace Node's web globals with a no-op stub CLASS (callable + constructable).
-  // Why a stub class and not \`delete\`/\`undefined\`:
-  //  - some bundled packages do \`class X extends globalThis.Request {}\`, which needs
-  //    a constructable superclass — \`undefined\`/\`delete\` throws at class definition.
-  //  - the stub is a no-op: it never touches the real fetch/Headers/..., so any
-  //    feature-detect code that reads or calls it does nothing instead of
-  //    initializing Node's undici stack (whose native bindings are unserializable).
+  // Neutralize Node's undici-backed web globals (fetch/Headers/Request/...) so they
+  // never lazily initialize Node's undici stack (llhttp HTTPParser + nghttp2), whose
+  // native bindings a V8 startup snapshot cannot serialize.
+  //
+  // This MUST be done in two passes:
+  //  1. delete the global first. Node defines these as lazy accessor properties; a
+  //     plain redefine via Object.defineProperty (e.g. of \`Headers\`) makes Node load
+  //     undici → http2 native eagerly — the exact thing we must avoid. \`delete\`
+  //     removes the lazy getter WITHOUT triggering it.
+  //  2. then install a no-op stub CLASS as a plain data property. It is now safe (no
+  //     lazy getter remains to trigger) and constructable, so a bundled package doing
+  //     \`class X extends globalThis.Request {}\` still works (\`delete\`/\`undefined\`
+  //     alone would throw "Class extends value undefined" at class definition).
   // The live process re-exposes the real globals on restore.
   var __WEB_GLOBALS = ${webJson};
   for (var __i = 0; __i < __WEB_GLOBALS.length; __i++) {
-    try { Object.defineProperty(globalThis, __WEB_GLOBALS[__i], { value: function WebGlobalStub(){}, configurable: true, writable: true }); } catch (e) {}
+    try { delete globalThis[__WEB_GLOBALS[__i]]; } catch (e) {}
+  }
+  for (var __k = 0; __k < __WEB_GLOBALS.length; __k++) {
+    try { Object.defineProperty(globalThis, __WEB_GLOBALS[__k], { value: function WebGlobalStub(){}, configurable: true, writable: true }); } catch (e) {}
   }
 
   if (globalThis.__LAZY_EXT) return;

@@ -74,12 +74,18 @@ describe('snapshot lazy-external', () => {
   });
 
   describe('renderSnapshotPrelude (lazy body)', () => {
-    it('stubs Node lazy web globals with defineProperty (not delete)', () => {
-      // delete would throw ReferenceError when a bundled module references the
-      // global; a referencable stub avoids that and never pulls in undici.
+    it('neutralizes web globals by delete-then-stub (delete first, then a stub class)', () => {
+      // A plain Object.defineProperty over Node's lazy web globals (e.g. Headers)
+      // makes Node eagerly load undici → http2 native. So we delete first (removes
+      // the lazy getter without triggering it), THEN define a stub class (now a
+      // plain data property, constructable for `class extends globalThis.Request`).
       const prelude = renderSnapshotPrelude();
-      expect(prelude).toContain('Object.defineProperty(globalThis, __WEB_GLOBALS[__i]');
-      expect(prelude).not.toContain('delete globalThis[');
+      expect(prelude).toContain('delete globalThis[__WEB_GLOBALS[__i]]');
+      expect(prelude).toContain('Object.defineProperty(globalThis, __WEB_GLOBALS[__k]');
+      // delete must come before the stub-define so no lazy getter remains to trigger.
+      expect(prelude.indexOf('delete globalThis[__WEB_GLOBALS[__i]]')).toBeLessThan(
+        prelude.indexOf('Object.defineProperty(globalThis, __WEB_GLOBALS[__k]'),
+      );
       for (const g of ['fetch', 'Headers', 'Request', 'Response', 'FormData', 'WebSocket', 'File', 'Blob']) {
         expect(prelude).toContain(JSON.stringify(g));
       }
