@@ -165,6 +165,17 @@ jobs:
       - name: Run tests
         run: ut run ci
 
+      # Summarize how parallel the full-isolate-off suite actually ran. The gating
+      # `ut run ci` run above emits Vitest JSON (vitest.config.ts, CI only); this step
+      # turns it into avg/peak concurrency + efficiency metrics in the job summary. It
+      # is informational only (always() so failures still surface metrics) and never
+      # changes the gate — `ut run ci` already set the job's pass/fail above.
+      - name: Report parallelism metrics
+        if: always()
+        # Call node directly: `ut run <script> -- ...` re-serializes forwarded args into
+        # a shell string without re-quoting, so the parentheses in --name break it.
+        run: node scripts/ci-test-benchmark.js --report-only --vitest-json benchmark/ci-test/ci-run/vitest-results.json --output-dir benchmark/ci-test/ci-run --name "Parallel test metrics (${{ matrix.os }}, Node ${{ matrix.node }}, isolate=off)"
+
       - name: Run example tests
         if: ${{ matrix.os != 'windows-latest' }}
         run: |

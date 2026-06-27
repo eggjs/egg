@@ -11,6 +11,7 @@ Read this file before exploring raw sources.
 
 ## Workflows
 
+- [CI parallel test metrics](./workflows/ci-parallel-test-metrics.md) - How the CI test gate surfaces avg/peak concurrency + parallel-efficiency metrics for the isolate:false suite, and how to read or reproduce them.
 - [Docs and API Updates](./workflows/docs-and-api-updates.md) - How to handle changes that affect user-facing docs or durable project understanding.
 
 ## Decisions
