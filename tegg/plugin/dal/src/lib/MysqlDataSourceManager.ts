@@ -58,6 +58,10 @@ export class MysqlDataSourceManager {
   }
 
   clear(): void {
+    // Release this app's datasource references on teardown. (Both maps are
+    // per-app; dropping them lets the MysqlDataSource objects be collected
+    // instead of lingering after the owning app closes.)
+    this.dataSources.clear();
     this.dataSourceIndices.clear();
   }
 
