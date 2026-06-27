@@ -324,14 +324,17 @@ When you touch tegg core/plugins, follow these rules:
    two-tier: a global base for import-time creators + a per-app overlay for
    boot-time, app-capturing creators.)
 
-3. **Lifecycle-hook registration must run in the app scope.** Any plugin boot
-   that calls `app.{loadUnit,eggPrototype,eggObject,eggContext,loadUnitInstance}LifecycleUtil.registerLifecycle(hook)`
-   MUST wrap it in `TeggScope.run(this.app._teggScopeBag, () => { ... })` (and
-   the matching `deleteLifecycle` in `beforeClose`). The lifecycle utils are
-   per-app, so an unwrapped registration lands in the wrong bag and the hook
-   never fires during boot. Do **not** register lifecycle hooks in the boot
-   **constructor** — `app._teggScopeBag` does not exist yet; do it in
-   `configWillLoad`/`configDidLoad`/`didLoad`.
+3. **Lifecycle-hook registration via `app.*LifecycleUtil` is bag-pinned.**
+   Calling `app.{loadUnit,eggPrototype,eggObject,eggContext,loadUnitInstance}LifecycleUtil.registerLifecycle(hook)`
+   (and the matching `deleteLifecycle` in `beforeClose`) does **not** need a
+   `TeggScope.run` wrap — these app getters are pinned to this app's bag (via
+   `xxxLifecycleUtilFromBag`), so they resolve the correct per-app util even with
+   no active scope. Wrapping is still fine when the same block does other
+   scope-dependent work (as the tegg plugin's own boot does). Do **not** register
+   lifecycle hooks in the boot **constructor** — `app._teggScopeBag` does not
+   exist yet; do it in `configWillLoad`/`configDidLoad`/`didLoad`. (Accessing a
+   lifecycle util through a module-level static instead of `app.*LifecycleUtil`
+   still needs an active scope.)
 
 4. **Resolve egg objects per-app.** To get a proto from a class, prefer
    `EggPrototypeFactory.instance.getPrototypeByClazz(clazz)` (per-app) before
@@ -361,9 +364,9 @@ When you touch tegg core/plugins, follow these rules:
 **Performance:** `TeggScope.resolve` adds ~8 ns/access and `TeggScope.run`
 ~5 ns/call over a plain static read (Node 22); egg already runs on
 AsyncLocalStorage, so there is no new process-wide async penalty. The cost is
-negligible relative to real request work. The per-app lifecycle-util facade is a
-`Proxy` (~27 ns/call) — fine in practice; replace with an explicit delegating
-object only if a future profile shows it matters.
+negligible relative to real request work. The per-app lifecycle-util facade is an
+explicit delegating object (not a `Proxy`) — each method is a direct slot-resolve
+plus a method call, with no per-access trap or bound-function allocation.
 
 ## Common Patterns
 
