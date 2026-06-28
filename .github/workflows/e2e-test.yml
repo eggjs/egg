@@ -76,42 +76,83 @@ jobs:
               CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
 
               EGG_TS_ENABLE=false npx eggctl start --port=7001 --env=unittest --daemon
-              HEALTH_URL="http://127.0.0.1:7001/"
-              START_TIME=$(date +%s)
-              TIMEOUT=120
-              STATUS=""
-              READY=0
 
-              echo "Waiting for application to become healthy at ${HEALTH_URL} (timeout: ${TIMEOUT}s)..."
-              while true; do
-                # Capture response body and status code
-                STATUS=$(curl -s -o /tmp/cnpmcore-health-response -w "%{http_code}" "${HEALTH_URL}" || echo "000")
-                echo "Health check attempt at $(date): status=${STATUS}"
-
-                if [ "${STATUS}" = "200" ]; then
-                  echo "Health check succeeded with status 200"
-                  READY=1
-                  break
-                fi
-
-                NOW=$(date +%s)
-                ELAPSED=$((NOW - START_TIME))
-                if [ "${ELAPSED}" -ge "${TIMEOUT}" ]; then
-                  echo "Health check timed out after ${ELAPSED}s with last status ${STATUS}"
-                  break
-                fi
-
-                sleep 5
-              done
-
-              npx eggctl stop
-
-              if [ "${READY}" != "1" ]; then
-                echo "Health check failed; last HTTP status: ${STATUS}"
-                echo "Last health endpoint response body (if any):"
-                cat /tmp/cnpmcore-health-response 2>/dev/null || echo "<no response body captured>"
+              if bash ../wait-health.sh "http://127.0.0.1:7001/" /tmp/cnpmcore-health-response 120 5; then
+                npx eggctl stop
+              else
+                npx eggctl stop || true
                 echo "Recent error logs (if any):"
                 cat logs/cnpmcore/common-error.log 2>/dev/null || true
+                exit 1
+              fi
+          - name: cnpmcore-snapshot
+            node-version: 24
+            command: |
+              # V8 startup snapshot regression: build a snapshot of cnpmcore, restore
+              # it via `egg-scripts start --snapshot-blob`, and assert it serves
+              # `/-/ping` with HTTP 200. Restoring a V8 snapshot requires Node.js >= 24.
+              export EGG_TS_ENABLE=false
+              # Snapshot under the production env: it loads only config.default (DB
+              # comes from CNPMCORE_DATABASE_* env vars) and does NOT pull in test-only
+              # plugins like @eggjs/mock, so the snapshot stays lean and production-like.
+              # (unittest would bake the mock plugin + config.unittest into the blob.)
+              export EGG_SERVER_ENV=prod
+              export CNPMCORE_DATABASE_NAME=cnpmcore
+              # cnpmcore's NFSClientAdapter throws under prod when the store is local fs
+              # unless this is set. The snapshot e2e only needs a working /-/ping, so allow
+              # the local-fs store instead of wiring up OSS/S3.
+              export CNPMCORE_FORCE_LOCAL_FS=true
+
+              npm install --legacy-peer-deps
+
+              # Compile to JS and overlay onto source so the egg loader and tegg module
+              # scanner resolve .js at the expected paths (same approach as the cnpmcore
+              # job); the snapshot is built from the compiled app.
+              npm run tsc:prod
+              cp -r dist/* .
+              rm -rf dist
+              # Remove the now-redundant .ts sources so the bundler scans only .js. With
+              # both present, tegg's globby picks up the .ts AND .js of the same class as
+              # two modules (the "duplicate proto" hazard): a decorated class is bundled
+              # twice and only one copy's filePath is corrected, which breaks AOP advice
+              # resolution on restore (e.g. "Aop Advice(AsyncTimer) not found in loadUnits").
+              find app config -name '*.ts' ! -name '*.d.ts' -delete
+
+              # Under EGG_SERVER_ENV=prod the DB name comes from CNPMCORE_DATABASE_NAME
+              # (set to cnpmcore above), so prepare that database.
+              echo "Preparing database..."
+              mysql -h 127.0.0.1 -u root -e "CREATE DATABASE IF NOT EXISTS cnpmcore"
+              bash ./prepare-database-mysql.sh
+
+              # Build the V8 startup snapshot. Building works on Node.js >= 22 (CI runs
+              # on 24 here). leoric is auto-externalized (native optional DB drivers);
+              # @cnpmjs/packument / koa-onerror / undici / urllib are kept external. The
+              # network stack stays lazy-external (no manual stubs) so the blob is
+              # restorable on Node.js >= 24.
+              npx egg-bin snapshot build \
+                --output ./dist-bundle \
+                --force-external @cnpmjs/packument \
+                --force-external koa-onerror \
+                --force-external undici \
+                --force-external urllib
+
+              # Restore the snapshot and verify it serves traffic. --no-sourcemap keeps
+              # `--import source-map-support` out of the `node --snapshot-blob` process
+              # (cnpmcore sets egg.typescript, which would otherwise auto-enable it).
+              npx egg-scripts start \
+                --snapshot-blob ./dist-bundle/snapshot.blob \
+                --port 7001 \
+                --no-sourcemap \
+                --daemon \
+                --title=egg-server-cnpmcore-snapshot
+
+              if bash ../wait-health.sh "http://127.0.0.1:7001/-/ping" /tmp/cnpmcore-snapshot-health-response 120 3; then
+                npx egg-scripts stop --title=egg-server-cnpmcore-snapshot
+              else
+                npx egg-scripts stop --title=egg-server-cnpmcore-snapshot || true
+                echo "Recent snapshot error logs (if any):"
+                cat dist-bundle/logs/cnpmcore/common-error.log 2>/dev/null || true
+                cat "${HOME}/logs/master-stderr.log" 2>/dev/null || true
                 exit 1
               fi
           - name: examples
@@ -141,8 +182,8 @@ jobs:
         with:
           ecosystem-ci-project: ${{ matrix.project.name }}
 
-      - name: Install utoo
-        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # pinned from main
+      - name: Setup utoo
+        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
 
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
@@ -155,26 +196,18 @@ jobs:
       - name: Build all packages
         run: ut run build
 
-      - name: Install pnpm (for `pnpm -r pack`)
-        # utoo's `ut pm-pack` does not resolve `workspace:` / `catalog:`
-        # protocols inside the packed manifests, so downstream `npm install`
-        # in the ecosystem-ci projects fails with EUNSUPPORTEDPROTOCOL.
-        # Keep pnpm available just for the pack step. The root packageManager
-        # pins the pnpm version for this action.
-        # Setup must come AFTER `ut install`: action-setup exports PNPM_HOME,
-        # which makes utoo's install path read pnpm config and crash with
-        # exit 141 (SIGPIPE).
-        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
-
       - name: Pack packages into tgz
-        # `pnpm -r pack` resolves workspace:/catalog: deps in the emitted
-        # manifests, which `ut pm-pack` does not yet do. pnpm needs its own
-        # node_modules layout to resolve `workspace:` versions, so run
-        # `pnpm install --no-frozen-lockfile` first (cheap on top of the
-        # ut install since the deps are already in the global store).
+        # `ut pm-pack` resolves `workspace:` / `catalog:` protocols only on
+        # utoo >= 1.1, which is not yet on the `latest` tag that setup-utoo
+        # installs. Install 1.1.x into an isolated prefix and point pack-all.mjs
+        # at it via UT_BIN, so the install/build steps above keep using the
+        # repo-default utoo. pack-all.mjs generates `.utoo.toml` and injects a
+        # temporary `workspaces` field (both required by pm-pack), then writes
+        # one tgz per publishable package to the repo root for patch-project.ts.
         run: |
-          pnpm install --no-frozen-lockfile --ignore-scripts
-          pnpm -r pack
+          UT_PREFIX="$(mktemp -d)"
+          npm install --prefix "$UT_PREFIX" --no-save --no-fund --no-audit utoo@1.1.1
+          UT_BIN="$UT_PREFIX/node_modules/.bin/ut" node ecosystem-ci/pack-all.mjs
 
       - name: Override dependencies from tgz in ${{ matrix.project.name }}
         working-directory: ecosystem-ci/${{ matrix.project.name }}

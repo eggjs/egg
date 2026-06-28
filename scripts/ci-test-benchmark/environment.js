@@ -10,9 +10,18 @@ export async function collectEnvironment(command) {
     readVitestConfigDefaults(path.resolve(process.cwd(), 'vitest.config.ts')),
   ]);
   const cpus = os.cpus();
+  const availableParallelism = typeof os.availableParallelism === 'function' ? os.availableParallelism() : cpus.length;
+  // Effective concurrency ceiling for the threads pool. vitest.config.ts caps
+  // maxWorkers on Windows CI; everywhere else the pool defaults to the machine's
+  // available parallelism. Mirror that condition so efficiency divides by the number
+  // of workers vitest could actually use, not the raw core count.
+  const isWindowsCI = Boolean(process.env.CI) && os.platform() === 'win32';
+  const workerCeiling =
+    isWindowsCI && typeof vitestConfig?.maxWorkers === 'number' ? vitestConfig.maxWorkers : availableParallelism;
 
   return {
     arch: os.arch(),
+    availableParallelism,
     ci: Boolean(process.env.CI),
     commandParameters: extractCommandParameters(command),
     cpuCount: cpus.length,
@@ -41,6 +50,7 @@ export async function collectEnvironment(command) {
     release: os.release(),
     totalMemoryBytes: os.totalmem(),
     vitestConfig,
+    workerCeiling,
   };
 }
 
@@ -62,8 +72,14 @@ async function readVitestConfigDefaults(configPath) {
   return {
     coverageProvider: matchStringProperty(source, 'provider'),
     isolate: matchBooleanProperty(source, 'isolate'),
+    maxWorkers: matchNumberProperty(source, 'maxWorkers'),
     pool: matchStringProperty(source, 'pool'),
   };
+}
+
+function matchNumberProperty(source, property) {
+  const match = new RegExp(`^\\s*(?!//|/\\*)${escapeRegExp(property)}:\\s*(\\d+)`, 'm').exec(source);
+  return match ? Number(match[1]) : null;
 }
 
 function matchStringProperty(source, property) {

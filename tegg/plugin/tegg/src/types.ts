@@ -19,6 +19,7 @@ import type {
   LoadUnitInstanceLifecycleUtil,
   EggContext as TEggContext,
 } from '@eggjs/tegg-runtime';
+import type { TeggScopeBag } from '@eggjs/tegg-types';
 
 import type { EggContextHandler } from './lib/EggContextHandler.ts';
 import type { ModuleHandler } from './lib/ModuleHandler.ts';
@@ -58,6 +59,13 @@ declare module 'egg' {
 
     // set on ModuleHandler.init()
     module: EggModule;
+
+    /**
+     * Per-app TeggScope bag, created in the tegg plugin's configWillLoad. Carries
+     * this app's per-app factories/managers/caches; boot, request, and unittest
+     * scopes wrap their work in `TeggScope.run(app._teggScopeBag, ...)`.
+     */
+    _teggScopeBag: TeggScopeBag;
 
     /**
      * Mock the module context, only for unittest

@@ -161,10 +161,10 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     }
 
     // Propagate NODE_OPTIONS from this.env to process.env so vitest fork
-    // workers inherit them (e.g. ts-node/esm loader for TypeScript support).
-    // Also disable Node.js native type stripping when TypeScript loader is active,
-    // because native type stripping can't handle decorators and runs before
-    // custom ESM loaders like ts-node/esm.
+    // workers inherit them (e.g. the @oxc-node/core/register loader for
+    // TypeScript support). Also disable Node.js native type stripping when a
+    // TypeScript loader is active, because native type stripping can't handle
+    // decorators and runs before custom module hooks like @oxc-node/core.
     if (this.env.NODE_OPTIONS) {
       let nodeOptions = this.env.NODE_OPTIONS;
       if (flags.typescript && !nodeOptions.includes('--no-experimental-strip-types')) {

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/standalone",
-  "version": "4.0.2-beta.9",
+  "version": "4.0.2-beta.17",
   "description": "tegg standalone",
   "keywords": [
     "async",
@@ -50,7 +50,8 @@
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
-    "@eggjs/tegg-runtime": "workspace:*"
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/ajv-plugin": "workspace:*",

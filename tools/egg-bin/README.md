@@ -212,8 +212,6 @@ node worker.js
   `package.json#egg.framework` or `egg`. Absolute framework paths are not
   supported by the bundled runtime.
 - `--mode` build mode, `production` or `development`, default to `production`
-- `--no-tegg` accepted by the CLI, but not applied by the current bundler
-  implementation yet
 - `--force-external` package name to always keep external, supports multiple
 - `--inline-external` package name to force inline, supports multiple
 - `--pack-alias` `@utoo/pack` resolve alias in `<specifier>=<target>` form,

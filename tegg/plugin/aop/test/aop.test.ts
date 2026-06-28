@@ -36,4 +36,12 @@ describe('plugin/aop/test/aop.test.ts', () => {
       msg: 'withContextPointAroundResult(hello withContextPointAroundParam(foo))',
     });
   });
+
+  it('cross-loadUnit module aop should work', async () => {
+    app.mockCsrf();
+    const res = await app.httpRequest().get('/crossModuleAop').expect(200);
+    expect(res.body).toEqual({
+      msg: 'withCrossModuleResult(helloCross withCrossModuleParam(foo))',
+    });
+  });
 });

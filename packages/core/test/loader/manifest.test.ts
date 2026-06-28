@@ -751,6 +751,15 @@ describe('ManifestStore', () => {
     const savedPortable = process.env.NODE_COMPILE_CACHE_PORTABLE;
     const savedDisable = process.env.NODE_DISABLE_COMPILE_CACHE;
 
+    beforeEach(() => {
+      // enableCompileCache() respects an externally-set NODE_COMPILE_CACHE (CI
+      // may set one job-wide). Clear the ambient vars so these tests exercise
+      // the auto-set path from a clean slate; afterEach restores them.
+      delete process.env.NODE_COMPILE_CACHE;
+      delete process.env.NODE_COMPILE_CACHE_PORTABLE;
+      delete process.env.NODE_DISABLE_COMPILE_CACHE;
+    });
+
     afterEach(() => {
       for (const [key, saved] of [
         ['NODE_COMPILE_CACHE', savedCompileCache],

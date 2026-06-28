@@ -1,41 +1,5 @@
-import type { InputContentPart, MessageContentBlock } from './AgentMessage.ts';
-import type { AgentRunConfig, InputMessage, MessageObject, RunStatus } from './AgentStore.ts';
-
-export { ContentBlockType } from './AgentMessage.ts';
-export type { InputContentPart, MessageContentBlock, TextContentBlock } from './AgentMessage.ts';
-
-// ===== Message roles =====
-
-export const MessageRole = {
-  User: 'user',
-  Assistant: 'assistant',
-  System: 'system',
-} as const;
-export type MessageRole = (typeof MessageRole)[keyof typeof MessageRole];
-
-// ===== Message statuses =====
-
-export const MessageStatus = {
-  InProgress: 'in_progress',
-  Incomplete: 'incomplete',
-  Completed: 'completed',
-} as const;
-export type MessageStatus = (typeof MessageStatus)[keyof typeof MessageStatus];
-
-// ===== SSE events =====
-
-export const AgentSSEEvent = {
-  ThreadRunCreated: 'thread.run.created',
-  ThreadRunInProgress: 'thread.run.in_progress',
-  ThreadRunCompleted: 'thread.run.completed',
-  ThreadRunFailed: 'thread.run.failed',
-  ThreadRunCancelled: 'thread.run.cancelled',
-  ThreadMessageCreated: 'thread.message.created',
-  ThreadMessageDelta: 'thread.message.delta',
-  ThreadMessageCompleted: 'thread.message.completed',
-  Done: 'done',
-} as const;
-export type AgentSSEEvent = (typeof AgentSSEEvent)[keyof typeof AgentSSEEvent];
+import type { AgentMessage } from './AgentMessage.ts';
+import type { AgentRunConfig, RunStatus } from './AgentStore.ts';
 
 // ===== Error codes =====
 
@@ -54,7 +18,7 @@ export interface ThreadObject {
 }
 
 export interface ThreadObjectWithMessages extends ThreadObject {
-  messages: MessageObject[];
+  messages: AgentMessage[];
 }
 
 // ===== Run objects =====
@@ -72,7 +36,6 @@ export interface RunObject {
   failedAt?: number | null;
   usage?: { promptTokens: number; completionTokens: number; totalTokens: number } | null;
   metadata?: Record<string, unknown>;
-  output?: MessageObject[];
   config?: AgentRunConfig;
 }
 
@@ -80,37 +43,53 @@ export interface RunObject {
 
 export interface CreateRunInput {
   threadId?: string;
+  /**
+   * Populated by AgentRuntime before calling execRun.
+   * - true: threadId was provided (resume existing conversation)
+   * - false: no threadId provided, new thread created
+   */
+  isResume?: boolean;
   input: {
-    messages: InputMessage[];
+    messages: import('./AgentMessage.ts').InputMessage[];
   };
   config?: AgentRunConfig;
+  /**
+   * Metadata for the run. Stored verbatim on the run record, and additionally
+   * shallow-merged into the thread metadata (`meta.json`):
+   * - For an auto-created thread, it initializes the thread metadata.
+   * - For an existing thread, the keys are shallow-merged: new values overwrite
+   *   matching keys, while keys not present are preserved.
+   * - An omitted or empty object leaves the thread metadata unchanged.
+   */
   metadata?: Record<string, unknown>;
 }
 
-// ===== Message delta =====
+// ===== Thread input =====
 
-export interface MessageDeltaObject {
-  id: string;
-  object: 'thread.message.delta';
-  delta: {
-    content: MessageContentBlock[];
-  };
+/**
+ * Options for {@link AgentRuntime.createThread}.
+ *
+ * `metadata` is forwarded verbatim to {@link AgentStore.createThread} so callers
+ * can persist additional business semantics on the thread record (e.g. the
+ * resolved agent name, owning sandbox id, trace id).
+ */
+export interface CreateThreadOptions {
+  metadata?: Record<string, unknown>;
 }
 
-// ===== Stream message types =====
+// ===== Stream event (TaskEvent-style wrapper) =====
 
-export interface AgentStreamMessagePayload {
-  role?: string;
-  content: string | InputContentPart[];
+export interface StreamEvent {
+  seq: number;
+  type: string;
+  data: unknown;
+  ts: number;
 }
 
-export interface AgentRunUsage {
-  promptTokens?: number;
-  completionTokens?: number;
-}
+// ===== Get thread options =====
 
-export interface AgentStreamMessage {
-  type?: string;
-  message?: AgentStreamMessagePayload;
-  usage?: AgentRunUsage;
+export interface GetThreadOptions {
+  /** When true, return all message types (system, result, stream_event, etc.).
+   *  Defaults to false — only user and assistant messages are returned. */
+  includeAllMessages?: boolean;
 }

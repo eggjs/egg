@@ -7,10 +7,13 @@ Read this file before exploring raw sources.
 ## Concepts
 
 - [Repository Map](./concepts/repository-map.md) - High-level map of the main repository areas and where to look first.
+- [Vitest isolate:false state leaks](./concepts/vitest-isolate-false-state-leaks.md) - Why pool:threads + isolate:false exposes cross-file/cross-project state leaks, the concrete leaks (import.ts snapshot loader, mock mockContext, teardown close/load race), and how to triage them.
 
 ## Workflows
 
+- [CI parallel test metrics](./workflows/ci-parallel-test-metrics.md) - How the CI test gate surfaces avg/peak concurrency + parallel-efficiency metrics for the isolate:false suite, and how to read or reproduce them.
 - [Docs and API Updates](./workflows/docs-and-api-updates.md) - How to handle changes that affect user-facing docs or durable project understanding.
+- [Egg-bin Windows shell probe hotspot](./workflows/egg-bin-windows-shell-probe.md) - How PR #6014 diagnosed hosted-Windows egg-bin startup slowness and why the final fix only presets SHELL.
 
 ## Decisions
 

@@ -72,6 +72,11 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       description: 'customize node command path',
       default: 'node',
     }),
+    'snapshot-blob': Flags.string({
+      description:
+        'boot from a V8 startup snapshot blob (built by `egg-bin snapshot build`) via `node --snapshot-blob`, ' +
+        'instead of launching the egg cluster',
+    }),
     require: Flags.string({
       summary: 'require the given module',
       char: 'r',
@@ -80,6 +85,10 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     sourcemap: Flags.boolean({
       summary: 'whether enable sourcemap support, will load `source-map-support` etc',
       aliases: ['ts', 'typescript'],
+      // Allow the `--no-sourcemap` negation so callers can opt out of the
+      // source-map-support `--import` that `egg.typescript` auto-enables (e.g. a
+      // snapshot restore, where `--import` must not ride into `node --snapshot-blob`).
+      allowNo: true,
     }),
   };
 
@@ -109,6 +118,27 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     return path.join(import.meta.dirname, '../../scripts', serverBinName);
   }
 
+  /**
+   * Resolve the major version of the node binary that will actually run the
+   * snapshot. For the default (`--node` unset → 'node') or the egg-scripts
+   * runtime itself, the spawned process shares this runtime's version; for an
+   * explicit custom `--node /path`, query that binary directly. Returns
+   * `undefined` when the version cannot be determined, so the gate fails open
+   * (proceeds) rather than blocking a launch whose version it cannot read.
+   */
+  async #resolveSnapshotNodeMajor(command: string): Promise<number | undefined> {
+    if (command === 'node' || command === process.execPath) {
+      return parseInt(process.versions.node, 10);
+    }
+    try {
+      const { stdout } = await execFile(command, ['--version']);
+      const match = /^v?(\d+)\./.exec(stdout.toString().trim());
+      return match ? Number(match[1]) : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
   public async run(): Promise<void> {
     const { args, flags } = this;
     // context.execArgvObj = context.execArgvObj || {};
@@ -126,14 +156,11 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     }
     await this.initBaseInfo(baseDir);
 
-    flags.framework = await this.getFrameworkPath({
-      framework: flags.framework,
-      baseDir,
-    });
-
-    const frameworkName = await this.getFrameworkName(flags.framework);
-
-    flags.title = flags.title || `egg-server-${this.pkg.name}`;
+    // The shared startup option/env pipeline below runs for BOTH the cluster and
+    // the snapshot (`--snapshot-blob`) launch paths; only the final argv differs,
+    // so snapshot boots honor the same runtime contract (eggScriptsConfig.require,
+    // node-options--*, sourcemap, PATH, EGG_TS_ENABLE, …) as a normal start.
+    flags.title = flags.title || `egg-server-${this.pkg?.name ?? 'snapshot'}`;
 
     flags.stdout = flags.stdout || path.join(logDir, 'master-stdout.log');
     flags.stderr = flags.stderr || path.join(logDir, 'master-stderr.log');
@@ -232,7 +259,7 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       flags.port = parseInt(process.env.PORT);
     }
 
-    debug('flags: %o, framework: %o, baseDir: %o, execArgv: %o', flags, frameworkName, baseDir, execArgv);
+    debug('flags: %o, baseDir: %o, execArgv: %o', flags, baseDir, execArgv);
 
     const command = flags.node;
     const options: SpawnOptions = {
@@ -242,27 +269,77 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       cwd: baseDir,
     };
 
-    this.log('Starting %s application at %s', frameworkName, baseDir);
+    // The final argv is the only thing that differs between the two launch modes.
+    let eggArgs: string[];
+    let displayName: string;
+    if (flags['snapshot-blob']) {
+      // Restoring a V8 startup snapshot requires Node.js >= 24. A snapshot can be
+      // *built* on Node.js >= 22, but restoring a non-trivial egg heap on Node.js
+      // 22 aborts the process during deserialization (V8 bug:
+      // `Check failed: current == end_slot_index`). Refuse early with a clear
+      // message here instead of letting the spawned `node --snapshot-blob` child
+      // die with a cryptic native fatal error. Check the version of the node binary
+      // that will actually run the snapshot (`command`/`--node`), not just the
+      // egg-scripts runtime, so a custom `--node` is gated against the real target.
+      const nodeMajor = await this.#resolveSnapshotNodeMajor(command);
+      if (nodeMajor !== undefined && nodeMajor < 24) {
+        this.error(
+          `egg-scripts start --snapshot-blob requires Node.js >= 24 to restore a V8 snapshot, ` +
+            `but ${command} is Node.js ${nodeMajor}.x. ` +
+            `Building a snapshot (egg-bin snapshot build) works on Node.js >= 22, ` +
+            `but restoring it must run on Node.js >= 24. Please upgrade Node.js to 24 or later.`,
+          { exit: 1 },
+        );
+      }
+      // Snapshot boot: a single self-contained `node --snapshot-blob <blob>`
+      // process (no egg-cluster, no framework resolution). The snapshot entry
+      // reads the listen port from PORT env, and `--title` is appended only so
+      // `egg-scripts stop` can grep the process (the snapshot main ignores it).
+      const blobFlag = flags['snapshot-blob'];
+      const blob = path.isAbsolute(blobFlag) ? blobFlag : path.join(baseDir, blobFlag);
+      if (flags.port !== undefined) {
+        this.env.PORT = String(flags.port);
+      }
+      eggArgs = [...execArgv, '--snapshot-blob', blob, `--title=${flags.title}`];
+      displayName = 'snapshot';
+      this.log('Starting egg snapshot at %s', blob);
+    } else {
+      flags.framework = await this.getFrameworkPath({ framework: flags.framework, baseDir });
+      const frameworkName = await this.getFrameworkName(flags.framework);
+      this.log('Starting %s application at %s', frameworkName, baseDir);
+      // remove unused properties from stringify, alias had been remove by `removeAlias`
+      const ignoreKeys = ['env', 'daemon', 'stdout', 'stderr', 'timeout', 'ignore-stderr', 'node', 'snapshot-blob'];
+      const clusterOptions = stringify({ ...flags, baseDir }, ignoreKeys);
+      // Note: `spawn` is not like `fork`, had to pass `execArgv` yourself
+      const serverBin = await this.getServerBin();
+      eggArgs = [...execArgv, serverBin, clusterOptions, `--title=${flags.title}`];
+      displayName = frameworkName;
+    }
 
-    // remove unused properties from stringify, alias had been remove by `removeAlias`
-    const ignoreKeys = ['env', 'daemon', 'stdout', 'stderr', 'timeout', 'ignore-stderr', 'node'];
-    const clusterOptions = stringify(
-      {
-        ...flags,
-        baseDir,
-      },
-      ignoreKeys,
-    );
-    // Note: `spawn` is not like `fork`, had to pass `execArgv` yourself
-    const serverBin = await this.getServerBin();
-    const eggArgs = [...execArgv, serverBin, clusterOptions, `--title=${flags.title}`];
     const spawnScript = `${command} ${eggArgs.map((a) => `'${a}'`).join(' ')}`;
     this.log('Spawn %o', spawnScript);
 
+    await this.spawnServer(command, eggArgs, options, logDir, displayName);
+  }
+
+  /**
+   * Shared spawn + daemon/foreground lifecycle for both the cluster and snapshot
+   * launch paths. In daemon mode it waits for an `egg-ready` IPC message via
+   * {@link checkStatus}; in foreground mode it forwards termination signals to the
+   * child and mirrors its exit code.
+   */
+  protected async spawnServer(
+    command: string,
+    eggArgs: string[],
+    options: SpawnOptions,
+    logDir: string,
+    displayName: string,
+  ): Promise<void> {
+    const { flags } = this;
     // whether run in the background.
     if (flags.daemon) {
       this.log(`Save log file to ${logDir}`);
-      const [stdout, stderr] = await Promise.all([getRotateLog(flags.stdout), getRotateLog(flags.stderr)]);
+      const [stdout, stderr] = await Promise.all([getRotateLog(flags.stdout!), getRotateLog(flags.stderr!)]);
       options.stdio = ['ignore', stdout, stderr, 'ipc'];
       options.detached = true;
       const child = (this.#child = spawn(command, eggArgs, options));
@@ -271,7 +348,7 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
         // https://github.com/eggjs/cluster/blob/master/src/master.ts#L119
         if (msg && msg.action === 'egg-ready') {
           this.isReady = true;
-          this.log('%s started on %s', frameworkName, msg.data.address);
+          this.log('%s started on %s', displayName, msg.data.address);
           child.unref();
           child.disconnect();
         }

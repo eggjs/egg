@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/bin",
-  "version": "8.0.2-beta.9",
+  "version": "8.0.2-beta.17",
   "description": "egg developer tool",
   "homepage": "https://github.com/eggjs/egg/tree/next/tools/egg-bin",
   "bugs": {
@@ -28,10 +28,12 @@
   "exports": {
     ".": "./src/index.ts",
     "./baseCommand": "./src/baseCommand.ts",
+    "./bundleOptions": "./src/bundleOptions.ts",
     "./commands/bundle": "./src/commands/bundle.ts",
     "./commands/cov": "./src/commands/cov.ts",
     "./commands/dev": "./src/commands/dev.ts",
     "./commands/manifest": "./src/commands/manifest.ts",
+    "./commands/snapshot": "./src/commands/snapshot.ts",
     "./commands/test": "./src/commands/test.ts",
     "./types": "./src/types.ts",
     "./utils": "./src/utils.ts",
@@ -42,10 +44,12 @@
     "exports": {
       ".": "./dist/index.js",
       "./baseCommand": "./dist/baseCommand.js",
+      "./bundleOptions": "./dist/bundleOptions.js",
       "./commands/bundle": "./dist/commands/bundle.js",
       "./commands/cov": "./dist/commands/cov.js",
       "./commands/dev": "./dist/commands/dev.js",
       "./commands/manifest": "./dist/commands/manifest.js",
+      "./commands/snapshot": "./dist/commands/snapshot.js",
       "./commands/test": "./dist/commands/test.js",
       "./types": "./dist/types.js",
       "./utils": "./dist/utils.js",
@@ -65,6 +69,7 @@
     "@eggjs/tegg-vitest": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "@oclif/core": "catalog:",
+    "@oxc-node/core": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "ci-parallel-vars": "catalog:",
     "detect-port": "catalog:",

@@ -1,7 +1,14 @@
 import type { TableModel } from '@eggjs/dal-decorator';
+import { TeggScope } from '@eggjs/tegg-types';
+
+const TABLE_MODEL_MANAGER_SLOT = Symbol('tegg:dal:tableModelManager');
 
 export class TableModelManager {
-  static instance: TableModelManager = new TableModelManager();
+  // Per-app: keyed by module name, which collides across apps; resolved from the
+  // active TeggScope bag so two apps never share table-model registrations.
+  static get instance(): TableModelManager {
+    return TeggScope.resolve(TABLE_MODEL_MANAGER_SLOT, () => new TableModelManager(), 'TableModelManager.instance');
+  }
 
   private tableModels: Map</* moduleName */ string, Map<string, TableModel>>;
 

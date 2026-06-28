@@ -15,6 +15,7 @@ import type {
 } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import type { EggObject } from '@eggjs/tegg-runtime';
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
@@ -31,6 +32,9 @@ import getRawBody from 'raw-body';
 import type { ControllerRegister } from '../../ControllerRegister.ts';
 import { MCPConfig } from './MCPConfig.ts';
 import { MCPServerHelper } from './MCPServerHelper.ts';
+
+const MCP_CONTROLLER_REGISTER_SLOT = Symbol('tegg:controller:mcpControllerRegister');
+const MCP_HOOKS_SLOT = Symbol('tegg:controller:mcpControllerHooks');
 
 export interface MCPControllerHook {
   // SSE
@@ -67,6 +71,10 @@ interface ServerRegisterRecord<T> {
 }
 
 class InnerSSEServerTransport extends SSEServerTransport {
+  // Capture the owning per-app register so send() (driven by the MCP SDK, often
+  // outside any ALS frame) resolves the correct app's request map directly.
+  register?: MCPControllerRegister;
+
   async send(message: JSONRPCMessage): Promise<void> {
     let err: null | Error = null;
     try {
@@ -74,7 +82,7 @@ class InnerSSEServerTransport extends SSEServerTransport {
     } catch (e) {
       err = e as Error;
     } finally {
-      const map = MCPControllerRegister.instance?.sseTransportsRequestMap.get(this);
+      const map = this.register?.sseTransportsRequestMap.get(this);
       if (map && 'id' in message) {
         const { resolve, reject } = map[message.id!] ?? {};
         if (resolve) {
@@ -87,7 +95,16 @@ class InnerSSEServerTransport extends SSEServerTransport {
 }
 
 export class MCPControllerRegister implements ControllerRegister {
-  static instance?: MCPControllerRegister;
+  // Per-app: holds this app's MCP transports/servers/timers, so it is resolved
+  // from the active TeggScope bag rather than a process-global singleton.
+  static get instance(): MCPControllerRegister | undefined {
+    return TeggScope.getOr(MCP_CONTROLLER_REGISTER_SLOT, () => undefined, 'MCPControllerRegister.instance');
+  }
+
+  static set instance(value: MCPControllerRegister | undefined) {
+    TeggScope.set(MCP_CONTROLLER_REGISTER_SLOT, value);
+  }
+
   readonly app: Application;
   readonly eggContainerFactory: typeof EggContainerFactory;
   private readonly router: Router;
@@ -111,8 +128,15 @@ export class MCPControllerRegister implements ControllerRegister {
     >
   > = new Map();
 
-  static hooks: MCPControllerHook[] = [];
-  globalMiddlewares: compose.ComposedMiddleware<EggContext>;
+  // Per-app hook list (mcp-proxy registers its hook here at agent boot). Each app
+  // gets its own list so concurrent apps do not accumulate each other's hooks.
+  static get hooks(): MCPControllerHook[] {
+    return TeggScope.resolve(MCP_HOOKS_SLOT, () => [], 'MCPControllerRegister.hooks');
+  }
+
+  // Optional: resolved + composed lazily on the first request (see
+  // `composeGlobalMiddleware`), so it stays undefined until then.
+  globalMiddlewares?: compose.ComposedMiddleware<EggContext>;
 
   registerMap: Record<
     string,
@@ -164,10 +188,7 @@ export class MCPControllerRegister implements ControllerRegister {
   mcpStatelessStreamServerInit(name?: string): void {
     const postRouterFunc = this.router.post;
     const self = this;
-    let mw = (self.app.middleware as any).teggCtxLifecycleMiddleware();
-    if (self.globalMiddlewares) {
-      mw = compose([mw, self.globalMiddlewares]);
-    }
+    const mw = self.composeGlobalMiddleware(() => (self.app.middleware as any).teggCtxLifecycleMiddleware());
     const initHandler = async (ctx: Context) => {
       // Create fresh transport and server per request
       // MCP SDK >= 1.26 requires stateless transports to be single-use
@@ -248,10 +269,7 @@ export class MCPControllerRegister implements ControllerRegister {
   mcpStreamServerInit(name?: string): void {
     const allRouterFunc = this.router.all;
     const self = this;
-    let mw = (self.app.middleware as any).teggCtxLifecycleMiddleware();
-    if (self.globalMiddlewares) {
-      mw = compose([mw, self.globalMiddlewares]);
-    }
+    const mw = self.composeGlobalMiddleware(() => (self.app.middleware as any).teggCtxLifecycleMiddleware());
     const initHandler = async (ctx: Context) => {
       ctx.respond = false;
       if (MCPControllerRegister.hooks.length > 0) {
@@ -403,6 +421,7 @@ export class MCPControllerRegister implements ControllerRegister {
     const self = this;
     const initHandler = async (ctx: Context) => {
       const transport = new InnerSSEServerTransport(self.mcpConfig.getSseMessagePath(name), ctx.res);
+      transport.register = self;
       const id = transport.sessionId;
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
@@ -445,10 +464,7 @@ export class MCPControllerRegister implements ControllerRegister {
 
   sseCtxStorageRun(ctx: Context, transport: SSEServerTransport, name?: string): void {
     const self = this;
-    let mw = (this.app.middleware as any).teggCtxLifecycleMiddleware();
-    if (self.globalMiddlewares) {
-      mw = compose([mw, self.globalMiddlewares]);
-    }
+    const mw = self.composeGlobalMiddleware(() => (this.app.middleware as any).teggCtxLifecycleMiddleware());
     const closeFunc = transport.onclose;
     transport.onclose = () => {
       closeFunc?.();
@@ -510,10 +526,7 @@ export class MCPControllerRegister implements ControllerRegister {
     const routerFunc = this.router.post;
     const self = this;
 
-    let mw = (self.app.middleware as any).teggCtxLifecycleMiddleware();
-    if (self.globalMiddlewares) {
-      mw = compose([mw, self.globalMiddlewares]);
-    }
+    const mw = self.composeGlobalMiddleware(() => (self.app.middleware as any).teggCtxLifecycleMiddleware());
     const messageHander = async (ctx: Context) => {
       const sessionId = ctx.query.sessionId as string;
 
@@ -569,6 +582,16 @@ export class MCPControllerRegister implements ControllerRegister {
   }
 
   getGlobalMiddleware(): void {
+    // Build once. The named middleware factories come from `app.middlewares`,
+    // which is only populated by `loadMiddleware`. Controller registration runs
+    // during the tegg load-unit init (postCreate), before `loadMiddleware`, so
+    // this is invoked lazily on the first request (see `composeGlobalMiddleware`)
+    // instead of at registration time — otherwise registering a controller whose
+    // `config.mcp.middleware` names a middleware throws `Middleware xxx not found`
+    // at boot.
+    if (this.globalMiddlewares) {
+      return;
+    }
     const middlewareNames = this.app.config.mcp.middleware || [];
     const middlewares: compose.Middleware<EggContext>[] = [];
     for (const name of middlewareNames) {
@@ -582,6 +605,36 @@ export class MCPControllerRegister implements ControllerRegister {
       middlewares.push(mw);
     }
     this.globalMiddlewares = compose(middlewares);
+  }
+
+  // Wrap a base middleware so that both the base middleware itself and the
+  // configured global middlewares are resolved and composed on the first request
+  // (when `app.middleware`/`app.middlewares` are ready), not at registration time.
+  //
+  // The base middleware factory must be passed as a thunk rather than an already
+  // resolved middleware: `app.middleware.teggCtxLifecycleMiddleware` is loaded by
+  // egg's `loadMiddleware`, which runs *after* controller registration (the tegg
+  // load-unit init / postCreate). Calling it eagerly at registration time throws
+  // `teggCtxLifecycleMiddleware is not a function`. Deferring the call to the
+  // first request lets it bind once the middleware is loaded.
+  composeGlobalMiddleware(mwFactory: () => compose.Middleware<EggContext>): compose.Middleware<EggContext> {
+    const self = this;
+    // Resolve + compose once on the first request, then reuse the composed chain
+    // (globalMiddlewares is static after it is built) to avoid re-composing per
+    // request.
+    let resolved = false;
+    let composed: compose.Middleware<EggContext>;
+    return async (ctx, next) => {
+      if (!resolved) {
+        const mw = mwFactory();
+        self.getGlobalMiddleware();
+        composed = (
+          self.globalMiddlewares ? compose([mw, self.globalMiddlewares]) : mw
+        ) as compose.Middleware<EggContext>;
+        resolved = true;
+      }
+      return composed(ctx as any, next);
+    };
   }
 
   mcpServerPing(server: Server, sessionId: string, name?: string): void {
@@ -616,7 +669,6 @@ export class MCPControllerRegister implements ControllerRegister {
       }
       const metadata = proto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
       if (!this.mcpServerHelperMap[metadata.name ?? 'default']) {
-        this.getGlobalMiddleware();
         this.mcpServerHelperMap[metadata.name ?? 'default'] = () => {
           return new MCPServerHelper({
             name: this.controllerMeta.name ?? `chair-mcp-${metadata.name ?? this.app.name}-server`,

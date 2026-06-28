@@ -3,6 +3,15 @@ export { EntryGenerator, type EntryGeneratorOptions, type GeneratedEntries } fro
 export { ExternalsResolver, type ExternalsConfig, type ExternalsResolverOptions } from './lib/ExternalsResolver.ts';
 export { ManifestLoader, type ManifestLoaderOptions } from './lib/ManifestLoader.ts';
 export {
+  renderSnapshotPrelude,
+  prependSnapshotPrelude,
+  injectExternalRequireLazyHook,
+  resolveSnapshotLazyModules,
+  SNAPSHOT_PRELUDE_MARKER,
+  DEFAULT_SNAPSHOT_LAZY_MODULES,
+  type ExternalRequireInjectionResult,
+} from './lib/prelude.ts';
+export {
   PackRunner,
   type BuildFunc,
   type PackEntry,
@@ -28,6 +37,14 @@ export interface BundlerPackConfig {
   readonly rootPath?: string;
   /** @utoo/pack resolve tuning supplied by the application. */
   readonly resolve?: PackRunnerResolveConfig;
+  /**
+   * Emit a single self-contained worker.js (all modules inlined, zero sibling-chunk
+   * require). This is the default (`true`) and is required for V8 startup snapshots,
+   * which forbid user-land require of sibling chunks. Set to `false` to fall back to
+   * the legacy multi-chunk standalone output. Enabling {@link BundlerConfig.snapshot}
+   * forces this on regardless of an explicit `false`.
+   */
+  readonly singleFile?: boolean;
 }
 
 export interface BundlerRuntimeAssetsConfig {
@@ -54,8 +71,15 @@ export interface BundlerConfig {
   readonly pack?: BundlerPackConfig;
   /** Runtime asset copy tuning. */
   readonly runtimeAssets?: BundlerRuntimeAssetsConfig;
-  /** Enable tegg decoratedFile collection. Defaults to `true`. */
-  readonly tegg?: boolean;
+  /**
+   * Build a V8 startup snapshot-ready artifact. When `true` the bundler emits a
+   * single self-contained worker.js (implies {@link BundlerPackConfig.singleFile})
+   * and prepends a runtime prelude before the bundle IIFE so it runs before any
+   * module loads. The generated entry additionally honours the `EGG_BUNDLE_SNAPSHOT`
+   * env var at runtime to switch between normal start, snapshot build, and snapshot
+   * restore. Defaults to `false`.
+   */
+  readonly snapshot?: boolean;
 }
 
 export interface BundleResult {

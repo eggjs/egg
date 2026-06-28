@@ -1,14 +1,8 @@
-import {
-  EggLoadUnitType,
-  GlobalGraph,
-  type Loader,
-  type LoadUnit,
-  LoadUnitFactory,
-  ModuleDescriptorDumper,
-} from '@eggjs/metadata';
+import { EggLoadUnitType, GlobalGraph, type LoadUnit, LoadUnitFactory, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { Logger } from '@eggjs/tegg';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
 import { LoaderFactory } from '@eggjs/tegg-loader';
+import { TeggScope } from '@eggjs/tegg-types';
 
 export interface EggModuleLoaderOptions {
   logger: Logger;
@@ -64,19 +58,22 @@ export class EggModuleLoader {
   }
 
   static async preLoad(moduleReferences: readonly ModuleReference[], options: EggModuleLoaderOptions): Promise<void> {
-    const loadUnits: LoadUnit[] = [];
-    const loaderCache = new Map<string, Loader>();
-    const globalGraph = (GlobalGraph.instance = await EggModuleLoader.generateAppGraph(moduleReferences, options));
-    globalGraph.sort();
-    const moduleConfigList = globalGraph.moduleConfigList;
-    for (const moduleConfig of moduleConfigList) {
-      const modulePath = moduleConfig.path;
-      const loader = loaderCache.get(modulePath)!;
-      const loadUnit = await LoadUnitFactory.createPreloadLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
-      loadUnits.push(loadUnit);
-    }
-    for (const load of loadUnits) {
-      await load.preLoad?.();
-    }
+    // Isolate preload in its own temporary scope so its graph/proto registrations
+    // do not leak into the process-default bag or any concurrent Runner.
+    await TeggScope.run(TeggScope.createBag(), async () => {
+      const loadUnits: LoadUnit[] = [];
+      const globalGraph = (GlobalGraph.instance = await EggModuleLoader.generateAppGraph(moduleReferences, options));
+      globalGraph.sort();
+      const moduleConfigList = globalGraph.moduleConfigList;
+      for (const moduleConfig of moduleConfigList) {
+        const modulePath = moduleConfig.path;
+        const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
+        const loadUnit = await LoadUnitFactory.createPreloadLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
+        loadUnits.push(loadUnit);
+      }
+      for (const load of loadUnits) {
+        await load.preLoad?.();
+      }
+    });
   }
 }

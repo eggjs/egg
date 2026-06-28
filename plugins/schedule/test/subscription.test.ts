@@ -15,7 +15,9 @@ describe('cluster - subscription', () => {
   afterAll(() => app.close());
 
   it('should support interval and cron', async () => {
-    await sleep(5000);
+    // interval is 4000ms; give the forked agent/worker boot + IPC + log flush
+    // enough slack on busy CI runners so the task fires at least once.
+    await sleep(process.env.CI ? 10000 : 5000);
 
     const log = getLogContent('subscription');
     // console.log(log);

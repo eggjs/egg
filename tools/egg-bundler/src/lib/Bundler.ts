@@ -10,6 +10,12 @@ import { ExternalsResolver } from './ExternalsResolver.ts';
 import { assertFrameworkPackageSpecifier } from './frameworkSpecifier.ts';
 import { ManifestLoader } from './ManifestLoader.ts';
 import { PackRunner } from './PackRunner.ts';
+import {
+  injectExternalRequireLazyHook,
+  prependSnapshotPrelude,
+  readExternalExports,
+  resolveSnapshotLazyModules,
+} from './prelude.ts';
 
 const debug = debuglog('egg/bundler/bundler');
 
@@ -326,6 +332,7 @@ export class Bundler {
       externals,
       pack,
       runtimeAssets,
+      snapshot = false,
     } = this.#config;
 
     const absBaseDir = path.resolve(baseDir);
@@ -335,6 +342,21 @@ export class Bundler {
     const moduleConfig = await wrapStep('module.yml bundle config load', () => loadModuleBundleConfig(absBaseDir));
     const mergedPack = mergePackConfig(moduleConfig?.pack, pack);
     const mergedRuntimeAssets = mergeRuntimeAssetsConfig(moduleConfig?.runtimeAssets, runtimeAssets);
+
+    // Single-file output is the PackRunner default. Snapshot artifacts must be a
+    // single self-contained worker.js (a V8 startup snapshot forbids user-land
+    // require of sibling chunks), so snapshot mode forces it on even when the app
+    // explicitly opted out via pack.singleFile === false. Otherwise honour the
+    // app's pack.singleFile (undefined keeps PackRunner's default).
+    const singleFile = snapshot ? true : mergedPack?.singleFile;
+    debug('snapshot=%s singleFile=%o', snapshot, singleFile);
+
+    // The Node network-stack ids (plus the app's egg.snapshot.lazyModules) that must
+    // stay external so @utoo/pack emits an externalRequire call the prelude can
+    // intercept, and that the prelude's __LAZY_EXT set names.
+    const snapshotLazyModules = snapshot
+      ? await wrapStep('resolve snapshot lazy modules', () => resolveSnapshotLazyModules(absBaseDir))
+      : [];
 
     const manifestLoader = new ManifestLoader({
       baseDir: absBaseDir,
@@ -349,8 +371,15 @@ export class Bundler {
       force: externals?.force,
       inline: externals?.inline,
     });
-    const externalsMap = await wrapStep('externals resolve', () => externalsResolver.resolve());
-    debug('externals resolved: %d packages', Object.keys(externalsMap).length);
+    const resolvedExternals = await wrapStep('externals resolve', () => externalsResolver.resolve());
+    debug('externals resolved: %d packages', Object.keys(resolvedExternals).length);
+
+    // Keep the lazy network-stack ids external so @utoo/pack does not inline them
+    // (an inlined http/tls/dns would load — and fail to serialize — at snapshot
+    // build time). A builtin id maps to itself for the runtime require().
+    const externalsMap: Record<string, string> = snapshot
+      ? { ...resolvedExternals, ...Object.fromEntries(snapshotLazyModules.map((id) => [id, id])) }
+      : resolvedExternals;
 
     const entryGen = new EntryGenerator({
       baseDir: absBaseDir,
@@ -365,11 +394,20 @@ export class Bundler {
       entries: [{ name: 'worker', filepath: entries.workerEntry }],
       outputDir: absOutputDir,
       externals: externalsMap,
-      projectPath: absBaseDir,
-      rootPath: mergedPack?.rootPath,
+      // Use the generated entry dir as the project root so PackRunner's
+      // compiler tsconfig (useDefineForClassFields:false, decorator metadata)
+      // is the one @utoo/pack resolves — Turbopack reads tsconfig from the
+      // project dir, not the output dir or the app's own tsconfig. rootPath
+      // stays at the app baseDir (or a caller-supplied monorepo root) so the
+      // app sources and node_modules above the entry dir still resolve.
+      projectPath: entries.entryDir,
+      // Resolve a caller-supplied rootPath against absBaseDir so a relative value
+      // does not depend on cwd; default to the app baseDir.
+      rootPath: mergedPack?.rootPath ? path.resolve(absBaseDir, mergedPack.rootPath) : absBaseDir,
       mode,
       buildFunc: mergedPack?.buildFunc,
       resolve: mergedPack?.resolve,
+      singleFile,
     });
     const packResult = await wrapStep('pack build', () => packRunner.run());
     debug('pack produced %d files', packResult.files.length);
@@ -382,6 +420,31 @@ export class Bundler {
       patchResult.patchCount,
       patchResult.deletedMapCount,
     );
+
+    // In snapshot mode inject the lazy-external dispatch into @utoo/pack's
+    // externalRequire and prepend the prelude to each entry's worker.js so it runs
+    // before the bundle IIFE (and therefore before any bundled module loads).
+    if (snapshot) {
+      // Read each external's export names from the bundler process so the prelude's
+      // member proxy can present a full ESM namespace (`import { X } from 'pkg'`).
+      const externalExports = await wrapStep('read external exports', async () =>
+        readExternalExports(absBaseDir, Object.keys(externalsMap)),
+      );
+      const applied = await wrapStep('apply snapshot prelude', () =>
+        this.#applySnapshotPrelude(
+          absOutputDir,
+          ['worker'],
+          snapshotLazyModules,
+          patchResult.outputFiles,
+          externalExports,
+        ),
+      );
+      debug(
+        'snapshot: prepended prelude to %d entry file(s), injected lazy hook into %d externalRequire(s)',
+        applied.prependedEntries.length,
+        applied.injectedCount,
+      );
+    }
 
     const copiedRuntimeAssets = await wrapStep('runtime asset copy', () =>
       this.#copyRuntimeAssets(absBaseDir, absOutputDir, manifestLoader, mergedRuntimeAssets),
@@ -417,6 +480,93 @@ export class Bundler {
       files,
       manifestPath: manifestPathAbs,
     };
+  }
+
+  /**
+   * Make the bundled output V8-snapshot-eligible:
+   * 1. Inject the lazy dispatch at the start of every `externalRequire` body (in any
+   *    emitted .js) so a require of a lazy module id routes to the prelude's
+   *    `__makeLazyExt` instead of loading the real (non-serializable) module.
+   * 2. Prepend the prelude (carrying the resolved lazy id set) to each entry's
+   *    worker.js so it runs before the bundle IIFE.
+   */
+  async #applySnapshotPrelude(
+    outputDir: string,
+    entryNames: readonly string[],
+    lazyModules: readonly string[],
+    outputFiles: readonly string[],
+    externalExports: Readonly<Record<string, readonly string[]>> = {},
+  ): Promise<{ prependedEntries: readonly string[]; injectedCount: number }> {
+    const entrySet = new Set(entryNames.map((name) => this.#sanitizeOutputRelativePath(`${name}.js`)));
+    const seenEntries = new Set<string>();
+    const prependedEntries: string[] = [];
+    let injectedCount = 0;
+    let sawExternalRequire = false;
+    let sawInjectedLazyHook = false;
+
+    // Single pass over the emitted .js files: inject the lazy hook into every file
+    // carrying externalRequire (single-file mode keeps it in worker.js; the loop
+    // stays robust if it ever moves) and, in the same read/write, prepend the
+    // prelude to entry files so worker.js is only touched once.
+    for (const rawRel of outputFiles) {
+      const rel = this.#sanitizeOutputRelativePath(rawRel);
+      if (!rel.endsWith('.js')) continue;
+      const isEntry = entrySet.has(rel);
+
+      const filepath = path.join(outputDir, rel);
+      const original = await fs.readFile(filepath, 'utf8');
+      // Detect the @utoo/pack helper *definition* independently of our injection
+      // regex, so a helper that is emitted but not patched (e.g. a codegen format
+      // our injection regex no longer matches) becomes a loud build error below
+      // rather than a silent snapshot that loads the network stack at build time.
+      if (/function\s+externalRequire\b/.test(original)) sawExternalRequire = true;
+      // A file already carrying the dispatch was patched on a previous run; its
+      // injectedCount is 0 (idempotent) but it must NOT count as "unpatched".
+      if (original.includes('globalThis.__makeLazyExt(')) sawInjectedLazyHook = true;
+      const hooked = injectExternalRequireLazyHook(original);
+      injectedCount += hooked.injected;
+
+      let next = hooked.content;
+      if (isEntry) {
+        next = prependSnapshotPrelude(next, lazyModules, externalExports);
+        seenEntries.add(rel);
+        prependedEntries.push(rel);
+      }
+      if (next !== original) {
+        await fs.writeFile(filepath, next);
+      }
+    }
+
+    // The entry file is required output; a missing worker.js (absent from the pack
+    // output enumeration) means the build did not emit what we expect. Fail fast
+    // with a clear error instead of silently skipping the prelude (which would
+    // surface later as an obscure snapshot-build failure).
+    for (const rel of entrySet) {
+      if (!seenEntries.has(rel)) {
+        throw new Error(
+          `snapshot prelude: expected bundle entry "${rel}" was not found at ${path.join(outputDir, rel)}`,
+        );
+      }
+    }
+
+    if (injectedCount === 0) {
+      if (sawExternalRequire && !sawInjectedLazyHook) {
+        // The helper was emitted but our injection regex matched nothing: the lazy
+        // dispatch is absent, so the snapshot build would load the network stack and
+        // fail to serialize. Fail loud instead of producing a broken blob.
+        throw new Error(
+          'snapshot prelude: an externalRequire helper was emitted but the lazy hook could not be ' +
+            'injected (its signature did not match). The bundle would load the network stack at ' +
+            'snapshot-build time.',
+        );
+      }
+      // Otherwise benign: a bundle that never requires an external has nothing to
+      // defer. A real app that touches the network stack always produces an
+      // externalRequire, so this only fires for trivial/synthetic bundles.
+      debug('snapshot: no externalRequire helper emitted — lazy hook injected nowhere');
+    }
+
+    return { prependedEntries, injectedCount };
   }
 
   async #copyRuntimeAssets(

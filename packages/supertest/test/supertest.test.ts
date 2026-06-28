@@ -435,7 +435,13 @@ describe('request(app)', () => {
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
         expect(err instanceof Error).toBe(true);
-        expect(err.message).toBe('ECONNREFUSED: Connection refused');
+        // The point is that supertest surfaces a connection error rather than a fake
+        // success. The exact message depends on the environment: a closed port yields
+        // "ECONNREFUSED: Connection refused", but a port occupied by a non-HTTP
+        // listener that drops the connection (e.g. a local proxy) yields
+        // "socket hang up". Assert the family so the test is robust regardless of what
+        // (if anything) holds 127.0.0.1:1234.
+        expect(err.message).toMatch(/ECONNREFUSED|ECONNRESET|ETIMEDOUT|EPIPE|socket hang up/i);
       }
     });
   });

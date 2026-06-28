@@ -130,6 +130,7 @@ export class EggApplicationCore extends EggCore {
 
   #httpClient?: HttpClient;
   #loggers?: EggLoggers;
+  #startTimeoutTimer?: ReturnType<typeof setTimeout>;
   #clusterClients: any[] = [];
   #loadFinishedResolve!: () => void;
   #loadFinishedReject!: (err: unknown) => void;
@@ -244,7 +245,7 @@ export class EggApplicationCore extends EggCore {
     process.on('unhandledRejection', this._unhandledRejectionHandler);
 
     // register close function
-    this.lifecycle.registerBeforeClose(async () => {
+    const registered = this.lifecycle.registerBeforeClose(async () => {
       // close all cluster clients
       for (const clusterClient of this.#clusterClients) {
         await closeClusterClient(clusterClient);
@@ -263,6 +264,25 @@ export class EggApplicationCore extends EggCore {
       this.messenger.close();
       process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
     });
+
+    // Teardown may race ahead of this in-flight load (common on slow/Windows CI
+    // under vitest `isolate: false`). When close() is already running/finished,
+    // registerBeforeClose() refuses the hook above (returns false) — it would
+    // never fire. Clean up the resources this load already created so their
+    // process-level listeners (unhandledRejection, messenger IPC) and file
+    // descriptors (loggers) do not leak across files, then stop: there is
+    // nothing left to load for a torn-down app.
+    if (!registered) {
+      this.#clearStartTimeoutTimer();
+      process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
+      this.messenger.close();
+      if (this.#loggers) {
+        for (const logger of this.#loggers.values()) {
+          logger.close();
+        }
+      }
+      return;
+    }
 
     await this.loader.load();
   }
@@ -504,32 +524,69 @@ export class EggApplicationCore extends EggCore {
 
   /**
    * Clean up non-serializable resources before V8 heap serialization.
-   * Closes messenger (IPC listeners), loggers (file descriptors),
-   * and removes the process-level unhandledRejection listener.
+   * Closes messenger (IPC listeners), logger streams and flush timers
+   * (file descriptors), and removes the process-level unhandledRejection
+   * listener.
+   *
+   * The `EggLoggers` instance is intentionally kept (not discarded): plugins
+   * such as `@eggjs/schedule` capture individual logger references during the
+   * load phase, before serialization. Replacing them with a fresh `EggLoggers`
+   * on restore would leave those captured references pointing at closed
+   * streams (`... log stream had been closed`). Instead, `snapshotDidDeserialize`
+   * reopens these same logger objects in place.
    */
   protected snapshotWillSerialize(): void {
     this.messenger.close();
     if (this.#loggers) {
       for (const logger of this.#loggers.values()) {
+        // close() releases the file descriptor and, for buffered transports,
+        // clears the flush interval. The objects themselves stay reachable.
         logger.close();
       }
-      this.#loggers = undefined;
     }
     process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
   }
 
   /**
    * Restore non-serializable resources after V8 heap deserialization.
-   * Recreates messenger, re-registers the egg-ready listener,
-   * and re-attaches the process-level unhandledRejection listener.
-   * Loggers are lazily re-created via the `loggers` getter.
+   * Recreates messenger, re-registers the egg-ready listener, reopens the
+   * logger streams closed during serialize, and re-attaches the process-level
+   * unhandledRejection listener.
    */
   protected snapshotDidDeserialize(): void {
     (this as { messenger: IMessenger }).messenger = createMessenger(this);
     this.messenger.once('egg-ready', () => {
       this.lifecycle.triggerServerDidReady();
     });
+    this.#reopenLoggers();
     process.on('unhandledRejection', this._unhandledRejectionHandler);
+  }
+
+  /**
+   * Reopen logger resources that `snapshotWillSerialize` released.
+   *
+   * `transport.reload()` reopens each `FileTransport` stream on the existing
+   * logger objects (so references captured before the snapshot keep working).
+   * `FileBufferTransport`, however, clears its flush interval in `close()` and
+   * does not restart it in `reload()`, so buffered logs would never flush after
+   * restore. Restart that interval explicitly to keep the willSerialize /
+   * didDeserialize resource pairing complete.
+   */
+  #reopenLoggers(): void {
+    if (!this.#loggers) return;
+    for (const logger of this.#loggers.values()) {
+      for (const transport of logger.values()) {
+        // No-op for ConsoleTransport; reopens the stream for file transports.
+        transport.reload();
+        const bufferTransport = transport as unknown as {
+          _timer?: NodeJS.Timeout | null;
+          _createInterval?: () => NodeJS.Timeout;
+        };
+        if (typeof bufferTransport._createInterval === 'function' && !bufferTransport._timer) {
+          bufferTransport._timer = bufferTransport._createInterval();
+        }
+      }
+    }
   }
 
   /**
@@ -637,11 +694,51 @@ export class EggApplicationCore extends EggCore {
   }
 
   protected override customEggPaths(): string[] {
+    const bundleStore = ManifestStore.getBundleStore();
+    // Only rebase when the active bundle store belongs to *this* app. A global
+    // bundle store (shared via globalThis across @eggjs/core copies) may have
+    // been registered for a different app; mirror `ManifestStore.load()`'s
+    // `bundleStore.baseDir === baseDir` gate so an unrelated store never
+    // redirects this app's framework paths.
+    if (bundleStore && path.resolve(bundleStore.baseDir) === path.resolve(this.baseDir)) {
+      // In bundle mode `import.meta.dirname` is rewritten by the bundler to the
+      // bundle output directory, not the egg package directory, so it can no
+      // longer locate the framework `config/*` files. Rebase the framework dir
+      // under the output baseDir (`<output>/node_modules/egg/dist`) so the
+      // manifest-backed loader fs (keyed relative to the output baseDir)
+      // resolves the bundled framework config files.
+      const bundledFrameworkDir = path.join(bundleStore.baseDir, 'node_modules', 'egg', 'dist');
+      // Use the rebased framework dir when EITHER:
+      //  - egg is physically copied next to the bundle output (a deploy that ran
+      //    `npm ci` into the output dir), OR
+      //  - `import.meta.dirname` was actually rewritten by the bundler to the bundle
+      //    output dir (it resolves to `bundleStore.baseDir` instead of the real egg
+      //    package dir). In a real bundle the framework files are inlined and served
+      //    by the manifest-backed loaderFS (keyed `node_modules/egg/dist/...`), so
+      //    they need not exist on disk — `path.dirname(import.meta.dirname)` would
+      //    otherwise point at the app's parent dir and the built-in framework plugins
+      //    (security, session, view, …) would never load.
+      // Integration tests that inject a manifest-backed loaderFS while running from
+      // source keep a non-rewritten `import.meta.dirname` (the real egg dir), so they
+      // fall through to the import.meta.dirname branch below unchanged.
+      const importMetaRewritten =
+        !!import.meta.dirname && path.resolve(import.meta.dirname) === path.resolve(bundleStore.baseDir);
+      if (fs.existsSync(bundledFrameworkDir) || importMetaRewritten) {
+        return [bundledFrameworkDir, ...super.customEggPaths()];
+      }
+    }
     return [path.dirname(import.meta.dirname), ...super.customEggPaths()];
   }
 
+  #clearStartTimeoutTimer(): void {
+    if (this.#startTimeoutTimer) {
+      clearTimeout(this.#startTimeoutTimer);
+      this.#startTimeoutTimer = undefined;
+    }
+  }
+
   #setupTimeoutTimer(): void {
-    const startTimeoutTimer = setTimeout(() => {
+    this.#startTimeoutTimer = setTimeout(() => {
       this.coreLogger.error(this.timing.toString());
       this.coreLogger.error(`${this.type} still doesn't ready after ${this.config.workerStartTimeout} ms.`);
       // log unfinished
@@ -659,7 +756,7 @@ export class EggApplicationCore extends EggCore {
       this.dumpConfig();
       this.dumpTiming();
     }, this.config.workerStartTimeout);
-    this.ready(() => clearTimeout(startTimeoutTimer));
+    this.ready(() => this.#clearStartTimeoutTimer());
   }
 
   get config() {

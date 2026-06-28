@@ -26,7 +26,7 @@ describe('test/stream-mode-with-filematch-glob.test.ts', () => {
   });
   afterAll(async () => {
     try {
-      await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
+      await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true, maxRetries: 3 });
     } catch (err) {
       console.error(err);
     }

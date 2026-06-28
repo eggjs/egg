@@ -184,6 +184,53 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('"path": "app/port"');
   });
 
+  it('emits a runtime block that resolves relative tegg manifest paths to absolute output-dir paths', async () => {
+    // Mirror a bundle artifact whose tegg module paths are stored relative to
+    // baseDir (as normalized by ManifestLoader). The generated worker must
+    // re-absolutize both moduleReferences[].path and moduleDescriptors[].unitPath
+    // against __outputDir so LoaderFactory.loadApp matches them by exact equality
+    // and the precomputed controller/repository decorated files flow into it.
+    const manifest = makeManifest({
+      extensions: {
+        tegg: {
+          moduleReferences: [
+            {
+              name: 'appBiz',
+              path: 'app/biz',
+            },
+          ],
+          moduleDescriptors: [
+            {
+              name: 'appBiz',
+              unitPath: 'app/biz',
+              decoratedFiles: ['controller/HomeController.ts', 'repository/UserRepository.ts'],
+            },
+          ],
+        },
+      },
+    });
+
+    const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
+    const result = await gen.generate();
+    const worker = await fs.readFile(result.workerEntry, 'utf8');
+
+    // Controller + repository decorated files are collected as imports.
+    expect(extractImports(worker).map((i) => i.specifier)).toEqual([
+      '../../app/biz/controller/HomeController.ts',
+      '../../app/biz/repository/UserRepository.ts',
+    ]);
+
+    // Manifest keeps the matching relative keys so both sides resolve equally.
+    expect(worker).toContain('"path": "app/biz"');
+    expect(worker).toContain('"unitPath": "app/biz"');
+
+    // The absolutization block is emitted with the isAbsolute/resolve contract
+    // that maps both moduleReferences and moduleDescriptors onto __outputDir.
+    expect(worker).toContain('path.isAbsolute(p) ? p : path.resolve(__outputDir, p)');
+    expect(worker).toContain('if (__ref) __ref.path = __toAbs(__ref.path);');
+    expect(worker).toContain('if (__desc) __desc.unitPath = __toAbs(__desc.unitPath);');
+  });
+
   it('skips resolveCache entries whose value is null', async () => {
     const manifest = makeManifest({
       resolveCache: {
@@ -233,8 +280,27 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('__setBundleMap(__framework, __frameworkModule)');
     expect(worker).not.toContain('__frameworkImport');
     expect(worker).toContain(
-      "startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single', loaderFS: __loaderFS })",
+      "const __startOptions = { baseDir: __outputDir, framework: __framework, mode: 'single' as const, loaderFS: __loaderFS }",
     );
+    expect(worker).toContain('startEgg(__startOptions)');
+    // 3-mode snapshot dispatch (normal / snapshot-build / restore-main)
+    expect(worker).toContain("import v8 from 'node:v8'");
+    expect(worker).toContain("if (process.env.EGG_BUNDLE_SNAPSHOT === 'build')");
+    expect(worker).toContain('startEgg({ ...__startOptions, snapshot: true })');
+    expect(worker).toContain('app.triggerSnapshotWillSerialize()');
+    expect(worker).toContain('v8.startupSnapshot.setDeserializeMainFunction(() =>');
+    // restore main must defer (ESM loader not ready) and route imports via require()
+    expect(worker).toContain('setImmediate(() =>');
+    expect(worker).toContain("process.getBuiltinModule('node:module')");
+    expect(worker).toContain("(0, eval)('require')('node:module')");
+    expect(worker).toContain('globalThis.__RUNTIME_REQUIRE =');
+    expect(worker).toContain('globalThis.__EGG_MODULE_IMPORTER__ = async (fp: string) => __req(fp)');
+    // re-install the web globals (fetch/Headers/.../Blob/File) the prelude stubbed
+    expect(worker).toContain('globalThis.__installWebGlobalsLazy?.()');
+    expect(worker).toContain('__runtimeRequire.resolve =');
+    expect(worker).toContain('app.triggerSnapshotDidDeserialize()');
+    // daemon readiness over IPC for `egg-scripts start --snapshot-blob`
+    expect(worker).toContain("process.send({ action: 'egg-ready'");
   });
 
   it('builds a BUNDLE_MAP keyed by relKey, output absolute, original app absolute, and resolveCache aliases', async () => {
@@ -438,8 +504,9 @@ export async function startEgg(options) {
 
     expect(extractImports(worker).length).toBe(0);
     expect(worker).toContain(
-      "startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single', loaderFS: __loaderFS })",
+      "const __startOptions = { baseDir: __outputDir, framework: __framework, mode: 'single' as const, loaderFS: __loaderFS }",
     );
+    expect(worker).toContain('startEgg(__startOptions)');
     expect(worker).toContain('__EGG_BUNDLE_MODULE_LOADER__');
     expect(worker).toContain('ManifestStore.setBundleStore');
   });

@@ -2,11 +2,22 @@ import { InitTypeQualifierAttribute, ObjectInitType } from '@eggjs/core-decorato
 import { type EggPrototype, EggPrototypeFactory } from '@eggjs/metadata';
 import { ProxyUtil } from '@eggjs/tegg-common-util';
 import { EggContainerFactory, type LoadUnitInstance } from '@eggjs/tegg-runtime';
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, Context } from 'egg';
 
+const SINGLETON_PROTO_CACHE_SLOT = Symbol('tegg:plugin:singletonProtoCache');
+const REQUEST_PROTO_CACHE_SLOT = Symbol('tegg:plugin:requestProtoCache');
+
 export class CompatibleUtil {
-  static singletonProtoCache: Map<PropertyKey, EggPrototype> = new Map();
-  static requestProtoCache: Map<PropertyKey, EggPrototype> = new Map();
+  // Per-app proto-name caches. Two apps may share a proto NAME but have distinct
+  // protos, so these caches must be per-app (resolved from the active scope).
+  static get singletonProtoCache(): Map<PropertyKey, EggPrototype> {
+    return TeggScope.resolve(SINGLETON_PROTO_CACHE_SLOT, () => new Map(), 'CompatibleUtil.singletonProtoCache');
+  }
+
+  static get requestProtoCache(): Map<PropertyKey, EggPrototype> {
+    return TeggScope.resolve(REQUEST_PROTO_CACHE_SLOT, () => new Map(), 'CompatibleUtil.requestProtoCache');
+  }
 
   static getSingletonProto(name: PropertyKey): EggPrototype {
     if (!this.singletonProtoCache.has(name)) {
@@ -37,15 +48,19 @@ export class CompatibleUtil {
   private static singletonModuleProxyFactory(app: Application, loadUnitInstance: LoadUnitInstance) {
     let deprecated = false;
     return function (_: unknown, p: PropertyKey) {
-      const proto = CompatibleUtil.getSingletonProto(p);
-      const eggObj = EggContainerFactory.getEggObject(proto);
-      if (!deprecated) {
-        deprecated = true;
-        app.deprecate(
-          `[egg/module] Please use await app.getEggObject(clazzName) instead of app.${loadUnitInstance.name}.${String(p)}`,
-        );
-      }
-      return eggObj.obj;
+      // `app.module.xxx` may be accessed outside any request ALS frame, so
+      // re-establish this app's scope synchronously before resolving the proto.
+      return TeggScope.run(app._teggScopeBag, () => {
+        const proto = CompatibleUtil.getSingletonProto(p);
+        const eggObj = EggContainerFactory.getEggObject(proto);
+        if (!deprecated) {
+          deprecated = true;
+          app.deprecate(
+            `[egg/module] Please use await app.getEggObject(clazzName) instead of app.${loadUnitInstance.name}.${String(p)}`,
+          );
+        }
+        return eggObj.obj;
+      });
     };
   }
 
@@ -65,15 +80,18 @@ export class CompatibleUtil {
     if (!holder[cacheKey]) {
       let deprecated = false;
       const getter = function (_: unknown, p: PropertyKey) {
-        const proto = CompatibleUtil.getRequestProto(p);
-        const eggObj = EggContainerFactory.getEggObject(proto, p);
-        if (!deprecated) {
-          deprecated = true;
-          ctx.app.deprecate(
-            `[egg/module] Please use await ctx.getEggObject(clazzName) instead of ctx.${loadUnitInstance.name}.${String(p)}`,
-          );
-        }
-        return eggObj.obj;
+        // `ctx.module.xxx` access — re-establish this app's scope synchronously.
+        return TeggScope.run(ctx.app._teggScopeBag, () => {
+          const proto = CompatibleUtil.getRequestProto(p);
+          const eggObj = EggContainerFactory.getEggObject(proto, p);
+          if (!deprecated) {
+            deprecated = true;
+            ctx.app.deprecate(
+              `[egg/module] Please use await ctx.getEggObject(clazzName) instead of ctx.${loadUnitInstance.name}.${String(p)}`,
+            );
+          }
+          return eggObj.obj;
+        });
       };
       holder[cacheKey] = ProxyUtil.safeProxy(loadUnitInstance, getter);
     }
