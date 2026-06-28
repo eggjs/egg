@@ -7,7 +7,7 @@ import urllib from 'urllib';
 import { getPublishablePackages } from './utils.js';
 
 const baseDir = path.join(import.meta.dirname, '..');
-const packages = getPublishablePackages(baseDir).filter((pkg) => !pkg.private);
+const packages = getPublishablePackages(baseDir);
 
 console.log(`🚀 Syncing to https://npmmirror.com ...`);
 

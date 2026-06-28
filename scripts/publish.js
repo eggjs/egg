@@ -3,7 +3,14 @@
 /**
  * Resilient per-package publish script.
  *
- * Unlike `ut -r publish`, this script:
+ * Publishes with npm so the release keeps npm trusted publishing / provenance
+ * via OIDC (`ut publish` supports neither `--access` nor `--provenance`).
+ * Because npm does not understand the pnpm/utoo `workspace:` and `catalog:`
+ * protocol specifiers, each package manifest is rewritten to concrete version
+ * ranges right before publishing and restored afterwards — the same rewrite
+ * `pnpm publish` performed for us before the utoo migration.
+ *
+ * On top of that, unlike a bulk publish this script:
  * - Skips packages that are already published on npm (safe for retries)
  * - Publishes each package individually so one failure doesn't block others
  * - Retries failed packages once
@@ -14,9 +21,16 @@
  */
 
 import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
 import path from 'node:path';
 
-import { getPublishablePackages } from './utils.js';
+import {
+  applyPublishConfigOverrides,
+  getCatalogs,
+  getPublishablePackages,
+  getWorkspaceVersionMap,
+  resolveWorkspaceProtocols,
+} from './utils.js';
 
 const args = process.argv.slice(2);
 const isDryRun = args.includes('--dry-run');
@@ -30,7 +44,9 @@ if (tagArg) {
 
 const baseDir = path.join(import.meta.dirname, '..');
 const packages = getPublishablePackages(baseDir);
-const utBin = process.platform === 'win32' ? 'ut.cmd' : 'ut';
+const versionMap = getWorkspaceVersionMap(baseDir);
+const catalogs = getCatalogs(baseDir);
+const npmBin = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
 console.log(
   `📦 Publishing ${packages.length} packages (tag: ${npmTag}${isDryRun ? ', dry-run' : ''}${useProvenance ? ', provenance' : ''})`,
@@ -41,7 +57,7 @@ console.log(
  */
 function isPublished(name, version) {
   try {
-    const result = execFileSync('npm', ['view', `${name}@${version}`, 'version'], {
+    const result = execFileSync(npmBin, ['view', `${name}@${version}`, 'version'], {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
       timeout: 15000,
@@ -55,23 +71,39 @@ function isPublished(name, version) {
 }
 
 /**
- * Publish a single package by running `ut publish` from the package
- * directory. utoo's publish only documents --tag/--dry-run/--otp, so we
- * keep the npm-standard --access/--provenance flags (forwarded to npm)
- * and configure npm to skip git checks because the release workflow builds
- * gitignored dist outputs before publishing.
+ * Publish a single package with npm from the package directory. The manifest is
+ * rewritten in place to resolve `workspace:` / `catalog:` protocol specifiers
+ * (npm understands neither) and to hoist `publishConfig` overrides such as
+ * `exports`, then restored in a `finally` block so a crash mid-publish can never
+ * leave the rewritten manifest on disk. `--access` and `--provenance` are
+ * npm-native flags.
  */
 function publishOne(pkg) {
   const publishArgs = ['publish', '--access', 'public', '--tag', npmTag];
   if (useProvenance) publishArgs.push('--provenance');
   if (isDryRun) publishArgs.push('--dry-run');
 
-  execFileSync(utBin, publishArgs, {
-    cwd: path.join(baseDir, pkg.directory, pkg.folder),
-    stdio: 'inherit',
-    env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose', NPM_CONFIG_GIT_CHECKS: 'false' },
-    timeout: 120000,
-  });
+  const packageDir = path.join(baseDir, pkg.directory, pkg.folder);
+  const manifestPath = path.join(packageDir, 'package.json');
+  const originalManifest = fs.readFileSync(manifestPath, 'utf8');
+
+  try {
+    const withVersions = resolveWorkspaceProtocols(JSON.parse(originalManifest), {
+      versionMap,
+      catalogs,
+    });
+    const resolved = applyPublishConfigOverrides(withVersions);
+    fs.writeFileSync(manifestPath, `${JSON.stringify(resolved, null, 2)}\n`);
+
+    execFileSync(npmBin, publishArgs, {
+      cwd: packageDir,
+      stdio: 'inherit',
+      env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose' },
+      timeout: 120000,
+    });
+  } finally {
+    fs.writeFileSync(manifestPath, originalManifest);
+  }
 }
 
 const published = [];
@@ -105,31 +137,40 @@ for (const pkg of packages) {
   }
 }
 
-// Retry failed packages once
+// Retry failed packages once. A dry-run retry would just reproduce the same
+// result, so we skip the retry but still report the failures — otherwise a
+// dry-run would exit 0 even when every package failed to pack, defeating its
+// purpose as a pre-flight check.
 const finalFailed = [];
-if (toRetry.length > 0 && !isDryRun) {
-  console.log(`\n🔄 Retrying ${toRetry.length} failed package(s)...`);
-
-  for (const pkg of toRetry) {
-    const label = `${pkg.name}@${pkg.version}`;
-
-    if (isPublished(pkg.name, pkg.version)) {
-      console.log(`  ⏭️  ${label} now published`);
-      skipped.push(label);
-      continue;
+if (toRetry.length > 0) {
+  if (isDryRun) {
+    for (const pkg of toRetry) {
+      finalFailed.push(`${pkg.name}@${pkg.version}`);
     }
+  } else {
+    console.log(`\n🔄 Retrying ${toRetry.length} failed package(s)...`);
 
-    try {
-      publishOne(pkg);
-      console.log(`  ✅ ${label} (retry)`);
-      published.push(label);
-    } catch {
+    for (const pkg of toRetry) {
+      const label = `${pkg.name}@${pkg.version}`;
+
       if (isPublished(pkg.name, pkg.version)) {
-        console.log(`  ⏭️  ${label} now published (confirmed after retry error)`);
+        console.log(`  ⏭️  ${label} now published`);
         skipped.push(label);
-      } else {
-        console.error(`  ❌ ${label} retry failed`);
-        finalFailed.push(label);
+        continue;
+      }
+
+      try {
+        publishOne(pkg);
+        console.log(`  ✅ ${label} (retry)`);
+        published.push(label);
+      } catch {
+        if (isPublished(pkg.name, pkg.version)) {
+          console.log(`  ⏭️  ${label} now published (confirmed after retry error)`);
+          skipped.push(label);
+        } else {
+          console.error(`  ❌ ${label} retry failed`);
+          finalFailed.push(label);
+        }
       }
     }
   }
