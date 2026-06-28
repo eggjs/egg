@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-06-28] workflow | record egg-bin Windows shell probe hotspot
+
+- sources touched: `tools/egg-bin/bin/run.js`, `tools/egg-bin/test/fixtures/my-egg-bin/bin/run.js`, PR #6014 CI logs
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/workflows/egg-bin-windows-shell-probe.md`
+- note: Recorded the PR #6014 investigation that found hosted-Windows `test-egg-bin` slowness was oclif's synchronous shell probe when spawned children lacked `SHELL`. The final code keeps only the Windows `SHELL` preset before dynamically importing `@oclif/core`; temporary timing and runner-diagnostic code was removed from the PR. Latest single Windows bin job passed in about 3m06s with `test/commands/test.test.ts` around 48.8s and `test/my-egg-bin.test.ts` around 8.5s.
+
 ## [2026-06-28] package | snapshot bundler lazy-externalizes undici + urllib by default (PR #6011)
 
 - sources touched: `tools/egg-bundler/src/lib/prelude.ts`, `tools/egg-bundler/test/snapshot-lazy-external.test.ts`, `tools/egg-bundler/test/snapshot-lazy.realbuild.test.ts`
