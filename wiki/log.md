@@ -2,6 +2,15 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-06-28] package | snapshot bundler lazy-externalizes undici + urllib by default (PR #6011)
+
+- sources touched: `tools/egg-bundler/src/lib/prelude.ts`, `tools/egg-bundler/test/snapshot-lazy-external.test.ts`, `tools/egg-bundler/test/snapshot-lazy.realbuild.test.ts`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/log.md`
+- branch: `feat/snapshot-default-lazy-undici-urllib` (off `next`)
+- change: Added `undici` + `urllib` to `DEFAULT_SNAPSHOT_LAZY_MODULES` so an app gets a serializable V8 snapshot without listing them in `egg.snapshot.lazyModules`. Egg builds its HttpClient (urllib → undici) during boot, and undici's llhttp `WebAssembly` + `HTTPParser` cannot be snapshot-serialized. As npm packages they would be inlined; listing them forces them external (`Bundler` adds lazy ids to the externals map) so the prelude member-proxy stub is used at build and the real module is required on restore.
+- history note: the PR originally (off the older `next`) shipped a bespoke per-export forwarder in `__makeLazyExt` to make `class HttpClient extends urllib.HttpClient` survive the build→restore boundary. While the PR was open, #6003 landed on `next` and rewrote `__makeLazyExt` into a general **access-path-recording member-proxy** (`makeMember`) that already handles `class X extends pkg.Klass` / `DataTypes.INTEGER(11).UNSIGNED` plus `ownKeys`/`getOwnPropertyDescriptor` via `__EXTERNAL_EXPORTS`. The PR was rebased onto that and **reduced to just the default-list addition** (forwarder dropped as superseded). Note `makeMember`'s `protoProxy` has only a `get` trap (no `getPrototypeOf`), so `instanceof RealBase` on a snapshot-frozen subclass is `false` — methods/fields/super() work, identity-by-prototype does not.
+- verification: unit test asserts undici+urllib in the default list; new real `@utoo/pack` build test exercises a **forced-external npm package** `class Sub extends pkg.Base` across the build-stub / restore-real boundary in one process (upstream only realbuild-tested the `node:http` builtin). 28 lazy/realbuild tests green; tsgo + oxlint clean. Pre-existing macOS `ManifestLoader`/`EntryGenerator` tmpdir-symlink failures unrelated.
+
 ## [2026-06-27] concept | fix concurrent-import race in multi-app boot (oxc-node PR #5965)
 
 - sources touched: `packages/utils/src/import.ts`

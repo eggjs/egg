@@ -31,6 +31,18 @@ describe('snapshot lazy-external', () => {
       expect(result).toContain('node:dns');
     });
 
+    it("lazy-externalizes egg's HTTP client stack (undici + urllib) by default", async () => {
+      // Egg builds its HttpClient (urllib -> undici) during boot; undici's llhttp
+      // WebAssembly + HTTPParser cannot be snapshot-serialized. As npm packages they
+      // would otherwise be inlined, so they must be forced external (this list) to get
+      // the member-proxy stub at build — without an app listing them itself.
+      expect(DEFAULT_SNAPSHOT_LAZY_MODULES).toContain('undici');
+      expect(DEFAULT_SNAPSHOT_LAZY_MODULES).toContain('urllib');
+      const result = await resolveSnapshotLazyModules(tmp);
+      expect(result).toContain('undici');
+      expect(result).toContain('urllib');
+    });
+
     it('returns the default list when package.json has no egg.snapshot.lazyModules', async () => {
       await fs.writeFile(path.join(tmp, 'package.json'), JSON.stringify({ name: 'app', egg: {} }));
       expect(await resolveSnapshotLazyModules(tmp)).toEqual([...DEFAULT_SNAPSHOT_LAZY_MODULES]);
