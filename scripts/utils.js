@@ -29,6 +29,22 @@ const PUBLISH_CONFIG_OVERRIDE_FIELDS = [
   'os',
 ];
 
+// Valid npm package name (scoped or unscoped). Names that fail this are
+// rejected before they reach a git command (release commit message) or an
+// `npm publish` invocation — defence in depth against a malicious or
+// malformed `name` field smuggling shell metacharacters or a typo'd package.
+const NPM_NAME_RE = /^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/;
+
+export function isValidNpmPackageName(name) {
+  return typeof name === 'string' && name.length > 0 && name.length <= 214 && NPM_NAME_RE.test(name);
+}
+
+export function assertValidNpmPackageName(name) {
+  if (!isValidNpmPackageName(name)) {
+    throw new Error(`Invalid npm package name: ${JSON.stringify(name)}`);
+  }
+}
+
 function readWorkspaceConfig(baseDir) {
   const workspaceFile = path.join(baseDir, 'pnpm-workspace.yaml');
 
