@@ -49,6 +49,12 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/concepts/vitest-isolate-false-state-leaks.md`
 - note: Under root `pool:threads` + `isolate:false`, two realm-global leaks caused nondeterministic cross-file/cross-project failures. (1) `setSnapshotModuleLoader` left module-level `_snapshotModuleLoader`/`isESM=false` set (no-op test teardown), poisoning module resolution for later files (`Can not find plugin …`). (2) `mockContext()` reused `currentContext` from a different app, binding helpers to the wrong app config (surl/csrf failures). Fixed both at the source. Full Node-22 suite: 15 → 3 failing files (remaining 2 environmental MySQL/DNS; `multipart/file-mode` is a pre-existing load flake that also fails under `isolate:true`). Reproduce on Node 22/24 with a utoo install — not Node 26 / bare pnpm.
 
+## [2026-06-03] workflow | document local CI artifact cleanup
+
+- sources touched: `AGENTS.md`, `.github/workflows/ci.yml`, `package.json`, `tegg/core/loader/src/impl/ModuleLoader.ts`, `tegg/core/metadata/src/model/graph/GlobalGraph.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/workflows/local-ci.md`
+- note: Recorded that local unit tests should run from clean sources, because stale built `dist/` files can be scanned alongside tegg TypeScript sources and trigger `duplicate proto` failures.
+
 ## [2026-05-10] package | extract shared LoaderFS package
 
 - sources touched: `packages/loader-fs/src/index.ts`, `packages/loader-fs/package.json`, `packages/core/src/index.ts`, `packages/core/src/loader/file_loader.ts`, `packages/core/src/loader/egg_loader.ts`

@@ -74,6 +74,11 @@ ut run test:cov            # Run tests with coverage
 ut run ci                  # Full CI: vitest with coverage and bail on first failure
 ```
 
+Run tegg tests from clean sources, not immediately after `pnpm run build`. If
+local tests fail with `duplicate proto` after a build, remove stale `dist/`
+directories outside fixtures as described in the root `AGENTS.md` Local CI
+section, then re-run tests.
+
 **Note:** Tests are configured in the monorepo root `vitest.config.ts` which includes all tegg packages (`tegg/core/*`, `tegg/plugin/*`, `tegg/standalone/*`).
 
 ### Type Checking & Linting

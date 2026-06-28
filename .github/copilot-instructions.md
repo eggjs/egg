@@ -16,7 +16,7 @@ This is a **utoo monorepo** with multiple packages using utoo workspaces and cat
 
 ## Bootstrap and Build Process
 
-**Always run these commands in sequence after fresh clone:**
+**Run these commands after a fresh clone:**
 
 ```bash
 # 1. Enable utoo (required first)
@@ -25,12 +25,16 @@ corepack enable utoo
 # 2. Install all dependencies - takes ~63 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
 ut install --from pnpm
 
-# 3. Build all packages - takes ~14 seconds. NEVER CANCEL. Set timeout to 60+ seconds.
-ut run build
-
-# 4. Run linting (optional but recommended) - takes ~2 seconds
+# 3. Run lint to check code quality across all packages - takes ~2 seconds
 ut run lint
+
+# 4. Build all packages when validating build output - takes ~14 seconds. NEVER CANCEL. Set timeout to 60+ seconds.
+ut run build
 ```
+
+Run unit tests from a clean source tree, not immediately after `ut run build`.
+The main CI test job installs dependencies with `ut install --from pnpm` and
+runs tests with `ut run ci`; it does not run `build` before tests.
 
 ## Monorepo Structure
 
@@ -61,7 +65,7 @@ ut run lint
 
 - `ut run test` - **Run all tests (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
 - `ut run test:cov` - **Run tests with coverage (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
-- `ut run ci` - **Run tests with coverage (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
+- `ut run ci` - **Run tests with coverage (~2.1 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
 
 ### Linting Commands
 
@@ -92,7 +96,7 @@ ut --filter=site run dev
 
 ### 1. Making Changes
 
-- Always build packages first: `ut run build`
+- Work from the source tree first. Build when you need to validate package output, but do not run build immediately before unit tests.
 - Work primarily in `packages/egg/src/` for core framework features
 - Use TypeScript throughout - all packages are TypeScript-based
 - Follow the existing directory conventions in `packages/egg/src/`:
@@ -107,16 +111,16 @@ ut --filter=site run dev
 **Always perform these validation steps after making changes:**
 
 ```bash
-# 1. Build all packages (required)
-ut run build
-
-# 2. Run linting
+# 1. Run lint to check code quality across all packages
 ut run lint
 
-# 3. Run tests (some failures are expected in fresh environment)
+# 2. Run tests from a clean tree (some failures are expected in fresh environment)
 ut run test
 
-# 4. Test documentation site
+# 3. Build all packages when build output or packaging behavior is relevant
+ut run build
+
+# 4. Test documentation site when docs changed
 ut run site:dev
 ```
 
@@ -176,10 +180,15 @@ ut run site:dev
 - Some tests may fail in fresh environments - this is normal
 - Focus on fixing only failures related to your changes
 - Examples may have runtime issues - don't use them for validation
+- If tegg tests fail with `duplicate proto` after a local build, remove stale
+  `dist/` directories outside fixtures and re-run tests. Built `dist/*.js`
+  files can be scanned alongside `src/*.ts`, loading the same decorated class
+  twice.
 
 ### Build Issues
 
-- Always run `ut run build` after making changes
+- Run `ut run build` when validating build output, package exports, or changes
+  that affect generated artifacts.
 - TypeScript compilation errors will show clearly
 - Build warnings are generally acceptable
 
@@ -217,12 +226,12 @@ ut run site:dev
 
 After making changes, always verify:
 
-1. **Build Success**: `ut run build` completes without errors
-2. **Linting Passes**: `ut run lint` shows no new errors
+1. **Linting Passes**: `ut run lint` shows no new errors
+2. **Tests Run From Clean Sources**: `ut run test` executes without stale build artifacts interfering
 3. **Documentation Loads**: `ut run site:dev` starts successfully and the printed VitePress URL responds
-4. **Tests Run**: `ut run test` executes (some failures expected, focus on your changes)
+4. **Build Success When Relevant**: `ut run build` completes without errors
 
-**Remember**: This is a complex enterprise framework. Always build first, validate incrementally, and focus on the core packages (`egg`, `core`, `utils`) for most development work.
+**Remember**: This is a complex enterprise framework. Validate incrementally, keep unit tests isolated from stale build artifacts, and focus on the core packages (`egg`, `core`, `utils`) for most development work.
 
 ## Commit Message Format
 
