@@ -189,7 +189,7 @@ export class Response {
    */
   get length(): number | undefined {
     if (this.has('Content-Length')) {
-      return Number.parseInt(this.get('Content-Length')) || 0;
+      return Number.parseInt(this.get('Content-Length'), 10) || 0;
     }
 
     const body = this.body;
