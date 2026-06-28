@@ -506,8 +506,18 @@ if (process.env.EGG_BUNDLE_SNAPSHOT === 'build') {
             ? process.getBuiltinModule('node:module')
             : (0, eval)('require')('node:module');
         const __req = createRequire(__outputDir + '/');
-        globalThis.__RUNTIME_REQUIRE = (id: string) => __req(id);
+        const __runtimeRequire: any = (id: string) => __req(id);
+        // Expose resolve so the web-globals re-installer can locate undici through the
+        // app dependency tree (e.g. via urllib under pnpm).
+        __runtimeRequire.resolve = (id: string, options?: any) => __req.resolve(id, options);
+        globalThis.__RUNTIME_REQUIRE = __runtimeRequire;
         globalThis.__EGG_MODULE_IMPORTER__ = async (fp: string) => __req(fp);
+
+        // Re-install the web globals (fetch/Headers/.../Blob/File) the snapshot prelude
+        // replaced with stubs at build time, so an app using globalThis.fetch keeps
+        // working after a restore. They become lazy accessors backed by undici (the
+        // fetch family) and node:buffer (Blob/File), loaded on first use.
+        globalThis.__installWebGlobalsLazy?.();
 
         (async () => {
           if (app.agent) {

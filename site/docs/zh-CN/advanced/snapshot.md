@@ -117,6 +117,24 @@ await app.listen(7001);
 恢复阶段，V8 先反序列化堆，随后快照主函数运行 `snapshotDidDeserialize` 钩子重建这些
 运行期资源，跑完延后的生命周期直到 `didReady`，然后开始监听。
 
+保持 external 且惰性加载的模块集合默认是 Node 网络栈（`http`、`https`、`http2`、`tls`、
+`dns`、`inspector`，含它们的 `node:` 形式）。如果该列表之外的某个 builtin 在 import 时
+初始化了原生状态，可以通过应用 `package.json` 里的 `egg.snapshot.lazyModules` 扩展这个
+集合：
+
+```json
+{
+  "egg": {
+    "snapshot": {
+      "lazyModules": ["node:zlib"]
+    }
+  }
+}
+```
+
+当某个第三方依赖或 builtin 破坏了构建或恢复时，参见
+[快照故障排查](./snapshot-troubleshooting.md)，了解如何定位罪魁祸首模块并修复。
+
 ## 快照生命周期钩子
 
 如果你的 `app.js` 或 `agent.js` Boot 类管理了不能直接写入 V8 快照的资源，可以实现下面
@@ -165,11 +183,17 @@ module.exports = AppBootHook;
   （打开的 socket、原生 HTTP/2 绑定、后台 timer、文件句柄）都必须要么保持 external
   （`--force-external`），要么实现快照生命周期钩子，在序列化前释放、在恢复后重建。并不是
   每个包都开箱即可被快照化。
-- **Web 全局对象在恢复后是惰性桩**：构建期 prelude 会把 undici 支撑的全局对象
-  （`fetch`/`Headers`/`Request`/`Response`/`FormData`/`WebSocket`、以及 `Blob`/`File`）替换为
-  空操作的桩，否则在构建期触碰它们会拉起 Node 内建 undici 的原生 http/http2 绑定（无法被快照
-  序列化）。Node 的原生惰性 getter 本身不可被快照序列化，因此恢复后无法把它们还原。**恢复后的
-  进程里这些全局对象仍是桩**——快照化的应用应使用按需懒加载的 HTTP 客户端（如 `urllib`/`undici`，
-  通过 external 在恢复期加载真实模块），而不要直接依赖 `globalThis.fetch`。
+- **Web 全局对象必须在调用处引用**：undici 支撑的全局对象
+  （`fetch`/`Headers`/`Request`/`Response`/`FormData`/`WebSocket`/……）会在构建期被替换为桩
+  （触碰它们会拉起 undici 不可序列化的原生绑定），并在恢复时重新安装，因此在调用处使用时可正常工作。
+  但在模块求值期捕获的绑定——`const f = fetch`，或 `class X extends globalThis.Request`——会把构建期的
+  桩固化进 blob 且不会被升级。请在使用处引用 Web 全局对象，不要在模块顶层捕获。
 
 支持范围仍在演进中；完整的已知限制与设计取舍记录在项目的 V8 快照 RFC 中。
+
+## 故障排查
+
+如果快照无法构建（序列化期间原生中止）或无法恢复，参见
+[快照故障排查](./snapshot-troubleshooting.md)。其中涵盖了构建期与恢复期的错误特征、
+如何定位捕获了不可序列化状态的模块，以及可用的修复手段
+（`--force-external`、`egg.snapshot.lazyModules`、生命周期钩子）。

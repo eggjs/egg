@@ -295,6 +295,9 @@ describe('EntryGenerator', () => {
     expect(worker).toContain("(0, eval)('require')('node:module')");
     expect(worker).toContain('globalThis.__RUNTIME_REQUIRE =');
     expect(worker).toContain('globalThis.__EGG_MODULE_IMPORTER__ = async (fp: string) => __req(fp)');
+    // re-install the web globals (fetch/Headers/.../Blob/File) the prelude stubbed
+    expect(worker).toContain('globalThis.__installWebGlobalsLazy?.()');
+    expect(worker).toContain('__runtimeRequire.resolve =');
     expect(worker).toContain('app.triggerSnapshotDidDeserialize()');
     // daemon readiness over IPC for `egg-scripts start --snapshot-blob`
     expect(worker).toContain("process.send({ action: 'egg-ready'");

@@ -2,11 +2,16 @@ import { execFile } from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const execFileAsync = promisify(execFile);
+
+// Repo root: tools/egg-bundler/test -> ../../.. . `packages/egg` resolves urllib
+// (egg's direct dep), through which the prelude installer reaches undici under pnpm.
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
 // REAL @utoo/pack build regression test for the snapshot lazy-external mechanism.
 //
@@ -157,5 +162,211 @@ describe('snapshot lazy-external — real @utoo/pack build', () => {
     expect(restoreProbe.restored).toBe(true);
     expect(restoreProbe.methodsHasGet).toBe(true); // real http.METHODS also has GET
     expect(restoreProbe.createServerCall).toBe('object'); // real http.createServer() -> Server
+  }, 60_000);
+
+  it('re-installs the web globals (fetch/Headers/Blob) backed by real undici at restore', async () => {
+    await fs.writeFile(path.join(baseDir, 'package.json'), JSON.stringify({ name: 'snaplazy-rb-wg-app' }));
+
+    const entryDir = path.join(baseDir, '.egg-bundle', 'entries');
+    await fs.mkdir(entryDir, { recursive: true });
+    const entry = path.join(entryDir, 'worker.entry.ts');
+    // The prelude (prepended by bundle()) stubs the web globals at load. This entry
+    // simulates the snapshot restore-main: it calls __installWebGlobalsLazy (the
+    // restore-runner installs __RUNTIME_REQUIRE first), then exercises the now-real
+    // fetch/Headers/Blob against a local server.
+    await fs.writeFile(
+      entry,
+      [
+        '// @ts-nocheck',
+        "if (typeof globalThis.__installWebGlobalsLazy === 'function') globalThis.__installWebGlobalsLazy();",
+        '(async () => {',
+        "  const http = globalThis.__RUNTIME_REQUIRE('node:http');",
+        "  const server = http.createServer((req, res) => res.end('pong'));",
+        "  await new Promise((r) => server.listen(0, '127.0.0.1', r));",
+        '  const port = server.address().port;',
+        '  const out = { installerPresent: typeof globalThis.__installWebGlobalsLazy, fetchType: typeof globalThis.fetch, BlobType: typeof globalThis.Blob };',
+        '  try {',
+        "    const resp = await fetch('http://127.0.0.1:' + port + '/');",
+        '    out.body = await resp.text();',
+        "    out.headerOk = new Headers({ x: '1' }).get('x') === '1';",
+        "    out.blobText = await new Blob(['z']).text();",
+        '  } catch (e) { out.err = String((e && e.message) || e); }',
+        '  await new Promise((r) => server.close(r));',
+        "  process.stdout.write('WGPROBE:' + JSON.stringify(out), () => process.exit(0));",
+        '})();',
+        '',
+      ].join('\n'),
+    );
+    mocks.workerEntry = entry;
+    mocks.entryDir = entryDir;
+
+    const outputDir = path.join(baseDir, 'dist');
+    await bundle({ baseDir, outputDir, snapshot: true });
+
+    // Restore-runner installs __RUNTIME_REQUIRE (with resolve) pointing where
+    // urllib/undici live, exactly as the generated deserialize main would.
+    const runner = path.join(outputDir, 'wg-restore-runner.cjs');
+    await fs.writeFile(
+      runner,
+      [
+        'const { createRequire } = require("node:module");',
+        'const req = createRequire(process.env.EGG_TEST_REQUIRE_BASE);',
+        'const rt = (id) => req(id);',
+        'rt.resolve = (id, o) => req.resolve(id, o);',
+        'globalThis.__RUNTIME_REQUIRE = rt;',
+        'require("./worker.js");',
+        '',
+      ].join('\n'),
+    );
+    const ran = await execFileAsync(process.execPath, [runner], {
+      cwd: outputDir,
+      env: { ...process.env, EGG_TEST_REQUIRE_BASE: path.join(REPO_ROOT, 'packages/egg', 'package.json') },
+    });
+    const marker = 'WGPROBE:';
+    const probe = JSON.parse(ran.stdout.slice(ran.stdout.indexOf(marker) + marker.length));
+
+    expect(probe.installerPresent).toBe('function'); // prelude defined it
+    expect(probe.fetchType).toBe('function'); // re-installed, not the WebGlobalStub
+    expect(probe.body).toBe('pong'); // a real fetch round-trip works
+    expect(probe.headerOk).toBe(true); // real undici Headers
+    expect(probe.BlobType).toBe('function');
+    expect(probe.blobText).toBe('z'); // real node:buffer Blob
+  }, 60_000);
+
+  it('forced-external npm package: class extends pkg.Base is a stub at build, real base after restore', async () => {
+    // The scenario this PR's undici/urllib defaults enable: a bundled module extends a
+    // class exported by a forced-external npm package (egg's
+    // `class HttpClient extends urllib.HttpClient`). The `extends` clause is evaluated
+    // at BUILD time against the member-proxy stub; at RESTORE the member-proxy replays
+    // the access path against the real module, so `super(...)` and inherited methods
+    // resolve to the real base class. A local `lazy-base` package stands in for urllib
+    // so the test stays hermetic (ExternalsResolver is mocked, so it is forced external
+    // only via egg.snapshot.lazyModules).
+    await fs.writeFile(
+      path.join(baseDir, 'package.json'),
+      JSON.stringify({ name: 'snaplazy-extends-app', egg: { snapshot: { lazyModules: ['lazy-base'] } } }),
+    );
+    const basePkgDir = path.join(baseDir, 'node_modules', 'lazy-base');
+    await fs.mkdir(basePkgDir, { recursive: true });
+    await fs.writeFile(path.join(basePkgDir, 'package.json'), JSON.stringify({ name: 'lazy-base', main: 'index.js' }));
+    await fs.writeFile(
+      path.join(basePkgDir, 'index.js'),
+      [
+        // Module-eval load counter: lets the runners prove WHEN the real package is
+        // actually loaded (it must be never at build, and only at restore once the
+        // member-proxy resolves through the lazy hook — not via native resolution).
+        'globalThis.__LAZY_BASE_LOADS = (globalThis.__LAZY_BASE_LOADS || 0) + 1;',
+        'class Base {',
+        '  constructor(opt) { this.opt = opt; }',
+        "  greet() { return 'base#' + this.opt; }",
+        '}',
+        'module.exports = { Base };',
+        '',
+      ].join('\n'),
+    );
+
+    const entryDir = path.join(baseDir, '.egg-bundle', 'entries');
+    await fs.mkdir(entryDir, { recursive: true });
+    const entry = path.join(entryDir, 'worker.entry.ts');
+    await fs.writeFile(
+      entry,
+      [
+        '// @ts-nocheck',
+        // captured at module-eval; the `extends` link freezes against whatever this is
+        "const { Base } = require('lazy-base');",
+        'class Sub extends Base {',
+        '  constructor(opt) { super(opt); this.tag = "sub"; }',
+        '  describe() { return this.tag + ":" + this.greet(); }',
+        '}',
+        // defer instantiation so the runner controls the build/restore boundary
+        'globalThis.__makeSub = (n) => new Sub(n);',
+        'process.stdout.write("ENTRY_OK");',
+        '',
+      ].join('\n'),
+    );
+    mocks.workerEntry = entry;
+    mocks.entryDir = entryDir;
+
+    const outputDir = path.join(baseDir, 'dist');
+    await bundle({ baseDir, outputDir, snapshot: true });
+
+    const workerPath = path.join(outputDir, 'worker.js');
+    const worker = await fs.readFile(workerPath, 'utf8');
+    expect(worker).toContain(SNAPSHOT_PRELUDE_MARKER);
+    expect(worker).toMatch(/function\s+externalRequire\s*\(/);
+    await execFileAsync(process.execPath, ['--check', workerPath]);
+
+    const basePathLiteral = JSON.stringify(basePkgDir);
+
+    // BUILD context: define + construct the subclass with no __RUNTIME_REQUIRE. The base
+    // is the member-proxy stub, so the instance is not a real lazy-base instance, nothing
+    // throws, and crucially the real lazy-base module is NEVER loaded (realLoads === 0) —
+    // proving the bundle used the build-time stub rather than resolving the package.
+    const buildRunner = path.join(outputDir, 'build-runner.cjs');
+    await fs.writeFile(
+      buildRunner,
+      [
+        'const probe = { phase: "build" };',
+        'try {',
+        '  require("./worker.js");',
+        '  globalThis.__makeSub(7);',
+        '  probe.restored = !!globalThis.__RUNTIME_REQUIRE;',
+        '  probe.realLoads = globalThis.__LAZY_BASE_LOADS || 0;',
+        '  probe.threw = false;',
+        '} catch (e) { probe.threw = true; probe.err = e.message; }',
+        'process.stdout.write("\\n" + JSON.stringify(probe));',
+        '',
+      ].join('\n'),
+    );
+    const built = await execFileAsync(process.execPath, [buildRunner], { cwd: outputDir });
+    expect(JSON.parse(built.stdout.split('\n').pop() ?? '')).toMatchObject({
+      restored: false,
+      threw: false,
+      realLoads: 0, // real lazy-base never loaded at build
+    });
+
+    // RESTORE context (cross-phase, one process): require worker.js with __RUNTIME_REQUIRE
+    // still unset (freezing `extends` against the stub), THEN install it, THEN instantiate.
+    // The load counters prove the real lazy-base is pulled in ONLY when the member-proxy
+    // resolves through the `__RUNTIME_REQUIRE` hook (loadedBeforeMakeSub === 0,
+    // loadedAfterMakeSub === 1) — i.e. via the lazy hook, not native pre-resolution.
+    //
+    // `instanceof Base` is intentionally NOT asserted: makeMember's `protoProxy` exposes
+    // only a `get` trap (no `getPrototypeOf`), so inherited methods forward to the real
+    // prototype but the snapshot-frozen subclass's prototype chain does not literally
+    // contain the real `Base.prototype` — identity-by-prototype is a known non-goal of the
+    // upstream member-proxy.
+    const restoreRunner = path.join(outputDir, 'restore-runner.cjs');
+    await fs.writeFile(
+      restoreRunner,
+      [
+        'require("./worker.js");',
+        'const loadedBeforeRT = globalThis.__LAZY_BASE_LOADS || 0;',
+        `globalThis.__RUNTIME_REQUIRE = (id) => id === "lazy-base" ? require(${basePathLiteral}) : require(id);`,
+        'const loadedBeforeMakeSub = globalThis.__LAZY_BASE_LOADS || 0;',
+        'const inst = globalThis.__makeSub(7);',
+        'const probe = {',
+        '  restored: true,',
+        '  loadedBeforeRT,',
+        '  loadedBeforeMakeSub,',
+        '  loadedAfterMakeSub: globalThis.__LAZY_BASE_LOADS || 0,',
+        '  tag: inst.tag,',
+        '  greet: inst.greet(),',
+        '  describe: inst.describe(),',
+        '};',
+        'process.stdout.write("\\n" + JSON.stringify(probe));',
+        '',
+      ].join('\n'),
+    );
+    const restored = await execFileAsync(process.execPath, [restoreRunner], { cwd: outputDir });
+    expect(JSON.parse(restored.stdout.split('\n').pop() ?? '')).toEqual({
+      restored: true,
+      loadedBeforeRT: 0, // building the worker did not load the real module
+      loadedBeforeMakeSub: 0, // installing __RUNTIME_REQUIRE does not eagerly load it
+      loadedAfterMakeSub: 1, // loaded exactly once, when the member-proxy resolved via the hook
+      tag: 'sub', // subclass constructor ran
+      greet: 'base#7', // inherited real method + real field (opt=7) — real base constructed
+      describe: 'sub:base#7', // subclass method invoking the inherited one
+    });
   }, 60_000);
 });

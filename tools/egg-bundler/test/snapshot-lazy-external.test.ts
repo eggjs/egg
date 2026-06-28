@@ -31,6 +31,18 @@ describe('snapshot lazy-external', () => {
       expect(result).toContain('node:dns');
     });
 
+    it("lazy-externalizes egg's HTTP client stack (undici + urllib) by default", async () => {
+      // Egg builds its HttpClient (urllib -> undici) during boot; undici's llhttp
+      // WebAssembly + HTTPParser cannot be snapshot-serialized. As npm packages they
+      // would otherwise be inlined, so they must be forced external (this list) to get
+      // the member-proxy stub at build — without an app listing them itself.
+      expect(DEFAULT_SNAPSHOT_LAZY_MODULES).toContain('undici');
+      expect(DEFAULT_SNAPSHOT_LAZY_MODULES).toContain('urllib');
+      const result = await resolveSnapshotLazyModules(tmp);
+      expect(result).toContain('undici');
+      expect(result).toContain('urllib');
+    });
+
     it('returns the default list when package.json has no egg.snapshot.lazyModules', async () => {
       await fs.writeFile(path.join(tmp, 'package.json'), JSON.stringify({ name: 'app', egg: {} }));
       expect(await resolveSnapshotLazyModules(tmp)).toEqual([...DEFAULT_SNAPSHOT_LAZY_MODULES]);
@@ -91,10 +103,15 @@ describe('snapshot lazy-external', () => {
       }
     });
 
-    it('stubs node:buffer File/Blob (which would otherwise pull in undici)', () => {
+    it('defines __installWebGlobalsLazy sourcing the fetch family from undici and File/Blob from node:buffer', () => {
       const prelude = renderSnapshotPrelude();
-      expect(prelude).toContain("process.getBuiltinModule('node:buffer')");
-      expect(prelude).toContain('["File","Blob"]');
+      expect(prelude).toContain('globalThis.__installWebGlobalsLazy = function');
+      expect(prelude).toContain("rt('undici')");
+      // pnpm fallback: resolve undici through urllib (egg's direct dependency).
+      expect(prelude).toContain("rt.resolve('urllib')");
+      expect(prelude).toContain("getBuiltin('node:buffer')");
+      // node:buffer is NOT stubbed: File/Blob serialize fine and are re-installed from it.
+      expect(prelude).not.toContain('BufStub');
     });
 
     it('installs __LAZY_EXT with every lazy id and the __makeLazyExt factory', () => {
@@ -256,6 +273,98 @@ describe('snapshot lazy-external', () => {
       expect(Object.keys(tls)).toEqual([]); // no real module loaded -> no exports
       expect(() => Object.getOwnPropertyDescriptor(tls, 'prototype')).not.toThrow();
       expect('prototype' in tls).toBe(true);
+    });
+  });
+
+  describe('runtime __installWebGlobalsLazy behavior (prelude evaluated in a vm)', () => {
+    // The vm sandbox has no `process`, so the installer's getBuiltin falls back to
+    // __RUNTIME_REQUIRE — which the tests supply, standing in for node:buffer/undici.
+    function makeRestoreContext() {
+      const sandbox: Record<string, any> = {};
+      vm.createContext(sandbox);
+      vm.runInContext(renderSnapshotPrelude(['http']), sandbox);
+      return sandbox;
+    }
+
+    function makeFakeUndici() {
+      return {
+        fetch: () => 'fetched',
+        Headers: class Headers {},
+        Request: class Request {},
+        Response: class Response {},
+        FormData: class FormData {},
+        WebSocket: class WebSocket {},
+        EventSource: class EventSource {},
+        MessageEvent: class MessageEvent {},
+        CloseEvent: class CloseEvent {},
+      };
+    }
+
+    it('re-installs the fetch family from undici and File/Blob from node:buffer, lazily', () => {
+      const sandbox = makeRestoreContext();
+      const fakeUndici = makeFakeUndici();
+      const fakeBuffer = { File: class File {}, Blob: class Blob {} };
+      let undiciLoads = 0;
+      sandbox.__RUNTIME_REQUIRE = (id: string) => {
+        if (id === 'undici') {
+          undiciLoads++;
+          return fakeUndici;
+        }
+        if (id === 'node:buffer') return fakeBuffer;
+        return undefined;
+      };
+
+      sandbox.__installWebGlobalsLazy();
+
+      expect(undiciLoads).toBe(0); // lazy: undici not required until first access
+      expect(sandbox.fetch).toBe(fakeUndici.fetch);
+      expect(undiciLoads).toBe(1);
+      expect(sandbox.Headers).toBe(fakeUndici.Headers);
+      void sandbox.Request;
+      expect(undiciLoads).toBe(1); // cached
+      expect(sandbox.Blob).toBe(fakeBuffer.Blob);
+      expect(sandbox.File).toBe(fakeBuffer.File);
+    });
+
+    it('resolves a web global accessed re-entrantly while undici is still loading', () => {
+      const sandbox = makeRestoreContext();
+      const FakeHeaders = class Headers {};
+      sandbox.__RUNTIME_REQUIRE = (id: string) => {
+        if (id === 'undici') {
+          void sandbox.Headers; // re-entrant access mid-load -> getSource() is undefined
+          return { fetch: () => 'F', Headers: FakeHeaders };
+        }
+        return undefined;
+      };
+
+      sandbox.__installWebGlobalsLazy();
+
+      expect(typeof sandbox.fetch).toBe('function'); // triggers the re-entrant load
+      expect(sandbox.Headers).toBe(FakeHeaders); // resolved once undici finished
+    });
+
+    it('replaces the build-time WebGlobalStub but keeps a genuine value', () => {
+      const sandbox = makeRestoreContext();
+      // A genuine value (not a WebGlobalStub) must be preserved.
+      const genuine = function userHeaders() {};
+      sandbox.Headers = genuine;
+      sandbox.__RUNTIME_REQUIRE = (id: string) =>
+        id === 'undici' ? makeFakeUndici() : id === 'node:buffer' ? { File: class {}, Blob: class {} } : undefined;
+
+      sandbox.__installWebGlobalsLazy();
+
+      expect(sandbox.Headers).toBe(genuine); // kept
+      expect(sandbox.fetch()).toBe('fetched'); // the WebGlobalStub was replaced
+    });
+
+    it('skips a non-configurable global instead of throwing', () => {
+      const sandbox = makeRestoreContext();
+      const frozen = function frozenFetch() {};
+      Object.defineProperty(sandbox, 'fetch', { value: frozen, configurable: false, writable: false });
+      sandbox.__RUNTIME_REQUIRE = (id: string) => (id === 'undici' ? makeFakeUndici() : undefined);
+
+      expect(() => sandbox.__installWebGlobalsLazy()).not.toThrow();
+      expect(sandbox.fetch).toBe(frozen);
     });
   });
 });

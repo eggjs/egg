@@ -292,6 +292,7 @@ function sidebarAdvanced(): DefaultTheme.SidebarItem[] {
         { text: 'Plugin Development', link: 'plugin' },
         { text: 'Framework Development', link: 'framework' },
         { text: 'V8 Startup Snapshot', link: 'snapshot' },
+        { text: 'Snapshot Troubleshooting', link: 'snapshot-troubleshooting' },
       ],
     },
   ];
@@ -406,6 +407,7 @@ function sidebarAdvancedZhCN(): DefaultTheme.SidebarItem[] {
         { text: '升级你的生命周期事件函数', link: 'loader-update' },
         { text: '对象生命周期', link: 'lifecycle' },
         { text: 'V8 启动快照', link: 'snapshot' },
+        { text: '快照故障排查', link: 'snapshot-troubleshooting' },
       ],
     },
   ];
