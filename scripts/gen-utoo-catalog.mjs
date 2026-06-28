@@ -73,6 +73,9 @@ function main() {
   console.log(`Wrote ${out} (${toml.split('\n').length} lines)`);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Run main() only when invoked directly. Compare resolved paths (not
+// `file://${argv[1]}`) so the check also holds on Windows, where argv[1] uses
+// backslashes while import.meta.url is a forward-slash file URL.
+if (process.argv[1] && import.meta.filename === path.resolve(process.argv[1])) {
   main();
 }
