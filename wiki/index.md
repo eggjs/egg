@@ -13,6 +13,7 @@ Read this file before exploring raw sources.
 
 - [CI parallel test metrics](./workflows/ci-parallel-test-metrics.md) - How the CI test gate surfaces avg/peak concurrency + parallel-efficiency metrics for the isolate:false suite, and how to read or reproduce them.
 - [Docs and API Updates](./workflows/docs-and-api-updates.md) - How to handle changes that affect user-facing docs or durable project understanding.
+- [Local CI](./workflows/local-ci.md) - Local validation should run tests from clean sources and avoid stale build artifacts before tegg tests.
 - [Egg-bin Windows shell probe hotspot](./workflows/egg-bin-windows-shell-probe.md) - How PR #6014 diagnosed hosted-Windows egg-bin startup slowness and why the final fix only presets SHELL.
 
 ## Decisions
