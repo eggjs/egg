@@ -85,6 +85,10 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     sourcemap: Flags.boolean({
       summary: 'whether enable sourcemap support, will load `source-map-support` etc',
       aliases: ['ts', 'typescript'],
+      // Allow the `--no-sourcemap` negation so callers can opt out of the
+      // source-map-support `--import` that `egg.typescript` auto-enables (e.g. a
+      // snapshot restore, where `--import` must not ride into `node --snapshot-blob`).
+      allowNo: true,
     }),
   };
 
@@ -112,6 +116,27 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
   protected async getServerBin(): Promise<string> {
     const serverBinName = this.isESM ? 'start-cluster.mjs' : 'start-cluster.cjs';
     return path.join(import.meta.dirname, '../../scripts', serverBinName);
+  }
+
+  /**
+   * Resolve the major version of the node binary that will actually run the
+   * snapshot. For the default (`--node` unset → 'node') or the egg-scripts
+   * runtime itself, the spawned process shares this runtime's version; for an
+   * explicit custom `--node /path`, query that binary directly. Returns
+   * `undefined` when the version cannot be determined, so the gate fails open
+   * (proceeds) rather than blocking a launch whose version it cannot read.
+   */
+  async #resolveSnapshotNodeMajor(command: string): Promise<number | undefined> {
+    if (command === 'node' || command === process.execPath) {
+      return parseInt(process.versions.node, 10);
+    }
+    try {
+      const { stdout } = await execFile(command, ['--version']);
+      const match = /^v?(\d+)\./.exec(stdout.toString().trim());
+      return match ? Number(match[1]) : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   public async run(): Promise<void> {
@@ -248,6 +273,24 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     let eggArgs: string[];
     let displayName: string;
     if (flags['snapshot-blob']) {
+      // Restoring a V8 startup snapshot requires Node.js >= 24. A snapshot can be
+      // *built* on Node.js >= 22, but restoring a non-trivial egg heap on Node.js
+      // 22 aborts the process during deserialization (V8 bug:
+      // `Check failed: current == end_slot_index`). Refuse early with a clear
+      // message here instead of letting the spawned `node --snapshot-blob` child
+      // die with a cryptic native fatal error. Check the version of the node binary
+      // that will actually run the snapshot (`command`/`--node`), not just the
+      // egg-scripts runtime, so a custom `--node` is gated against the real target.
+      const nodeMajor = await this.#resolveSnapshotNodeMajor(command);
+      if (nodeMajor !== undefined && nodeMajor < 24) {
+        this.error(
+          `egg-scripts start --snapshot-blob requires Node.js >= 24 to restore a V8 snapshot, ` +
+            `but ${command} is Node.js ${nodeMajor}.x. ` +
+            `Building a snapshot (egg-bin snapshot build) works on Node.js >= 22, ` +
+            `but restoring it must run on Node.js >= 24. Please upgrade Node.js to 24 or later.`,
+          { exit: 1 },
+        );
+      }
       // Snapshot boot: a single self-contained `node --snapshot-blob <blob>`
       // process (no egg-cluster, no framework resolution). The snapshot entry
       // reads the listen port from PORT env, and `--title` is appended only so

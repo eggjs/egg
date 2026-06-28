@@ -124,7 +124,9 @@ describe('snapshot lazy-external — real @utoo/pack build', () => {
     expect(worker).toContain(SNAPSHOT_PRELUDE_MARKER);
     // @utoo/pack really emitted externalRequire and the hook landed inside it.
     expect(worker).toMatch(/function\s+externalRequire\s*\(/);
-    expect(worker).toMatch(/globalThis\.__LAZY_EXT\.has\([A-Za-z_$][\w$]*\)\) return globalThis\.__makeLazyExt\(/);
+    expect(worker).toMatch(
+      /globalThis\.__LAZY_EXT\.has\([A-Za-z_$][\w$]*\) \|\| !globalThis\.__isBuiltin\([A-Za-z_$][\w$]*\)\)\) return globalThis\.__makeLazyExt\(/,
+    );
 
     // The injected + prepended source is still valid JS.
     await execFileAsync(process.execPath, ['--check', workerPath]);
@@ -132,9 +134,9 @@ describe('snapshot lazy-external — real @utoo/pack build', () => {
     // BUILD context: run worker.js directly. http must be the stub.
     const built = await execFileAsync(process.execPath, [workerPath], { cwd: outputDir });
     expect(JSON.parse(built.stdout)).toEqual({
-      methodsHasGet: true, // hardcoded METHODS, real http never loaded
-      maxHeaderSize: 16384, // hardcoded constant
-      createServerCall: 'undefined', // apply trap no-ops at build time
+      methodsHasGet: true, // __HTTP_CONSTS.METHODS (read from build Node), real http never loaded
+      maxHeaderSize: 16384, // __HTTP_CONSTS.maxHeaderSize, real http never loaded
+      createServerCall: 'object', // build: a call-result member-proxy uses an object target (typeof 'object', mirroring the real instance); still chainable for x.y(z).w
       restored: false,
     });
 

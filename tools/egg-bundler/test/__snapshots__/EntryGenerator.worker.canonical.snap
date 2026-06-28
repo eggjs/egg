@@ -100,6 +100,47 @@ for (const [appAbsRequest, targetRel] of __APP_RESOLVE_CACHE_ALIASES) {
   }
 }
 
+// ── decorator file-path correction ──────────────────────────────────────────
+// tegg decorators (@SingletonProto/@HTTPController/@Advice/…) capture a class's
+// source path from the CALL STACK at module evaluation, via
+// StackUtil.getCalleeFromStack(depth) with a hardcoded frame index. In a bundle
+// every user frame collapses onto worker.js plus turbopack module wrappers, so a
+// decorator that uses a deeper index than the norm — notably @Advice's depth-5 vs
+// @SingletonProto's depth-4 — captures the runtime frame ("…/worker.js") instead
+// of its own source file. tegg then cannot match that proto to its load unit and
+// fails at restore with "Aop Advice(X) not found in loadUnits".
+//
+// The bundle DOES know each decorated file's real path (the manifest's tegg
+// decoratedFiles, surfaced here as __DECORATED_FILE_KEYS). Re-stamp the correct
+// path (outputDir + relKey, matching the format the well-behaved decorators get)
+// on every decorated export, overriding whatever the decorator captured. This runs
+// at build, so the corrected paths are baked into the snapshot the restore reads.
+const __DECORATED_FILE_KEYS: string[] = ["node_modules/@eggjs/fake-module/app/service/UserService.ts"];
+{
+  const __FILE_PATH_META = Symbol.for('EggPrototype.filePath');
+  const __reflect = Reflect as unknown as {
+    hasOwnMetadata?: (key: symbol, target: unknown) => boolean;
+    defineMetadata?: (key: symbol, value: unknown, target: unknown) => void;
+  };
+  if (typeof __reflect.hasOwnMetadata === 'function' && typeof __reflect.defineMetadata === 'function') {
+    for (const __rel of __DECORATED_FILE_KEYS) {
+      const __mod = __getBundleMap(__rel) as Record<string, unknown> | undefined;
+      if (!__mod || (typeof __mod !== 'object' && typeof __mod !== 'function')) continue;
+      const __abs = path.resolve(__outputDir, __rel);
+      for (const __k of Object.keys(__mod)) {
+        const __exported = __mod[__k];
+        if (
+          __exported &&
+          (typeof __exported === 'function' || typeof __exported === 'object') &&
+          __reflect.hasOwnMetadata(__FILE_PATH_META, __exported)
+        ) {
+          __reflect.defineMetadata(__FILE_PATH_META, __abs, __exported);
+        }
+      }
+    }
+  }
+}
+
 // Tegg module reference / descriptor paths are stored relative to baseDir in the
 // manifest. Resolve them to absolute paths under the runtime output dir so every
 // tegg loader consumer (ModuleConfigUtil, EggAppLoader, LoaderFactory.loadApp
@@ -145,6 +186,44 @@ if (process.env.EGG_BUNDLE_SNAPSHOT === 'build') {
   // no servers/timers/connections), run the snapshotWillSerialize hooks to release
   // non-serializable resources, then register the deserialize main function that
   // V8 invokes when restoring from the blob.
+  //
+  // Install the egg loader module importer for the BUILD phase too: the loader
+  // loads config/app files, and under --build-snapshot Node dynamic import() is
+  // unavailable, so route through the bundle map / require() instead. Do NOT set
+  // __RUNTIME_REQUIRE here — that would make externals load for real and defeat
+  // the lazy snapshot stubs; __EGG_MODULE_IMPORTER__ only feeds app/config files.
+  {
+    // getBuiltinModule needs Node >= 22.3; fall back to an eval'd require for
+    // 22.0–22.2 (same opaque-specifier trick the restore branch uses below).
+    const { createRequire: __cr } =
+      typeof process.getBuiltinModule === 'function'
+        ? process.getBuiltinModule('node:module')
+        : (0, eval)('require')('node:module');
+    const __buildReq = __cr(__outputDir + '/');
+    globalThis.__EGG_MODULE_IMPORTER__ = async (fp: string) => {
+      const bundled = __getBundleMap(fp);
+      if (bundled !== undefined) return bundled;
+      // Only skip when fp ITSELF cannot be resolved (a manifest-miss config unit the
+      // loader tolerates). Resolving first separates that from a nested MODULE_NOT_FOUND
+      // raised while loading a resolved file, which is a genuine missing dependency that
+      // must surface rather than be silently swallowed.
+      let resolved: string;
+      try {
+        resolved = __buildReq.resolve(fp);
+      } catch {
+        return undefined;
+      }
+      try {
+        return __buildReq(resolved);
+      } catch (err) {
+        // A resolved ESM file cannot be require()'d under --build-snapshot (no ESM
+        // loader); skip it. Any other error — including a nested MODULE_NOT_FOUND from
+        // a real missing dependency — is genuine and propagates.
+        if ((err as { code?: string } | undefined)?.code === 'ERR_INTERNAL_ASSERTION') return undefined;
+        throw err;
+      }
+    };
+  }
   startEgg({ ...__startOptions, snapshot: true }).then(async (app) => {
     if (app.agent) {
       await app.agent.triggerSnapshotWillSerialize();
@@ -156,6 +235,18 @@ if (process.env.EGG_BUNDLE_SNAPSHOT === 'build') {
       // V8 runs this callback synchronously right after deserialization, before
       // the Node ESM loader is ready, so all real work is deferred to the next
       // tick via setImmediate.
+      //
+      // Restoring a V8 snapshot requires Node.js >= 24: Node.js 22 aborts while
+      // deserializing a non-trivial egg heap (V8 bug). The supported launcher
+      // (egg-scripts start --snapshot-blob) already gates this before spawning,
+      // so this is a defense-in-depth guard for a direct `node --snapshot-blob`
+      // launch that managed to deserialize on an unsupported runtime.
+      const __nodeMajor = parseInt(process.versions.node, 10);
+      if (__nodeMajor < 24) {
+        // eslint-disable-next-line no-console
+        console.error('[egg-bundler] V8 snapshot restore requires Node.js >= 24, but this process is ' + process.version + '. Build works on Node.js >= 22; restore must run on Node.js >= 24.');
+        process.exit(1);
+      }
       setImmediate(() => {
         // A restored snapshot process has no dynamic import() callback
         // (ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING). Route every egg loader import

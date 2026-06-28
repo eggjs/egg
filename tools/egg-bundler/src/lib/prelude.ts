@@ -4,16 +4,26 @@
  * In snapshot mode the bundler prepends this prelude to the emitted single-file
  * `worker.js`, BEFORE the bundle IIFE (`((__UTOOPACK__)=>{...})([...modules])`),
  * so it runs before any bundled module is evaluated. It installs the
- * lazy-external / native-binding stub mechanism that keeps a V8 startup snapshot
- * serializable: the Node network stack (http/https/http2/tls/dns) is NOT loaded
- * while the snapshot is built (its native bindings — HTTPParser, nghttp2
- * settingsBuffer, tls SecureContext, dns ChannelWrap — cannot be serialized, and
- * `WebAssembly` is disabled under `--build-snapshot`), then forwarded to the real
- * module at restore time via `globalThis.__RUNTIME_REQUIRE` (installed by the
- * generated snapshot-restore entry).
+ * lazy-external / native-binding mechanism that keeps a V8 startup snapshot
+ * serializable:
+ *
+ * 1. Node's web globals (fetch/Headers/.../File/Blob) are replaced with plain JS
+ *    stubs so a bundled module touching them at evaluation time neither crashes
+ *    (delete → ReferenceError) nor pulls in Node's built-in undici (whose llhttp
+ *    HTTPParser / nghttp2 native bindings cannot be V8-snapshot-serialized).
+ * 2. `node:buffer.File/Blob` getters are stubbed for the same reason (reading
+ *    them lazily initializes the undici/http stack).
+ * 3. Every external require is routed through `__makeLazyExt`, a member-proxy
+ *    that returns a build-time stub and, at restore time, forwards to the real
+ *    module via `globalThis.__RUNTIME_REQUIRE` — recording the access path so
+ *    `class X extends pkg.Klass` / `DataTypes.INTEGER(11).UNSIGNED` keep working.
+ *
+ * The real globals/modules are present in the restored (live) process.
  */
 
 import { promises as fs } from 'node:fs';
+import http from 'node:http';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
@@ -26,17 +36,20 @@ const debug = debuglog('egg/bundler/snapshot-prelude');
 export const SNAPSHOT_PRELUDE_MARKER = '@eggjs/egg-bundler:snapshot-prelude';
 
 /**
- * Node built-in network modules that produce non-serializable native bindings when
- * loaded inside a V8 startup snapshot builder:
+ * Node built-in modules that produce non-serializable native bindings when loaded
+ * inside a V8 startup snapshot builder. They are kept as lazy externals: build time
+ * returns a member-proxy stub; restore time forwards to the real module via
+ * `globalThis.__RUNTIME_REQUIRE`.
  *
- * - `node:http` / `node:https` create an `HTTPParser` (llhttp) C++ global handle.
- * - `node:http2` creates `HTTPParser` + an `nghttp2` `settingsBuffer` Uint32Array.
- * - `node:tls` creates a `SecureContext`.
- * - `node:dns` creates a `ChannelWrap`.
- *
- * Egg's loader phase touches the HTTP/TLS/DNS stack (HttpClient, agents, etc.), so
- * these are kept as lazy externals: build time returns a stub Proxy; restore time
- * forwards to the real module via `globalThis.__RUNTIME_REQUIRE`.
+ * - network stack (HTTPParser, nghttp2, SecureContext, ChannelWrap):
+ *   http/https/http2/tls/dns.
+ * - `inspector`: a builtin would normally load for real at build (it is not a
+ *   business package, so the `!isBuiltin` lazy condition does not catch it), but
+ *   `egg` core does `import inspector from 'node:inspector'` and evaluates
+ *   `inspector.url()` while building config — which initializes the CDP stack
+ *   (readline/repl + http2 nghttp2 native), making the heap unserializable. Keep
+ *   it lazy so the build-time stub is used; the live process gets the real module
+ *   on restore.
  */
 export const DEFAULT_SNAPSHOT_LAZY_MODULES: readonly string[] = [
   'http',
@@ -49,14 +62,17 @@ export const DEFAULT_SNAPSHOT_LAZY_MODULES: readonly string[] = [
   'node:tls',
   'dns',
   'node:dns',
+  'inspector',
+  'node:inspector',
 ];
 
 /**
- * Node's lazy web globals. Accessing any of them lazily initializes undici, whose
- * llhttp parser allocates a `WebAssembly` instance + `HTTPParser` binding that the
- * snapshot builder cannot serialize. They are removed with `delete` before any
- * bundled module runs. `Object.defineProperty` is NOT usable here: redefining the
- * lazy accessor triggers the very undici load we are avoiding.
+ * Node's web globals. They are backed by undici (fetch/Headers/Request/Response/
+ * FormData/WebSocket/EventSource) or by node:buffer (File/Blob); touching the
+ * undici-backed ones lazily initializes undici (llhttp HTTPParser + WebAssembly),
+ * which the snapshot builder cannot serialize. They are replaced with build-time
+ * stubs (NOT `delete`d — a deleted global throws ReferenceError when a bundled
+ * module references it; a stub is referencable and harmless at build time).
  */
 const WEB_GLOBALS: readonly string[] = [
   'fetch',
@@ -72,113 +88,13 @@ const WEB_GLOBALS: readonly string[] = [
   'Blob',
 ];
 
-/** `http.METHODS` — hardcoded so a library's top-level `[...http.METHODS]` does not force a build-time load. */
-const HTTP_METHODS: readonly string[] = [
-  'ACL',
-  'BIND',
-  'CHECKOUT',
-  'CONNECT',
-  'COPY',
-  'DELETE',
-  'GET',
-  'HEAD',
-  'LINK',
-  'LOCK',
-  'M-SEARCH',
-  'MERGE',
-  'MKACTIVITY',
-  'MKCALENDAR',
-  'MKCOL',
-  'MOVE',
-  'NOTIFY',
-  'OPTIONS',
-  'PATCH',
-  'POST',
-  'PROPFIND',
-  'PROPPATCH',
-  'PURGE',
-  'PUT',
-  'QUERY',
-  'REBIND',
-  'REPORT',
-  'SEARCH',
-  'SOURCE',
-  'SUBSCRIBE',
-  'TRACE',
-  'UNBIND',
-  'UNLINK',
-  'UNLOCK',
-  'UNSUBSCRIBE',
-];
-
-/** `http.STATUS_CODES` — hardcoded for the same reason as METHODS. */
-const HTTP_STATUS_CODES: Readonly<Record<string, string>> = {
-  '100': 'Continue',
-  '101': 'Switching Protocols',
-  '102': 'Processing',
-  '103': 'Early Hints',
-  '200': 'OK',
-  '201': 'Created',
-  '202': 'Accepted',
-  '203': 'Non-Authoritative Information',
-  '204': 'No Content',
-  '205': 'Reset Content',
-  '206': 'Partial Content',
-  '207': 'Multi-Status',
-  '208': 'Already Reported',
-  '226': 'IM Used',
-  '300': 'Multiple Choices',
-  '301': 'Moved Permanently',
-  '302': 'Found',
-  '303': 'See Other',
-  '304': 'Not Modified',
-  '305': 'Use Proxy',
-  '307': 'Temporary Redirect',
-  '308': 'Permanent Redirect',
-  '400': 'Bad Request',
-  '401': 'Unauthorized',
-  '402': 'Payment Required',
-  '403': 'Forbidden',
-  '404': 'Not Found',
-  '405': 'Method Not Allowed',
-  '406': 'Not Acceptable',
-  '407': 'Proxy Authentication Required',
-  '408': 'Request Timeout',
-  '409': 'Conflict',
-  '410': 'Gone',
-  '411': 'Length Required',
-  '412': 'Precondition Failed',
-  '413': 'Payload Too Large',
-  '414': 'URI Too Long',
-  '415': 'Unsupported Media Type',
-  '416': 'Range Not Satisfiable',
-  '417': 'Expectation Failed',
-  '418': "I'm a Teapot",
-  '421': 'Misdirected Request',
-  '422': 'Unprocessable Entity',
-  '423': 'Locked',
-  '424': 'Failed Dependency',
-  '425': 'Too Early',
-  '426': 'Upgrade Required',
-  '428': 'Precondition Required',
-  '429': 'Too Many Requests',
-  '431': 'Request Header Fields Too Large',
-  '451': 'Unavailable For Legal Reasons',
-  '500': 'Internal Server Error',
-  '501': 'Not Implemented',
-  '502': 'Bad Gateway',
-  '503': 'Service Unavailable',
-  '504': 'Gateway Timeout',
-  '505': 'HTTP Version Not Supported',
-  '506': 'Variant Also Negotiates',
-  '507': 'Insufficient Storage',
-  '508': 'Loop Detected',
-  '509': 'Bandwidth Limit Exceeded',
-  '510': 'Not Extended',
-  '511': 'Network Authentication Required',
-};
-
-const HTTP_MAX_HEADER_SIZE = 16384;
+/**
+ * `node:buffer` is a real, serializable builtin (Buffer is needed at build time),
+ * but reading its `File`/`Blob` getters lazily initializes Node's built-in undici
+ * (→ http/http2 native bindings). Those two property getters are stubbed at build;
+ * the live process re-exposes the real ones on restore.
+ */
+const BUFFER_DANGEROUS_PROPS: readonly string[] = ['File', 'Blob'];
 
 interface AppPackageJson {
   readonly egg?: {
@@ -223,16 +139,23 @@ export async function resolveSnapshotLazyModules(baseDir: string): Promise<strin
  * output package.json is `{ "type": "commonjs" }`) and must be safe to execute at
  * the very top of the worker file, before the bundle IIFE.
  *
- * It (1) deletes Node's lazy web globals and (2) installs `globalThis.__LAZY_EXT`
- * (the set of lazy module ids) + `globalThis.__makeLazyExt` (the build-time stub /
- * restore-time forwarder) that the patched `externalRequire` (see
- * {@link injectExternalRequireLazyHook}) consults for every external require.
+ * http constants (METHODS/STATUS_CODES/maxHeaderSize) are read from the BUILD
+ * Node here and inlined, instead of being hand-written — so they track the Node
+ * version the bundle is built with and stay maintenance-free.
  */
-export function renderSnapshotPrelude(lazyModules: readonly string[] = DEFAULT_SNAPSHOT_LAZY_MODULES): string {
+export function renderSnapshotPrelude(
+  lazyModules: readonly string[] = DEFAULT_SNAPSHOT_LAZY_MODULES,
+  externalExports: Readonly<Record<string, readonly string[]>> = {},
+): string {
   const lazyJson = JSON.stringify([...lazyModules]);
   const webJson = JSON.stringify([...WEB_GLOBALS]);
-  const methodsJson = JSON.stringify([...HTTP_METHODS]);
-  const statusJson = JSON.stringify(HTTP_STATUS_CODES);
+  const bufDangerJson = JSON.stringify([...BUFFER_DANGEROUS_PROPS]);
+  const externalExportsJson = JSON.stringify(externalExports);
+  const httpConstsJson = JSON.stringify({
+    METHODS: http.METHODS,
+    STATUS_CODES: http.STATUS_CODES,
+    maxHeaderSize: http.maxHeaderSize,
+  });
 
   return `// ⚠️ auto-generated by @eggjs/egg-bundler — snapshot prelude (do not edit)
 // marker: ${SNAPSHOT_PRELUDE_MARKER}
@@ -240,110 +163,158 @@ export function renderSnapshotPrelude(lazyModules: readonly string[] = DEFAULT_S
 /* eslint-disable */
 (function eggBundlerSnapshotPrelude() {
   'use strict';
-  // Drop Node's lazy web globals before any bundled module touches them. These
-  // getters lazily initialize undici, whose llhttp HTTPParser / WebAssembly cannot
-  // be V8-snapshot-serialized. MUST use \`delete\`: redefining the lazy accessor
-  // would trigger the very load we are avoiding.
+  // Neutralize Node's undici-backed web globals (fetch/Headers/Request/...) so they
+  // never lazily initialize Node's undici stack (llhttp HTTPParser + nghttp2), whose
+  // native bindings a V8 startup snapshot cannot serialize.
+  //
+  // This MUST be done in two passes:
+  //  1. delete the global first. Node defines these as lazy accessor properties; a
+  //     plain redefine via Object.defineProperty (e.g. of \`Headers\`) makes Node load
+  //     undici → http2 native eagerly — the exact thing we must avoid. \`delete\`
+  //     removes the lazy getter WITHOUT triggering it.
+  //  2. then install a no-op stub CLASS as a plain data property. It is now safe (no
+  //     lazy getter remains to trigger) and constructable, so a bundled package doing
+  //     \`class X extends globalThis.Request {}\` still works (\`delete\`/\`undefined\`
+  //     alone would throw "Class extends value undefined" at class definition).
+  // The live process re-exposes the real globals on restore.
   var __WEB_GLOBALS = ${webJson};
   for (var __i = 0; __i < __WEB_GLOBALS.length; __i++) {
     try { delete globalThis[__WEB_GLOBALS[__i]]; } catch (e) {}
   }
+  for (var __k = 0; __k < __WEB_GLOBALS.length; __k++) {
+    try { Object.defineProperty(globalThis, __WEB_GLOBALS[__k], { value: function WebGlobalStub(){}, configurable: true, writable: true }); } catch (e) {}
+  }
 
   if (globalThis.__LAZY_EXT) return;
 
-  // Set of module ids treated as lazy externals. The patched externalRequire
-  // forwards these here instead of requiring the real module at build time.
+  // Set of module ids treated as lazy externals (the patched externalRequire
+  // forwards these to __makeLazyExt instead of loading the real module at build).
   globalThis.__LAZY_EXT = new Set(${lazyJson});
 
-  // Hardcoded http constants so top-level \`[...http.METHODS]\` or
-  // \`Object.keys(http.STATUS_CODES)\` in a bundled library does not force a
-  // build-time load of the real (non-serializable) http module.
-  var __HTTP_METHODS = ${methodsJson};
-  var __HTTP_STATUS_CODES = ${statusJson};
-  var __HTTP_MAX_HEADER_SIZE = ${HTTP_MAX_HEADER_SIZE};
+  // http constants captured from the build Node (no hand-written tables).
+  globalThis.__HTTP_CONSTS = ${httpConstsJson};
+
+  // External-package export names, read at build by the bundler. The member proxy
+  // exposes these via ownKeys so @utoo/pack's interopEsm builds a full ESM
+  // namespace and \`import { X } from 'pkg'\` resolves to a member-proxy (not undefined).
+  globalThis.__EXTERNAL_EXPORTS = ${externalExportsJson};
+
+  // node:buffer is real at build (Buffer is needed) but its File/Blob getters
+  // trigger Node's built-in undici. Stub just those two; restore re-exposes them.
+  (function () {
+    try {
+      var __buf = process.getBuiltinModule('node:buffer');
+      var __bd = ${bufDangerJson};
+      for (var __j = 0; __j < __bd.length; __j++) {
+        try { Object.defineProperty(__buf, __bd[__j], { value: function BufStub(){}, configurable: true, writable: true }); } catch (e) {}
+      }
+    } catch (e) {}
+  })();
+
+  // isBuiltin: tells builtin "tool" modules (path/fs/module — load for real at
+  // build) apart from non-builtin packages (lazy-stubbed at build).
+  globalThis.__isBuiltin = (function () {
+    try { return process.getBuiltinModule('node:module').isBuiltin; } catch (e) { return function () { return false; }; }
+  })();
 
   globalThis.__makeLazyExt = function (id, thunk) {
+    var realMod = function () { var rt = globalThis.__RUNTIME_REQUIRE; return rt ? rt(id) : undefined; };
+    var EXPORTS = (globalThis.__EXTERNAL_EXPORTS && globalThis.__EXTERNAL_EXPORTS[id]) || [];
     var isHttp = id === 'http' || id === 'node:http' || id === 'https' || id === 'node:https';
-    // Build time: globalThis.__RUNTIME_REQUIRE is unset -> returns undefined, the
-    // real module is never loaded. Restore time: __RUNTIME_REQUIRE (installed by the
-    // generated snapshot-restore entry) really requires the module, so
-    // http.createServer is the genuine builtin and the app truly listens.
-    var realModule = function () {
-      var rt = globalThis.__RUNTIME_REQUIRE;
-      return rt ? rt(id) : undefined;
+
+    // Call args captured at build can themselves be member-proxies — e.g. a model column
+    // \`DataTypes.TEXT(LENGTH_VARIANTS.long)\` where LENGTH_VARIANTS is also a lazy export.
+    // They must be resolved to their real values before reaching the real callee, or the
+    // callee receives a Proxy and mishandles it (leoric coerces it to a string in an error
+    // template and throws "String.prototype.toString requires that 'this' be a String").
+    // A member-proxy returns its resolved value via the __MR symbol; anything else passes
+    // through unchanged.
+    var __MR = globalThis.__MEMBER_RESOLVE || (globalThis.__MEMBER_RESOLVE = Symbol.for('@eggjs/egg-bundler:memberResolve'));
+    var resolveArg = function (a) {
+      if (a && (typeof a === 'object' || typeof a === 'function')) {
+        try { var rv = a[__MR]; if (rv !== undefined) return rv; } catch (e) {}
+      }
+      return a;
     };
-    var buildConst = function (prop) {
-      if (!isHttp) return undefined;
-      if (prop === 'METHODS') return __HTTP_METHODS;
-      if (prop === 'STATUS_CODES') return __HTTP_STATUS_CODES;
-      if (prop === 'maxHeaderSize') return __HTTP_MAX_HEADER_SIZE;
-      return undefined;
-    };
+    var resolveArgs = function (args) { var out = []; for (var i = 0; i < args.length; i++) out.push(resolveArg(args[i])); return out; };
+
+    // A member-proxy records the access path (get/apply/construct + call args)
+    // taken at build time and replays it against the real module on restore, so
+    // e.g. \`class X extends urllib.HttpClient\` (build: stub superclass; restore:
+    // real super()/methods) and \`DataTypes.INTEGER(11).UNSIGNED\` keep working.
+    function makeMember(ops) {
+      var resolve = function () {
+        var v = realMod(), prev;
+        for (var i = 0; i < ops.length; i++) {
+          if (v == null) return undefined;
+          var op = ops[i];
+          if (op.t === 'g') { prev = v; v = v[op.k]; }
+          // Use Reflect.apply/construct (invoke [[Call]]/[[Construct]] directly) rather
+          // than v.apply(...): when an earlier step resolved to a member-proxy (a callable
+          // Proxy), \`typeof v === 'function'\` is true but \`v.apply\` is undefined, so
+          // \`v.apply(...)\` throws "v.apply is not a function" (hit by e.g. leoric's
+          // createType introspecting a proxied DataType). Reflect.apply works on any callable.
+          else if (op.t === 'a') { v = (typeof v === 'function') ? Reflect.apply(v, prev, resolveArgs(op.args)) : undefined; prev = undefined; }
+          else if (op.t === 'c') { v = (typeof v === 'function') ? Reflect.construct(v, resolveArgs(op.args)) : undefined; prev = undefined; }
+        }
+        return v;
+      };
+      var protoProxy = new Proxy({}, { get: function (t, p) { var r = resolve(); return r && r.prototype ? r.prototype[p] : undefined; } });
+      // Pick the proxy target so \`typeof member\` matches what the resolved value will be:
+      // a call/construct RESULT is normally an instance (typeof 'object'), while a plain
+      // member access is usually a class/function (typeof 'function'). Libraries branch on
+      // \`typeof x === 'function'\` (e.g. leoric's createType: function ⇒ DataType class,
+      // object ⇒ DataType instance) — a uniformly-function proxy would take the wrong path.
+      // (A non-callable target makes the apply/construct traps dead, which is correct: a
+      // resolved instance is not meant to be called.)
+      var __lastOp = ops.length ? ops[ops.length - 1] : null;
+      var __target = __lastOp && (__lastOp.t === 'a' || __lastOp.t === 'c') ? {} : function () {};
+      var member = new Proxy(__target, {
+        get: function (t, p) { if (p === __MR) return resolve(); if (p === 'prototype') return protoProxy; var r = resolve(); if (r != null) return r[p]; if (p === 'then') return undefined; if (typeof p === 'symbol') return undefined; return makeMember(ops.concat([{ t: 'g', k: p }])); },
+        apply: function (t, thisArg, args) { var r = resolve(); if (typeof r === 'function') return Reflect.apply(r, thisArg, resolveArgs(args)); return makeMember(ops.concat([{ t: 'a', args: args }])); },
+        construct: function (t, args, nt) { var r = resolve(); if (typeof r === 'function') return Reflect.construct(r, resolveArgs(args), nt || r); return makeMember(ops.concat([{ t: 'c', args: args }])); }
+      });
+      return member;
+    }
+
     var proxy = new Proxy(function () {}, {
       get: function (target, prop) {
+        if (prop === __MR) return realMod();
         if (prop === 'default') return proxy;
-        var real = realModule();
-        if (real !== undefined && real !== null) {
-          return real[prop];
-        }
-        // --- build time only below ---
-        if (typeof prop === 'string') {
-          var c = buildConst(prop);
-          if (c !== undefined) return c;
-        }
+        var real = realMod();
+        if (real != null) return real[prop];
+        // Build-time http constants so a library iterating http.METHODS etc.
+        // (e.g. \`for (const m of http.METHODS)\`) does not crash.
+        if (isHttp && typeof prop === 'string' && globalThis.__HTTP_CONSTS && Object.prototype.hasOwnProperty.call(globalThis.__HTTP_CONSTS, prop)) return globalThis.__HTTP_CONSTS[prop];
         if (prop === '__esModule') return undefined;
-        if (typeof prop === 'symbol') return undefined;
-        // Never expose a build-time \`then\`: returning the callable proxy would make
-        // the stub a thenable, so \`await require(id)\` / Promise.resolve(stub) hangs
-        // (apply never resolves). At restore the real module forwards \`then\` above.
         if (prop === 'then') return undefined;
-        // Satisfy Proxy invariants: the function target's own non-configurable
-        // props (prototype/length/name) must be reported faithfully.
-        if (prop === 'prototype' || prop === 'name' || prop === 'length') {
-          return Reflect.get(target, prop);
-        }
-        return proxy; // chainable build-time stub
+        if (typeof prop === 'symbol') return undefined;
+        if (prop === 'prototype' || prop === 'name' || prop === 'length') return Reflect.get(target, prop);
+        return makeMember([{ t: 'g', k: prop }]);
       },
-      apply: function (target, thisArg, args) {
-        var real = realModule();
-        if (typeof real === 'function') return Reflect.apply(real, thisArg, args);
-        return undefined;
-      },
-      construct: function (target, args) {
-        var real = realModule();
-        if (typeof real === 'function') return Reflect.construct(real, args);
-        return proxy; // build time: keep \`new Stub().method()\` chainable
-      },
-      has: function (target, prop) {
-        var real = realModule();
-        if (real !== undefined && real !== null) return prop in real;
-        return true;
-      },
-      // Structural traps. At restore time reflect the REAL module's keys so
-      // Object.keys / spread / destructuring-rest over e.g. require('http') see the
-      // genuine exports; at build time fall back to the target. Either way the
-      // function target's own non-configurable keys (prototype) stay reported so the
-      // Proxy invariants hold. Real descriptors are forced configurable to avoid the
-      // "report a non-configurable prop absent from target" invariant violation.
+      apply: function (target, thisArg, args) { var real = realMod(); if (typeof real === 'function') return Reflect.apply(real, thisArg, resolveArgs(args)); return undefined; },
+      construct: function (target, args, nt) { var real = realMod(); if (typeof real === 'function') return Reflect.construct(real, resolveArgs(args), nt || real); return Object.create((nt && nt.prototype) || target.prototype); },
+      has: function (target, prop) { var real = realMod(); if (real != null) return prop in real; return true; },
+      // Expose the external's real export names at build time (from
+      // __EXTERNAL_EXPORTS, injected by the entry) so @utoo/pack's interopEsm —
+      // which enumerates Object.getOwnPropertyNames(raw) — builds a full ESM
+      // namespace whose named bindings each point at a member-proxy. Without this
+      // \`import { HttpClient } from 'urllib'\` resolves to undefined.
       ownKeys: function (target) {
-        var real = realModule();
-        if (real === undefined || real === null) return Reflect.ownKeys(target);
-        var keys = Reflect.ownKeys(real);
-        var targetKeys = Reflect.ownKeys(target);
-        for (var i = 0; i < targetKeys.length; i++) {
-          if (keys.indexOf(targetKeys[i]) === -1) keys.push(targetKeys[i]);
-        }
-        return keys;
+        var real = realMod();
+        var base = (real != null) ? Reflect.ownKeys(real) : EXPORTS.slice();
+        var tk = Reflect.ownKeys(target);
+        for (var i = 0; i < tk.length; i++) if (base.indexOf(tk[i]) === -1) base.push(tk[i]);
+        return base;
       },
       getOwnPropertyDescriptor: function (target, prop) {
-        var targetDesc = Reflect.getOwnPropertyDescriptor(target, prop);
-        if (targetDesc && !targetDesc.configurable) return targetDesc;
-        var real = realModule();
-        if (real === undefined || real === null) return targetDesc;
-        var desc = Reflect.getOwnPropertyDescriptor(real, prop);
-        if (desc) desc.configurable = true;
-        return desc;
-      },
+        var td = Reflect.getOwnPropertyDescriptor(target, prop);
+        if (td && !td.configurable) return td;
+        var real = realMod();
+        if (real != null) { var d = Reflect.getOwnPropertyDescriptor(real, prop); if (d) d.configurable = true; return d; }
+        if (typeof prop === 'string' && EXPORTS.indexOf(prop) !== -1) return { value: makeMember([{ t: 'g', k: prop }]), configurable: true, enumerable: true, writable: true };
+        return td;
+      }
     });
     return proxy;
   };
@@ -360,6 +331,7 @@ export function renderSnapshotPrelude(lazyModules: readonly string[] = DEFAULT_S
 export function prependSnapshotPrelude(
   source: string,
   lazyModules: readonly string[] = DEFAULT_SNAPSHOT_LAZY_MODULES,
+  externalExports: Readonly<Record<string, readonly string[]>> = {},
 ): string {
   // Only look for the marker in the file head (the prelude is short and always
   // sits at the very top). A whole-file `includes` would false-positive if any
@@ -369,7 +341,7 @@ export function prependSnapshotPrelude(
     return source;
   }
 
-  const prelude = renderSnapshotPrelude(lazyModules);
+  const prelude = renderSnapshotPrelude(lazyModules, externalExports);
   const lines = source.split('\n');
   let insertAt = 0;
 
@@ -392,6 +364,57 @@ export function prependSnapshotPrelude(
 }
 
 /**
+ * Read the export names of every external id (lazy network builtins + external
+ * packages) from the BUILD process, so {@link renderSnapshotPrelude}'s member
+ * proxy can present a full ESM namespace for `import { X } from 'pkg'`. Runs in
+ * the bundler process (NOT the snapshot), so requiring a package here is harmless;
+ * ids that cannot be required (e.g. a missing optional native binary) are skipped.
+ */
+export function readExternalExports(baseDir: string, ids: Iterable<string>): Record<string, string[]> {
+  const req = createRequire(path.join(baseDir, 'package.json'));
+  let isBuiltin: ((id: string) => boolean) | undefined;
+  try {
+    isBuiltin = (process.getBuiltinModule('node:module') as { isBuiltin?: (id: string) => boolean }).isBuiltin;
+  } catch {
+    isBuiltin = undefined;
+  }
+  // Function/class internals that are own-properties but never real exports.
+  const FN_INTERNALS = new Set(['length', 'name', 'prototype', 'arguments', 'caller']);
+  const collect = (mod: unknown): string[] => {
+    const set = new Set<string>();
+    const add = (o: unknown) => {
+      if (!o || (typeof o !== 'object' && typeof o !== 'function')) return;
+      // getOwnPropertyNames (not Object.keys) so NON-ENUMERABLE named exports are
+      // included — @utoo/pack's interopEsm enumerates getOwnPropertyNames(raw) to build
+      // the ESM namespace, so EXPORTS must match or `import { X }` would resolve to
+      // undefined for a non-enumerable X.
+      for (const k of Object.getOwnPropertyNames(o)) {
+        if (typeof o === 'function' && FN_INTERNALS.has(k)) continue;
+        set.add(k);
+      }
+    };
+    add(mod);
+    // CJS packages required as ESM expose named exports on `default`; merge them
+    // (e.g. leoric's `DataTypes`/`Bone` only show up under default via import).
+    if (mod && typeof mod === 'object') add((mod as Record<string, unknown>).default);
+    return [...set];
+  };
+  const out: Record<string, string[]> = {};
+  for (const id of ids) {
+    try {
+      const mod = isBuiltin?.(id)
+        ? process.getBuiltinModule(id as Parameters<typeof process.getBuiltinModule>[0])
+        : req(id);
+      const names = collect(mod);
+      if (names.length > 0) out[id] = names;
+    } catch (err) {
+      debug('skip external exports for %s: %s', id, err instanceof Error ? err.message : err);
+    }
+  }
+  return out;
+}
+
+/**
  * The source `@utoo/pack` (Turbopack) emits for its external-require helper. The
  * lazy hook is injected right after the opening brace, using the helper's own
  * parameter names so it stays correct even if Turbopack renames them.
@@ -408,11 +431,17 @@ export interface ExternalRequireInjectionResult {
  * Inject the lazy dispatch at the start of every `externalRequire` body:
  *
  * ```js
- * if (globalThis.__LAZY_EXT && globalThis.__LAZY_EXT.has(id)) return globalThis.__makeLazyExt(id, thunk);
+ * if (globalThis.__makeLazyExt && !globalThis.__RUNTIME_REQUIRE &&
+ *     (globalThis.__LAZY_EXT.has(id) || !globalThis.__isBuiltin(id)))
+ *   return globalThis.__makeLazyExt(id, thunk);
  * ```
  *
- * so a require of a lazy module id is rerouted to {@link renderSnapshotPrelude}'s
- * `__makeLazyExt` instead of loading the real (non-serializable) module.
+ * so at BUILD time a require is rerouted to {@link renderSnapshotPrelude}'s
+ * `__makeLazyExt` when the id is a blacklisted network builtin OR a non-builtin
+ * package (business deps must not be loaded/required for real at build — they may
+ * be missing platform binaries or open connections). Builtin "tool" modules
+ * (path/fs/module) stay real. At restore (`__RUNTIME_REQUIRE` installed) the hook
+ * is a no-op and the real module is required.
  */
 export function injectExternalRequireLazyHook(content: string): ExternalRequireInjectionResult {
   // Idempotent: a re-run over already-injected output must not double-inject the
@@ -425,7 +454,7 @@ export function injectExternalRequireLazyHook(content: string): ExternalRequireI
   let injected = 0;
   const next = content.replace(EXTERNAL_REQUIRE_SIGNATURE, (match, idParam: string, thunkParam: string) => {
     injected++;
-    return `${match} if (globalThis.__LAZY_EXT && globalThis.__LAZY_EXT.has(${idParam})) return globalThis.__makeLazyExt(${idParam}, ${thunkParam});`;
+    return `${match} if (globalThis.__makeLazyExt && !globalThis.__RUNTIME_REQUIRE && (globalThis.__LAZY_EXT.has(${idParam}) || !globalThis.__isBuiltin(${idParam}))) return globalThis.__makeLazyExt(${idParam}, ${thunkParam});`;
   });
   return { content: next, injected };
 }

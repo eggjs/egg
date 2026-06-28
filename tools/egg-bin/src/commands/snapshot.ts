@@ -142,6 +142,10 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
       throw new Error(`snapshot build finished but no blob was written at ${blobPath}`);
     }
     this.log(`snapshot blob written to ${blobPath}`);
+    // Building works on Node.js >= 22, but restoring the blob requires Node.js
+    // >= 24 (Node.js 22 aborts while deserializing a non-trivial egg heap).
+    // Surface that here so the requirement is visible at build time.
+    this.log('note: restoring this snapshot requires Node.js >= 24 (e.g. `egg-scripts start --snapshot-blob`)');
   }
 
   async #spawnNode(nodeArgs: readonly string[], extraEnv: NodeJS.ProcessEnv = {}): Promise<void> {

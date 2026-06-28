@@ -109,7 +109,7 @@ describe('PackRunner', () => {
     await expect(fs.stat(deepOut)).resolves.toBeTruthy();
   });
 
-  it('defaults to single-file export output with a per-entry library, target node 22, platform node, and UMD-form externals through to buildFunc', async () => {
+  it('defaults to single-file export output with a per-entry library, target node 22, platform node, and commonjs-type externals through to buildFunc', async () => {
     const buildFunc = vi.fn<BuildFunc>(async () => {});
     const entries: PackEntry[] = [
       { name: 'worker', filepath: '/abs/worker.entry.ts' },
@@ -132,10 +132,13 @@ describe('PackRunner', () => {
     expect(config.target).toBe('node 22');
     expect(config.platform).toBe('node');
     expect(config.output).toEqual({ path: path.join(tmpDir, 'out'), type: 'export' });
-    // Externals must be UMD-form ({ commonjs, root }) so @utoo/pack output emits
-    // `require(name)` for the CJS runtime (not globalThis[name]).
+    // Single-file: externals are ExternalType `commonjs` ({ root, type }) so
+    // @utoo/pack emits a direct require(name) (surfaced as externalRequire, which
+    // the snapshot lazy hook intercepts). UMD form would fall through to
+    // globalThis[name] = undefined inside the single-file IIFE (no CommonJS
+    // module/exports in scope there).
     expect(config.externals).toEqual({
-      '@eggjs/core': { commonjs: '@eggjs/core', root: '@eggjs/core' },
+      '@eggjs/core': { root: '@eggjs/core', type: 'commonjs' },
     });
     expect(config.resolve).toBeUndefined();
     expect(projectPath).toBe(tmpDir);
