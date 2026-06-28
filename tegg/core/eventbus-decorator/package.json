@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/eventbus-decorator",
-  "version": "4.0.2-beta.17",
+  "version": "4.0.2-beta.18",
   "description": "tegg eventbus decorator",
   "keywords": [
     "egg",

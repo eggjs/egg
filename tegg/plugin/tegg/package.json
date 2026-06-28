@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-plugin",
-  "version": "4.0.2-beta.17",
+  "version": "4.0.2-beta.18",
   "description": "module plugin for egg",
   "keywords": [
     "egg",
