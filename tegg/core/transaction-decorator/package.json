@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/transaction-decorator",
-  "version": "4.0.2-beta.16",
+  "version": "4.0.2-beta.17",
   "description": "tegg transaction decorator",
   "keywords": [
     "decorator",
