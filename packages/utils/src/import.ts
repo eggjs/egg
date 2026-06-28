@@ -55,8 +55,22 @@ try {
   // If import.meta is not available, it's likely CJS
   isESM = false;
 }
+// Remember the auto-detected module format. `setSnapshotModuleLoader` flips
+// `isESM` to false while a snapshot loader is active; clearing the loader must
+// restore this value so consumers running later in the same realm are not left
+// stuck in CJS mode. This matters under vitest `isolate: false`, where module
+// state persists across test files.
+const detectedIsESM = isESM;
 const nodeMajorVersion = parseInt(process.versions.node.split('.', 1)[0], 10);
-const supportImportMetaResolve = nodeMajorVersion >= 18;
+// Feature-detect instead of gating on the Node version: when the code is shipped
+// inside a bundle (e.g. @utoo/pack rewrites `import.meta` to a runtime shim that
+// lacks `.resolve`), `import.meta.resolve` is not a function even on Node >= 18, so
+// calling it throws. Detecting the actual capability lets us fall back to
+// `require.resolve` in the bundled CommonJS runtime.
+const supportImportMetaResolve =
+  nodeMajorVersion >= 18 &&
+  typeof import.meta !== 'undefined' &&
+  typeof (import.meta as { resolve?: unknown }).resolve === 'function';
 
 let _customRequire: NodeRequire;
 export function getRequire(): NodeRequire {
@@ -367,6 +381,17 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
     }
   }
 
+  // In bundle mode a module's source may not exist on disk (it is inlined into the
+  // bundle). After on-disk resolution has failed, if the registered bundle module
+  // loader recognizes the path, treat it as already resolved and return it as the
+  // canonical key, mirroring importModule. This must run before import.meta.resolve
+  // (which is unavailable in the bundled runtime).
+  const bundleModuleLoader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
+  if (bundleModuleLoader && bundleModuleLoader(normalizeBundleModulePath(filepath)) !== undefined) {
+    debug('[importResolve:bundle] %o => %o', filepath, filepath);
+    return filepath;
+  }
+
   const extname = path.extname(filepath);
   if ((!isAbsolute && extname === '.json') || !isESM) {
     moduleFilePath = getRequire().resolve(filepath, {
@@ -390,7 +415,10 @@ export function importResolve(filepath: string, options?: ImportResolveOptions):
         throw new TypeError(`Cannot find module ${filepath}, because ${moduleFilePath} does not exists`);
       }
     } else {
-      moduleFilePath = getRequire().resolve(filepath);
+      // Fallback when `import.meta.resolve` is unavailable (e.g. inside a bundle).
+      // Forward `paths` so package resolution still honours the caller's lookup
+      // dirs (the app baseDir / framework dirs), matching the on-disk attempts above.
+      moduleFilePath = getRequire().resolve(filepath, paths ? { paths } : undefined);
     }
   }
   debug('[importResolve:success] %o, options: %o => %o, isESM: %s', filepath, options, moduleFilePath, isESM);
@@ -415,10 +443,15 @@ let _snapshotModuleLoader: SnapshotModuleLoader | undefined;
  *
  * Also sets `isESM = false` because the snapshot bundle is CJS and
  * esbuild's `import.meta` polyfill causes incorrect ESM detection.
+ *
+ * Pass `undefined` to clear the loader and restore the auto-detected `isESM`
+ * value. Always clear it once snapshot mode is no longer needed (e.g. in test
+ * teardown) so the module-level state does not leak into other files when
+ * vitest runs with `isolate: false`.
  */
-export function setSnapshotModuleLoader(loader: SnapshotModuleLoader): void {
+export function setSnapshotModuleLoader(loader: SnapshotModuleLoader | undefined): void {
   _snapshotModuleLoader = loader;
-  isESM = false;
+  isESM = loader ? false : detectedIsESM;
 }
 
 export type { BundleModuleLoader } from '@eggjs/typings';
@@ -440,6 +473,10 @@ function normalizeBundleModulePath(filepath: string): string {
 export function setBundleModuleLoader(loader: BundleModuleLoader | undefined): void {
   globalThis.__EGG_BUNDLE_MODULE_LOADER__ = loader;
 }
+
+// Shared promises for ESM imports that are currently in flight, keyed by file URL.
+// See the usage site in `importModule` for why this is needed.
+const _inflightImports = new Map<string, Promise<any>>();
 
 export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
   const _bundleModuleLoader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
@@ -468,6 +505,21 @@ export async function importModule(filepath: string, options?: ImportModuleOptio
     return obj;
   }
 
+  // Async module importer override (e.g. a Vitest runner that loads the module
+  // through its own module graph). Same `ModuleImporter` global the tegg loader
+  // uses, so app/boot files and tegg modules resolve via one realm under test.
+  const _moduleImporter = globalThis.__EGG_MODULE_IMPORTER__;
+  if (_moduleImporter) {
+    let obj = (await _moduleImporter(moduleFilePath)) as any;
+    if (obj && typeof obj === 'object' && obj.default?.__esModule === true && obj.default && 'default' in obj.default) {
+      obj = obj.default;
+    }
+    if (options?.importDefaultOnly && obj && typeof obj === 'object' && 'default' in obj) {
+      obj = obj.default;
+    }
+    return obj;
+  }
+
   let obj: any;
   if (isESM) {
     // esm
@@ -477,7 +529,30 @@ export async function importModule(filepath: string, options?: ImportModuleOptio
     if (_bundleModuleLoader) {
       obj = await getNativeDynamicImport()(fileUrl);
     } else {
-      obj = await import(fileUrl);
+      // Dedupe concurrent in-flight imports of the same URL. The runtime TS
+      // transpile loaders (tsx, @oxc-node/core) recompile a module on every
+      // `import()` (tsx appends a cache-busting query), so when several apps boot
+      // concurrently in one process (e.g. tegg multi-app isolation) two loaders can
+      // trigger two simultaneous compiles of the SAME module and one may observe a
+      // partially-initialized namespace (an `undefined` default export) — surfacing
+      // downstream as `Cannot convert undefined or null to object` in `loadExtend`
+      // or a plugin that lost its `path`. Sharing a single `import()` per URL
+      // serializes those concurrent first-loads.
+      let pending = _inflightImports.get(fileUrl);
+      if (pending === undefined) {
+        pending = import(fileUrl);
+        _inflightImports.set(fileUrl, pending);
+        const clearInflight = () => {
+          if (_inflightImports.get(fileUrl) === pending) {
+            _inflightImports.delete(fileUrl);
+          }
+        };
+        // `then(clear, clear)` (not `finally`) so a failed import settles the
+        // cleanup chain without leaving an unhandled rejection — the awaiting
+        // caller below still observes and propagates the original error.
+        pending.then(clearInflight, clearInflight);
+      }
+      obj = await pending;
     }
     debug('[importModule:success] await import %o', fileUrl);
     // {

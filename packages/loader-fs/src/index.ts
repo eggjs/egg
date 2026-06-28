@@ -19,6 +19,27 @@ const Module = typeof module !== 'undefined' && module.constructor.length > 1 ? 
 const extensions = (Module as unknown as CommonJSModuleConstructor)._extensions ?? {};
 const extensionNames = Object.keys(extensions).concat(['.js', '.cjs', '.mjs']);
 
+// Detect vitest's "environment was torn down" error, raised when a dynamic
+// import() resolves after the test environment that issued it has already been
+// torn down. It is reported by name (`EnvironmentTeardownError`) and/or message,
+// possibly nested behind a `cause`, so walk a short cause chain.
+//
+// Gated on `process.env.VITEST` so this is unmistakably a test-runner-only
+// accommodation: the condition only exists inside the vitest runner during
+// teardown and never in production, so outside vitest we never swallow.
+function isEnvironmentTeardownError(e: unknown): boolean {
+  if (!process.env.VITEST) return false;
+  let cur = e as { name?: unknown; message?: unknown; cause?: unknown } | undefined | null;
+  for (let depth = 0; cur && depth < 5; depth++) {
+    if (cur.name === 'EnvironmentTeardownError') return true;
+    if (typeof cur.message === 'string' && cur.message.includes('after the environment was torn down')) {
+      return true;
+    }
+    cur = cur.cause as typeof cur;
+  }
+  return false;
+}
+
 export type LoaderFSGlobOptions = globby.GlobbyOptions;
 
 export interface LoaderFS {
@@ -63,6 +84,22 @@ export class RealLoaderFS implements LoaderFS {
       }
       return await importModule(filepath, { importDefaultOnly: true });
     } catch (e) {
+      // `isEnvironmentTeardownError` is gated on `process.env.VITEST`, so this
+      // swallow only ever applies inside the vitest runner and can never alter
+      // production loader behavior.
+      if (isEnvironmentTeardownError(e)) {
+        // A dynamic import() that loses the race with a vitest test-environment
+        // teardown throws EnvironmentTeardownError ("Cannot load X ... after the
+        // environment was torn down"). This happens only inside the vitest runner
+        // as a test ends — never in production — and the load result is unusable
+        // anyway. Returning a benign empty value (instead of throwing) keeps the
+        // stray load from surfacing as an unhandled rejection that, under vitest
+        // `isolate: false`, gets blamed on whatever unrelated test file is running
+        // when the import settles. Loaders already treat an empty module as "no
+        // exports", so this is a safe no-op.
+        debug('[loadFile] ignore environment-teardown race for %s', filepath);
+        return undefined;
+      }
       if (!(e instanceof Error)) {
         console.trace(e);
       }

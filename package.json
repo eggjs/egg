@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/monorepo",
-  "version": "4.1.2-beta.9",
+  "version": "4.1.2-beta.17",
   "private": true,
   "description": "Eggjs framework monorepo",
   "license": "MIT",
@@ -52,6 +52,7 @@
   "devDependencies": {
     "@eggjs/bin": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
+    "@oxc-node/core": "catalog:",
     "@types/content-type": "catalog:",
     "@types/js-yaml": "catalog:",
     "@types/koa-compose": "catalog:",
@@ -81,7 +82,7 @@
   "lint-staged": {
     "*": [
       "oxfmt --no-error-on-unmatched-pattern",
-      "oxlint --type-aware --fix"
+      "oxlint --type-aware --fix --no-error-on-unmatched-pattern"
     ]
   },
   "engines": {

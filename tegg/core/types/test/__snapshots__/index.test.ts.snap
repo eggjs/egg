@@ -12,24 +12,13 @@ exports[`should export stable 1`] = `
   "AgentErrorCode": {
     "ExecError": "EXEC_ERROR",
   },
+  "AgentInvalidRequestError": [Function],
   "AgentNotFoundError": [Function],
   "AgentObjectType": {
     "Thread": "thread",
-    "ThreadMessage": "thread.message",
-    "ThreadMessageDelta": "thread.message.delta",
     "ThreadRun": "thread.run",
   },
-  "AgentSSEEvent": {
-    "Done": "done",
-    "ThreadMessageCompleted": "thread.message.completed",
-    "ThreadMessageCreated": "thread.message.created",
-    "ThreadMessageDelta": "thread.message.delta",
-    "ThreadRunCancelled": "thread.run.cancelled",
-    "ThreadRunCompleted": "thread.run.completed",
-    "ThreadRunCreated": "thread.run.created",
-    "ThreadRunFailed": "thread.run.failed",
-    "ThreadRunInProgress": "thread.run.in_progress",
-  },
+  "AgentTimeoutError": [Function],
   "CONSTRUCTOR_QUALIFIER_META_DATA": Symbol(EggPrototype#constructorQualifier),
   "CONTROLLER_ACL": Symbol(EggPrototype#controller#acl),
   "CONTROLLER_AGENT_CONTROLLER": Symbol(EggPrototype#controller#agent#isAgent),
@@ -112,9 +101,6 @@ exports[`should export stable 1`] = `
     "ZLIB": "ZLIB",
   },
   "ConfigSourceQualifierAttribute": Symbol(Qualifier.ConfigSource),
-  "ContentBlockType": {
-    "Text": "text",
-  },
   "ControllerType": {
     "HEADERS": "HEADERS",
     "HTTP": "HTTP",
@@ -225,16 +211,6 @@ exports[`should export stable 1`] = `
   "MODEL_DATA_SOURCE": Symbol(EggPrototype#model#dataSource),
   "MODEL_DATA_TABLE_NAME": Symbol(EggPrototype#model#tableName),
   "MODEL_PROTO_IMPL_TYPE": "MODEL_PROTO",
-  "MessageRole": {
-    "Assistant": "assistant",
-    "System": "system",
-    "User": "user",
-  },
-  "MessageStatus": {
-    "Completed": "completed",
-    "InProgress": "in_progress",
-    "Incomplete": "incomplete",
-  },
   "MethodType": {
     "HTTP": "HTTP",
     "MESSAGE": "MESSAGE",
@@ -301,6 +277,7 @@ exports[`should export stable 1`] = `
     "UPDATE": "UPDATE",
   },
   "TRANSACTION_META_DATA": Symbol(EggPrototype#transaction#metaData),
+  "TeggScope": [Function],
   "Templates": {
     "BASE_DAO": "base_dao",
     "DAO": "dao",

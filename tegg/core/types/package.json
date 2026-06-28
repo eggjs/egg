@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-types",
-  "version": "4.0.2-beta.9",
+  "version": "4.0.2-beta.17",
   "description": "tegg types",
   "keywords": [
     "egg",
@@ -124,6 +124,8 @@
     "./runtime/model/EggObject": "./src/runtime/model/EggObject.ts",
     "./runtime/model/LoadUnitInstance": "./src/runtime/model/LoadUnitInstance.ts",
     "./schedule": "./src/schedule.ts",
+    "./scope": "./src/scope/index.ts",
+    "./scope/TeggScope": "./src/scope/TeggScope.ts",
     "./transaction": "./src/transaction.ts",
     "./package.json": "./package.json"
   },
@@ -227,6 +229,8 @@
       "./runtime/model/EggObject": "./dist/runtime/model/EggObject.js",
       "./runtime/model/LoadUnitInstance": "./dist/runtime/model/LoadUnitInstance.js",
       "./schedule": "./dist/schedule.js",
+      "./scope": "./dist/scope/index.js",
+      "./scope/TeggScope": "./dist/scope/TeggScope.js",
       "./transaction": "./dist/transaction.js",
       "./package.json": "./package.json"
     }

@@ -5,12 +5,11 @@ import coffee from 'coffee';
 const coffeeFork = {
   fork(modulePath: string, args: string[], options: ForkOptions = {}): ReturnType<typeof coffee.fork> {
     options.execArgv = [
-      // '--require', 'ts-node/register/transpile-only',
+      // oxc-node registers a CJS require hook + an ESM module.register() hook
+      // from one `--import`, so the forked egg-bin CLI (TypeScript) boots much
+      // faster than the old `ts-node/register` + `ts-node/esm` loader pair.
       '--import',
-      'ts-node/register/transpile-only',
-      '--no-warnings',
-      '--loader',
-      'ts-node/esm',
+      '@oxc-node/core/register',
       ...(options.execArgv ?? []),
     ];
     options.env = {

@@ -11,7 +11,7 @@ describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
   const repoModulePath = path.join(__dirname, './fixtures/modules/module-for-loader');
 
   it('should load only precomputed files when provided', async () => {
-    const loader = new ModuleLoader(repoModulePath, ['AppRepo.ts']);
+    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: ['AppRepo.ts'] });
     const prototypes = await loader.load();
     // AppRepo.ts has 2 decorated classes: AppRepo and AppRepo2
     assert.equal(prototypes.length, 2);
@@ -27,7 +27,7 @@ describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
     // Load via precomputed files (manifest path)
     // Get the file list from normal loading to ensure consistency
     const fileNames = ['AppRepo.ts', 'SprintRepo.ts', 'UserRepo.ts'];
-    const manifestLoader = new ModuleLoader(repoModulePath, fileNames);
+    const manifestLoader = new ModuleLoader(repoModulePath, { precomputedFiles: fileNames });
     const manifestProtos = await manifestLoader.load();
 
     // Same number and same class names
@@ -38,13 +38,13 @@ describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
   });
 
   it('should return empty list for empty precomputedFiles', async () => {
-    const loader = new ModuleLoader(repoModulePath, []);
+    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: [] });
     const prototypes = await loader.load();
     assert.equal(prototypes.length, 0);
   });
 
   it('should cache result on subsequent calls', async () => {
-    const loader = new ModuleLoader(repoModulePath, ['AppRepo.ts']);
+    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: ['AppRepo.ts'] });
     const first = await loader.load();
     const second = await loader.load();
     assert.strictEqual(first, second);

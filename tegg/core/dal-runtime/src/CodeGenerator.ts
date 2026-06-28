@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import { ColumnModel, TableModel } from '@eggjs/dal-decorator';
@@ -11,6 +12,11 @@ import nunjucks, { type Environment } from 'nunjucks';
 
 import { SqlGenerator } from './SqlGenerator.ts';
 import { TemplateUtil } from './TemplateUtil.ts';
+
+// This package is ESM (type: module), so the CJS `__dirname` global is not
+// available. Restore it from import.meta.url to locate the ./templates dir
+// shipped alongside the built output.
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export class CodeGenerator {
   private readonly moduleDir: string;

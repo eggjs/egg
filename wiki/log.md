@@ -2,6 +2,53 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-06-28] workflow | record egg-bin Windows shell probe hotspot
+
+- sources touched: `tools/egg-bin/bin/run.js`, `tools/egg-bin/test/fixtures/my-egg-bin/bin/run.js`, PR #6014 CI logs
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/workflows/egg-bin-windows-shell-probe.md`
+- note: Recorded the PR #6014 investigation that found hosted-Windows `test-egg-bin` slowness was oclif's synchronous shell probe when spawned children lacked `SHELL`. The final code keeps only the Windows `SHELL` preset before dynamically importing `@oclif/core`; temporary timing and runner-diagnostic code was removed from the PR. Latest single Windows bin job passed in about 3m06s with `test/commands/test.test.ts` around 48.8s and `test/my-egg-bin.test.ts` around 8.5s.
+
+## [2026-06-28] package | snapshot bundler lazy-externalizes undici + urllib by default (PR #6011)
+
+- sources touched: `tools/egg-bundler/src/lib/prelude.ts`, `tools/egg-bundler/test/snapshot-lazy-external.test.ts`, `tools/egg-bundler/test/snapshot-lazy.realbuild.test.ts`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/log.md`
+- branch: `feat/snapshot-default-lazy-undici-urllib` (off `next`)
+- change: Added `undici` + `urllib` to `DEFAULT_SNAPSHOT_LAZY_MODULES` so an app gets a serializable V8 snapshot without listing them in `egg.snapshot.lazyModules`. Egg builds its HttpClient (urllib → undici) during boot, and undici's llhttp `WebAssembly` + `HTTPParser` cannot be snapshot-serialized. As npm packages they would be inlined; listing them forces them external (`Bundler` adds lazy ids to the externals map) so the prelude member-proxy stub is used at build and the real module is required on restore.
+- history note: the PR originally (off the older `next`) shipped a bespoke per-export forwarder in `__makeLazyExt` to make `class HttpClient extends urllib.HttpClient` survive the build→restore boundary. While the PR was open, #6003 landed on `next` and rewrote `__makeLazyExt` into a general **access-path-recording member-proxy** (`makeMember`) that already handles `class X extends pkg.Klass` / `DataTypes.INTEGER(11).UNSIGNED` plus `ownKeys`/`getOwnPropertyDescriptor` via `__EXTERNAL_EXPORTS`. The PR was rebased onto that and **reduced to just the default-list addition** (forwarder dropped as superseded). Note `makeMember`'s `protoProxy` has only a `get` trap (no `getPrototypeOf`), so `instanceof RealBase` on a snapshot-frozen subclass is `false` — methods/fields/super() work, identity-by-prototype does not.
+- verification: unit test asserts undici+urllib in the default list; new real `@utoo/pack` build test exercises a **forced-external npm package** `class Sub extends pkg.Base` across the build-stub / restore-real boundary in one process (upstream only realbuild-tested the `node:http` builtin). 28 lazy/realbuild tests green; tsgo + oxlint clean. Pre-existing macOS `ManifestLoader`/`EntryGenerator` tmpdir-symlink failures unrelated.
+
+## [2026-06-27] concept | fix concurrent-import race in multi-app boot (oxc-node PR #5965)
+
+- sources touched: `packages/utils/src/import.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/vitest-isolate-false-state-leaks.md`
+- note: `tegg/plugin/tegg/test/MultiAppParallel.test.ts` ("…under concurrent boot") flaked ~12% (tsx) / ~24% (oxc-node) on macOS CI with `Can not find plugin watcher` or `Cannot convert undefined or null to object`. NOT caused by the tsx→oxc-node switch (both transpilers flake). Root cause: under `describe.concurrent`, multiple app loaders call `importModule()` on the same `.ts` module simultaneously; the transpile loaders recompile per-`import()` (tsx appends `?<ts>`, defeating Node's dedup) so a concurrent first-load can return a namespace whose `default` is `undefined` → empty framework `config/plugin` (watcher loses its `path`) or `Object.getOwnPropertyNames(undefined)` in `loadExtend`. Fix: `importModule` shares one in-flight `import()` per URL. 40/40 green under both transpilers after; full suite stays 527 files / 3430 tests, 0 failures. Heisenbug (instrumentation masks it); the `.egg/manifest.json` read/write race was a red herring. Recorded as root cause #5 on the concept page.
+
+## [2026-06-27] workflow | CI surfaces single-run parallelism metrics for the isolate:false suite
+
+- sources touched: `vitest.config.ts`, `.github/workflows/ci.yml`, `scripts/ci-test-benchmark/{index,vitest-summary,report,cli,fs,environment}.js`, `benchmark/ci-test/README.md`, `.gitignore`, `packages/supertest/test/supertest.test.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/workflows/ci-parallel-test-metrics.md`, `wiki/concepts/vitest-isolate-false-state-leaks.md`
+- branch: `feat/ci-parallel-metrics` (off `feat/tegg-multiapp-isolation`)
+- note: The full suite already runs `pool:threads` + `isolate:false` (full parallelism, made safe by tegg `TeggScope`). This change instruments the existing **test gating job** to show _how parallel it actually ran_, without touching gate semantics. `vitest.config.ts` adds a `json` reporter **only when `CI` is set** (writes `benchmark/ci-test/ci-run/vitest-results.json` as a side effect of the gating `ut run ci`; default console reporter preserved). A new `Report parallelism metrics` step (`if: always()`) runs the existing `ci-test-benchmark` harness in a new `--report-only --vitest-json <path>` mode, which now computes **avg/peak concurrency, parallel efficiency, and critical path** via a concurrency-timeline sweep over per-file `startTime`/`endTime`, and appends the report to `$GITHUB_STEP_SUMMARY`. Key gotcha found and fixed: the step calls `node scripts/ci-test-benchmark.js` **directly**, because `ut run <script> -- …` re-serializes forwarded args into a `sh -c` string without re-quoting, so parentheses in `--name` throw `syntax error near unexpected token '('`. Honesty caveat baked into the report footnote (corrected after adversarial review): Vitest 4 derives a file's interval from test-level timings, so spans cover test bodies + per-test beforeEach/afterEach but **exclude suite-level beforeAll/afterAll (egg app boots) and module transform/import** — avg/efficiency are lower bounds; peak concurrency is the robust signal. Worker ceiling mirrors the config (Windows caps at 2). Fully-skipped files are dropped from the timeline.
+
+Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--maxWorkers 4`, services up): **526 files / 3425 tests pass, 0 failures**. The only two failures seen during validation were non-isolation: (1) `@eggjs/supertest` "should handle connection error" asserted exact `ECONNREFUSED` on hardcoded `127.0.0.1:1234`, which collides with a local proxy (Surge) → hardened to accept the connection-error family (`ECONNREFUSED|ECONNRESET|ETIMEDOUT|EPIPE|socket hang up`); (2) the pre-existing `@eggjs/multipart` upload load-flake (fails under isolate:true too) surfaces only when a 12-core box over-saturates beyond CI's 4 vCPUs — out of scope, mitigated by CI-faithful worker count. Validated end-to-end: edited config loads in real vitest (both reporters, JSON at the configured path), harness math cross-checked independently, `--report-only` exits 0 on missing JSON, step-summary append is cross-platform, oxfmt/oxlint clean.
+
+## [2026-06-22] package | egg-bundler CJS/ESM require interop fixed upstream in @utoo/pack (EGG-69)
+
+- sources touched: `pnpm-workspace.yaml`, `tools/egg-bundler/src/lib/Bundler.ts`, `tools/egg-bundler/test/Bundler.test.ts`, `tools/egg-bundler/test/cjsEsmInterop.realbuild.test.ts`
+- note: Bundled cnpmcore crashed at runtime with `<path>/tsconfig.json is malformed JSON5.parse is not a function`. Root cause: older `@utoo/pack` (Turbopack, target node) resolved a CJS `require('json5')` to json5's ESM `module` entry (`dist/index.mjs`, default-only), so `commonJsRequire` returned the `{ __esModule, default }` namespace and `JSON5.parse` was undefined. This is now **fixed upstream** (utooland/utoo#3185): `@utoo/pack` >= 1.4.16 resolves a CJS `require()` of such a dual package to its CommonJS `main`, matching Node's own CommonJS resolution. The earlier in-repo workaround (a post-build patch of `_turbopack__runtime.js` that unwrapped the lone `default`) is **removed** in favour of the upstream fix; the catalog `@utoo/pack` range is bumped to `^1.4.16`. Verified by a real `@utoo/pack` build over a json5-shaped dual fixture (`main`+`module`, ESM exports only `default`) required from authored CJS via a named member: the bundled worker runs the CJS implementation (`cjs:ok`) with no crash, confirming `require('pkg').member` resolves like Node. NB: the internal registry (`registry.antgroup-inc.cn`) still tops out at 1.4.14 (which lacks the fix); the OSS repo/CI uses the public registry where 1.4.16 is available.
+
+## [2026-06-20] concept | fix Windows-flaky session test (teardown close/load race)
+
+- sources touched: `packages/core/src/lifecycle.ts`, `packages/egg/src/lib/egg.ts`, `packages/core/test/lifecycle.test.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/concepts/vitest-isolate-false-state-leaks.md`
+- note: Windows CI flakily failed `@eggjs/session` `session.test.ts` with "app has been closed" / "Can't find viewEngine". Root cause: a still-loading `mm.app()` app/agent (load runs on `process.nextTick` as a `registerBeforeStart` hook) calls `Lifecycle.registerBeforeClose()` after `close()` already set `#isClosed`, directly in `egg.ts` `load()` or lazily via `coreLogger`→`createLoggers()` from `dumpTiming` / `_unhandledRejectionHandler`. The `assert(#isClosed === false)` threw, becoming a process unhandled rejection that `isolate:false` attributes to whatever file is running. Fix: `registerBeforeClose()` now skips (no-op + debug) when already closed instead of throwing; `load()` short-circuits when `lifecycle.isClosed` (removes the just-added unhandledRejection listener, returns); added `Lifecycle.isClosed` getter + regression test. Continuation of the isolate:false work (root cause #4 on the concept page).
+
+## [2026-06-08] concept | vitest isolate:false state leaks diagnosed and fixed
+
+- sources touched: `packages/utils/src/import.ts`, `packages/utils/test/snapshot-import.test.ts`, `plugins/mock/src/app/extend/application.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/concepts/vitest-isolate-false-state-leaks.md`
+- note: Under root `pool:threads` + `isolate:false`, two realm-global leaks caused nondeterministic cross-file/cross-project failures. (1) `setSnapshotModuleLoader` left module-level `_snapshotModuleLoader`/`isESM=false` set (no-op test teardown), poisoning module resolution for later files (`Can not find plugin …`). (2) `mockContext()` reused `currentContext` from a different app, binding helpers to the wrong app config (surl/csrf failures). Fixed both at the source. Full Node-22 suite: 15 → 3 failing files (remaining 2 environmental MySQL/DNS; `multipart/file-mode` is a pre-existing load flake that also fails under `isolate:true`). Reproduce on Node 22/24 with a utoo install — not Node 26 / bare pnpm.
+
 ## [2026-06-03] workflow | document local CI artifact cleanup
 
 - sources touched: `AGENTS.md`, `.github/workflows/ci.yml`, `package.json`, `tegg/core/loader/src/impl/ModuleLoader.ts`, `tegg/core/metadata/src/model/graph/GlobalGraph.ts`
@@ -61,3 +108,9 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - sources touched: `packages/typings/package.json`, `packages/typings/src/index.ts`, `packages/typings/src/global.ts`, `AGENTS.md`, `CLAUDE.md`
 - pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/typings.md`
 - note: Recorded `@eggjs/typings` as the shared home for cross-package global typing contracts.
+
+## [2026-06-27] api | formalize bundle/snapshot module-loader hooks
+
+- sources touched: `packages/utils/src/import.ts`, `packages/utils/README.md`, `packages/utils/test/module-importer.test.ts`, `packages/utils/test/fixtures/module-importer-require-esm/run.mjs`, `packages/typings/src/index.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/utils.md`
+- note: Documented the `__EGG_BUNDLE_MODULE_LOADER__` → snapshot loader (`setSnapshotModuleLoader`) → `__EGG_MODULE_IMPORTER__` → native priority as a formal contract (JSDoc on `BundleModuleLoader`/`ModuleImporter` + README). Added regression coverage for the V8 snapshot-restore path where `__EGG_MODULE_IMPORTER__ = require` loads ESM with no dynamic-import callback (inline sync-require test + spawned `node:vm` fixture). No load-semantics change — types/declarations already existed.

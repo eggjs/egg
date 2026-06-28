@@ -1,4 +1,5 @@
 import { MODEL_PROTO_IMPL_TYPE } from '@eggjs/orm-decorator';
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { DataSourceManager } from './lib/DataSourceManager.ts';
@@ -32,6 +33,8 @@ export default class OrmAppBootHook implements ILifecycleBoot {
   }
 
   configWillLoad(): void {
+    // app.*LifecycleUtil getters are pinned to this app's scope bag, and
+    // registerEggObjectCreateMethod is a shared static registry — no run wrap needed.
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.modelProtoHook);
     this.app.eggObjectFactory.registerEggObjectCreateMethod(SingletonModelProto, SingletonModelObject.createObject);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.ormLoadUnitHook);
@@ -50,7 +53,7 @@ export default class OrmAppBootHook implements ILifecycleBoot {
 
   async didLoad(): Promise<void> {
     await this.app.moduleHandler.ready();
-    await this.leoricRegister.register();
+    await TeggScope.run(this.app._teggScopeBag, () => this.leoricRegister.register());
   }
 
   async beforeClose(): Promise<void> {

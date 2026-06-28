@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import { describe, it, afterEach } from 'vitest';
@@ -119,7 +120,7 @@ describe('test/snapshot.test.ts', () => {
       assert.ok(app.messenger.listenerCount('egg-ready') >= 1, 'new messenger should have egg-ready listener');
     });
 
-    it('should clean up loggers on snapshotWillSerialize', async () => {
+    it('should keep the same EggLoggers instance across serialize/deserialize', async () => {
       app = new Application({
         baseDir: demoApp,
         mode: 'single',
@@ -128,20 +129,89 @@ describe('test/snapshot.test.ts', () => {
       await app.ready();
 
       // Access loggers to force lazy creation
-      const _loggers = app.loggers;
-      assert.ok(_loggers, 'loggers should exist');
+      const loggersBefore = app.loggers;
+      assert.ok(loggersBefore, 'loggers should exist');
 
       await app.triggerSnapshotWillSerialize();
 
-      // After serialize, loggers are cleared (set to undefined internally).
-      // Accessing loggers again would re-create them lazily.
-      // We can't directly check the private #loggers field, but we can verify
-      // that new loggers are created after deserialize.
+      // The EggLoggers instance is intentionally NOT discarded on serialize:
+      // plugins capture individual logger references during load, so replacing
+      // them with a fresh instance would orphan those captured references.
       await app.triggerSnapshotDidDeserialize();
       await new Promise<void>((resolve) => process.nextTick(resolve));
 
-      // After deserialize, loggers should be lazily re-created on access
-      assert.ok(app.loggers, 'loggers should be lazily re-created');
+      // Same instance is reused (reopened in place), not lazily re-created.
+      assert.strictEqual(app.loggers, loggersBefore, 'loggers instance should be preserved');
+    });
+
+    it('should reopen logger streams so captured references keep writing after deserialize', async () => {
+      app = new Application({
+        baseDir: demoApp,
+        mode: 'single',
+        snapshot: true,
+      });
+      await app.ready();
+      await app.loadFinished;
+
+      // Plugins such as @eggjs/schedule grab a logger reference during the load
+      // phase (in their boot hook constructor) and keep using it afterwards.
+      // Emulate that: capture the logger up-front, then drive serialize/restore.
+      const capturedLogger = app.getLogger('logger');
+      assert.ok(capturedLogger, 'logger should exist');
+
+      // Collect the file-backed transports of the captured logger.
+      const fileTransports: any[] = [...capturedLogger.values()].filter(
+        (t: any) => t.options && typeof t.options.file === 'string',
+      );
+      assert.ok(fileTransports.length > 0, 'logger should have a file transport');
+      for (const t of fileTransports) {
+        assert.equal(t.writable, true, 'file transport should be writable before serialize');
+      }
+
+      // Serialize: streams are closed and buffer flush timers cleared.
+      await app.triggerSnapshotWillSerialize();
+      for (const t of fileTransports) {
+        assert.ok(!t.writable, 'file transport should be closed after serialize');
+      }
+
+      // Deserialize: the SAME transports must be reopened (not replaced).
+      await app.triggerSnapshotDidDeserialize();
+      await new Promise<void>((resolve) => process.nextTick(resolve));
+
+      // Identity is preserved — the captured reference is still the live logger.
+      assert.strictEqual(app.getLogger('logger'), capturedLogger, 'captured logger reference should stay live');
+      for (const t of fileTransports) {
+        assert.equal(t.writable, true, 'file transport should be reopened after deserialize');
+        // Buffered transports clear their flush interval on close(); it must be
+        // restarted so buffered logs flush again.
+        if (typeof t._createInterval === 'function') {
+          assert.ok(t._timer, 'buffer flush timer should be restarted after deserialize');
+        }
+      }
+
+      // End-to-end: writing through the captured reference lands on disk
+      // instead of hitting the "log stream had been closed" path.
+      // Unique per execution so the assertion can't match a stale line left in
+      // the demo app's (append-only) log file by an earlier test run.
+      const marker = `snapshot-restore-marker-${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      capturedLogger.info(marker);
+      for (const t of fileTransports) {
+        // flush buffered transports immediately so we don't wait for the interval
+        if (typeof t.flush === 'function') t.flush();
+      }
+      const appLog = fileTransports.find((t) => t.options.file.endsWith('-web.log'));
+      assert.ok(appLog, 'app web log transport should exist');
+      // flush() issues an async WriteStream.write(); poll until it reaches disk
+      // so the assertion does not race the libuv threadpool write on slow CI.
+      let landed = false;
+      for (let i = 0; i < 100 && !landed; i++) {
+        if (readFileSync(appLog.options.file, 'utf8').includes(marker)) {
+          landed = true;
+          break;
+        }
+        await new Promise<void>((resolve) => setTimeout(resolve, 20));
+      }
+      assert.ok(landed, 'log written after restore should reach the file');
     });
 
     it('should remove unhandledRejection handler on serialize and restore on deserialize', async () => {

@@ -7,18 +7,12 @@ import { getFilepath } from './helper.ts';
 
 describe('test/snapshot-import.test.ts', () => {
   describe('setSnapshotModuleLoader', () => {
-    // We need to capture and restore isESM since setSnapshotModuleLoader mutates it.
-    // Use dynamic import to read the current value.
-    afterEach(async () => {
-      // Reset the snapshot loader by setting it to a no-op then clearing via
-      // module internals. Since there's no public "unset" API, we re-import
-      // and the module-level _snapshotModuleLoader remains set — but tests
-      // are isolated enough that this is fine. We'll use a different approach:
-      // just call setSnapshotModuleLoader with a passthrough that calls the
-      // real import, but that changes isESM. Instead, we accept that these
-      // tests run with the loader set and each test overrides it.
-      // Reset by overwriting with undefined via the setter trick:
-      // Actually we can't unset. Let's just re-import fresh for isolation.
+    // setSnapshotModuleLoader mutates module-level state (_snapshotModuleLoader
+    // and isESM). Clear it after each test, otherwise the state leaks into every
+    // other test file sharing this realm when vitest runs with `isolate: false`,
+    // breaking their module resolution ("Can not find plugin ...").
+    afterEach(() => {
+      setSnapshotModuleLoader(undefined);
     });
 
     it('should intercept importModule with registered loader', async () => {

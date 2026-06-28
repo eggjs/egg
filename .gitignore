@@ -13,6 +13,9 @@ run
 .egg
 .husky/_
 
+# CI test benchmark run outputs (keep benchmark/ci-test/README.md)
+benchmark/ci-test/*/
+
 *-lock.json
 *-lock.yaml
 yarn.lock
@@ -116,6 +119,7 @@ tegg/plugin/tegg/test/fixtures/apps/**/*.js
 *.tgz
 
 ecosystem-ci/cnpmcore
+ecosystem-ci/cnpmcore-snapshot
 ecosystem-ci/examples
 pnpm-lock.yaml
 .utoo.toml

@@ -1,25 +1,92 @@
 import assert from 'node:assert';
 
 import type { OSSObject } from 'oss-client';
-import { describe, it, vi, beforeEach } from 'vitest';
+import { describe, it, beforeEach } from 'vitest';
 
 import { OSSObjectStorageClient } from '../src/OSSObjectStorageClient.ts';
+
+/** Simple mock function helper for mocha tests. */
+function mockFn() {
+  const calls: any[][] = [];
+  let nextResults: Array<{ type: 'resolve' | 'reject'; value: any }> = [];
+  const fn = (...args: any[]) => {
+    calls.push(args);
+    const result = nextResults.shift();
+    if (result) {
+      return result.type === 'resolve' ? Promise.resolve(result.value) : Promise.reject(result.value);
+    }
+    return Promise.resolve({});
+  };
+  fn.mock = { calls };
+  fn.mockResolvedValue = (val: any) => {
+    nextResults = [];
+    fn.mockResolvedValueOnce(val);
+    nextResults = nextResults.map(() => ({ type: 'resolve' as const, value: val }));
+    (fn as any)._defaultResult = { type: 'resolve', value: val };
+    return fn;
+  };
+  fn.mockResolvedValueOnce = (val: any) => {
+    nextResults.push({ type: 'resolve', value: val });
+    return fn;
+  };
+  fn.mockRejectedValue = (val: any) => {
+    (fn as any)._defaultResult = { type: 'reject', value: val };
+    return fn;
+  };
+  fn.mockRejectedValueOnce = (val: any) => {
+    nextResults.push({ type: 'reject', value: val });
+    return fn;
+  };
+
+  // Override fn to use default result when nextResults is empty
+  const wrappedFn: any = (...args: any[]) => {
+    calls.push(args);
+    const result = nextResults.shift();
+    if (result) {
+      return result.type === 'resolve' ? Promise.resolve(result.value) : Promise.reject(result.value);
+    }
+    const def = (wrappedFn as any)._defaultResult;
+    if (def) {
+      return def.type === 'resolve' ? Promise.resolve(def.value) : Promise.reject(def.value);
+    }
+    return Promise.resolve({});
+  };
+  wrappedFn.mock = { calls };
+  wrappedFn.mockResolvedValue = (val: any) => {
+    (wrappedFn as any)._defaultResult = { type: 'resolve', value: val };
+    return wrappedFn;
+  };
+  wrappedFn.mockResolvedValueOnce = (val: any) => {
+    nextResults.push({ type: 'resolve', value: val });
+    return wrappedFn;
+  };
+  wrappedFn.mockRejectedValue = (val: any) => {
+    (wrappedFn as any)._defaultResult = { type: 'reject', value: val };
+    return wrappedFn;
+  };
+  wrappedFn.mockRejectedValueOnce = (val: any) => {
+    nextResults.push({ type: 'reject', value: val });
+    return wrappedFn;
+  };
+
+  return wrappedFn;
+}
 
 describe('test/OSSObjectStorageClient.test.ts', () => {
   let client: OSSObjectStorageClient;
   let mockOSS: {
-    put: ReturnType<typeof vi.fn>;
-    get: ReturnType<typeof vi.fn>;
-    append: ReturnType<typeof vi.fn>;
-    head: ReturnType<typeof vi.fn>;
+    put: ReturnType<typeof mockFn>;
+    get: ReturnType<typeof mockFn>;
+    append: ReturnType<typeof mockFn>;
+    head: ReturnType<typeof mockFn>;
   };
 
   beforeEach(() => {
     mockOSS = {
-      put: vi.fn(),
-      get: vi.fn(),
-      append: vi.fn(),
-      head: vi.fn(),
+      put: mockFn(),
+      get: mockFn(),
+      append: mockFn(),
+      head: mockFn(),
     };
     client = new OSSObjectStorageClient(mockOSS as unknown as OSSObject);
   });

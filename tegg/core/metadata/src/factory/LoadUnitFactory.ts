@@ -1,3 +1,4 @@
+import { TeggScope } from '@eggjs/tegg-types';
 import type {
   EggLoadUnitTypeLike,
   Id,
@@ -10,13 +11,34 @@ import type {
 
 import { LoadUnitLifecycleUtil } from '../model/index.ts';
 
+const LOAD_UNIT_MAP_SLOT = Symbol('tegg:metadata:loadUnitMap');
+const LOAD_UNIT_ID_MAP_SLOT = Symbol('tegg:metadata:loadUnitIdMap');
+const LOAD_UNIT_CREATOR_OVERLAY_SLOT = Symbol('tegg:metadata:loadUnitCreatorOverlay');
+
+/**
+ * Creators registered at IMPORT time are app-agnostic (MODULE/APP) and live in
+ * this process-global base map. Creators registered at BOOT time that capture
+ * per-app state (CONTROLLER/Standalone) go into the active app's overlay so
+ * concurrent apps never clobber each other. Lookup checks overlay first, then base.
+ */
+const loadUnitCreatorBaseMap: Map<EggLoadUnitTypeLike, LoadUnitCreator> = new Map();
+
 export class LoadUnitFactory {
-  private static loadUnitCreatorMap: Map<EggLoadUnitTypeLike, LoadUnitCreator> = new Map();
-  private static loadUnitMap: Map<string, LoadUnitPair> = new Map();
-  private static loadUnitIdMap: Map<Id, LoadUnit> = new Map();
+  // Per-app caches: collide across apps if shared (unitPath / name-based id),
+  // so resolved from the active TeggScope bag (or process-default in single-app).
+  private static get loadUnitMap(): Map<string, LoadUnitPair> {
+    return TeggScope.resolve(LOAD_UNIT_MAP_SLOT, () => new Map(), 'LoadUnitFactory.loadUnitMap');
+  }
+
+  private static get loadUnitIdMap(): Map<Id, LoadUnit> {
+    return TeggScope.resolve(LOAD_UNIT_ID_MAP_SLOT, () => new Map(), 'LoadUnitFactory.loadUnitIdMap');
+  }
 
   protected static async getLoanUnit(ctx: LoadUnitLifecycleContext, type: EggLoadUnitTypeLike): Promise<LoadUnit> {
-    const creator = LoadUnitFactory.loadUnitCreatorMap.get(type);
+    const overlay = TeggScope.current()?.get(LOAD_UNIT_CREATOR_OVERLAY_SLOT) as
+      | Map<EggLoadUnitTypeLike, LoadUnitCreator>
+      | undefined;
+    const creator = overlay?.get(type) ?? loadUnitCreatorBaseMap.get(type);
     if (!creator) {
       throw new Error(`not find creator for load unit type ${type}`);
     }
@@ -24,8 +46,9 @@ export class LoadUnitFactory {
   }
 
   static async createLoadUnit(unitPath: string, type: EggLoadUnitTypeLike, loader: Loader): Promise<LoadUnit> {
-    if (LoadUnitFactory.loadUnitMap.has(unitPath)) {
-      return LoadUnitFactory.loadUnitMap.get(unitPath)!.loadUnit;
+    const loadUnitMap = LoadUnitFactory.loadUnitMap;
+    if (loadUnitMap.has(unitPath)) {
+      return loadUnitMap.get(unitPath)!.loadUnit;
     }
     const ctx: LoadUnitLifecycleContext = {
       unitPath,
@@ -37,7 +60,7 @@ export class LoadUnitFactory {
       await loadUnit.init(ctx);
     }
     await LoadUnitLifecycleUtil.objectPostCreate(ctx, loadUnit);
-    LoadUnitFactory.loadUnitMap.set(unitPath, { loadUnit, ctx });
+    loadUnitMap.set(unitPath, { loadUnit, ctx });
     LoadUnitFactory.loadUnitIdMap.set(loadUnit.id, loadUnit);
     return loadUnit;
   }
@@ -51,14 +74,15 @@ export class LoadUnitFactory {
   }
 
   static async destroyLoadUnit(loadUnit: LoadUnit): Promise<void> {
-    const { ctx } = LoadUnitFactory.loadUnitMap.get(loadUnit.unitPath)!;
+    const loadUnitMap = LoadUnitFactory.loadUnitMap;
+    const { ctx } = loadUnitMap.get(loadUnit.unitPath)!;
     try {
       await LoadUnitLifecycleUtil.objectPreDestroy(ctx, loadUnit);
       if (loadUnit.destroy) {
         await loadUnit.destroy(ctx);
       }
     } finally {
-      LoadUnitFactory.loadUnitMap.delete(loadUnit.unitPath);
+      loadUnitMap.delete(loadUnit.unitPath);
       LoadUnitFactory.loadUnitIdMap.delete(loadUnit.id);
       LoadUnitLifecycleUtil.clearObjectLifecycle(loadUnit);
     }
@@ -69,6 +93,19 @@ export class LoadUnitFactory {
   }
 
   static registerLoadUnitCreator(type: EggLoadUnitTypeLike, creator: LoadUnitCreator): void {
-    LoadUnitFactory.loadUnitCreatorMap.set(type, creator);
+    const bag = TeggScope.current();
+    if (bag) {
+      // Boot-time registration inside an app scope: keep it per-app so a creator
+      // capturing this app's state never overwrites another concurrent app's.
+      let overlay = bag.get(LOAD_UNIT_CREATOR_OVERLAY_SLOT) as Map<EggLoadUnitTypeLike, LoadUnitCreator> | undefined;
+      if (!overlay) {
+        overlay = new Map();
+        bag.set(LOAD_UNIT_CREATOR_OVERLAY_SLOT, overlay);
+      }
+      overlay.set(type, creator);
+      return;
+    }
+    // Import-time / no-scope registration: app-agnostic, shared base.
+    loadUnitCreatorBaseMap.set(type, creator);
   }
 }

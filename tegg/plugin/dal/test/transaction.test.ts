@@ -1,7 +1,6 @@
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
 
-import { MysqlDataSourceManager } from '../src/lib/MysqlDataSourceManager.ts';
 import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.ts';
 import { FooService } from './fixtures/apps/dal-app/modules/dal/FooService.ts';
 import { getFixtures } from './utils.ts';
@@ -21,7 +20,7 @@ describe('plugin/dal/test/transaction.test.ts', () => {
   });
 
   afterEach(async () => {
-    const dataSource = MysqlDataSourceManager.instance.get('dal', 'foo')!;
+    const dataSource = app.mysqlDataSourceManager.get('dal', 'foo')!;
     await dataSource.query('delete from egg_foo;');
   });
 

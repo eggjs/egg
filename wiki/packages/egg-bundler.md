@@ -7,9 +7,10 @@ source_files:
   - tools/egg-bundler/src/lib/Bundler.ts
   - tools/egg-bundler/src/lib/EntryGenerator.ts
   - tools/egg-bundler/src/lib/ExternalsResolver.ts
+  - tools/egg-bundler/src/lib/prelude.ts
   - tools/egg-bin/src/commands/bundle.ts
   - tools/egg-bundler/docs/output-structure.md
-updated_at: 2026-05-06
+updated_at: 2026-06-28
 status: active
 ---
 
@@ -66,3 +67,51 @@ CommonJS artifact from an Egg application.
   external.
 - `BundlerConfig.tegg` is accepted but intentionally not wired into the current
   implementation yet.
+
+### Snapshot lazy-external defaults
+
+In `snapshot: true` mode the bundler keeps a set of modules **lazy-external** so a
+V8 startup snapshot stays serializable: each is emitted as an `externalRequire`,
+left out of the build-time heap (a member-proxy stub from the prelude's
+`__makeLazyExt`), and forwarded to the real module at restore via
+`globalThis.__RUNTIME_REQUIRE`. The injected hook also lazy-stubs any **non-builtin**
+external at build (`!__isBuiltin(id)`); the explicit list mainly exists to (a) cover
+builtins the `!isBuiltin` rule skips and (b) **force npm packages external** that
+would otherwise be inlined.
+
+- `DEFAULT_SNAPSHOT_LAZY_MODULES` (in `src/lib/prelude.ts`) covers the Node network
+  stack (`http`/`https`/`http2`/`tls`/`dns`), `inspector`, **and egg's HTTP client
+  stack `undici` + `urllib`**. Egg builds its `HttpClient` (urllib → undici) during
+  boot, and undici instantiates an llhttp `WebAssembly` (disabled under
+  `--build-snapshot`) + `HTTPParser` that cannot be serialized. As npm packages
+  urllib/undici would be inlined; listing them forces them external (`Bundler` adds
+  the lazy ids to the externals map) so the member-proxy stub is used at build — an
+  app gets a serializable snapshot without listing them in `egg.snapshot.lazyModules`.
+- The member-proxy records the build-time access path (`get`/`apply`/`construct`) and
+  replays it against the real module on restore, so `class HttpClient extends
+urllib.HttpClient` (and urllib's own `class BaseAgent extends undici.Agent`) keep
+  working: the `extends` is evaluated against the build stub, then `super(...)` /
+  inherited methods resolve to the real base class after deserialization.
+
+#### When does a new dependency need adding?
+
+Only a package that **directly** creates non-serializable native/WASM state at
+module-eval or boot-time instantiation needs a list entry (like `undici`, which
+compiles llhttp WASM). A package that only reaches the network/native stack
+**transitively** is already covered, because the underlying builtins are lazy:
+
+- `@modelcontextprotocol/sdk` (a default tegg-controller dep, loaded at boot via
+  `tegg/plugin/controller` → `MCPControllerRegister`) → its StreamableHTTP
+  transport `require`s `@hono/node-server`, which does a top-level
+  `require("http2")` + `class extends globalThis.Request`. `http2` is already lazy
+  and `globalThis.Request` is stubbed by the prelude, and no MCP transport/server
+  is instantiated at boot — so the SDK does **not** need a list entry.
+- `@grpc/grpc-js`, `ws` — not present in OSS tegg; gRPC would route through the
+  already-lazy `http2` anyway. No entry needed.
+
+`Inference:` audited 2026-06-28 against `tegg/plugin/controller`, default egg
+plugins, and the suspect packages' module-eval closures. The opt-in
+`mcp-client`/`mcp-proxy`/`langchain` plugins pull the SDK _client_ transports
+(`eventsource`/`cross-spawn`/`pkce-challenge`); if an app enables those and
+snapshots, re-assess via `egg.snapshot.lazyModules` — that is an app concern, not
+a framework default.

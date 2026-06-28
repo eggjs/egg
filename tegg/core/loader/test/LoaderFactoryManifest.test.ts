@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
+import { RealLoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
 import { ModuleDescriptorDumper } from '@eggjs/metadata';
 import { describe, it } from 'vitest';
 
@@ -59,6 +60,24 @@ describe('core/loader/test/LoaderFactoryManifest.test.ts', () => {
     const descriptors = await LoaderFactory.loadApp([moduleRef], manifest);
     assert.equal(descriptors.length, 1);
     assert(descriptors[0].clazzList.length > 0);
+  });
+
+  it('should route discovery through an injected LoaderFS (non-manifest branch)', async () => {
+    class StubLoaderFS extends RealLoaderFS {
+      globCalls = 0;
+      glob(_patterns: string | string[], _options?: LoaderFSGlobOptions): string[] {
+        this.globCalls++;
+        return ['UserRepo.ts'];
+      }
+    }
+    const loaderFS = new StubLoaderFS();
+    const descriptors = await LoaderFactory.loadApp([moduleRef], undefined, loaderFS);
+
+    assert.equal(descriptors.length, 1);
+    // Only the file the stub returned is loaded.
+    const names = descriptors[0].clazzList.map((c) => c.name).sort();
+    assert.deepStrictEqual(names, ['UserRepo']);
+    assert.equal(loaderFS.globCalls, 1);
   });
 
   it('should roundtrip: loadApp → getDecoratedFiles → loadApp(manifest)', async () => {

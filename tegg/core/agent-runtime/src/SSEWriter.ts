@@ -5,6 +5,8 @@
 export interface SSEWriter {
   /** Write an SSE event with the given name and JSON-serializable data. */
   writeEvent(event: string, data: unknown): void;
+  /** Write an SSE comment (e.g. `: keepalive`). Used for heartbeat signals. */
+  writeComment(text: string): void;
   /** Whether the underlying connection has been closed. */
   readonly closed: boolean;
   /** End the SSE stream. */

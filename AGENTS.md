@@ -46,6 +46,33 @@ Then re-run tests.
 - keep file names lowercase with hyphens
 - keep public API changes deliberate and documented
 - use `oxfmt` and `oxlint --type-aware` conventions already present in the repo
+- **tegg multi-app isolation**: do NOT introduce new process-global mutable
+  runtime state in `tegg/`; per-app state must be backed by a `TeggScope` slot.
+  Hooks registered through the bag-pinned `app.*LifecycleUtil` getters need no
+  extra wrap; detached/escape-point access (timers, emitter listeners, proxy
+  handlers, module-level lifecycle-util statics) must run inside
+  `TeggScope.run(app._teggScopeBag, ...)`. See the "Multi-App Isolation
+  (TeggScope)" section in `tegg/CLAUDE.md` for the full rules.
+- **V8 startup snapshot dependencies**: the egg-bundler can build a V8 startup
+  snapshot (`snapshot: true`), where the app boots only to `configWillLoad` at
+  BUILD time. Any module loaded or instantiated during that boot that creates a
+  non-serializable native binding — llhttp `HTTPParser` (http/https/undici),
+  `nghttp2` (http2, and anything built on it), tls `SecureContext`, dns
+  `ChannelWrap`, a `WebAssembly` instance (undici's llhttp; WASM is disabled under
+  `--build-snapshot`), fs watchers, native addons, open sockets — makes the
+  snapshot build FATAL ("global handle not serialized"). Such modules must be kept
+  EXTERNAL (not inlined) so the prelude stubs them at build and forwards to the
+  real module via `globalThis.__RUNTIME_REQUIRE` at restore. The framework default
+  list is `DEFAULT_SNAPSHOT_LAZY_MODULES` in `tools/egg-bundler/src/lib/prelude.ts`
+  (network builtins + `inspector` + `undici` + `urllib`); apps extend it via
+  `egg.snapshot.lazyModules` in `package.json`. **When adding a framework
+  dependency that touches the network/native stack during boot, check whether it
+  must be added to that list.** A package that only reaches the network stack
+  _transitively_ is already covered because those builtins are lazy (e.g.
+  `@modelcontextprotocol/sdk` → `@hono/node-server` → `http2`, `@grpc/grpc-js` →
+  `http2`); only a package that DIRECTLY creates native/WASM state at module-eval
+  or boot-time instantiation (like `undici`) needs adding. See the "Snapshot
+  lazy-external defaults" section in `wiki/packages/egg-bundler.md` for details.
 
 ## TypeScript Global Types
 

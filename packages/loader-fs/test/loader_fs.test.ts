@@ -35,4 +35,18 @@ describe('test/loader_fs.test.ts', () => {
     assert.deepEqual(await loaderFS.loadFile(path.join(baseDir, 'object.js')), { a: 1 });
     assert.deepEqual(await loaderFS.loadFile(yamlPath), fs.readFileSync(yamlPath));
   });
+
+  it('should treat a vitest environment-teardown import error as a benign no-op', async () => {
+    // A dynamic import() that loses the race with a test-environment teardown
+    // throws `EnvironmentTeardownError` ("...after the environment was torn
+    // down"). loadFile must swallow it (resolve undefined) so the stray load
+    // does not surface as an unhandled rejection that fails an unrelated test.
+    const teardownPath = path.join(baseDir, 'teardown-error.js');
+    assert.equal(await loaderFS.loadFile(teardownPath), undefined);
+  });
+
+  it('should still throw for a genuine load-time failure', async () => {
+    const errorPath = path.join(baseDir, 'normal-error.js');
+    await assert.rejects(loaderFS.loadFile(errorPath), /\[@eggjs\/loader-fs\] load file:.*boom: real load failure/);
+  });
 });

@@ -11,6 +11,7 @@ import { LoaderFactory, LoaderUtil } from '../src/index.ts';
 describe('core/loader/test/Loader.test.ts', () => {
   afterEach(() => {
     globalThis.__EGG_BUNDLE_MODULE_LOADER__ = undefined;
+    globalThis.__EGG_MODULE_IMPORTER__ = undefined;
     LoaderUtil.setConfig({});
   });
 
@@ -88,6 +89,56 @@ describe('core/loader/test/Loader.test.ts', () => {
         (err: Error & { cause?: unknown }) => {
           assert.equal(err.message, '[tegg/loader] load /bundle/app/service.ts failed: bundle loader failed');
           assert.equal(err.cause, 'bundle loader failed');
+          return true;
+        },
+      );
+    });
+
+    it('should load through the async module importer when set', async () => {
+      class ImportedService {}
+      SingletonProto()(ImportedService);
+      const importedFile = '/imported/app/manager/ImportedService.ts';
+      let importerArg: string | undefined;
+      globalThis.__EGG_MODULE_IMPORTER__ = async (filePath: string) => {
+        importerArg = filePath;
+        return { ImportedService };
+      };
+
+      const prototypes = await LoaderUtil.loadFile(importedFile);
+
+      assert.equal(importerArg, importedFile);
+      assert.deepEqual(
+        prototypes.map((proto) => proto.name),
+        ['ImportedService'],
+      );
+      assert.equal(PrototypeUtil.getFilePath(ImportedService), importedFile);
+    });
+
+    it('should fall back to dynamic import when the module importer returns null', async () => {
+      const appRepoFile = path.join(__dirname, './fixtures/modules/module-for-loader/AppRepo.ts');
+      globalThis.__EGG_MODULE_IMPORTER__ = async () => null;
+
+      const prototypes = await LoaderUtil.loadFile(appRepoFile);
+
+      assert.deepEqual(
+        prototypes.map((proto) => proto.name),
+        ['AppRepo', 'AppRepo2'],
+      );
+    });
+
+    it('should wrap module importer errors', async () => {
+      const importedFile = '/imported/app/service.ts';
+      globalThis.__EGG_MODULE_IMPORTER__ = async () => {
+        throw 'importer failed';
+      };
+
+      await assert.rejects(
+        async () => {
+          await LoaderUtil.loadFile(importedFile);
+        },
+        (err: Error & { cause?: unknown }) => {
+          assert.equal(err.message, '[tegg/loader] load /imported/app/service.ts failed: importer failed');
+          assert.equal(err.cause, 'importer failed');
           return true;
         },
       );

@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 
-import { PrototypeUtil } from '@eggjs/core-decorator';
 import { type Events, CORK_ID, type ContextEventBus, type Arguments } from '@eggjs/eventbus-decorator';
 import { SingletonEventBus } from '@eggjs/eventbus-runtime';
 import type { EggPrototype } from '@eggjs/metadata';
@@ -13,7 +12,7 @@ export class EggContextEventBus implements ContextEventBus {
   private corkId?: string;
 
   constructor(ctx: Context) {
-    const proto = PrototypeUtil.getClazzProto(SingletonEventBus) as EggPrototype;
+    const proto = ctx.app.eggPrototypeFactory.getPrototypeByClazzOrGlobal(SingletonEventBus) as EggPrototype;
     const eggObject = ctx.app.eggContainerFactory.getEggObject(proto, proto.name);
     this.context = ContextHandler.getContext()!;
     this.eventBus = eggObject.obj as SingletonEventBus;

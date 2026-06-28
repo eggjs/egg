@@ -290,6 +290,89 @@ const impl = await eggObjectFactory.getEggObject(
 );
 ```
 
+## Multi-App Isolation (TeggScope) — MUST follow
+
+Tegg supports multiple apps booting and serving requests **concurrently in one
+process** without cross-talk. This is built on `TeggScope`
+(`@eggjs/tegg-types`), a type-free `AsyncLocalStorage<Map<symbol, unknown>>`.
+Each app owns a per-app "bag" (`app._teggScopeBag`); per-app state lives in
+slots inside that bag, and the active bag is established with
+`TeggScope.run(app._teggScopeBag, ...)`. Per-app singletons resolve via the same
+old static call sites (e.g. `EggPrototypeFactory.instance`) — they now read the
+current scope instead of a process global.
+
+When you touch tegg core/plugins, follow these rules:
+
+1. **Never add new process-global mutable runtime state.** A `static` field /
+   `Map` / singleton that holds per-app data WILL leak across concurrent apps.
+   If you need such state, back it with a `TeggScope` slot:
+
+   ```ts
+   import { TeggScope } from '@eggjs/tegg-types';
+   const X_SLOT = Symbol('tegg:<pkg>:<name>'); // module-private, never exported
+   export class X {
+     static get instance(): X {
+       return TeggScope.resolve(X_SLOT, () => new X(), 'X.instance');
+     }
+   }
+   ```
+
+   Import `TeggScope` **only** from `@eggjs/tegg-types`; never import another
+   package's slot. A package that imports `TeggScope` must declare
+   `@eggjs/tegg-types` as a direct dependency.
+
+2. **Shared, app-agnostic registries stay global.** Class/type-keyed maps
+   populated at import time with app-agnostic values (e.g.
+   `EggPrototypeCreatorFactory` creator map, `registerEggObjectCreateMethod`,
+   `registerLoadUnitInstanceClass`) must NOT be scoped. Only state that holds
+   per-app instances/data is scoped. (`LoadUnitFactory`'s creator map is
+   two-tier: a global base for import-time creators + a per-app overlay for
+   boot-time, app-capturing creators.)
+
+3. **Lifecycle-hook registration via `app.*LifecycleUtil` is bag-pinned.**
+   Calling `app.{loadUnit,eggPrototype,eggObject,eggContext,loadUnitInstance}LifecycleUtil.registerLifecycle(hook)`
+   (and the matching `deleteLifecycle` in `beforeClose`) does **not** need a
+   `TeggScope.run` wrap — these app getters are pinned to this app's bag (via
+   `xxxLifecycleUtilFromBag`), so they resolve the correct per-app util even with
+   no active scope. Wrapping is still fine when the same block does other
+   scope-dependent work (as the tegg plugin's own boot does). Do **not** register
+   lifecycle hooks in the boot **constructor** — `app._teggScopeBag` does not
+   exist yet; do it in `configWillLoad`/`configDidLoad`/`didLoad`. (Accessing a
+   lifecycle util through a module-level static instead of `app.*LifecycleUtil`
+   still needs an active scope.)
+
+4. **Resolve egg objects per-app.** To get a proto from a class, prefer
+   `EggPrototypeFactory.instance.getPrototypeByClazz(clazz)` (per-app) before
+   falling back to `PrototypeUtil.getClazzProto(clazz)` (a process-global slot
+   on the class, overwritten by concurrent boot). `ctx.getEggObject` /
+   `app.getEggObject` already do this and wrap in the app scope.
+
+5. **Escape points** — code that runs **detached** from the request must
+   re-establish the scope. Capture `const bag = TeggScope.current()` at
+   registration/scheduling and re-enter `TeggScope.run(bag, cb)` inside the
+   callback for: emitter listeners triggered later (`res.on('close')`,
+   `signal.addEventListener('abort')`), fire-and-forget `EventBus.emit` from a
+   detached context, and timers created outside a scope. Timers/promises created
+   **inside** an active scope inherit it automatically — no wrap needed.
+
+6. **Strict-mode fuse.** Under true multi-app (`> 1` live app) any access that
+   escapes to the process-default bag throws in dev / warns in prod. If you see
+   `[tegg] TeggScope escaped to the process-default bag`, you have an unwrapped
+   access — wrap the relevant boot/request/escape path in `TeggScope.run`.
+
+7. **Single app is unchanged.** With one app the default bag is used silently
+   and the fuse never fires, so existing single-app behavior and tests are
+   unaffected. Add multi-app regression coverage (two concurrent apps sharing a
+   module) when you change loader/runtime/lifecycle/eventbus behavior — see
+   `tegg/plugin/tegg/test/MultiApp.test.ts`.
+
+**Performance:** `TeggScope.resolve` adds ~8 ns/access and `TeggScope.run`
+~5 ns/call over a plain static read (Node 22); egg already runs on
+AsyncLocalStorage, so there is no new process-wide async penalty. The cost is
+negligible relative to real request work. The per-app lifecycle-util facade is an
+explicit delegating object (not a `Proxy`) — each method is a direct slot-resolve
+plus a method call, with no per-access trap or bound-function allocation.
+
 ## Common Patterns
 
 ### Creating a New Core Package

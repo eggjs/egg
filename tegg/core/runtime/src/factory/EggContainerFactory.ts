@@ -85,8 +85,10 @@ export class EggContainerFactory {
     name?: EggObjectName,
     qualifiers?: QualifierInfo[],
   ): Promise<EggObject> {
-    let proto = PrototypeUtil.getClazzProto(clazz as EggProtoImplClass) as EggPrototype | undefined;
-    const isMultiInstance = PrototypeUtil.isEggMultiInstancePrototype(clazz as EggProtoImplClass);
+    const isMultiInstance = PrototypeUtil.isEggMultiInstancePrototype(clazz);
+    let proto: EggPrototype | undefined = isMultiInstance
+      ? undefined
+      : EggPrototypeFactory.instance.getPrototypeByClazzOrGlobal(clazz);
     debug('getOrCreateEggObjectFromClazz:%o, isMultiInstance:%s, proto:%o', clazz.name, isMultiInstance, !!proto);
     if (isMultiInstance) {
       const defaultName = NameUtil.getClassName(clazz as EggProtoImplClass);
