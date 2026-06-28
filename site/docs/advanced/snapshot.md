@@ -133,6 +133,25 @@ At restore time V8 deserializes the heap, then the snapshot main runs
 `snapshotDidDeserialize` hooks to recreate those runtime-only resources, finishes
 the deferred lifecycle through `didReady`, and starts listening.
 
+The set of modules kept external and lazy defaults to the Node network stack
+(`http`, `https`, `http2`, `tls`, `dns`, `inspector`, with their `node:` forms).
+If a builtin beyond that list initializes native state at import, extend the set
+via `egg.snapshot.lazyModules` in the app `package.json`:
+
+```json
+{
+  "egg": {
+    "snapshot": {
+      "lazyModules": ["node:zlib"]
+    }
+  }
+}
+```
+
+When a third-party dependency or builtin breaks the build or restore, see
+[Snapshot Troubleshooting](./snapshot-troubleshooting.md) for how to find the
+offending module and fix it.
+
 ## Snapshot lifecycle hooks
 
 If your `app.js` or `agent.js` boot class manages resources that cannot be
@@ -185,8 +204,9 @@ which is exactly the cost a snapshot front-loads into build time.
   so its state is released before serialization and rebuilt after restore. Not
   every package is snapshot-safe out of the box.
 - **Web globals are no-op stubs after restore**: at build the prelude replaces the
-  undici-backed globals (`fetch`/`Headers`/`Request`/`Response`/`FormData`/`WebSocket`,
-  plus `Blob`/`File`) with no-op stubs, because touching them at build time pulls in
+  undici-backed globals (`fetch`/`Headers`/`Request`/`Response`/`FormData`/`WebSocket`/
+  `EventSource`/`MessageEvent`/`CloseEvent`, plus `Blob`/`File`) with no-op stubs,
+  because touching them at build time pulls in
   Node's built-in undici and its native http/http2 bindings (which a snapshot cannot
   serialize). Node's native lazy getters are themselves not snapshot-serializable, so
   they cannot be reinstated on restore. **In the restored process those globals stay
@@ -195,3 +215,11 @@ which is exactly the cost a snapshot front-loads into build time.
 
 The supported surface is still evolving; the full list of known limitations and
 the design rationale are tracked in the project's V8 snapshot RFC.
+
+## Troubleshooting
+
+If a snapshot fails to build (a native abort during serialization) or fails to
+restore, see [Snapshot Troubleshooting](./snapshot-troubleshooting.md). It covers
+the build-time vs restore-time error signatures, how to find the module that
+captured non-serializable state, and the available fixes
+(`--force-external`, `egg.snapshot.lazyModules`, lifecycle hooks).
