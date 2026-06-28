@@ -146,8 +146,8 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
 
   async #spawnNode(nodeArgs: readonly string[], extraEnv: NodeJS.ProcessEnv = {}): Promise<void> {
     // Run the self-contained bundle with a clean env: start from process.env, NOT
-    // this.env. BaseCommand.#afterInit injects NODE_OPTIONS=--loader ts-node/esm
-    // (plus ts-node/register, tsconfig-paths) into this.env for TypeScript apps;
+    // this.env. BaseCommand.#afterInit injects NODE_OPTIONS=--import @oxc-node/core/register
+    // (plus tsconfig-paths) into this.env for TypeScript apps;
     // applying that to `node --build-snapshot worker.js` would pull a non-bundled
     // loader into the snapshot build. process.env never carries that injection.
     const env = { ...process.env, ...extraEnv };

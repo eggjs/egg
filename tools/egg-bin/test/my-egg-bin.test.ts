@@ -19,10 +19,11 @@ describe('test/my-egg-bin.test.ts', () => {
       .end();
   });
 
-  // Each forked `egg-bin` spawn pays a slow ts-node/esm startup (~50s on
-  // Windows CI). Keep these as one fork per case so no single test sums multiple
-  // sequential spawns and blows the timeout — splitting was the fix for the
-  // flaky `Test bin (windows-latest)` job.
+  // Each forked `egg-bin` spawn pays a TypeScript loader startup cost (smaller
+  // now that the CLI boots via @oxc-node/core/register instead of ts-node/esm,
+  // but still non-trivial on Windows CI). Keep these as one fork per case so no
+  // single test sums multiple sequential spawns and blows the timeout —
+  // splitting was the fix for the flaky `Test bin (windows-latest)` job.
   it('should my-egg-bin nsp -h success', async () => {
     await coffee
       .fork(eggBin, ['nsp', '-h'], { cwd })
@@ -69,7 +70,7 @@ describe('test/my-egg-bin.test.ts', () => {
       // .debug()
       .expect('stdout', /Run the development server with my-egg-bin/)
       .expect('stdout', /listening port, default to 7001/)
-      .expect('stdout', /TypeScript compiler, like ts-node\/register/)
+      .expect('stdout', /TypeScript compiler, like @oxc-node\/core\/register/)
       .expect('code', 0)
       .end();
   });
