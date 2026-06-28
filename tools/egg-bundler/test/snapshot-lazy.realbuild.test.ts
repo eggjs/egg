@@ -2,11 +2,16 @@ import { execFile } from 'node:child_process';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const execFileAsync = promisify(execFile);
+
+// Repo root: tools/egg-bundler/test -> ../../.. . `packages/egg` resolves urllib
+// (egg's direct dep), through which the prelude installer reaches undici under pnpm.
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
 // REAL @utoo/pack build regression test for the snapshot lazy-external mechanism.
 //
@@ -157,5 +162,74 @@ describe('snapshot lazy-external — real @utoo/pack build', () => {
     expect(restoreProbe.restored).toBe(true);
     expect(restoreProbe.methodsHasGet).toBe(true); // real http.METHODS also has GET
     expect(restoreProbe.createServerCall).toBe('object'); // real http.createServer() -> Server
+  }, 60_000);
+
+  it('re-installs the web globals (fetch/Headers/Blob) backed by real undici at restore', async () => {
+    await fs.writeFile(path.join(baseDir, 'package.json'), JSON.stringify({ name: 'snaplazy-rb-wg-app' }));
+
+    const entryDir = path.join(baseDir, '.egg-bundle', 'entries');
+    await fs.mkdir(entryDir, { recursive: true });
+    const entry = path.join(entryDir, 'worker.entry.ts');
+    // The prelude (prepended by bundle()) stubs the web globals at load. This entry
+    // simulates the snapshot restore-main: it calls __installWebGlobalsLazy (the
+    // restore-runner installs __RUNTIME_REQUIRE first), then exercises the now-real
+    // fetch/Headers/Blob against a local server.
+    await fs.writeFile(
+      entry,
+      [
+        '// @ts-nocheck',
+        "if (typeof globalThis.__installWebGlobalsLazy === 'function') globalThis.__installWebGlobalsLazy();",
+        '(async () => {',
+        "  const http = globalThis.__RUNTIME_REQUIRE('node:http');",
+        "  const server = http.createServer((req, res) => res.end('pong'));",
+        "  await new Promise((r) => server.listen(0, '127.0.0.1', r));",
+        '  const port = server.address().port;',
+        '  const out = { installerPresent: typeof globalThis.__installWebGlobalsLazy, fetchType: typeof globalThis.fetch, BlobType: typeof globalThis.Blob };',
+        '  try {',
+        "    const resp = await fetch('http://127.0.0.1:' + port + '/');",
+        '    out.body = await resp.text();',
+        "    out.headerOk = new Headers({ x: '1' }).get('x') === '1';",
+        "    out.blobText = await new Blob(['z']).text();",
+        '  } catch (e) { out.err = String((e && e.message) || e); }',
+        '  await new Promise((r) => server.close(r));',
+        "  process.stdout.write('WGPROBE:' + JSON.stringify(out), () => process.exit(0));",
+        '})();',
+        '',
+      ].join('\n'),
+    );
+    mocks.workerEntry = entry;
+    mocks.entryDir = entryDir;
+
+    const outputDir = path.join(baseDir, 'dist');
+    await bundle({ baseDir, outputDir, snapshot: true });
+
+    // Restore-runner installs __RUNTIME_REQUIRE (with resolve) pointing where
+    // urllib/undici live, exactly as the generated deserialize main would.
+    const runner = path.join(outputDir, 'wg-restore-runner.cjs');
+    await fs.writeFile(
+      runner,
+      [
+        'const { createRequire } = require("node:module");',
+        'const req = createRequire(process.env.EGG_TEST_REQUIRE_BASE);',
+        'const rt = (id) => req(id);',
+        'rt.resolve = (id, o) => req.resolve(id, o);',
+        'globalThis.__RUNTIME_REQUIRE = rt;',
+        'require("./worker.js");',
+        '',
+      ].join('\n'),
+    );
+    const ran = await execFileAsync(process.execPath, [runner], {
+      cwd: outputDir,
+      env: { ...process.env, EGG_TEST_REQUIRE_BASE: path.join(REPO_ROOT, 'packages/egg', 'package.json') },
+    });
+    const marker = 'WGPROBE:';
+    const probe = JSON.parse(ran.stdout.slice(ran.stdout.indexOf(marker) + marker.length));
+
+    expect(probe.installerPresent).toBe('function'); // prelude defined it
+    expect(probe.fetchType).toBe('function'); // re-installed, not the WebGlobalStub
+    expect(probe.body).toBe('pong'); // a real fetch round-trip works
+    expect(probe.headerOk).toBe(true); // real undici Headers
+    expect(probe.BlobType).toBe('function');
+    expect(probe.blobText).toBe('z'); // real node:buffer Blob
   }, 60_000);
 });

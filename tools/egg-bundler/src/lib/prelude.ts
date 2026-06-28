@@ -74,7 +74,7 @@ export const DEFAULT_SNAPSHOT_LAZY_MODULES: readonly string[] = [
  * stubs (NOT `delete`d — a deleted global throws ReferenceError when a bundled
  * module references it; a stub is referencable and harmless at build time).
  */
-const WEB_GLOBALS: readonly string[] = [
+const UNDICI_WEB_GLOBALS: readonly string[] = [
   'fetch',
   'Headers',
   'Request',
@@ -84,17 +84,12 @@ const WEB_GLOBALS: readonly string[] = [
   'EventSource',
   'MessageEvent',
   'CloseEvent',
-  'File',
-  'Blob',
 ];
 
-/**
- * `node:buffer` is a real, serializable builtin (Buffer is needed at build time),
- * but reading its `File`/`Blob` getters lazily initializes Node's built-in undici
- * (→ http/http2 native bindings). Those two property getters are stubbed at build;
- * the live process re-exposes the real ones on restore.
- */
-const BUFFER_DANGEROUS_PROPS: readonly string[] = ['File', 'Blob'];
+/** Web globals provided by `node:buffer`; re-installed from that builtin on restore. */
+const BUFFER_WEB_GLOBALS: readonly string[] = ['File', 'Blob'];
+
+const WEB_GLOBALS: readonly string[] = [...UNDICI_WEB_GLOBALS, ...BUFFER_WEB_GLOBALS];
 
 interface AppPackageJson {
   readonly egg?: {
@@ -149,7 +144,8 @@ export function renderSnapshotPrelude(
 ): string {
   const lazyJson = JSON.stringify([...lazyModules]);
   const webJson = JSON.stringify([...WEB_GLOBALS]);
-  const bufDangerJson = JSON.stringify([...BUFFER_DANGEROUS_PROPS]);
+  const undiciGlobalsJson = JSON.stringify([...UNDICI_WEB_GLOBALS]);
+  const bufferGlobalsJson = JSON.stringify([...BUFFER_WEB_GLOBALS]);
   const externalExportsJson = JSON.stringify(externalExports);
   const httpConstsJson = JSON.stringify({
     METHODS: http.METHODS,
@@ -198,18 +194,6 @@ export function renderSnapshotPrelude(
   // exposes these via ownKeys so @utoo/pack's interopEsm builds a full ESM
   // namespace and \`import { X } from 'pkg'\` resolves to a member-proxy (not undefined).
   globalThis.__EXTERNAL_EXPORTS = ${externalExportsJson};
-
-  // node:buffer is real at build (Buffer is needed) but its File/Blob getters
-  // trigger Node's built-in undici. Stub just those two; restore re-exposes them.
-  (function () {
-    try {
-      var __buf = process.getBuiltinModule('node:buffer');
-      var __bd = ${bufDangerJson};
-      for (var __j = 0; __j < __bd.length; __j++) {
-        try { Object.defineProperty(__buf, __bd[__j], { value: function BufStub(){}, configurable: true, writable: true }); } catch (e) {}
-      }
-    } catch (e) {}
-  })();
 
   // isBuiltin: tells builtin "tool" modules (path/fs/module — load for real at
   // build) apart from non-builtin packages (lazy-stubbed at build).
@@ -317,6 +301,68 @@ export function renderSnapshotPrelude(
       }
     });
     return proxy;
+  };
+
+  // Restore-time re-installer for the web globals the build replaced with stubs.
+  // Serialized into the blob and called by the generated snapshot-restore entry AFTER
+  // globalThis.__RUNTIME_REQUIRE is set. Without it globalThis.fetch (etc.) stays the
+  // build-time WebGlobalStub in the live process. The fetch family comes from the
+  // app's real \`undici\` (kept external, so it loads for real at restore — resolved
+  // directly, or through \`urllib\` for pnpm layouts where undici is not hoisted);
+  // File/Blob come from \`node:buffer\`. Each becomes a lazy accessor so the real
+  // module only loads on first access.
+  var __UNDICI_GLOBALS = ${undiciGlobalsJson};
+  var __BUFFER_GLOBALS = ${bufferGlobalsJson};
+  globalThis.__installWebGlobalsLazy = function () {
+    var rt = globalThis.__RUNTIME_REQUIRE;
+    var getBuiltin = function (id) {
+      try { return process.getBuiltinModule(id); } catch (e) { return typeof rt === 'function' ? rt(id) : undefined; }
+    };
+    var __undici;
+    var __undiciTried = false;
+    var loadUndici = function () {
+      if (__undiciTried) return __undici;
+      __undiciTried = true;
+      if (typeof rt !== 'function') return (__undici = undefined);
+      try { __undici = rt('undici'); return __undici; } catch (e) {}
+      try {
+        var mod = getBuiltin('node:module');
+        if (mod && typeof rt.resolve === 'function') __undici = mod.createRequire(rt.resolve('urllib'))('undici');
+      } catch (e2) { __undici = undefined; }
+      return __undici;
+    };
+    var loadBuffer = function () { return getBuiltin('node:buffer'); };
+    var install = function (name, getSource) {
+      // Replace the build stub (a function named WebGlobalStub) or an absent slot;
+      // never clobber a non-configurable global or a genuine value.
+      var existing = Object.getOwnPropertyDescriptor(globalThis, name);
+      if (existing) {
+        if (existing.configurable === false) return;
+        if (!('value' in existing)) return;
+        var cur = existing.value;
+        if (cur !== undefined && !(cur && cur.name === 'WebGlobalStub')) return;
+      }
+      var define = function (value) {
+        Object.defineProperty(globalThis, name, { value: value, writable: true, enumerable: false, configurable: true });
+        return value;
+      };
+      Object.defineProperty(globalThis, name, {
+        configurable: true,
+        enumerable: false,
+        get: function () {
+          var value;
+          try { var src = getSource(); value = src ? src[name] : undefined; } catch (e) { value = undefined; }
+          // Do not cache undefined: the source module may still be loading when this
+          // fires re-entrantly (undici reads globalThis.Headers while its own require()
+          // is in flight), so leave the accessor in place for a later read to resolve.
+          if (value !== undefined) return define(value);
+          return undefined;
+        },
+        set: function (value) { define(value); }
+      });
+    };
+    for (var __u = 0; __u < __UNDICI_GLOBALS.length; __u++) install(__UNDICI_GLOBALS[__u], loadUndici);
+    for (var __b = 0; __b < __BUFFER_GLOBALS.length; __b++) install(__BUFFER_GLOBALS[__b], loadBuffer);
   };
 })();
 `;
