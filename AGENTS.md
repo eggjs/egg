@@ -18,12 +18,14 @@ Egg is maintained as a pnpm monorepo.
 
 ## Core Commands
 
-- `pnpm install` hydrates the workspace.
-- `pnpm run build` builds all packages.
-- `pnpm run test` runs the main test suite.
-- `pnpm run lint` runs linting.
-- `pnpm run typecheck` runs TypeScript checking.
-- use filtered commands for focused work, for example `pnpm --filter=egg run test` or `pnpm --filter=site run dev`.
+The repository runs on [utoo](https://github.com/utooland/utoo) (`ut`); the workspace is still defined in `pnpm-workspace.yaml` (catalog mode), so `ut install` reads it via `--from pnpm`.
+
+- `ut install --from pnpm` hydrates the workspace.
+- `ut run build` builds all packages.
+- `ut run test` runs the main test suite.
+- `ut run lint` runs linting.
+- `ut run typecheck` runs TypeScript checking.
+- use filtered commands for focused work, for example `ut run test --workspace @eggjs/bin` or `ut run build -- --workspace ./tools/egg-bin`.
 
 ### Local CI
 
@@ -92,7 +94,7 @@ Then re-run tests.
 
 - review `SECURITY.md` before handling vulnerability-related work
 - do not commit secrets, credentials, or local-only URLs
-- keep local Node.js and pnpm versions aligned with the repository configuration
+- keep local Node.js, utoo, and pnpm versions aligned with the repository configuration (`engines.node`, `packageManager`)
 
 ## Shared Knowledge Workflow
 
