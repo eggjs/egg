@@ -3,7 +3,7 @@
 /**
  * Resilient per-package publish script.
  *
- * Unlike `pnpm -r publish`, this script:
+ * Unlike `ut -r publish`, this script:
  * - Skips packages that are already published on npm (safe for retries)
  * - Publishes each package individually so one failure doesn't block others
  * - Retries failed packages once
@@ -30,6 +30,7 @@ if (tagArg) {
 
 const baseDir = path.join(import.meta.dirname, '..');
 const packages = getPublishablePackages(baseDir);
+const utBin = process.platform === 'win32' ? 'ut.cmd' : 'ut';
 
 console.log(
   `📦 Publishing ${packages.length} packages (tag: ${npmTag}${isDryRun ? ', dry-run' : ''}${useProvenance ? ', provenance' : ''})`,
@@ -54,18 +55,21 @@ function isPublished(name, version) {
 }
 
 /**
- * Publish a single package using pnpm --filter (preserves workspace context
- * so that workspace: protocol references are properly resolved).
+ * Publish a single package by running `ut publish` from the package
+ * directory. utoo's publish only documents --tag/--dry-run/--otp, so we
+ * keep the npm-standard --access/--provenance flags (forwarded to npm)
+ * and configure npm to skip git checks because the release workflow builds
+ * gitignored dist outputs before publishing.
  */
 function publishOne(pkg) {
-  const publishArgs = ['--filter', pkg.name, 'publish', '--no-git-checks', '--access', 'public', '--tag', npmTag];
+  const publishArgs = ['publish', '--access', 'public', '--tag', npmTag];
   if (useProvenance) publishArgs.push('--provenance');
   if (isDryRun) publishArgs.push('--dry-run');
 
-  execFileSync('pnpm', publishArgs, {
-    cwd: baseDir,
+  execFileSync(utBin, publishArgs, {
+    cwd: path.join(baseDir, pkg.directory, pkg.folder),
     stdio: 'inherit',
-    env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose' },
+    env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose', NPM_CONFIG_GIT_CHECKS: 'false' },
     timeout: 120000,
   });
 }

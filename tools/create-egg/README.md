@@ -13,7 +13,7 @@
 ## Scaffolding Your First Egg.js Project
 
 > **Compatibility Note:**
-> Egg.js requires [Node.js](https://nodejs.org/) version 20.19+. However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
+> Egg.js requires [Node.js](https://nodejs.org/) version 22.18+. However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
 
 With NPM:
 
@@ -27,10 +27,10 @@ With Yarn:
 yarn create egg
 ```
 
-With PNPM:
+With utoo:
 
 ```bash
-pnpm create egg
+ut create egg
 ```
 
 Then follow the prompts!
@@ -44,8 +44,8 @@ npm create egg@latest my-egg-app -- --template tegg
 # yarn
 yarn create egg my-egg-app --template tegg
 
-# pnpm
-pnpm create egg my-egg-app --template tegg
+# utoo
+ut create egg my-egg-app --template tegg
 ```
 
 Currently supported template presets include:

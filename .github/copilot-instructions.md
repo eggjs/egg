@@ -6,12 +6,12 @@
 
 Eggjs is a progressive Node.js framework for building enterprise-class server-side applications. Built on top of Koa.js, it provides a plugin system, conventions over configuration, and enterprise-grade features like clustering, logging, and security.
 
-This is a **pnpm monorepo** with multiple packages using pnpm workspaces and catalog mode for centralized dependency management.
+This is a **utoo monorepo** with multiple packages using utoo workspaces and catalog mode for centralized dependency management.
 
 ## Prerequisites and Environment Setup
 
 - **Node.js >= 22.18.0 required** - This is a hard requirement
-- Enable pnpm first: `corepack enable pnpm` (uses the `packageManager` version from `package.json`, currently pnpm v10.28.0)
+- Enable utoo first: `corepack enable utoo`
 - **NEVER CANCEL** any build or test commands - they can take several minutes to complete
 
 ## Bootstrap and Build Process
@@ -19,20 +19,20 @@ This is a **pnpm monorepo** with multiple packages using pnpm workspaces and cat
 **Run these commands after a fresh clone:**
 
 ```bash
-# 1. Enable pnpm (required first)
-corepack enable pnpm
+# 1. Enable utoo (required first)
+corepack enable utoo
 
 # 2. Install all dependencies - takes ~63 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
-pnpm install
+ut install --from pnpm
 
-# 3. Run pnpm run lint to check code quality across all packages - takes ~2 seconds
-pnpm run lint
+# 3. Run lint to check code quality across all packages - takes ~2 seconds
+ut run lint
 
 # 4. Build all packages when validating build output - takes ~14 seconds. NEVER CANCEL. Set timeout to 60+ seconds.
-pnpm run build
+ut run build
 ```
 
-Run unit tests from a clean source tree, not immediately after `pnpm run build`.
+Run unit tests from a clean source tree, not immediately after `ut run build`.
 The main CI test job installs dependencies with `ut install --from pnpm` and
 runs tests with `ut run ci`; it does not run `build` before tests.
 
@@ -52,44 +52,44 @@ runs tests with `ut run ci`; it does not run `build` before tests.
 ### Supporting Directories
 
 - **`examples/`** - Two example apps: `helloworld-commonjs` and `helloworld-typescript` (currently have runtime issues)
-- **`site/`** - Documentation website built with Dumi
+- **`site/`** - Documentation website built with VitePress
 
 ## Essential Commands and Timing
 
 ### Build Commands
 
-- `pnpm run build` - **Build all packages (~14 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
-- `pnpm run clean` - Clean all dist directories
+- `ut run build` - **Build all packages (~14 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
+- `ut run clean-dist` - Clean all dist directories
 
 ### Testing Commands
 
-- `pnpm run test` - **Run all tests (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
-- `pnpm run test:cov` - **Run tests with coverage (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
-- `pnpm run ci` - **Run tests with coverage (~2.1 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
+- `ut run test` - **Run all tests (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
+- `ut run test:cov` - **Run tests with coverage (~2 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
+- `ut run ci` - **Run tests with coverage (~2.1 minutes). NEVER CANCEL. Set timeout to 180+ seconds.**
 
 ### Linting Commands
 
-- `pnpm run lint` - Run oxlint across all packages (~2 seconds)
+- `ut run lint` - Run oxlint across all packages (~2 seconds)
 
 ### Documentation Commands
 
-- `pnpm run site:dev` - Start documentation dev server at http://localhost:8000
-- `cd site && pnpm run build:skip` - **Build documentation site (~24 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
+- `ut run site:dev` - Start documentation dev server (defaults to VitePress port 5173)
+- `ut run site:build` - **Build documentation site (~24 seconds). NEVER CANCEL. Set timeout to 60+ seconds.**
 
 ### Example Applications (Currently Not Working)
 
-- `pnpm run example:commonjs` - Start CommonJS example (has runtime issues)
-- `pnpm run example:typescript` - Start TypeScript example (has runtime issues)
+- `ut run example:dev:commonjs` - Start CommonJS example (has runtime issues)
+- `ut run example:dev:typescript` - Start TypeScript example (has runtime issues)
 
 ## Package-Specific Commands
 
-Run commands for specific packages using `pnpm --filter=<package>`:
+Run commands for specific packages using `ut --filter=<package>`:
 
 ```bash
 # Examples
-pnpm --filter=egg run test
-pnpm --filter=@eggjs/core run build
-pnpm --filter=site run dev
+ut --filter=egg run test
+ut --filter=@eggjs/core run build
+ut --filter=site run dev
 ```
 
 ## Development Workflow
@@ -111,17 +111,17 @@ pnpm --filter=site run dev
 **Always perform these validation steps after making changes:**
 
 ```bash
-# 1. Run pnpm run lint to check code quality across all packages
-pnpm run lint
+# 1. Run lint to check code quality across all packages
+ut run lint
 
 # 2. Run tests from a clean tree (some failures are expected in fresh environment)
-pnpm run test
+ut run test
 
 # 3. Build all packages when build output or packaging behavior is relevant
-pnpm run build
+ut run build
 
 # 4. Test documentation site when docs changed
-pnpm run site:dev
+ut run site:dev
 ```
 
 ### 3. Testing Strategy
@@ -166,7 +166,7 @@ pnpm run site:dev
 - **All sub-project tsconfig.json files MUST extend from root:** `"extends": "../../tsconfig.json"`
 - Root tsconfig.json includes all packages in `references` array
 
-## pnpm Workspace & Catalog Dependencies
+## utoo Workspace & Catalog Dependencies
 
 - Dependencies defined in `pnpm-workspace.yaml` catalog section
 - Reference catalog entries: `"package-name": "catalog:"`
@@ -187,7 +187,7 @@ pnpm run site:dev
 
 ### Build Issues
 
-- Run `pnpm run build` when validating build output, package exports, or changes
+- Run `ut run build` when validating build output, package exports, or changes
   that affect generated artifacts.
 - TypeScript compilation errors will show clearly
 - Build warnings are generally acceptable
@@ -226,10 +226,10 @@ pnpm run site:dev
 
 After making changes, always verify:
 
-1. **Linting Passes**: `pnpm run lint` shows no new errors
-2. **Tests Run From Clean Sources**: `pnpm run test` executes without stale build artifacts interfering
-3. **Documentation Loads**: `pnpm run site:dev` starts successfully and site loads at http://localhost:8000
-4. **Build Success When Relevant**: `pnpm run build` completes without errors
+1. **Linting Passes**: `ut run lint` shows no new errors
+2. **Tests Run From Clean Sources**: `ut run test` executes without stale build artifacts interfering
+3. **Documentation Loads**: `ut run site:dev` starts successfully and the printed VitePress URL responds
+4. **Build Success When Relevant**: `ut run build` completes without errors
 
 **Remember**: This is a complex enterprise framework. Validate incrementally, keep unit tests isolated from stale build artifacts, and focus on the core packages (`egg`, `core`, `utils`) for most development work.
 

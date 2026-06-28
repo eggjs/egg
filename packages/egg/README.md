@@ -21,14 +21,17 @@
 Follow the commands listed below.
 
 ```bash
+$ corepack enable utoo
 $ mkdir showcase && cd showcase
-$ npm init egg --type=simple # Optionally pnpm create egg --type=simple
-$ pnpm install
-$ pnpm run dev
+$ ut create egg@beta
+# Or with npm:
+$ npm init egg --type=simple
+$ ut install
+$ ut run dev
 $ open http://localhost:7001
 ```
 
-> Node.js >= 20.19.0 required, [supports `require(esm)` by default](https://nodejs.org/en/blog/release/v20.19.0).
+> Node.js >= 22.18.0 required.
 
 ## Documentations
 

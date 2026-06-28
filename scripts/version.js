@@ -121,7 +121,7 @@ if (eggVersion) {
 if (isDryRun) {
   console.log('\n✅ Dry run complete! No changes were made.');
   console.log('\nTo apply these changes, run:');
-  console.log(`  pnpm run version:${versionType}`);
+  console.log(`  ut run version:${versionType}`);
   process.exit(0);
 }
 

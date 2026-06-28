@@ -27,42 +27,43 @@ English | [简体中文](./README.zh-CN.md)
 Follow the commands listed below.
 
 ```bash
+$ corepack enable utoo
 $ mkdir showcase && cd showcase
-$ pnpm create egg@beta
-$ pnpm install
-$ pnpm run dev
+$ ut create egg@beta
+$ ut install
+$ ut run dev
 $ open http://localhost:7001
 ```
 
-> Node.js >= 20.19.0 required, [supports `require(esm)` by default](https://nodejs.org/en/blog/release/v20.19.0).
+> Node.js >= 22.18.0 required.
 
 ## Monorepo Structure
 
-This project is structured as a pnpm monorepo with the following packages:
+This project is structured as a utoo monorepo with the following packages:
 
 - `packages/egg` - Main Eggjs framework
 - `examples/helloworld-commonjs` - CommonJS example application
 - `examples/helloworld-typescript` - TypeScript example application
 - `site` - Documentation website
 
-The monorepo uses **pnpm catalog mode** for centralized dependency management, ensuring consistent versions across all packages.
+The monorepo uses **utoo catalog mode** for centralized dependency management, ensuring consistent versions across all packages.
 
 ### Development Commands
 
 ```bash
 # Install dependencies for all packages
-pnpm install
+ut install --from pnpm
 
 # Build all packages
-pnpm run build
+ut run build
 
 # Test all packages
-pnpm run test
+ut run test
 
 # Run specific package commands
-pnpm --filter=egg run test
-pnpm --filter=@examples/helloworld-typescript run dev
-pnpm --filter=site run dev
+ut --filter=egg run test
+ut --filter=@examples/helloworld-typescript run dev
+ut --filter=site run dev
 ```
 
 ### Local External Services
@@ -70,7 +71,7 @@ pnpm --filter=site run dev
 Some DAL, ORM, Redis, and ecosystem benchmark paths need local MySQL and Redis services. Start the repository-aligned Docker services before running those tests on a clean machine:
 
 ```bash
-utoo run dev:services:start
+ut run dev:services:start
 ```
 
 This starts MySQL 8 and Redis 7, matching the main CI service versions, and creates the databases used by local DAL/ORM/e2e fixtures: `test`, `apple`, `banana`, `test_runtime_datasource`, `test_runtime_dao`, `test_dal_plugin`, `test_dal_standalone`, `cnpmcore`, and `cnpmcore_unittest`.
@@ -78,9 +79,9 @@ This starts MySQL 8 and Redis 7, matching the main CI service versions, and crea
 Useful commands:
 
 ```bash
-utoo run dev:services:status
-utoo run dev:services:stop
-utoo run dev:services:reset
+ut run dev:services:status
+ut run dev:services:stop
+ut run dev:services:reset
 ```
 
 The default host ports are `127.0.0.1:3306` for MySQL and `127.0.0.1:6379` for Redis. If either port is already used, the start command stops before changing containers. Keep using the existing service if it is compatible with CI, or stop it and run the command again. You can change Docker host ports with `EGG_DEV_SERVICES_MYSQL_PORT` and `EGG_DEV_SERVICES_REDIS_PORT`; however, the full DAL/ORM/Redis local test path still expects the default host ports.
@@ -88,11 +89,11 @@ The default host ports are `127.0.0.1:3306` for MySQL and `127.0.0.1:6379` for R
 Image overrides are available for compatibility checks:
 
 ```bash
-EGG_DEV_SERVICES_MYSQL_IMAGE=mysql:5.7 utoo run dev:services:start
-EGG_DEV_SERVICES_REDIS_IMAGE=redis:7 utoo run dev:services:start
+EGG_DEV_SERVICES_MYSQL_IMAGE=mysql:5.7 ut run dev:services:start
+EGG_DEV_SERVICES_REDIS_IMAGE=redis:7 ut run dev:services:start
 ```
 
-Run `utoo run dev:services:reset` before switching MySQL image families, for example between MySQL 8 and MySQL 5.7, because MySQL data directories are not downgrade-compatible across major versions.
+Run `ut run dev:services:reset` before switching MySQL image families, for example between MySQL 8 and MySQL 5.7, because MySQL data directories are not downgrade-compatible across major versions.
 
 Current hard-coded service assumptions:
 

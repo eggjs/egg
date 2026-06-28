@@ -21,15 +21,16 @@
 - 深度框架定制
 - 丰富的[插件](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 
-> 支持 Node.js >= 20.19.0 及以上版本，[默认支持 `require(esm)`](https://nodejs.org/en/blog/release/v20.19.0)。
+> 支持 Node.js >= 22.18.0 及以上版本。
 
 ## 快速开始
 
 ```bash
+corepack enable utoo
 mkdir showcase && cd showcase
-pnpm create egg@beta
-pnpm install
-pnpm run dev
+ut create egg@beta
+ut install
+ut run dev
 
 open http://localhost:7001
 ```

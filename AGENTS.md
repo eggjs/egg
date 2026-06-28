@@ -6,7 +6,7 @@ If another agent-specific file exists, it should import or defer to this file fo
 
 ## Project Map
 
-Egg is maintained as a pnpm monorepo.
+Egg is maintained as a utoo monorepo.
 
 - `packages/` contains core framework packages and shared internals.
 - `plugins/` contains optional Egg integrations.
@@ -20,6 +20,7 @@ Egg is maintained as a pnpm monorepo.
 
 The repository runs on [utoo](https://github.com/utooland/utoo) (`ut`); the workspace is still defined in `pnpm-workspace.yaml` (catalog mode), so `ut install` reads it via `--from pnpm`.
 
+- `corepack enable utoo` enables utoo on a clean machine.
 - `ut install --from pnpm` hydrates the workspace.
 - `ut run build` builds all packages.
 - `ut run test` runs the main test suite.
@@ -29,7 +30,7 @@ The repository runs on [utoo](https://github.com/utooland/utoo) (`ut`); the work
 
 ### Local CI
 
-Run tests **without building first**. The CI workflow (`ut install → ut run ci`) never runs `build` before tests. If `dist/` directories exist from a prior build, tegg plugin tests will fail with `duplicate proto` errors because globby scans both `src/*.ts` and `dist/*.js`, loading the same decorated class twice.
+Run tests **without building first**. The CI workflow (`ut install --from pnpm → ut run ci`) never runs `build` before tests. If `dist/` directories exist from a prior build, tegg plugin tests will fail with `duplicate proto` errors because globby scans both `src/*.ts` and `dist/*.js`, loading the same decorated class twice.
 
 When you see `duplicate proto` failures locally:
 
