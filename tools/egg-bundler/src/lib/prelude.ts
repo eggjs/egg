@@ -36,9 +36,9 @@ const debug = debuglog('egg/bundler/snapshot-prelude');
 export const SNAPSHOT_PRELUDE_MARKER = '@eggjs/egg-bundler:snapshot-prelude';
 
 /**
- * Node built-in modules that produce non-serializable native bindings when loaded
- * inside a V8 startup snapshot builder. They are kept as lazy externals: build time
- * returns a member-proxy stub; restore time forwards to the real module via
+ * Modules that produce non-serializable native bindings when loaded inside a V8
+ * startup snapshot builder. They are kept as lazy externals: build time returns a
+ * member-proxy stub; restore time forwards to the real module via
  * `globalThis.__RUNTIME_REQUIRE`.
  *
  * - network stack (HTTPParser, nghttp2, SecureContext, ChannelWrap):
@@ -50,6 +50,16 @@ export const SNAPSHOT_PRELUDE_MARKER = '@eggjs/egg-bundler:snapshot-prelude';
  *   (readline/repl + http2 nghttp2 native), making the heap unserializable. Keep
  *   it lazy so the build-time stub is used; the live process gets the real module
  *   on restore.
+ * - `undici` / `urllib`: egg's HTTP client stack, built during boot
+ *   (`class HttpClient extends urllib.HttpClient`, and urllib's own
+ *   `class BaseAgent extends undici.Agent`). undici instantiates an llhttp
+ *   `WebAssembly` module (disabled under `--build-snapshot`) + an `HTTPParser`, so
+ *   it must not be evaluated at build. Unlike the builtins above these are npm
+ *   packages that would otherwise be **inlined** into the bundle and evaluated at
+ *   build; listing them here forces them external (see {@link Bundler}) so the
+ *   member-proxy stub is used at build and the real module is required on restore.
+ *   Listing them by default means an app gets a serializable snapshot without
+ *   adding them to `egg.snapshot.lazyModules` itself.
  */
 export const DEFAULT_SNAPSHOT_LAZY_MODULES: readonly string[] = [
   'http',
@@ -64,6 +74,8 @@ export const DEFAULT_SNAPSHOT_LAZY_MODULES: readonly string[] = [
   'node:dns',
   'inspector',
   'node:inspector',
+  'undici',
+  'urllib',
 ];
 
 /**
