@@ -137,31 +137,40 @@ for (const pkg of packages) {
   }
 }
 
-// Retry failed packages once
+// Retry failed packages once. A dry-run retry would just reproduce the same
+// result, so we skip the retry but still report the failures — otherwise a
+// dry-run would exit 0 even when every package failed to pack, defeating its
+// purpose as a pre-flight check.
 const finalFailed = [];
-if (toRetry.length > 0 && !isDryRun) {
-  console.log(`\n🔄 Retrying ${toRetry.length} failed package(s)...`);
-
-  for (const pkg of toRetry) {
-    const label = `${pkg.name}@${pkg.version}`;
-
-    if (isPublished(pkg.name, pkg.version)) {
-      console.log(`  ⏭️  ${label} now published`);
-      skipped.push(label);
-      continue;
+if (toRetry.length > 0) {
+  if (isDryRun) {
+    for (const pkg of toRetry) {
+      finalFailed.push(`${pkg.name}@${pkg.version}`);
     }
+  } else {
+    console.log(`\n🔄 Retrying ${toRetry.length} failed package(s)...`);
 
-    try {
-      publishOne(pkg);
-      console.log(`  ✅ ${label} (retry)`);
-      published.push(label);
-    } catch {
+    for (const pkg of toRetry) {
+      const label = `${pkg.name}@${pkg.version}`;
+
       if (isPublished(pkg.name, pkg.version)) {
-        console.log(`  ⏭️  ${label} now published (confirmed after retry error)`);
+        console.log(`  ⏭️  ${label} now published`);
         skipped.push(label);
-      } else {
-        console.error(`  ❌ ${label} retry failed`);
-        finalFailed.push(label);
+        continue;
+      }
+
+      try {
+        publishOne(pkg);
+        console.log(`  ✅ ${label} (retry)`);
+        published.push(label);
+      } catch {
+        if (isPublished(pkg.name, pkg.version)) {
+          console.log(`  ⏭️  ${label} now published (confirmed after retry error)`);
+          skipped.push(label);
+        } else {
+          console.error(`  ❌ ${label} retry failed`);
+          finalFailed.push(label);
+        }
       }
     }
   }
