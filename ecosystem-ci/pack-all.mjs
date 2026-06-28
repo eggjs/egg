@@ -35,9 +35,23 @@ import { generateUtooToml } from '../scripts/gen-utoo-catalog.mjs';
 const rootDir = path.join(import.meta.dirname, '..');
 const UT_BIN = process.env.UT_BIN || (process.platform === 'win32' ? 'ut.cmd' : 'ut');
 
-// Keys in publishConfig that control how npm publishes rather than manifest
-// fields consumers read; these must NOT be copied onto the published manifest.
-const PUBLISH_CONTROL_KEYS = new Set(['access', 'tag', 'registry', 'provenance', 'otp']);
+// publishConfig keys that are manifest fields consumers read, which npm/pnpm
+// copy onto the published manifest at publish time. Use an allowlist so
+// publish-only keys (access, tag, registry, ignore, ...) never leak into the
+// packed package.json. Mirrors pnpm's publish-time overridable field set.
+const PUBLISHABLE_MANIFEST_FIELDS = new Set([
+  'bin',
+  'main',
+  'exports',
+  'types',
+  'typings',
+  'module',
+  'browser',
+  'esnext',
+  'es2015',
+  'unpkg',
+  'umd:main',
+]);
 
 const ws = yaml.load(fs.readFileSync(path.join(rootDir, 'pnpm-workspace.yaml'), 'utf8'));
 
@@ -82,7 +96,7 @@ function applyPublishConfig(manifest) {
   const pc = manifest.publishConfig;
   if (!pc) return manifest;
   for (const [key, value] of Object.entries(pc)) {
-    if (!PUBLISH_CONTROL_KEYS.has(key)) manifest[key] = value;
+    if (PUBLISHABLE_MANIFEST_FIELDS.has(key)) manifest[key] = value;
   }
   return manifest;
 }
