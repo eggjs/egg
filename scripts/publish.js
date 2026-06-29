@@ -93,7 +93,8 @@ function isPublished(name, version) {
     // warn loudly. We still return false, but npm's version immutability prevents
     // an accidental overwrite if a publish is then attempted.
     if (!/E404|404 Not Found/i.test(stderr)) {
-      console.warn(`  ⚠️  could not verify ${name}@${version} on npm: ${stderr.split('\n')[0] || err.message}`);
+      const detail = stderr.split('\n')[0] || (err instanceof Error ? err.message : String(err));
+      console.warn(`  ⚠️  could not verify ${name}@${version} on npm: ${detail}`);
     }
     return false;
   }
@@ -127,9 +128,10 @@ function publishOne(pkg) {
     execFileSync(npmBin, publishArgs, {
       cwd: packageDir,
       stdio: 'inherit',
-      // Verbose logging only on dry-run; on a real publish it can surface auth
+      // Verbose logging only on dry-run. On a real publish, force a non-verbose
+      // level so an inherited NPM_CONFIG_LOGLEVEL=verbose can't surface auth
       // headers in CI logs.
-      env: { ...process.env, ...(isDryRun ? { NPM_CONFIG_LOGLEVEL: 'verbose' } : {}) },
+      env: { ...process.env, NPM_CONFIG_LOGLEVEL: isDryRun ? 'verbose' : 'notice' },
       timeout: 120000,
     });
   } finally {

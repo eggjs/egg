@@ -35,10 +35,21 @@ const PUBLISH_CONFIG_OVERRIDE_FIELDS = [
 // malformed `name` field smuggling shell metacharacters or a typo'd package.
 const NPM_NAME_RE = /^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/;
 
+/**
+ * Whether `name` is a syntactically valid npm package name (scoped or unscoped,
+ * 1-214 chars, lowercase, URL-safe).
+ * @param {unknown} name
+ * @returns {boolean}
+ */
 export function isValidNpmPackageName(name) {
   return typeof name === 'string' && name.length > 0 && name.length <= 214 && NPM_NAME_RE.test(name);
 }
 
+/**
+ * Throw if `name` is not a valid npm package name. Used to reject a malicious or
+ * typo'd `name` before it reaches a git command or `npm publish`.
+ * @param {unknown} name
+ */
 export function assertValidNpmPackageName(name) {
   if (!isValidNpmPackageName(name)) {
     throw new Error(`Invalid npm package name: ${JSON.stringify(name)}`);
