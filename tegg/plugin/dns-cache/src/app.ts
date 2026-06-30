@@ -12,7 +12,7 @@ export default class DnsCacheAppHook implements ILifecycleBoot {
 
   configWillLoad(): void {
     if (!this.app.config.dnsCache) {
-      this.app.logger.warn('[tegg-dns-cache-plugin] DNS cache is disabled, please setup dnsCache config.');
+      this.app.logger.warn('[dns-cache-plugin] DNS cache is disabled, please setup dnsCache config.');
     }
   }
 

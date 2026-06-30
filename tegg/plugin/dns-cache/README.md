@@ -1,4 +1,4 @@
-# @eggjs/tegg-dns-cache
+# @eggjs/dns-cache-plugin
 
 DNS cache plugin for tegg framework. This plugin provides DNS caching capabilities to improve performance and reduce DNS lookup time.
 
@@ -14,7 +14,7 @@ DNS cache plugin for tegg framework. This plugin provides DNS caching capabiliti
 ## Installation
 
 ```bash
-npm install @eggjs/tegg-dns-cache --save
+npm install @eggjs/dns-cache-plugin --save
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ npm install @eggjs/tegg-dns-cache --save
 // config/plugin.js
 exports.dnsCache = {
   enable: true,
-  package: '@eggjs/tegg-dns-cache',
+  package: '@eggjs/dns-cache-plugin',
 };
 ```
 
