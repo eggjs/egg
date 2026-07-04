@@ -12,6 +12,7 @@ export interface ModuleDescriptor {
   optional?: boolean;
   clazzList: EggProtoImplClass[];
   multiInstanceClazzList: EggProtoImplClass[];
+  innerObjectClazzList: EggProtoImplClass[];
   protos: ProtoDescriptor[];
 }
 
@@ -32,6 +33,11 @@ export class ModuleDescriptorDumper {
         })
         .join(',')}],` +
       `"multiInstanceClazzList": [${moduleDescriptor.multiInstanceClazzList
+        .map((t) => {
+          return ModuleDescriptorDumper.stringifyClazz(t, moduleDescriptor);
+        })
+        .join(',')}],` +
+      `"innerObjectClazzList": [${moduleDescriptor.innerObjectClazzList
         .map((t) => {
           return ModuleDescriptorDumper.stringifyClazz(t, moduleDescriptor);
         })
@@ -79,6 +85,9 @@ export class ModuleDescriptorDumper {
     };
     for (const clazz of desc.clazzList) addClazz(clazz);
     for (const clazz of desc.multiInstanceClazzList) addClazz(clazz);
+    // Inner object / lifecycle proto classes are diverted out of clazzList, but
+    // their files must still be recorded so bundle mode re-imports them.
+    for (const clazz of desc.innerObjectClazzList) addClazz(clazz);
     return Array.from(fileSet);
   }
 

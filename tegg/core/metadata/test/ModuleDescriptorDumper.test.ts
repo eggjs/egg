@@ -17,6 +17,7 @@ describe('test/ModuleDescriptorDumper.test.ts', () => {
         unitPath: '/tmp/empty',
         clazzList: [],
         multiInstanceClazzList: [],
+        innerObjectClazzList: [],
         protos: [],
       };
       const files = ModuleDescriptorDumper.getDecoratedFiles(desc);
@@ -35,6 +36,7 @@ describe('test/ModuleDescriptorDumper.test.ts', () => {
         unitPath: loadUnitPath,
         clazzList: [AppRepo],
         multiInstanceClazzList: [],
+        innerObjectClazzList: [],
         protos: [],
       };
 
@@ -56,6 +58,7 @@ describe('test/ModuleDescriptorDumper.test.ts', () => {
         unitPath: loadUnitPath,
         clazzList: [AppRepo],
         multiInstanceClazzList: [AppRepo],
+        innerObjectClazzList: [],
         protos: [],
       };
 
@@ -73,6 +76,7 @@ describe('test/ModuleDescriptorDumper.test.ts', () => {
         unitPath: '/tmp/fake-module',
         clazzList: [],
         multiInstanceClazzList: [AppRepo],
+        innerObjectClazzList: [],
         protos: [],
       };
 

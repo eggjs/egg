@@ -95,12 +95,16 @@ export class LoaderFactory {
         clazzList: [],
         protos: [],
         multiInstanceClazzList,
+        innerObjectClazzList: [],
         optional: moduleReference.optional,
       };
       result.push(res);
       const clazzList = await loader.load();
       for (const clazz of clazzList) {
-        if (PrototypeUtil.isEggPrototype(clazz)) {
+        // Inner object protos are also egg prototypes, so this branch must come first.
+        if (PrototypeUtil.isEggInnerObject(clazz)) {
+          res.innerObjectClazzList.push(clazz);
+        } else if (PrototypeUtil.isEggPrototype(clazz)) {
           res.clazzList.push(clazz);
         } else if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
           res.multiInstanceClazzList.push(clazz);
