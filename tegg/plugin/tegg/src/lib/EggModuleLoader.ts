@@ -11,6 +11,7 @@ export class EggModuleLoader {
   app: Application;
   globalGraph: GlobalGraph;
   private pendingBuildHooks: GlobalGraphBuildHook[] = [];
+  #moduleDescriptors: readonly ModuleDescriptor[] = [];
   /**
    * True when the app graph was built from a tegg manifest (bundle mode). In
    * that case the module source files do not exist on disk, so module load
@@ -52,6 +53,7 @@ export class EggModuleLoader {
     // RealLoaderFS in normal mode (zero behavior change), ManifestLoaderFS in bundle mode.
     const loaderFS = this.app.loader.loaderFS;
     const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest, loaderFS);
+    this.#moduleDescriptors = moduleDescriptors;
 
     // Collect manifest data when not loaded from manifest
     if (!loadAppManifest) {
@@ -133,11 +135,25 @@ export class EggModuleLoader {
     }
   }
 
-  async load(): Promise<void> {
+  get moduleDescriptors(): readonly ModuleDescriptor[] {
+    return this.#moduleDescriptors;
+  }
+
+  /**
+   * Phase 1: scan modules and create the business GlobalGraph (nodes only),
+   * then flush buffered build hooks onto it. Kept separate from load() so the
+   * InnerObjectLoadUnit can be instantiated in between — its lifecycle protos
+   * (including graph build hooks they register) must be live before build().
+   */
+  async initGraph(): Promise<void> {
     GlobalGraph.instance = this.globalGraph = await this.buildAppGraph();
     for (const hook of this.pendingBuildHooks) {
       this.globalGraph.registerBuildHook(hook);
     }
+  }
+
+  /** Phase 2: create the APP load unit, build()/sort() the graph and create module load units. */
+  async load(): Promise<void> {
     await this.loadApp();
     await this.loadModule();
   }
