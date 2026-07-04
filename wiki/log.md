@@ -114,3 +114,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `packages/utils/src/import.ts`, `packages/utils/README.md`, `packages/utils/test/module-importer.test.ts`, `packages/utils/test/fixtures/module-importer-require-esm/run.mjs`, `packages/typings/src/index.ts`
 - pages updated: `wiki/log.md`, `wiki/packages/utils.md`
 - note: Documented the `__EGG_BUNDLE_MODULE_LOADER__` → snapshot loader (`setSnapshotModuleLoader`) → `__EGG_MODULE_IMPORTER__` → native priority as a formal contract (JSDoc on `BundleModuleLoader`/`ModuleImporter` + README). Added regression coverage for the V8 snapshot-restore path where `__EGG_MODULE_IMPORTER__ = require` loads ESM with no dynamic-import callback (inline sync-require test + spawned `node:vm` fixture). No load-semantics change — types/declarations already existed.
+
+## [2026-07-04] architecture | tegg module plugin mechanism (both hosts)
+
+- sources touched: `tegg/core/{types,core-decorator,loader,metadata,runtime}`, `tegg/core/aop-runtime`, `tegg/plugin/{tegg,aop,dal}`, `tegg/standalone/standalone`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Ported tegg#325's declarative module plugin core to next and completed it: @InnerObjectProto/@EggLifecycleProto five variants, host-agnostic InnerObjectLoadUnit instantiated before the business graph builds (restores the two-phase ordering so declarative graph build hooks land in-window), egg-host wiring (#325 left app mode out), and conversion of the built-in AOP/DAL/ConfigSource hooks to module plugins on both hosts. Runner renamed to StandaloneApp (no alias). Also fixed plugin/controller's middlewareGraphHook silent no-op (registered on a not-yet-created graph) on branch fix/controller-middleware-graph-hook.
