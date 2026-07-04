@@ -9,7 +9,7 @@ import { importResolve } from '@eggjs/utils';
 import { mm } from 'mm';
 import { describe, it, afterEach, beforeEach } from 'vitest';
 
-import { main, StandaloneContext, Runner, preLoad } from '../src/index.ts';
+import { main, StandaloneContext, StandaloneApp, preLoad } from '../src/index.ts';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello.ts';
 import { Foo } from './fixtures/dal-module/src/Foo.ts';
 
@@ -69,7 +69,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
   describe('runner with custom context', () => {
     it('should work', async () => {
-      const runner = new Runner(path.join(__dirname, './fixtures/custom-context'));
+      const runner = new StandaloneApp(path.join(__dirname, './fixtures/custom-context'));
       await runner.init();
       const ctx = new StandaloneContext();
       ctx.set('foo', 'foo');
@@ -210,7 +210,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
     it('should throw error if no proto found', async () => {
       const fixturePath = path.join(__dirname, './fixtures/invalid-inject');
-      const runner = new Runner(fixturePath);
+      const runner = new StandaloneApp(fixturePath);
       await assert.rejects(
         runner.init(),
         /EggPrototypeNotFound: Object doesNotExist not found in LOAD_UNIT:invalidInject/,
@@ -232,15 +232,15 @@ describe('standalone/standalone/test/index.test.ts', () => {
   });
 
   describe('load', () => {
-    let runner: Runner;
+    let runner: StandaloneApp;
     afterEach(async () => {
       if (runner) await runner.destroy();
     });
 
     it('should work', async () => {
-      runner = new Runner(path.join(__dirname, './fixtures/simple'));
+      runner = new StandaloneApp(path.join(__dirname, './fixtures/simple'));
       await runner.init();
-      const loadunits = await runner.load();
+      const loadunits = runner.loadUnits;
       for (const loadunit of loadunits) {
         for (const proto of loadunit.iterateEggPrototype()) {
           if (proto.id.match(/:hello$/)) {
@@ -255,9 +255,9 @@ describe('standalone/standalone/test/index.test.ts', () => {
     });
 
     it('should work with multi', async () => {
-      runner = new Runner(path.join(__dirname, './fixtures/multi-callback-instance-module'));
+      runner = new StandaloneApp(path.join(__dirname, './fixtures/multi-callback-instance-module'));
       await runner.init();
-      const loadunits = await runner.load();
+      const loadunits = runner.loadUnits;
       for (const loadunit of loadunits) {
         for (const proto of loadunit.iterateEggPrototype()) {
           if (proto.id.match(/:dynamicLogger$/)) {

@@ -46,6 +46,7 @@
     "@eggjs/aop-runtime": "workspace:*",
     "@eggjs/dal-plugin": "workspace:*",
     "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/loader-fs": "workspace:*",
     "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
