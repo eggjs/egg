@@ -1,4 +1,5 @@
 import {
+  LoadUnitLifecycleProto,
   PrototypeUtil,
   QualifierUtil,
   ConfigSourceQualifier,
@@ -12,6 +13,7 @@ import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
  * Hook for inject moduleConfig.
  * Add default qualifier value is current module name.
  */
+@LoadUnitLifecycleProto()
 export class ConfigSourceLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   async preCreate(ctx: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
     const classList = await ctx.loader.load();

@@ -76,6 +76,11 @@ export class LoaderUtil {
       const clazzList = await loader.load();
       const eggProtoClass: EggProtoImplClass[] = [];
       for (const clazz of clazzList) {
+        // Inner object protos are diverted out of module load units by the
+        // production loader (LoaderFactory.loadApp); mirror that here.
+        if (PrototypeUtil.isEggInnerObject(clazz)) {
+          continue;
+        }
         if (PrototypeUtil.isEggPrototype(clazz)) {
           eggProtoClass.push(clazz);
         }

@@ -1,29 +1,13 @@
+import { AOP_INNER_OBJECT_CLAZZ_LIST, AOP_INNER_OBJECT_MODULE_REFERENCE } from '@eggjs/aop-runtime';
 import {
-  crossCutGraphHook,
-  EggObjectAopHook,
-  EggPrototypeCrossCutHook,
-  LoadUnitAopHook,
-  pointCutGraphHook,
-} from '@eggjs/aop-runtime';
-import {
-  DalTableEggPrototypeHook,
-  DalModuleLoadUnitHook,
+  DAL_INNER_OBJECT_CLAZZ_LIST,
+  DAL_INNER_OBJECT_MODULE_REFERENCE,
   MysqlDataSourceManager,
   SqlMapManager,
   TableModelManager,
-  TransactionPrototypeHook,
 } from '@eggjs/dal-plugin';
 import type { LoaderFS } from '@eggjs/loader-fs';
-import {
-  type EggPrototype,
-  EggPrototypeFactory,
-  EggPrototypeLifecycleUtil,
-  GlobalGraph,
-  type LoadUnit,
-  LoadUnitFactory,
-  LoadUnitLifecycleUtil,
-  LoadUnitMultiInstanceProtoHook,
-} from '@eggjs/metadata';
+import { type EggPrototype, EggPrototypeFactory, type LoadUnit, LoadUnitFactory } from '@eggjs/metadata';
 import { type ModuleConfigHolder, ModuleConfigs, ConfigSourceQualifierAttribute, type Logger } from '@eggjs/tegg';
 import {
   ModuleConfigUtil,
@@ -36,7 +20,6 @@ import {
   ContextHandler,
   EggContainerFactory,
   type EggContext,
-  EggObjectLifecycleUtil,
   type InnerObject,
   InnerObjectLoadUnitBuilder,
   type LoadUnitInstance,
@@ -44,7 +27,6 @@ import {
 } from '@eggjs/tegg-runtime';
 import { TeggScope } from '@eggjs/tegg-types';
 import type { TeggScopeBag } from '@eggjs/tegg-types';
-import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
 import { StandaloneUtil, type MainRunner } from '@eggjs/tegg/standalone';
 
 import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook.ts';
@@ -93,16 +75,6 @@ export class StandaloneApp {
   readonly options?: StandaloneAppOptions;
   private loadUnitLoader: EggModuleLoader;
   private runnerProto: EggPrototype;
-  private configSourceEggPrototypeHook: ConfigSourceLoadUnitHook;
-  private loadUnitMultiInstanceProtoHook: LoadUnitMultiInstanceProtoHook;
-  private dalTableEggPrototypeHook: DalTableEggPrototypeHook;
-  private dalModuleLoadUnitHook: DalModuleLoadUnitHook;
-  private transactionPrototypeHook: TransactionPrototypeHook;
-
-  private crosscutAdviceFactory: CrosscutAdviceFactory;
-  private loadUnitAopHook: LoadUnitAopHook;
-  private eggPrototypeCrossCutHook: EggPrototypeCrossCutHook;
-  private eggObjectAopHook: EggObjectAopHook;
 
   loadUnits: LoadUnit[] = [];
   loadUnitInstances: LoadUnitInstance[] = [];
@@ -206,6 +178,8 @@ export class StandaloneApp {
     } else if (options?.innerObjectHandlers) {
       Object.assign(this.innerObjects, options.innerObjectHandlers);
     }
+    // Framework hooks (e.g. DAL) inject `logger`; make sure it always resolves.
+    this.innerObjects.logger ??= [{ obj: console }];
   }
 
   static getModuleReferences(
@@ -266,38 +240,6 @@ export class StandaloneApp {
       loaderFS: this.options?.loaderFS,
     });
     await this.loadUnitLoader.init();
-    // The graph exists (nodes only) and build() has not run yet, so build hooks
-    // registered here — or declaratively by lifecycle protos instantiated in
-    // the InnerObjectLoadUnit below — all land before their consumption point.
-    GlobalGraph.instance!.registerBuildHook(crossCutGraphHook);
-    GlobalGraph.instance!.registerBuildHook(pointCutGraphHook);
-    const configSourceEggPrototypeHook = new ConfigSourceLoadUnitHook();
-    LoadUnitLifecycleUtil.registerLifecycle(configSourceEggPrototypeHook);
-
-    // TODO(PR4): revamp the manual registrations below to module plugins
-    // (@XxxLifecycleProto) inside their own packages.
-    // aop runtime
-    this.crosscutAdviceFactory = new CrosscutAdviceFactory();
-    this.loadUnitAopHook = new LoadUnitAopHook(this.crosscutAdviceFactory);
-    this.eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook(this.crosscutAdviceFactory);
-    this.eggObjectAopHook = new EggObjectAopHook();
-
-    EggPrototypeLifecycleUtil.registerLifecycle(this.eggPrototypeCrossCutHook);
-    LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitAopHook);
-    EggObjectLifecycleUtil.registerLifecycle(this.eggObjectAopHook);
-
-    this.loadUnitMultiInstanceProtoHook = new LoadUnitMultiInstanceProtoHook();
-    LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitMultiInstanceProtoHook);
-
-    const loggerInnerObject = this.innerObjects.logger && this.innerObjects.logger[0];
-    const logger = (loggerInnerObject?.obj || console) as Logger;
-
-    this.dalModuleLoadUnitHook = new DalModuleLoadUnitHook(this.env ?? '', this.moduleConfigs, logger);
-    this.dalTableEggPrototypeHook = new DalTableEggPrototypeHook(logger);
-    this.transactionPrototypeHook = new TransactionPrototypeHook(this.moduleConfigs, logger);
-    EggPrototypeLifecycleUtil.registerLifecycle(this.dalTableEggPrototypeHook);
-    EggPrototypeLifecycleUtil.registerLifecycle(this.transactionPrototypeHook);
-    LoadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
   }
 
   /**
@@ -308,6 +250,13 @@ export class StandaloneApp {
   private async instantiateInnerObjectLoadUnit(): Promise<void> {
     StandaloneContextHandler.register();
     const builder = new InnerObjectLoadUnitBuilder();
+    // Built-in framework module plugins (declarative hooks in their own packages).
+    builder.addInnerObjectClazzList([ConfigSourceLoadUnitHook], {
+      name: 'standalone',
+      path: 'tegg:standalone',
+    });
+    builder.addInnerObjectClazzList(AOP_INNER_OBJECT_CLAZZ_LIST, AOP_INNER_OBJECT_MODULE_REFERENCE);
+    builder.addInnerObjectClazzList(DAL_INNER_OBJECT_CLAZZ_LIST, DAL_INNER_OBJECT_MODULE_REFERENCE);
     for (const moduleDescriptor of this.loadUnitLoader.moduleDescriptors) {
       builder.addInnerObjectClazzList(moduleDescriptor.innerObjectClazzList, {
         name: moduleDescriptor.name,
@@ -403,33 +352,8 @@ export class StandaloneApp {
         await LoadUnitFactory.destroyLoadUnit(loadUnit);
       }
     }
-    if (this.configSourceEggPrototypeHook) {
-      LoadUnitLifecycleUtil.deleteLifecycle(this.configSourceEggPrototypeHook);
-    }
-
-    if (this.eggPrototypeCrossCutHook) {
-      EggPrototypeLifecycleUtil.deleteLifecycle(this.eggPrototypeCrossCutHook);
-    }
-    if (this.loadUnitAopHook) {
-      LoadUnitLifecycleUtil.deleteLifecycle(this.loadUnitAopHook);
-    }
-    if (this.eggObjectAopHook) {
-      EggObjectLifecycleUtil.deleteLifecycle(this.eggObjectAopHook);
-    }
-
-    if (this.loadUnitMultiInstanceProtoHook) {
-      LoadUnitLifecycleUtil.deleteLifecycle(this.loadUnitMultiInstanceProtoHook);
-    }
-
-    if (this.dalTableEggPrototypeHook) {
-      EggPrototypeLifecycleUtil.deleteLifecycle(this.dalTableEggPrototypeHook);
-    }
-    if (this.dalModuleLoadUnitHook) {
-      LoadUnitLifecycleUtil.deleteLifecycle(this.dalModuleLoadUnitHook);
-    }
-    if (this.transactionPrototypeHook) {
-      EggPrototypeLifecycleUtil.deleteLifecycle(this.transactionPrototypeHook);
-    }
+    // Framework hooks (ConfigSource/AOP/DAL) live in the InnerObjectLoadUnit
+    // and deregister themselves when it is destroyed above.
     MysqlDataSourceManager.instance.clear();
     SqlMapManager.instance.clear();
     TableModelManager.instance.clear();

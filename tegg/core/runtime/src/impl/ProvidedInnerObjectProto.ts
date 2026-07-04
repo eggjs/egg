@@ -42,12 +42,13 @@ export class ProvidedInnerObjectProto implements EggPrototype {
     initType: ObjectInitTypeLike,
     loadUnitId: Id,
     qualifiers: QualifierInfo[],
+    accessLevel?: AccessLevel,
   ) {
     this.id = id;
     this.clazz = clazz;
     this.name = name;
     this.initType = initType;
-    this.accessLevel = AccessLevel.PUBLIC;
+    this.accessLevel = accessLevel ?? AccessLevel.PUBLIC;
     this.injectObjects = [];
     this.loadUnitId = loadUnitId;
     this.qualifiers = qualifiers;

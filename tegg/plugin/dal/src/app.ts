@@ -1,43 +1,28 @@
 import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
-import { DalModuleLoadUnitHook } from './lib/DalModuleLoadUnitHook.ts';
-import { DalTableEggPrototypeHook } from './lib/DalTableEggPrototypeHook.ts';
+import { DAL_INNER_OBJECT_CLAZZ_LIST, DAL_INNER_OBJECT_MODULE_REFERENCE } from './lib/DalInnerObjectClazzList.ts';
 import { MysqlDataSourceManager } from './lib/MysqlDataSourceManager.ts';
 import { SqlMapManager } from './lib/SqlMapManager.ts';
 import { TableModelManager } from './lib/TableModelManager.ts';
-import { TransactionPrototypeHook } from './lib/TransactionPrototypeHook.ts';
 
 export default class DalAppBootHook implements ILifecycleBoot {
   private readonly app: Application;
-  private dalTableEggPrototypeHook: DalTableEggPrototypeHook;
-  private dalModuleLoadUnitHook: DalModuleLoadUnitHook;
-  private transactionPrototypeHook: TransactionPrototypeHook;
 
   constructor(app: Application) {
     this.app = app;
   }
 
-  configWillLoad(): void {
-    this.dalModuleLoadUnitHook = new DalModuleLoadUnitHook(this.app.config.env, this.app.moduleConfigs);
-    this.dalTableEggPrototypeHook = new DalTableEggPrototypeHook(this.app.logger);
-    this.transactionPrototypeHook = new TransactionPrototypeHook(this.app.moduleConfigs, this.app.logger);
-    // app.*LifecycleUtil getters are pinned to this app's scope bag — no run wrap needed.
-    this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.dalTableEggPrototypeHook);
-    this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.transactionPrototypeHook);
-    this.app.loadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
+  configDidLoad(): void {
+    // The DAL hooks are module plugin classes (@XxxLifecycleProto): buffer them
+    // on the moduleHandler (created in the tegg plugin's configDidLoad, which
+    // runs before ours) so they are instantiated inside the InnerObjectLoadUnit
+    // — with moduleConfigs/runtimeConfig/logger injected — before any business
+    // load unit is created. Registration/deregistration is automatic.
+    this.app.moduleHandler.registerInnerObjectClazzList(DAL_INNER_OBJECT_CLAZZ_LIST, DAL_INNER_OBJECT_MODULE_REFERENCE);
   }
 
   async beforeClose(): Promise<void> {
-    if (this.dalTableEggPrototypeHook) {
-      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.dalTableEggPrototypeHook);
-    }
-    if (this.dalModuleLoadUnitHook) {
-      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.dalModuleLoadUnitHook);
-    }
-    if (this.transactionPrototypeHook) {
-      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.transactionPrototypeHook);
-    }
     // The per-app DAL managers are resolved/cleared within this app's scope.
     await TeggScope.run(this.app._teggScopeBag, async () => {
       MysqlDataSourceManager.instance.clear();

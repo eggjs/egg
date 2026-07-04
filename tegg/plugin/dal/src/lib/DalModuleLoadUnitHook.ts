@@ -1,23 +1,29 @@
+import { Inject, InjectOptional, LoadUnitLifecycleProto } from '@eggjs/core-decorator';
 import { DatabaseForker, type DataSourceOptions } from '@eggjs/dal-runtime';
 import type { LifecycleHook } from '@eggjs/lifecycle';
 import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
-import type { Logger, ModuleConfigHolder } from '@eggjs/tegg-types';
+import type { ModuleConfigs, RuntimeConfig } from '@eggjs/tegg-common-util';
+import type { Logger } from '@eggjs/tegg-types';
 
 import { MysqlDataSourceManager } from './MysqlDataSourceManager.ts';
 
+@LoadUnitLifecycleProto()
 export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
-  private readonly moduleConfigs: Record<string, ModuleConfigHolder>;
-  private readonly env: string;
+  @Inject()
+  private readonly moduleConfigs: ModuleConfigs;
+
+  @Inject()
+  private readonly runtimeConfig: Partial<RuntimeConfig>;
+
+  @InjectOptional()
   private readonly logger?: Logger;
 
-  constructor(env: string, moduleConfigs: Record<string, ModuleConfigHolder>, logger?: Logger) {
-    this.env = env;
-    this.moduleConfigs = moduleConfigs;
-    this.logger = logger;
+  private get env(): string {
+    return this.runtimeConfig.env ?? '';
   }
 
   async preCreate(_: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
-    const moduleConfigHolder = this.moduleConfigs[loadUnit.name];
+    const moduleConfigHolder = this.moduleConfigs.inner[loadUnit.name];
     if (!moduleConfigHolder) return;
     const dataSourceConfig: Record<string, DataSourceOptions> | undefined = (moduleConfigHolder.config as any)
       .dataSource;

@@ -1,11 +1,14 @@
 import { EggLoadUnitType, type LoadUnit, LoadUnitFactory } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook } from '@eggjs/metadata';
+import { ModuleConfigs } from '@eggjs/tegg-common-util';
 import {
   INNER_OBJECT_LOAD_UNIT_TYPE,
   InnerObjectLoadUnitBuilder,
+  type InnerObjectModuleReference,
   type LoadUnitInstance,
   LoadUnitInstanceFactory,
 } from '@eggjs/tegg-runtime';
+import { AccessLevel, type EggProtoImplClass } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 import { Base } from 'sdk-base';
 
@@ -30,6 +33,24 @@ export class ModuleHandler extends Base {
     this.loadUnitLoader.registerBuildHook(hook);
   }
 
+  readonly #innerObjectClazzRegistrations: Array<{
+    clazzList: readonly EggProtoImplClass[];
+    moduleReference: InnerObjectModuleReference;
+  }> = [];
+
+  /**
+   * Buffer framework module plugin classes (`@InnerObjectProto` /
+   * `@XxxLifecycleProto`) provided by other egg plugins. They are instantiated
+   * in the InnerObjectLoadUnit during init(), before any business load unit is
+   * created. Call from configDidLoad or the synchronous part of didLoad.
+   */
+  registerInnerObjectClazzList(
+    clazzList: readonly EggProtoImplClass[],
+    moduleReference: InnerObjectModuleReference,
+  ): void {
+    this.#innerObjectClazzRegistrations.push({ clazzList, moduleReference });
+  }
+
   /**
    * Create AND instantiate the InnerObjectLoadUnit before the business graph
    * is built, so `@XxxLifecycleProto` hooks provided by module plugins
@@ -38,6 +59,9 @@ export class ModuleHandler extends Base {
    */
   private async instantiateInnerObjectLoadUnit(): Promise<LoadUnitInstance> {
     const builder = new InnerObjectLoadUnitBuilder();
+    for (const { clazzList, moduleReference } of this.#innerObjectClazzRegistrations) {
+      builder.addInnerObjectClazzList(clazzList, moduleReference);
+    }
     for (const moduleDescriptor of this.loadUnitLoader.moduleDescriptors) {
       builder.addInnerObjectClazzList(moduleDescriptor.innerObjectClazzList, {
         name: moduleDescriptor.name,
@@ -45,7 +69,23 @@ export class ModuleHandler extends Base {
       });
     }
     const innerObjectLoadUnit = await builder.createLoadUnit({
-      innerObjects: {},
+      // Base host objects for framework hooks. PRIVATE: the egg host has its
+      // own resolution surface for these names (egg compatible objects), the
+      // provided protos must stay visible to inner objects only.
+      innerObjects: {
+        moduleConfigs: [{ obj: new ModuleConfigs(this.app.moduleConfigs), accessLevel: AccessLevel.PRIVATE }],
+        runtimeConfig: [
+          {
+            obj: {
+              baseDir: this.app.baseDir,
+              env: this.app.config.env,
+              name: this.app.name,
+            },
+            accessLevel: AccessLevel.PRIVATE,
+          },
+        ],
+        logger: [{ obj: this.app.logger, accessLevel: AccessLevel.PRIVATE }],
+      },
     });
     this.loadUnits.push(innerObjectLoadUnit);
     return await LoadUnitInstanceFactory.createLoadUnitInstance(innerObjectLoadUnit);

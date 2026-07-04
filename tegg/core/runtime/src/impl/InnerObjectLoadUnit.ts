@@ -1,7 +1,14 @@
 import { IdenticalUtil } from '@eggjs/lifecycle';
 import { ClassProtoDescriptor, EggPrototypeCreatorFactory, EggPrototypeFactory } from '@eggjs/metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import type { EggPrototype, EggPrototypeName, LoadUnit, ProtoDescriptor, QualifierInfo } from '@eggjs/tegg-types';
+import type {
+  AccessLevel,
+  EggPrototype,
+  EggPrototypeName,
+  LoadUnit,
+  ProtoDescriptor,
+  QualifierInfo,
+} from '@eggjs/tegg-types';
 import { ObjectInitType } from '@eggjs/tegg-types';
 
 import { ProvidedInnerObjectProto } from './ProvidedInnerObjectProto.ts';
@@ -13,6 +20,13 @@ export const INNER_OBJECT_LOAD_UNIT_PATH = 'InnerObjectLoadUnitPath';
 export interface InnerObject {
   obj: object;
   qualifiers?: QualifierInfo[];
+  /**
+   * Defaults to PUBLIC (standalone convention: business modules may inject
+   * host-provided objects). Hosts with their own resolution surface for these
+   * names (e.g. the egg host) should pass PRIVATE so the provided protos stay
+   * visible to inner objects only and never pollute cross-unit resolution.
+   */
+  accessLevel?: AccessLevel;
 }
 
 export interface InnerObjectLoadUnitOptions {
@@ -54,7 +68,7 @@ export class InnerObjectLoadUnit implements LoadUnit {
 
   async init(): Promise<void> {
     for (const [name, objs] of Object.entries(this.#innerObjects)) {
-      for (const { obj, qualifiers } of objs) {
+      for (const { obj, qualifiers, accessLevel } of objs) {
         const proto = new ProvidedInnerObjectProto(
           IdenticalUtil.createProtoId(this.id, name),
           name,
@@ -62,6 +76,7 @@ export class InnerObjectLoadUnit implements LoadUnit {
           ObjectInitType.SINGLETON,
           this.id,
           qualifiers || [],
+          accessLevel,
         );
         EggPrototypeFactory.instance.registerPrototype(proto, this);
       }

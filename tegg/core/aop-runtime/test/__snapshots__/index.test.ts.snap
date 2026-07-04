@@ -2,6 +2,18 @@
 
 exports[`should export stable 1`] = `
 {
+  "AOP_INNER_OBJECT_CLAZZ_LIST": [
+    [Function],
+    [Function],
+    [Function],
+    [Function],
+    [Function],
+  ],
+  "AOP_INNER_OBJECT_MODULE_REFERENCE": {
+    "name": "teggAop",
+    "path": "tegg:aop-runtime",
+  },
+  "AopGraphHookRegistrar": [Function],
   "AspectExecutor": [Function],
   "EggObjectAopHook": [Function],
   "EggPrototypeCrossCutHook": [Function],

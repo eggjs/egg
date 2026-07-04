@@ -42,9 +42,19 @@ export interface CreateInnerObjectLoadUnitOptions {
  */
 export class InnerObjectLoadUnitBuilder {
   readonly #protoGraph: Graph<ProtoNode, ProtoDependencyMeta> = new Graph();
+  readonly #seenClazzSet: Set<EggProtoImplClass> = new Set();
 
   addInnerObjectClazzList(clazzList: readonly EggProtoImplClass[], moduleReference: InnerObjectModuleReference): void {
     for (const clazz of clazzList) {
+      // The same class may arrive twice — hosts hard-feed built-in framework
+      // lists unconditionally, and the owning package may also be scanned as an
+      // eggModule (e.g. @eggjs/dal-plugin declared as a module dependency).
+      // First registration wins; a DIFFERENT class with a colliding proto id
+      // still fails below.
+      if (this.#seenClazzSet.has(clazz)) {
+        continue;
+      }
+      this.#seenClazzSet.add(clazz);
       const descriptor = ProtoDescriptorHelper.createByInstanceClazz(clazz, {
         moduleName: INNER_OBJECT_LOAD_UNIT_NAME,
         unitPath: INNER_OBJECT_LOAD_UNIT_PATH,

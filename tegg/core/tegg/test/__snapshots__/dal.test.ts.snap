@@ -58,6 +58,15 @@ exports[`should dal exports stable 1`] = `
   "DAL_COLUMN_INFO_MAP": Symbol(EggPrototype#dalColumnInfoMap),
   "DAL_COLUMN_TYPE_MAP": Symbol(EggPrototype#dalColumnTypeMap),
   "DAL_INDEX_LIST": Symbol(EggPrototype#dalIndexList),
+  "DAL_INNER_OBJECT_CLAZZ_LIST": [
+    [Function],
+    [Function],
+    [Function],
+  ],
+  "DAL_INNER_OBJECT_MODULE_REFERENCE": {
+    "name": "teggDal",
+    "path": "tegg:dal-plugin",
+  },
   "DAL_IS_DAO": Symbol(EggPrototype#dalIsDao),
   "DAL_IS_TABLE": Symbol(EggPrototype#dalIsTable),
   "DAL_TABLE_PARAMS": Symbol(EggPrototype#dalTableParams),

@@ -44,6 +44,7 @@
   "dependencies": {
     "@eggjs/aop-decorator": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
     "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",

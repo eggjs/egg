@@ -1,3 +1,4 @@
+import { EggPrototypeLifecycleProto, Inject } from '@eggjs/core-decorator';
 import { DaoInfoUtil, TableModel } from '@eggjs/dal-decorator';
 import { SqlMapLoader } from '@eggjs/dal-runtime';
 import type { LifecycleHook } from '@eggjs/lifecycle';
@@ -7,12 +8,10 @@ import type { Logger } from '@eggjs/tegg-types';
 import { SqlMapManager } from './SqlMapManager.ts';
 import { TableModelManager } from './TableModelManager.ts';
 
+@EggPrototypeLifecycleProto()
 export class DalTableEggPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
+  @Inject()
   private readonly logger: Logger;
-
-  constructor(logger: Logger) {
-    this.logger = logger;
-  }
 
   async preCreate(ctx: EggPrototypeLifecycleContext): Promise<void> {
     if (!DaoInfoUtil.getIsDao(ctx.clazz)) {
