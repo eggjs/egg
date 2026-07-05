@@ -14,12 +14,13 @@ describe('plugin/aop/test/aop.test.ts', () => {
     return mm.restore();
   });
 
+  // App boot can exceed the default 10s hook timeout on slow Windows runners.
   beforeAll(async () => {
     app = mm.app({
       baseDir: path.join(import.meta.dirname, 'fixtures/apps/aop-app'),
     });
     await app.ready();
-  });
+  }, 60_000);
 
   it('module aop should work', async () => {
     app.mockCsrf();
