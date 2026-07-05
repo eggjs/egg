@@ -66,6 +66,7 @@ export class StandaloneApp {
   /** Filled during init(); the ModuleConfigs inner object holds this same map. */
   readonly moduleConfigs: Record<string, ModuleConfigHolder>;
   #moduleReferences?: readonly ModuleReference[];
+  #initialized = false;
   /** Filled during init(); the runtimeConfig inner object holds this same object. */
   readonly #runtimeConfig: Partial<RuntimeConfig> = {};
   readonly env?: string;
@@ -331,6 +332,11 @@ export class StandaloneApp {
   }
 
   async init(): Promise<void> {
+    // Idempotent (same contract as ServiceWorkerApp.init): a second call must
+    // not re-push moduleConfig inner objects or re-create load units.
+    if (this.#initialized) {
+      return;
+    }
     await this.runInScope(async () => {
       this.loadConfigs();
       await this.initLoaderInstance();
@@ -338,6 +344,7 @@ export class StandaloneApp {
       await this.instantiateModuleLoadUnits();
       this.initRunner();
     });
+    this.#initialized = true;
   }
 
   async run<T>(aCtx?: EggContext): Promise<T> {
