@@ -1,4 +1,5 @@
 import {
+  ClassProtoDescriptor,
   EggPrototypeNotFound,
   LoadUnitFactory,
   ProtoDependencyMeta,
@@ -19,6 +20,7 @@ import {
 } from './InnerObjectLoadUnit.ts';
 // Import for the side effect of registering the load unit instance class.
 import './InnerObjectLoadUnitInstance.ts';
+import { PROVIDED_INNER_OBJECT_PROTO_IMPL_TYPE } from './ProvidedInnerObjectProto.ts';
 
 export interface InnerObjectModuleReference {
   name: string;
@@ -59,37 +61,38 @@ export class InnerObjectLoadUnitBuilder {
     }
   }
 
-  /** protoImplType marking host-provided instances in the builder graph. */
-  static readonly PROVIDED_PROTO_IMPL_TYPE = 'PROVIDED_INNER_OBJECT';
-
   /**
-   * Host-provided instances are graph citizens like every hook proto: same
-   * descriptor shape, same vertices, same edge resolution and topological
-   * sort (they trivially sort first — no outgoing edges). Only the
-   * instantiation step skips them, because the instance already exists.
+   * Host-provided instances are ordinary protos, exactly as before the
+   * module-plugin refactor (StandaloneInnerObjectProto): the descriptor
+   * carries a factory clazz (`() => obj`), so they flow through the same
+   * graph, the same creator dispatch (PROVIDED_INNER_OBJECT_PROTO_IMPL_TYPE)
+   * and the same instantiation loop — "constructing" one returns the
+   * instance. No filtering anywhere.
    */
   static #providedDescriptors(innerObjects: Record<string, InnerObject[]>): ProtoDescriptor[] {
     const descriptors: ProtoDescriptor[] = [];
     for (const [name, objects] of Object.entries(innerObjects)) {
       for (const innerObject of objects) {
-        descriptors.push({
-          name,
-          accessLevel: innerObject.accessLevel ?? AccessLevel.PUBLIC,
-          initType: ObjectInitType.SINGLETON,
-          protoImplType: InnerObjectLoadUnitBuilder.PROVIDED_PROTO_IMPL_TYPE,
-          qualifiers: ProtoDescriptorHelper.addDefaultQualifier(
-            innerObject.qualifiers ?? [],
-            ObjectInitType.SINGLETON,
-            INNER_OBJECT_LOAD_UNIT_NAME,
-          ),
-          injectObjects: [],
-          properQualifiers: {},
-          defineModuleName: INNER_OBJECT_LOAD_UNIT_NAME,
-          defineUnitPath: INNER_OBJECT_LOAD_UNIT_PATH,
-          instanceModuleName: INNER_OBJECT_LOAD_UNIT_NAME,
-          instanceDefineUnitPath: INNER_OBJECT_LOAD_UNIT_PATH,
-          equal: () => false,
-        });
+        descriptors.push(
+          new ClassProtoDescriptor({
+            name,
+            clazz: (() => innerObject.obj) as unknown as EggProtoImplClass,
+            accessLevel: innerObject.accessLevel ?? AccessLevel.PUBLIC,
+            initType: ObjectInitType.SINGLETON,
+            protoImplType: PROVIDED_INNER_OBJECT_PROTO_IMPL_TYPE,
+            qualifiers: ProtoDescriptorHelper.addDefaultQualifier(
+              innerObject.qualifiers ?? [],
+              ObjectInitType.SINGLETON,
+              INNER_OBJECT_LOAD_UNIT_NAME,
+            ),
+            injectObjects: [],
+            properQualifiers: {},
+            defineModuleName: INNER_OBJECT_LOAD_UNIT_NAME,
+            defineUnitPath: INNER_OBJECT_LOAD_UNIT_PATH,
+            instanceModuleName: INNER_OBJECT_LOAD_UNIT_NAME,
+            instanceDefineUnitPath: INNER_OBJECT_LOAD_UNIT_PATH,
+          }),
+        );
       }
     }
     return descriptors;
@@ -126,13 +129,7 @@ export class InnerObjectLoadUnitBuilder {
       throw new Error('inner object proto has recursive deps: ' + loopPath);
     }
 
-    // Provided instances participated in resolution and ordering above; the
-    // instantiation list excludes them because their objects already exist
-    // (the load unit registers them from options.innerObjects).
-    return this.#protoGraph
-      .sort()
-      .map((node) => node.val.proto)
-      .filter((proto) => proto.protoImplType !== InnerObjectLoadUnitBuilder.PROVIDED_PROTO_IMPL_TYPE);
+    return this.#protoGraph.sort().map((node) => node.val.proto);
   }
 
   async createLoadUnit(options: CreateInnerObjectLoadUnitOptions): Promise<LoadUnit> {
@@ -145,7 +142,6 @@ export class InnerObjectLoadUnitBuilder {
     const protos = this.#buildProtoGraph();
     LoadUnitFactory.registerLoadUnitCreator(INNER_OBJECT_LOAD_UNIT_TYPE, () => {
       return new InnerObjectLoadUnit({
-        innerObjects: options.innerObjects,
         protos,
         name: options.name,
         unitPath: options.unitPath,

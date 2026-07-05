@@ -66,6 +66,7 @@ exports[`should export stable 1`] = `
     "registerObjectLifecycle": [Function],
   },
   "ModuleLoadUnitInstance": [Function],
+  "PROVIDED_INNER_OBJECT_PROTO_IMPL_TYPE": "PROVIDED_INNER_OBJECT",
   "ProvidedInnerObject": [Function],
   "ProvidedInnerObjectProto": [Function],
   "eggContextLifecycleUtilFromBag": [Function],

@@ -1,5 +1,6 @@
-import { MetadataUtil, QualifierUtil } from '@eggjs/core-decorator';
+import { MetadataUtil } from '@eggjs/core-decorator';
 import { IdenticalUtil } from '@eggjs/lifecycle';
+import { EggPrototypeCreatorFactory } from '@eggjs/metadata';
 import type { EggPrototypeLifecycleContext } from '@eggjs/metadata';
 import type {
   EggObject,
@@ -90,10 +91,24 @@ export class ProvidedInnerObjectProto implements EggPrototype {
       clazz,
       ctx.prototypeInfo.initType,
       loadUnit.id,
-      QualifierUtil.getProtoQualifiers(clazz),
+      ctx.prototypeInfo.qualifiers ?? [],
+      ctx.prototypeInfo.accessLevel,
     );
   }
 }
+
+/**
+ * protoImplType for host-provided, already-constructed instances. The
+ * descriptor carries a factory `clazz` (`() => obj`) so provided objects are
+ * ordinary protos end to end: same graph vertices, same creator dispatch,
+ * same instantiation loop — "constructing" one returns the instance.
+ */
+export const PROVIDED_INNER_OBJECT_PROTO_IMPL_TYPE = 'PROVIDED_INNER_OBJECT';
+
+EggPrototypeCreatorFactory.registerPrototypeCreator(
+  PROVIDED_INNER_OBJECT_PROTO_IMPL_TYPE,
+  ProvidedInnerObjectProto.create,
+);
 
 export class ProvidedInnerObject implements EggObject {
   readonly isReady: boolean = true;

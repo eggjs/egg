@@ -1,4 +1,3 @@
-import { IdenticalUtil } from '@eggjs/lifecycle';
 import { ClassProtoDescriptor, EggPrototypeCreatorFactory, EggPrototypeFactory } from '@eggjs/metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
 import type {
@@ -9,9 +8,6 @@ import type {
   ProtoDescriptor,
   QualifierInfo,
 } from '@eggjs/tegg-types';
-import { ObjectInitType } from '@eggjs/tegg-types';
-
-import { ProvidedInnerObjectProto } from './ProvidedInnerObjectProto.ts';
 
 export const INNER_OBJECT_LOAD_UNIT_TYPE = 'INNER_OBJECT_LOAD_UNIT';
 export const INNER_OBJECT_LOAD_UNIT_NAME = 'InnerObjectLoadUnit';
@@ -30,11 +26,11 @@ export interface InnerObject {
 }
 
 export interface InnerObjectLoadUnitOptions {
-  /** Host-provided, already-constructed objects (logger, router, ...). */
-  innerObjects: Record<string, InnerObject[]>;
   /**
-   * Proto descriptors of `@InnerObjectProto` / `@XxxLifecycleProto` classes
-   * collected from modules, in instantiation (topological) order.
+   * Proto descriptors in instantiation (topological) order:
+   * `@InnerObjectProto` / `@XxxLifecycleProto` classes collected from
+   * modules AND host-provided instances (factory-clazz descriptors with
+   * PROVIDED_INNER_OBJECT_PROTO_IMPL_TYPE) — one uniform channel.
    */
   protos?: ProtoDescriptor[];
   name?: string;
@@ -54,7 +50,6 @@ export class InnerObjectLoadUnit implements LoadUnit {
   readonly unitPath: string;
   readonly type: string = INNER_OBJECT_LOAD_UNIT_TYPE;
 
-  readonly #innerObjects: Record<string, InnerObject[]>;
   readonly #protos: ProtoDescriptor[];
   readonly #protoMap: Map<EggPrototypeName, EggPrototype[]> = new Map();
 
@@ -62,28 +57,14 @@ export class InnerObjectLoadUnit implements LoadUnit {
     this.name = options.name ?? INNER_OBJECT_LOAD_UNIT_NAME;
     this.unitPath = options.unitPath ?? INNER_OBJECT_LOAD_UNIT_PATH;
     this.id = this.name;
-    this.#innerObjects = options.innerObjects;
     this.#protos = options.protos ?? [];
   }
 
   async init(): Promise<void> {
-    for (const [name, objs] of Object.entries(this.#innerObjects)) {
-      for (const { obj, qualifiers, accessLevel } of objs) {
-        const proto = new ProvidedInnerObjectProto(
-          IdenticalUtil.createProtoId(this.id, name),
-          name,
-          (() => obj) as any,
-          ObjectInitType.SINGLETON,
-          this.id,
-          qualifiers || [],
-          accessLevel,
-        );
-        EggPrototypeFactory.instance.registerPrototype(proto, this);
+    for (const protoDescriptor of this.#protos) {
+      if (!ClassProtoDescriptor.isClassProtoDescriptor(protoDescriptor)) {
+        continue;
       }
-    }
-
-    const protoDescriptors = this.#protos.filter((t) => ClassProtoDescriptor.isClassProtoDescriptor(t));
-    for (const protoDescriptor of protoDescriptors) {
       const proto = await EggPrototypeCreatorFactory.createProtoByDescriptor(protoDescriptor, this);
       EggPrototypeFactory.instance.registerPrototype(proto, this);
     }
