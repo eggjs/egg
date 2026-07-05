@@ -1,4 +1,11 @@
-import { StandaloneApp, type StandaloneAppOptions } from './StandaloneApp.ts';
+import type { EggContext } from '@eggjs/tegg-runtime';
+
+import {
+  StandaloneApp,
+  type InitStandaloneAppOptions,
+  type StandaloneAppInit,
+  type StandaloneAppOptions,
+} from './StandaloneApp.ts';
 
 export async function preLoad(cwd: string, dependencies?: StandaloneAppOptions['dependencies']): Promise<void> {
   try {
@@ -11,10 +18,14 @@ export async function preLoad(cwd: string, dependencies?: StandaloneAppOptions['
   }
 }
 
-export async function main<T = void>(cwd: string, options?: StandaloneAppOptions): Promise<T> {
-  const app = new StandaloneApp(cwd, options);
+export async function appMain<T = void>(
+  options: InitStandaloneAppOptions,
+  init?: StandaloneAppInit,
+  ctx?: EggContext,
+): Promise<T> {
+  const app = new StandaloneApp(init);
   try {
-    await app.init();
+    await app.init(options);
   } catch (e) {
     if (e instanceof Error) {
       e.message = `[tegg/standalone] bootstrap tegg failed: ${e.message}`;
@@ -27,11 +38,30 @@ export async function main<T = void>(cwd: string, options?: StandaloneAppOptions
     throw e;
   }
   try {
-    return await app.run<T>();
+    return await app.run<T>(ctx);
   } finally {
     app.destroy().catch((e) => {
       e.message = `[tegg/standalone] destroy tegg failed: ${e.message}`;
       console.warn(e);
     });
   }
+}
+
+export async function main<T = void>(cwd: string, options?: StandaloneAppOptions): Promise<T> {
+  return await appMain<T>(
+    {
+      baseDir: cwd,
+      name: options?.name,
+      env: options?.env,
+      dependencies: options?.dependencies,
+      manifest: options?.manifest,
+      loaderFS: options?.loaderFS,
+    },
+    {
+      frameworkDeps: options?.frameworkDeps,
+      dump: options?.dump,
+      innerObjects: options?.innerObjectHandlers,
+      logger: options?.logger,
+    },
+  );
 }

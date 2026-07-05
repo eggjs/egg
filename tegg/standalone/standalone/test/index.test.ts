@@ -92,8 +92,8 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
   describe('runner with custom context', () => {
     it('should work', async () => {
-      const runner = new StandaloneApp(path.join(__dirname, './fixtures/custom-context'));
-      await runner.init();
+      const runner = new StandaloneApp();
+      await runner.init({ baseDir: path.join(__dirname, './fixtures/custom-context') });
       const ctx = new StandaloneContext();
       ctx.set('foo', 'foo');
       const msg = await runner.run(ctx);
@@ -161,8 +161,8 @@ describe('standalone/standalone/test/index.test.ts', () => {
       const msg = await main(path.join(__dirname, './fixtures/runtime-config'));
       assert.deepEqual(msg, {
         baseDir: path.join(__dirname, './fixtures/runtime-config'),
-        env: undefined,
-        name: undefined,
+        env: '',
+        name: '',
       });
     });
 
@@ -233,9 +233,9 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
     it('should throw error if no proto found', async () => {
       const fixturePath = path.join(__dirname, './fixtures/invalid-inject');
-      const runner = new StandaloneApp(fixturePath);
+      const runner = new StandaloneApp();
       await assert.rejects(
-        runner.init(),
+        runner.init({ baseDir: fixturePath }),
         /EggPrototypeNotFound: Object doesNotExist not found in LOAD_UNIT:invalidInject/,
       );
       await runner.destroy();
@@ -261,8 +261,8 @@ describe('standalone/standalone/test/index.test.ts', () => {
     });
 
     it('should work', async () => {
-      runner = new StandaloneApp(path.join(__dirname, './fixtures/simple'));
-      await runner.init();
+      runner = new StandaloneApp();
+      await runner.init({ baseDir: path.join(__dirname, './fixtures/simple') });
       const loadunits = runner.loadUnits;
       for (const loadunit of loadunits) {
         for (const proto of loadunit.iterateEggPrototype()) {
@@ -278,8 +278,8 @@ describe('standalone/standalone/test/index.test.ts', () => {
     });
 
     it('should work with multi', async () => {
-      runner = new StandaloneApp(path.join(__dirname, './fixtures/multi-callback-instance-module'));
-      await runner.init();
+      runner = new StandaloneApp();
+      await runner.init({ baseDir: path.join(__dirname, './fixtures/multi-callback-instance-module') });
       const loadunits = runner.loadUnits;
       for (const loadunit of loadunits) {
         for (const proto of loadunit.iterateEggPrototype()) {
