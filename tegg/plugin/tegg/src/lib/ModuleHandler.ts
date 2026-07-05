@@ -40,6 +40,14 @@ export class ModuleHandler extends Base {
   private async instantiateInnerObjectLoadUnit(): Promise<LoadUnitInstance> {
     const builder = new InnerObjectLoadUnitBuilder();
     for (const moduleDescriptor of this.loadUnitLoader.moduleDescriptors) {
+      // Optional modules that were NOT promoted (framework-dependency modules
+      // whose plugin is disabled, or unused optional modules) must not have
+      // their hooks instantiated — graph sort already gates their business
+      // protos, this gates their inner objects symmetrically. Enabled
+      // plugins' references were promoted to non-optional in buildAppGraph.
+      if (moduleDescriptor.optional === true) {
+        continue;
+      }
       builder.addInnerObjectClazzList(moduleDescriptor.innerObjectClazzList, {
         name: moduleDescriptor.name,
         path: moduleDescriptor.unitPath,

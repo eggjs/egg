@@ -215,15 +215,9 @@ export class StandaloneApp {
       [] as readonly ModuleReference[],
     );
     // The same module may be reachable from multiple scan roots (a built-in
-    // framework module the app also depends on); first reference wins.
-    const seenPaths = new Set<string>();
-    return references.filter((reference) => {
-      if (seenPaths.has(reference.path)) {
-        return false;
-      }
-      seenPaths.add(reference.path);
-      return true;
-    });
+    // framework module the app also depends on) — shared dedupe (first path
+    // wins, conflicting duplicate names throw).
+    return ModuleConfigUtil.deduplicateModules(references);
   }
 
   static async preLoad(
