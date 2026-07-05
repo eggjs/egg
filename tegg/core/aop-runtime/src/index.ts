@@ -1,5 +1,4 @@
 export * from './AspectExecutor.js';
-export * from './InnerObjects.js';
 export * from './CrossCutGraphHook.js';
 export * from './EggObjectAopHook.js';
 export * from './EggPrototypeCrossCutHook.js';

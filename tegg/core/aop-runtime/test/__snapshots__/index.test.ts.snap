@@ -4,7 +4,6 @@ exports[`should export stable 1`] = `
 {
   "AopGraphHookRegistrar": [Function],
   "AspectExecutor": [Function],
-  "CrosscutAdviceFactory": [Function],
   "EggObjectAopHook": [Function],
   "EggPrototypeCrossCutHook": [Function],
   "LoadUnitAopHook": [Function],
