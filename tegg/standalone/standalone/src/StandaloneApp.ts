@@ -69,6 +69,12 @@ export class StandaloneApp {
   #initialized = false;
   /** Filled during init(); the runtimeConfig inner object holds this same object. */
   readonly #runtimeConfig: Partial<RuntimeConfig> = {};
+  /**
+   * Filled during init() with one qualified entry per module. A host that
+   * overrides `moduleConfig` via innerObjectHandlers replaces the registered
+   * list entirely — the fills below stay invisible, as before.
+   */
+  readonly #moduleConfigList: InnerObject[] = [];
   readonly env?: string;
   readonly name?: string;
   readonly options?: StandaloneAppOptions;
@@ -131,7 +137,7 @@ export class StandaloneApp {
           obj: new ModuleConfigs(this.moduleConfigs),
         },
       ],
-      moduleConfig: [],
+      moduleConfig: this.#moduleConfigList,
       mysqlDataSourceManager: [
         {
           obj: MysqlDataSourceManager.instance,
@@ -186,7 +192,7 @@ export class StandaloneApp {
       };
     }
     for (const moduleConfig of Object.values(this.moduleConfigs)) {
-      this.innerObjects.moduleConfig.push({
+      this.#moduleConfigList.push({
         obj: moduleConfig.config,
         qualifiers: [
           {
