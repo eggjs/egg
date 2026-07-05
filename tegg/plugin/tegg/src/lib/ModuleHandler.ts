@@ -72,9 +72,14 @@ export class ModuleHandler extends Base {
       });
     }
     const innerObjectLoadUnit = await builder.createLoadUnit({
-      // Base host objects for framework hooks. PRIVATE: the egg host has its
-      // own resolution surface for these names (egg compatible objects), the
-      // provided protos must stay visible to inner objects only.
+      // Base host objects for framework hooks — the SAME instances mounted on
+      // `app`, fed through the host-agnostic provided-objects contract. They
+      // cannot resolve via the egg compatible mechanism (EggAppLoader's
+      // COMPATIBLE protos): that load unit is only created in load(), AFTER
+      // this unit — which must instantiate first so its lifecycle hooks see
+      // every later load unit, egg-app included. PRIVATE: the egg host has
+      // its own resolution surface for these names (egg compatible objects),
+      // the provided protos must stay visible to inner objects only.
       innerObjects: {
         moduleConfigs: [{ obj: new ModuleConfigs(this.app.moduleConfigs), accessLevel: AccessLevel.PRIVATE }],
         runtimeConfig: [
