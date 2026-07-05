@@ -63,8 +63,9 @@ export interface StandaloneAppOptions {
 
 export class StandaloneApp {
   readonly cwd: string;
-  readonly moduleReferences: readonly ModuleReference[];
+  /** Filled during init(); the ModuleConfigs inner object holds this same map. */
   readonly moduleConfigs: Record<string, ModuleConfigHolder>;
+  #moduleReferences?: readonly ModuleReference[];
   readonly env?: string;
   readonly name?: string;
   readonly options?: StandaloneAppOptions;
@@ -84,22 +85,24 @@ export class StandaloneApp {
     this.env = options?.env;
     this.name = options?.name;
     this.options = options;
+    this.moduleConfigs = {};
     this.scopeBag = TeggScope.createBag();
     TeggScope.registerScope(this.scopeBag);
-    try {
-      this.moduleReferences = StandaloneApp.getModuleReferences(
-        this.cwd,
-        options?.dependencies,
-        options?.frameworkDeps,
-      );
-      this.moduleConfigs = {};
-      this.runInScope(() => this.initInnerObjectsAndConfigs(options));
-    } catch (e) {
-      // Construction failed after the scope was registered; release it so the
-      // never-returned app does not leak into liveScopeBags.
-      TeggScope.unregisterScope(this.scopeBag);
-      throw e;
-    }
+  }
+
+  /**
+   * Lazily computed on first access so constructing an app does no fs scan;
+   * init() is the usual first consumer. Scan errors (e.g. duplicate module
+   * names) therefore surface at init() where callers already tear down via
+   * destroy() — never from the constructor.
+   */
+  get moduleReferences(): readonly ModuleReference[] {
+    this.#moduleReferences ??= StandaloneApp.getModuleReferences(
+      this.cwd,
+      this.options?.dependencies,
+      this.options?.frameworkDeps,
+    );
+    return this.#moduleReferences;
   }
 
   /** Run `fn` within THIS app's per-app scope so factories/managers resolve here. */
@@ -312,6 +315,7 @@ export class StandaloneApp {
 
   async init(): Promise<void> {
     await this.runInScope(async () => {
+      this.initInnerObjectsAndConfigs(this.options);
       await this.initLoaderInstance();
       await this.instantiateInnerObjectLoadUnit();
       await this.instantiateModuleLoadUnits();
