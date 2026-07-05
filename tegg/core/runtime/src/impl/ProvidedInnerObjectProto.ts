@@ -26,7 +26,8 @@ import { EggObjectFactory } from '../factory/EggObjectFactory.ts';
  */
 export class ProvidedInnerObjectProto implements EggPrototype {
   [key: symbol]: PropertyDescriptor;
-  private readonly clazz: EggProtoImplClass;
+  /** NOT a class: the factory `() => obj` returning the provided instance. */
+  private readonly objFactory: () => object;
   private readonly qualifiers: QualifierInfo[];
 
   readonly id: string;
@@ -39,14 +40,14 @@ export class ProvidedInnerObjectProto implements EggPrototype {
   constructor(
     id: string,
     name: EggPrototypeName,
-    clazz: EggProtoImplClass,
+    objFactory: () => object,
     initType: ObjectInitTypeLike,
     loadUnitId: Id,
     qualifiers: QualifierInfo[],
     accessLevel?: AccessLevel,
   ) {
     this.id = id;
-    this.clazz = clazz;
+    this.objFactory = objFactory;
     this.name = name;
     this.initType = initType;
     this.accessLevel = accessLevel ?? AccessLevel.PUBLIC;
@@ -70,11 +71,12 @@ export class ProvidedInnerObjectProto implements EggPrototype {
   }
 
   constructEggObject(): object {
-    return Reflect.apply(this.clazz, null, []);
+    // no `new`: calling the factory returns the host-provided instance
+    return this.objFactory();
   }
 
   getMetaData<T>(metadataKey: MetaDataKey): T | undefined {
-    return MetadataUtil.getMetaData(metadataKey, this.clazz);
+    return MetadataUtil.getMetaData(metadataKey, this.objFactory as unknown as EggProtoImplClass);
   }
 
   getQualifier(attribute: string): QualifierValue | undefined {
@@ -82,13 +84,15 @@ export class ProvidedInnerObjectProto implements EggPrototype {
   }
 
   static create(ctx: EggPrototypeLifecycleContext): EggPrototype {
+    // The descriptor rides the standard EggPrototypeLifecycleContext, whose
+    // `clazz` slot carries the provided-instance factory (see the builder).
     const { clazz, loadUnit } = ctx;
     const name = ctx.prototypeInfo.name;
     const id = IdenticalUtil.createProtoId(loadUnit.id, name);
     return new ProvidedInnerObjectProto(
       id,
       name,
-      clazz,
+      clazz as unknown as () => object,
       ctx.prototypeInfo.initType,
       loadUnit.id,
       ctx.prototypeInfo.qualifiers ?? [],
