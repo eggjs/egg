@@ -69,16 +69,24 @@ describe('standalone/standalone/test/index.test.ts', () => {
   });
 
   describe('custom logger option', () => {
-    it('should expose options.logger as the logger inner object', async () => {
+    it('should inject options.logger as the logger inner object', async () => {
       const customLogger = { ...console };
-      const app = new StandaloneApp(path.join(__dirname, './fixtures/inner-object'), {
+      const injected = await main(path.join(__dirname, './fixtures/logger-option'), {
         logger: customLogger,
       });
-      try {
-        assert.equal(app.innerObjects.logger[0].obj, customLogger);
-      } finally {
-        await app.destroy();
-      }
+      assert.equal(injected, customLogger);
+    });
+
+    it('should let an innerObjectHandlers logger entry win over options.logger', async () => {
+      const optionLogger = { ...console };
+      const handlerLogger = { ...console };
+      const injected = await main(path.join(__dirname, './fixtures/logger-option'), {
+        logger: optionLogger,
+        innerObjectHandlers: {
+          logger: [{ obj: handlerLogger }],
+        },
+      });
+      assert.equal(injected, handlerLogger);
     });
   });
 

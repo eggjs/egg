@@ -67,14 +67,6 @@ export class StandaloneApp {
   readonly moduleConfigs: Record<string, ModuleConfigHolder>;
   #moduleReferences?: readonly ModuleReference[];
   #initialized = false;
-  /** Filled during init(); the runtimeConfig inner object holds this same object. */
-  readonly #runtimeConfig: Partial<RuntimeConfig> = {};
-  /**
-   * Filled during init() with one qualified entry per module. A host that
-   * overrides `moduleConfig` via innerObjectHandlers replaces the registered
-   * list entirely — the fills below stay invisible, as before.
-   */
-  readonly #moduleConfigList: InnerObject[] = [];
   readonly env?: string;
   readonly name?: string;
   readonly options?: StandaloneAppOptions;
@@ -83,6 +75,13 @@ export class StandaloneApp {
 
   loadUnits: LoadUnit[] = [];
   loadUnitInstances: LoadUnitInstance[] = [];
+  /**
+   * Host contract: provided objects merged OVER the framework base objects
+   * when the InnerObjectLoadUnit is created — hosts may add entries between
+   * new and init(). The base objects themselves (moduleConfigs/moduleConfig/
+   * runtimeConfig/logger/...) are built at that point of use, same shape as
+   * the egg host's ModuleHandler.
+   */
   innerObjects: Record<string, InnerObject[]>;
 
   // This app's own per-app TeggScope bag — all factories/managers/graph/config
@@ -95,19 +94,9 @@ export class StandaloneApp {
     this.name = options?.name;
     this.options = options;
     this.moduleConfigs = {};
+    this.innerObjects = { ...options?.innerObjectHandlers };
     this.scopeBag = TeggScope.createBag();
     TeggScope.registerScope(this.scopeBag);
-    try {
-      // innerObjects is a construction-time contract: hosts may add provided
-      // objects between new and init(). No fs I/O happens here — module
-      // configs are loaded into the placeholder maps during init().
-      this.runInScope(() => this.initInnerObjects(options));
-    } catch (e) {
-      // Construction failed after the scope was registered; release it so the
-      // never-returned app does not leak into liveScopeBags.
-      TeggScope.unregisterScope(this.scopeBag);
-      throw e;
-    }
   }
 
   /**
@@ -130,50 +119,20 @@ export class StandaloneApp {
     return TeggScope.run(this.scopeBag, fn);
   }
 
-  private initInnerObjects(options?: StandaloneAppOptions): void {
-    this.innerObjects = {
-      moduleConfigs: [
-        {
-          obj: new ModuleConfigs(this.moduleConfigs),
-        },
-      ],
-      moduleConfig: this.#moduleConfigList,
-      mysqlDataSourceManager: [
-        {
-          obj: MysqlDataSourceManager.instance,
-        },
-      ],
-    };
-
-    // Inject runtimeConfig (placeholder; values are assigned during init())
-    this.innerObjects.runtimeConfig = [
-      {
-        obj: this.#runtimeConfig,
-      },
-    ];
-
-    if (options?.innerObjectHandlers) {
-      Object.assign(this.innerObjects, options.innerObjectHandlers);
-    }
-    // Framework hooks (e.g. DAL) inject `logger`; make sure it always
-    // resolves. An innerObjectHandlers entry wins, then options.logger,
-    // console as the last resort.
-    this.innerObjects.logger ??= [{ obj: options?.logger ?? console }];
+  /**
+   * The framework logger: a host `logger` entry wins, then options.logger,
+   * console as the last resort.
+   */
+  get #logger(): Logger {
+    return (this.innerObjects.logger?.[0]?.obj as Logger) ?? this.options?.logger ?? console;
   }
 
   /**
-   * Fill the placeholders created in the constructor: assign runtimeConfig
-   * values, load every module's config and expose it as a qualified
-   * `moduleConfig` inner object. Runs at init() so the module scan (the
-   * `moduleReferences` getter) stays off the construction path.
+   * Load every module's config into `this.moduleConfigs`. Runs at init() so
+   * the module scan (the `moduleReferences` getter) stays off the
+   * construction path.
    */
-  private loadConfigs(): void {
-    Object.assign(this.#runtimeConfig, {
-      baseDir: this.cwd,
-      name: this.name,
-      env: this.env,
-    });
-
+  private loadModuleConfigs(): void {
     // load module.yml and module.env.yml by default
     // Always set configNames for this app invocation, since destroy() clears it
     // asynchronously and may not have completed before the next app is created.
@@ -190,17 +149,6 @@ export class StandaloneApp {
         reference: absoluteRef,
         config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path),
       };
-    }
-    for (const moduleConfig of Object.values(this.moduleConfigs)) {
-      this.#moduleConfigList.push({
-        obj: moduleConfig.config,
-        qualifiers: [
-          {
-            attribute: ConfigSourceQualifierAttribute,
-            value: moduleConfig.name,
-          },
-        ],
-      });
     }
   }
 
@@ -282,7 +230,7 @@ export class StandaloneApp {
 
   private async initLoaderInstance(): Promise<void> {
     this.loadUnitLoader = new EggModuleLoader(this.moduleReferences, {
-      logger: ((this.innerObjects.logger && this.innerObjects.logger[0])?.obj as Logger) || console,
+      logger: this.#logger,
       baseDir: this.cwd,
       dump: this.options?.dump,
       manifest: this.options?.manifest,
@@ -305,8 +253,33 @@ export class StandaloneApp {
         path: moduleDescriptor.unitPath,
       });
     }
+    // Framework base objects, built at the point of use from this app's
+    // surface — the same shape as the egg host's ModuleHandler. Host entries
+    // (constructor innerObjectHandlers or additions between new and init)
+    // win on name clash via the spread.
+    const runtimeConfig: Partial<RuntimeConfig> = {
+      baseDir: this.cwd,
+      name: this.name,
+      env: this.env,
+    };
+    const moduleConfigList: InnerObject[] = Object.values(this.moduleConfigs).map((moduleConfig) => ({
+      obj: moduleConfig.config,
+      qualifiers: [
+        {
+          attribute: ConfigSourceQualifierAttribute,
+          value: moduleConfig.name,
+        },
+      ],
+    }));
     const innerObjectLoadUnit = await builder.createLoadUnit({
-      innerObjects: this.innerObjects,
+      innerObjects: {
+        moduleConfigs: [{ obj: new ModuleConfigs(this.moduleConfigs) }],
+        moduleConfig: moduleConfigList,
+        runtimeConfig: [{ obj: runtimeConfig }],
+        mysqlDataSourceManager: [{ obj: MysqlDataSourceManager.instance }],
+        logger: [{ obj: this.#logger }],
+        ...this.innerObjects,
+      },
     });
     this.loadUnits.push(innerObjectLoadUnit);
     const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(innerObjectLoadUnit);
@@ -339,12 +312,12 @@ export class StandaloneApp {
 
   async init(): Promise<void> {
     // Idempotent (same contract as ServiceWorkerApp.init): a second call must
-    // not re-push moduleConfig inner objects or re-create load units.
+    // not reload configs or re-create load units.
     if (this.#initialized) {
       return;
     }
     await this.runInScope(async () => {
-      this.loadConfigs();
+      this.loadModuleConfigs();
       await this.initLoaderInstance();
       await this.instantiateInnerObjectLoadUnit();
       await this.instantiateModuleLoadUnits();
