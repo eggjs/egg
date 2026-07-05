@@ -201,33 +201,24 @@ export class StandaloneApp {
     }
   }
 
-  /**
-   * Built-in framework module plugins, consumed through the SAME module scan
-   * as any business module (their `@InnerObjectProto` / `@XxxLifecycleProto`
-   * classes are diverted into the InnerObjectLoadUnit by loadApp) — no
-   * hand-fed class lists. The packages declare `eggModule` metadata; the
-   * default file pattern already excludes `test/`.
-   */
-  static builtinFrameworkModules(): ModuleDependency[] {
-    // The packages ARE the modules; never pick their test fixture modules up
-    // (workspace/dev layouts ship test/ next to src/).
-    const scan = { extraFilePattern: ['!test/**'] };
-    return [
-      // The PLUGIN packages are the modules (teggAop/teggDal/teggConfig) for
-      // both hosts; their egg imports are type-only so the scan is host-safe.
-      { baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/aop-plugin/package.json'))), ...scan },
-      { baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/dal-plugin/package.json'))), ...scan },
-      { baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/tegg-config/package.json'))), ...scan },
-    ];
-  }
-
   static getModuleReferences(
     cwd: string,
     dependencies?: (string | ModuleDependency)[],
     frameworkDeps?: (string | ModuleDependency)[],
   ): readonly ModuleReference[] {
+    // The standalone package itself is the built-in framework scan root: its
+    // own package.json dependencies that declare `eggModule` (the aop/dal/
+    // config plugin packages) are discovered through the SAME node_modules
+    // convention as app dependencies — no hand-maintained package list.
+    // `!test/**` keeps this package's own test fixture modules out of the
+    // scan in workspace layouts (src/ in dev, dist/ when published — the
+    // package root is one level up either way).
+    const standaloneRoot: ModuleDependency = {
+      baseDir: path.join(path.dirname(fileURLToPath(import.meta.url)), '..'),
+      extraFilePattern: ['!test/**'],
+    };
     // framework deps first so their modules are scanned ahead of app modules
-    const moduleDirs = (StandaloneApp.builtinFrameworkModules() as (string | ModuleDependency)[])
+    const moduleDirs = ([standaloneRoot] as (string | ModuleDependency)[])
       .concat(frameworkDeps || [])
       .concat(dependencies || [])
       .concat(cwd);
