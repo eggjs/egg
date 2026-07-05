@@ -283,7 +283,9 @@ export class StandaloneApp {
   private async instantiateInnerObjectLoadUnit(): Promise<void> {
     StandaloneContextHandler.register();
     const builder = new InnerObjectLoadUnitBuilder();
-    // Built-in framework module plugins (declarative hooks in their own packages).
+    // Host built-in, NOT scan-discovered: core tegg semantics (moduleConfig
+    // injection) with no declaring app — same single shared class as the egg
+    // host, wired by each composition root with one line.
     builder.addInnerObjectClazzList([ConfigSourceLoadUnitHook], {
       name: 'standalone',
       path: 'tegg:standalone',

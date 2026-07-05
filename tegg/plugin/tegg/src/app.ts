@@ -45,9 +45,12 @@ export default class TeggAppBoot implements ILifecycleBoot {
       this.eggContextHandler.register();
     });
     this.app.moduleHandler = new ModuleHandler(this.app);
-    // ConfigSourceLoadUnitHook is a module plugin class (@LoadUnitLifecycleProto):
-    // it is instantiated in the InnerObjectLoadUnit during init() and
-    // registered/deregistered automatically.
+    // Host built-in, NOT scan-discovered: this hook is core tegg semantics
+    // (every module's `moduleConfig` injection depends on it, unconditionally)
+    // with no declaring app — requiring a module.json entry for it would leak
+    // host internals into user configuration. The class itself is the single
+    // shared implementation from @eggjs/metadata; each host's composition
+    // root wires it with one line (standalone does the same).
     this.app.moduleHandler.registerInnerObjectClazzList([ConfigSourceLoadUnitHook], {
       name: 'tegg',
       path: 'tegg:tegg-plugin',
