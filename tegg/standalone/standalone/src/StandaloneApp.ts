@@ -34,11 +34,6 @@ export interface ModuleDependency extends ReadModuleReferenceOptions {
 }
 
 export interface StandaloneAppOptions {
-  /**
-   * @deprecated
-   * use inner object handlers instead
-   */
-  innerObjects?: Record<string, object>;
   env?: string;
   name?: string;
   innerObjectHandlers?: Record<string, InnerObject[]>;
@@ -165,15 +160,7 @@ export class StandaloneApp {
         ],
       });
     }
-    if (options?.innerObjects) {
-      for (const [name, obj] of Object.entries(options.innerObjects)) {
-        this.innerObjects[name] = [
-          {
-            obj,
-          },
-        ];
-      }
-    } else if (options?.innerObjectHandlers) {
+    if (options?.innerObjectHandlers) {
       Object.assign(this.innerObjects, options.innerObjectHandlers);
     }
     // Framework hooks (e.g. DAL) inject `logger`; make sure it always resolves.
