@@ -7,11 +7,20 @@ import { importResolve } from '@eggjs/utils';
 
 const debug = debuglog('egg/tegg/plugin/config/ModuleScanner');
 
+export interface ModuleScannerOptions extends ReadModuleReferenceOptions {
+  /**
+   * The RUNTIME framework directory (egg resolves it from options.framework /
+   * mm). Preferred over re-deriving from `appPkg.egg.framework`, which is
+   * absent in test harnesses and custom launches.
+   */
+  frameworkDir?: string;
+}
+
 export class ModuleScanner {
   private readonly baseDir: string;
-  private readonly readModuleOptions: ReadModuleReferenceOptions;
+  private readonly readModuleOptions: ModuleScannerOptions;
 
-  constructor(baseDir: string, readModuleOptions: ReadModuleReferenceOptions) {
+  constructor(baseDir: string, readModuleOptions: ModuleScannerOptions) {
     this.baseDir = baseDir;
     this.readModuleOptions = readModuleOptions;
   }
@@ -22,18 +31,21 @@ export class ModuleScanner {
    */
   loadModuleReferences(): readonly ModuleReference[] {
     const moduleReferences = ModuleConfigUtil.readModuleReference(this.baseDir, this.readModuleOptions || {});
-    const appPkg: { egg?: { framework?: string } } = JSON.parse(
-      readFileSync(path.join(this.baseDir, 'package.json'), 'utf-8'),
-    );
-    const framework = appPkg.egg?.framework;
-    if (!framework) {
-      return ModuleConfigUtil.deduplicateModules(moduleReferences);
+    let frameworkDir = this.readModuleOptions?.frameworkDir;
+    if (!frameworkDir) {
+      const appPkg: { egg?: { framework?: string } } = JSON.parse(
+        readFileSync(path.join(this.baseDir, 'package.json'), 'utf-8'),
+      );
+      const framework = appPkg.egg?.framework;
+      if (!framework) {
+        return ModuleConfigUtil.deduplicateModules(moduleReferences);
+      }
+      const frameworkPkg = importResolve(`${framework}/package.json`, {
+        paths: [this.baseDir],
+      });
+      frameworkDir = path.dirname(frameworkPkg);
     }
-    const frameworkPkg = importResolve(`${framework}/package.json`, {
-      paths: [this.baseDir],
-    });
-    const frameworkDir = path.dirname(frameworkPkg);
-    debug('loadModuleReferences from framework:%o, frameworkDir:%o', framework, frameworkDir);
+    debug('loadModuleReferences frameworkDir:%o', frameworkDir);
     const optionalModuleReferences = ModuleConfigUtil.readModuleReference(frameworkDir, this.readModuleOptions || {});
 
     // Merge all module references and deduplicate

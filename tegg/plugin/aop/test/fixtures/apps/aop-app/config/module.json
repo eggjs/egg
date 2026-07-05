@@ -4,8 +4,5 @@
   },
   {
     "path": "../modules/aop-cross-module"
-  },
-  {
-    "package": "@eggjs/aop-plugin"
   }
 ]

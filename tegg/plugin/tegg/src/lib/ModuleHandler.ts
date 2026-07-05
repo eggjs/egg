@@ -1,13 +1,8 @@
 import { EggLoadUnitType, type LoadUnit, LoadUnitFactory } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook } from '@eggjs/metadata';
 import { ModuleConfigs } from '@eggjs/tegg-common-util';
-import {
-  InnerObjectLoadUnitBuilder,
-  type InnerObjectModuleReference,
-  type LoadUnitInstance,
-  LoadUnitInstanceFactory,
-} from '@eggjs/tegg-runtime';
-import { AccessLevel, type EggProtoImplClass } from '@eggjs/tegg-types';
+import { InnerObjectLoadUnitBuilder, type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+import { AccessLevel } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 import { Base } from 'sdk-base';
 
@@ -36,24 +31,6 @@ export class ModuleHandler extends Base {
     this.loadUnitLoader.registerBuildHook(hook);
   }
 
-  readonly #innerObjectClazzRegistrations: Array<{
-    clazzList: readonly EggProtoImplClass[];
-    moduleReference: InnerObjectModuleReference;
-  }> = [];
-
-  /**
-   * Buffer framework module plugin classes (`@InnerObjectProto` /
-   * `@XxxLifecycleProto`) provided by other egg plugins. They are instantiated
-   * in the InnerObjectLoadUnit during init(), before any business load unit is
-   * created. Call from configDidLoad or the synchronous part of didLoad.
-   */
-  registerInnerObjectClazzList(
-    clazzList: readonly EggProtoImplClass[],
-    moduleReference: InnerObjectModuleReference,
-  ): void {
-    this.#innerObjectClazzRegistrations.push({ clazzList, moduleReference });
-  }
-
   /**
    * Create AND instantiate the InnerObjectLoadUnit before the business graph
    * is built, so `@XxxLifecycleProto` hooks provided by module plugins
@@ -62,9 +39,6 @@ export class ModuleHandler extends Base {
    */
   private async instantiateInnerObjectLoadUnit(): Promise<LoadUnitInstance> {
     const builder = new InnerObjectLoadUnitBuilder();
-    for (const { clazzList, moduleReference } of this.#innerObjectClazzRegistrations) {
-      builder.addInnerObjectClazzList(clazzList, moduleReference);
-    }
     for (const moduleDescriptor of this.loadUnitLoader.moduleDescriptors) {
       builder.addInnerObjectClazzList(moduleDescriptor.innerObjectClazzList, {
         name: moduleDescriptor.name,

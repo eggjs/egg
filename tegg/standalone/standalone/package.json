@@ -50,6 +50,7 @@
     "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"

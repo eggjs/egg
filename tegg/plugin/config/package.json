@@ -51,6 +51,7 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
+    "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
@@ -67,6 +68,9 @@
   },
   "engines": {
     "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "teggConfig"
   },
   "eggPlugin": {
     "name": "teggConfig"

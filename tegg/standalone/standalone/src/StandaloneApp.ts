@@ -3,13 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 import { MysqlDataSourceManager, SqlMapManager, TableModelManager } from '@eggjs/dal-plugin';
 import type { LoaderFS } from '@eggjs/loader-fs';
-import {
-  ConfigSourceLoadUnitHook,
-  type EggPrototype,
-  EggPrototypeFactory,
-  type LoadUnit,
-  LoadUnitFactory,
-} from '@eggjs/metadata';
+import { type EggPrototype, EggPrototypeFactory, type LoadUnit, LoadUnitFactory } from '@eggjs/metadata';
 import { type ModuleConfigHolder, ModuleConfigs, ConfigSourceQualifierAttribute, type Logger } from '@eggjs/tegg';
 import {
   ModuleConfigUtil,
@@ -195,10 +189,11 @@ export class StandaloneApp {
     // (workspace/dev layouts ship test/ next to src/).
     const scan = { extraFilePattern: ['!test/**'] };
     return [
-      // The aop PLUGIN package is the aop module (eggModule: teggAop) for
-      // both hosts; its egg imports are type-only so the scan is host-safe.
+      // The PLUGIN packages are the modules (teggAop/teggDal/teggConfig) for
+      // both hosts; their egg imports are type-only so the scan is host-safe.
       { baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/aop-plugin/package.json'))), ...scan },
       { baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/dal-plugin/package.json'))), ...scan },
+      { baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/tegg-config/package.json'))), ...scan },
     ];
   }
 
@@ -283,13 +278,6 @@ export class StandaloneApp {
   private async instantiateInnerObjectLoadUnit(): Promise<void> {
     StandaloneContextHandler.register();
     const builder = new InnerObjectLoadUnitBuilder();
-    // Host built-in, NOT scan-discovered: core tegg semantics (moduleConfig
-    // injection) with no declaring app — same single shared class as the egg
-    // host, wired by each composition root with one line.
-    builder.addInnerObjectClazzList([ConfigSourceLoadUnitHook], {
-      name: 'standalone',
-      path: 'tegg:standalone',
-    });
     for (const moduleDescriptor of this.loadUnitLoader.moduleDescriptors) {
       builder.addInnerObjectClazzList(moduleDescriptor.innerObjectClazzList, {
         name: moduleDescriptor.name,

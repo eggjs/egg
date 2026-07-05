@@ -2,7 +2,6 @@
 import './lib/AppLoadUnit.ts';
 import './lib/AppLoadUnitInstance.ts';
 import './lib/EggCompatibleObject.ts';
-import { ConfigSourceLoadUnitHook } from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
@@ -45,16 +44,6 @@ export default class TeggAppBoot implements ILifecycleBoot {
       this.eggContextHandler.register();
     });
     this.app.moduleHandler = new ModuleHandler(this.app);
-    // Host built-in, NOT scan-discovered: this hook is core tegg semantics
-    // (every module's `moduleConfig` injection depends on it, unconditionally)
-    // with no declaring app — requiring a module.json entry for it would leak
-    // host internals into user configuration. The class itself is the single
-    // shared implementation from @eggjs/metadata; each host's composition
-    // root wires it with one line (standalone does the same).
-    this.app.moduleHandler.registerInnerObjectClazzList([ConfigSourceLoadUnitHook], {
-      name: 'tegg',
-      path: 'tegg:tegg-plugin',
-    });
   }
 
   async didLoad(): Promise<void> {
