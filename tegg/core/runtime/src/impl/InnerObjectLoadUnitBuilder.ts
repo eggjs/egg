@@ -8,6 +8,7 @@ import {
 } from '@eggjs/metadata';
 import { Graph, GraphNode } from '@eggjs/tegg-common-util';
 import type { EggProtoImplClass, LoadUnit, ProtoDescriptor } from '@eggjs/tegg-types';
+import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 
 import {
   INNER_OBJECT_LOAD_UNIT_NAME,
@@ -42,19 +43,9 @@ export interface CreateInnerObjectLoadUnitOptions {
  */
 export class InnerObjectLoadUnitBuilder {
   readonly #protoGraph: Graph<ProtoNode, ProtoDependencyMeta> = new Graph();
-  readonly #seenClazzSet: Set<EggProtoImplClass> = new Set();
 
   addInnerObjectClazzList(clazzList: readonly EggProtoImplClass[], moduleReference: InnerObjectModuleReference): void {
     for (const clazz of clazzList) {
-      // The same class may arrive twice — hosts hard-feed built-in framework
-      // lists unconditionally, and the owning package may also be scanned as an
-      // eggModule (e.g. @eggjs/dal-plugin declared as a module dependency).
-      // First registration wins; a DIFFERENT class with a colliding proto id
-      // still fails below.
-      if (this.#seenClazzSet.has(clazz)) {
-        continue;
-      }
-      this.#seenClazzSet.add(clazz);
       const descriptor = ProtoDescriptorHelper.createByInstanceClazz(clazz, {
         moduleName: INNER_OBJECT_LOAD_UNIT_NAME,
         unitPath: INNER_OBJECT_LOAD_UNIT_PATH,
@@ -68,7 +59,41 @@ export class InnerObjectLoadUnitBuilder {
     }
   }
 
-  #buildProtoGraph(providedNames: Set<PropertyKey>): ProtoDescriptor[] {
+  /**
+   * Host-provided instances resolve through the SAME matching rules as graph
+   * protos (name + qualifiers + access level via selectProto); they just
+   * never join the topological sort — an already-constructed instance has no
+   * construction order and no outgoing dependencies. Model each provided
+   * entry as a minimal descriptor for matching only.
+   */
+  static #providedDescriptors(innerObjects: Record<string, InnerObject[]>): ProtoDescriptor[] {
+    const descriptors: ProtoDescriptor[] = [];
+    for (const [name, objects] of Object.entries(innerObjects)) {
+      for (const innerObject of objects) {
+        descriptors.push({
+          name,
+          accessLevel: innerObject.accessLevel ?? AccessLevel.PUBLIC,
+          initType: ObjectInitType.SINGLETON,
+          protoImplType: 'PROVIDED_INNER_OBJECT',
+          qualifiers: ProtoDescriptorHelper.addDefaultQualifier(
+            innerObject.qualifiers ?? [],
+            ObjectInitType.SINGLETON,
+            INNER_OBJECT_LOAD_UNIT_NAME,
+          ),
+          injectObjects: [],
+          properQualifiers: {},
+          defineModuleName: INNER_OBJECT_LOAD_UNIT_NAME,
+          defineUnitPath: INNER_OBJECT_LOAD_UNIT_PATH,
+          instanceModuleName: INNER_OBJECT_LOAD_UNIT_NAME,
+          instanceDefineUnitPath: INNER_OBJECT_LOAD_UNIT_PATH,
+          equal: () => false,
+        });
+      }
+    }
+    return descriptors;
+  }
+
+  #buildProtoGraph(providedDescriptors: ProtoDescriptor[]): ProtoDescriptor[] {
     const index = ProtoGraphUtils.buildProtoNameIndex(this.#protoGraph);
     for (const protoNode of this.#protoGraph.nodes.values()) {
       for (const injectObject of protoNode.val.proto.injectObjects) {
@@ -78,17 +103,30 @@ export class InnerObjectLoadUnitBuilder {
           injectObject,
           index,
         );
-        if (!injectProto) {
-          // Host-provided inner objects are registered on the load unit
-          // directly (not part of this graph); their resolution happens at
-          // prototype-build time. Anything else missing is a hard error —
-          // deferring it to runtime hides broken module plugins.
-          if (injectObject.optional || providedNames.has(injectObject.objName)) {
-            continue;
-          }
-          throw new EggPrototypeNotFound(injectObject.objName, protoNode.val.proto.defineModuleName);
+        if (injectProto) {
+          this.#protoGraph.addEdge(
+            protoNode,
+            injectProto,
+            new ProtoDependencyMeta({ injectObj: injectObject.objName }),
+          );
+          continue;
         }
-        this.#protoGraph.addEdge(protoNode, injectProto, new ProtoDependencyMeta({ injectObj: injectObject.objName }));
+        // Not a hook proto: match host-provided instances with the same
+        // selectProto rules. Resolution to the instance happens at
+        // prototype-build time; no edge is needed (no construction order).
+        const provided = providedDescriptors.find((descriptor) =>
+          ProtoDescriptorHelper.selectProto(descriptor, {
+            name: injectObject.objName,
+            qualifiers: injectObject.qualifiers ?? [],
+            moduleName: protoNode.val.proto.instanceModuleName,
+          }),
+        );
+        if (provided || injectObject.optional) {
+          continue;
+        }
+        // Anything else missing is a hard error — deferring it to runtime
+        // hides broken module plugins.
+        throw new EggPrototypeNotFound(injectObject.objName, protoNode.val.proto.defineModuleName);
       }
     }
     const loopPath = this.#protoGraph.loopPath();
@@ -100,8 +138,8 @@ export class InnerObjectLoadUnitBuilder {
   }
 
   async createLoadUnit(options: CreateInnerObjectLoadUnitOptions): Promise<LoadUnit> {
-    const providedNames = new Set<PropertyKey>(Object.keys(options.innerObjects));
-    const protos = this.#buildProtoGraph(providedNames);
+    const providedDescriptors = InnerObjectLoadUnitBuilder.#providedDescriptors(options.innerObjects);
+    const protos = this.#buildProtoGraph(providedDescriptors);
     LoadUnitFactory.registerLoadUnitCreator(INNER_OBJECT_LOAD_UNIT_TYPE, () => {
       return new InnerObjectLoadUnit({
         innerObjects: options.innerObjects,

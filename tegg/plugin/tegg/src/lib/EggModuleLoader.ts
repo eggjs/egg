@@ -20,36 +20,38 @@ export class EggModuleLoader {
    * globbing the file system.
    */
   private loadedFromManifest = false;
-  /** Framework module plugins registered by other egg plugins (scan path). */
-  readonly #extraModuleReferences: ModuleReference[] = [];
 
   constructor(app: Application) {
     this.app = app;
   }
 
   /**
-   * Register a framework package as a scanned module: its
-   * `@InnerObjectProto` / `@XxxLifecycleProto` classes are collected by the
-   * regular module scan (loadApp diverts them into innerObjectClazzList) —
-   * the module-plugin path, no hand-fed class lists.
+   * Enabled egg plugins that declare `eggModule` metadata ARE module plugins:
+   * their `@InnerObjectProto` / `@XxxLifecycleProto` classes are collected by
+   * the regular module scan (loadApp diverts them into the
+   * InnerObjectLoadUnit) — no registration API, enabling the plugin is the
+   * whole contract. Most are already picked up from the app/framework
+   * dependencies by tegg-config's ModuleScanner; this only fills the gap for
+   * enabled plugins that are not on that dependency path, deduped by path.
    */
-  registerModule(modulePath: string): void {
-    this.#extraModuleReferences.push({
-      name: ModuleConfigUtil.readModuleNameSync(modulePath),
-      path: modulePath,
-    });
-  }
-
-  /** App references plus registered framework modules, deduped by path (first wins). */
-  get allModuleReferences(): readonly ModuleReference[] {
-    const seen = new Set<string>();
-    const res: ModuleReference[] = [];
-    for (const ref of [...this.#extraModuleReferences, ...this.app.moduleReferences]) {
-      if (seen.has(ref.path)) continue;
-      seen.add(ref.path);
-      res.push(ref);
+  static resolveModuleReferences(app: Application): readonly ModuleReference[] {
+    const references: ModuleReference[] = [...app.moduleReferences];
+    const seenPaths = new Set(references.map((t) => t.path));
+    for (const plugin of Object.values(app.plugins)) {
+      if (!plugin.enable || !plugin.path || seenPaths.has(plugin.path)) continue;
+      let name: string;
+      try {
+        name = ModuleConfigUtil.readModuleNameSync(plugin.path);
+      } catch {
+        continue;
+      }
+      // readModuleNameSync falls back to the package name for non-eggModule
+      // packages; only packages DECLARING eggModule join the scan.
+      if (!ModuleConfigUtil.hasEggModule(plugin.path)) continue;
+      seenPaths.add(plugin.path);
+      references.push({ name, path: plugin.path });
     }
-    return res;
+    return references;
   }
 
   registerBuildHook(hook: GlobalGraphBuildHook): void {
@@ -80,12 +82,13 @@ export class EggModuleLoader {
     // Reuse egg-core's loader fs so discovery goes through the shared VFS:
     // RealLoaderFS in normal mode (zero behavior change), ManifestLoaderFS in bundle mode.
     const loaderFS = this.app.loader.loaderFS;
-    const moduleDescriptors = await LoaderFactory.loadApp(this.allModuleReferences, loadAppManifest, loaderFS);
+    const moduleReferences = EggModuleLoader.resolveModuleReferences(this.app);
+    const moduleDescriptors = await LoaderFactory.loadApp(moduleReferences, loadAppManifest, loaderFS);
     this.#moduleDescriptors = moduleDescriptors;
 
     // Collect manifest data when not loaded from manifest
     if (!loadAppManifest) {
-      EggModuleLoader.collectTeggManifest(this.app, this.allModuleReferences, moduleDescriptors);
+      EggModuleLoader.collectTeggManifest(this.app, moduleReferences, moduleDescriptors);
     }
 
     for (const moduleDescriptor of moduleDescriptors) {

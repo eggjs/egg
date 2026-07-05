@@ -7,7 +7,7 @@ import {
   type LoadUnitInstance,
   LoadUnitInstanceFactory,
 } from '@eggjs/tegg-runtime';
-import { AccessLevel, type EggProtoImplClass, type ModuleReference } from '@eggjs/tegg-types';
+import { AccessLevel, type EggProtoImplClass } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 import { Base } from 'sdk-base';
 
@@ -34,21 +34,6 @@ export class ModuleHandler extends Base {
 
   registerGlobalGraphBuildHook(hook: GlobalGraphBuildHook): void {
     this.loadUnitLoader.registerBuildHook(hook);
-  }
-
-  /**
-   * Register a framework package (declaring `eggModule` metadata) as a
-   * scanned module plugin — the preferred path: hooks are collected by the
-   * module scan like any module. Call from configDidLoad / the synchronous
-   * part of didLoad, before the graph is built.
-   */
-  registerInnerObjectModule(modulePath: string): void {
-    this.loadUnitLoader.registerModule(modulePath);
-  }
-
-  /** App references plus registered framework modules (deduped). */
-  get allModuleReferences(): readonly ModuleReference[] {
-    return this.loadUnitLoader.allModuleReferences;
   }
 
   readonly #innerObjectClazzRegistrations: Array<{

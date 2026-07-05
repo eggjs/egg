@@ -1,5 +1,3 @@
-import path from 'node:path';
-
 import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
@@ -20,9 +18,6 @@ export default class DalAppBootHook implements ILifecycleBoot {
     // runs before ours) so they are instantiated inside the InnerObjectLoadUnit
     // — with moduleConfigs/runtimeConfig/logger injected — before any business
     // load unit is created. Registration/deregistration is automatic.
-    // Module-plugin path: this plugin package itself declares eggModule
-    // metadata (teggDal); the regular module scan collects its hooks.
-    this.app.moduleHandler.registerInnerObjectModule(path.join(import.meta.dirname, '..'));
   }
 
   async beforeClose(): Promise<void> {

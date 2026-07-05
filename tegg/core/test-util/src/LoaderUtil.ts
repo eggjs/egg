@@ -1,6 +1,5 @@
 import { type EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
 import {
-  EggLoadUnitType,
   GlobalGraph,
   type GlobalGraphBuildHook,
   GlobalModuleNodeBuilder,
@@ -46,50 +45,20 @@ export class LoaderUtil {
   }
 
   static async buildGlobalGraph(modulePaths: string[], hooks?: GlobalGraphBuildHook[]): Promise<void> {
-    GlobalGraph.instance = new GlobalGraph();
+    // Reuse the production classification (LoaderFactory.loadApp): inner
+    // object protos are diverted out of module clazzLists there, exactly as
+    // in a real boot — no test-local re-implementation.
+    const moduleReferences = modulePaths.map((modulePath) => ({
+      path: modulePath,
+      name: ModuleConfigUtil.readModuleNameSync(modulePath),
+    }));
+    const moduleDescriptors = await LoaderFactory.loadApp(moduleReferences);
+    const globalGraph = await GlobalGraph.create(moduleDescriptors);
     for (const hook of hooks ?? []) {
-      GlobalGraph.instance.registerBuildHook(hook);
+      globalGraph.registerBuildHook(hook);
     }
-    const multiInstanceEggProtoClass: {
-      clazz: any;
-      unitPath: string;
-      moduleName: string;
-    }[] = [];
-    for (let i = 0; i < modulePaths.length; i++) {
-      const modulePath = modulePaths[i];
-      const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
-      const clazzList = await loader.load();
-      const moduleName = ModuleConfigUtil.readModuleNameSync(modulePath);
-      for (const clazz of clazzList) {
-        if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
-          multiInstanceEggProtoClass.push({
-            clazz,
-            unitPath: modulePath,
-            moduleName,
-          });
-        }
-      }
-    }
-    for (let i = 0; i < modulePaths.length; i++) {
-      const modulePath = modulePaths[i];
-      const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
-      const clazzList = await loader.load();
-      const eggProtoClass: EggProtoImplClass[] = [];
-      for (const clazz of clazzList) {
-        // Inner object protos are diverted out of module load units by the
-        // production loader (LoaderFactory.loadApp); mirror that here.
-        if (PrototypeUtil.isEggInnerObject(clazz)) {
-          continue;
-        }
-        if (PrototypeUtil.isEggPrototype(clazz)) {
-          eggProtoClass.push(clazz);
-        }
-      }
-      GlobalGraph.instance.addModuleNode(
-        LoaderUtil.buildModuleNode(modulePath, eggProtoClass, multiInstanceEggProtoClass),
-      );
-    }
-    GlobalGraph.instance.build();
-    GlobalGraph.instance.sort();
+    GlobalGraph.instance = globalGraph;
+    globalGraph.build();
+    globalGraph.sort();
   }
 }
