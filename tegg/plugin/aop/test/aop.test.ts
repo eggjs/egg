@@ -14,13 +14,15 @@ describe('plugin/aop/test/aop.test.ts', () => {
     return mm.restore();
   });
 
-  // App boot can exceed the default 10s hook timeout on slow Windows runners.
+  // App boot exceeds the 10s vitest default on slow Windows runners; the tegg
+  // projects do not inherit the root config's 20s hookTimeout, so state it
+  // explicitly with the same value.
   beforeAll(async () => {
     app = mm.app({
       baseDir: path.join(import.meta.dirname, 'fixtures/apps/aop-app'),
     });
     await app.ready();
-  }, 60_000);
+  }, 20_000);
 
   it('module aop should work', async () => {
     app.mockCsrf();

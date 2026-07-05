@@ -65,9 +65,9 @@ describe('plugin/tegg/test/BundledAppBoot.test.ts', () => {
     app = mm.app({ baseDir, mode: 'single', loaderFS } as Parameters<typeof mm.app>[0]);
     await app.ready();
     bootFallbackGlobTargets = [...fallbackGlobTargets];
-    // The double app boot above can exceed the default 10s hook timeout on
-    // slow Windows runners.
-  }, 120_000);
+    // TWO app boots plus manifest generation: 3x the root config's 20s
+    // single-boot hookTimeout (which tegg projects do not inherit).
+  }, 60_000);
 
   afterEach(async () => {
     return mm.restore();
