@@ -24,8 +24,10 @@ export class ModuleDescriptorDumper {
   static stringifyDescriptor(moduleDescriptor: ModuleDescriptor): string {
     return (
       '{' +
-      `"name": "${moduleDescriptor.name}",` +
-      `"unitPath": "${moduleDescriptor.unitPath}",` +
+      // JSON.stringify the string fields — unitPath/filePath contain
+      // backslashes on Windows, raw interpolation produces invalid JSON.
+      `"name": ${JSON.stringify(moduleDescriptor.name)},` +
+      `"unitPath": ${JSON.stringify(moduleDescriptor.unitPath)},` +
       (typeof moduleDescriptor.optional !== 'undefined' ? `"optional": ${moduleDescriptor.optional},` : '') +
       `"clazzList": [${moduleDescriptor.clazzList
         .map((t) => {
@@ -54,9 +56,9 @@ export class ModuleDescriptorDumper {
   static stringifyClazz(clazz: EggProtoImplClass, moduleDescriptor: ModuleDescriptor): string {
     return (
       '{' +
-      `"name": "${clazz.name}",` +
+      `"name": ${JSON.stringify(clazz.name)},` +
       (PrototypeUtil.getFilePath(clazz)
-        ? `"filePath": "${path.relative(moduleDescriptor.unitPath, PrototypeUtil.getFilePath(clazz)!)}"`
+        ? `"filePath": ${JSON.stringify(path.relative(moduleDescriptor.unitPath, PrototypeUtil.getFilePath(clazz)!))}`
         : '') +
       '}'
     );
