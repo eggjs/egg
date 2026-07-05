@@ -83,6 +83,17 @@ export class StandaloneApp {
     this.moduleConfigs = {};
     this.scopeBag = TeggScope.createBag();
     TeggScope.registerScope(this.scopeBag);
+    try {
+      // innerObjects is a construction-time contract: hosts may add provided
+      // objects between new and init(). No fs I/O happens here — module
+      // configs are loaded into the placeholder maps during init().
+      this.runInScope(() => this.initInnerObjects(options));
+    } catch (e) {
+      // Construction failed after the scope was registered; release it so the
+      // never-returned app does not leak into liveScopeBags.
+      TeggScope.unregisterScope(this.scopeBag);
+      throw e;
+    }
   }
 
   /**
@@ -105,7 +116,7 @@ export class StandaloneApp {
     return TeggScope.run(this.scopeBag, fn);
   }
 
-  private initInnerObjectsAndConfigs(options?: StandaloneAppOptions): void {
+  private initInnerObjects(options?: StandaloneAppOptions): void {
     this.innerObjects = {
       moduleConfigs: [
         {
@@ -132,6 +143,20 @@ export class StandaloneApp {
       },
     ];
 
+    if (options?.innerObjectHandlers) {
+      Object.assign(this.innerObjects, options.innerObjectHandlers);
+    }
+    // Framework hooks (e.g. DAL) inject `logger`; make sure it always resolves.
+    this.innerObjects.logger ??= [{ obj: console }];
+  }
+
+  /**
+   * Fill the placeholder maps created in the constructor: load every module's
+   * config and expose it as a qualified `moduleConfig` inner object. Runs at
+   * init() so the module scan (the `moduleReferences` getter) stays off the
+   * construction path.
+   */
+  private loadModuleConfigs(): void {
     // load module.yml and module.env.yml by default
     // Always set configNames for this app invocation, since destroy() clears it
     // asynchronously and may not have completed before the next app is created.
@@ -160,11 +185,6 @@ export class StandaloneApp {
         ],
       });
     }
-    if (options?.innerObjectHandlers) {
-      Object.assign(this.innerObjects, options.innerObjectHandlers);
-    }
-    // Framework hooks (e.g. DAL) inject `logger`; make sure it always resolves.
-    this.innerObjects.logger ??= [{ obj: console }];
   }
 
   /**
@@ -302,7 +322,7 @@ export class StandaloneApp {
 
   async init(): Promise<void> {
     await this.runInScope(async () => {
-      this.initInnerObjectsAndConfigs(this.options);
+      this.loadModuleConfigs();
       await this.initLoaderInstance();
       await this.instantiateInnerObjectLoadUnit();
       await this.instantiateModuleLoadUnits();
