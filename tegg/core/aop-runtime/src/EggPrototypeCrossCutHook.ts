@@ -7,13 +7,6 @@ export class EggPrototypeCrossCutHook implements LifecycleHook<EggPrototypeLifec
   @Inject()
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
 
-  // Optional manual-construction path (tests / legacy hosts); DI overrides it.
-  constructor(crosscutAdviceFactory?: CrosscutAdviceFactory) {
-    if (crosscutAdviceFactory) {
-      this.crosscutAdviceFactory = crosscutAdviceFactory;
-    }
-  }
-
   async preCreate(ctx: EggPrototypeLifecycleContext): Promise<void> {
     if (CrosscutInfoUtil.isCrosscutAdvice(ctx.clazz)) {
       this.crosscutAdviceFactory.registerCrossAdviceClazz(ctx.clazz);

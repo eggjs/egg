@@ -37,8 +37,10 @@ describe('test/aop-runtime.test.ts', () => {
     beforeEach(async () => {
       crosscutAdviceFactory = new CrosscutAdviceFactory();
       eggObjectAopHook = new EggObjectAopHook();
-      loadUnitAopHook = new LoadUnitAopHook(crosscutAdviceFactory);
-      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook(crosscutAdviceFactory);
+      loadUnitAopHook = new LoadUnitAopHook();
+      Reflect.set(loadUnitAopHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
+      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook();
+      Reflect.set(eggPrototypeCrossCutHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
       EggPrototypeLifecycleUtil.registerLifecycle(eggPrototypeCrossCutHook);
       LoadUnitLifecycleUtil.registerLifecycle(loadUnitAopHook);
       EggObjectLifecycleUtil.registerLifecycle(eggObjectAopHook);
@@ -166,8 +168,10 @@ describe('test/aop-runtime.test.ts', () => {
     beforeEach(async () => {
       crosscutAdviceFactory = new CrosscutAdviceFactory();
       eggObjectAopHook = new EggObjectAopHook();
-      loadUnitAopHook = new LoadUnitAopHook(crosscutAdviceFactory);
-      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook(crosscutAdviceFactory);
+      loadUnitAopHook = new LoadUnitAopHook();
+      Reflect.set(loadUnitAopHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
+      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook();
+      Reflect.set(eggPrototypeCrossCutHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
       EggPrototypeLifecycleUtil.registerLifecycle(eggPrototypeCrossCutHook);
       LoadUnitLifecycleUtil.registerLifecycle(loadUnitAopHook);
       EggObjectLifecycleUtil.registerLifecycle(eggObjectAopHook);
@@ -193,8 +197,10 @@ describe('test/aop-runtime.test.ts', () => {
     beforeEach(async () => {
       crosscutAdviceFactory = new CrosscutAdviceFactory();
       eggObjectAopHook = new EggObjectAopHook();
-      loadUnitAopHook = new LoadUnitAopHook(crosscutAdviceFactory);
-      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook(crosscutAdviceFactory);
+      loadUnitAopHook = new LoadUnitAopHook();
+      Reflect.set(loadUnitAopHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
+      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook();
+      Reflect.set(eggPrototypeCrossCutHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
       EggPrototypeLifecycleUtil.registerLifecycle(eggPrototypeCrossCutHook);
       LoadUnitLifecycleUtil.registerLifecycle(loadUnitAopHook);
       EggObjectLifecycleUtil.registerLifecycle(eggObjectAopHook);

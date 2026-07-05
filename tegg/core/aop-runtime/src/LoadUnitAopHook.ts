@@ -14,13 +14,6 @@ export class LoadUnitAopHook implements LifecycleHook<LoadUnitLifecycleContext, 
   @Inject()
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
 
-  // Optional manual-construction path (tests / legacy hosts); DI overrides it.
-  constructor(crosscutAdviceFactory?: CrosscutAdviceFactory) {
-    if (crosscutAdviceFactory) {
-      this.crosscutAdviceFactory = crosscutAdviceFactory;
-    }
-  }
-
   async postCreate(_: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
     for (const proto of loadUnit.iterateEggPrototype()) {
       const protoWithClazz = proto as EggPrototypeWithClazz;

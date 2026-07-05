@@ -28,7 +28,8 @@ describe('standalone/standalone/test/index.test.ts', () => {
       const msg: string = await main(fixture);
       assert.equal(msg, 'hello!hello from ctx');
       await sleep(500);
-      assert.equal((ModuleDescriptorDumper.dump as any).called, 1);
+      // app module + the two built-in framework modules (teggAopRuntime/teggDal)
+      assert.equal((ModuleDescriptorDumper.dump as any).called, 3);
     });
 
     it('should not dump', async () => {
@@ -357,7 +358,8 @@ describe('standalone/standalone/test/index.test.ts', () => {
       await preLoad(fixturePath);
       await main(fixturePath);
       assert.deepEqual(Foo.staticCalled, ['preLoad', 'construct', 'postConstruct', 'preInject', 'postInject', 'init']);
-      assert.equal((ModuleDescriptorDumper.dump as any).called, 1);
+      // app module + the two built-in framework modules (teggAopRuntime/teggDal)
+      assert.equal((ModuleDescriptorDumper.dump as any).called, 3);
     });
   });
 });

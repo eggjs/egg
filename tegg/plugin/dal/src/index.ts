@@ -1,6 +1,5 @@
 import './types.ts';
 
-export * from './lib/DalInnerObjectClazzList.ts';
 export * from './lib/DalModuleLoadUnitHook.ts';
 export * from './lib/DalTableEggPrototypeHook.ts';
 export * from './lib/DataSource.ts';

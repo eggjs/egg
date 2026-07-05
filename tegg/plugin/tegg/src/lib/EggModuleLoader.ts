@@ -1,5 +1,6 @@
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
+import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { LoaderFactory, ModuleLoader, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import type { ModuleReference } from '@eggjs/tegg-types';
@@ -19,9 +20,36 @@ export class EggModuleLoader {
    * globbing the file system.
    */
   private loadedFromManifest = false;
+  /** Framework module plugins registered by other egg plugins (scan path). */
+  readonly #extraModuleReferences: ModuleReference[] = [];
 
   constructor(app: Application) {
     this.app = app;
+  }
+
+  /**
+   * Register a framework package as a scanned module: its
+   * `@InnerObjectProto` / `@XxxLifecycleProto` classes are collected by the
+   * regular module scan (loadApp diverts them into innerObjectClazzList) —
+   * the module-plugin path, no hand-fed class lists.
+   */
+  registerModule(modulePath: string): void {
+    this.#extraModuleReferences.push({
+      name: ModuleConfigUtil.readModuleNameSync(modulePath),
+      path: modulePath,
+    });
+  }
+
+  /** App references plus registered framework modules, deduped by path (first wins). */
+  get allModuleReferences(): readonly ModuleReference[] {
+    const seen = new Set<string>();
+    const res: ModuleReference[] = [];
+    for (const ref of [...this.#extraModuleReferences, ...this.app.moduleReferences]) {
+      if (seen.has(ref.path)) continue;
+      seen.add(ref.path);
+      res.push(ref);
+    }
+    return res;
   }
 
   registerBuildHook(hook: GlobalGraphBuildHook): void {
@@ -52,12 +80,12 @@ export class EggModuleLoader {
     // Reuse egg-core's loader fs so discovery goes through the shared VFS:
     // RealLoaderFS in normal mode (zero behavior change), ManifestLoaderFS in bundle mode.
     const loaderFS = this.app.loader.loaderFS;
-    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest, loaderFS);
+    const moduleDescriptors = await LoaderFactory.loadApp(this.allModuleReferences, loadAppManifest, loaderFS);
     this.#moduleDescriptors = moduleDescriptors;
 
     // Collect manifest data when not loaded from manifest
     if (!loadAppManifest) {
-      EggModuleLoader.collectTeggManifest(this.app, moduleDescriptors);
+      EggModuleLoader.collectTeggManifest(this.app, this.allModuleReferences, moduleDescriptors);
     }
 
     for (const moduleDescriptor of moduleDescriptors) {
@@ -98,8 +126,12 @@ export class EggModuleLoader {
   /**
    * Collect tegg manifest data and store in manifest extensions.
    */
-  static collectTeggManifest(app: Application, moduleDescriptors: readonly ModuleDescriptor[]): void {
-    const data = EggModuleLoader.buildTeggManifestData(app.moduleReferences, moduleDescriptors);
+  static collectTeggManifest(
+    app: Application,
+    moduleReferences: readonly ModuleReference[],
+    moduleDescriptors: readonly ModuleDescriptor[],
+  ): void {
+    const data = EggModuleLoader.buildTeggManifestData(moduleReferences, moduleDescriptors);
     app.loader.manifest.setExtension(TEGG_MANIFEST_KEY, data);
   }
 

@@ -1,11 +1,7 @@
-import { AOP_INNER_OBJECT_CLAZZ_LIST, AOP_INNER_OBJECT_MODULE_REFERENCE } from '@eggjs/aop-runtime';
-import {
-  DAL_INNER_OBJECT_CLAZZ_LIST,
-  DAL_INNER_OBJECT_MODULE_REFERENCE,
-  MysqlDataSourceManager,
-  SqlMapManager,
-  TableModelManager,
-} from '@eggjs/dal-plugin';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { MysqlDataSourceManager, SqlMapManager, TableModelManager } from '@eggjs/dal-plugin';
 import type { LoaderFS } from '@eggjs/loader-fs';
 import {
   ConfigSourceLoadUnitHook,
@@ -187,20 +183,50 @@ export class StandaloneApp {
     this.innerObjects.logger ??= [{ obj: console }];
   }
 
+  /**
+   * Built-in framework module plugins, consumed through the SAME module scan
+   * as any business module (their `@InnerObjectProto` / `@XxxLifecycleProto`
+   * classes are diverted into the InnerObjectLoadUnit by loadApp) — no
+   * hand-fed class lists. The packages declare `eggModule` metadata; the
+   * default file pattern already excludes `test/`.
+   */
+  static builtinFrameworkModules(): ModuleDependency[] {
+    // The packages ARE the modules; never pick their test fixture modules up
+    // (workspace/dev layouts ship test/ next to src/).
+    const scan = { extraFilePattern: ['!test/**'] };
+    return [
+      { baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/aop-runtime/package.json'))), ...scan },
+      { baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/dal-plugin/package.json'))), ...scan },
+    ];
+  }
+
   static getModuleReferences(
     cwd: string,
     dependencies?: StandaloneAppOptions['dependencies'],
     frameworkDeps?: StandaloneAppOptions['frameworkDeps'],
   ): readonly ModuleReference[] {
     // framework deps first so their modules are scanned ahead of app modules
-    const moduleDirs = (frameworkDeps || []).concat(dependencies || []).concat(cwd);
-    return moduleDirs.reduce(
+    const moduleDirs = (StandaloneApp.builtinFrameworkModules() as (string | ModuleDependency)[])
+      .concat(frameworkDeps || [])
+      .concat(dependencies || [])
+      .concat(cwd);
+    const references = moduleDirs.reduce(
       (list, baseDir) => {
         const module = typeof baseDir === 'string' ? { baseDir } : baseDir;
         return list.concat(...ModuleConfigUtil.readModuleReference(module.baseDir, module));
       },
       [] as readonly ModuleReference[],
     );
+    // The same module may be reachable from multiple scan roots (a built-in
+    // framework module the app also depends on); first reference wins.
+    const seenPaths = new Set<string>();
+    return references.filter((reference) => {
+      if (seenPaths.has(reference.path)) {
+        return false;
+      }
+      seenPaths.add(reference.path);
+      return true;
+    });
   }
 
   static async preLoad(
@@ -260,8 +286,6 @@ export class StandaloneApp {
       name: 'standalone',
       path: 'tegg:standalone',
     });
-    builder.addInnerObjectClazzList(AOP_INNER_OBJECT_CLAZZ_LIST, AOP_INNER_OBJECT_MODULE_REFERENCE);
-    builder.addInnerObjectClazzList(DAL_INNER_OBJECT_CLAZZ_LIST, DAL_INNER_OBJECT_MODULE_REFERENCE);
     for (const moduleDescriptor of this.loadUnitLoader.moduleDescriptors) {
       builder.addInnerObjectClazzList(moduleDescriptor.innerObjectClazzList, {
         name: moduleDescriptor.name,

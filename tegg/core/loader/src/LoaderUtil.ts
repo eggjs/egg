@@ -85,9 +85,13 @@ export class LoaderUtil {
       '!**/*.d.cts',
       // test runner configuration is not an application module
       '!**/vitest.config.*',
-      // not load test/coverage files
+      // not load test/coverage files (both the directory entry and its
+      // contents: a bare '!**/test' does not exclude descendants, which
+      // matters when scanning workspace packages that ship their test dirs)
       '!**/test',
+      '!**/test/**',
       '!**/coverage',
+      '!**/coverage/**',
       // extra file pattern
       ...(this.config.extraFilePattern || []),
     ];

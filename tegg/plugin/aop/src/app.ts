@@ -1,6 +1,7 @@
 import assert from 'node:assert';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import { AOP_INNER_OBJECT_CLAZZ_LIST, AOP_INNER_OBJECT_MODULE_REFERENCE } from '@eggjs/aop-runtime';
 import { GlobalGraph } from '@eggjs/metadata';
 import type { Application, ILifecycleBoot } from 'egg';
 
@@ -21,7 +22,11 @@ export default class AopAppHook implements ILifecycleBoot {
     // before ours) so they are instantiated inside the InnerObjectLoadUnit —
     // after the business GlobalGraph is created and before build() runs.
     // Registration/deregistration is automatic.
-    this.app.moduleHandler.registerInnerObjectClazzList(AOP_INNER_OBJECT_CLAZZ_LIST, AOP_INNER_OBJECT_MODULE_REFERENCE);
+    // Module-plugin path: @eggjs/aop-runtime declares eggModule metadata, the
+    // regular module scan collects its hooks - no hand-fed class list.
+    this.app.moduleHandler.registerInnerObjectModule(
+      path.dirname(fileURLToPath(import.meta.resolve('@eggjs/aop-runtime/package.json'))),
+    );
   }
 
   async didLoad(): Promise<void> {

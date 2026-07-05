@@ -1,7 +1,8 @@
+import path from 'node:path';
+
 import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
-import { DAL_INNER_OBJECT_CLAZZ_LIST, DAL_INNER_OBJECT_MODULE_REFERENCE } from './lib/DalInnerObjectClazzList.ts';
 import { MysqlDataSourceManager } from './lib/MysqlDataSourceManager.ts';
 import { SqlMapManager } from './lib/SqlMapManager.ts';
 import { TableModelManager } from './lib/TableModelManager.ts';
@@ -19,7 +20,9 @@ export default class DalAppBootHook implements ILifecycleBoot {
     // runs before ours) so they are instantiated inside the InnerObjectLoadUnit
     // — with moduleConfigs/runtimeConfig/logger injected — before any business
     // load unit is created. Registration/deregistration is automatic.
-    this.app.moduleHandler.registerInnerObjectClazzList(DAL_INNER_OBJECT_CLAZZ_LIST, DAL_INNER_OBJECT_MODULE_REFERENCE);
+    // Module-plugin path: this plugin package itself declares eggModule
+    // metadata (teggDal); the regular module scan collects its hooks.
+    this.app.moduleHandler.registerInnerObjectModule(path.join(import.meta.dirname, '..'));
   }
 
   async beforeClose(): Promise<void> {
