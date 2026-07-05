@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { MysqlDataSourceManager, SqlMapManager, TableModelManager } from '@eggjs/dal-plugin';
 import type { LoaderFS } from '@eggjs/loader-fs';
 import { type EggPrototype, EggPrototypeFactory, type LoadUnit, LoadUnitFactory } from '@eggjs/metadata';
 import { type ModuleConfigHolder, ModuleConfigs, ConfigSourceQualifierAttribute, type Logger } from '@eggjs/tegg';
@@ -113,18 +112,10 @@ export class StandaloneApp {
   constructor(init?: StandaloneAppInit) {
     this.#frameworkDeps = init?.frameworkDeps ?? [];
     this.#dump = init?.dump !== false;
+    this.#innerObjects = this.#createInnerObjects(init);
+    this.#logger = this.#innerObjects.logger[0].obj as Logger;
     this.scopeBag = TeggScope.createBag();
     TeggScope.registerScope(this.scopeBag);
-    try {
-      // In this app's scope: MysqlDataSourceManager.instance resolves per-app.
-      this.#innerObjects = this.runInScope(() => this.#createInnerObjects(init));
-      this.#logger = this.#innerObjects.logger[0].obj as Logger;
-    } catch (e) {
-      // Construction failed after the scope was registered; release it so the
-      // never-returned app does not leak into liveScopeBags.
-      TeggScope.unregisterScope(this.scopeBag);
-      throw e;
-    }
   }
 
   /** Scanned during init(); empty before that. */
@@ -148,7 +139,6 @@ export class StandaloneApp {
         // Framework hooks (e.g. DAL) inject `logger`; an init.innerObjects
         // entry wins over init.logger, console is the last resort.
         logger: [{ obj: init?.logger ?? console }],
-        mysqlDataSourceManager: [{ obj: MysqlDataSourceManager.instance }],
       },
       init?.innerObjects,
       {
@@ -393,10 +383,8 @@ export class StandaloneApp {
       }
     }
     // Framework hooks (ConfigSource/AOP/DAL) live in the InnerObjectLoadUnit
-    // and deregister themselves when it is destroyed above.
-    MysqlDataSourceManager.instance.clear();
-    SqlMapManager.instance.clear();
-    TableModelManager.instance.clear();
+    // and deregister themselves — and clean up their own managers — when it
+    // is destroyed above (dal: DalModuleLoadUnitHook#destroy).
     // clear configNames
     ModuleConfigUtil.setConfigNames(undefined);
   }
