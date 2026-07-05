@@ -68,6 +68,20 @@ describe('standalone/standalone/test/index.test.ts', () => {
     });
   });
 
+  describe('custom logger option', () => {
+    it('should expose options.logger as the logger inner object', async () => {
+      const customLogger = { ...console };
+      const app = new StandaloneApp(path.join(__dirname, './fixtures/inner-object'), {
+        logger: customLogger,
+      });
+      try {
+        assert.equal(app.innerObjects.logger[0].obj, customLogger);
+      } finally {
+        await app.destroy();
+      }
+    });
+  });
+
   describe('runner with custom context', () => {
     it('should work', async () => {
       const runner = new StandaloneApp(path.join(__dirname, './fixtures/custom-context'));

@@ -36,6 +36,11 @@ export interface ModuleDependency extends ReadModuleReferenceOptions {
 export interface StandaloneAppOptions {
   env?: string;
   name?: string;
+  /**
+   * Logger used by the framework (loader, hooks) and injectable as the
+   * `logger` inner object. Defaults to console.
+   */
+  logger?: Logger;
   innerObjectHandlers?: Record<string, InnerObject[]>;
   dependencies?: (string | ModuleDependency)[];
   /**
@@ -143,8 +148,10 @@ export class StandaloneApp {
     if (options?.innerObjectHandlers) {
       Object.assign(this.innerObjects, options.innerObjectHandlers);
     }
-    // Framework hooks (e.g. DAL) inject `logger`; make sure it always resolves.
-    this.innerObjects.logger ??= [{ obj: console }];
+    // Framework hooks (e.g. DAL) inject `logger`; make sure it always
+    // resolves. An innerObjectHandlers entry wins, then options.logger,
+    // console as the last resort.
+    this.innerObjects.logger ??= [{ obj: options?.logger ?? console }];
   }
 
   /**
@@ -256,7 +263,7 @@ export class StandaloneApp {
     const moduleReferences = StandaloneApp.getModuleReferences(cwd, options?.dependencies, options?.frameworkDeps);
     return await TeggScope.run(TeggScope.createBag(), async () => {
       const loader = new EggModuleLoader(moduleReferences, {
-        logger: console,
+        logger: options?.logger ?? console,
         baseDir: cwd,
         dump: false,
         loaderFS: options?.loaderFS,
