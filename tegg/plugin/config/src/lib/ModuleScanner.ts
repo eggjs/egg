@@ -25,13 +25,21 @@ export class ModuleScanner {
     const appPkg: { egg?: { framework?: string } } = JSON.parse(
       readFileSync(path.join(this.baseDir, 'package.json'), 'utf-8'),
     );
-    const framework = appPkg.egg?.framework;
-    if (!framework) {
+    // Same convention as egg-core: apps on a custom framework declare it in
+    // pkg.egg.framework; apps on the base framework declare nothing — default
+    // to `egg` so framework-shipped module plugins (aop/dal/config) are still
+    // discovered.
+    const framework = appPkg.egg?.framework ?? 'egg';
+    let frameworkPkg: string;
+    try {
+      frameworkPkg = importResolve(`${framework}/package.json`, {
+        paths: [this.baseDir],
+      });
+    } catch {
+      // No resolvable framework package next to the app (e.g. unit fixtures
+      // without node_modules) — app modules only.
       return ModuleConfigUtil.deduplicateModules(moduleReferences);
     }
-    const frameworkPkg = importResolve(`${framework}/package.json`, {
-      paths: [this.baseDir],
-    });
     const frameworkDir = path.dirname(frameworkPkg);
     debug('loadModuleReferences from framework:%o, frameworkDir:%o', framework, frameworkDir);
     const optionalModuleReferences = ModuleConfigUtil.readModuleReference(frameworkDir, this.readModuleOptions || {});

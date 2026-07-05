@@ -18,24 +18,27 @@ describe('plugin/config/test/ReadModule.test.ts', () => {
   });
 
   it('should work', () => {
-    expect(app.moduleConfigs).toEqual({
-      moduleA: {
-        config: {},
-        name: 'moduleA',
-        reference: {
-          optional: undefined,
-          name: 'moduleA',
-          path: getFixtures('apps/app-with-modules/app/module-a'),
-        },
-      },
-    });
-    expect(app.moduleReferences).toEqual([
-      {
+    // The app's own module, exactly as scanned.
+    expect(app.moduleConfigs.moduleA).toEqual({
+      config: {},
+      name: 'moduleA',
+      reference: {
         optional: undefined,
         name: 'moduleA',
         path: getFixtures('apps/app-with-modules/app/module-a'),
       },
-    ]);
+    });
+    expect(app.moduleReferences).toContainEqual({
+      optional: undefined,
+      name: 'moduleA',
+      path: getFixtures('apps/app-with-modules/app/module-a'),
+    });
+    // Framework module plugins are discovered through the default framework
+    // (`egg`) scan even when the app declares no pkg.egg.framework — the
+    // cnpmcore shape. They join as OPTIONAL references until plugin
+    // promotion.
+    const teggConfigRef = app.moduleReferences.find((ref) => ref.name === 'teggConfig');
+    expect(teggConfigRef?.optional).toBe(true);
   });
 
   it('should type defines work', () => {

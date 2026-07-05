@@ -1,7 +1,4 @@
 {
   "name": "inject-module-config",
-  "type": "module",
-  "egg": {
-    "framework": "egg"
-  }
+  "type": "module"
 }

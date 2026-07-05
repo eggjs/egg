@@ -28,6 +28,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./app": "./src/app.ts",
+    "./InnerObjects": "./src/InnerObjects.ts",
     "./lib/AopContextHook": "./src/lib/AopContextHook.ts",
     "./types": "./src/types.ts",
     "./package.json": "./package.json"
@@ -37,6 +38,7 @@
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
+      "./InnerObjects": "./dist/InnerObjects.js",
       "./lib/AopContextHook": "./dist/lib/AopContextHook.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"

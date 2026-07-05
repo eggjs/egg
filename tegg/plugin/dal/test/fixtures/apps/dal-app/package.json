@@ -1,7 +1,4 @@
 {
   "name": "dal-app",
-  "type": "module",
-  "egg": {
-    "framework": "egg"
-  }
+  "type": "module"
 }

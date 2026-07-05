@@ -1,7 +1,4 @@
 {
   "name": "egg-app",
-  "type": "module",
-  "egg": {
-    "framework": "egg"
-  }
+  "type": "module"
 }

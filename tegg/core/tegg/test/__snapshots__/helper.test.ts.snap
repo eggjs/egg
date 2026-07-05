@@ -139,6 +139,7 @@ exports[`should helper exports stable 1`] = `
   "MultiPrototypeFound": [Function],
   "NameUtil": [Function],
   "ObjectUtils": [Function],
+  "PROVIDED_INNER_OBJECT_PROTO_IMPL_TYPE": "PROVIDED_INNER_OBJECT",
   "ProtoDependencyMeta": [Function],
   "ProtoDescriptorHelper": [Function],
   "ProtoDescriptorType": {

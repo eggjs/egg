@@ -31,6 +31,7 @@
     "./agent": "./src/agent.ts",
     "./app": "./src/app.ts",
     "./config/config.default": "./src/config/config.default.ts",
+    "./lib/ConfigSourceLoadUnitHook": "./src/lib/ConfigSourceLoadUnitHook.ts",
     "./lib/ModuleScanner": "./src/lib/ModuleScanner.ts",
     "./types": "./src/types.ts",
     "./package.json": "./package.json"
@@ -42,6 +43,7 @@
       "./agent": "./dist/agent.js",
       "./app": "./dist/app.js",
       "./config/config.default": "./dist/config/config.default.js",
+      "./lib/ConfigSourceLoadUnitHook": "./dist/lib/ConfigSourceLoadUnitHook.js",
       "./lib/ModuleScanner": "./dist/lib/ModuleScanner.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
