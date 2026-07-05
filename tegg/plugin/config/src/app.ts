@@ -104,11 +104,20 @@ export default class App implements ILifecycleBoot {
         optional: reference.optional,
       };
 
-      const moduleName = ModuleConfigUtil.readModuleNameSync(absoluteRef.path);
+      // Framework plugin modules restored from a bundle manifest are NOT
+      // materialized inside the bundle output — their code ships externally
+      // (real node_modules outside the bundle). Fall back to the
+      // manifest-carried name and an empty config instead of reading their
+      // package.json/module.yml from a directory that does not exist.
+      // (Follow-up: carry module configs in the manifest so a module.yml of
+      // an external module survives bundling.)
+      const moduleDirExists = fs.existsSync(absoluteRef.path);
+      const moduleName =
+        !moduleDirExists && reference.name ? reference.name : ModuleConfigUtil.readModuleNameSync(absoluteRef.path);
       this.app.moduleConfigs[moduleName] = {
         name: moduleName,
         reference: absoluteRef,
-        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path),
+        config: moduleDirExists ? ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path) : {},
       };
     }
 
