@@ -291,6 +291,13 @@ describe('standalone/standalone/test/index.test.ts', () => {
     });
   });
 
+  describe('inject mysqlDataSourceManager inner object', () => {
+    it('should stay injectable for business modules', async () => {
+      const ok = await main<boolean>(path.join(__dirname, './fixtures/dal-manager-inject'));
+      assert.equal(ok, true);
+    });
+  });
+
   describe('dal runner', () => {
     it('should work', async () => {
       const foo: Foo = await main(path.join(__dirname, './fixtures/dal-module'), {
