@@ -1,6 +1,6 @@
 import { Inject, InjectOptional, LoadUnitLifecycleProto } from '@eggjs/core-decorator';
 import { DatabaseForker, type DataSourceOptions } from '@eggjs/dal-runtime';
-import type { LifecycleHook } from '@eggjs/lifecycle';
+import { LifecycleDestroy, type LifecycleHook } from '@eggjs/lifecycle';
 import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
 import type { ModuleConfigs, RuntimeConfig } from '@eggjs/tegg-common-util';
 import type { Logger } from '@eggjs/tegg-types';
@@ -55,13 +55,15 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
   }
 
   /**
-   * EggObjectLifecycle destroy of the hook object itself: it goes down with
-   * the InnerObjectLoadUnit instance — AFTER every business load unit — so
-   * the dal module clears its own per-app managers on app shutdown (the
-   * standalone counterpart of this plugin's egg-side beforeClose). No dal
-   * knowledge leaks into the hosts.
+   * Self lifecycle of the hook object: runs when the InnerObjectLoadUnit
+   * instance goes down — AFTER every business load unit — so the dal module
+   * clears its own per-app managers on app shutdown (the standalone
+   * counterpart of this plugin's egg-side beforeClose). Must be declared via
+   * decorator: inner objects never fall back to interface method names
+   * (EggInnerObjectImpl#callObjectLifecycle).
    */
-  async destroy(): Promise<void> {
+  @LifecycleDestroy()
+  async destroyManagers(): Promise<void> {
     MysqlDataSourceManager.instance.clear();
     SqlMapManager.instance.clear();
     TableModelManager.instance.clear();
