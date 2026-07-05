@@ -2,7 +2,6 @@ import { EggLoadUnitType, type LoadUnit, LoadUnitFactory } from '@eggjs/metadata
 import type { GlobalGraphBuildHook } from '@eggjs/metadata';
 import { ModuleConfigs } from '@eggjs/tegg-common-util';
 import {
-  INNER_OBJECT_LOAD_UNIT_TYPE,
   InnerObjectLoadUnitBuilder,
   type InnerObjectModuleReference,
   type LoadUnitInstance,
@@ -18,6 +17,10 @@ import { EggModuleLoader } from './EggModuleLoader.ts';
 
 export class ModuleHandler extends Base {
   loadUnits: LoadUnit[] = [];
+  // The inner-object load unit is tracked separately from business load
+  // units: init iterates business units without filtering, destroy tears it
+  // down last (its lifecycle protos must outlive every hooked object).
+  #innerObjectLoadUnit?: LoadUnit;
   loadUnitInstances: LoadUnitInstance[] = [];
 
   private readonly loadUnitLoader: EggModuleLoader;
@@ -87,7 +90,7 @@ export class ModuleHandler extends Base {
         logger: [{ obj: this.app.logger, accessLevel: AccessLevel.PRIVATE }],
       },
     });
-    this.loadUnits.push(innerObjectLoadUnit);
+    this.#innerObjectLoadUnit = innerObjectLoadUnit;
     return await LoadUnitInstanceFactory.createLoadUnitInstance(innerObjectLoadUnit);
   }
 
@@ -104,20 +107,16 @@ export class ModuleHandler extends Base {
       const instances: LoadUnitInstance[] = [innerObjectInstance];
       this.app.module = {} as any;
 
+      const businessInstances: LoadUnitInstance[] = [];
       for (const loadUnit of this.loadUnits) {
-        if (loadUnit.type === INNER_OBJECT_LOAD_UNIT_TYPE) {
-          continue;
-        }
         const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
         if (instance.loadUnit.type !== EggLoadUnitType.APP) {
           CompatibleUtil.appCompatible(this.app, instance);
         }
         instances.push(instance);
+        businessInstances.push(instance);
       }
-      CompatibleUtil.contextModuleCompatible(
-        this.app.context,
-        instances.filter((instance) => instance.loadUnit.type !== INNER_OBJECT_LOAD_UNIT_TYPE),
-      );
+      CompatibleUtil.contextModuleCompatible(this.app.context, businessInstances);
       this.loadUnitInstances = instances;
       this.ready(true);
     } catch (e) {
@@ -139,6 +138,10 @@ export class ModuleHandler extends Base {
       for (const loadUnit of [...this.loadUnits].reverse()) {
         await LoadUnitFactory.destroyLoadUnit(loadUnit);
       }
+    }
+    if (this.#innerObjectLoadUnit) {
+      await LoadUnitFactory.destroyLoadUnit(this.#innerObjectLoadUnit);
+      this.#innerObjectLoadUnit = undefined;
     }
   }
 }

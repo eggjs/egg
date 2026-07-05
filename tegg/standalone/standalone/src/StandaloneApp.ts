@@ -7,7 +7,13 @@ import {
   TableModelManager,
 } from '@eggjs/dal-plugin';
 import type { LoaderFS } from '@eggjs/loader-fs';
-import { type EggPrototype, EggPrototypeFactory, type LoadUnit, LoadUnitFactory } from '@eggjs/metadata';
+import {
+  ConfigSourceLoadUnitHook,
+  type EggPrototype,
+  EggPrototypeFactory,
+  type LoadUnit,
+  LoadUnitFactory,
+} from '@eggjs/metadata';
 import { type ModuleConfigHolder, ModuleConfigs, ConfigSourceQualifierAttribute, type Logger } from '@eggjs/tegg';
 import {
   ModuleConfigUtil,
@@ -29,7 +35,6 @@ import { TeggScope } from '@eggjs/tegg-types';
 import type { TeggScopeBag } from '@eggjs/tegg-types';
 import { StandaloneUtil, type MainRunner } from '@eggjs/tegg/standalone';
 
-import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook.ts';
 import { EggModuleLoader } from './EggModuleLoader.ts';
 import { StandaloneContext } from './StandaloneContext.ts';
 import { StandaloneContextHandler } from './StandaloneContextHandler.ts';

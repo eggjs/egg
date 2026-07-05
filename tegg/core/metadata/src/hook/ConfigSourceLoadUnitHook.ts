@@ -1,16 +1,17 @@
-import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
 import {
-  type LifecycleHook,
   LoadUnitLifecycleProto,
   PrototypeUtil,
   QualifierUtil,
   ConfigSourceQualifier,
   ConfigSourceQualifierAttribute,
-} from '@eggjs/tegg';
+} from '@eggjs/core-decorator';
+import type { LifecycleHook } from '@eggjs/lifecycle';
+import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg-types';
 
 /**
- * Hook for inject moduleConfig.
- * Add default qualifier value is current module name.
+ * Host-agnostic module plugin hook shared by the egg plugin and the
+ * standalone app: gives every `moduleConfig` injection a default
+ * ConfigSourceQualifier of the owning module's name.
  */
 @LoadUnitLifecycleProto()
 export class ConfigSourceLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {

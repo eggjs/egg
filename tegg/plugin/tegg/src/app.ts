@@ -2,12 +2,12 @@
 import './lib/AppLoadUnit.ts';
 import './lib/AppLoadUnitInstance.ts';
 import './lib/EggCompatibleObject.ts';
+import { ConfigSourceLoadUnitHook } from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { CompatibleUtil } from './lib/CompatibleUtil.ts';
-import { ConfigSourceLoadUnitHook } from './lib/ConfigSourceLoadUnitHook.ts';
 import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook.ts';
 import { EggContextHandler } from './lib/EggContextHandler.ts';
 import { EggModuleLoader } from './lib/EggModuleLoader.ts';
