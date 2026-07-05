@@ -195,7 +195,9 @@ export class StandaloneApp {
     // (workspace/dev layouts ship test/ next to src/).
     const scan = { extraFilePattern: ['!test/**'] };
     return [
-      { baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/aop-runtime/package.json'))), ...scan },
+      // The aop PLUGIN package is the aop module (eggModule: teggAop) for
+      // both hosts; its egg imports are type-only so the scan is host-safe.
+      { baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/aop-plugin/package.json'))), ...scan },
       { baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/dal-plugin/package.json'))), ...scan },
     ];
   }

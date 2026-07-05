@@ -59,12 +59,14 @@ export class InnerObjectLoadUnitBuilder {
     }
   }
 
+  /** protoImplType marking host-provided instances in the builder graph. */
+  static readonly PROVIDED_PROTO_IMPL_TYPE = 'PROVIDED_INNER_OBJECT';
+
   /**
-   * Host-provided instances resolve through the SAME matching rules as graph
-   * protos (name + qualifiers + access level via selectProto); they just
-   * never join the topological sort — an already-constructed instance has no
-   * construction order and no outgoing dependencies. Model each provided
-   * entry as a minimal descriptor for matching only.
+   * Host-provided instances are graph citizens like every hook proto: same
+   * descriptor shape, same vertices, same edge resolution and topological
+   * sort (they trivially sort first — no outgoing edges). Only the
+   * instantiation step skips them, because the instance already exists.
    */
   static #providedDescriptors(innerObjects: Record<string, InnerObject[]>): ProtoDescriptor[] {
     const descriptors: ProtoDescriptor[] = [];
@@ -74,7 +76,7 @@ export class InnerObjectLoadUnitBuilder {
           name,
           accessLevel: innerObject.accessLevel ?? AccessLevel.PUBLIC,
           initType: ObjectInitType.SINGLETON,
-          protoImplType: 'PROVIDED_INNER_OBJECT',
+          protoImplType: InnerObjectLoadUnitBuilder.PROVIDED_PROTO_IMPL_TYPE,
           qualifiers: ProtoDescriptorHelper.addDefaultQualifier(
             innerObject.qualifiers ?? [],
             ObjectInitType.SINGLETON,
@@ -93,7 +95,7 @@ export class InnerObjectLoadUnitBuilder {
     return descriptors;
   }
 
-  #buildProtoGraph(providedDescriptors: ProtoDescriptor[]): ProtoDescriptor[] {
+  #buildProtoGraph(): ProtoDescriptor[] {
     const index = ProtoGraphUtils.buildProtoNameIndex(this.#protoGraph);
     for (const protoNode of this.#protoGraph.nodes.values()) {
       for (const injectObject of protoNode.val.proto.injectObjects) {
@@ -111,21 +113,11 @@ export class InnerObjectLoadUnitBuilder {
           );
           continue;
         }
-        // Not a hook proto: match host-provided instances with the same
-        // selectProto rules. Resolution to the instance happens at
-        // prototype-build time; no edge is needed (no construction order).
-        const provided = providedDescriptors.find((descriptor) =>
-          ProtoDescriptorHelper.selectProto(descriptor, {
-            name: injectObject.objName,
-            qualifiers: injectObject.qualifiers ?? [],
-            moduleName: protoNode.val.proto.instanceModuleName,
-          }),
-        );
-        if (provided || injectObject.optional) {
+        if (injectObject.optional) {
           continue;
         }
-        // Anything else missing is a hard error — deferring it to runtime
-        // hides broken module plugins.
+        // Missing is a hard error — deferring it to runtime hides broken
+        // module plugins.
         throw new EggPrototypeNotFound(injectObject.objName, protoNode.val.proto.defineModuleName);
       }
     }
@@ -134,12 +126,23 @@ export class InnerObjectLoadUnitBuilder {
       throw new Error('inner object proto has recursive deps: ' + loopPath);
     }
 
-    return this.#protoGraph.sort().map((node) => node.val.proto);
+    // Provided instances participated in resolution and ordering above; the
+    // instantiation list excludes them because their objects already exist
+    // (the load unit registers them from options.innerObjects).
+    return this.#protoGraph
+      .sort()
+      .map((node) => node.val.proto)
+      .filter((proto) => proto.protoImplType !== InnerObjectLoadUnitBuilder.PROVIDED_PROTO_IMPL_TYPE);
   }
 
   async createLoadUnit(options: CreateInnerObjectLoadUnitOptions): Promise<LoadUnit> {
-    const providedDescriptors = InnerObjectLoadUnitBuilder.#providedDescriptors(options.innerObjects);
-    const protos = this.#buildProtoGraph(providedDescriptors);
+    for (const descriptor of InnerObjectLoadUnitBuilder.#providedDescriptors(options.innerObjects)) {
+      const node = new GraphNode<ProtoNode, ProtoDependencyMeta>(new ProtoNode(descriptor));
+      if (!this.#protoGraph.addVertex(node)) {
+        throw new Error(`duplicate provided inner object: ${node.val}`);
+      }
+    }
+    const protos = this.#buildProtoGraph();
     LoadUnitFactory.registerLoadUnitCreator(INNER_OBJECT_LOAD_UNIT_TYPE, () => {
       return new InnerObjectLoadUnit({
         innerObjects: options.innerObjects,

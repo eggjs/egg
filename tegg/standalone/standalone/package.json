@@ -43,7 +43,7 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@eggjs/aop-runtime": "workspace:*",
+    "@eggjs/aop-plugin": "workspace:*",
     "@eggjs/dal-plugin": "workspace:*",
     "@eggjs/lifecycle": "workspace:*",
     "@eggjs/loader-fs": "workspace:*",

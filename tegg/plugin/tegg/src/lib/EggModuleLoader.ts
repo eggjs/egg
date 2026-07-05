@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
@@ -38,20 +41,30 @@ export class EggModuleLoader {
     const references: ModuleReference[] = [...app.moduleReferences];
     const seenPaths = new Set(references.map((t) => t.path));
     for (const plugin of Object.values(app.plugins)) {
-      if (!plugin.enable || !plugin.path || seenPaths.has(plugin.path)) continue;
-      let name: string;
-      try {
-        name = ModuleConfigUtil.readModuleNameSync(plugin.path);
-      } catch {
-        continue;
-      }
-      // readModuleNameSync falls back to the package name for non-eggModule
-      // packages; only packages DECLARING eggModule join the scan.
-      if (!ModuleConfigUtil.hasEggModule(plugin.path)) continue;
-      seenPaths.add(plugin.path);
-      references.push({ name, path: plugin.path });
+      if (!plugin.enable || !plugin.path) continue;
+      // plugin.path points INSIDE the package (e.g. <pkg>/src) and may go
+      // through a symlink; module references use the real package root.
+      const packageRoot = EggModuleLoader.#findPackageRoot(plugin.path);
+      if (!packageRoot || seenPaths.has(packageRoot)) continue;
+      if (!ModuleConfigUtil.hasEggModule(packageRoot)) continue;
+      const name = ModuleConfigUtil.readModuleNameSync(packageRoot);
+      seenPaths.add(packageRoot);
+      references.push({ name, path: packageRoot });
     }
     return references;
+  }
+
+  static #findPackageRoot(dir: string): string | undefined {
+    let current = dir;
+    for (let i = 0; i < 5; i++) {
+      if (fs.existsSync(path.join(current, 'package.json'))) {
+        return fs.realpathSync(current);
+      }
+      const parent = path.dirname(current);
+      if (parent === current) return undefined;
+      current = parent;
+    }
+    return undefined;
   }
 
   registerBuildHook(hook: GlobalGraphBuildHook): void {

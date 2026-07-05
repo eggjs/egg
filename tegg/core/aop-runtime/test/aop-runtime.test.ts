@@ -47,7 +47,6 @@ describe('test/aop-runtime.test.ts', () => {
 
       modules = await CoreTestHelper.prepareModules(
         [
-          path.join(__dirname, '..'),
           path.join(__dirname, 'fixtures/modules/hello_succeed'),
           path.join(__dirname, 'fixtures/modules/hello_point_cut'),
           path.join(__dirname, 'fixtures/modules/state_point_cut'),
@@ -180,7 +179,6 @@ describe('test/aop-runtime.test.ts', () => {
     it('should throw', async () => {
       await assert.rejects(async () => {
         await CoreTestHelper.prepareModules([
-          path.join(__dirname, '..'),
           path.join(__dirname, 'fixtures/modules/should_throw'),
         ]);
       }, /Aop Advice\(PointcutAdvice\) not found in loadUnits/);
@@ -207,7 +205,6 @@ describe('test/aop-runtime.test.ts', () => {
 
       modules = await CoreTestHelper.prepareModules(
         [
-          path.join(__dirname, '..'),
           path.join(__dirname, 'fixtures/modules/constructor_inject_aop'),
           path.join(__dirname, 'fixtures/modules/hello_point_cut'),
           path.join(__dirname, 'fixtures/modules/hello_cross_cut'),
