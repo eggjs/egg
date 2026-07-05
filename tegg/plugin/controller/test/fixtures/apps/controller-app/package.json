@@ -1,4 +1,7 @@
 {
   "name": "controller-app",
-  "type": "module"
+  "type": "module",
+  "egg": {
+    "framework": "egg"
+  }
 }

@@ -77,13 +77,7 @@ export default class App implements ILifecycleBoot {
           readModuleOptions.extraFilePattern = [...extraFilePattern, excludePattern];
         }
       }
-      const moduleScanner = new ModuleScanner(this.app.baseDir, {
-        ...readModuleOptions,
-        // egg already resolved the real framework (mm option / egg-scripts);
-        // framework dependencies declaring eggModule join the scan as
-        // OPTIONAL modules, promoted when their plugin is enabled.
-        frameworkDir: (this.app.options as { framework?: string } | undefined)?.framework,
-      });
+      const moduleScanner = new ModuleScanner(this.app.baseDir, readModuleOptions);
       moduleReferences = moduleScanner.loadModuleReferences();
 
       if (outDir) {
