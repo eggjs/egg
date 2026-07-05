@@ -220,17 +220,6 @@ export class ModuleConfigUtil {
     return ModuleConfigUtil.getModuleName(pkg);
   }
 
-  /** Whether the package at moduleDir declares eggModule metadata. */
-  public static hasEggModule(moduleDir: string, baseDir?: string): boolean {
-    moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
-    try {
-      const pkg = JSON.parse(fs.readFileSync(path.join(moduleDir, 'package.json'), 'utf8'));
-      return !!pkg.eggModule?.name;
-    } catch {
-      return false;
-    }
-  }
-
   public static readModuleNameSync(moduleDir: string, baseDir?: string): string {
     moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
     const pkgContent = fs.readFileSync(path.join(moduleDir, 'package.json'), 'utf8');

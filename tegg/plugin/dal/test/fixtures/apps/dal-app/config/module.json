@@ -4,5 +4,8 @@
   },
   {
     "package": "../../../../"
+  },
+  {
+    "package": "@eggjs/aop-plugin"
   }
 ]

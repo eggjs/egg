@@ -1,9 +1,5 @@
-import fs from 'node:fs';
-import path from 'node:path';
-
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
-import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { LoaderFactory, ModuleLoader, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import type { ModuleReference } from '@eggjs/tegg-types';
@@ -26,45 +22,6 @@ export class EggModuleLoader {
 
   constructor(app: Application) {
     this.app = app;
-  }
-
-  /**
-   * Enabled egg plugins that declare `eggModule` metadata ARE module plugins:
-   * their `@InnerObjectProto` / `@XxxLifecycleProto` classes are collected by
-   * the regular module scan (loadApp diverts them into the
-   * InnerObjectLoadUnit) — no registration API, enabling the plugin is the
-   * whole contract. Most are already picked up from the app/framework
-   * dependencies by tegg-config's ModuleScanner; this only fills the gap for
-   * enabled plugins that are not on that dependency path, deduped by path.
-   */
-  static resolveModuleReferences(app: Application): readonly ModuleReference[] {
-    const references: ModuleReference[] = [...app.moduleReferences];
-    const seenPaths = new Set(references.map((t) => t.path));
-    for (const plugin of Object.values(app.plugins)) {
-      if (!plugin.enable || !plugin.path) continue;
-      // plugin.path points INSIDE the package (e.g. <pkg>/src) and may go
-      // through a symlink; module references use the real package root.
-      const packageRoot = EggModuleLoader.#findPackageRoot(plugin.path);
-      if (!packageRoot || seenPaths.has(packageRoot)) continue;
-      if (!ModuleConfigUtil.hasEggModule(packageRoot)) continue;
-      const name = ModuleConfigUtil.readModuleNameSync(packageRoot);
-      seenPaths.add(packageRoot);
-      references.push({ name, path: packageRoot });
-    }
-    return references;
-  }
-
-  static #findPackageRoot(dir: string): string | undefined {
-    let current = dir;
-    for (let i = 0; i < 5; i++) {
-      if (fs.existsSync(path.join(current, 'package.json'))) {
-        return fs.realpathSync(current);
-      }
-      const parent = path.dirname(current);
-      if (parent === current) return undefined;
-      current = parent;
-    }
-    return undefined;
   }
 
   registerBuildHook(hook: GlobalGraphBuildHook): void {
@@ -95,13 +52,12 @@ export class EggModuleLoader {
     // Reuse egg-core's loader fs so discovery goes through the shared VFS:
     // RealLoaderFS in normal mode (zero behavior change), ManifestLoaderFS in bundle mode.
     const loaderFS = this.app.loader.loaderFS;
-    const moduleReferences = EggModuleLoader.resolveModuleReferences(this.app);
-    const moduleDescriptors = await LoaderFactory.loadApp(moduleReferences, loadAppManifest, loaderFS);
+    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest, loaderFS);
     this.#moduleDescriptors = moduleDescriptors;
 
     // Collect manifest data when not loaded from manifest
     if (!loadAppManifest) {
-      EggModuleLoader.collectTeggManifest(this.app, moduleReferences, moduleDescriptors);
+      EggModuleLoader.collectTeggManifest(this.app, this.app.moduleReferences, moduleDescriptors);
     }
 
     for (const moduleDescriptor of moduleDescriptors) {

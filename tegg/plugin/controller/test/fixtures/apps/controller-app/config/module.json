@@ -10,5 +10,8 @@
   },
   {
     "path": "../modules/multi-module-controller"
+  },
+  {
+    "package": "@eggjs/aop-plugin"
   }
 ]

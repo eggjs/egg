@@ -4,5 +4,8 @@
   },
   {
     "path": "../modules/foo-module"
+  },
+  {
+    "package": "@eggjs/aop-plugin"
   }
 ]
