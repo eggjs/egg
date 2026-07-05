@@ -61,6 +61,8 @@ export class StandaloneApp {
   /** Filled during init(); the ModuleConfigs inner object holds this same map. */
   readonly moduleConfigs: Record<string, ModuleConfigHolder>;
   #moduleReferences?: readonly ModuleReference[];
+  /** Filled during init(); the runtimeConfig inner object holds this same object. */
+  readonly #runtimeConfig: Partial<RuntimeConfig> = {};
   readonly env?: string;
   readonly name?: string;
   readonly options?: StandaloneAppOptions;
@@ -131,15 +133,10 @@ export class StandaloneApp {
       ],
     };
 
-    const runtimeConfig: Partial<RuntimeConfig> = {
-      baseDir: this.cwd,
-      name: this.name,
-      env: this.env,
-    };
-    // Inject runtimeConfig
+    // Inject runtimeConfig (placeholder; values are assigned during init())
     this.innerObjects.runtimeConfig = [
       {
-        obj: runtimeConfig,
+        obj: this.#runtimeConfig,
       },
     ];
 
@@ -151,12 +148,18 @@ export class StandaloneApp {
   }
 
   /**
-   * Fill the placeholder maps created in the constructor: load every module's
-   * config and expose it as a qualified `moduleConfig` inner object. Runs at
-   * init() so the module scan (the `moduleReferences` getter) stays off the
-   * construction path.
+   * Fill the placeholders created in the constructor: assign runtimeConfig
+   * values, load every module's config and expose it as a qualified
+   * `moduleConfig` inner object. Runs at init() so the module scan (the
+   * `moduleReferences` getter) stays off the construction path.
    */
-  private loadModuleConfigs(): void {
+  private loadConfigs(): void {
+    Object.assign(this.#runtimeConfig, {
+      baseDir: this.cwd,
+      name: this.name,
+      env: this.env,
+    });
+
     // load module.yml and module.env.yml by default
     // Always set configNames for this app invocation, since destroy() clears it
     // asynchronously and may not have completed before the next app is created.
@@ -322,7 +325,7 @@ export class StandaloneApp {
 
   async init(): Promise<void> {
     await this.runInScope(async () => {
-      this.loadModuleConfigs();
+      this.loadConfigs();
       await this.initLoaderInstance();
       await this.instantiateInnerObjectLoadUnit();
       await this.instantiateModuleLoadUnits();
