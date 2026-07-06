@@ -14,7 +14,7 @@ import { describe, it, beforeAll, afterAll, expect } from 'vitest';
 
 import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from '../../src/lib/ControllerLoadUnit.ts';
 import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';
-import { EggControllerPrototypeHook } from '../../src/lib/EggControllerPrototypeHook.ts';
+import { ControllerPrototypeHook as EggControllerPrototypeHook } from '../../src/lib/ControllerPrototypeHook.ts';
 import { HTTPMethodRegister } from '../../src/lib/impl/http/HTTPMethodRegister.ts';
 import { getFixtures } from '../utils.ts';
 

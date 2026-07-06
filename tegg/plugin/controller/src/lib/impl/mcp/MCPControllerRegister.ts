@@ -160,7 +160,9 @@ export class MCPControllerRegister implements ControllerRegister {
 
   constructor(_proto: EggPrototype, controllerMeta: MCPControllerMeta, app: Application) {
     this.app = app;
-    this.eggContainerFactory = app.eggContainerFactory;
+    // Direct import, not a read off the (possibly proxied) app — see
+    // HTTPControllerRegister.create.
+    this.eggContainerFactory = EggContainerFactory;
     this.router = app.router;
 
     this.controllerMeta = controllerMeta;

@@ -1,21 +1,30 @@
-import type { MCPControllerMeta, MCPPromptMeta, MCPResourceMeta, MCPToolMeta } from '@eggjs/tegg';
+import type { MCPControllerMeta, MCPPromptMeta, MCPResourceMeta, MCPToolMeta } from '@eggjs/controller-decorator';
 import { CONTROLLER_META_DATA } from '@eggjs/tegg-types';
 import type { EggObject, EggObjectName, EggPrototype } from '@eggjs/tegg-types';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ReadResourceCallback, ToolCallback, PromptCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 
-import type { MCPControllerHook } from './MCPControllerRegister.ts';
-import { MCPControllerRegister } from './MCPControllerRegister.ts';
+/**
+ * The host-agnostic slice of the MCP controller hooks: a schema loader that
+ * resolves tool/prompt args schemas when the decorated metadata has none.
+ * The egg host passes its (per-app, live) MCPControllerRegister.hooks list.
+ */
+export interface MCPSchemaLoaderHook {
+  schemaLoader?: (
+    controllerMeta: MCPControllerMeta,
+    meta: MCPPromptMeta | MCPToolMeta,
+  ) => Promise<Parameters<McpServer['tool']>['2'] | undefined>;
+}
 
 export interface MCPServerHelperOptions {
   name: string;
   version: string;
-  hooks: MCPControllerHook[];
+  hooks?: readonly MCPSchemaLoaderHook[];
 }
 
 export class MCPServerHelper {
   server: McpServer;
-  hooks: MCPControllerHook[];
+  hooks: readonly MCPSchemaLoaderHook[];
   constructor(opts: MCPServerHelperOptions) {
     this.server = new McpServer(
       {
@@ -24,7 +33,19 @@ export class MCPServerHelper {
       },
       { capabilities: { logging: {} } },
     );
-    this.hooks = opts.hooks;
+    this.hooks = opts.hooks ?? [];
+  }
+
+  private async loadSchema(
+    controllerMeta: MCPControllerMeta,
+    meta: MCPPromptMeta | MCPToolMeta,
+  ): Promise<Parameters<McpServer['tool']>['2'] | undefined> {
+    for (const hook of this.hooks) {
+      const schema = await hook.schemaLoader?.(controllerMeta, meta);
+      if (schema) {
+        return schema;
+      }
+    }
   }
 
   async mcpResourceRegister(
@@ -59,13 +80,8 @@ export class MCPServerHelper {
     let schema: NonNullable<(typeof toolMeta)['detail']>['argsSchema'] | undefined;
     if (toolMeta.detail?.argsSchema) {
       schema = toolMeta.detail?.argsSchema;
-    } else if (MCPControllerRegister.hooks.length > 0) {
-      for (const hook of MCPControllerRegister.hooks) {
-        schema = await hook.schemaLoader?.(controllerMeta, toolMeta);
-        if (schema) {
-          break;
-        }
-      }
+    } else {
+      schema = await this.loadSchema(controllerMeta, toolMeta);
     }
     const handler = async (...args: any[]) => {
       const eggObj = await getOrCreateEggObject(controllerProto, controllerProto.name);
@@ -104,13 +120,8 @@ export class MCPServerHelper {
     let schema: NonNullable<(typeof promptMeta)['detail']>['argsSchema'] | undefined;
     if (promptMeta.detail?.argsSchema) {
       schema = promptMeta.detail?.argsSchema;
-    } else if (MCPControllerRegister.hooks.length > 0) {
-      for (const hook of MCPControllerRegister.hooks) {
-        schema = await hook.schemaLoader?.(controllerMeta, promptMeta);
-        if (schema) {
-          break;
-        }
-      }
+    } else {
+      schema = await this.loadSchema(controllerMeta, promptMeta);
     }
     const handler = async (...args: any[]) => {
       const eggObj = await getOrCreateEggObject(controllerProto, controllerProto.name);

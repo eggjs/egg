@@ -2,7 +2,11 @@ import { ControllerMetaBuilderFactory, ControllerMetadataUtil } from '@eggjs/con
 import type { LifecycleHook } from '@eggjs/lifecycle';
 import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/metadata';
 
-export class EggControllerPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
+/**
+ * Host-agnostic prototype hook: build controller metadata from the decorated
+ * class when its prototype is created.
+ */
+export class ControllerPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
   async postCreate(ctx: EggPrototypeLifecycleContext): Promise<void> {
     const metadata = ControllerMetaBuilderFactory.build(ctx.clazz);
     if (metadata) {

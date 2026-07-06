@@ -1,57 +1,28 @@
 import assert from 'node:assert';
 
 import {
-  type EggContext,
-  HTTPControllerMeta,
-  HTTPMethodMeta,
   HTTPParamType,
-  PathParamMeta,
-  QueriesParamMeta,
-  QueryParamMeta,
+  type PathParamMeta,
+  type QueriesParamMeta,
+  type QueryParamMeta,
   Cookies,
+  type HTTPMethodMeta,
 } from '@eggjs/controller-decorator';
-import type { EggPrototype } from '@eggjs/metadata';
-import { EggRouter } from '@eggjs/router';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import { EggContainerFactory } from '@eggjs/tegg-runtime';
-import type { Router, MiddlewareFunc } from 'egg';
-import { FrameworkErrorFormater } from 'egg-errors';
-import pathToRegexp from 'path-to-regexp';
+import type { MiddlewareFunc } from 'egg';
 
-import { RouterConflictError } from '../../errors.ts';
-import { RootProtoManager } from '../../RootProtoManager.ts';
+import { HTTPMethodRegister as BaseHTTPMethodRegister, type HTTPHandlerFunc } from './HTTPMethodRegisterBase.ts';
 import { aclMiddlewareFactory } from './Acl.ts';
 import { initRequest } from './Req.ts';
 
-const noop = () => {
-  // ...
-};
-
-export class HTTPMethodRegister {
-  private readonly router: Router;
-  private readonly checkRouters: Map<string, Router>;
-  private readonly controllerMeta: HTTPControllerMeta;
-  private readonly methodMeta: HTTPMethodMeta;
-  private readonly proto: EggPrototype;
-  private readonly eggContainerFactory: typeof EggContainerFactory;
-
-  constructor(
-    proto: EggPrototype,
-    controllerMeta: HTTPControllerMeta,
-    methodMeta: HTTPMethodMeta,
-    router: Router,
-    checkRouters: Map<string, Router>,
-    eggContainerFactory: typeof EggContainerFactory,
-  ) {
-    this.proto = proto;
-    this.controllerMeta = controllerMeta;
-    this.router = router;
-    this.methodMeta = methodMeta;
-    this.checkRouters = checkRouters;
-    this.eggContainerFactory = eggContainerFactory;
-  }
-
-  private createHandler(methodMeta: HTTPMethodMeta, host: string | undefined): MiddlewareFunc {
+/**
+ * The egg host's HTTP method register: the shared skeleton
+ * (route registration / duplicate check / root proto wiring) lives in
+ * the controller plugin runtime; this subclass binds the egg ctx request shape
+ * to method args and writes the return value back to `ctx.body`.
+ */
+export class HTTPMethodRegister extends BaseHTTPMethodRegister {
+  protected createHandler(methodMeta: HTTPMethodMeta, host: string | undefined): HTTPHandlerFunc {
     const argsLength = methodMeta.paramMap.size;
     const hasContext = methodMeta.contextParamIndex !== undefined;
     const contextIndex = methodMeta.contextParamIndex;
@@ -59,7 +30,7 @@ export class HTTPMethodRegister {
     const timeout = this.controllerMeta.getMethodTimeout(methodMeta);
     // oxlint-disable-next-line no-this-alias
     const methodRegister = this;
-    return async function (ctx, next) {
+    const handler: MiddlewareFunc = async function (ctx, next) {
       // if hosts is not empty and host is not matched, not execute
       if (host && host !== ctx.host) {
         return await next();
@@ -141,79 +112,11 @@ export class HTTPMethodRegister {
         ctx.body = body;
       }
     };
+    return handler as HTTPHandlerFunc;
   }
 
-  checkDuplicate(): void {
-    // 1. check duplicate with egg controller
-    this.checkDuplicateInRouter(this.router);
-
-    // 2. check duplicate with host tegg controller
-    let hostRouter: Router | undefined;
-    const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) || [];
-    hosts.forEach((h) => {
-      if (h) {
-        hostRouter = this.checkRouters.get(h);
-        if (!hostRouter) {
-          hostRouter = new EggRouter({ sensitive: true }, this.router.app);
-          this.checkRouters.set(h, hostRouter!);
-        }
-      }
-      if (hostRouter) {
-        this.checkDuplicateInRouter(hostRouter);
-        this.registerToRouter(hostRouter);
-      }
-    });
-  }
-
-  private registerToRouter(router: Router) {
-    const routerFunc = router[this.methodMeta.method.toLowerCase() as keyof Router] as Function;
-    const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
-    const methodName = this.controllerMeta.getMethodName(this.methodMeta);
-    Reflect.apply(routerFunc, router, [methodName, methodRealPath, noop]);
-  }
-
-  private checkDuplicateInRouter(router: Router) {
-    const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
-    const matched = router.match(methodRealPath, this.methodMeta.method);
-    const methodName = this.controllerMeta.getMethodName(this.methodMeta);
-    if (matched.route) {
-      const [layer] = matched.path;
-      const err = new RouterConflictError(
-        `register http controller ${methodName} failed, ${this.methodMeta.method} ${methodRealPath} is conflict with exists rule ${layer.path}`,
-      );
-      throw FrameworkErrorFormater.format(err);
-    }
-  }
-
-  /**
-   * register method to router
-   */
-  register(rootProtoManager: RootProtoManager): void {
-    const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
-    const methodName = this.controllerMeta.getMethodName(this.methodMeta);
-    const routerFunc = this.router[this.methodMeta.method.toLowerCase() as keyof Router] as Function;
-    const methodMiddlewares = this.controllerMeta.getMethodMiddlewares(this.methodMeta);
+  protected getExtraMethodMiddlewares(): HTTPHandlerFunc[] {
     const aclMiddleware = aclMiddlewareFactory(this.controllerMeta, this.methodMeta);
-    if (aclMiddleware) {
-      methodMiddlewares.push(aclMiddleware);
-    }
-    const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) ?? [undefined];
-    hosts.forEach((host) => {
-      const handler = this.createHandler(this.methodMeta, host);
-      Reflect.apply(routerFunc, this.router, [methodName, methodRealPath, ...methodMiddlewares, handler]);
-      // https://github.com/eggjs/egg-core/blob/0af6178022e7734c4a8b17bb56d592b315207883/lib/egg.js#L279
-      const regExp = pathToRegexp(methodRealPath, {
-        sensitive: true,
-      });
-      rootProtoManager.registerRootProto(
-        this.methodMeta.method,
-        (ctx: EggContext) => {
-          if (regExp.test(ctx.path)) {
-            return this.proto;
-          }
-        },
-        host || '',
-      );
-    });
+    return aclMiddleware ? [aclMiddleware as HTTPHandlerFunc] : [];
   }
 }

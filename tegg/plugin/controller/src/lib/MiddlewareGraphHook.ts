@@ -1,6 +1,6 @@
+import { ControllerInfoUtil, MethodInfoUtil } from '@eggjs/controller-decorator';
 import type { GlobalGraph, ProtoDependencyMeta, ProtoNode } from '@eggjs/metadata';
 import { ClassProtoDescriptor as ClassProtoDescriptorImpl } from '@eggjs/metadata';
-import { ControllerInfoUtil, MethodInfoUtil } from '@eggjs/tegg';
 import type { GraphNode } from '@eggjs/tegg-common-util';
 import type { EggProtoImplClass, IAdvice } from '@eggjs/tegg-types';
 

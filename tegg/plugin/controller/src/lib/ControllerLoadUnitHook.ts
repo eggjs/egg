@@ -3,14 +3,18 @@ import type { LifecycleHook } from '@eggjs/lifecycle';
 import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
 
 import { ControllerMetadataManager } from './ControllerMetadataManager.ts';
-import { ControllerRegisterFactory } from './ControllerRegisterFactory.ts';
-import { RootProtoManager } from './RootProtoManager.ts';
+import type { ControllerRegisterFactory } from './ControllerRegisterFactory.ts';
+import type { RootProtoManager } from './RootProtoManager.ts';
 
-export class AppLoadUnitControllerHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
-  private readonly controllerRegisterFactory: ControllerRegisterFactory;
+/**
+ * Host-agnostic load-unit hook: for every controller proto in a created load
+ * unit, resolve the register for its controller type and run it.
+ */
+export class ControllerLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
+  private readonly controllerRegisterFactory: ControllerRegisterFactory<any>;
   private readonly rootProtoManager: RootProtoManager;
 
-  constructor(controllerRegisterFactory: ControllerRegisterFactory, rootProtoManager: RootProtoManager) {
+  constructor(controllerRegisterFactory: ControllerRegisterFactory<any>, rootProtoManager: RootProtoManager) {
     this.controllerRegisterFactory = controllerRegisterFactory;
     this.rootProtoManager = rootProtoManager;
   }

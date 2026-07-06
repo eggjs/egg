@@ -1,8 +1,17 @@
 import type { EggPrototype } from '@eggjs/metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import type { Context } from 'egg';
 
-export type GetRootProtoCallback = (ctx: Context) => EggPrototype | undefined;
+/**
+ * The structural request shape RootProtoManager needs. Both the egg Context
+ * and fetch-style contexts satisfy it.
+ */
+export interface RootProtoRequestContext {
+  method: string;
+  host: string;
+  path: string;
+}
+
+export type GetRootProtoCallback = (ctx: RootProtoRequestContext) => EggPrototype | undefined;
 
 export class RootProtoManager {
   // <method, GetRootProtoCallback[]>
@@ -14,7 +23,7 @@ export class RootProtoManager {
     cbList.push(cb);
   }
 
-  getRootProto(ctx: Context): EggPrototype | undefined {
+  getRootProto(ctx: RootProtoRequestContext): EggPrototype | undefined {
     const hostCbList = this.protoMap.get(ctx.method + ctx.host);
     if (hostCbList) {
       for (const cb of hostCbList) {

@@ -1,24 +1,27 @@
 import assert from 'node:assert';
 
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/controller-decorator';
-import type { LoadUnitLifecycleContext } from '@eggjs/metadata';
-import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
+import { EggPrototypeFactory, type LoadUnitLifecycleContext } from '@eggjs/metadata';
+import {
+  EggContainerFactory,
+  type LoadUnitInstanceLifecycleContext,
+  ModuleLoadUnitInstance,
+} from '@eggjs/tegg-runtime';
 import { AGENT_CONTROLLER_PROTO_IMPL_TYPE, TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { AgentControllerObject } from './lib/AgentControllerObject.ts';
 import { AgentControllerProto } from './lib/AgentControllerProto.ts';
-import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook.ts';
 import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.ts';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.ts';
 import { ControllerMetadataManager } from './lib/ControllerMetadataManager.ts';
-import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';
+import type { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';
 import { EggControllerLoader } from './lib/EggControllerLoader.ts';
-import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook.ts';
 import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.ts';
 import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister.ts';
 import { middlewareGraphHook } from './lib/MiddlewareGraphHook.ts';
-import { RootProtoManager } from './lib/RootProtoManager.ts';
+import type { RootProtoManager } from './lib/RootProtoManager.ts';
+import { ControllerRegisterDefaults } from './lib/ControllerRegisterDefaults.ts';
 
 // Load Controller process
 // 1. await add load unit is ready, controller may depend other load unit
@@ -27,19 +30,15 @@ import { RootProtoManager } from './lib/RootProtoManager.ts';
 
 export default class ControllerAppBootHook implements ILifecycleBoot {
   private readonly app: Application;
-  private readonly loadUnitHook: AppLoadUnitControllerHook;
-  private readonly controllerRegisterFactory: ControllerRegisterFactory;
   private controllerLoadUnitHandler: ControllerLoadUnitHandler;
-  private readonly controllerPrototypeHook: EggControllerPrototypeHook;
 
   constructor(app: Application) {
     this.app = app;
-    this.controllerRegisterFactory = new ControllerRegisterFactory(this.app);
-    this.app.rootProtoManager = new RootProtoManager();
-    this.app.controllerRegisterFactory = this.controllerRegisterFactory;
+    // rootProtoManager / controllerRegisterFactory / the controller hooks are
+    // declared by the controller MODULE (lib/ControllerModule.ts) and
+    // instantiated in the InnerObjectLoadUnit — didLoad() below backfills the
+    // per-app instances onto the app surface.
     this.app.controllerMetaBuilderFactory = ControllerMetaBuilderFactory;
-    this.loadUnitHook = new AppLoadUnitControllerHook(this.controllerRegisterFactory, this.app.rootProtoManager);
-    this.controllerPrototypeHook = new EggControllerPrototypeHook();
     this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
       AGENT_CONTROLLER_PROTO_IMPL_TYPE,
       AgentControllerProto.createProto,
@@ -56,13 +55,13 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   private doConfigWillLoad(): void {
-    this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitHook);
-    this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.controllerPrototypeHook);
     this.app.eggObjectFactory.registerEggObjectCreateMethod(AgentControllerProto, AgentControllerObject.createObject);
     this.app.loaderFactory.registerLoader(CONTROLLER_LOAD_UNIT, (unitPath) => {
       return new EggControllerLoader(unitPath);
     });
-    this.controllerRegisterFactory.registerControllerRegister(ControllerType.HTTP, HTTPControllerRegister.create);
+    // Drained by the module factory proto when the InnerObjectLoadUnit
+    // materializes (before any business load unit).
+    ControllerRegisterDefaults.enqueue(ControllerType.HTTP, HTTPControllerRegister.create);
     this.app.loadUnitFactory.registerLoadUnitCreator(
       CONTROLLER_LOAD_UNIT,
       (ctx: LoadUnitLifecycleContext): ControllerLoadUnit => {
@@ -98,7 +97,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
     if (this.mcpEnable()) {
-      this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, MCPControllerRegister.create);
+      ControllerRegisterDefaults.enqueue(ControllerType.MCP, MCPControllerRegister.create);
       // Don't let the mcp's body be consumed
       this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
 
@@ -150,6 +149,16 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     // that touches the per-app factories), and the HTTP/MCP registers below are
     // per-app — run the whole flow inside this app's scope.
     await TeggScope.run(this.app._teggScopeBag, async () => {
+      // The controller module owns these protos; expose the per-app instances
+      // on the app surface for the teggRootProto middleware and downstream
+      // consumers.
+      const factoryProto = EggPrototypeFactory.instance.getPrototype('controllerRegisterFactory');
+      this.app.controllerRegisterFactory = (await EggContainerFactory.getOrCreateEggObject(factoryProto))
+        .obj as ControllerRegisterFactory;
+      const rootProtoManagerProto = EggPrototypeFactory.instance.getPrototype('rootProtoManager');
+      this.app.rootProtoManager = (await EggContainerFactory.getOrCreateEggObject(rootProtoManagerProto))
+        .obj as RootProtoManager;
+
       this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
       await this.controllerLoadUnitHandler.ready();
 
@@ -183,8 +192,8 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       if (this.controllerLoadUnitHandler) {
         await this.controllerLoadUnitHandler.destroy();
       }
-      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitHook);
-      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
+      // The module-declared controller hooks deregister with the
+      // InnerObjectLoadUnit teardown.
       ControllerMetadataManager.instance.clear();
       HTTPControllerRegister.clean();
       MCPControllerRegister.clean();

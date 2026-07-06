@@ -1,24 +1,17 @@
 import assert from 'node:assert/strict';
 
-import {
-  CONTROLLER_META_DATA,
-  type ControllerMetadata,
-  ControllerType,
-  HTTPControllerMeta,
-  HTTPMethodMeta,
-} from '@eggjs/controller-decorator';
+import { type ControllerMetadata, ControllerType } from '@eggjs/controller-decorator';
 import type { EggPrototype } from '@eggjs/metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, Router } from 'egg';
 
-import type { ControllerRegister } from '../../ControllerRegister.ts';
-import { RootProtoManager } from '../../RootProtoManager.ts';
+import { HTTPControllerRegister as BaseHTTPControllerRegister } from './HTTPControllerRegisterBase.ts';
 import { HTTPMethodRegister } from './HTTPMethodRegister.ts';
 
 const HTTP_CONTROLLER_REGISTER_SLOT = Symbol('tegg:controller:httpControllerRegister');
 
-export class HTTPControllerRegister implements ControllerRegister {
+export class HTTPControllerRegister extends BaseHTTPControllerRegister {
   // Per-app: the register accumulates protos and binds to one app's router, so
   // it must be per-app (resolved from the active TeggScope bag).
   static get instance(): HTTPControllerRegister | undefined {
@@ -29,79 +22,31 @@ export class HTTPControllerRegister implements ControllerRegister {
     TeggScope.set(HTTP_CONTROLLER_REGISTER_SLOT, value);
   }
 
-  private readonly router: Router;
-  private readonly checkRouters: Map<string, Router>;
-  private readonly eggContainerFactory: typeof EggContainerFactory;
-  private controllerProtos: EggPrototype[] = [];
-
   static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application): HTTPControllerRegister {
     assert(controllerMeta.type === ControllerType.HTTP, 'controller meta type is not HTTP');
     if (!HTTPControllerRegister.instance) {
-      HTTPControllerRegister.instance = new HTTPControllerRegister(app.router, app.eggContainerFactory);
+      // Import the container factory directly: `app` may arrive through the
+      // inject proxy, whose property reads bind function values — a bound
+      // class loses its statics.
+      HTTPControllerRegister.instance = new HTTPControllerRegister(app.router, EggContainerFactory);
     }
-    HTTPControllerRegister.instance.controllerProtos.push(proto);
+    HTTPControllerRegister.instance.addControllerProto(proto);
     return HTTPControllerRegister.instance;
   }
 
   constructor(router: Router, eggContainerFactory: typeof EggContainerFactory) {
-    this.router = router;
-    this.checkRouters = new Map();
-    this.checkRouters.set('default', router);
-    this.eggContainerFactory = eggContainerFactory;
-  }
-
-  register(): Promise<void> {
-    // do noting
-    return Promise.resolve();
+    super(
+      router,
+      eggContainerFactory,
+      (proto, controllerMeta, methodMeta, methodRouter, checkRouters, containerFactory) =>
+        new HTTPMethodRegister(proto, controllerMeta, methodMeta, methodRouter, checkRouters, containerFactory),
+    );
   }
 
   static clean(): void {
     if (this.instance) {
-      this.instance.controllerProtos = [];
-      this.instance.checkRouters.clear();
+      this.instance.clear();
     }
     this.instance = undefined;
-  }
-
-  doRegister(rootProtoManager: RootProtoManager): void {
-    const methodMap = new Map<HTTPMethodMeta, EggPrototype>();
-    for (const proto of this.controllerProtos) {
-      const metadata = proto.getMetaData(CONTROLLER_META_DATA) as HTTPControllerMeta;
-      for (const method of metadata.methods) {
-        methodMap.set(method, proto);
-      }
-    }
-    const allMethods = Array.from(methodMap.keys()).sort((a, b) => b.priority - a.priority);
-
-    // FIXME: why init method register twice?
-    for (const method of allMethods) {
-      const controllerProto = methodMap.get(method)!;
-      const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as HTTPControllerMeta;
-      const methodRegister = new HTTPMethodRegister(
-        controllerProto,
-        controllerMeta,
-        method,
-        this.router,
-        this.checkRouters,
-        this.eggContainerFactory,
-      );
-      methodRegister.checkDuplicate();
-    }
-
-    for (const method of allMethods) {
-      const controllerProto = methodMap.get(method)!;
-      const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as HTTPControllerMeta;
-      const methodRegister = new HTTPMethodRegister(
-        controllerProto,
-        controllerMeta,
-        method,
-        this.router,
-        this.checkRouters,
-        this.eggContainerFactory,
-      );
-      // Error: framework.RouterConflictError: register http controller GET AppController2.get failed, GET /apps/:id is conflict with exists rule /apps/:id [ https://eggjs.org/faq/TEGG_ROUTER_CONFLICT ]
-      // methodRegister.checkDuplicate();
-      methodRegister.register(rootProtoManager);
-    }
   }
 }
