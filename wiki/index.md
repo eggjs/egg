@@ -27,6 +27,7 @@ Read this file before exploring raw sources.
 - [Egg Bundler](./packages/egg-bundler.md) - Tooling package that bundles Egg applications and backs `egg-bin bundle`.
 - [Loader FS Package](./packages/loader-fs.md) - Shared loader-facing filesystem boundary for Egg loaders and future bundled runtimes.
 - [Onerror Plugin](./packages/onerror.md) - Default Egg error-handling plugin and configurable response negotiation layer.
+- [Standalone Service Worker](./packages/service-worker.md) - Fetch-semantics standalone runtime serving HTTP controllers and MCP tools from a tegg module without an egg application.
 - [Typings Package](./packages/typings.md) - Shared TypeScript type surface for cross-package Egg typings.
 - [Utils Package](./packages/utils.md) - Shared utility package for module loading and bundled module-loader integration.
 

@@ -180,3 +180,8 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `tegg/core/runtime/src/impl/InnerObjectLoadUnitBuilder.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`
 - pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
 - note: Kept logger as a dedicated Standalone public option, but removed the logger-specific builder channel. Each host now adds its logger to the complete provided-inner-object map before invoking the host-agnostic builder.
+## [2026-07-05] package | standalone service worker (方案二 complete)
+
+- sources touched: `tegg/plugin/controller`, `tegg/standalone/{service-worker-runtime,service-worker}`, `examples/helloworld-service-worker`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/service-worker.md`
+- note: Completed the service-worker migration on top of the module plugin mechanism: made the controller plugin a dual-host module carrying its host-agnostic runtime under `lib/runtime/`, added the two service worker packages (fetch adapter + protocol-agnostic runtime), MCP stateless streamable HTTP via the SDK's web-standard transport (SDK >= 1.29 forbids stateless transport reuse — fresh server+transport per request), streaming-response lifecycle via BackgroundTaskHelper drain, unified `{ code, message }` errors, `mcpAuthHandler` auth extension point, and a runnable example. Gotcha recorded: frameworkDeps module scans must exclude `test/**` or framework test fixtures load as business modules.
