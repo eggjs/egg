@@ -64,7 +64,7 @@ export interface FileLoaderParseItem {
 type NormalizedFileLoaderOptions = FileLoaderOptions & Required<Pick<FileLoaderOptions, 'caseStyle' | 'loaderFS'>>;
 
 function getDefaultFileLoaderMatch(): string[] {
-  return isSupportTypeScript() ? ['**/*.(js|ts)', '!**/*.d.ts'] : ['**/*.js'];
+  return isSupportTypeScript() ? ['**/*.(js|ts|mjs)', '!**/*.d.ts'] : ['**/*.{js,mjs}'];
 }
 
 /**
