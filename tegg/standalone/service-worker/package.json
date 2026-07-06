@@ -1,0 +1,68 @@
+{
+  "name": "@eggjs/service-worker",
+  "version": "4.0.2-beta.19",
+  "description": "tegg standalone service worker runtime: fetch event model, HTTP controller support and a node:http serve() bridge",
+  "keywords": [
+    "egg",
+    "fetch",
+    "service worker",
+    "standalone",
+    "tegg",
+    "typescript"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/standalone/service-worker",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "tegg/standalone/service-worker"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/controller-decorator": "workspace:*",
+    "@eggjs/controller-plugin": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
+    "@eggjs/router": "workspace:*",
+    "@eggjs/service-worker-runtime": "workspace:*",
+    "@eggjs/standalone": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "zod": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "serviceWorker"
+  }
+}

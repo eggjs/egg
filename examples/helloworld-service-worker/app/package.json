@@ -1,0 +1,7 @@
+{
+  "name": "helloworld-service-worker-app",
+  "type": "module",
+  "eggModule": {
+    "name": "helloWorldServiceWorker"
+  }
+}

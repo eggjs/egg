@@ -1,24 +1,23 @@
 {
-  "name": "@eggjs/standalone-decorator",
-  "version": "4.0.2-beta.25",
-  "description": "tegg standalone decorator",
+  "name": "@eggjs/service-worker-runtime",
+  "version": "4.0.2-beta.19",
+  "description": "protocol-agnostic tegg service worker runtime: @Runner event dispatch, context event injection and background task wiring",
   "keywords": [
-    "decorator",
     "egg",
+    "service worker",
     "standalone",
     "tegg",
     "typescript"
   ],
-  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/standalone-decorator",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/standalone/service-worker-runtime",
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
   "license": "MIT",
-  "author": "killagu <killa123@126.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "tegg/core/standalone-decorator"
+    "directory": "tegg/standalone/service-worker-runtime"
   },
   "files": [
     "dist"
@@ -42,8 +41,12 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/dynamic-inject": "workspace:*",
+    "@eggjs/background-task": "workspace:*",
+    "@eggjs/dynamic-inject-runtime": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/metadata": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
@@ -52,5 +55,8 @@
   },
   "engines": {
     "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "serviceWorkerRuntime"
   }
 }

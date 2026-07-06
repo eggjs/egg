@@ -1,0 +1,100 @@
+import type { RootProtoManager } from '@eggjs/controller-plugin';
+import { BackgroundTaskHelper } from '@eggjs/service-worker-runtime';
+import { AccessLevel, Inject } from '@eggjs/tegg';
+import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
+import { AbstractEventHandler, EventHandlerProto } from '@eggjs/tegg/standalone';
+
+import { MCPRegisterProvider } from '../mcp/MCPRegisterProvider.ts';
+import type { FetchEvent } from '../types.ts';
+import { ResponseUtils } from '../utils/ResponseUtils.ts';
+import { FetchRouter } from './FetchRouter.ts';
+import { HTTPRegisterProvider } from './HTTPRegisterProvider.ts';
+import { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext.ts';
+
+type RouterMiddleware = (ctx: ServiceWorkerFetchContext, next: () => Promise<void>) => Promise<void>;
+
+@EventHandlerProto('fetch', { accessLevel: AccessLevel.PUBLIC })
+export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response> {
+  @Inject()
+  private readonly fetchRouter: FetchRouter;
+
+  @Inject()
+  private readonly rootProtoManager: RootProtoManager;
+
+  @Inject()
+  private readonly httpRegisterProvider: HTTPRegisterProvider;
+
+  @Inject()
+  private readonly mcpRegisterProvider: MCPRegisterProvider;
+
+  #routes?: RouterMiddleware;
+  #initPromise?: Promise<void>;
+
+  private async initRoutes(): Promise<void> {
+    if (this.#routes) {
+      return;
+    }
+    this.#initPromise ??= this.doInitRoutes().catch((err) => {
+      this.#initPromise = undefined;
+      throw err;
+    });
+    await this.#initPromise;
+  }
+
+  private async doInitRoutes(): Promise<void> {
+    // Routes land on the router lazily at the first event: every load unit has
+    // been created by now, so all controller protos are collected.
+    this.httpRegisterProvider.doRegister(this.rootProtoManager);
+    await this.mcpRegisterProvider.doRegister();
+    this.#routes = this.fetchRouter.middleware() as unknown as RouterMiddleware;
+  }
+
+  async handleEvent(event: FetchEvent): Promise<Response> {
+    await this.initRoutes();
+    const ctx = new ServiceWorkerFetchContext({ event });
+    try {
+      await this.#routes!(ctx, async () => {
+        /* noop */
+      });
+      const response = ctx.response;
+      if (!response) {
+        return ResponseUtils.createErrorResponse(404, 'NOT_FOUND', `${ctx.method} ${ctx.path} not found`);
+      }
+      for (const [key, value] of ctx.responseHeaders.entries()) {
+        response.headers.set(key, value);
+      }
+      return await this.#guardResponseStream(response);
+    } catch (e: any) {
+      console.error('[service-worker] handle fetch event failed:', e);
+      return ResponseUtils.createErrorResponse(500, 'INTERNAL_SERVER_ERROR', e?.message ?? 'internal error');
+    }
+  }
+
+  /**
+   * The tegg context is destroyed as soon as the runner returns, but a
+   * streaming body keeps pulling from ContextProto objects afterwards. Route
+   * the body through a passthrough and register the drain as a background
+   * task: ctx destroy then waits (bounded by `config.backgroundTask.timeout`)
+   * until the client has fully consumed the stream. Client aborts are a
+   * normal way for the drain to end, not an error.
+   */
+  async #guardResponseStream(response: Response): Promise<Response> {
+    if (!response.body) {
+      return response;
+    }
+    const { readable, writable } = new TransformStream();
+    const drained = response.body.pipeTo(writable).catch(() => {
+      /* client abort / stream error: consumption is over either way */
+    });
+    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(
+      BackgroundTaskHelper as unknown as EggProtoImplClass,
+    );
+    (eggObject.obj as BackgroundTaskHelper).run(() => drained);
+    return new Response(readable, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    });
+  }
+}
