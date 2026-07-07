@@ -127,6 +127,28 @@ describe('test/egg-ts.test.ts', () => {
     assert(app.serviceClasses.test);
   });
 
+  it('should load mjs/cjs and prefer the ts source over its compiled mjs/cjs', async () => {
+    mm(process.env, 'EGG_TYPESCRIPT', 'true');
+    app = createApp('egg-ts-js');
+
+    // loadService must not throw "can't overwrite property" even though
+    // `dual.ts`+`dual.mjs` and `dualc.ts`+`dualc.cjs` coexist in the directory.
+    await app.loader.loadService();
+
+    // standalone `.mjs` / `.cjs` are scanned and loaded as first-class files
+    assert(app.serviceClasses.pureMjs);
+    assert.equal(app.serviceClasses.pureMjs.loadedFrom, 'mjs');
+    assert(app.serviceClasses.pureCjs);
+    assert.equal(app.serviceClasses.pureCjs.loadedFrom, 'cjs');
+
+    // priority: when a `.ts` source and its compiled `.mjs`/`.cjs` coexist,
+    // the `.ts` source wins and the compiled sibling is ignored.
+    assert(app.serviceClasses.dual);
+    assert.equal(app.serviceClasses.dual.loadedFrom, 'ts');
+    assert(app.serviceClasses.dualc);
+    assert.equal(app.serviceClasses.dualc.loadedFrom, 'ts');
+  });
+
   it('should auto require tsconfig-paths', async () => {
     mm(process.env, 'EGG_TYPESCRIPT', 'true');
     app = createApp('egg-ts-js-tsconfig-paths');
