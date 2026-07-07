@@ -27,7 +27,13 @@ export default class AgentBoot implements ILifecycleBoot {
     }
   }
 
-  async serverDidReady(): Promise<void> {
+  // Set up the reload file watcher in `didReady` (agent is ready) instead of
+  // `serverDidReady` (which waits for the app workers to be ready). The watcher
+  // only needs the agent itself; waiting for the app server means file changes
+  // that happen right after the workers start — but before `serverDidReady`
+  // fires — are not being watched yet and get missed (the reload never triggers).
+  // Starting the watch earlier closes that window without changing reload behavior.
+  async didReady(): Promise<void> {
     const agent = this.#agent;
     // single process mode don't watch and reload
     if (agent.options && Reflect.get(agent.options, 'mode') === 'single') {
