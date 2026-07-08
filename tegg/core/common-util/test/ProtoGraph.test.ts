@@ -82,6 +82,28 @@ describe('test/LoadUnit/Graph.test.ts', () => {
   });
 
   describe('sort', () => {
+    function buildLayeredGraph(layerSize: number, layerCount: number) {
+      const graph = new Graph<GraphNodeVal>();
+      const layers: GraphNode<GraphNodeVal>[][] = [];
+      for (let layerIndex = 0; layerIndex < layerCount; ++layerIndex) {
+        const layer: GraphNode<GraphNodeVal>[] = [];
+        for (let nodeIndex = 0; nodeIndex < layerSize; ++nodeIndex) {
+          const node = new GraphNode(new GraphNodeVal(`${layerIndex}-${nodeIndex}`));
+          graph.addVertex(node);
+          layer.push(node);
+        }
+        layers.push(layer);
+      }
+      for (let layerIndex = 0; layerIndex < layerCount - 1; ++layerIndex) {
+        for (const fromNode of layers[layerIndex]) {
+          for (const toNode of layers[layerIndex + 1]) {
+            graph.addEdge(fromNode, toNode);
+          }
+        }
+      }
+      return { graph, layers };
+    }
+
     it('can not access vertex should at first', () => {
       const graph = new Graph();
       const node1 = new GraphNode({ id: '1' });
@@ -115,27 +137,42 @@ describe('test/LoadUnit/Graph.test.ts', () => {
       assert.deepStrictEqual(sortRes, [node5, node2, node1, node4, node3]);
     });
 
-    it('should sort shared acyclic paths once', () => {
+    it('should fail fast when sorting circular dependencies', () => {
       const graph = new Graph();
-      const layers: GraphNode<GraphNodeVal>[][] = [];
+      const node1 = new GraphNode(new GraphNodeVal('1'));
+      const node2 = new GraphNode(new GraphNodeVal('2'));
+      graph.addVertex(node1);
+      graph.addVertex(node2);
+      graph.addEdge(node1, node2);
+      graph.addEdge(node2, node1);
+
+      assert.throws(() => graph.sort(), /graph has recursive deps: id:1/);
+    });
+
+    it('should keep legacy accessNode boolean array API', () => {
+      const graph = new Graph<GraphNodeVal>();
+      const node1 = new GraphNode(new GraphNodeVal('1'));
+      const node2 = new GraphNode(new GraphNodeVal('2'));
+      const node3 = new GraphNode(new GraphNodeVal('3'));
+      graph.addVertex(node1);
+      graph.addVertex(node2);
+      graph.addVertex(node3);
+      graph.addEdge(node1, node2);
+      graph.addEdge(node2, node3);
+      const nodes = [node1, node2, node3];
+      const accessed = [false, false, true];
+      const res: GraphNode<GraphNodeVal>[] = [node3];
+
+      graph.accessNode(node1, nodes, accessed, res);
+
+      assert.deepStrictEqual(res, [node3, node2, node1]);
+      assert.deepStrictEqual(accessed, [true, true, true]);
+    });
+
+    it('should sort shared acyclic paths once', () => {
       const layerSize = 8;
       const layerCount = 8;
-      for (let layerIndex = 0; layerIndex < layerCount; ++layerIndex) {
-        const layer: GraphNode<GraphNodeVal>[] = [];
-        for (let nodeIndex = 0; nodeIndex < layerSize; ++nodeIndex) {
-          const node = new GraphNode(new GraphNodeVal(`${layerIndex}-${nodeIndex}`));
-          graph.addVertex(node);
-          layer.push(node);
-        }
-        layers.push(layer);
-      }
-      for (let layerIndex = 0; layerIndex < layerCount - 1; ++layerIndex) {
-        for (const fromNode of layers[layerIndex]) {
-          for (const toNode of layers[layerIndex + 1]) {
-            graph.addEdge(fromNode, toNode);
-          }
-        }
-      }
+      const { graph, layers } = buildLayeredGraph(layerSize, layerCount);
 
       assert.equal(graph.loopPath(), undefined);
       const sortRes = graph.sort();
@@ -149,6 +186,27 @@ describe('test/LoadUnit/Graph.test.ts', () => {
           }
         }
       }
+    });
+
+    it('should not scan nodes with Array#indexOf when sorting shared paths', () => {
+      const { graph } = buildLayeredGraph(8, 8);
+      const originalIndexOf = Array.prototype.indexOf;
+      let indexOfCallCount = 0;
+      Array.prototype.indexOf = function indexOfSpy(
+        this: unknown[],
+        searchElement: unknown,
+        fromIndex?: number,
+      ): number {
+        indexOfCallCount++;
+        return originalIndexOf.call(this, searchElement, fromIndex);
+      };
+      try {
+        graph.sort();
+      } finally {
+        Array.prototype.indexOf = originalIndexOf;
+      }
+
+      assert.equal(indexOfCallCount, 0);
     });
   });
 });

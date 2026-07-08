@@ -120,6 +120,9 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return undefined;
   }
 
+  /**
+   * @deprecated Use loopPath() instead. This method is kept for compatibility.
+   */
   appendVertexToPath(node: GraphNode<T, M>, accessPath: GraphPath<T, M>, meta?: M): boolean {
     if (!accessPath.pushVertex(node, meta)) {
       return false;
@@ -188,22 +191,33 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return;
   }
 
-  private accessNodeWithSet(node: GraphNode<T, M>, accessed: Set<GraphNode<T, M>>, res: Array<GraphNode<T, M>>): void {
+  private accessNodeWithSet(
+    node: GraphNode<T, M>,
+    accessed: Set<GraphNode<T, M>>,
+    visiting: Set<GraphNode<T, M>>,
+    res: Array<GraphNode<T, M>>,
+  ): void {
     if (accessed.has(node)) {
       return;
     }
-    if (!node.toNodeMap.size) {
-      accessed.add(node);
-      res.push(node);
-      return;
+    if (visiting.has(node)) {
+      throw new Error('graph has recursive deps: ' + node);
     }
-    for (const toNode of node.toNodeMap.values()) {
-      this.accessNodeWithSet(toNode.node, accessed, res);
+    visiting.add(node);
+    try {
+      for (const toNode of node.toNodeMap.values()) {
+        this.accessNodeWithSet(toNode.node, accessed, visiting, res);
+      }
+    } finally {
+      visiting.delete(node);
     }
     accessed.add(node);
     res.push(node);
   }
 
+  /**
+   * @deprecated Prefer sort(), which uses Set-based traversal directly.
+   */
   accessNode(
     node: GraphNode<T, M>,
     nodes: Array<GraphNode<T, M>>,
@@ -216,7 +230,7 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
         accessedSet.add(nodes[i]);
       }
     }
-    this.accessNodeWithSet(node, accessedSet, res);
+    this.accessNodeWithSet(node, accessedSet, new Set<GraphNode<T, M>>(), res);
     for (let i = 0; i < nodes.length; ++i) {
       accessed[i] = accessedSet.has(nodes[i]);
     }
@@ -234,8 +248,9 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     const res: Array<GraphNode<T, M>> = [];
     const nodes = Array.from(this.nodes.values());
     const accessed = new Set<GraphNode<T, M>>();
+    const visiting = new Set<GraphNode<T, M>>();
     for (const node of nodes) {
-      this.accessNodeWithSet(node, accessed, res);
+      this.accessNodeWithSet(node, accessed, visiting, res);
     }
     return res;
   }
