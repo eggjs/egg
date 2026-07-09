@@ -9,7 +9,9 @@ import type {
   EggPrototypeLifecycleContext,
   EggPrototypeName,
   InjectConstructor,
+  InjectConstructorProto,
   InjectObject,
+  InjectObjectProto,
   LoadUnit,
   ObjectInitTypeLike,
   QualifierInfo,
@@ -19,6 +21,22 @@ import { DEFAULT_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
 import { EggPrototypeCreatorFactory } from '../factory/index.ts';
 import { EggPrototypeImpl } from './EggPrototypeImpl.ts';
 import { InjectObjectPrototypeFinder } from './InjectObjectPrototypeFinder.ts';
+
+export type EggPrototypeImplClass = new (
+  id: string,
+  name: EggPrototypeName,
+  clazz: EggProtoImplClass,
+  filepath: string,
+  initType: ObjectInitTypeLike,
+  accessLevel: AccessLevel,
+  injectObjectProtos: Array<InjectObjectProto | InjectConstructorProto>,
+  loadUnitId: string,
+  qualifiers: QualifierInfo[],
+  className?: string,
+  injectType?: InjectType,
+  multiInstanceConstructorIndex?: number,
+  multiInstanceConstructorAttributes?: QualifierAttribute[],
+) => EggPrototype;
 
 export class EggPrototypeBuilder {
   private clazz: EggProtoImplClass;
@@ -34,12 +52,18 @@ export class EggPrototypeBuilder {
   private className?: string;
   private multiInstanceConstructorIndex?: number;
   private multiInstanceConstructorAttributes?: QualifierAttribute[];
+  private protoImplClass: EggPrototypeImplClass = EggPrototypeImpl;
 
   static create(ctx: EggPrototypeLifecycleContext): EggPrototype {
+    return EggPrototypeBuilder.createWithProtoImpl(ctx, EggPrototypeImpl);
+  }
+
+  static createWithProtoImpl(ctx: EggPrototypeLifecycleContext, protoImplClass: EggPrototypeImplClass): EggPrototype {
     const { clazz, loadUnit } = ctx;
     const filepath = PrototypeUtil.getFilePath(clazz);
     assert(filepath, 'not find filepath');
     const builder = new EggPrototypeBuilder();
+    builder.protoImplClass = protoImplClass;
     builder.clazz = clazz;
     builder.name = ctx.prototypeInfo.name;
     builder.className = ctx.prototypeInfo.className;
@@ -69,7 +93,7 @@ export class EggPrototypeBuilder {
       injectObjects: this.injectObjects,
     });
     const id = IdenticalUtil.createProtoId(this.loadUnit.id, this.name);
-    return new EggPrototypeImpl(
+    return new this.protoImplClass(
       id,
       this.name,
       this.clazz,

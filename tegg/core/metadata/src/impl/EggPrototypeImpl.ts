@@ -74,7 +74,7 @@ export class EggPrototypeImpl implements EggPrototype {
     return selfQualifiers?.value === qualifier.value;
   }
 
-  getQualifier(attribute: string): QualifierValue | undefined {
+  getQualifier(attribute: QualifierAttribute): QualifierValue | undefined {
     return this.qualifiers.find((t) => t.attribute === attribute)?.value;
   }
 
