@@ -9,7 +9,7 @@ import {
 } from '@eggjs/metadata';
 import type { Logger } from '@eggjs/tegg';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
-import { LoaderFactory, ModuleLoader, type TeggManifestExtension } from '@eggjs/tegg-loader';
+import { buildTeggManifestData, LoaderFactory, ModuleLoader, type TeggManifestExtension } from '@eggjs/tegg-loader';
 import { TeggScope } from '@eggjs/tegg-types';
 
 export interface EggModuleLoaderOptions {
@@ -78,21 +78,7 @@ export class EggModuleLoader {
     moduleReferences: readonly ModuleReference[],
     moduleDescriptors: readonly ModuleDescriptor[],
   ): TeggManifestExtension {
-    return {
-      moduleReferences: moduleReferences.map((ref) => ({
-        name: ref.name,
-        package: ref.package,
-        path: ref.path,
-        optional: ref.optional,
-        loaderType: ref.loaderType,
-      })),
-      moduleDescriptors: moduleDescriptors.map((desc) => ({
-        name: desc.name,
-        unitPath: desc.unitPath,
-        optional: desc.optional,
-        decoratedFiles: ModuleDescriptorDumper.getDecoratedFiles(desc),
-      })),
-    };
+    return buildTeggManifestData(moduleReferences, moduleDescriptors);
   }
 
   #createModuleLoader(modulePath: string) {

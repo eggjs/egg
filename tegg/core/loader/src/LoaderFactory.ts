@@ -1,6 +1,6 @@
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { LoaderFS } from '@eggjs/loader-fs';
-import type { ModuleDescriptor } from '@eggjs/metadata';
+import { ModuleDescriptorDumper, type ModuleDescriptor } from '@eggjs/metadata';
 import {
   EggLoadUnitType,
   type EggLoadUnitTypeLike,
@@ -34,6 +34,27 @@ export interface TeggManifestExtension {
 }
 
 export const TEGG_MANIFEST_KEY = 'tegg';
+
+export function buildTeggManifestData(
+  moduleReferences: readonly ModuleReference[],
+  moduleDescriptors: readonly ModuleDescriptor[],
+): TeggManifestExtension {
+  return {
+    moduleReferences: moduleReferences.map((ref) => ({
+      name: ref.name,
+      package: ref.package,
+      path: ref.path,
+      optional: ref.optional,
+      loaderType: ref.loaderType,
+    })),
+    moduleDescriptors: moduleDescriptors.map((desc) => ({
+      name: desc.name,
+      unitPath: desc.unitPath,
+      optional: desc.optional,
+      decoratedFiles: ModuleDescriptorDumper.getDecoratedFiles(desc),
+    })),
+  };
+}
 
 export interface LoadAppManifest {
   moduleDescriptors: ManifestModuleDescriptor[];

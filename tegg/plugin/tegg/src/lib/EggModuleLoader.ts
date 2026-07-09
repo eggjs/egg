@@ -1,6 +1,6 @@
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
-import { LoaderFactory, ModuleLoader, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
+import { buildTeggManifestData, LoaderFactory, ModuleLoader, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import type { ModuleReference } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
@@ -89,21 +89,7 @@ export class EggModuleLoader {
     moduleReferences: readonly ModuleReference[],
     moduleDescriptors: readonly ModuleDescriptor[],
   ): TeggManifestExtension {
-    return {
-      moduleReferences: moduleReferences.map((ref) => ({
-        name: ref.name,
-        package: ref.package,
-        path: ref.path,
-        optional: ref.optional,
-        loaderType: ref.loaderType,
-      })),
-      moduleDescriptors: moduleDescriptors.map((desc) => ({
-        name: desc.name,
-        unitPath: desc.unitPath,
-        optional: desc.optional,
-        decoratedFiles: ModuleDescriptorDumper.getDecoratedFiles(desc),
-      })),
-    };
+    return buildTeggManifestData(moduleReferences, moduleDescriptors);
   }
 
   /**
