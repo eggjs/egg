@@ -60,6 +60,20 @@ describe('plugin/config/test/ModuleScanner.test.ts', () => {
     expect(warnings).toEqual([]);
   });
 
+  it('should resolve framework module.json package references from the framework directory', () => {
+    const baseDir = getFixtures('framework-module-json/app');
+    const refs = new ModuleScanner(baseDir, { cwd: baseDir }).loadModuleReferences();
+
+    expect(refs).toEqual([
+      {
+        name: 'frameworkConfigModule',
+        package: 'framework-config-module',
+        path: path.join(baseDir, 'node_modules/chair-framework/node_modules/framework-config-module'),
+        optional: true,
+      },
+    ]);
+  });
+
   it('should stop scanning when framework chain has a cycle', () => {
     const baseDir = getFixtures('framework-cycle/app');
     const refs = new ModuleScanner(baseDir, {}).loadModuleReferences();

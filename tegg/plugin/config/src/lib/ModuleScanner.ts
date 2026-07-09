@@ -76,9 +76,12 @@ export class ModuleScanner {
     return frameworkDirs;
   }
 
-  private readAndDeduplicateModuleReferences(baseDir: string): readonly ModuleReference[] {
+  private readAndDeduplicateModuleReferences(baseDir: string, cwd?: string): readonly ModuleReference[] {
     return ModuleConfigUtil.deduplicateModules(
-      ModuleConfigUtil.readModuleReference(baseDir, this.readModuleOptions || {}),
+      ModuleConfigUtil.readModuleReference(baseDir, {
+        ...this.readModuleOptions,
+        ...(cwd ? { cwd } : {}),
+      }),
     );
   }
 
@@ -126,7 +129,7 @@ export class ModuleScanner {
     }
     debug('loadModuleReferences from frameworkDirs:%o', frameworkDirs);
     const optionalModuleReferences = frameworkDirs.flatMap((frameworkDir) =>
-      this.readAndDeduplicateModuleReferences(frameworkDir),
+      this.readAndDeduplicateModuleReferences(frameworkDir, frameworkDir),
     );
 
     // Merge all module references and deduplicate

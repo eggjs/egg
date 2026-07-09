@@ -35,6 +35,12 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
         path: '/virtual/disabled-plugin',
         optional: true,
       },
+      {
+        name: 'samePathDifferentPackage',
+        package: 'module-package',
+        path: '/virtual/same-path',
+        optional: true,
+      },
     ];
     const app = {
       baseDir: '/virtual/app',
@@ -64,6 +70,11 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
           package: 'disabled-plugin',
           path: '/virtual/disabled-plugin',
         },
+        samePathDifferentPackage: {
+          enable: true,
+          package: 'plugin-package',
+          path: '/virtual/same-path',
+        },
       },
     } as any;
 
@@ -79,6 +90,7 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
     assert.equal(moduleReferences[0].optional, false);
     assert.equal(moduleReferences[1].optional, false);
     assert.equal(moduleReferences[2].optional, true);
+    assert.equal(moduleReferences[3].optional, true);
   });
 
   describe('has recursive dependency module', () => {

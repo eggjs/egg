@@ -1,0 +1,7 @@
+{
+  "name": "chair-framework",
+  "type": "module",
+  "egg": {
+    "framework": true
+  }
+}
