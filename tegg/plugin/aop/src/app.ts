@@ -13,15 +13,6 @@ export default class AopAppHook implements ILifecycleBoot {
     this.app = app;
   }
 
-  configDidLoad(): void {
-    // The AOP hooks are module plugin classes (@XxxLifecycleProto /
-    // @InnerObjectProto, incl. the graph build hook registrar): buffer them on
-    // the moduleHandler (created in the tegg plugin's configDidLoad, which runs
-    // before ours) so they are instantiated inside the InnerObjectLoadUnit —
-    // after the business GlobalGraph is created and before build() runs.
-    // Registration/deregistration is automatic.
-  }
-
   async didLoad(): Promise<void> {
     await this.app.moduleHandler.ready();
     // The graph already ran the declaratively registered build hooks during
