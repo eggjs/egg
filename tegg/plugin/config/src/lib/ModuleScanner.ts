@@ -46,7 +46,7 @@ export class ModuleScanner {
   }
 
   private resolveParentFrameworkDir(frameworkDir: string): string | undefined {
-    let pkg: { egg?: { framework?: string } };
+    let pkg: { egg?: { framework?: unknown } };
     try {
       pkg = JSON.parse(fs.readFileSync(path.join(frameworkDir, 'package.json'), 'utf8'));
     } catch (err) {
@@ -57,7 +57,8 @@ export class ModuleScanner {
       );
       return undefined;
     }
-    if (!pkg.egg?.framework) {
+    const framework = pkg.egg?.framework;
+    if (typeof framework !== 'string' || !framework) {
       return undefined;
     }
     return this.resolveFrameworkDir(frameworkDir);
