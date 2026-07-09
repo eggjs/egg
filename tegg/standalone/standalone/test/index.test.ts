@@ -78,6 +78,34 @@ describe('standalone/standalone/test/index.test.ts', () => {
     });
   });
 
+  describe('manifest consume', () => {
+    afterEach(() => {
+      mm.restore();
+    });
+
+    it('should reuse manifest moduleReferences without scanning modules', async () => {
+      const fixture = path.join(__dirname, './fixtures/simple');
+      const moduleReferences = StandaloneApp.getModuleReferences(fixture);
+      mm(StandaloneApp, 'getModuleReferences', () => {
+        throw new Error('should not scan module references when manifest provides them');
+      });
+
+      const app = new StandaloneApp();
+      await app.init({
+        baseDir: fixture,
+        manifest: {
+          moduleReferences,
+          moduleDescriptors: [],
+        },
+      });
+      try {
+        assert.deepEqual(app.moduleReferences, moduleReferences);
+      } finally {
+        await app.destroy();
+      }
+    });
+  });
+
   describe('simple runner', () => {
     const fixture = path.join(__dirname, './fixtures/simple');
 

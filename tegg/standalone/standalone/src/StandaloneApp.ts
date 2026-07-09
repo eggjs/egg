@@ -323,8 +323,11 @@ export class StandaloneApp {
     }
     await this.runInScope(async () => {
       this.#initRuntime(opts);
-      // The module scan happens here — baseDir only arrives at init().
-      this.#moduleReferences = StandaloneApp.getModuleReferences(opts.baseDir, opts.dependencies, this.#frameworkDeps);
+      // In manifest-consume mode the module reference graph was already
+      // captured at build time; reuse it instead of re-scanning the filesystem.
+      this.#moduleReferences = opts.manifest?.moduleReferences?.length
+        ? opts.manifest.moduleReferences
+        : StandaloneApp.getModuleReferences(opts.baseDir, opts.dependencies, this.#frameworkDeps);
       this.#loadModuleConfigs();
       await this.#initLoaderInstance(opts);
       await this.#instantiateInnerObjectLoadUnit();
