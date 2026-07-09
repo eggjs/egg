@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { debuglog } from 'node:util';
 
 import { ModuleConfigUtil, type ModuleReference, type ReadModuleReferenceOptions } from '@eggjs/tegg-common-util';
@@ -22,19 +24,49 @@ export class ModuleScanner {
    * cnpmcore) still get the egg-shipped module plugins, and chair apps
    * (which declare their framework) automatically scan chair.
    */
-  private resolveFrameworkDir(): string | undefined {
+  private resolveFrameworkDir(baseDir: string): string | undefined {
     try {
-      return getFrameworkPath({ baseDir: this.baseDir });
+      return getFrameworkPath({ baseDir });
     } catch (err) {
       // No package.json or no resolvable framework next to the app (e.g.
       // bare unit fixtures without node_modules) — app modules only.
       debug(
         'resolve framework dir failed, baseDir: %s, err: %s',
-        this.baseDir,
+        baseDir,
         err instanceof Error ? err.message : String(err),
       );
       return undefined;
     }
+  }
+
+  private resolveParentFrameworkDir(frameworkDir: string): string | undefined {
+    let pkg: { egg?: { framework?: string } };
+    try {
+      pkg = JSON.parse(fs.readFileSync(path.join(frameworkDir, 'package.json'), 'utf8'));
+    } catch (err) {
+      debug(
+        'read framework package failed, frameworkDir: %s, err: %s',
+        frameworkDir,
+        err instanceof Error ? err.message : String(err),
+      );
+      return undefined;
+    }
+    if (!pkg.egg?.framework) {
+      return undefined;
+    }
+    return this.resolveFrameworkDir(frameworkDir);
+  }
+
+  private resolveFrameworkDirs(): readonly string[] {
+    const frameworkDirs: string[] = [];
+    const seen = new Set<string>();
+    let frameworkDir = this.resolveFrameworkDir(this.baseDir);
+    while (frameworkDir && !seen.has(frameworkDir)) {
+      seen.add(frameworkDir);
+      frameworkDirs.push(frameworkDir);
+      frameworkDir = this.resolveParentFrameworkDir(frameworkDir);
+    }
+    return frameworkDirs;
   }
 
   /**
@@ -44,12 +76,14 @@ export class ModuleScanner {
    */
   loadModuleReferences(): readonly ModuleReference[] {
     const moduleReferences = ModuleConfigUtil.readModuleReference(this.baseDir, this.readModuleOptions || {});
-    const frameworkDir = this.resolveFrameworkDir();
-    if (!frameworkDir) {
+    const frameworkDirs = this.resolveFrameworkDirs();
+    if (!frameworkDirs.length) {
       return ModuleConfigUtil.deduplicateModules(moduleReferences);
     }
-    debug('loadModuleReferences from frameworkDir:%o', frameworkDir);
-    const optionalModuleReferences = ModuleConfigUtil.readModuleReference(frameworkDir, this.readModuleOptions || {});
+    debug('loadModuleReferences from frameworkDirs:%o', frameworkDirs);
+    const optionalModuleReferences = frameworkDirs.flatMap((frameworkDir) =>
+      ModuleConfigUtil.readModuleReference(frameworkDir, this.readModuleOptions || {}),
+    );
 
     // Merge all module references and deduplicate
     const allModuleReferences = [
