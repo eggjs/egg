@@ -23,6 +23,12 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
   @Inject()
   private readonly mysqlDataSourceManager: MysqlDataSourceManager;
 
+  @Inject()
+  private readonly sqlMapManager: SqlMapManager;
+
+  @Inject()
+  private readonly tableModelManager: TableModelManager;
+
   private get env(): string {
     return this.runtimeConfig.env ?? '';
   }
@@ -68,7 +74,7 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
   @LifecycleDestroy()
   async destroyManagers(): Promise<void> {
     this.mysqlDataSourceManager.clear();
-    SqlMapManager.instance.clear();
-    TableModelManager.instance.clear();
+    this.sqlMapManager.clear();
+    this.tableModelManager.clear();
   }
 }

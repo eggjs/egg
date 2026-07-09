@@ -13,15 +13,21 @@ export class DalTableEggPrototypeHook implements LifecycleHook<EggPrototypeLifec
   @Inject()
   private readonly logger: Logger;
 
+  @Inject()
+  private readonly sqlMapManager: SqlMapManager;
+
+  @Inject()
+  private readonly tableModelManager: TableModelManager;
+
   async preCreate(ctx: EggPrototypeLifecycleContext): Promise<void> {
     if (!DaoInfoUtil.getIsDao(ctx.clazz)) {
       return;
     }
     const tableClazz = ctx.clazz.clazzModel;
     const tableModel: TableModel<object> = TableModel.build(tableClazz);
-    TableModelManager.instance.set(ctx.loadUnit.name, tableModel);
+    this.tableModelManager.set(ctx.loadUnit.name, tableModel);
     const loader = new SqlMapLoader(tableModel, ctx.clazz, this.logger);
     const sqlMap = loader.load();
-    SqlMapManager.instance.set(ctx.loadUnit.name, sqlMap);
+    this.sqlMapManager.set(ctx.loadUnit.name, sqlMap);
   }
 }

@@ -62,6 +62,8 @@ export class DataSourceDelegate<T> extends DataSource<T> {
 
   constructor(
     @Inject() mysqlDataSourceManager: MysqlDataSourceManager,
+    @Inject() sqlMapManager: SqlMapManager,
+    @Inject() tableModelManager: TableModelManager,
     @Inject({ name: 'transactionalAOP' }) transactionalAOP: TransactionalAOP,
     @MultiInstanceInfo([DataSourceQualifierAttribute, LoadUnitNameQualifierAttribute])
     objInfo: ObjectInfo,
@@ -71,11 +73,11 @@ export class DataSourceDelegate<T> extends DataSource<T> {
     )?.value;
     assert(dataSourceQualifierValue);
     const [moduleName, dataSource, clazzName] = (dataSourceQualifierValue as string).split('.');
-    const tableModel = TableModelManager.instance.get(moduleName, clazzName);
+    const tableModel = tableModelManager.get(moduleName, clazzName);
     assert(tableModel, `not found table ${dataSourceQualifierValue}`);
     const mysqlDataSource = mysqlDataSourceManager.get(moduleName, dataSource);
     assert(mysqlDataSource, `not found dataSource ${dataSource} in module ${moduleName}`);
-    const sqlMap = SqlMapManager.instance.get(moduleName, clazzName);
+    const sqlMap = sqlMapManager.get(moduleName, clazzName);
     assert(sqlMap, `not found SqlMap ${clazzName} in module ${moduleName}`);
 
     super(tableModel as TableModel<T>, mysqlDataSource, sqlMap);
