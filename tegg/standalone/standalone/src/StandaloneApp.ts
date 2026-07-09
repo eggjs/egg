@@ -134,21 +134,26 @@ export class StandaloneApp {
   }
 
   #createInnerObjects(init?: StandaloneAppInit): Record<string, InnerObject[]> {
-    return Object.assign(
-      {
-        // Framework hooks (e.g. DAL) inject `logger`; an init.innerObjects
-        // entry wins over init.logger, console is the last resort.
-        logger: [{ obj: init?.logger ?? console }],
-      },
-      init?.innerObjects,
-      {
-        // Framework placeholders pre-created at construction and filled during
-        // init() — the inner objects hold these same references.
-        moduleConfigs: [{ obj: new ModuleConfigs(this.#moduleConfigs) }],
-        moduleConfig: [] as InnerObject[],
-        runtimeConfig: [{ obj: this.#runtimeConfig }],
-      },
-    );
+    const frameworkInnerObjects = {
+      // Framework hooks (e.g. DAL) inject `logger`; an init.innerObjects
+      // entry wins over init.logger, console is the last resort.
+      logger: [{ obj: init?.logger ?? console }],
+      // Framework placeholders pre-created at construction and filled during
+      // init() — the inner objects hold these same references unless the caller
+      // intentionally overrides them below.
+      moduleConfigs: [{ obj: new ModuleConfigs(this.#moduleConfigs) }],
+      moduleConfig: [] as InnerObject[],
+      runtimeConfig: [{ obj: this.#runtimeConfig }],
+    };
+    const reservedNames = ['moduleConfigs', 'moduleConfig', 'runtimeConfig'];
+    for (const name of reservedNames) {
+      if (init?.innerObjects?.[name]) {
+        (init.logger ?? console).warn(
+          `[tegg/standalone] innerObjectHandlers.${name} overrides the framework provided inner object`,
+        );
+      }
+    }
+    return Object.assign(frameworkInnerObjects, init?.innerObjects);
   }
 
   /** Fill the runtimeConfig placeholder and bind module config names. */

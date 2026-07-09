@@ -278,6 +278,33 @@ describe('standalone/standalone/test/index.test.ts', () => {
         env: 'unittest',
       });
     });
+
+    it('should let innerObjectHandlers runtimeConfig override framework placeholder with warning', async () => {
+      const warnings: unknown[][] = [];
+      const logger = {
+        ...console,
+        warn: (...args: unknown[]) => {
+          warnings.push(args);
+        },
+      };
+      const runtimeConfig = {
+        baseDir: 'custom-base-dir',
+        env: 'custom-env',
+        name: 'custom-name',
+      };
+
+      const injected = await main(path.join(__dirname, './fixtures/runtime-config'), {
+        logger,
+        innerObjectHandlers: {
+          runtimeConfig: [{ obj: runtimeConfig }],
+        },
+      });
+
+      assert.equal(injected, runtimeConfig);
+      assert.deepEqual(warnings, [
+        ['[tegg/standalone] innerObjectHandlers.runtimeConfig overrides the framework provided inner object'],
+      ]);
+    });
   });
 
   describe('multi instance prototype runner', () => {
