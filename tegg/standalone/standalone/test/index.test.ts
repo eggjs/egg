@@ -94,7 +94,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
       await app.init({
         baseDir: fixture,
         manifest: {
-          moduleReferences,
+          moduleReferences: [...moduleReferences],
           moduleDescriptors: [],
         },
       });

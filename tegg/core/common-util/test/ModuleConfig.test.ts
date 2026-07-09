@@ -54,6 +54,40 @@ describe('test/ModuleConfig.test.ts', () => {
     // });
   });
 
+  describe('resolve module config tolerant', () => {
+    it('should read existing module config', () => {
+      const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-module-json');
+      const modulePath = path.join(fixturesPath, 'app/module-a');
+      const resolved = ModuleConfigUtil.resolveModuleConfigTolerant({
+        path: modulePath,
+        name: 'moduleA',
+      });
+
+      assert.deepStrictEqual(resolved, {
+        name: 'moduleA',
+        path: modulePath,
+        config: {},
+      });
+    });
+
+    it('should use reference name and empty config when module dir does not exist', () => {
+      const baseDir = path.join(__dirname, './fixtures/apps/app-with-module-json');
+      const resolved = ModuleConfigUtil.resolveModuleConfigTolerant(
+        {
+          path: 'external/module-a',
+          name: 'externalModule',
+        },
+        baseDir,
+      );
+
+      assert.deepStrictEqual(resolved, {
+        name: 'externalModule',
+        path: path.resolve(baseDir, 'external/module-a'),
+        config: {},
+      });
+    });
+  });
+
   describe('load module reference', () => {
     describe('module.json not exits', () => {
       it('should work', () => {

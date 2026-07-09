@@ -92,32 +92,17 @@ export default class App implements ILifecycleBoot {
   #loadModuleConfigs(): void {
     this.app.moduleConfigs = {};
     for (const reference of this.app.moduleReferences) {
-      // Module reference paths from the manifest / ModuleScanner are absolute or
-      // relative to baseDir. `ModuleConfigUtil.resolveModuleDir` resolves a
-      // relative path against `baseDir/config` (the `config/module.json`
-      // convention), which is wrong here, so resolve against baseDir directly. In
-      // bundle mode baseDir is the output dir where the bundler copied each
-      // module's package.json.
-      const absoluteRef: ModuleReference = {
-        path: path.isAbsolute(reference.path) ? reference.path : path.resolve(this.app.baseDir, reference.path),
+      const resolved = ModuleConfigUtil.resolveModuleConfigTolerant(reference, this.app.baseDir);
+      const resolvedRef: ModuleReference = {
+        path: resolved.path,
         name: reference.name,
         optional: reference.optional,
+        loaderType: reference.loaderType,
       };
-
-      // Framework plugin modules restored from a bundle manifest are NOT
-      // materialized inside the bundle output — their code ships externally
-      // (real node_modules outside the bundle). Fall back to the
-      // manifest-carried name and an empty config instead of reading their
-      // package.json/module.yml from a directory that does not exist.
-      // (Follow-up: carry module configs in the manifest so a module.yml of
-      // an external module survives bundling.)
-      const moduleDirExists = fs.existsSync(absoluteRef.path);
-      const moduleName =
-        !moduleDirExists && reference.name ? reference.name : ModuleConfigUtil.readModuleNameSync(absoluteRef.path);
-      this.app.moduleConfigs[moduleName] = {
-        name: moduleName,
-        reference: absoluteRef,
-        config: moduleDirExists ? ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path) : {},
+      this.app.moduleConfigs[resolved.name] = {
+        name: resolved.name,
+        reference: resolvedRef,
+        config: resolved.config,
       };
     }
 

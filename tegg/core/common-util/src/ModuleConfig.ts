@@ -36,6 +36,12 @@ const DEFAULT_READ_MODULE_REF_OPTS = {
 
 const CONFIG_NAMES_SLOT = Symbol('tegg:common-util:moduleConfigNames');
 
+export interface ResolvedModuleConfig {
+  name: string;
+  path: string;
+  config: ModuleConfig;
+}
+
 export class ModuleConfigUtil {
   // Per-app/per-Runner: each standalone Runner (and app) has distinct config
   // names (env-based); a process-global static races across them (the standalone
@@ -304,6 +310,32 @@ export class ModuleConfigUtil {
     }
 
     return target;
+  }
+
+  public static resolveModuleConfigTolerant(
+    reference: ModuleReference,
+    baseDir?: string,
+    env?: string,
+  ): ResolvedModuleConfig {
+    if (!path.isAbsolute(reference.path)) {
+      assert(baseDir, 'baseDir is required for relative module reference path');
+    }
+    const modulePath = path.isAbsolute(reference.path) ? reference.path : path.resolve(baseDir!, reference.path);
+
+    if (!fs.existsSync(modulePath) && reference.name) {
+      return {
+        name: reference.name,
+        path: modulePath,
+        config: {},
+      };
+    }
+
+    const name = ModuleConfigUtil.readModuleNameSync(modulePath);
+    return {
+      name,
+      path: modulePath,
+      config: ModuleConfigUtil.loadModuleConfigSync(modulePath, undefined, env),
+    };
   }
 
   static #loadOneSync(moduleDir: string, configName: string): ModuleConfig | undefined {

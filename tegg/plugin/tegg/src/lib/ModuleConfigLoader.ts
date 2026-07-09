@@ -1,6 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
-
 import {
   AccessLevel,
   type EggProtoImplClass,
@@ -56,25 +53,13 @@ export class ModuleConfigLoader {
     const result: EggProtoImplClass[] = [];
     const moduleConfigMap: Record<string, ModuleConfigHolder> = {};
     for (const reference of this.app.moduleReferences) {
-      // Same tolerance as the config plugin's loadModuleConfigs: framework
-      // plugin modules restored from a bundle manifest are NOT materialized
-      // inside the bundle output (their code ships externally), so read the
-      // manifest-carried name instead of a package.json that does not exist.
-      const modulePath = path.isAbsolute(reference.path)
-        ? reference.path
-        : path.resolve(this.app.baseDir, reference.path);
-      const moduleDirExists = fs.existsSync(modulePath);
-      const moduleName =
-        !moduleDirExists && reference.name ? reference.name : ModuleConfigUtil.readModuleNameSync(modulePath);
-      const defaultConfig = moduleDirExists
-        ? ModuleConfigUtil.loadModuleConfigSync(modulePath, undefined, this.app.config.env)
-        : undefined;
+      const resolved = ModuleConfigUtil.resolveModuleConfigTolerant(reference, this.app.baseDir, this.app.config.env);
       // @eggjs/tegg-config moduleConfigs[module].config overwrite
-      const config = extend(true, {}, defaultConfig, this.app.moduleConfigs[moduleName]?.config);
-      moduleConfigMap[moduleName] = {
-        name: moduleName,
+      const config = extend(true, {}, resolved.config, this.app.moduleConfigs[resolved.name]?.config);
+      moduleConfigMap[resolved.name] = {
+        name: resolved.name,
         reference: {
-          name: moduleName,
+          name: resolved.name,
           path: reference.path,
         },
         config,
@@ -101,7 +86,7 @@ export class ModuleConfigLoader {
       QualifierUtil.addProtoQualifier(func, LoadUnitNameQualifierAttribute, 'app');
       QualifierUtil.addProtoQualifier(func, InitTypeQualifierAttribute, ObjectInitType.SINGLETON);
       QualifierUtil.addProtoQualifier(func, EggQualifierAttribute, EggType.APP);
-      QualifierUtil.addProtoQualifier(func, ConfigSourceQualifierAttribute, moduleName);
+      QualifierUtil.addProtoQualifier(func, ConfigSourceQualifierAttribute, resolved.name);
       result.push(func);
     }
     const moduleConfigs = this.loadModuleConfigs(moduleConfigMap);

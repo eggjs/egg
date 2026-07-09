@@ -171,16 +171,17 @@ export class StandaloneApp {
   /** Load every module's config and expose it as a qualified `moduleConfig` inner object. */
   #loadModuleConfigs(): void {
     for (const reference of this.#moduleReferences) {
-      const absoluteRef = {
-        path: ModuleConfigUtil.resolveModuleDir(reference.path, this.#runtimeConfig.baseDir),
+      const resolved = ModuleConfigUtil.resolveModuleConfigTolerant(reference, this.#runtimeConfig.baseDir);
+      const resolvedRef = {
+        path: resolved.path,
         name: reference.name,
+        optional: reference.optional,
+        loaderType: reference.loaderType,
       };
-
-      const moduleName = ModuleConfigUtil.readModuleNameSync(absoluteRef.path);
-      this.#moduleConfigs[moduleName] = {
-        name: moduleName,
-        reference: absoluteRef,
-        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path),
+      this.#moduleConfigs[resolved.name] = {
+        name: resolved.name,
+        reference: resolvedRef,
+        config: resolved.config,
       };
     }
     for (const moduleConfig of Object.values(this.#moduleConfigs)) {
