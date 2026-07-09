@@ -8,6 +8,23 @@ import { ModuleDescriptorDumper } from '../src/index.js';
 import type { ModuleDescriptor } from '../src/index.js';
 
 describe('test/ModuleDescriptorDumper.test.ts', () => {
+  describe('stringifyDescriptor()', () => {
+    it('should emit valid JSON for clazz without filePath', () => {
+      class MissingFilePath {}
+      const desc: ModuleDescriptor = {
+        name: 'no-file-path',
+        unitPath: '/tmp/no-file-path',
+        clazzList: [MissingFilePath as any],
+        multiInstanceClazzList: [],
+        innerObjectClazzList: [],
+        protos: [],
+      };
+
+      const json = JSON.parse(ModuleDescriptorDumper.stringifyDescriptor(desc));
+      assert.deepEqual(json.clazzList, [{ name: 'MissingFilePath' }]);
+    });
+  });
+
   describe('getDecoratedFiles()', () => {
     const loadUnitPath = path.join(__dirname, 'fixtures/modules/load-unit');
 

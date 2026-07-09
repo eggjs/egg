@@ -54,14 +54,11 @@ export class ModuleDescriptorDumper {
   }
 
   static stringifyClazz(clazz: EggProtoImplClass, moduleDescriptor: ModuleDescriptor): string {
-    return (
-      '{' +
-      `"name": ${JSON.stringify(clazz.name)},` +
-      (PrototypeUtil.getFilePath(clazz)
-        ? `"filePath": ${JSON.stringify(path.relative(moduleDescriptor.unitPath, PrototypeUtil.getFilePath(clazz)!))}`
-        : '') +
-      '}'
-    );
+    const filePath = PrototypeUtil.getFilePath(clazz);
+    return JSON.stringify({
+      name: clazz.name,
+      ...(filePath ? { filePath: path.relative(moduleDescriptor.unitPath, filePath) } : {}),
+    });
   }
 
   static dumpPath(desc: ModuleDescriptor, options?: ModuleDumpOptions): string {
