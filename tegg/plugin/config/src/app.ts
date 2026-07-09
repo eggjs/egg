@@ -96,6 +96,7 @@ export default class App implements ILifecycleBoot {
       const resolvedRef: ModuleReference = {
         path: resolved.path,
         name: reference.name,
+        package: reference.package,
         optional: reference.optional,
         loaderType: reference.loaderType,
       };

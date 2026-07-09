@@ -49,6 +49,10 @@ describe('plugin/tegg/test/ManifestCollection.test.ts', () => {
         .map((r) => r.name)
         .sort((a: string, b: string) => a.localeCompare(b));
       assert.deepStrictEqual(manifestRefNames, appRefNames);
+
+      const appPackages = app.moduleReferences.map((r: any) => r.package).sort();
+      const manifestPackages = teggExt.moduleReferences.map((r) => r.package).sort();
+      assert.deepStrictEqual(manifestPackages, appPackages);
     });
 
     it('should have moduleDescriptors with decoratedFiles', () => {

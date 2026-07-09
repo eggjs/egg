@@ -81,6 +81,7 @@ export class EggModuleLoader {
     return {
       moduleReferences: moduleReferences.map((ref) => ({
         name: ref.name,
+        package: ref.package,
         path: ref.path,
         optional: ref.optional,
         loaderType: ref.loaderType,

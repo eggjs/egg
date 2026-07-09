@@ -1,5 +1,6 @@
 export interface ModuleReference {
   name: string;
+  package?: string;
   path: string;
   optional?: boolean;
   loaderType?: string;

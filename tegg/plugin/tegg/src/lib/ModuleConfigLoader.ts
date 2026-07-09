@@ -60,6 +60,7 @@ export class ModuleConfigLoader {
         name: resolved.name,
         reference: {
           name: resolved.name,
+          package: reference.package,
           path: reference.path,
         },
         config,

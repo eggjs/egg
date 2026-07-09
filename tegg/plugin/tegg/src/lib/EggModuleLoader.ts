@@ -1,6 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
-
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
 import { LoaderFactory, ModuleLoader, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
@@ -31,17 +28,11 @@ export class EggModuleLoader {
     this.pendingBuildHooks.push(hook);
   }
 
-  static #findPackageRoot(dir: string): string | undefined {
-    let current = dir;
-    for (let i = 0; i < 5; i++) {
-      if (fs.existsSync(path.join(current, 'package.json'))) {
-        return fs.realpathSync(current);
-      }
-      const parent = path.dirname(current);
-      if (parent === current) return undefined;
-      current = parent;
+  static #isModulePluginReference(moduleReference: ModuleReference, plugin: { package?: string; path?: string }) {
+    if (moduleReference.package && plugin.package) {
+      return moduleReference.package === plugin.package;
     }
-    return undefined;
+    return !!plugin.path && moduleReference.path === plugin.path;
   }
 
   private async loadApp(): Promise<void> {
@@ -51,15 +42,12 @@ export class EggModuleLoader {
   }
 
   private async buildAppGraph(): Promise<GlobalGraph> {
-    // Promote enabled plugins' module references to non-optional. plugin.path
-    // points INSIDE the package (e.g. <pkg>/src) and may go through a
-    // symlink, while references carry the real package root — resolve before
-    // matching, or the promotion never fires.
+    // Promote enabled plugins' module references to non-optional. Prefer the
+    // npm package identity captured at scan/manifest time; fall back to the old
+    // direct path comparison for pre-package manifest data.
     for (const plugin of Object.values(this.app.plugins)) {
-      if (!plugin.enable || !plugin.path) continue;
-      const packageRoot = EggModuleLoader.#findPackageRoot(plugin.path);
-      if (!packageRoot) continue;
-      const modulePlugin = this.app.moduleReferences.find((t) => t.path === packageRoot);
+      if (!plugin.enable) continue;
+      const modulePlugin = this.app.moduleReferences.find((t) => EggModuleLoader.#isModulePluginReference(t, plugin));
       if (modulePlugin) {
         modulePlugin.optional = false;
       }
@@ -104,6 +92,7 @@ export class EggModuleLoader {
     return {
       moduleReferences: moduleReferences.map((ref) => ({
         name: ref.name,
+        package: ref.package,
         path: ref.path,
         optional: ref.optional,
         loaderType: ref.loaderType,

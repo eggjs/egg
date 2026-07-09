@@ -25,12 +25,15 @@ describe('plugin/config/test/ReadModule.test.ts', () => {
       reference: {
         optional: undefined,
         name: 'moduleA',
+        package: 'module-a',
         path: getFixtures('apps/app-with-modules/app/module-a'),
+        loaderType: undefined,
       },
     });
     expect(app.moduleReferences).toContainEqual({
       optional: undefined,
       name: 'moduleA',
+      package: 'module-a',
       path: getFixtures('apps/app-with-modules/app/module-a'),
     });
     // Framework module plugins are discovered through the default framework

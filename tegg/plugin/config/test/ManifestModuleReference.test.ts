@@ -13,7 +13,9 @@ const moduleDir = getFixtures('apps/app-with-modules/app/module-a');
 // Build a minimal fake Application that feeds module references straight from a
 // tegg manifest extension, mirroring how a bundled worker entry primes the loader
 // without running the globby module scan.
-function createFakeApp(moduleReferences: { name?: string; path: string; optional?: boolean }[]): Application {
+function createFakeApp(
+  moduleReferences: { name?: string; package?: string; path: string; optional?: boolean }[],
+): Application {
   return {
     baseDir,
     config: { tegg: { readModuleOptions: {} } },
@@ -51,7 +53,9 @@ describe('plugin/config/test/ManifestModuleReference.test.ts', () => {
         reference: {
           optional: undefined,
           name: 'moduleA',
+          package: undefined,
           path: moduleDir,
+          loaderType: undefined,
         },
       },
     });

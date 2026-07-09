@@ -13,6 +13,7 @@ export type LoaderCreator = (unitPath: string, loaderFS?: LoaderFS) => Loader;
 
 export interface ManifestModuleReference {
   name: string;
+  package?: string;
   path: string;
   optional?: boolean;
   loaderType?: string;

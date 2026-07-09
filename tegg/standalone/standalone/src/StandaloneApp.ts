@@ -175,6 +175,7 @@ export class StandaloneApp {
       const resolvedRef = {
         path: resolved.path,
         name: reference.name,
+        package: reference.package,
         optional: reference.optional,
         loaderType: reference.loaderType,
       };

@@ -86,15 +86,19 @@ export class ModuleConfigUtil {
         const pkgJson = path.posix.join(moduleReferenceConfig.package, 'package.json');
         const file = importResolve(pkgJson, options);
         const modulePath = path.dirname(file);
+        const pkg = ModuleConfigUtil.readPackageJsonSync(modulePath);
         moduleReference = {
           path: modulePath,
-          name: ModuleConfigUtil.readModuleNameSync(modulePath),
+          name: ModuleConfigUtil.getModuleName(pkg),
+          package: ModuleConfigUtil.getPackageName(pkg),
         };
       } else if (ModuleReferenceConfigHelp.isInlineModuleReference(moduleReferenceConfig)) {
         const modulePath = path.join(configDir, moduleReferenceConfig.path);
+        const pkg = ModuleConfigUtil.readPackageJsonSync(modulePath);
         moduleReference = {
           path: modulePath,
-          name: ModuleConfigUtil.readModuleNameSync(modulePath),
+          name: ModuleConfigUtil.getModuleName(pkg),
+          package: ModuleConfigUtil.getPackageName(pkg),
         };
       } else {
         throw new Error('unknown type of module reference config: ' + JSON.stringify(moduleReferenceConfig));
@@ -144,15 +148,18 @@ export class ModuleConfigUtil {
       }
       moduleDirSet.add(moduleDir);
 
+      let pkg: any;
       let name: string;
       try {
-        name = this.readModuleNameSync(moduleDir);
+        pkg = this.readPackageJsonSync(moduleDir);
+        name = this.getModuleName(pkg);
       } catch {
         continue;
       }
       ref.push({
         path: moduleDir,
         name,
+        package: this.getPackageName(pkg),
       });
     }
     const moduleReferences = this.readModuleFromNodeModules(baseDir);
@@ -163,10 +170,7 @@ export class ModuleConfigUtil {
           throw new Error('duplicate import of module reference: ' + moduleBasePath);
         }
       });
-      ref.push({
-        path: moduleReference.path,
-        name: moduleReference.name,
-      });
+      ref.push(moduleReference);
     }
     return ref;
   }
@@ -194,10 +198,11 @@ export class ModuleConfigUtil {
       const absolutePkgPath = path.dirname(packageJsonPath);
       const realPkgPath = fs.realpathSync(absolutePkgPath);
       try {
-        const name = this.readModuleNameSync(realPkgPath);
+        const pkg = this.readPackageJsonSync(realPkgPath);
         ref.push({
           path: realPkgPath,
-          name,
+          name: this.getModuleName(pkg),
+          package: this.getPackageName(pkg),
         });
       } catch {
         continue;
@@ -219,6 +224,15 @@ export class ModuleConfigUtil {
     return pkg.eggModule.name;
   }
 
+  private static getPackageName(pkg: any): string | undefined {
+    return pkg.name;
+  }
+
+  private static readPackageJsonSync(moduleDir: string): any {
+    const pkgContent = fs.readFileSync(path.join(moduleDir, 'package.json'), 'utf8');
+    return JSON.parse(pkgContent);
+  }
+
   public static async readModuleName(baseDir: string, moduleDir: string): Promise<string> {
     moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
     const pkgContent = await fsPromise.readFile(path.join(moduleDir, 'package.json'), 'utf8');
@@ -228,8 +242,7 @@ export class ModuleConfigUtil {
 
   public static readModuleNameSync(moduleDir: string, baseDir?: string): string {
     moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
-    const pkgContent = fs.readFileSync(path.join(moduleDir, 'package.json'), 'utf8');
-    const pkg = JSON.parse(pkgContent);
+    const pkg = ModuleConfigUtil.readPackageJsonSync(moduleDir);
     return ModuleConfigUtil.getModuleName(pkg);
   }
 

@@ -30,6 +30,7 @@ interface TeggModuleDescriptor {
 
 interface TeggModuleReference {
   name: string;
+  package?: string;
   path: string;
   optional?: boolean;
   loaderType?: string;
