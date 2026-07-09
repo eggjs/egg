@@ -20,6 +20,9 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
   @InjectOptional()
   private readonly logger?: Logger;
 
+  @Inject()
+  private readonly mysqlDataSourceManager: MysqlDataSourceManager;
+
   private get env(): string {
     return this.runtimeConfig.env ?? '';
   }
@@ -43,7 +46,7 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
         }
 
         try {
-          await MysqlDataSourceManager.instance.createDataSource(loadUnit.name, name, dataSourceOptions);
+          await this.mysqlDataSourceManager.createDataSource(loadUnit.name, name, dataSourceOptions);
         } catch (e) {
           if (e instanceof Error) {
             e.message = `create module ${loadUnit.name} datasource ${name} failed: ${e.message}`;
@@ -64,7 +67,7 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
    */
   @LifecycleDestroy()
   async destroyManagers(): Promise<void> {
-    MysqlDataSourceManager.instance.clear();
+    this.mysqlDataSourceManager.clear();
     SqlMapManager.instance.clear();
     TableModelManager.instance.clear();
   }

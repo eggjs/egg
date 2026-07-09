@@ -4,8 +4,7 @@ import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
 
 /**
  * Pins the PUBLIC `mysqlDataSourceManager` injection surface: business
- * modules inject the dal manager by name (the standalone counterpart of the
- * dal plugin's `app.mysqlDataSourceManager` egg extend).
+ * modules inject the dal manager by name.
  */
 @Runner()
 @SingletonProto()

@@ -20,6 +20,9 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
   @Inject()
   private readonly logger: Logger;
 
+  @Inject()
+  private readonly mysqlDataSourceManager: MysqlDataSourceManager;
+
   public async preCreate(ctx: EggPrototypeLifecycleContext): Promise<void> {
     const builder = new TransactionMetaBuilder(ctx.clazz);
     const transactionMetadataList = builder.build();
@@ -56,7 +59,7 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
       const adviceParams: TransactionalParams = {
         propagation: transactionMetadata.propagation,
         dataSourceGetter: () => {
-          const mysqlDataSource = MysqlDataSourceManager.instance.get(moduleName, datasourceName);
+          const mysqlDataSource = this.mysqlDataSourceManager.get(moduleName, datasourceName);
           if (!mysqlDataSource) {
             throw new Error(`method ${clazzName} not found datasource ${datasourceName}`);
           }

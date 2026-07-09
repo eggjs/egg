@@ -89,7 +89,6 @@ exports[`should dal exports stable 1`] = `
     "NO": "NO",
   },
   "MysqlDataSourceManager": [Function],
-  "MysqlDataSourceManagerObject": [Function],
   "RowFormat": {
     "COMPACT": "COMPACT",
     "COMPRESSED": "COMPRESSED",

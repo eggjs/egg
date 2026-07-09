@@ -4,7 +4,8 @@ import path from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
 
-import { MysqlDataSourceManager } from '@eggjs/dal-plugin';
+import type { MysqlDataSourceManager } from '@eggjs/dal-plugin';
+import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { TeggScope } from '@eggjs/tegg-types';
 import { type ModuleConfig, ModuleConfigs, ModuleDescriptorDumper } from '@eggjs/tegg/helper';
 import { importResolve } from '@eggjs/utils';
@@ -429,17 +430,22 @@ describe('standalone/standalone/test/index.test.ts', () => {
   describe('dal manager cleanup', () => {
     it('should clear dal managers when the app is destroyed', async () => {
       const app = new StandaloneApp();
-      // THIS app's per-scope manager instance — survives destroy as a plain
-      // object reference, so we can observe the cleanup.
-      const manager = TeggScope.run(app.scopeBag, () => MysqlDataSourceManager.instance);
+      let manager: MysqlDataSourceManager | undefined;
       try {
         await app.init({ baseDir: path.join(__dirname, './fixtures/dal-module'), env: 'unittest' });
+        // The inner object instance survives destroy as a plain object
+        // reference, so we can observe the cleanup.
+        manager = await TeggScope.run(app.scopeBag, async () => {
+          const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName('mysqlDataSourceManager');
+          return eggObject.obj as MysqlDataSourceManager;
+        });
         assert(manager.get('dal', 'foo'), 'datasource created during init');
       } finally {
         await app.destroy();
       }
       // Cleared by DalModuleLoadUnitHook#destroyManagers (@LifecycleDestroy)
       // when the InnerObjectLoadUnit instance goes down.
+      assert(manager);
       assert.equal(manager.get('dal', 'foo'), undefined);
     });
   });
