@@ -25,9 +25,14 @@ export class ModuleScanner {
   private resolveFrameworkDir(): string | undefined {
     try {
       return getFrameworkPath({ baseDir: this.baseDir });
-    } catch {
+    } catch (err) {
       // No package.json or no resolvable framework next to the app (e.g.
       // bare unit fixtures without node_modules) — app modules only.
+      debug(
+        'resolve framework dir failed, baseDir: %s, err: %s',
+        this.baseDir,
+        err instanceof Error ? err.message : String(err),
+      );
       return undefined;
     }
   }
