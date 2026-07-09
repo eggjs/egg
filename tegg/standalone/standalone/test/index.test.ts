@@ -128,6 +128,17 @@ describe('standalone/standalone/test/index.test.ts', () => {
       });
       assert.equal(msg, 'hello, inner');
     });
+
+    it('should reject removed innerObjects option', async () => {
+      await assert.rejects(
+        main(path.join(__dirname, './fixtures/inner-object'), {
+          innerObjects: {
+            hello: [{ obj: {} }],
+          },
+        } as any),
+        /options\.innerObjects has been removed, use options\.innerObjectHandlers instead/,
+      );
+    });
   });
 
   describe('custom logger option', () => {

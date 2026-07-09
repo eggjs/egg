@@ -56,6 +56,9 @@ export async function appMain<T = void>(
 }
 
 export async function main<T = void>(cwd: string, options?: StandaloneAppOptions): Promise<T> {
+  if (options && 'innerObjects' in options) {
+    throw new Error('[tegg/standalone] options.innerObjects has been removed, use options.innerObjectHandlers instead');
+  }
   return await appMain<T>(
     {
       baseDir: cwd,
