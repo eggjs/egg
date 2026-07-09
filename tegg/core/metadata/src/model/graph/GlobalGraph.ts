@@ -69,6 +69,7 @@ export class GlobalGraph {
   moduleProtoDescriptorMap: Map<string, ProtoDescriptor[]>;
   strict: boolean;
   private buildHooks: GlobalGraphBuildHook[];
+  private protoNameNodeMap: Map<PropertyKey, GraphNode<ProtoNode, ProtoDependencyMeta>[]>;
 
   /**
    * The per-app graph instance used in ModuleLoadUnit, backed by TeggScope: the
@@ -98,6 +99,7 @@ export class GlobalGraph {
     this.strict = options?.strict ?? false;
     this.moduleProtoDescriptorMap = new Map();
     this.buildHooks = [];
+    this.protoNameNodeMap = new Map();
   }
 
   registerBuildHook(hook: GlobalGraphBuildHook): void {
@@ -112,6 +114,12 @@ export class GlobalGraph {
       if (!this.protoGraph.addVertex(protoNode)) {
         throw new Error(`duplicate proto: ${protoNode.val}`);
       }
+      let nodes = this.protoNameNodeMap.get(protoNode.val.proto.name);
+      if (!nodes) {
+        nodes = [];
+        this.protoNameNodeMap.set(protoNode.val.proto.name, nodes);
+      }
+      nodes.push(protoNode);
     }
   }
 
@@ -185,9 +193,8 @@ export class GlobalGraph {
     injectObject: InjectObjectDescriptor,
     qualifiers: QualifierInfo[],
   ): GraphNode<ProtoNode, ProtoDependencyMeta>[] {
-    // TODO perf O(n(proto count)*m(inject count)*n)
     const result: GraphNode<ProtoNode, ProtoDependencyMeta>[] = [];
-    for (const node of this.protoGraph.nodes.values()) {
+    for (const node of this.protoNameNodeMap.get(injectObject.objName) ?? []) {
       if (
         node.val.selectProto({
           name: injectObject.objName,
