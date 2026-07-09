@@ -11,7 +11,10 @@ source_files:
   - tegg/core/runtime/src/impl/EggInnerObjectImpl.ts
   - tegg/standalone/standalone/src/StandaloneApp.ts
   - tegg/plugin/tegg/src/lib/ModuleHandler.ts
-updated_at: 2026-07-04
+  - tegg/plugin/aop/src/app.ts
+  - tegg/plugin/config/src/app.ts
+  - tegg/plugin/dal/src/app.ts
+updated_at: 2026-07-09
 status: active
 ---
 
@@ -49,15 +52,20 @@ Hosts: `StandaloneApp.init()` (standalone) and `ModuleHandler.init()` via
 
 ## Feeding rules
 
-- Scanned modules feed automatically (`innerObjectClazzList`).
-- Built-in framework hooks (AOP `AOP_INNER_OBJECT_CLAZZ_LIST`, DAL
-  `DAL_INNER_OBJECT_CLAZZ_LIST`, ConfigSource) are hard-fed:
-  standalone in `StandaloneApp`, egg via
-  `moduleHandler.registerInnerObjectClazzList()` from the aop/dal plugin
-  boots (configDidLoad; moduleHandler exists because those plugins depend
-  on `tegg`).
-- The builder dedupes by class: a package may be BOTH hard-fed and scanned
-  as an eggModule (e.g. `@eggjs/dal-plugin` as a module dependency).
+- Module scanning is the single feed path: the loader diverts
+  `@InnerObjectProto` / lifecycle proto classes into
+  `ModuleDescriptor.innerObjectClazzList`.
+- Egg (`ModuleHandler.instantiateInnerObjectLoadUnit`) and standalone
+  (`StandaloneApp.#instantiateInnerObjectLoadUnit`) both iterate loaded
+  module descriptors and call
+  `InnerObjectLoadUnitBuilder.addInnerObjectClazzList()`.
+- Built-in AOP / DAL / ConfigSource hooks are ordinary module plugin classes
+  discovered through module references. There are no
+  `AOP_INNER_OBJECT_CLAZZ_LIST` / `DAL_INNER_OBJECT_CLAZZ_LIST` hard-fed
+  lists and no `moduleHandler.registerInnerObjectClazzList()` API.
+- The builder does not silently dedupe classes: duplicate inner-object proto
+  ids are hard errors. Package/path dedupe belongs to module reference
+  discovery before descriptors are loaded.
 - Host-provided instances (`innerObjects` / `innerObjectHandlers`) become
   `ProvidedInnerObjectProto`s. Standalone keeps them PUBLIC (business
   modules inject `moduleConfigs` etc.); the egg host passes PRIVATE for its

@@ -120,3 +120,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `tegg/core/{types,core-decorator,loader,metadata,runtime}`, `tegg/core/aop-runtime`, `tegg/plugin/{tegg,aop,dal}`, `tegg/standalone/standalone`
 - pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
 - note: Ported tegg#325's declarative module plugin core to next and completed it: @InnerObjectProto/@EggLifecycleProto five variants, host-agnostic InnerObjectLoadUnit instantiated before the business graph builds (restores the two-phase ordering so declarative graph build hooks land in-window), egg-host wiring (#325 left app mode out), and conversion of the built-in AOP/DAL/ConfigSource hooks to module plugins on both hosts. Runner renamed to StandaloneApp (no alias). Also fixed plugin/controller's middlewareGraphHook silent no-op (registered on a not-yet-created graph) on branch fix/controller-middleware-graph-hook.
+
+## [2026-07-09] docs | correct tegg module plugin feeding rules
+
+- sources touched: `tegg/core/runtime/src/impl/InnerObjectLoadUnitBuilder.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/plugin/{aop,config,dal}/src/app.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Corrected stale feeding-rule notes: inner object/lifecycle classes now arrive only through `ModuleDescriptor.innerObjectClazzList`; built-in AOP/DAL/ConfigSource hooks are discovered as normal module plugin classes rather than hard-fed lists, and duplicate inner-object proto ids are errors instead of class-level dedupe.
