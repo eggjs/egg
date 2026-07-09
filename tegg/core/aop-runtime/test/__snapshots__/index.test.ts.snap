@@ -2,6 +2,7 @@
 
 exports[`should export stable 1`] = `
 {
+  "AopContextAdviceRegistry": [Function],
   "AopGraphHookRegistrar": [Function],
   "AspectExecutor": [Function],
   "EggObjectAopHook": [Function],
