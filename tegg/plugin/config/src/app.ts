@@ -77,7 +77,7 @@ export default class App implements ILifecycleBoot {
           readModuleOptions.extraFilePattern = [...extraFilePattern, excludePattern];
         }
       }
-      const moduleScanner = new ModuleScanner(this.app.baseDir, readModuleOptions);
+      const moduleScanner = new ModuleScanner(this.app.baseDir, readModuleOptions, this.app.coreLogger);
       moduleReferences = moduleScanner.loadModuleReferences();
 
       if (outDir) {

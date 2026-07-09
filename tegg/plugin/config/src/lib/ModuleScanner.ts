@@ -7,13 +7,19 @@ import { getFrameworkPath } from '@eggjs/utils';
 
 const debug = debuglog('egg/tegg/plugin/config/ModuleScanner');
 
+interface WarnLogger {
+  warn(message: string): void;
+}
+
 export class ModuleScanner {
   private readonly baseDir: string;
   private readonly readModuleOptions: ReadModuleReferenceOptions;
+  private readonly logger?: WarnLogger;
 
-  constructor(baseDir: string, readModuleOptions: ReadModuleReferenceOptions) {
+  constructor(baseDir: string, readModuleOptions: ReadModuleReferenceOptions, logger?: WarnLogger) {
     this.baseDir = baseDir;
     this.readModuleOptions = readModuleOptions;
+    this.logger = logger;
   }
 
   /**
@@ -69,20 +75,57 @@ export class ModuleScanner {
     return frameworkDirs;
   }
 
+  private readAndDeduplicateModuleReferences(baseDir: string): readonly ModuleReference[] {
+    return ModuleConfigUtil.deduplicateModules(
+      ModuleConfigUtil.readModuleReference(baseDir, this.readModuleOptions || {}),
+    );
+  }
+
+  private warnDuplicateModuleName(kept: ModuleReference, skipped: ModuleReference): void {
+    if (kept.path === skipped.path) {
+      return;
+    }
+    const message =
+      `[egg/tegg/plugin/config] Duplicate module name "${skipped.name}" found while scanning framework modules, ` +
+      `keep ${kept.path}, skip ${skipped.path}`;
+    if (this.logger) {
+      this.logger.warn(message);
+    } else {
+      debug(message);
+    }
+  }
+
+  private deduplicateLayeredModuleReferences(moduleReferences: readonly ModuleReference[]): readonly ModuleReference[] {
+    const result: ModuleReference[] = [];
+    const nameMap = new Map<string, ModuleReference>();
+
+    for (const moduleReference of moduleReferences) {
+      const existing = nameMap.get(moduleReference.name);
+      if (existing) {
+        this.warnDuplicateModuleName(existing, moduleReference);
+        continue;
+      }
+      nameMap.set(moduleReference.name, moduleReference);
+      result.push(moduleReference);
+    }
+
+    return result;
+  }
+
   /**
    * - load module references from config or scan from baseDir
    * - load the framework's module plugins as OPTIONAL references
    *   (plugin promotion flips the enabled ones to non-optional)
    */
   loadModuleReferences(): readonly ModuleReference[] {
-    const moduleReferences = ModuleConfigUtil.readModuleReference(this.baseDir, this.readModuleOptions || {});
+    const moduleReferences = this.readAndDeduplicateModuleReferences(this.baseDir);
     const frameworkDirs = this.resolveFrameworkDirs();
     if (!frameworkDirs.length) {
-      return ModuleConfigUtil.deduplicateModules(moduleReferences);
+      return moduleReferences;
     }
     debug('loadModuleReferences from frameworkDirs:%o', frameworkDirs);
     const optionalModuleReferences = frameworkDirs.flatMap((frameworkDir) =>
-      ModuleConfigUtil.readModuleReference(frameworkDir, this.readModuleOptions || {}),
+      this.readAndDeduplicateModuleReferences(frameworkDir),
     );
 
     // Merge all module references and deduplicate
@@ -91,6 +134,6 @@ export class ModuleScanner {
       ...optionalModuleReferences.map((ref) => ({ ...ref, optional: true })),
     ];
 
-    return ModuleConfigUtil.deduplicateModules(allModuleReferences);
+    return this.deduplicateLayeredModuleReferences(allModuleReferences);
   }
 }
