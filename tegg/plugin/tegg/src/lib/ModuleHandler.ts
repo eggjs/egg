@@ -90,8 +90,8 @@ export class ModuleHandler extends Base {
 
       await this.loadUnitLoader.initGraph();
       const innerObjectInstance = await this.instantiateInnerObjectLoadUnit();
+      this.loadUnitInstances.push(innerObjectInstance);
       await this.loadUnitLoader.load();
-      const instances: LoadUnitInstance[] = [innerObjectInstance];
       this.app.module = {} as any;
 
       const businessInstances: LoadUnitInstance[] = [];
@@ -100,11 +100,10 @@ export class ModuleHandler extends Base {
         if (instance.loadUnit.type !== EggLoadUnitType.APP) {
           CompatibleUtil.appCompatible(this.app, instance);
         }
-        instances.push(instance);
+        this.loadUnitInstances.push(instance);
         businessInstances.push(instance);
       }
       CompatibleUtil.contextModuleCompatible(this.app.context, businessInstances);
-      this.loadUnitInstances = instances;
       this.ready(true);
     } catch (e) {
       this.ready(e as Error);
@@ -113,22 +112,34 @@ export class ModuleHandler extends Base {
   }
 
   async destroy(): Promise<void> {
+    const errors: unknown[] = [];
+    const safe = async (destroy: () => Promise<void>) => {
+      try {
+        await destroy();
+      } catch (e) {
+        errors.push(e);
+      }
+    };
+
     // Reverse creation order: business load units go down first, the
     // InnerObjectLoadUnit last — its lifecycle protos stay registered until
     // every object they may hook has been destroyed.
     if (this.loadUnitInstances) {
       for (const instance of [...this.loadUnitInstances].reverse()) {
-        await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);
+        await safe(() => LoadUnitInstanceFactory.destroyLoadUnitInstance(instance));
       }
     }
     if (this.loadUnits) {
       for (const loadUnit of [...this.loadUnits].reverse()) {
-        await LoadUnitFactory.destroyLoadUnit(loadUnit);
+        await safe(() => LoadUnitFactory.destroyLoadUnit(loadUnit));
       }
     }
     if (this.#innerObjectLoadUnit) {
-      await LoadUnitFactory.destroyLoadUnit(this.#innerObjectLoadUnit);
+      await safe(() => LoadUnitFactory.destroyLoadUnit(this.#innerObjectLoadUnit!));
       this.#innerObjectLoadUnit = undefined;
+    }
+    if (errors.length) {
+      throw new AggregateError(errors, 'destroy tegg module handler failed');
     }
   }
 }
