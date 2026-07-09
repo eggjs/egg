@@ -36,6 +36,8 @@ export type EggPrototypeImplClass = new (
   injectType?: InjectType,
   multiInstanceConstructorIndex?: number,
   multiInstanceConstructorAttributes?: QualifierAttribute[],
+  defineModuleName?: string,
+  defineUnitPath?: string,
 ) => EggPrototype;
 
 export class EggPrototypeBuilder {
@@ -52,6 +54,8 @@ export class EggPrototypeBuilder {
   private className?: string;
   private multiInstanceConstructorIndex?: number;
   private multiInstanceConstructorAttributes?: QualifierAttribute[];
+  private defineModuleName?: string;
+  private defineUnitPath?: string;
   private protoImplClass: EggPrototypeImplClass = EggPrototypeImpl;
 
   static create(ctx: EggPrototypeLifecycleContext): EggPrototype {
@@ -60,26 +64,32 @@ export class EggPrototypeBuilder {
 
   static createWithProtoImpl(ctx: EggPrototypeLifecycleContext, protoImplClass: EggPrototypeImplClass): EggPrototype {
     const { clazz, loadUnit } = ctx;
+    const prototypeInfo = ctx.prototypeInfo as typeof ctx.prototypeInfo & {
+      defineModuleName?: string;
+      defineUnitPath?: string;
+    };
     const filepath = PrototypeUtil.getFilePath(clazz);
     assert(filepath, 'not find filepath');
     const builder = new EggPrototypeBuilder();
     builder.protoImplClass = protoImplClass;
     builder.clazz = clazz;
-    builder.name = ctx.prototypeInfo.name;
-    builder.className = ctx.prototypeInfo.className;
-    builder.initType = ctx.prototypeInfo.initType;
-    builder.accessLevel = ctx.prototypeInfo.accessLevel;
+    builder.name = prototypeInfo.name;
+    builder.className = prototypeInfo.className;
+    builder.initType = prototypeInfo.initType;
+    builder.accessLevel = prototypeInfo.accessLevel;
     builder.filepath = filepath!;
     builder.injectType = PrototypeUtil.getInjectType(clazz);
     builder.injectObjects = PrototypeUtil.getInjectObjects(clazz) || [];
     builder.loadUnit = loadUnit;
     builder.qualifiers = QualifierUtil.mergeQualifiers(
       QualifierUtil.getProtoQualifiers(clazz),
-      ctx.prototypeInfo.qualifiers ?? [],
+      prototypeInfo.qualifiers ?? [],
     );
-    builder.properQualifiers = ctx.prototypeInfo.properQualifiers ?? {};
+    builder.properQualifiers = prototypeInfo.properQualifiers ?? {};
     builder.multiInstanceConstructorIndex = PrototypeUtil.getMultiInstanceConstructorIndex(clazz);
     builder.multiInstanceConstructorAttributes = PrototypeUtil.getMultiInstanceConstructorAttributes(clazz);
+    builder.defineModuleName = prototypeInfo.defineModuleName;
+    builder.defineUnitPath = prototypeInfo.defineUnitPath;
     return builder.build();
   }
 
@@ -107,6 +117,8 @@ export class EggPrototypeBuilder {
       this.injectType,
       this.multiInstanceConstructorIndex,
       this.multiInstanceConstructorAttributes,
+      this.defineModuleName,
+      this.defineUnitPath,
     );
   }
 }

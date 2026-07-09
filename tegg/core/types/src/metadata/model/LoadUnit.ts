@@ -14,6 +14,7 @@ export type EggLoadUnitTypeLike = EggLoadUnitType | string;
 
 export interface LoadUnitLifecycleContext extends LifecycleContext {
   unitPath: string;
+  unitName?: string;
   loader: Loader;
 }
 

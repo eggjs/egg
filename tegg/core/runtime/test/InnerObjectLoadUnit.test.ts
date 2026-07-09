@@ -257,9 +257,20 @@ describe('core/runtime/test/InnerObjectLoadUnit.test.ts', () => {
     const loadUnit = await builder.createLoadUnit({ innerObjects: {} });
     let instance: LoadUnitInstance | undefined;
     try {
-      assert.throws(() => {
-        EggPrototypeFactory.instance.getPrototype('sharedInner', loadUnit);
-      }, /multi proto found/);
+      assert.throws(
+        () => {
+          EggPrototypeFactory.instance.getPrototype('sharedInner', loadUnit);
+        },
+        (err) => {
+          assert(err instanceof Error);
+          assert.match(err.message, /multi proto found/);
+          assert.match(err.message, /define:module-a@\/module-a/);
+          assert.match(err.message, /define:module-b@\/module-b/);
+          assert.match(err.message, /Symbol\(Qualifier\.DefineModule\)=module-a/);
+          assert.match(err.message, /Symbol\(Qualifier\.DefineModule\)=module-b/);
+          return true;
+        },
+      );
       const moduleAProto = EggPrototypeFactory.instance.getPrototype('sharedInner', loadUnit, [
         {
           attribute: DefineModuleQualifierAttribute,
@@ -308,6 +319,14 @@ describe('core/runtime/test/InnerObjectLoadUnit.test.ts', () => {
     });
     let instance: LoadUnitInstance | undefined;
     try {
+      const providedProto = EggPrototypeFactory.instance.getPrototype('sharedHostObject', loadUnit, [
+        {
+          attribute: DefineModuleQualifierAttribute,
+          value: 'app',
+        },
+      ]);
+      assert.equal(providedProto.getQualifier(DefineModuleQualifierAttribute), 'app');
+
       instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
       const consumerProto = EggPrototypeFactory.instance.getPrototype('providedInnerConsumer', loadUnit);
       const consumer = (instance as any).getEggObject('providedInnerConsumer', consumerProto)

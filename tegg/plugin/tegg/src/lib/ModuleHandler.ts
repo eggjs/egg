@@ -16,6 +16,7 @@ export class ModuleHandler extends Base {
   // units: init iterates business units without filtering, destroy tears it
   // down last (its lifecycle protos must outlive every hooked object).
   #innerObjectLoadUnit?: LoadUnit;
+  #innerObjectLoadUnitInstance?: LoadUnitInstance;
   loadUnitInstances: LoadUnitInstance[] = [];
 
   private readonly loadUnitLoader: EggModuleLoader;
@@ -90,6 +91,7 @@ export class ModuleHandler extends Base {
 
       await this.loadUnitLoader.initGraph();
       const innerObjectInstance = await this.instantiateInnerObjectLoadUnit();
+      this.#innerObjectLoadUnitInstance = innerObjectInstance;
       this.loadUnitInstances.push(innerObjectInstance);
       await this.loadUnitLoader.load();
       this.app.module = {} as any;
@@ -121,11 +123,13 @@ export class ModuleHandler extends Base {
       }
     };
 
-    // Reverse creation order: business load units go down first, the
-    // InnerObjectLoadUnit last — its lifecycle protos stay registered until
-    // every object they may hook has been destroyed.
+    // Reverse creation order: business load units go down first; the inner
+    // instance and load unit go down after business load-unit metadata so its
+    // lifecycle protos still observe LoadUnitFactory.destroyLoadUnit().
+    const innerObjectLoadUnitInstance = this.#innerObjectLoadUnitInstance ?? this.loadUnitInstances[0];
     if (this.loadUnitInstances) {
-      for (const instance of [...this.loadUnitInstances].reverse()) {
+      const businessInstances = this.loadUnitInstances.filter((instance) => instance !== innerObjectLoadUnitInstance);
+      for (const instance of [...businessInstances].reverse()) {
         await safe(() => LoadUnitInstanceFactory.destroyLoadUnitInstance(instance));
       }
     }
@@ -133,6 +137,10 @@ export class ModuleHandler extends Base {
       for (const loadUnit of [...this.loadUnits].reverse()) {
         await safe(() => LoadUnitFactory.destroyLoadUnit(loadUnit));
       }
+    }
+    if (innerObjectLoadUnitInstance) {
+      await safe(() => LoadUnitInstanceFactory.destroyLoadUnitInstance(innerObjectLoadUnitInstance));
+      this.#innerObjectLoadUnitInstance = undefined;
     }
     if (this.#innerObjectLoadUnit) {
       await safe(() => LoadUnitFactory.destroyLoadUnit(this.#innerObjectLoadUnit!));

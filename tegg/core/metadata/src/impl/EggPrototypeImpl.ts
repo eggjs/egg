@@ -25,6 +25,8 @@ export class EggPrototypeImpl implements EggPrototype {
   readonly injectObjects: Array<InjectObjectProto | InjectConstructorProto>;
   readonly injectType: InjectType;
   readonly loadUnitId: Id;
+  readonly defineModuleName?: string;
+  readonly defineUnitPath?: string;
   readonly className?: string;
   readonly multiInstanceConstructorIndex?: number;
   readonly multiInstanceConstructorAttributes?: QualifierAttribute[];
@@ -44,6 +46,8 @@ export class EggPrototypeImpl implements EggPrototype {
     injectType?: InjectType,
     multiInstanceConstructorIndex?: number,
     multiInstanceConstructorAttributes?: QualifierAttribute[],
+    defineModuleName?: string,
+    defineUnitPath?: string,
   ) {
     this.id = id;
     this.clazz = clazz;
@@ -58,6 +62,8 @@ export class EggPrototypeImpl implements EggPrototype {
     this.injectType = injectType || InjectType.PROPERTY;
     this.multiInstanceConstructorIndex = multiInstanceConstructorIndex;
     this.multiInstanceConstructorAttributes = multiInstanceConstructorAttributes;
+    this.defineModuleName = defineModuleName;
+    this.defineUnitPath = defineUnitPath;
   }
 
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean {

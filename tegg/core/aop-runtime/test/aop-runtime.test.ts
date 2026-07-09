@@ -13,6 +13,7 @@ import { describe, beforeEach, afterEach, it } from 'vitest';
 import { Hello } from './fixtures/modules/hello_succeed/Hello.js';
 
 import { crossCutGraphHook } from '../src/CrossCutGraphHook.js';
+import { AopContextAdviceRegistry } from '../src/AopContextAdviceRegistry.js';
 import { EggObjectAopHook } from '../src/EggObjectAopHook.js';
 import { EggPrototypeCrossCutHook } from '../src/EggPrototypeCrossCutHook.js';
 import { LoadUnitAopHook } from '../src/LoadUnitAopHook.js';
@@ -21,6 +22,13 @@ import { HelloConstructorInject } from './fixtures/modules/constructor_inject_ao
 import { CallTrace } from './fixtures/modules/hello_cross_cut/CallTrace.js';
 import { crosscutAdviceParams } from './fixtures/modules/hello_cross_cut/HelloCrossCut.js';
 import { pointcutAdviceParams } from './fixtures/modules/hello_point_cut/HelloPointCut.js';
+
+function createLoadUnitAopHook(crosscutAdviceFactory: CrosscutAdviceFactory): LoadUnitAopHook {
+  const loadUnitAopHook = new LoadUnitAopHook();
+  Reflect.set(loadUnitAopHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
+  Reflect.set(loadUnitAopHook, 'aopContextAdviceRegistry', new AopContextAdviceRegistry());
+  return loadUnitAopHook;
+}
 
 describe('test/aop-runtime.test.ts', () => {
   afterEach(() => {
@@ -37,8 +45,7 @@ describe('test/aop-runtime.test.ts', () => {
     beforeEach(async () => {
       crosscutAdviceFactory = new CrosscutAdviceFactory();
       eggObjectAopHook = new EggObjectAopHook();
-      loadUnitAopHook = new LoadUnitAopHook();
-      Reflect.set(loadUnitAopHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
+      loadUnitAopHook = createLoadUnitAopHook(crosscutAdviceFactory);
       eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook();
       Reflect.set(eggPrototypeCrossCutHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
       EggPrototypeLifecycleUtil.registerLifecycle(eggPrototypeCrossCutHook);
@@ -167,8 +174,7 @@ describe('test/aop-runtime.test.ts', () => {
     beforeEach(async () => {
       crosscutAdviceFactory = new CrosscutAdviceFactory();
       eggObjectAopHook = new EggObjectAopHook();
-      loadUnitAopHook = new LoadUnitAopHook();
-      Reflect.set(loadUnitAopHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
+      loadUnitAopHook = createLoadUnitAopHook(crosscutAdviceFactory);
       eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook();
       Reflect.set(eggPrototypeCrossCutHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
       EggPrototypeLifecycleUtil.registerLifecycle(eggPrototypeCrossCutHook);
@@ -195,8 +201,7 @@ describe('test/aop-runtime.test.ts', () => {
     beforeEach(async () => {
       crosscutAdviceFactory = new CrosscutAdviceFactory();
       eggObjectAopHook = new EggObjectAopHook();
-      loadUnitAopHook = new LoadUnitAopHook();
-      Reflect.set(loadUnitAopHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
+      loadUnitAopHook = createLoadUnitAopHook(crosscutAdviceFactory);
       eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook();
       Reflect.set(eggPrototypeCrossCutHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
       EggPrototypeLifecycleUtil.registerLifecycle(eggPrototypeCrossCutHook);

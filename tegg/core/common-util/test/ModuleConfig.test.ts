@@ -137,7 +137,7 @@ describe('test/ModuleConfig.test.ts', () => {
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
         assert.deepStrictEqual(ref, [
           { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA', package: 'module-a' },
-          { path: path.join(fixturesPath, 'app/module-b'), name: 'moduleB', package: 'module-b' },
+          { path: path.join(fixturesPath, 'app/module-b'), name: 'moduleB', package: 'module-b', optional: true },
         ]);
       });
     });
@@ -153,6 +153,7 @@ describe('test/ModuleConfig.test.ts', () => {
             path: path.join(fixturesPath, 'node_modules/module-a'),
             name: 'moduleA',
             package: 'module-a',
+            optional: true,
           },
         ]);
       });

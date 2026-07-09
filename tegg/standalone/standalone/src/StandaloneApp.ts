@@ -169,9 +169,8 @@ export class StandaloneApp {
     this.#runtimeConfig.env = opts.env ?? '';
     this.#runtimeConfig.baseDir = opts.baseDir;
 
-    // load module.yml and module.env.yml by default
-    // Always set configNames for this app invocation, since destroy() clears it
-    // asynchronously and may not have completed before the next app is created.
+    // Load module.yml and module.env.yml by default. The override is scoped to
+    // this app's TeggScope bag.
     ModuleConfigUtil.configNames = opts.env ? ['module.default', `module.${opts.env}`] : ['module.default'];
   }
 
@@ -406,7 +405,7 @@ export class StandaloneApp {
     // Framework hooks (ConfigSource/AOP/DAL) live in the InnerObjectLoadUnit
     // and deregister themselves — and clean up their own managers — when it
     // is destroyed above (dal: DalModuleLoadUnitHook#destroy).
-    // clear configNames
+    // Release this app's scoped config name override before unregistering the scope.
     ModuleConfigUtil.setConfigNames(undefined);
   }
 }

@@ -14,11 +14,18 @@ interface WarnLogger {
 export class ModuleScanner {
   private readonly baseDir: string;
   private readonly readModuleOptions: ReadModuleReferenceOptions;
+  private readonly appReadModuleOptions: ReadModuleReferenceOptions;
   private readonly logger?: WarnLogger;
 
-  constructor(baseDir: string, readModuleOptions: ReadModuleReferenceOptions, logger?: WarnLogger) {
+  constructor(
+    baseDir: string,
+    readModuleOptions: ReadModuleReferenceOptions,
+    logger?: WarnLogger,
+    appReadModuleOptions: ReadModuleReferenceOptions = readModuleOptions,
+  ) {
     this.baseDir = baseDir;
     this.readModuleOptions = readModuleOptions;
+    this.appReadModuleOptions = appReadModuleOptions;
     this.logger = logger;
   }
 
@@ -76,13 +83,12 @@ export class ModuleScanner {
     return frameworkDirs;
   }
 
-  private readAndDeduplicateModuleReferences(baseDir: string, cwd?: string): readonly ModuleReference[] {
-    return ModuleConfigUtil.deduplicateModules(
-      ModuleConfigUtil.readModuleReference(baseDir, {
-        ...this.readModuleOptions,
-        ...(cwd ? { cwd } : {}),
-      }),
-    );
+  private readModuleReferences(baseDir: string, cwd?: string): readonly ModuleReference[] {
+    const readModuleOptions = cwd ? this.readModuleOptions : this.appReadModuleOptions;
+    return ModuleConfigUtil.readModuleReference(baseDir, {
+      ...readModuleOptions,
+      ...(cwd ? { cwd } : {}),
+    });
   }
 
   private warnDuplicateModuleName(kept: ModuleReference, skipped: ModuleReference): void {
@@ -90,7 +96,7 @@ export class ModuleScanner {
       return;
     }
     const message =
-      `[egg/tegg/plugin/config] Duplicate module name "${skipped.name}" found while scanning framework modules, ` +
+      `[egg/tegg/plugin/config] Duplicate module name "${skipped.name}" found while scanning module references, ` +
       `keep ${kept.path}, skip ${skipped.path}`;
     if (this.logger) {
       this.logger.warn(message);
@@ -122,14 +128,11 @@ export class ModuleScanner {
    *   (plugin promotion flips the enabled ones to non-optional)
    */
   loadModuleReferences(): readonly ModuleReference[] {
-    const moduleReferences = this.readAndDeduplicateModuleReferences(this.baseDir);
+    const moduleReferences = this.readModuleReferences(this.baseDir);
     const frameworkDirs = this.resolveFrameworkDirs();
-    if (!frameworkDirs.length) {
-      return moduleReferences;
-    }
     debug('loadModuleReferences from frameworkDirs:%o', frameworkDirs);
     const optionalModuleReferences = frameworkDirs.flatMap((frameworkDir) =>
-      this.readAndDeduplicateModuleReferences(frameworkDir, frameworkDir),
+      this.readModuleReferences(frameworkDir, frameworkDir),
     );
 
     // Merge all module references and deduplicate

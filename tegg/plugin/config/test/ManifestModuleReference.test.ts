@@ -71,4 +71,12 @@ describe('plugin/config/test/ManifestModuleReference.test.ts', () => {
 
     expect(app.moduleConfigs.moduleA.reference.path).toBe(moduleDir);
   });
+
+  it('stores the resolved module name on manifest references without name', () => {
+    const app = createFakeApp([{ path: 'app/module-a' }]);
+
+    new App(app).configWillLoad();
+
+    expect(app.moduleConfigs.moduleA.reference.name).toBe('moduleA');
+  });
 });

@@ -319,6 +319,9 @@ export class ModuleLoadUnit implements LoadUnit {
   }
 
   static createModule(ctx: LoadUnitLifecycleContext): ModuleLoadUnit {
+    if (ctx.unitName) {
+      return new ModuleLoadUnit(ctx.unitName, ctx.unitPath);
+    }
     const pkgPath = path.join(ctx.unitPath, 'package.json');
     const pkg: { eggModule?: { name: string } } = JSON.parse(readFileSync(pkgPath, 'utf-8'));
     assert(pkg.eggModule, `module config not found in package ${pkgPath}`);

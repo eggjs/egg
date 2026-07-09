@@ -92,7 +92,15 @@ export class ModuleDescriptorDumper {
 
   static async dump(desc: ModuleDescriptor, options?: ModuleDumpOptions): Promise<void> {
     const dumpPath = ModuleDescriptorDumper.dumpPath(desc, options);
-    await fs.mkdir(path.dirname(dumpPath), { recursive: true });
-    await fs.writeFile(dumpPath, ModuleDescriptorDumper.stringifyDescriptor(desc));
+    const dumpDir = path.dirname(dumpPath);
+    await fs.mkdir(dumpDir, { recursive: true });
+    const tmpDir = await fs.mkdtemp(path.join(dumpDir, '.tmp-'));
+    const tmpPath = path.join(tmpDir, path.basename(dumpPath));
+    try {
+      await fs.writeFile(tmpPath, ModuleDescriptorDumper.stringifyDescriptor(desc));
+      await fs.rename(tmpPath, dumpPath);
+    } finally {
+      await fs.rm(tmpDir, { recursive: true, force: true });
+    }
   }
 }

@@ -70,14 +70,23 @@ export default class App implements ILifecycleBoot {
       // Auto-exclude outDir (e.g. dist/) from module scanning to avoid
       // duplicate modules when both source and compiled output exist
       const outDir = this.app.loader.outDir;
+      let appReadModuleOptions = readModuleOptions;
       if (outDir) {
         const extraFilePattern = readModuleOptions.extraFilePattern || [];
         const excludePattern = `!**/${outDir}`;
         if (!extraFilePattern.includes(excludePattern)) {
-          readModuleOptions.extraFilePattern = [...extraFilePattern, excludePattern];
+          appReadModuleOptions = {
+            ...readModuleOptions,
+            extraFilePattern: [...extraFilePattern, excludePattern],
+          };
         }
       }
-      const moduleScanner = new ModuleScanner(this.app.baseDir, readModuleOptions, this.app.coreLogger);
+      const moduleScanner = new ModuleScanner(
+        this.app.baseDir,
+        readModuleOptions,
+        this.app.coreLogger,
+        appReadModuleOptions,
+      );
       moduleReferences = moduleScanner.loadModuleReferences();
 
       if (outDir) {
@@ -95,7 +104,7 @@ export default class App implements ILifecycleBoot {
       const resolved = ModuleConfigUtil.resolveModuleConfigTolerant(reference, this.app.baseDir);
       const resolvedRef: ModuleReference = {
         path: resolved.path,
-        name: reference.name,
+        name: resolved.name,
         package: reference.package,
         optional: reference.optional,
         loaderType: reference.loaderType,

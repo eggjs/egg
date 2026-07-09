@@ -17,7 +17,7 @@ export class LoadUnitAopHook implements LifecycleHook<LoadUnitLifecycleContext, 
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
 
   @Inject()
-  private readonly aopContextAdviceRegistry: AopContextAdviceRegistry = new AopContextAdviceRegistry();
+  private readonly aopContextAdviceRegistry: AopContextAdviceRegistry;
 
   async postCreate(_: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
     for (const proto of loadUnit.iterateEggPrototype()) {

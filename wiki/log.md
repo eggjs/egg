@@ -126,3 +126,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `tegg/core/runtime/src/impl/InnerObjectLoadUnitBuilder.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/plugin/{aop,config,dal}/src/app.ts`
 - pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
 - note: Corrected stale feeding-rule notes: inner object/lifecycle classes now arrive only through `ModuleDescriptor.innerObjectClazzList`; built-in AOP/DAL/ConfigSource hooks are discovered as normal module plugin classes rather than hard-fed lists, and duplicate inner-object proto ids are errors instead of class-level dedupe.
+
+## [2026-07-09] docs | align tegg module plugin notes with review fixes
+
+- sources touched: `tegg/plugin/aop/src/lib/AopContextHook.ts`, `tegg/core/aop-runtime/src/AopContextAdviceRegistry.ts`, `tegg/core/aop-runtime/src/LoadUnitAopHook.ts`, `tegg/plugin/dal/src/index.ts`, `tegg/plugin/dal/src/lib/DalModuleLoadUnitHook.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Replaced stale DAL source paths and updated the AOP note after `AopContextHook` moved to lifecycle-proto/inner-object registration backed by `AopContextAdviceRegistry`.

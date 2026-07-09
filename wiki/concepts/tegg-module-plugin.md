@@ -11,9 +11,14 @@ source_files:
   - tegg/core/runtime/src/impl/EggInnerObjectImpl.ts
   - tegg/standalone/standalone/src/StandaloneApp.ts
   - tegg/plugin/tegg/src/lib/ModuleHandler.ts
+  - tegg/plugin/tegg/src/lib/EggModuleLoader.ts
   - tegg/plugin/aop/src/app.ts
+  - tegg/plugin/aop/src/lib/AopContextHook.ts
+  - tegg/core/aop-runtime/src/AopContextAdviceRegistry.ts
+  - tegg/core/aop-runtime/src/LoadUnitAopHook.ts
   - tegg/plugin/config/src/app.ts
-  - tegg/plugin/dal/src/app.ts
+  - tegg/plugin/dal/src/index.ts
+  - tegg/plugin/dal/src/lib/DalModuleLoadUnitHook.ts
 updated_at: 2026-07-09
 status: active
 ---
@@ -82,6 +87,7 @@ Hosts: `StandaloneApp.init()` (standalone) and `ModuleHandler.init()` via
 - `frameworkDeps` (StandaloneApp option) scans framework module packages
   ahead of app modules; app mode has no frameworkDeps — plugins enter via
   the egg plugin shell + eggModule scanning.
-- Inference: hooks needing egg-only resources (`EggQualifierProtoHook`
-  captures `app`; `EggContextCompatibleHook`/`AopContextHook` snapshot
-  init products) intentionally stay host-registered.
+- Inference: hooks that truly capture egg-only resources
+  (`EggQualifierProtoHook`, `EggContextCompatibleHook`) stay host-registered.
+  `AopContextHook` is now an `@EggContextLifecycleProto` inner object and
+  reads request-scope advice from `AopContextAdviceRegistry`.

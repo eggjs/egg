@@ -2,11 +2,12 @@ import assert from 'node:assert/strict';
 import { mock } from 'node:test';
 // import { scheduler } from 'node:timers/promises';
 
-import { GlobalGraph } from '@eggjs/metadata';
+import { EggLoadUnitType, GlobalGraph, LoadUnitFactory } from '@eggjs/metadata';
 import { mm } from '@eggjs/mock';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { describe, it, afterEach } from 'vitest';
 
+import TeggAppBoot from '../../src/app.ts';
 import { EggModuleLoader } from '../../src/lib/EggModuleLoader.ts';
 import { getAppBaseDir } from '../utils.ts';
 
@@ -33,7 +34,7 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
         name: 'disabledPlugin',
         package: 'disabled-plugin',
         path: '/virtual/disabled-plugin',
-        optional: true,
+        optional: false,
       },
       {
         name: 'samePathDifferentPackage',
@@ -41,10 +42,46 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
         path: '/virtual/same-path',
         optional: true,
       },
+      {
+        name: 'regularAppModule',
+        package: 'regular-app-module',
+        path: '/virtual/regular-app-module',
+        optional: false,
+      },
+      {
+        name: 'disabledPathPlugin',
+        path: '/disabled/path-plugin',
+        optional: false,
+      },
     ];
     const app = {
       baseDir: '/virtual/app',
       loader: {
+        allPlugins: {
+          teggConfig: {
+            enable: true,
+            package: '@eggjs/tegg-config',
+            path: '/some/plugin/path/inside-package',
+          },
+          legacyPlugin: {
+            enable: true,
+            path: '/legacy/plugin/path',
+          },
+          disabledPlugin: {
+            enable: false,
+            package: 'disabled-plugin',
+            path: '/virtual/disabled-plugin',
+          },
+          samePathDifferentPackage: {
+            enable: true,
+            package: 'plugin-package',
+            path: '/virtual/same-path',
+          },
+          disabledPathPlugin: {
+            enable: false,
+            path: '/disabled/path-plugin',
+          },
+        },
         loaderFS: undefined,
         manifest: {
           getExtension: () => undefined,
@@ -64,11 +101,6 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
         legacyPlugin: {
           enable: true,
           path: '/legacy/plugin/path',
-        },
-        disabledPlugin: {
-          enable: false,
-          package: 'disabled-plugin',
-          path: '/virtual/disabled-plugin',
         },
         samePathDifferentPackage: {
           enable: true,
@@ -91,6 +123,129 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
     assert.equal(moduleReferences[1].optional, false);
     assert.equal(moduleReferences[2].optional, true);
     assert.equal(moduleReferences[3].optional, true);
+    assert.equal(moduleReferences[4].optional, false);
+    assert.equal(moduleReferences[5].optional, true);
+  });
+
+  it('should reconcile module plugin references before collecting metadata manifest', async () => {
+    const moduleReferences = [
+      {
+        name: 'teggConfig',
+        package: '@eggjs/tegg-config',
+        path: '/virtual/tegg-config',
+        optional: true,
+      },
+      {
+        name: 'disabledPlugin',
+        package: 'disabled-plugin',
+        path: '/virtual/disabled-plugin',
+        optional: false,
+      },
+    ];
+    const extensions = new Map<string, unknown>();
+    const app = {
+      moduleReferences,
+      loader: {
+        allPlugins: {
+          teggConfig: {
+            enable: true,
+            package: '@eggjs/tegg-config',
+            path: '/virtual/tegg-config',
+          },
+          disabledPlugin: {
+            enable: false,
+            package: 'disabled-plugin',
+            path: '/virtual/disabled-plugin',
+          },
+        },
+        manifest: {
+          setExtension(key: string, value: unknown) {
+            extensions.set(key, value);
+          },
+        },
+      },
+      plugins: {
+        teggConfig: {
+          enable: true,
+          package: '@eggjs/tegg-config',
+          path: '/virtual/tegg-config',
+        },
+      },
+    } as any;
+
+    mock.method(LoaderFactory, 'loadApp', async () => []);
+
+    await new TeggAppBoot(app).loadMetadata();
+
+    assert.equal(moduleReferences[0].optional, false);
+    assert.equal(moduleReferences[1].optional, true);
+    assert.deepEqual(extensions.get('tegg'), {
+      moduleReferences: [
+        {
+          name: 'teggConfig',
+          package: '@eggjs/tegg-config',
+          path: '/virtual/tegg-config',
+          optional: false,
+          loaderType: undefined,
+        },
+        {
+          name: 'disabledPlugin',
+          package: 'disabled-plugin',
+          path: '/virtual/disabled-plugin',
+          optional: true,
+          loaderType: undefined,
+        },
+      ],
+      moduleDescriptors: [],
+    });
+  });
+
+  it('should pass manifest module name when creating bundled module load units', async () => {
+    const app = {
+      loader: {
+        loaderFS: undefined,
+        manifest: {
+          getExtension: () => ({
+            moduleDescriptors: [
+              {
+                name: 'bundledModule',
+                unitPath: '/virtual/bundled-module',
+                decoratedFiles: ['src/index.ts'],
+              },
+            ],
+          }),
+        },
+      },
+      moduleHandler: {
+        loadUnits: [],
+      },
+    } as any;
+    const moduleLoader = new EggModuleLoader(app);
+    moduleLoader.globalGraph = {
+      build() {},
+      sort() {},
+      moduleConfigList: [
+        {
+          name: 'bundledModule',
+          path: '/virtual/bundled-module',
+        },
+      ],
+    } as any;
+    (moduleLoader as any).loadedFromManifest = true;
+
+    const calls: unknown[][] = [];
+    mock.method(LoadUnitFactory, 'createLoadUnit', async (...args: unknown[]) => {
+      calls.push(args);
+      return { name: 'bundledModule', unitPath: '/virtual/bundled-module' };
+    });
+
+    await (moduleLoader as any).loadModule();
+
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0][0], '/virtual/bundled-module');
+    assert.equal(calls[0][1], EggLoadUnitType.MODULE);
+    assert.equal(calls[0][3], 'bundledModule');
+    assert.equal(app.moduleHandler.loadUnits.length, 1);
   });
 
   describe('has recursive dependency module', () => {

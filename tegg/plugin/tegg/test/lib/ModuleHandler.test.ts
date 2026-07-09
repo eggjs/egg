@@ -76,15 +76,18 @@ describe('plugin/tegg/test/lib/ModuleHandler.test.ts', () => {
     handler.loadUnitInstances.push(createInstance('inner'), createInstance('business'));
     handler.loadUnits.push(firstLoadUnit, secondLoadUnit);
 
+    const destroyed: string[] = [];
     const destroyedInstances: string[] = [];
     const destroyedLoadUnits: string[] = [];
     mock.method(LoadUnitInstanceFactory, 'destroyLoadUnitInstance', async (instance: LoadUnitInstance) => {
+      destroyed.push(`instance:${String(instance.loadUnit.name)}`);
       destroyedInstances.push(String(instance.loadUnit.name));
       if (instance.loadUnit.name === 'business') {
         throw new Error('destroy instance failed');
       }
     });
     mock.method(LoadUnitFactory, 'destroyLoadUnit', async (loadUnit: LoadUnit) => {
+      destroyed.push(`loadUnit:${String(loadUnit.name)}`);
       destroyedLoadUnits.push(String(loadUnit.name));
       if (loadUnit === firstLoadUnit) {
         throw new Error('destroy load unit failed');
@@ -102,5 +105,6 @@ describe('plugin/tegg/test/lib/ModuleHandler.test.ts', () => {
     );
     assert.deepEqual(destroyedInstances, ['business', 'inner']);
     assert.deepEqual(destroyedLoadUnits, ['second', 'first']);
+    assert.deepEqual(destroyed, ['instance:business', 'loadUnit:second', 'loadUnit:first', 'instance:inner']);
   });
 });

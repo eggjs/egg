@@ -91,6 +91,7 @@ export class ModuleConfigUtil {
           path: modulePath,
           name: ModuleConfigUtil.getModuleName(pkg),
           package: ModuleConfigUtil.getPackageName(pkg),
+          ...(moduleReferenceConfig.optional === undefined ? {} : { optional: moduleReferenceConfig.optional }),
         };
       } else if (ModuleReferenceConfigHelp.isInlineModuleReference(moduleReferenceConfig)) {
         const modulePath = path.join(configDir, moduleReferenceConfig.path);
@@ -99,6 +100,7 @@ export class ModuleConfigUtil {
           path: modulePath,
           name: ModuleConfigUtil.getModuleName(pkg),
           package: ModuleConfigUtil.getPackageName(pkg),
+          ...(moduleReferenceConfig.optional === undefined ? {} : { optional: moduleReferenceConfig.optional }),
         };
       } else {
         throw new Error('unknown type of module reference config: ' + JSON.stringify(moduleReferenceConfig));

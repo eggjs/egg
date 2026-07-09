@@ -1,0 +1,11 @@
+{
+  "name": "app-duplicate-name-first-wins",
+  "type": "module",
+  "dependencies": {
+    "far-module": "*",
+    "near-module": "*"
+  },
+  "egg": {
+    "framework": "missing-framework"
+  }
+}

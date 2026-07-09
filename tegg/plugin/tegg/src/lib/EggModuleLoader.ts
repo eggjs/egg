@@ -35,6 +35,21 @@ export class EggModuleLoader {
     return !!plugin.path && moduleReference.path === plugin.path;
   }
 
+  static reconcileModulePluginReferences(app: Application): void {
+    const enabledPlugins = Object.values(app.plugins).filter((plugin) => plugin.enable);
+    const allPlugins = Object.values(app.loader.allPlugins ?? {});
+
+    for (const moduleReference of app.moduleReferences) {
+      if (enabledPlugins.some((plugin) => EggModuleLoader.#isModulePluginReference(moduleReference, plugin))) {
+        moduleReference.optional = false;
+        continue;
+      }
+      if (allPlugins.some((plugin) => EggModuleLoader.#isModulePluginReference(moduleReference, plugin))) {
+        moduleReference.optional = true;
+      }
+    }
+  }
+
   private async loadApp(): Promise<void> {
     const loader = new EggAppLoader(this.app);
     const loadUnit = await LoadUnitFactory.createLoadUnit(this.app.baseDir, EggLoadUnitType.APP, loader);
@@ -42,16 +57,9 @@ export class EggModuleLoader {
   }
 
   private async buildAppGraph(): Promise<GlobalGraph> {
-    // Promote enabled plugins' module references to non-optional. Prefer the
-    // npm package identity captured at scan/manifest time; fall back to the old
-    // direct path comparison for pre-package manifest data.
-    for (const plugin of Object.values(this.app.plugins)) {
-      if (!plugin.enable) continue;
-      const modulePlugin = this.app.moduleReferences.find((t) => EggModuleLoader.#isModulePluginReference(t, plugin));
-      if (modulePlugin) {
-        modulePlugin.optional = false;
-      }
-    }
+    // Normalize module plugin references against the Egg plugin enable state.
+    // Ordinary app modules keep their original optional semantics.
+    EggModuleLoader.reconcileModulePluginReferences(this.app);
 
     // Pass manifest data to LoaderFactory if available
     const manifest = this.app.loader.manifest;
@@ -131,7 +139,12 @@ export class EggModuleLoader {
       const loader = precomputedFiles
         ? new ModuleLoader(modulePath, { precomputedFiles, loaderFS })
         : LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, loaderFS);
-      const loadUnit = await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
+      const loadUnit = await LoadUnitFactory.createLoadUnit(
+        modulePath,
+        EggLoadUnitType.MODULE,
+        loader,
+        precomputedFiles ? moduleConfig.name : undefined,
+      );
       this.app.moduleHandler.loadUnits.push(loadUnit);
     }
   }

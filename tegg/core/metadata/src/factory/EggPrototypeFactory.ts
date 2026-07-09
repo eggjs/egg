@@ -1,7 +1,7 @@
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import { FrameworkErrorFormatter } from '@eggjs/errors';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import { AccessLevel, TeggScope } from '@eggjs/tegg-types';
+import { AccessLevel, DefineModuleQualifierAttribute, TeggScope } from '@eggjs/tegg-types';
 import type {
   EggProtoImplClass,
   EggPrototypeName,
@@ -98,7 +98,9 @@ export class EggPrototypeFactory {
     if (protos.length === 1) {
       return protos[0];
     }
-    throw FrameworkErrorFormatter.formatError(new MultiPrototypeFound(name, qualifiers));
+    throw FrameworkErrorFormatter.formatError(
+      new MultiPrototypeFound(name, qualifiers, JSON.stringify(protos.map(EggPrototypeFactory.formatPrototype))),
+    );
   }
 
   private doGetPrototype(name: EggPrototypeName, qualifiers: QualifierInfo[], loadUnit?: LoadUnit): EggPrototype[] {
@@ -113,5 +115,14 @@ export class EggPrototypeFactory {
     // 2. find public proto in global
     const protos = this.publicProtoMap.get(name);
     return protos?.filter((proto) => proto.verifyQualifiers(qualifiers)) || [];
+  }
+
+  private static formatPrototype(proto: EggPrototype): string {
+    return (
+      `${String(proto.name)}@${proto.loadUnitId}` +
+      ` define:${String(proto.defineModuleName ?? proto.getQualifier(DefineModuleQualifierAttribute))}` +
+      `@${String(proto.defineUnitPath ?? proto.loadUnitId)}` +
+      ` qualifiers:[${String(DefineModuleQualifierAttribute)}=${String(proto.getQualifier(DefineModuleQualifierAttribute))}]`
+    );
   }
 }

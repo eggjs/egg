@@ -12,6 +12,7 @@ import type {
   InjectObjectProto,
   MetaDataKey,
   ObjectInitTypeLike,
+  QualifierAttribute,
   QualifierInfo,
   QualifierValue,
 } from '@eggjs/tegg-types';
@@ -36,6 +37,8 @@ export class ProvidedInnerObjectProto implements EggPrototype {
   readonly accessLevel: AccessLevel;
   readonly injectObjects: InjectObjectProto[];
   readonly loadUnitId: Id;
+  readonly defineModuleName?: string;
+  readonly defineUnitPath?: string;
 
   constructor(
     id: string,
@@ -45,6 +48,8 @@ export class ProvidedInnerObjectProto implements EggPrototype {
     loadUnitId: Id,
     qualifiers: QualifierInfo[],
     accessLevel?: AccessLevel,
+    defineModuleName?: string,
+    defineUnitPath?: string,
   ) {
     this.id = id;
     this.objFactory = objFactory;
@@ -54,6 +59,8 @@ export class ProvidedInnerObjectProto implements EggPrototype {
     this.injectObjects = [];
     this.loadUnitId = loadUnitId;
     this.qualifiers = qualifiers;
+    this.defineModuleName = defineModuleName;
+    this.defineUnitPath = defineUnitPath;
   }
 
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean {
@@ -79,7 +86,7 @@ export class ProvidedInnerObjectProto implements EggPrototype {
     return MetadataUtil.getMetaData(metadataKey, this.objFactory as unknown as EggProtoImplClass);
   }
 
-  getQualifier(attribute: string): QualifierValue | undefined {
+  getQualifier(attribute: QualifierAttribute): QualifierValue | undefined {
     return this.qualifiers.find((t) => t.attribute === attribute)?.value;
   }
 
@@ -87,16 +94,22 @@ export class ProvidedInnerObjectProto implements EggPrototype {
     // The descriptor rides the standard EggPrototypeLifecycleContext, whose
     // `clazz` slot carries the provided-instance factory (see the builder).
     const { clazz, loadUnit } = ctx;
-    const name = ctx.prototypeInfo.name;
+    const prototypeInfo = ctx.prototypeInfo as typeof ctx.prototypeInfo & {
+      defineModuleName?: string;
+      defineUnitPath?: string;
+    };
+    const name = prototypeInfo.name;
     const id = IdenticalUtil.createProtoId(loadUnit.id, name);
     return new ProvidedInnerObjectProto(
       id,
       name,
       clazz as unknown as () => object,
-      ctx.prototypeInfo.initType,
+      prototypeInfo.initType,
       loadUnit.id,
-      ctx.prototypeInfo.qualifiers ?? [],
-      ctx.prototypeInfo.accessLevel,
+      prototypeInfo.qualifiers ?? [],
+      prototypeInfo.accessLevel,
+      prototypeInfo.defineModuleName,
+      prototypeInfo.defineUnitPath,
     );
   }
 }

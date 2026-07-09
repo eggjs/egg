@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import { PrototypeUtil } from '@eggjs/core-decorator';
@@ -100,6 +102,32 @@ describe('test/ModuleDescriptorDumper.test.ts', () => {
       // File is outside /tmp/fake-module so relative path starts with ..
       const files = ModuleDescriptorDumper.getDecoratedFiles(desc);
       assert.equal(files.length, 0);
+    });
+  });
+
+  describe('dump()', () => {
+    it('should write descriptor to deterministic path and cleanup temp dir', async () => {
+      const dumpDir = await fs.mkdtemp(path.join(tmpdir(), 'module-desc-dump-'));
+      try {
+        const desc: ModuleDescriptor = {
+          name: 'dumped',
+          unitPath: '/tmp/dumped',
+          clazzList: [],
+          multiInstanceClazzList: [],
+          innerObjectClazzList: [],
+          protos: [],
+        };
+
+        await ModuleDescriptorDumper.dump(desc, { dumpDir });
+
+        const dumpPath = ModuleDescriptorDumper.dumpPath(desc, { dumpDir });
+        const json = JSON.parse(await fs.readFile(dumpPath, 'utf8'));
+        assert.equal(json.name, 'dumped');
+        const dumpEntries = await fs.readdir(path.join(dumpDir, '.egg'));
+        assert.deepEqual(dumpEntries, ['dumped_module_desc.json']);
+      } finally {
+        await fs.rm(dumpDir, { recursive: true, force: true });
+      }
     });
   });
 });
