@@ -44,9 +44,13 @@ export async function appMain<T = void>(
   try {
     return await app.run<T>(ctx);
   } finally {
-    app.destroy().catch((e) => {
-      e.message = `[tegg/standalone] destroy tegg failed: ${e.message}`;
-      console.warn(e);
+    await app.destroy().catch((e: unknown) => {
+      if (e instanceof Error) {
+        e.message = `[tegg/standalone] destroy tegg failed: ${e.message}`;
+        console.warn(e);
+        return;
+      }
+      console.warn('[tegg/standalone] destroy tegg failed:', e);
     });
   }
 }

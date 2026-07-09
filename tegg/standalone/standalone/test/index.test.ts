@@ -11,7 +11,7 @@ import { importResolve } from '@eggjs/utils';
 import { mm } from 'mm';
 import { describe, it, afterEach, beforeEach } from 'vitest';
 
-import { main, StandaloneContext, StandaloneApp, preLoad } from '../src/index.ts';
+import { main, StandaloneContext, StandaloneApp, preLoad, appMain } from '../src/index.ts';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello.ts';
 import { Foo } from './fixtures/dal-module/src/Foo.ts';
 
@@ -32,6 +32,49 @@ describe('standalone/standalone/test/index.test.ts', () => {
       await preLoad('/tmp/app', ['dep'], ['framework']);
 
       assert.deepEqual(calls, [['/tmp/app', ['dep'], ['framework']]]);
+    });
+  });
+
+  describe('appMain', () => {
+    afterEach(() => {
+      mm.restore();
+    });
+
+    it('should await app destroy on success', async () => {
+      const events: string[] = [];
+      mm(StandaloneApp.prototype, 'init', async () => {
+        events.push('init');
+      });
+      mm(StandaloneApp.prototype, 'run', async () => {
+        events.push('run');
+        return 'done';
+      });
+      mm(StandaloneApp.prototype, 'destroy', async () => {
+        await sleep(10);
+        events.push('destroy');
+      });
+
+      const result = await appMain<string>({ baseDir: '/tmp/app' });
+
+      assert.equal(result, 'done');
+      assert.deepEqual(events, ['init', 'run', 'destroy']);
+    });
+
+    it('should warn when destroy rejects with non-Error value', async () => {
+      const warnings: unknown[][] = [];
+      mm(StandaloneApp.prototype, 'init', async () => {});
+      mm(StandaloneApp.prototype, 'run', async () => 'done');
+      mm(StandaloneApp.prototype, 'destroy', async () => {
+        throw 'boom';
+      });
+      mm(console, 'warn', (...args: unknown[]) => {
+        warnings.push(args);
+      });
+
+      const result = await appMain<string>({ baseDir: '/tmp/app' });
+
+      assert.equal(result, 'done');
+      assert.deepEqual(warnings, [['[tegg/standalone] destroy tegg failed:', 'boom']]);
     });
   });
 

@@ -348,9 +348,13 @@ export class StandaloneApp {
           return await runner.main();
         } finally {
           if (ctx.destroy) {
-            ctx.destroy(lifecycle).catch((e) => {
-              e.message = `[tegg/standalone] destroy tegg context failed: ${e.message}`;
-              console.warn(e);
+            await ctx.destroy(lifecycle).catch((e: unknown) => {
+              if (e instanceof Error) {
+                e.message = `[tegg/standalone] destroy tegg context failed: ${e.message}`;
+                console.warn(e);
+                return;
+              }
+              console.warn('[tegg/standalone] destroy tegg context failed:', e);
             });
           }
         }
