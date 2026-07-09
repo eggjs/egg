@@ -72,6 +72,7 @@ export async function main<T = void>(cwd: string, options?: StandaloneAppOptions
       frameworkDeps: options?.frameworkDeps,
       dump: options?.dump,
       innerObjects: options?.innerObjectHandlers,
+      innerObjectsName: 'innerObjectHandlers',
       logger: options?.logger,
     },
   );

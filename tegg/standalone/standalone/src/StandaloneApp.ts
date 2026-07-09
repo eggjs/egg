@@ -47,11 +47,13 @@ export interface StandaloneAppInit {
   frameworkDeps?: (string | ModuleDependency)[];
   dump?: boolean;
   /**
-   * Host-provided inner objects. The framework placeholders
-   * (moduleConfigs/moduleConfig/runtimeConfig) always win on name clash;
-   * a `logger` entry here wins over the `logger` option.
+   * Host-provided inner objects. Entries here win over the framework default
+   * placeholders, except `moduleConfig` entries are extended with module config
+   * objects loaded during init().
    */
   innerObjects?: Record<string, InnerObject[]>;
+  /** User-facing option name for diagnostics. Defaults to `innerObjects`. */
+  innerObjectsName?: string;
   /**
    * Logger used by the framework (loader, hooks) and injectable as the
    * `logger` inner object. Defaults to console.
@@ -145,13 +147,18 @@ export class StandaloneApp {
       moduleConfig: [] as InnerObject[],
       runtimeConfig: [{ obj: this.#runtimeConfig }],
     };
-    const reservedNames = ['moduleConfigs', 'moduleConfig', 'runtimeConfig'];
-    for (const name of reservedNames) {
+    const innerObjectsName = init?.innerObjectsName ?? 'innerObjects';
+    const logger = init?.logger ?? console;
+    if (init?.innerObjects?.logger) {
+      logger.warn(`[tegg/standalone] ${innerObjectsName}.logger overrides the framework provided inner object`);
+    }
+    for (const name of ['moduleConfigs', 'runtimeConfig']) {
       if (init?.innerObjects?.[name]) {
-        (init.logger ?? console).warn(
-          `[tegg/standalone] innerObjectHandlers.${name} overrides the framework provided inner object`,
-        );
+        logger.warn(`[tegg/standalone] ${innerObjectsName}.${name} overrides the framework provided inner object`);
       }
+    }
+    if (init?.innerObjects?.moduleConfig) {
+      logger.warn(`[tegg/standalone] ${innerObjectsName}.moduleConfig extends the framework provided inner objects`);
     }
     return Object.assign(frameworkInnerObjects, init?.innerObjects);
   }

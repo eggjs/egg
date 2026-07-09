@@ -180,7 +180,13 @@ describe('standalone/standalone/test/index.test.ts', () => {
     });
 
     it('should let an innerObjectHandlers logger entry win over options.logger', async () => {
-      const optionLogger = { ...console };
+      const warnings: unknown[][] = [];
+      const optionLogger = {
+        ...console,
+        warn: (...args: unknown[]) => {
+          warnings.push(args);
+        },
+      };
       const handlerLogger = { ...console };
       const injected = await main(path.join(__dirname, './fixtures/logger-option'), {
         logger: optionLogger,
@@ -189,6 +195,30 @@ describe('standalone/standalone/test/index.test.ts', () => {
         },
       });
       assert.equal(injected, handlerLogger);
+      assert.deepEqual(warnings, [
+        ['[tegg/standalone] innerObjectHandlers.logger overrides the framework provided inner object'],
+      ]);
+    });
+
+    it('should warn when innerObjects logger overrides the framework logger', async () => {
+      const warnings: unknown[][] = [];
+      const logger = {
+        ...console,
+        warn: (...args: unknown[]) => {
+          warnings.push(args);
+        },
+      };
+      const handlerLogger = { ...console };
+      const app = new StandaloneApp({
+        logger,
+        innerObjects: {
+          logger: [{ obj: handlerLogger }],
+        },
+      });
+      await app.destroy();
+      assert.deepEqual(warnings, [
+        ['[tegg/standalone] innerObjects.logger overrides the framework provided inner object'],
+      ]);
     });
   });
 
@@ -304,6 +334,28 @@ describe('standalone/standalone/test/index.test.ts', () => {
       assert.equal(injected, runtimeConfig);
       assert.deepEqual(warnings, [
         ['[tegg/standalone] innerObjectHandlers.runtimeConfig overrides the framework provided inner object'],
+      ]);
+    });
+
+    it('should use low-level innerObjects name in framework object warnings', async () => {
+      const warnings: unknown[][] = [];
+      const logger = {
+        ...console,
+        warn: (...args: unknown[]) => {
+          warnings.push(args);
+        },
+      };
+      const app = new StandaloneApp({
+        logger,
+        innerObjects: {
+          runtimeConfig: [{ obj: {} }],
+          moduleConfig: [{ obj: {} }],
+        },
+      });
+      await app.destroy();
+      assert.deepEqual(warnings, [
+        ['[tegg/standalone] innerObjects.runtimeConfig overrides the framework provided inner object'],
+        ['[tegg/standalone] innerObjects.moduleConfig extends the framework provided inner objects'],
       ]);
     });
   });
