@@ -1,5 +1,6 @@
 export * from './ConfigSource.ts';
 export * from './ContextProto.ts';
+export * from './DefineModuleQualifier.ts';
 export * from './EggLifecycleProto.ts';
 export * from './EggQualifier.ts';
 export * from './InitTypeQualifier.ts';

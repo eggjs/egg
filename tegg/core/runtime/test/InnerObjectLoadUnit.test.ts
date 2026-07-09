@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { mock } from 'node:test';
 
 import {
+  DefineModuleQualifier,
+  DefineModuleQualifierAttribute,
   EggObjectLifecycleProto,
   Inject,
   InjectOptional,
@@ -217,6 +219,100 @@ describe('core/runtime/test/InnerObjectLoadUnit.test.ts', () => {
       const obj = (instance as any).getEggObject('tolerantInner', proto).obj as TolerantInner;
       assert.equal(obj.logger, console);
       assert.equal(obj.notExists, undefined);
+    } finally {
+      if (instance) {
+        await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);
+      }
+      await LoadUnitFactory.destroyLoadUnit(loadUnit);
+    }
+  });
+
+  it('should resolve same-name inner objects by define module qualifier', async () => {
+    @InnerObjectProto({ name: 'sharedInner', accessLevel: AccessLevel.PUBLIC })
+    class ModuleAInner {
+      value = 'module-a';
+    }
+
+    @InnerObjectProto({ name: 'sharedInner', accessLevel: AccessLevel.PUBLIC })
+    class ModuleBInner {
+      value = 'module-b';
+    }
+
+    @InnerObjectProto()
+    class QualifiedInnerConsumer {
+      @Inject()
+      @DefineModuleQualifier('module-b')
+      sharedInner: { value: string };
+    }
+
+    const builder = new InnerObjectLoadUnitBuilder();
+    builder.addInnerObjectClazzList([ModuleAInner], {
+      name: 'module-a',
+      path: '/module-a',
+    });
+    builder.addInnerObjectClazzList([ModuleBInner, QualifiedInnerConsumer], {
+      name: 'module-b',
+      path: '/module-b',
+    });
+    const loadUnit = await builder.createLoadUnit({ innerObjects: {} });
+    let instance: LoadUnitInstance | undefined;
+    try {
+      assert.throws(() => {
+        EggPrototypeFactory.instance.getPrototype('sharedInner', loadUnit);
+      }, /multi proto found/);
+      const moduleAProto = EggPrototypeFactory.instance.getPrototype('sharedInner', loadUnit, [
+        {
+          attribute: DefineModuleQualifierAttribute,
+          value: 'module-a',
+        },
+      ]);
+      assert(moduleAProto.verifyQualifier({ attribute: DefineModuleQualifierAttribute, value: 'module-a' }));
+
+      instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
+      const consumerProto = EggPrototypeFactory.instance.getPrototype('qualifiedInnerConsumer', loadUnit);
+      const consumer = (instance as any).getEggObject('qualifiedInnerConsumer', consumerProto)
+        .obj as QualifiedInnerConsumer;
+      assert.equal(consumer.sharedInner.value, 'module-b');
+    } finally {
+      if (instance) {
+        await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);
+      }
+      await LoadUnitFactory.destroyLoadUnit(loadUnit);
+    }
+  });
+
+  it('should use app as default define module qualifier for provided inner objects', async () => {
+    const providedShared = { value: 'provided' };
+
+    @InnerObjectProto({ name: 'sharedHostObject', accessLevel: AccessLevel.PUBLIC })
+    class ModuleSharedHostObject {
+      value = 'module';
+    }
+
+    @InnerObjectProto()
+    class ProvidedInnerConsumer {
+      @Inject()
+      @DefineModuleQualifier('app')
+      sharedHostObject: { value: string };
+    }
+
+    const builder = new InnerObjectLoadUnitBuilder();
+    builder.addInnerObjectClazzList([ModuleSharedHostObject, ProvidedInnerConsumer], {
+      name: 'host-module',
+      path: '/host-module',
+    });
+    const loadUnit = await builder.createLoadUnit({
+      innerObjects: {
+        sharedHostObject: [{ obj: providedShared }],
+      },
+    });
+    let instance: LoadUnitInstance | undefined;
+    try {
+      instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
+      const consumerProto = EggPrototypeFactory.instance.getPrototype('providedInnerConsumer', loadUnit);
+      const consumer = (instance as any).getEggObject('providedInnerConsumer', consumerProto)
+        .obj as ProvidedInnerConsumer;
+      assert.equal(consumer.sharedHostObject, providedShared);
     } finally {
       if (instance) {
         await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);

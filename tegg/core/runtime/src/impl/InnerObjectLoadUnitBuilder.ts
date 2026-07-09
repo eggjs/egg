@@ -8,8 +8,8 @@ import {
   ProtoNode,
 } from '@eggjs/metadata';
 import { Graph, GraphNode } from '@eggjs/tegg-common-util';
-import type { EggProtoImplClass, LoadUnit, ProtoDescriptor } from '@eggjs/tegg-types';
-import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, LoadUnit, ProtoDescriptor, QualifierInfo } from '@eggjs/tegg-types';
+import { AccessLevel, DefineModuleQualifierAttribute, ObjectInitType } from '@eggjs/tegg-types';
 
 import {
   INNER_OBJECT_LOAD_UNIT_NAME,
@@ -34,6 +34,8 @@ export interface CreateInnerObjectLoadUnitOptions {
   unitPath?: string;
 }
 
+const PROVIDED_DEFINE_MODULE_NAME = 'app';
+
 /**
  * Collects `@InnerObjectProto` / `@XxxLifecycleProto` classes from scanned
  * modules, resolves their mutual dependencies on a dedicated proto graph
@@ -46,6 +48,19 @@ export interface CreateInnerObjectLoadUnitOptions {
 export class InnerObjectLoadUnitBuilder {
   readonly #protoGraph: Graph<ProtoNode, ProtoDependencyMeta> = new Graph();
 
+  static #addDefaultDefineModuleQualifier(qualifiers: QualifierInfo[], moduleName: string): QualifierInfo[] {
+    if (qualifiers.find((t) => t.attribute === DefineModuleQualifierAttribute)) {
+      return qualifiers;
+    }
+    return [
+      ...qualifiers,
+      {
+        attribute: DefineModuleQualifierAttribute,
+        value: moduleName,
+      },
+    ];
+  }
+
   addInnerObjectClazzList(clazzList: readonly EggProtoImplClass[], moduleReference: InnerObjectModuleReference): void {
     for (const clazz of clazzList) {
       const descriptor = ProtoDescriptorHelper.createByInstanceClazz(clazz, {
@@ -54,6 +69,10 @@ export class InnerObjectLoadUnitBuilder {
         defineModuleName: moduleReference.name,
         defineUnitPath: moduleReference.path,
       });
+      descriptor.qualifiers = InnerObjectLoadUnitBuilder.#addDefaultDefineModuleQualifier(
+        descriptor.qualifiers,
+        moduleReference.name,
+      );
       const protoGraphNode = new GraphNode<ProtoNode, ProtoDependencyMeta>(new ProtoNode(descriptor));
       if (!this.#protoGraph.addVertex(protoGraphNode)) {
         throw new Error(`duplicate inner object proto: ${protoGraphNode.val}`);
@@ -81,7 +100,10 @@ export class InnerObjectLoadUnitBuilder {
             initType: ObjectInitType.SINGLETON,
             protoImplType: PROVIDED_INNER_OBJECT_PROTO_IMPL_TYPE,
             qualifiers: ProtoDescriptorHelper.addDefaultQualifier(
-              innerObject.qualifiers ?? [],
+              InnerObjectLoadUnitBuilder.#addDefaultDefineModuleQualifier(
+                innerObject.qualifiers ?? [],
+                PROVIDED_DEFINE_MODULE_NAME,
+              ),
               ObjectInitType.SINGLETON,
               INNER_OBJECT_LOAD_UNIT_NAME,
             ),

@@ -64,6 +64,8 @@ exports[`should export stable 1`] = `
   "Cookies": [Function],
   "CookiesParamMeta": [Function],
   "DEFAULT_PROTO_IMPL_TYPE": "DEFAULT",
+  "DefineModuleQualifier": [Function],
+  "DefineModuleQualifierAttribute": Symbol(Qualifier.DefineModule),
   "EGG_INNER_OBJECT_PROTO_IMPL_TYPE": "EGG_INNER_OBJECT_PROTOTYPE",
   "EVENT_CONTEXT_INJECT": Symbol(EggPrototype#event#handler#context#inject),
   "EVENT_NAME": Symbol(EggPrototype#eventName),

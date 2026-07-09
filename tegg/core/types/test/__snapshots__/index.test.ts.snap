@@ -121,6 +121,7 @@ exports[`should export stable 1`] = `
   "DEFAULT_PROTO_IMPL_TYPE": "DEFAULT",
   "DataSourceInjectName": "dataSource",
   "DataSourceQualifierAttribute": Symbol(Qualifier.DataSource),
+  "DefineModuleQualifierAttribute": Symbol(Qualifier.DefineModule),
   "EGG_INNER_OBJECT_PROTO_IMPL_TYPE": "EGG_INNER_OBJECT_PROTOTYPE",
   "EggLoadUnitType": {
     "APP": "APP",
