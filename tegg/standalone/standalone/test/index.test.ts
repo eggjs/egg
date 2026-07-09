@@ -538,7 +538,16 @@ describe('standalone/standalone/test/index.test.ts', () => {
     it('should work', async () => {
       await preLoad(fixturePath);
       await main(fixturePath);
-      assert.deepEqual(Foo.staticCalled, ['preLoad', 'construct', 'postConstruct', 'preInject', 'postInject', 'init']);
+      assert.deepEqual(Foo.staticCalled, [
+        'preLoad',
+        'construct',
+        'postConstruct',
+        'preInject',
+        'postInject',
+        'init',
+        'preDestroy',
+        'destroy',
+      ]);
       // app module + the three built-in framework modules (teggAop/teggDal/teggConfig)
       assert.equal((ModuleDescriptorDumper.dump as any).called, 4);
     });
