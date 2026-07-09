@@ -7,9 +7,13 @@ import {
   type StandaloneAppOptions,
 } from './StandaloneApp.ts';
 
-export async function preLoad(cwd: string, dependencies?: StandaloneAppOptions['dependencies']): Promise<void> {
+export async function preLoad(
+  cwd: string,
+  dependencies?: StandaloneAppOptions['dependencies'],
+  frameworkDeps?: StandaloneAppOptions['frameworkDeps'],
+): Promise<void> {
   try {
-    await StandaloneApp.preLoad(cwd, dependencies);
+    await StandaloneApp.preLoad(cwd, dependencies, frameworkDeps);
   } catch (e) {
     if (e instanceof Error) {
       e.message = `[tegg/standalone] bootstrap standalone preLoad failed: ${e.message}`;

@@ -18,6 +18,23 @@ import { Foo } from './fixtures/dal-module/src/Foo.ts';
 const __dirname = import.meta.dirname;
 
 describe('standalone/standalone/test/index.test.ts', () => {
+  describe('preLoad', () => {
+    afterEach(() => {
+      mm.restore();
+    });
+
+    it('should pass frameworkDeps to StandaloneApp.preLoad', async () => {
+      const calls: unknown[][] = [];
+      mm(StandaloneApp, 'preLoad', async (...args: unknown[]) => {
+        calls.push(args);
+      });
+
+      await preLoad('/tmp/app', ['dep'], ['framework']);
+
+      assert.deepEqual(calls, [['/tmp/app', ['dep'], ['framework']]]);
+    });
+  });
+
   describe('simple runner', () => {
     const fixture = path.join(__dirname, './fixtures/simple');
 
