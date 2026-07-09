@@ -6,7 +6,7 @@ import { ModuleScanner } from '../src/lib/ModuleScanner.ts';
 import { getFixtures } from './utils.ts';
 
 describe('plugin/config/test/ModuleScanner.test.ts', () => {
-  it('should scan module plugins from every framework layer', () => {
+  it('should scan module plugins from every framework layer and keep nearest duplicate names', () => {
     const baseDir = getFixtures('framework-chain/app');
     const warnings: string[] = [];
     const refs = new ModuleScanner(baseDir, {}).loadModuleReferences();
@@ -43,5 +43,40 @@ describe('plugin/config/test/ModuleScanner.test.ts', () => {
     ]);
     expect(warnings[0]).toContain(path.join(baseDir, 'node_modules/chair-framework/node_modules/shared-module-chair'));
     expect(warnings[0]).toContain(path.join(baseDir, 'node_modules/base-framework/node_modules/shared-module-base'));
+  });
+
+  it('should keep the app reference when a framework scans the same module path', () => {
+    const baseDir = getFixtures('framework-same-path/app');
+    const warnings: string[] = [];
+    const refs = new ModuleScanner(baseDir, {}, { warn: (message) => warnings.push(message) }).loadModuleReferences();
+
+    expect(refs).toEqual([
+      {
+        name: 'chairModule',
+        package: 'chair-module',
+        path: path.join(baseDir, 'node_modules/chair-framework/node_modules/chair-module'),
+      },
+    ]);
+    expect(warnings).toEqual([]);
+  });
+
+  it('should stop scanning when framework chain has a cycle', () => {
+    const baseDir = getFixtures('framework-cycle/app');
+    const refs = new ModuleScanner(baseDir, {}).loadModuleReferences();
+
+    expect(refs).toEqual([
+      {
+        name: 'chairModule',
+        package: 'chair-module',
+        path: path.join(baseDir, 'node_modules/chair-framework/node_modules/chair-module'),
+        optional: true,
+      },
+      {
+        name: 'baseModule',
+        package: 'base-module',
+        path: path.join(baseDir, 'node_modules/base-framework/node_modules/base-module'),
+        optional: true,
+      },
+    ]);
   });
 });

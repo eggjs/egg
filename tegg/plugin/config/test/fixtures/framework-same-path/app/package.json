@@ -1,0 +1,7 @@
+{
+  "name": "framework-same-path-app",
+  "type": "module",
+  "egg": {
+    "framework": "chair-framework"
+  }
+}
