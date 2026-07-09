@@ -43,11 +43,11 @@ export class Foo implements MainRunner<string> {
 
 - cwd 为当前应用工作目录
 - options:
-  - innerObjects: 当前运行环境中内置的对象
+  - innerObjectHandlers: 当前运行环境中内置的对象
 
 ```
 await main(cwd, {
-  innerObjects: {
+  innerObjectHandlers: {
     hello: {
       hello: () => {
         return 'hello, inner';
