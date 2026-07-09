@@ -41,11 +41,11 @@ class ControllerPrototypeLifecycle {}
 class ControllerContextLifecycle {}
 
 @EggLifecycleProto({
-  type: 'CustomLifecycle',
+  type: 'EggObject',
   name: 'customName',
   accessLevel: AccessLevel.PUBLIC,
 })
-class ControllerOtherLifecycle {}
+class CustomNamedLifecycle {}
 
 describe('core/core-decorator/test/inner-object-decorators.test.ts', () => {
   describe('InnerObjectProto', () => {
@@ -103,17 +103,17 @@ describe('core/core-decorator/test/inner-object-decorators.test.ts', () => {
       assertLifecycleProtoMetadata(ControllerContextLifecycle, 'EggContext');
     });
 
-    it('should params work with open lifecycle type', () => {
+    it('should params work with explicit supported lifecycle type', () => {
       const expectObjectProperty: EggPrototypeInfo = {
         name: 'customName',
         initType: ObjectInitType.SINGLETON,
         accessLevel: AccessLevel.PUBLIC,
         protoImplType: EGG_INNER_OBJECT_PROTO_IMPL_TYPE,
-        className: 'ControllerOtherLifecycle',
+        className: 'CustomNamedLifecycle',
       };
-      assert.deepEqual(PrototypeUtil.getProperty(ControllerOtherLifecycle), expectObjectProperty);
-      assert.deepEqual(PrototypeUtil.getEggLifecyclePrototypeMetadata(ControllerOtherLifecycle), {
-        type: 'CustomLifecycle',
+      assert.deepEqual(PrototypeUtil.getProperty(CustomNamedLifecycle), expectObjectProperty);
+      assert.deepEqual(PrototypeUtil.getEggLifecyclePrototypeMetadata(CustomNamedLifecycle), {
+        type: 'EggObject',
       });
     });
 

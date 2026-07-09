@@ -1,6 +1,11 @@
 import assert from 'node:assert';
 
-import type { CommonEggLifecycleProtoParams, EggLifecycleProtoParams, EggProtoImplClass } from '@eggjs/tegg-types';
+import type {
+  CommonEggLifecycleProtoParams,
+  EggLifecycleProtoParams,
+  EggLifecycleType,
+  EggProtoImplClass,
+} from '@eggjs/tegg-types';
 
 import { PrototypeUtil } from '../util/PrototypeUtil.ts';
 import { InnerObjectProto } from './InnerObjectProto.ts';
@@ -20,7 +25,7 @@ export function EggLifecycleProto(params: CommonEggLifecycleProtoParams): Protot
 
 type EggLifecycleProtoDecoratorFactory = (params?: EggLifecycleProtoParams) => PrototypeDecorator;
 
-const createLifecycleProto = (type: CommonEggLifecycleProtoParams['type']): EggLifecycleProtoDecoratorFactory => {
+const createLifecycleProto = (type: EggLifecycleType): EggLifecycleProtoDecoratorFactory => {
   return (params?: EggLifecycleProtoParams) => EggLifecycleProto({ type, ...params });
 };
 
