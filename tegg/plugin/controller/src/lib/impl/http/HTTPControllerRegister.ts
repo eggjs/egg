@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 
 import { type ControllerMetadata, ControllerType } from '@eggjs/controller-decorator';
+import { HTTPControllerRegister as BaseHTTPControllerRegister } from '@eggjs/controller-runtime';
 import type { EggPrototype } from '@eggjs/metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, Router } from 'egg';
 
-import { HTTPControllerRegister as BaseHTTPControllerRegister } from './HTTPControllerRegisterBase.ts';
 import { HTTPMethodRegister } from './HTTPMethodRegister.ts';
 
 const HTTP_CONTROLLER_REGISTER_SLOT = Symbol('tegg:controller:httpControllerRegister');

@@ -1,6 +1,8 @@
 import http, { IncomingMessage, ServerResponse } from 'node:http';
 import { Socket } from 'node:net';
 
+import type { McpRouter, McpServerRegistration } from '@eggjs/controller-runtime';
+import { MCPServerHelper } from '@eggjs/controller-runtime';
 import { MCPProtocols } from '@eggjs/tegg';
 import type { MCPControllerMeta, MCPPromptMeta, MCPToolMeta, EggContext } from '@eggjs/tegg';
 import { TeggScope } from '@eggjs/tegg-types';
@@ -18,8 +20,6 @@ import compose from 'koa-compose';
 import getRawBody from 'raw-body';
 
 import { MCPConfig } from './MCPConfig.ts';
-import type { McpRouter, McpServerRegistration } from './McpRouter.ts';
-import { MCPServerHelper } from './MCPServerHelper.ts';
 
 const MCP_HOOKS_SLOT = Symbol('tegg:controller:mcpControllerHooks');
 

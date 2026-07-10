@@ -1,4 +1,4 @@
-import type { RootProtoManager } from '@eggjs/controller-plugin';
+import type { RootProtoManager } from '@eggjs/controller-runtime';
 import { BackgroundTaskHelper } from '@eggjs/service-worker-runtime';
 import { AccessLevel, Inject } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';

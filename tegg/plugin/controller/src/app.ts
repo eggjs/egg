@@ -1,6 +1,16 @@
 import assert from 'node:assert';
 
 import { ControllerMetaBuilderFactory, ControllerType, type MCPControllerMeta } from '@eggjs/controller-decorator';
+import {
+  CONTROLLER_LOAD_UNIT,
+  ControllerLoadUnit,
+  ControllerMetadataManager,
+  ControllerRegisterDefaults,
+  type ControllerRegisterFactory,
+  MCPControllerRegister,
+  middlewareGraphHook,
+  type RootProtoManager,
+} from '@eggjs/controller-runtime';
 import { EggPrototypeFactory, type LoadUnitLifecycleContext } from '@eggjs/metadata';
 import {
   EggContainerFactory,
@@ -12,17 +22,10 @@ import type { Application, ILifecycleBoot } from 'egg';
 
 import { AgentControllerObject } from './lib/AgentControllerObject.ts';
 import { AgentControllerProto } from './lib/AgentControllerProto.ts';
-import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.ts';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.ts';
-import { ControllerMetadataManager } from './lib/ControllerMetadataManager.ts';
-import { ControllerRegisterDefaults } from './lib/ControllerRegisterDefaults.ts';
-import type { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';
 import { EggControllerLoader } from './lib/EggControllerLoader.ts';
 import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.ts';
 import { EggMcpRouter } from './lib/impl/mcp/EggMcpRouter.ts';
-import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister.ts';
-import { middlewareGraphHook } from './lib/MiddlewareGraphHook.ts';
-import type { RootProtoManager } from './lib/RootProtoManager.ts';
 
 // Load Controller process
 // 1. await add load unit is ready, controller may depend other load unit

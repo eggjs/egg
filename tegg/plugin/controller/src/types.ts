@@ -1,8 +1,6 @@
 import '@eggjs/tegg-plugin/types';
 import type { ControllerMetaBuilderFactory } from '@eggjs/controller-decorator';
-
-import type { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';
-import type { RootProtoManager } from './lib/RootProtoManager.ts';
+import type { ControllerRegisterFactory, RootProtoManager } from '@eggjs/controller-runtime';
 
 declare module 'egg' {
   interface Application {

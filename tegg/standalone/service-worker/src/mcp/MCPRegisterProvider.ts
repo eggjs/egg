@@ -1,6 +1,5 @@
 import { ControllerType, type MCPControllerMeta } from '@eggjs/controller-decorator';
-import type { ControllerRegisterFactory } from '@eggjs/controller-plugin';
-import { MCPControllerRegister } from '@eggjs/controller-plugin/lib/impl/mcp/MCPControllerRegister';
+import { MCPControllerRegister, type ControllerRegisterFactory } from '@eggjs/controller-runtime';
 import { Inject, InnerObjectProto, LifecyclePostInject } from '@eggjs/tegg';
 import { AccessLevel } from '@eggjs/tegg-types';
 

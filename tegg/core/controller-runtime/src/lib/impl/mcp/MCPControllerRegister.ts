@@ -1,7 +1,7 @@
+import type { MCPControllerMeta } from '@eggjs/controller-decorator';
 import type { EggPrototype } from '@eggjs/metadata';
-import { CONTROLLER_META_DATA } from '@eggjs/tegg';
-import type { MCPControllerMeta } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import { CONTROLLER_META_DATA } from '@eggjs/tegg-types';
 
 import type { ControllerRegister } from '../../ControllerRegister.ts';
 import type { McpRouter, ServerRegisterRecord } from './McpRouter.ts';

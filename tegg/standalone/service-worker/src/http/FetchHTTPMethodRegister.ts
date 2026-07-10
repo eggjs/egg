@@ -2,7 +2,7 @@ import type { IncomingHttpHeaders } from 'node:http';
 
 import type { HTTPMethodMeta, PathParamMeta, QueriesParamMeta, QueryParamMeta } from '@eggjs/controller-decorator';
 import { HTTPParamType } from '@eggjs/controller-decorator';
-import { HTTPMethodRegister, type HTTPHandlerFunc } from '@eggjs/controller-plugin';
+import { HTTPMethodRegister, type HTTPHandlerFunc } from '@eggjs/controller-runtime';
 
 import { RequestUtils } from '../utils/RequestUtils.ts';
 import type { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext.ts';

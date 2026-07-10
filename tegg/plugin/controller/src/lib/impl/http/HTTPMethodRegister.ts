@@ -8,10 +8,10 @@ import {
   Cookies,
   type HTTPMethodMeta,
 } from '@eggjs/controller-decorator';
+import { HTTPMethodRegister as BaseHTTPMethodRegister, type HTTPHandlerFunc } from '@eggjs/controller-runtime';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import type { MiddlewareFunc } from 'egg';
 
-import { HTTPMethodRegister as BaseHTTPMethodRegister, type HTTPHandlerFunc } from './HTTPMethodRegisterBase.ts';
 import { aclMiddlewareFactory } from './Acl.ts';
 import { initRequest } from './Req.ts';
 

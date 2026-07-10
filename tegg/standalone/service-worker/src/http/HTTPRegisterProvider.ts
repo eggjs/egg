@@ -1,6 +1,6 @@
 import { ControllerType } from '@eggjs/controller-decorator';
-import { HTTPControllerRegister, type RootProtoManager } from '@eggjs/controller-plugin';
-import type { ControllerRegisterFactory } from '@eggjs/controller-plugin';
+import { HTTPControllerRegister, type RootProtoManager } from '@eggjs/controller-runtime';
+import type { ControllerRegisterFactory } from '@eggjs/controller-runtime';
 import { Inject, InnerObjectProto, LifecyclePostInject } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { AccessLevel } from '@eggjs/tegg-types';

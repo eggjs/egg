@@ -1,5 +1,10 @@
 import { CONTROLLER_META_DATA, type MCPControllerMeta } from '@eggjs/controller-decorator';
-import { MCPServerHelper, MCP_ROUTER_NAME, type McpRouter, type McpServerRegistration } from '@eggjs/controller-plugin';
+import {
+  MCPServerHelper,
+  MCP_ROUTER_NAME,
+  type McpRouter,
+  type McpServerRegistration,
+} from '@eggjs/controller-runtime';
 import { Inject, InnerObjectProto } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { AccessLevel, CONTROLLER_AOP_MIDDLEWARES } from '@eggjs/tegg-types';

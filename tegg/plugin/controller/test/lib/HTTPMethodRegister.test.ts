@@ -1,6 +1,11 @@
 import path from 'node:path';
 
 import {
+  CONTROLLER_LOAD_UNIT,
+  ControllerLoadUnit,
+  ControllerPrototypeHook as EggControllerPrototypeHook,
+} from '@eggjs/controller-runtime';
+import {
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
   EggPrototypeLifecycleUtil,
@@ -12,9 +17,7 @@ import { CONTROLLER_META_DATA, HTTPControllerMeta } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { describe, it, beforeAll, afterAll, expect } from 'vitest';
 
-import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from '../../src/lib/ControllerLoadUnit.ts';
 import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';
-import { ControllerPrototypeHook as EggControllerPrototypeHook } from '../../src/lib/ControllerPrototypeHook.ts';
 import { HTTPMethodRegister } from '../../src/lib/impl/http/HTTPMethodRegister.ts';
 import { getFixtures } from '../utils.ts';
 
