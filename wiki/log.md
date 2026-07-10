@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-10] package | four-package controller layering (runtime library + per-host plugins)
+
+- sources touched: `tegg/core/controller-runtime/*` (new), `tegg/standalone/service-worker-controller/*` (new), `tegg/plugin/controller/src/{index.ts,lib/ControllerModule.ts}`, `tegg/standalone/service-worker/src/{ServiceWorkerApp.ts,index.ts,ControllerModule.ts}` (moved)
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Split the controller stack into four packages mirroring the egg/standalone host boundary. Extracted the egg-free host-agnostic runtime into `@eggjs/controller-runtime` — a plain LIBRARY, NOT an eggModule (it defines the base register classes, collect-only `MCPControllerRegister`, `McpRouter`/`Router` abstractions, `MCPServerHelper`, and the controller inner-object prototypes, but is never scanned). The scanned eggModule stays a HOST package: the egg host's `teggController` plugin (`@eggjs/controller-plugin`) and the fetch host's `serviceWorker` module (extracted into a new `@eggjs/service-worker-controller` package) each re-export the runtime's protos into their own module (`ControllerModule.ts`, collected by `LoaderUtil.loadFile`). `@eggjs/service-worker` is now just the `ServiceWorkerApp` host facade, depending on the egg-free runtime + the fetch controller package — never on the egg plugin. Package-identity module binding (the C2/C3 reconcile) keeps the egg host promoting its own `teggController`. Regression green across controller/service-worker/mcp-proxy/example/MultiApp; typecheck clean; the runtime and fetch-controller packages carry no `egg` dependency.
+
 ## [2026-07-10] package | host-agnostic MCP register via McpRouter boundary
 
 - sources touched: `tegg/plugin/controller/src/lib/impl/mcp/{McpRouter,EggMcpRouter,MCPControllerRegister}.ts`, `tegg/plugin/controller/src/{app.ts,lib/ControllerModule.ts}`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/service-worker/src/mcp/{ServiceWorkerMcpRouter,MCPRegisterProvider}.ts`, `tegg/plugin/mcp-proxy/src/{app,index}.ts`

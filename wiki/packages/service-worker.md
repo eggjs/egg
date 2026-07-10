@@ -5,8 +5,11 @@ summary: Fetch-semantics standalone runtime — HTTP controllers and MCP tools s
 source_files:
   - tegg/standalone/service-worker-runtime/src
   - tegg/standalone/service-worker/src
+  - tegg/standalone/service-worker-controller/src
+  - tegg/core/controller-runtime/src
+  - tegg/plugin/controller/src
   - examples/helloworld-service-worker
-updated_at: 2026-07-05
+updated_at: 2026-07-10
 status: active
 ---
 
@@ -18,16 +21,29 @@ module-plugin mechanism (declarative `@InnerObjectProto` /
   dispatching events to `@EventHandlerProto('<type>')` handlers, event
   injection into ContextProtos, `BackgroundTaskHelper` re-export
   (ctx-destroy draining).
-- `@eggjs/service-worker` — the fetch protocol: `FetchEventHandler`,
-  `FetchRouter` + fetch parameter binding (no `@Cookies`), MCP stateless
-  streamable HTTP under `/mcp[/name]/stream`, `ServiceWorkerApp` facade with
-  `serve()` (node:http bridge) and embedded `handleEvent()`.
+- `@eggjs/service-worker-controller` — the fetch controller transport (the
+  `serviceWorker` eggModule): `FetchEventHandler`, `FetchRouter` + fetch
+  parameter binding (no `@Cookies`), `HTTP/MCP RegisterProvider`,
+  `ServiceWorkerMcpRouter`, MCP stateless streamable HTTP under
+  `/mcp[/name]/stream`.
+- `@eggjs/service-worker` — the host app only: the `ServiceWorkerApp` facade
+  over `StandaloneApp` with `serve()` (node:http bridge) and embedded
+  `handleEvent()`, loading the runtime + controller packages as frameworkDeps.
+  Its `index` re-exports the controller package so the public API is stable.
 
 Key mechanics and constraints:
 
-- **Controller reuse**: metadata from `@eggjs/controller-decorator`,
-  registration runtime from `@eggjs/controller-plugin` (shared); only param
-  binding and transports are fetch-specific.
+- **Four-package controller layering** (mirrors the egg host): host-agnostic
+  runtime `@eggjs/controller-runtime` (a plain LIBRARY, not an eggModule — base
+  register classes, collect-only `MCPControllerRegister`, `McpRouter`/`Router`
+  abstractions, `MCPServerHelper`, and the controller inner-object prototypes)
+  → egg transport `@eggjs/controller-plugin` (the `teggController` plugin
+  module) → fetch transport `@eggjs/service-worker-controller` (the
+  `serviceWorker` module) → host app `@eggjs/service-worker`. Each HOST package
+  owns the scanned eggModule and re-exports the runtime's inner-object protos
+  into it (`ControllerModule.ts`); the runtime library itself is never scanned.
+  The service worker depends only on the egg-free runtime, never on the egg
+  plugin.
 - **Host-agnostic MCP register + `McpRouter` boundary**: the shared
   `MCPControllerRegister` (controller-plugin) only COLLECTS tool/resource/prompt
   records and delegates transport to an injected `McpRouter`
