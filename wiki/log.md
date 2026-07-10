@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-10] package | host-agnostic MCP register via McpRouter boundary
+
+- sources touched: `tegg/plugin/controller/src/lib/impl/mcp/{McpRouter,EggMcpRouter,MCPControllerRegister}.ts`, `tegg/plugin/controller/src/{app.ts,lib/ControllerModule.ts}`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/service-worker/src/mcp/{ServiceWorkerMcpRouter,MCPRegisterProvider}.ts`, `tegg/plugin/mcp-proxy/src/{app,index}.ts`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Fixed the C4 host-boundary leak — the MCP controller register mixed record collection with egg-specific transport and the egg host threaded its `Application` into the module inner-object DI graph as a PRIVATE `eggApp` provided object. Extracted a `McpRouter` transport boundary: the shared `MCPControllerRegister` now only collects tool/resource/prompt records and calls `mcpRouter.registerServer(reg)`; egg node-HTTP transport moved to `EggMcpRouter` (built in `app.ts` with `app`), SW fetch transport to `ServiceWorkerMcpRouter`. Both provide the `mcpRouter` DI name (host plugins never coexist). `eggApp` provided object removed from `ModuleHandler`; `EggControllerRegisterFactory` dropped its host generic/injection. `MCPServerHelper` was already host-agnostic and is unchanged. Regression green (controller/service-worker/mcp-proxy/example/MultiApp) modulo a pre-existing controller boot-error test that only times out under the 5000ms suite-default and dal tests that need MySQL.
+
 ## [2026-06-28] workflow | record egg-bin Windows shell probe hotspot
 
 - sources touched: `tools/egg-bin/bin/run.js`, `tools/egg-bin/test/fixtures/my-egg-bin/bin/run.js`, PR #6014 CI logs
