@@ -4,6 +4,7 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 
+import { FetchEventImpl, type MCPAuthHandler } from '@eggjs/service-worker-controller';
 import { ContextProtoProperty } from '@eggjs/service-worker-runtime';
 import {
   StandaloneApp,
@@ -11,9 +12,6 @@ import {
   type InitStandaloneAppOptions,
   type StandaloneAppOptions,
 } from '@eggjs/standalone';
-
-import { FetchEventImpl } from './event/FetchEventImpl.ts';
-import type { MCPAuthHandler } from './types.ts';
 
 export interface ServiceWorkerAppOptions extends StandaloneAppOptions {
   /** Injected as the `config` inner object (BackgroundTaskHelper reads `config.backgroundTask.timeout`). */
@@ -47,14 +45,15 @@ export class ServiceWorkerApp {
 
   constructor(cwd: string, options?: ServiceWorkerAppOptions) {
     const { config, mcpAuthHandler, ...standaloneOptions } = options ?? {};
-    // This package root alone would discover BOTH modules through the
-    // node_modules convention (its package.json depends on
-    // @eggjs/service-worker-runtime, which declares `eggModule`), but that
-    // yields [serviceWorker, serviceWorkerRuntime] and reference order is
-    // currently load-bearing: with the runtime module scanned second, the
+    // The @eggjs/service-worker-controller package root alone would discover
+    // BOTH modules through the node_modules convention (its package.json
+    // depends on @eggjs/service-worker-runtime, which declares `eggModule`),
+    // but that yields [serviceWorker, serviceWorkerRuntime] and reference order
+    // is currently load-bearing: with the runtime module scanned second, the
     // ServiceWorkerRunner's `eggObjectFactory` inject fails to resolve
     // (EggPrototypeNotFound in LOAD_UNIT:serviceWorkerRuntime). Keep the
-    // runtime entry explicitly FIRST until reference order stops affecting
+    // runtime entry explicitly FIRST, then the service-worker-controller
+    // (`serviceWorker` eggModule) entry, until reference order stops affecting
     // resolution. `!test/**` keeps the packages' test fixture modules out of
     // the scan in workspace layouts (src/ in dev, dist/ when published — the
     // package root either way).
@@ -64,7 +63,7 @@ export class ServiceWorkerApp {
         extraFilePattern: ['!test/**'],
       },
       {
-        baseDir: path.join(path.dirname(fileURLToPath(import.meta.url)), '..'),
+        baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/service-worker-controller/package.json'))),
         extraFilePattern: ['!test/**'],
       },
       ...(standaloneOptions.frameworkDeps ?? []),

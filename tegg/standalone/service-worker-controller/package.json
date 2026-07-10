@@ -1,8 +1,9 @@
 {
-  "name": "@eggjs/service-worker",
+  "name": "@eggjs/service-worker-controller",
   "version": "4.0.2-beta.19",
-  "description": "tegg standalone service worker runtime: fetch event model, HTTP controller support and a node:http serve() bridge",
+  "description": "tegg standalone service worker fetch controller transport: fetch HTTP/MCP controller support for the service worker runtime",
   "keywords": [
+    "controller",
     "egg",
     "fetch",
     "service worker",
@@ -10,7 +11,7 @@
     "tegg",
     "typescript"
   ],
-  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/standalone/service-worker",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/standalone/service-worker-controller",
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
@@ -18,7 +19,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",
-    "directory": "tegg/standalone/service-worker"
+    "directory": "tegg/standalone/service-worker-controller"
   },
   "files": [
     "dist"
@@ -42,17 +43,24 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@eggjs/service-worker-controller": "workspace:*",
+    "@eggjs/controller-decorator": "workspace:*",
+    "@eggjs/controller-runtime": "workspace:*",
+    "@eggjs/router": "workspace:*",
     "@eggjs/service-worker-runtime": "workspace:*",
-    "@eggjs/standalone": "workspace:*"
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.23.0"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "^1.23.0",
     "@types/node": "catalog:",
     "typescript": "catalog:",
     "zod": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "serviceWorker"
   }
 }
