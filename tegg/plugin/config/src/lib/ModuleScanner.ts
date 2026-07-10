@@ -91,8 +91,21 @@ export class ModuleScanner {
     });
   }
 
+  // Same physical module reached via two different path strings — e.g. an app
+  // inline module.json path (not realpath'd) vs the same module resolved from
+  // node_modules with fs.realpathSync — must NOT warn. Compare realpaths, not
+  // raw strings, so pnpm/symlinked layouts don't trigger a spurious duplicate.
+  private static isSamePath(a: string, b: string): boolean {
+    if (a === b) return true;
+    try {
+      return fs.realpathSync(a) === fs.realpathSync(b);
+    } catch {
+      return false;
+    }
+  }
+
   private warnDuplicateModuleName(kept: ModuleReference, skipped: ModuleReference): void {
-    if (kept.path === skipped.path) {
+    if (ModuleScanner.isSamePath(kept.path, skipped.path)) {
       return;
     }
     const message =
