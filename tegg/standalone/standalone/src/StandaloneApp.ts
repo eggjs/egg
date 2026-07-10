@@ -364,7 +364,15 @@ export class StandaloneApp {
           return await runner.main();
         } finally {
           if (ctx.destroy) {
-            await ctx.destroy(lifecycle).catch((e: unknown) => {
+            // Fire-and-forget on purpose: do NOT await here. A host may return a
+            // response whose body is drained by the CALLER after run() returns
+            // (e.g. the service-worker pipes a streaming Response body and keeps
+            // context protos alive via a BackgroundTaskHelper drain task).
+            // ctx.destroy() drains those tasks, so awaiting it here would block
+            // run() from returning the Response the caller must consume first —
+            // a deadlock. App-level teardown determinism is handled by the
+            // awaited app.destroy() in appMain (main.ts).
+            void ctx.destroy(lifecycle).catch((e: unknown) => {
               if (e instanceof Error) {
                 e.message = `[tegg/standalone] destroy tegg context failed: ${e.message}`;
                 console.warn(e);
