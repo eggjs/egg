@@ -51,6 +51,8 @@
     "./lib/impl/http/HTTPMethodRegister": "./src/lib/impl/http/HTTPMethodRegister.ts",
     "./lib/impl/http/HTTPMethodRegisterBase": "./src/lib/impl/http/HTTPMethodRegisterBase.ts",
     "./lib/impl/http/Req": "./src/lib/impl/http/Req.ts",
+    "./lib/impl/mcp/EggMcpRouter": "./src/lib/impl/mcp/EggMcpRouter.ts",
+    "./lib/impl/mcp/McpRouter": "./src/lib/impl/mcp/McpRouter.ts",
     "./lib/impl/mcp/MCPConfig": "./src/lib/impl/mcp/MCPConfig.ts",
     "./lib/impl/mcp/MCPControllerRegister": "./src/lib/impl/mcp/MCPControllerRegister.ts",
     "./lib/impl/mcp/MCPServerHelper": "./src/lib/impl/mcp/MCPServerHelper.ts",

@@ -1,4 +1,4 @@
-import { MCPControllerRegister } from '@eggjs/controller-plugin/lib/impl/mcp/MCPControllerRegister';
+import { EggMcpRouter } from '@eggjs/controller-plugin/lib/impl/mcp/EggMcpRouter';
 import { TeggScope } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 
@@ -13,7 +13,7 @@ export default class AppHook {
 
   configWillLoad(): void {
     // hooks is per-app (scope-backed); register into this app's scope.
-    TeggScope.run(this.agent._teggScopeBag, () => MCPControllerRegister.addHook(MCPProxyHook));
+    TeggScope.run(this.agent._teggScopeBag, () => EggMcpRouter.addHook(MCPProxyHook));
   }
 
   async didLoad(): Promise<void> {

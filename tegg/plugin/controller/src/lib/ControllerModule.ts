@@ -1,13 +1,6 @@
 import { LifecyclePostInject } from '@eggjs/lifecycle';
-import {
-  EggPrototypeLifecycleProto,
-  Inject,
-  InjectOptional,
-  InnerObjectProto,
-  LoadUnitLifecycleProto,
-} from '@eggjs/tegg';
+import { EggPrototypeLifecycleProto, Inject, InnerObjectProto, LoadUnitLifecycleProto } from '@eggjs/tegg';
 import { AccessLevel } from '@eggjs/tegg-types';
-import type { Application } from 'egg';
 
 import { ControllerLoadUnitHook } from './ControllerLoadUnitHook.ts';
 import { ControllerPrototypeHook } from './ControllerPrototypeHook.ts';
@@ -28,13 +21,11 @@ import { RootProtoManager } from './RootProtoManager.ts';
 export class EggRootProtoManager extends RootProtoManager {}
 
 @InnerObjectProto({ name: 'controllerRegisterFactory', accessLevel: AccessLevel.PUBLIC })
-export class EggControllerRegisterFactory extends ControllerRegisterFactory<Application | undefined> {
-  // The egg host provides `eggApp` as a PRIVATE inner object (transport
-  // registers mount routes on app.router); standalone provides none and the
-  // fetch creators ignore the host argument.
-  constructor(@InjectOptional() eggApp?: Application) {
-    super(eggApp);
-  }
+export class EggControllerRegisterFactory extends ControllerRegisterFactory {
+  // No host is threaded through the DI graph: egg's transport creators close
+  // over `app` imperatively (see app.ts), the fetch creators are container
+  // citizens. Both register through ControllerRegisterDefaults / the injected
+  // factory directly.
 
   /**
    * Apply the transport creators the host enqueued imperatively before this

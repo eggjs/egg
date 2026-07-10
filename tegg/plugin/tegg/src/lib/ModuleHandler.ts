@@ -76,12 +76,6 @@ export class ModuleHandler extends Base {
             accessLevel: AccessLevel.PRIVATE,
           },
         ],
-        // The app itself (named eggApp: the egg compat surface already owns
-        // the plain `app` name), for host-specific needs of framework hooks (e.g.
-        // the controller register factory carries app so HTTP registers can
-        // mount routes on app.router). PRIVATE: inner objects only — business
-        // modules must never inject app.
-        eggApp: [{ obj: this.app, accessLevel: AccessLevel.PRIVATE }],
       },
     });
     this.#innerObjectLoadUnit = innerObjectLoadUnit;

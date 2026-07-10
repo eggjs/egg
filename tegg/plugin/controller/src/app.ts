@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/controller-decorator';
+import { ControllerMetaBuilderFactory, ControllerType, type MCPControllerMeta } from '@eggjs/controller-decorator';
 import { EggPrototypeFactory, type LoadUnitLifecycleContext } from '@eggjs/metadata';
 import {
   EggContainerFactory,
@@ -15,13 +15,14 @@ import { AgentControllerProto } from './lib/AgentControllerProto.ts';
 import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.ts';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.ts';
 import { ControllerMetadataManager } from './lib/ControllerMetadataManager.ts';
+import { ControllerRegisterDefaults } from './lib/ControllerRegisterDefaults.ts';
 import type { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';
 import { EggControllerLoader } from './lib/EggControllerLoader.ts';
 import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.ts';
+import { EggMcpRouter } from './lib/impl/mcp/EggMcpRouter.ts';
 import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister.ts';
 import { middlewareGraphHook } from './lib/MiddlewareGraphHook.ts';
 import type { RootProtoManager } from './lib/RootProtoManager.ts';
-import { ControllerRegisterDefaults } from './lib/ControllerRegisterDefaults.ts';
 
 // Load Controller process
 // 1. await add load unit is ready, controller may depend other load unit
@@ -60,8 +61,13 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       return new EggControllerLoader(unitPath);
     });
     // Drained by the module factory proto when the InnerObjectLoadUnit
-    // materializes (before any business load unit).
-    ControllerRegisterDefaults.enqueue(ControllerType.HTTP, HTTPControllerRegister.create);
+    // materializes (before any business load unit). The creators close over
+    // `this.app` (rather than the DI-threaded host) so the egg app never has to
+    // be provided as an inner object — HTTP registers mount on `app.router`,
+    // the MCP router captures the app imperatively.
+    ControllerRegisterDefaults.enqueue(ControllerType.HTTP, (proto, meta) =>
+      HTTPControllerRegister.create(proto, meta, this.app),
+    );
     this.app.loadUnitFactory.registerLoadUnitCreator(
       CONTROLLER_LOAD_UNIT,
       (ctx: LoadUnitLifecycleContext): ControllerLoadUnit => {
@@ -97,7 +103,18 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
     if (this.mcpEnable()) {
-      ControllerRegisterDefaults.enqueue(ControllerType.MCP, MCPControllerRegister.create);
+      // One EggMcpRouter + one collect-only MCPControllerRegister per app,
+      // created lazily on the first MCP controller proto (during didLoad, when
+      // app.router/app.config.mcp are ready). The router owns all egg transport;
+      // the register only collects records and delegates to the router.
+      let eggMcpRouter: EggMcpRouter | undefined;
+      let mcpRegister: MCPControllerRegister | undefined;
+      ControllerRegisterDefaults.enqueue(ControllerType.MCP, (proto, meta) => {
+        eggMcpRouter ??= new EggMcpRouter(this.app);
+        mcpRegister ??= new MCPControllerRegister(meta as MCPControllerMeta, eggMcpRouter);
+        mcpRegister.addControllerProto(proto);
+        return mcpRegister;
+      });
       // Don't let the mcp's body be consumed
       this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
 
@@ -168,7 +185,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       // and register methods after collect is done.
       HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
 
-      this.app.config.mcp.hooks = MCPControllerRegister.hooks;
+      this.app.config.mcp.hooks = EggMcpRouter.hooks;
     });
   }
 
@@ -196,7 +213,8 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       // InnerObjectLoadUnit teardown.
       ControllerMetadataManager.instance.clear();
       HTTPControllerRegister.clean();
-      MCPControllerRegister.clean();
+      // The MCP register/router are per-boot closures (no static instance to
+      // clean); the scope-backed hook list is torn down with the app bag.
     });
   }
 }

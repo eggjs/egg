@@ -4,8 +4,8 @@ import querystring from 'node:querystring';
 import { Readable } from 'node:stream';
 import url from 'node:url';
 
-import { MCPControllerRegister } from '@eggjs/controller-plugin/lib/impl/mcp/MCPControllerRegister';
-import type { MCPControllerHook } from '@eggjs/controller-plugin/lib/impl/mcp/MCPControllerRegister';
+import { EggMcpRouter } from '@eggjs/controller-plugin/lib/impl/mcp/EggMcpRouter';
+import type { MCPControllerHook } from '@eggjs/controller-plugin/lib/impl/mcp/EggMcpRouter';
 import { MCPProtocols, TeggScope, type TeggScopeBag } from '@eggjs/tegg-types';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -64,8 +64,8 @@ export const MCPProxyHook: MCPControllerHook = {
       // owning app's scope before reading the scope-backed hook list.
       const bag = (self.app as { _teggScopeBag?: TeggScopeBag })._teggScopeBag;
       await TeggScope.runMaybe(bag, async () => {
-        if (MCPControllerRegister.hooks.length > 0) {
-          for (const hook of MCPControllerRegister.hooks) {
+        if (EggMcpRouter.hooks.length > 0) {
+          for (const hook of EggMcpRouter.hooks) {
             await hook.preProxy?.(ctx, req, res);
           }
         }
@@ -144,8 +144,8 @@ export const MCPProxyHook: MCPControllerHook = {
         // reading the scope-backed hook list.
         const bag = (self.app as { _teggScopeBag?: TeggScopeBag })._teggScopeBag;
         await TeggScope.runMaybe(bag, async () => {
-          if (MCPControllerRegister.hooks.length > 0) {
-            for (const hook of MCPControllerRegister.hooks) {
+          if (EggMcpRouter.hooks.length > 0) {
+            for (const hook of EggMcpRouter.hooks) {
               await hook.preProxy?.(ctx, req, res);
             }
           }

@@ -1,43 +1,36 @@
 import { ControllerType, type MCPControllerMeta } from '@eggjs/controller-decorator';
 import type { ControllerRegisterFactory } from '@eggjs/controller-plugin';
+import { MCPControllerRegister } from '@eggjs/controller-plugin/lib/impl/mcp/MCPControllerRegister';
 import { Inject, InnerObjectProto, LifecyclePostInject } from '@eggjs/tegg';
 import { AccessLevel } from '@eggjs/tegg-types';
 
-import type { FetchRouter } from '../http/FetchRouter.ts';
-import type { MCPAuthHandler } from '../types.ts';
-import { MCPControllerRegister } from './MCPControllerRegister.ts';
+import { ServiceWorkerMcpRouter } from './ServiceWorkerMcpRouter.ts';
 
 /**
- * Owns the fetch host's MCPControllerRegister (no per-app statics) and plugs
- * the MCP register creator into the controller register factory.
+ * Plugs the shared, host-agnostic MCP collect-register into the controller
+ * register factory, bound to the fetch host's {@link ServiceWorkerMcpRouter}.
+ * The register only collects records; the router owns the fetch transport.
  */
 @InnerObjectProto({ name: 'mcpRegisterProvider', accessLevel: AccessLevel.PUBLIC })
 export class MCPRegisterProvider {
   @Inject()
-  private readonly fetchRouter: FetchRouter;
+  private readonly mcpRouter: ServiceWorkerMcpRouter;
 
   @Inject()
   private readonly controllerRegisterFactory: ControllerRegisterFactory;
-
-  @Inject()
-  private readonly mcpAuthHandler: MCPAuthHandler;
 
   #register?: MCPControllerRegister;
 
   @LifecyclePostInject()
   protected init(): void {
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, (proto, controllerMeta) => {
-      this.#register ??= new MCPControllerRegister(
-        controllerMeta as MCPControllerMeta,
-        this.fetchRouter,
-        this.mcpAuthHandler,
-      );
+      this.#register ??= new MCPControllerRegister(controllerMeta as MCPControllerMeta, this.mcpRouter);
       this.#register.addControllerProto(proto);
       return this.#register;
     });
   }
 
   async doRegister(): Promise<void> {
-    await this.#register?.doRegister();
+    await this.mcpRouter.doRegister();
   }
 }

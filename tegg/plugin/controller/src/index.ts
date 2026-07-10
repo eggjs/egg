@@ -12,4 +12,5 @@ export * from './lib/RootProtoManager.ts';
 export * from './lib/errors.ts';
 export * from './lib/impl/http/HTTPControllerRegisterBase.ts';
 export * from './lib/impl/http/HTTPMethodRegisterBase.ts';
+export * from './lib/impl/mcp/McpRouter.ts';
 export * from './lib/impl/mcp/MCPServerHelper.ts';

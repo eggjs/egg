@@ -7,7 +7,7 @@ import type { ReadResourceCallback, ToolCallback, PromptCallback } from '@modelc
 /**
  * The host-agnostic slice of the MCP controller hooks: a schema loader that
  * resolves tool/prompt args schemas when the decorated metadata has none.
- * The egg host passes its (per-app, live) MCPControllerRegister.hooks list.
+ * The egg host passes its (per-app, live) EggMcpRouter.hooks list.
  */
 export interface MCPSchemaLoaderHook {
   schemaLoader?: (

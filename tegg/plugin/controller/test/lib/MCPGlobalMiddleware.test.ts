@@ -3,16 +3,16 @@ import assert from 'node:assert/strict';
 import compose from 'koa-compose';
 import { describe, it } from 'vitest';
 
-import { MCPControllerRegister } from '../../src/lib/impl/mcp/MCPControllerRegister.ts';
+import { EggMcpRouter } from '../../src/lib/impl/mcp/EggMcpRouter.ts';
 
 // Unit tests for the lazy MCP global-middleware resolution.
 //
-// MCPControllerRegister.register() runs during the tegg load-unit init
-// (postCreate), which happens before egg's `loadMiddleware` populates
-// `app.middlewares`. The middleware named in `config.mcp.middleware` must
-// therefore be resolved lazily — on the first request — rather than at
-// registration time, otherwise booting an app that configures `mcp.middleware`
-// throws `Middleware <name> not found`.
+// The MCP routes are mounted during the tegg load-unit init (postCreate),
+// which happens before egg's `loadMiddleware` populates `app.middlewares`. The
+// middleware named in `config.mcp.middleware` must therefore be resolved lazily
+// — on the first request — rather than at registration time, otherwise booting
+// an app that configures `mcp.middleware` throws `Middleware <name> not found`.
+// This lazy wiring lives on the egg transport router (EggMcpRouter).
 function createRegister(mcp: any, middlewares: any) {
   const app: any = {
     eggContainerFactory: {},
@@ -20,7 +20,7 @@ function createRegister(mcp: any, middlewares: any) {
     config: { mcp },
     middlewares,
   };
-  const register = new (MCPControllerRegister as any)({}, {}, app);
+  const register = new (EggMcpRouter as any)(app);
   return { register, app };
 }
 
@@ -134,7 +134,7 @@ describe('plugin/controller/test/lib/MCPGlobalMiddleware.test.ts', () => {
       config: { mcp: { middleware: ['trace'] } },
       middlewares: {}, // 'trace' not loaded yet
     };
-    const register = new (MCPControllerRegister as any)({}, {}, app);
+    const register = new (EggMcpRouter as any)(app);
 
     assert.doesNotThrow(() => register.mcpStatelessStreamServerInit());
     assert.doesNotThrow(() => register.mcpStreamServerInit());
