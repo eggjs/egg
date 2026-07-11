@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/utils",
-  "version": "5.0.2-beta.21",
+  "version": "5.0.2-beta.22",
   "description": "Utils for all egg projects",
   "keywords": [
     "egg",
