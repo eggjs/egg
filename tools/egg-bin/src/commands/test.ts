@@ -252,6 +252,12 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     }
     if (!runner) {
       debug('skip @eggjs/tegg-vitest/runner: self-test fixture or not resolvable');
+    } else {
+      const teggSetup = importResolve('@eggjs/tegg-vitest/setup', {
+        paths: [flags.base, import.meta.dirname],
+      });
+      setupFiles.unshift(teggSetup);
+      debug('auto add @eggjs/tegg-vitest/setup: %o', teggSetup);
     }
 
     return {
