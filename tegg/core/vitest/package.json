@@ -30,6 +30,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./runner": "./src/runner.ts",
+    "./setup": "./src/setup.ts",
     "./shared": "./src/shared.ts",
     "./package.json": "./package.json"
   },
@@ -38,6 +39,7 @@
     "exports": {
       ".": "./dist/index.js",
       "./runner": "./dist/runner.js",
+      "./setup": "./dist/setup.js",
       "./shared": "./dist/shared.js",
       "./package.json": "./package.json"
     }

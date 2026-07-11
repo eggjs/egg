@@ -87,12 +87,6 @@ export default class TeggVitestRunner extends VitestTestRunner {
 
   constructor(config: ConstructorParameters<typeof VitestTestRunner>[0]) {
     super(config);
-    // TEGG discovers prototype files while the Egg app is booting. Route those
-    // imports through Vitest's module graph so application loading and test
-    // imports resolve to the same class instances.
-    // `setup` imports intentionally invalidate Vitest's module cache. Use the
-    // regular collection path here so an already imported prototype is reused.
-    globalThis.__EGG_MODULE_IMPORTER__ = async (filepath: string) => super.importFile(filepath, 'collect');
     // When isolate: false, all test files share the same worker and module cache.
     // The app must not be closed between files — only after all files finish.
     this.sharedMode = !config.isolate;
