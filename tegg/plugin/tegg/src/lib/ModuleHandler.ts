@@ -7,6 +7,7 @@ import type { Application } from 'egg';
 import { Base } from 'sdk-base';
 
 import { CompatibleUtil } from './CompatibleUtil.ts';
+import { EggAppLoader } from './EggAppLoader.ts';
 import { COMPATIBLE_PROTO_IMPLE_TYPE, EggCompatibleProtoImpl } from './EggCompatibleProtoImpl.ts';
 import { EggModuleLoader } from './EggModuleLoader.ts';
 
@@ -54,36 +55,27 @@ export class ModuleHandler extends Base {
         path: moduleDescriptor.unitPath,
       });
     }
+    // Feed the egg host's APP-scoped compat protos (`() => app[name]`) into the
+    // inner-object graph so inner objects inject app properties (router /
+    // logger / runtimeConfig / ...) through the SAME compat mechanism business
+    // modules use — no hand-provided instances. Built PRIVATE so they resolve
+    // for inner objects only and never collide with the app load unit's PUBLIC
+    // copies in business-module resolution. Added AFTER the scanned inner
+    // objects so a same-named inner object wins (compat proto is skipped).
+    builder.addCompatibleClazzList(new EggAppLoader(this.app).buildAppSingletonCompatClazzList(AccessLevel.PRIVATE), {
+      name: 'app',
+      path: this.app.baseDir,
+    });
+    // `moduleConfigs` is the one base object that is NOT a plain app-property
+    // compat proto: it is blacklisted in EggAppLoader and consumers want a
+    // ModuleConfigs wrapper (not the raw `app.moduleConfigs` map), so it stays
+    // an explicit provided inner object. PRIVATE: visible to inner objects only.
+    // (`logger` / `router` / `runtimeConfig` now arrive via the compat protos
+    // fed above; standalone, which has no egg compat surface, provides its own
+    // `logger` through its innerObjects instead.)
     const innerObjectLoadUnit = await builder.createLoadUnit({
-      // Base host objects for framework hooks — the SAME instances mounted on
-      // `app`, fed through the host-agnostic provided-objects contract. They
-      // cannot resolve via the egg compatible mechanism (EggAppLoader's
-      // COMPATIBLE protos): that load unit is only created in load(), AFTER
-      // this unit — which must instantiate first so its lifecycle hooks see
-      // every later load unit, egg-app included. PRIVATE: the egg host has
-      // its own resolution surface for these names (egg compatible objects),
-      // the provided protos must stay visible to inner objects only.
       innerObjects: {
-        logger: [{ obj: this.app.logger, accessLevel: AccessLevel.PRIVATE }],
         moduleConfigs: [{ obj: new ModuleConfigs(this.app.moduleConfigs), accessLevel: AccessLevel.PRIVATE }],
-        runtimeConfig: [
-          {
-            obj: {
-              baseDir: this.app.baseDir,
-              env: this.app.config.env,
-              name: this.app.name,
-            },
-            accessLevel: AccessLevel.PRIVATE,
-          },
-        ],
-        // The egg router, handed in so inner objects (e.g. the controller
-        // plugin's httpRegisterProvider) can inject it instead of closing over
-        // `app`. Named `httpRouter`, NOT `router`, on purpose: `router` is an
-        // app property, so EggQualifierProtoHook would stamp any `router`
-        // injection with EggQualifier=APP and route it to the egg compatible
-        // app proto (a different load unit) instead of this provided inner
-        // object. PRIVATE: visible to inner objects only.
-        httpRouter: [{ obj: this.app.router, accessLevel: AccessLevel.PRIVATE }],
       },
     });
     this.#innerObjectLoadUnit = innerObjectLoadUnit;

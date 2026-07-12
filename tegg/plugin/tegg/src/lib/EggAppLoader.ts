@@ -36,7 +36,7 @@ export class EggAppLoader implements Loader {
     this.moduleConfigLoader = new ModuleConfigLoader(this.app);
   }
 
-  private buildClazz(name: string, eggType: EggType): EggProtoImplClass {
+  private buildClazz(name: string, eggType: EggType, accessLevel: AccessLevel = AccessLevel.PUBLIC): EggProtoImplClass {
     const app = this.app;
     let func: EggProtoImplClass;
     if (eggType === EggType.APP) {
@@ -68,7 +68,7 @@ export class EggAppLoader implements Loader {
     PrototypeUtil.setProperty(func, {
       name,
       initType: ObjectInitType.SINGLETON,
-      accessLevel: AccessLevel.PUBLIC,
+      accessLevel,
       protoImplType: COMPATIBLE_PROTO_IMPLE_TYPE,
     });
     QualifierUtil.addProtoQualifier(func, LoadUnitNameQualifierAttribute, 'app');
@@ -77,7 +77,7 @@ export class EggAppLoader implements Loader {
     return func;
   }
 
-  private buildAppLoggerClazz(name: string): EggProtoImplClass {
+  private buildAppLoggerClazz(name: string, accessLevel: AccessLevel = AccessLevel.PUBLIC): EggProtoImplClass {
     const app = this.app;
     const func: EggProtoImplClass = function () {
       return app.getLogger(name);
@@ -93,7 +93,7 @@ export class EggAppLoader implements Loader {
     PrototypeUtil.setProperty(func, {
       name,
       initType: ObjectInitType.SINGLETON,
-      accessLevel: AccessLevel.PUBLIC,
+      accessLevel,
       protoImplType: COMPATIBLE_PROTO_IMPLE_TYPE,
     });
     QualifierUtil.addProtoQualifier(func, LoadUnitNameQualifierAttribute, 'app');
@@ -108,7 +108,16 @@ export class EggAppLoader implements Loader {
     return loggerNames.filter((t) => !ctxClazzNames.includes(t) && !singletonClazzNames.includes(t));
   }
 
-  async load(): Promise<EggProtoImplClass[]> {
+  /**
+   * The APP-scoped egg compatible protos: `() => app[name]` for every app
+   * property (minus the blacklist) plus the named app loggers. Extracted so
+   * ModuleHandler can feed the SAME compat protos into the InnerObjectLoadUnit,
+   * letting inner objects inject app properties (router / logger / ...) through
+   * the very mechanism business modules use — instead of hand-provided
+   * instances. CONTEXT-scoped compat protos stay out: inner objects are
+   * singletons and cannot inject request-scoped objects.
+   */
+  buildAppSingletonCompatClazzList(accessLevel: AccessLevel = AccessLevel.PUBLIC): EggProtoImplClass[] {
     const app = this.app;
     const appProperties = ObjectUtils.getProperties(app);
     const contextProperties = ObjectUtils.getProperties((app as any).context);
@@ -120,15 +129,24 @@ export class EggAppLoader implements Loader {
     CONTEXT_CLAZZ_BLACK_LIST.forEach((t) => allContextClazzNamesSet.delete(t));
     const allContextClazzNames = Array.from(allContextClazzNamesSet);
     const loggerNames = this.getLoggerNames(allContextClazzNames, allSingletonClazzNames);
-    const allSingletonClazzs = allSingletonClazzNames.map((name) => this.buildClazz(name, EggType.APP));
+    return [
+      ...allSingletonClazzNames.map((name) => this.buildClazz(name, EggType.APP, accessLevel)),
+      ...loggerNames.map((name) => this.buildAppLoggerClazz(name, accessLevel)),
+    ];
+  }
+
+  async load(): Promise<EggProtoImplClass[]> {
+    const app = this.app;
+    const contextProperties = ObjectUtils.getProperties((app as any).context);
+    const allContextClazzNamesSet = new Set([...contextProperties, ...DEFAULT_CONTEXT_CLAZZ]);
+    CONTEXT_CLAZZ_BLACK_LIST.forEach((t) => allContextClazzNamesSet.delete(t));
+    const allContextClazzNames = Array.from(allContextClazzNamesSet);
     const allContextClazzs = allContextClazzNames.map((name) => this.buildClazz(name, EggType.CONTEXT));
-    const appLoggerClazzs = loggerNames.map((name) => this.buildAppLoggerClazz(name));
     const moduleConfigList = this.moduleConfigLoader.loadModuleConfigList();
 
     return [
-      ...allSingletonClazzs,
+      ...this.buildAppSingletonCompatClazzList(),
       ...allContextClazzs,
-      ...appLoggerClazzs,
       ...moduleConfigList,
 
       // inner helper class list

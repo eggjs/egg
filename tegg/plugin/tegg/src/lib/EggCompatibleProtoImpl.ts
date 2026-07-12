@@ -34,12 +34,13 @@ export class EggCompatibleProtoImpl implements EggPrototype {
     initType: ObjectInitTypeLike,
     loadUnitId: Id,
     qualifiers: QualifierInfo[],
+    accessLevel: AccessLevel = AccessLevel.PUBLIC,
   ) {
     this.id = id;
     this.clazz = clazz;
     this.name = name;
     this.initType = initType;
-    this.accessLevel = AccessLevel.PUBLIC;
+    this.accessLevel = accessLevel;
     this.injectObjects = [];
     this.loadUnitId = loadUnitId;
     this.qualifiers = qualifiers;
@@ -82,6 +83,11 @@ export class EggCompatibleProtoImpl implements EggPrototype {
       ctx.prototypeInfo.initType,
       loadUnit.id,
       QualifierUtil.mergeQualifiers(QualifierUtil.getProtoQualifiers(clazz), ctx.prototypeInfo.qualifiers ?? []),
+      // The app load unit's compat protos stay PUBLIC (the default carried on
+      // the built clazz); the same protos fed into the InnerObjectLoadUnit are
+      // built PRIVATE so they resolve for inner objects only and never collide
+      // with the app load unit's protos in business-module resolution.
+      ctx.prototypeInfo.accessLevel,
     );
     return proto;
   }

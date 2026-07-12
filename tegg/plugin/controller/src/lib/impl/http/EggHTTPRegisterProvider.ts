@@ -4,7 +4,7 @@ import {
   type ControllerRegisterFactory,
   type RootProtoManager,
 } from '@eggjs/controller-runtime';
-import { Inject, InnerObjectProto } from '@eggjs/core-decorator';
+import { EggQualifier, EggType, Inject, InnerObjectProto } from '@eggjs/core-decorator';
 import { LifecyclePostInject } from '@eggjs/lifecycle';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { AccessLevel } from '@eggjs/tegg-types';
@@ -15,18 +15,20 @@ import { EggHTTPMethodRegister } from './EggHTTPMethodRegister.ts';
 /**
  * Owns the egg host's HTTPControllerRegister as a container citizen: the
  * provider is an inner object (per-app via the InnerObjectLoadUnit, no static
- * TeggScope slot) that injects the app's router — handed in as the provided
- * inner object `httpRouter` by ModuleHandler — and plugs the HTTP register
- * creator into the controller register factory. Structurally identical to the
- * fetch host's HTTPRegisterProvider; only the injected router and
- * method-register differ. (It is `httpRouter`, not `router`: see the
- * ModuleHandler note — `router` is an app property and would be routed to the
- * egg compatible app proto instead of this provided inner object.)
+ * TeggScope slot) that injects the app's `router` — resolved through the egg
+ * compat protos ModuleHandler feeds into the inner-object graph — and plugs the
+ * HTTP register creator into the controller register factory. Structurally
+ * identical to the fetch host's HTTPRegisterProvider; only the injected router
+ * and method-register differ.
  */
 @InnerObjectProto({ name: 'httpRegisterProvider', accessLevel: AccessLevel.PUBLIC })
 export class EggHTTPRegisterProvider {
+  // `router` is both an app and a ctx property, so a plain inject would be
+  // stamped EggType.CONTEXT (a singleton inner object cannot inject that).
+  // Qualify to the app-scoped compat proto explicitly.
   @Inject()
-  private readonly httpRouter: Router;
+  @EggQualifier(EggType.APP)
+  private readonly router: Router;
 
   @Inject()
   private readonly controllerRegisterFactory: ControllerRegisterFactory;
@@ -44,7 +46,7 @@ export class EggHTTPRegisterProvider {
 
   getOrCreateRegister(): HTTPControllerRegister {
     this.#register ??= new HTTPControllerRegister(
-      this.httpRouter,
+      this.router,
       EggContainerFactory,
       (proto, controllerMeta, methodMeta, methodRouter, checkRouters, containerFactory) =>
         new EggHTTPMethodRegister(proto, controllerMeta, methodMeta, methodRouter, checkRouters, containerFactory),

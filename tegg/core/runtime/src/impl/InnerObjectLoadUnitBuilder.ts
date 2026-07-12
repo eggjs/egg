@@ -81,6 +81,33 @@ export class InnerObjectLoadUnitBuilder {
   }
 
   /**
+   * Feed host-agnostic compatible protos (the egg host's `() => app[name]` app
+   * property protos) so inner objects can inject app properties through the
+   * same compat mechanism business modules use. Unlike inner-object classes, a
+   * name collision is NOT an error: a scanned inner object of the same name
+   * wins and the compat proto is skipped, because the app surface legitimately
+   * overlaps inner-object names. Call AFTER all inner-object classes are added
+   * so they take precedence.
+   */
+  addCompatibleClazzList(clazzList: readonly EggProtoImplClass[], moduleReference: InnerObjectModuleReference): void {
+    for (const clazz of clazzList) {
+      const descriptor = ProtoDescriptorHelper.createByInstanceClazz(clazz, {
+        moduleName: INNER_OBJECT_LOAD_UNIT_NAME,
+        unitPath: INNER_OBJECT_LOAD_UNIT_PATH,
+        defineModuleName: moduleReference.name,
+        defineUnitPath: moduleReference.path,
+      });
+      descriptor.qualifiers = InnerObjectLoadUnitBuilder.#addDefaultDefineModuleQualifier(
+        descriptor.qualifiers,
+        moduleReference.name,
+      );
+      const protoGraphNode = new GraphNode<ProtoNode, ProtoDependencyMeta>(new ProtoNode(descriptor));
+      // A scanned inner object of the same identity wins; skip the compat proto.
+      this.#protoGraph.addVertex(protoGraphNode);
+    }
+  }
+
+  /**
    * Host-provided instances are ordinary protos, exactly as before the
    * module-plugin refactor (StandaloneInnerObjectProto): the descriptor
    * carries a factory clazz (`() => obj`), so they flow through the same
