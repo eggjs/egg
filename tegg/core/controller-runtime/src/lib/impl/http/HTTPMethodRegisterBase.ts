@@ -105,8 +105,10 @@ export abstract class HTTPMethodRegister {
     const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);
     const routerFunc = this.router[this.methodMeta.method.toLowerCase() as keyof Router] as Function;
-    const methodMiddlewares: HTTPHandlerFunc[] = this.controllerMeta.getMethodMiddlewares(this.methodMeta);
-    methodMiddlewares.push(...this.getExtraMethodMiddlewares());
+    const methodMiddlewares: HTTPHandlerFunc[] = [
+      ...this.controllerMeta.getMethodMiddlewares(this.methodMeta),
+      ...this.getExtraMethodMiddlewares(),
+    ];
     const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) ?? [undefined];
     hosts.forEach((host) => {
       const handler = this.createHandler(this.methodMeta, host);
