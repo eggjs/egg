@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/logrotator",
-  "version": "5.0.2-beta.23",
+  "version": "5.0.2-beta.24",
   "description": "logrotator for egg",
   "keywords": [
     "egg",

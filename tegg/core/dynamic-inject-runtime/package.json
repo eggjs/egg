@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/dynamic-inject-runtime",
-  "version": "4.0.2-beta.23",
+  "version": "4.0.2-beta.24",
   "description": "tegg dynamic inject runtime",
   "keywords": [
     "egg",

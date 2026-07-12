@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/langchain-plugin",
-  "version": "4.0.2-beta.23",
+  "version": "4.0.2-beta.24",
   "description": "langchain for egg",
   "keywords": [
     "egg",

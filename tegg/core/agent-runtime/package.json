@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/agent-runtime",
-  "version": "4.0.2-beta.23",
+  "version": "4.0.2-beta.24",
   "description": "Agent runtime with store abstraction for Egg.js tegg",
   "keywords": [
     "agent",

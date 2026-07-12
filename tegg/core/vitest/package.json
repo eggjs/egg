@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-vitest",
-  "version": "4.0.2-beta.23",
+  "version": "4.0.2-beta.24",
   "description": "Vitest adapter for tegg context injection",
   "keywords": [
     "adapter",
