@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/controller-decorator';
-import { GlobalGraph, type LoadUnitLifecycleContext } from '@eggjs/metadata';
+import type { LoadUnitLifecycleContext } from '@eggjs/metadata';
 import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
 import { AGENT_CONTROLLER_PROTO_IMPL_TYPE, TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
@@ -164,8 +164,14 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   configDidLoad(): void {
-    // Pin to this app's graph (set later during didLoad) — no run wrap needed.
-    GlobalGraph.instanceFor(this.app._teggScopeBag)?.registerBuildHook(middlewareGraphHook);
+    // The per-app GlobalGraph does not exist yet (it is created inside
+    // moduleHandler.init() during didLoad), so registering on the graph here
+    // would be a silent no-op and cross-module controller middleware inject
+    // edges would never be woven. Buffer the hook on moduleHandler instead —
+    // it is flushed onto the graph right after creation, before build() runs.
+    // moduleHandler is created in the tegg plugin's configDidLoad, which runs
+    // before ours (teggController declares a dependency on tegg).
+    this.app.moduleHandler.registerGlobalGraphBuildHook(middlewareGraphHook);
   }
 
   mcpEnable(): boolean {
