@@ -33,6 +33,11 @@ describe('fixture demo app', () => {
   });
 
   it('injects ctx and getEggObject', async () => {
+    const loadedModule = (await globalThis.__EGG_MODULE_IMPORTER__?.(
+      path.join(__dirname, 'fixtures/apps/demo-app/modules/demo-module/HelloService.ts'),
+    )) as { HelloService: typeof HelloService };
+    assert.strictEqual(loadedModule.HelloService, HelloService);
+
     const ctx = app.ctxStorage.getStore();
     assert(ctx);
     const helloService = (await ctx.getEggObject(HelloService)) as any;
