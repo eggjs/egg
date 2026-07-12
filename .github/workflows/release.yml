@@ -75,10 +75,7 @@ jobs:
           console.log(`npm dist-tag: ${npmTag}`);
           EOF
 
-      - name: Set package versions
-        run: node scripts/set-release-version.js ${{ steps.release.outputs.version }}
-
-      - name: Push version commit and tag
+      - name: Validate release tag target
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
           RELEASE_TARGET: ${{ github.event.release.target_commitish }}
@@ -88,6 +85,23 @@ jobs:
             exit 1
           fi
 
+          git fetch origin "refs/tags/${RELEASE_TAG}:refs/tags/${RELEASE_TAG}" --force
+          TAG_SHA=$(git rev-parse "${RELEASE_TAG}^{commit}")
+          HEAD_SHA=$(git rev-parse HEAD)
+          if [[ "$TAG_SHA" != "$HEAD_SHA" ]]; then
+            echo "Release tag ${RELEASE_TAG} already points to ${TAG_SHA}, but ${RELEASE_TARGET} is at ${HEAD_SHA}."
+            echo "Create the GitHub Release with a new tag, or move/delete the old tag intentionally before retrying."
+            exit 1
+          fi
+
+      - name: Set package versions
+        run: node scripts/set-release-version.js ${{ steps.release.outputs.version }}
+
+      - name: Push version commit and tag
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TARGET: ${{ github.event.release.target_commitish }}
+        run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 

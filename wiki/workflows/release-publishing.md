@@ -22,6 +22,8 @@ The workflow checks out the GitHub Release target branch, installs with `ut inst
 
 Because Egg packages use independent major versions, the release tag is not copied to every workspace package. For example, publishing `v4.1.2-beta.17` bumps `egg` to `4.1.2-beta.17`, but bumps `@eggjs/core` from `7.0.2-beta.16` to `7.0.2-beta.17`.
 
+If the release tag already exists somewhere other than the selected target branch HEAD, the workflow fails before changing versions or publishing. In that case choose the next version tag, or move/delete the old tag intentionally before retrying.
+
 `scripts/publish.js` uses `pnpm --filter <package> publish` for each publishable package so workspace protocol references are handled by the package manager while npm provenance is enabled via `--provenance`. It skips versions that are already present on npm, publishes packages individually, and retries failures once. This makes a release retry-safe after a partial publish.
 
 The npm dist-tag is `latest` for stable versions, the semver prerelease identifier for versions such as `4.1.2-alpha.0`, `4.1.2-beta.0`, or `4.1.2-rc.0`, and `beta` when the GitHub Release is marked as prerelease but the version has no semver prerelease identifier.
