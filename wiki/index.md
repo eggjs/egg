@@ -12,6 +12,7 @@ Read this file before exploring raw sources.
 ## Workflows
 
 - [Docs and API Updates](./workflows/docs-and-api-updates.md) - How to handle changes that affect user-facing docs or durable project understanding.
+- [Release Publishing](./workflows/release-publishing.md) - GitHub Release publishing, retry behavior, and one-time npm trusted publishing setup for new packages.
 
 ## Decisions
 

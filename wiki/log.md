@@ -2,6 +2,18 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-12] workflow | switch releases to GitHub Release published trigger
+
+- sources touched: `.github/workflows/release.yml`, `scripts/set-release-version.js`, `scripts/publish.js`, `pnpm-workspace.yaml`, `wiki/workflows/release-publishing.md`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/workflows/release-publishing.md`
+- note: Release publishing now follows the GitHub Releases page flow used by utoo-pm: publishing a `v<semver>` GitHub Release triggers the workflow, the tag version is treated as the target `egg`/root version, `scripts/set-release-version.js` infers the semver bump type and applies it to publishable workspace manifests inside CI, the workflow commits those version changes back to the release target branch and moves the release tag to that commit, the build runs with `ut run build`, and `scripts/publish.js` publishes with provenance using a dist-tag derived from the semver prerelease id or the GitHub Release prerelease flag. The workflow no longer uses `workflow_dispatch` inputs or creates a draft release after publishing.
+
+## [2026-07-09] workflow | record release publishing OIDC setup for new packages
+
+- sources touched: `.github/workflows/release.yml`, `scripts/publish.js`, `pnpm-workspace.yaml`, `tegg/plugin/dns-cache/package.json`, npm trusted publishing docs
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/workflows/release-publishing.md`
+- note: Manual release uses `npm publish --provenance` through `scripts/publish.js` so GitHub Actions OIDC/trusted publishing and provenance work after the utoo install/build flow. The script publishes packages individually, skips versions already on npm, and retries failures once. Newly added packages still need one-time npm initialization/trusted-publisher setup because npm trust configuration requires the package to exist first; an OIDC token exchange `package not found` plus registry 404 indicates this setup is missing.
+
 ## [2026-06-22] package | egg-bundler CJS/ESM require interop fixed upstream in @utoo/pack (EGG-69)
 
 - sources touched: `pnpm-workspace.yaml`, `tools/egg-bundler/src/lib/Bundler.ts`, `tools/egg-bundler/test/Bundler.test.ts`, `tools/egg-bundler/test/cjsEsmInterop.realbuild.test.ts`
