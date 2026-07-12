@@ -6,8 +6,8 @@
 // (`LoaderUtil.loadFile` collects re-exported `@*Proto` classes). The egg host
 // re-exports the same prototypes from its own `teggController` plugin module.
 export {
-  EggRootProtoManager,
-  EggControllerRegisterFactory,
-  EggControllerLoadUnitHook,
-  EggControllerPrototypeLifecycleHook,
+  RootProtoManager,
+  ControllerRegisterFactory,
+  ControllerLoadUnitHook,
+  ControllerPrototypeHook,
 } from '@eggjs/controller-runtime';

@@ -8,8 +8,8 @@
 // eggModule (see @eggjs/service-worker/src/ControllerModule.ts). The scanned
 // module is always a host package; the runtime library is never scanned.
 export {
-  EggRootProtoManager,
-  EggControllerRegisterFactory,
-  EggControllerLoadUnitHook,
-  EggControllerPrototypeLifecycleHook,
+  RootProtoManager,
+  ControllerRegisterFactory,
+  ControllerLoadUnitHook,
+  ControllerPrototypeHook,
 } from '@eggjs/controller-runtime';

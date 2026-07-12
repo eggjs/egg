@@ -1,20 +1,26 @@
 import { CONTROLLER_META_DATA, type ControllerMetadata } from '@eggjs/controller-decorator';
+import { Inject, LoadUnitLifecycleProto } from '@eggjs/core-decorator';
 import type { LifecycleHook } from '@eggjs/lifecycle';
 import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
 
 import { ControllerMetadataManager } from './ControllerMetadataManager.ts';
-import type { ControllerRegisterFactory } from './ControllerRegisterFactory.ts';
-import type { RootProtoManager } from './RootProtoManager.ts';
+import { ControllerRegisterFactory } from './ControllerRegisterFactory.ts';
+import { RootProtoManager } from './RootProtoManager.ts';
 
 /**
- * Host-agnostic load-unit hook: for every controller proto in a created load
- * unit, resolve the register for its controller type and run it.
+ * Host-agnostic load-unit lifecycle proto: for every controller proto in a
+ * created load unit, resolve the register for its controller type and run it.
+ * Defined once here; each host re-exports it into its own scanned eggModule.
  */
+@LoadUnitLifecycleProto()
 export class ControllerLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly controllerRegisterFactory: ControllerRegisterFactory<any>;
   private readonly rootProtoManager: RootProtoManager;
 
-  constructor(controllerRegisterFactory: ControllerRegisterFactory<any>, rootProtoManager: RootProtoManager) {
+  constructor(
+    @Inject() controllerRegisterFactory: ControllerRegisterFactory<any>,
+    @Inject() rootProtoManager: RootProtoManager,
+  ) {
     this.controllerRegisterFactory = controllerRegisterFactory;
     this.rootProtoManager = rootProtoManager;
   }

@@ -1,5 +1,7 @@
+import { InnerObjectProto } from '@eggjs/core-decorator';
 import type { EggPrototype } from '@eggjs/metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
+import { AccessLevel } from '@eggjs/tegg-types';
 
 /**
  * The structural request shape RootProtoManager needs. Both the egg Context
@@ -13,6 +15,13 @@ export interface RootProtoRequestContext {
 
 export type GetRootProtoCallback = (ctx: RootProtoRequestContext) => EggPrototype | undefined;
 
+/**
+ * A controller-module inner-object proto. It is defined host-agnostically here
+ * (this package is a plain library, never scanned); each host re-exports it
+ * into its own scanned eggModule (see the host `ControllerModule.ts` shims), so
+ * the container materializes one `rootProtoManager` per app.
+ */
+@InnerObjectProto({ name: 'rootProtoManager', accessLevel: AccessLevel.PUBLIC })
 export class RootProtoManager {
   // <method, GetRootProtoCallback[]>
   protoMap: Map<string, GetRootProtoCallback[]> = new Map();

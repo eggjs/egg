@@ -2,7 +2,6 @@
 // the standalone service-worker host subclass/consume these.
 export * from './lib/ControllerLoadUnit.ts';
 export * from './lib/ControllerLoadUnitHook.ts';
-export * from './lib/ControllerModule.ts';
 export * from './lib/ControllerLoadUnitInstance.ts';
 export * from './lib/ControllerMetadataManager.ts';
 export * from './lib/ControllerPrototypeHook.ts';
