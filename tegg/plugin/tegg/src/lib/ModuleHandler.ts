@@ -76,6 +76,14 @@ export class ModuleHandler extends Base {
             accessLevel: AccessLevel.PRIVATE,
           },
         ],
+        // The egg router, handed in so inner objects (e.g. the controller
+        // plugin's httpRegisterProvider) can inject it instead of closing over
+        // `app`. Named `httpRouter`, NOT `router`, on purpose: `router` is an
+        // app property, so EggQualifierProtoHook would stamp any `router`
+        // injection with EggQualifier=APP and route it to the egg compatible
+        // app proto (a different load unit) instead of this provided inner
+        // object. PRIVATE: visible to inner objects only.
+        httpRouter: [{ obj: this.app.router, accessLevel: AccessLevel.PRIVATE }],
       },
     });
     this.#innerObjectLoadUnit = innerObjectLoadUnit;

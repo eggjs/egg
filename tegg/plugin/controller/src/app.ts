@@ -24,7 +24,7 @@ import { AgentControllerObject } from './lib/AgentControllerObject.ts';
 import { AgentControllerProto } from './lib/AgentControllerProto.ts';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.ts';
 import { EggControllerLoader } from './lib/EggControllerLoader.ts';
-import { EggHTTPControllerRegister } from './lib/impl/http/EggHTTPControllerRegister.ts';
+import type { EggHTTPRegisterProvider } from './lib/impl/http/EggHTTPRegisterProvider.ts';
 import { EggMcpRouter } from './lib/impl/mcp/EggMcpRouter.ts';
 
 // Load Controller process
@@ -63,14 +63,6 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     this.app.loaderFactory.registerLoader(CONTROLLER_LOAD_UNIT, (unitPath) => {
       return new EggControllerLoader(unitPath);
     });
-    // Drained by the module factory proto when the InnerObjectLoadUnit
-    // materializes (before any business load unit). The creators close over
-    // `this.app` (rather than the DI-threaded host) so the egg app never has to
-    // be provided as an inner object — HTTP registers mount on `app.router`,
-    // the MCP router captures the app imperatively.
-    ControllerRegisterDefaults.enqueue(ControllerType.HTTP, (proto, meta) =>
-      EggHTTPControllerRegister.create(proto, meta, this.app),
-    );
     this.app.loadUnitFactory.registerLoadUnitCreator(
       CONTROLLER_LOAD_UNIT,
       (ctx: LoadUnitLifecycleContext): ControllerLoadUnit => {
@@ -179,14 +171,21 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       this.app.rootProtoManager = (await EggContainerFactory.getOrCreateEggObject(rootProtoManagerProto))
         .obj as RootProtoManager;
 
+      // Resolve the HTTP register provider up front: its @LifecyclePostInject
+      // plugs the HTTP register creator into the factory, which the load-unit
+      // hook needs when ControllerLoadUnitHandler processes controller protos
+      // below. (MCP's creator is plugged in by the factory's own drain of the
+      // configWillLoad enqueue.)
+      const httpProviderProto = EggPrototypeFactory.instance.getPrototype('httpRegisterProvider');
+      const httpRegisterProvider = (await EggContainerFactory.getOrCreateEggObject(httpProviderProto))
+        .obj as EggHTTPRegisterProvider;
+
       this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
       await this.controllerLoadUnitHandler.ready();
 
-      // The real register HTTP controller/method.
-      // HTTP method should sort by priority
-      // The EggHTTPControllerRegister will collect all the methods
-      // and register methods after collect is done.
-      EggHTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
+      // The real register HTTP controller/method, after every controller proto
+      // has been collected. HTTP methods are sorted by priority inside.
+      httpRegisterProvider.doRegister(this.app.rootProtoManager);
 
       this.app.config.mcp.hooks = EggMcpRouter.hooks;
     });
@@ -212,12 +211,11 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       if (this.controllerLoadUnitHandler) {
         await this.controllerLoadUnitHandler.destroy();
       }
-      // The module-declared controller hooks deregister with the
-      // InnerObjectLoadUnit teardown.
+      // The module-declared controller hooks, the httpRegisterProvider (and its
+      // HTTPControllerRegister), and the MCP register/router all deregister /
+      // tear down with the InnerObjectLoadUnit and the app bag — no static
+      // instance to clean.
       ControllerMetadataManager.instance.clear();
-      EggHTTPControllerRegister.clean();
-      // The MCP register/router are per-boot closures (no static instance to
-      // clean); the scope-backed hook list is torn down with the app bag.
     });
   }
 }
