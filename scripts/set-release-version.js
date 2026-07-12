@@ -30,8 +30,8 @@ if (!eggPackage) {
 }
 
 const currentEggVersion = eggPackage.version;
-const prerelease = semver.prerelease(targetVersion);
-const prereleaseTag = prerelease?.find((part) => typeof part === 'string');
+const targetPrerelease = semver.prerelease(targetVersion);
+const prereleaseTag = targetPrerelease?.find((part) => typeof part === 'string');
 let releaseType;
 
 if (semver.eq(currentEggVersion, targetVersion)) {
@@ -53,18 +53,36 @@ function getNextVersion(currentVersion) {
     return currentVersion;
   }
 
+  let nextVersion;
   if (releaseType.includes('pre')) {
-    return semver.inc(currentVersion, releaseType, prereleaseTag);
+    nextVersion = semver.inc(currentVersion, releaseType, prereleaseTag);
+  } else {
+    nextVersion = semver.inc(currentVersion, releaseType);
   }
 
-  return semver.inc(currentVersion, releaseType);
+  if (!nextVersion) {
+    console.error(`Unable to update ${currentVersion} with inferred release type ${releaseType}.`);
+    process.exit(1);
+  }
+
+  if (releaseType.includes('pre') && targetPrerelease?.length) {
+    return setPrerelease(nextVersion, targetPrerelease);
+  }
+
+  return nextVersion;
 }
 
 if (getNextVersion(currentEggVersion) !== targetVersion) {
   console.error(
-    `Inferred release type ${releaseType} would not update egg from ${currentEggVersion} to ${targetVersion}.`,
+    `Inferred release type ${releaseType} cannot update egg from ${currentEggVersion} to ${targetVersion}.`,
   );
+  console.error('Use the next stable target, or a prerelease target such as v4.1.2-beta.24.');
   process.exit(1);
+}
+
+function setPrerelease(version, prereleaseParts) {
+  const parsed = semver.parse(version);
+  return `${parsed.major}.${parsed.minor}.${parsed.patch}-${prereleaseParts.join('.')}`;
 }
 
 function updateManifest(packageJsonPath, newVersion) {
