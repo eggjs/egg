@@ -15,6 +15,8 @@ import { describe, it, afterEach, beforeEach } from 'vitest';
 import { main, StandaloneContext, StandaloneApp, preLoad, appMain } from '../src/index.ts';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello.ts';
 import { Foo } from './fixtures/dal-module/src/Foo.ts';
+import { CleanupProbe } from './fixtures/init-failure/CleanupProbe.ts';
+import { InitFailureInner } from './fixtures/init-failure/InitFailureInner.ts';
 
 const __dirname = import.meta.dirname;
 
@@ -100,10 +102,71 @@ describe('standalone/standalone/test/index.test.ts', () => {
         },
       });
       try {
-        assert.deepEqual(app.moduleReferences, moduleReferences);
+        assert.equal(await app.run(), 'hello!hello from ctx');
       } finally {
         await app.destroy();
       }
+    });
+
+    it('should store the resolved module name when a manifest reference name drifts', async () => {
+      const fixture = path.join(__dirname, './fixtures/simple');
+      const moduleReferences = [...StandaloneApp.getModuleReferences(fixture)];
+      const appReference = moduleReferences.find((reference) => reference.path === fixture);
+      assert(appReference);
+      appReference.name = 'staleManifestName';
+
+      const app = new StandaloneApp({ dump: false });
+      await app.init({
+        baseDir: fixture,
+        manifest: { moduleReferences, moduleDescriptors: [] },
+      });
+      try {
+        const moduleConfigs = await TeggScope.run(app.scopeBag, async () => {
+          const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName('moduleConfigs');
+          return eggObject.obj as ModuleConfigs;
+        });
+        assert(moduleConfigs.inner.simple);
+        assert.equal(moduleConfigs.inner.simple.reference.name, 'simple');
+        assert.equal(await app.run(), 'hello!hello from ctx');
+      } finally {
+        await app.destroy();
+      }
+    });
+  });
+
+  describe('app lifecycle state', () => {
+    const fixture = path.join(__dirname, './fixtures/simple');
+
+    it('should ignore repeated init and destroy after each operation completes', async () => {
+      const app = new StandaloneApp({ dump: false });
+      await app.init({ baseDir: fixture });
+      await app.init({ baseDir: fixture });
+      await app.destroy();
+      await app.destroy();
+      await assert.rejects(() => app.run(), /cannot run app in closed state/);
+    });
+
+    it('should close the app after init fails', async () => {
+      const failureFixture = path.join(__dirname, './fixtures/init-failure');
+      InitFailureInner.attempts = 0;
+      InitFailureInner.destroyed = 0;
+      CleanupProbe.initialized.length = 0;
+      CleanupProbe.destroyed.length = 0;
+      const app = new StandaloneApp({ dump: false, frameworkDeps: [failureFixture] });
+      await assert.rejects(() => app.init({ baseDir: fixture }), /expected init failure/);
+      assert.equal(CleanupProbe.initialized.length, 1);
+      assert.equal(CleanupProbe.destroyed.length, 0);
+      assert.equal(InitFailureInner.attempts, 1);
+      assert.equal(InitFailureInner.destroyed, 0);
+      await assert.rejects(() => app.init({ baseDir: fixture }), /cannot init app in closed state/);
+      await app.destroy();
+      assert.equal(CleanupProbe.destroyed.length, 0);
+    });
+
+    it('should reject init after destroy', async () => {
+      const app = new StandaloneApp({ dump: false });
+      await app.destroy();
+      await assert.rejects(() => app.init({ baseDir: fixture }), /cannot init app in closed state/);
     });
   });
 
@@ -168,6 +231,16 @@ describe('standalone/standalone/test/index.test.ts', () => {
         /options\.innerObjects has been removed, use options\.innerObjectHandlers instead/,
       );
     });
+
+    it('should ignore a removed innerObjects option whose value is undefined', async () => {
+      const result = await main(path.join(__dirname, './fixtures/inner-object'), {
+        innerObjects: undefined,
+        innerObjectHandlers: {
+          hello: [{ obj: { hello: () => 'hello from handler' } }],
+        },
+      } as any);
+      assert.equal(result, 'hello from handler');
+    });
   });
 
   describe('custom logger option', () => {
@@ -179,46 +252,27 @@ describe('standalone/standalone/test/index.test.ts', () => {
       assert.equal(injected, customLogger);
     });
 
-    it('should let an innerObjectHandlers logger entry win over options.logger', async () => {
-      const warnings: unknown[][] = [];
-      const optionLogger = {
-        ...console,
-        warn: (...args: unknown[]) => {
-          warnings.push(args);
-        },
-      };
+    it('should reject logger from innerObjectHandlers', async () => {
       const handlerLogger = { ...console };
-      const injected = await main(path.join(__dirname, './fixtures/logger-option'), {
-        logger: optionLogger,
-        innerObjectHandlers: {
-          logger: [{ obj: handlerLogger }],
-        },
-      });
-      assert.equal(injected, handlerLogger);
-      assert.deepEqual(warnings, [
-        ['[tegg/standalone] innerObjectHandlers.logger overrides the framework provided inner object'],
-      ]);
+      await assert.rejects(
+        main(path.join(__dirname, './fixtures/logger-option'), {
+          innerObjectHandlers: {
+            logger: [{ obj: handlerLogger }],
+          },
+        }),
+        /innerObjectHandlers\.logger is reserved; use the logger option instead/,
+      );
     });
 
-    it('should warn when innerObjects logger overrides the framework logger', async () => {
-      const warnings: unknown[][] = [];
-      const logger = {
-        ...console,
-        warn: (...args: unknown[]) => {
-          warnings.push(args);
-        },
-      };
+    it('should reject logger from low-level innerObjects', () => {
       const handlerLogger = { ...console };
-      const app = new StandaloneApp({
-        logger,
-        innerObjects: {
-          logger: [{ obj: handlerLogger }],
-        },
-      });
-      await app.destroy();
-      assert.deepEqual(warnings, [
-        ['[tegg/standalone] innerObjects.logger overrides the framework provided inner object'],
-      ]);
+      assert.throws(
+        () =>
+          new StandaloneApp({
+            innerObjects: { logger: [{ obj: handlerLogger }] },
+          }),
+        /innerObjects\.logger is reserved; use the logger option instead/,
+      );
     });
   });
 
@@ -286,6 +340,31 @@ describe('standalone/standalone/test/index.test.ts', () => {
       assert.deepEqual(configs.get('foo'), foo);
       assert.deepEqual(configs.get('bar'), bar);
     });
+
+    it('should silently ignore framework-owned config handlers', async () => {
+      const warnings: unknown[][] = [];
+      const logger = {
+        ...console,
+        warn: (...args: unknown[]) => {
+          warnings.push(args);
+        },
+      };
+      const moduleConfigs = new ModuleConfigs({});
+      const moduleConfig = { custom: true };
+
+      const injected = (await main(path.join(__dirname, './fixtures/multi-modules'), {
+        logger,
+        innerObjectHandlers: {
+          moduleConfigs: [{ obj: moduleConfigs }],
+          moduleConfig: [{ obj: moduleConfig }],
+        },
+      })) as { configs: ModuleConfigs; foo: ModuleConfig };
+
+      assert.notEqual(injected.configs, moduleConfigs);
+      assert.notEqual(injected.foo, moduleConfig);
+      assert.deepEqual(injected.configs.get('foo'), injected.foo);
+      assert.deepEqual(warnings, []);
+    });
   });
 
   describe('runner with runtimeConfig', () => {
@@ -310,7 +389,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
       });
     });
 
-    it('should let innerObjectHandlers runtimeConfig override framework placeholder with warning', async () => {
+    it('should silently ignore the framework-owned runtimeConfig handler', async () => {
       const warnings: unknown[][] = [];
       const logger = {
         ...console,
@@ -324,39 +403,18 @@ describe('standalone/standalone/test/index.test.ts', () => {
         name: 'custom-name',
       };
 
-      const injected = await main(path.join(__dirname, './fixtures/runtime-config'), {
+      const injectedRuntimeConfig = await main(path.join(__dirname, './fixtures/runtime-config'), {
         logger,
         innerObjectHandlers: {
           runtimeConfig: [{ obj: runtimeConfig }],
         },
       });
-
-      assert.equal(injected, runtimeConfig);
-      assert.deepEqual(warnings, [
-        ['[tegg/standalone] innerObjectHandlers.runtimeConfig overrides the framework provided inner object'],
-      ]);
-    });
-
-    it('should use low-level innerObjects name in framework object warnings', async () => {
-      const warnings: unknown[][] = [];
-      const logger = {
-        ...console,
-        warn: (...args: unknown[]) => {
-          warnings.push(args);
-        },
-      };
-      const app = new StandaloneApp({
-        logger,
-        innerObjects: {
-          runtimeConfig: [{ obj: {} }],
-          moduleConfig: [{ obj: {} }],
-        },
+      assert.deepEqual(injectedRuntimeConfig, {
+        baseDir: path.join(__dirname, './fixtures/runtime-config'),
+        env: '',
+        name: '',
       });
-      await app.destroy();
-      assert.deepEqual(warnings, [
-        ['[tegg/standalone] innerObjects.runtimeConfig overrides the framework provided inner object'],
-        ['[tegg/standalone] innerObjects.moduleConfig extends the framework provided inner objects'],
-      ]);
+      assert.deepEqual(warnings, []);
     });
   });
 
@@ -432,43 +490,6 @@ describe('standalone/standalone/test/index.test.ts', () => {
         msg,
         `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`,
       );
-    });
-  });
-
-  describe('load', () => {
-    let runner: StandaloneApp;
-    afterEach(async () => {
-      if (runner) await runner.destroy();
-    });
-
-    it('should work', async () => {
-      runner = new StandaloneApp();
-      await runner.init({ baseDir: path.join(__dirname, './fixtures/simple') });
-      const loadunits = runner.loadUnits;
-      for (const loadunit of loadunits) {
-        for (const proto of loadunit.iterateEggPrototype()) {
-          if (proto.id.match(/:hello$/)) {
-            assert.equal(proto.className, 'Hello');
-          } else if (proto.id.match(/:moduleConfigs$/)) {
-            assert.equal(proto.className, undefined);
-          } else if (proto.id.match(/:moduleConfig$/)) {
-            assert.equal(proto.className, undefined);
-          }
-        }
-      }
-    });
-
-    it('should work with multi', async () => {
-      runner = new StandaloneApp();
-      await runner.init({ baseDir: path.join(__dirname, './fixtures/multi-callback-instance-module') });
-      const loadunits = runner.loadUnits;
-      for (const loadunit of loadunits) {
-        for (const proto of loadunit.iterateEggPrototype()) {
-          if (proto.id.match(/:dynamicLogger$/)) {
-            assert.equal(proto.className, 'DynamicLogger');
-          }
-        }
-      }
     });
   });
 

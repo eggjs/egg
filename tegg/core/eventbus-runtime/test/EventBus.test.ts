@@ -4,10 +4,10 @@ import { mock } from 'node:test';
 
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import { EventInfoUtil, CORK_ID } from '@eggjs/eventbus-decorator';
-import { type EggPrototype, LoadUnitFactory } from '@eggjs/metadata';
+import { type EggPrototype } from '@eggjs/metadata';
 import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+import { type LoadUnitInstance } from '@eggjs/tegg-runtime';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '../src/index.ts';
@@ -26,10 +26,7 @@ describe('test/EventBus.test.ts', () => {
   });
 
   afterEach(async () => {
-    for (const module of modules) {
-      await LoadUnitFactory.destroyLoadUnit(module.loadUnit);
-      await LoadUnitInstanceFactory.destroyLoadUnitInstance(module);
-    }
+    await CoreTestHelper.destroyModules(modules);
     mock.reset();
   });
 

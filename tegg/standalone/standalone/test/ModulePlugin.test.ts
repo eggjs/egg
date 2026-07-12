@@ -5,9 +5,10 @@ import { EggPrototypeNotFound } from '@eggjs/metadata';
 import { describe, it } from 'vitest';
 
 import { main } from '../src/index.ts';
+import { FooLoadUnitHook } from './fixtures/load-unit-lifecycle-proto/FooLoadUnitHook.ts';
 
 describe('standalone/standalone/test/ModulePlugin.test.ts', () => {
-  const getFixture = (name: string) => path.join(__dirname, 'fixtures', name);
+  const getFixture = (name: string) => path.join(import.meta.dirname, 'fixtures', name);
 
   describe('EggLifecycleProto', () => {
     it('should LoadUnitLifecycleProto work', async () => {
@@ -16,6 +17,8 @@ describe('standalone/standalone/test/ModulePlugin.test.ts', () => {
       // (with DI wired) before business load units are created.
       const msg = await main<string>(getFixture('load-unit-lifecycle-proto'));
       assert.equal(msg, 'dynamic bar name|foo fake name');
+      assert.deepEqual(FooLoadUnitHook.events, ['business-load-unit-destroy', 'inner-hook-destroy']);
+      FooLoadUnitHook.events.length = 0;
     });
 
     it('should LoadUnitInstanceLifecycleProto work', async () => {

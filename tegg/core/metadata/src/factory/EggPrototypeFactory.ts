@@ -121,7 +121,7 @@ export class EggPrototypeFactory {
     return (
       `${String(proto.name)}@${proto.loadUnitId}` +
       ` define:${String(proto.defineModuleName ?? proto.getQualifier(DefineModuleQualifierAttribute))}` +
-      `@${String(proto.defineUnitPath ?? proto.loadUnitId)}` +
+      `@${String(proto.defineUnitPath ?? '<unknown>')}` +
       ` qualifiers:[${String(DefineModuleQualifierAttribute)}=${String(proto.getQualifier(DefineModuleQualifierAttribute))}]`
     );
   }

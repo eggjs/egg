@@ -1,8 +1,16 @@
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { LifecycleUtil } from '@eggjs/lifecycle';
 import { EggPrototypeLifecycleUtil, LoadUnitLifecycleUtil } from '@eggjs/metadata';
-import type { EggLifecycleInfo, LoadUnitInstance, LoadUnitInstanceLifecycleContext } from '@eggjs/tegg-types';
+import type {
+  EggLifecycleInfo,
+  EggObject,
+  EggPrototype,
+  EggPrototypeName,
+  LoadUnitInstance,
+  LoadUnitInstanceLifecycleContext,
+} from '@eggjs/tegg-types';
 
+import { EggObjectFactory } from '../factory/EggObjectFactory.ts';
 import { LoadUnitInstanceFactory } from '../factory/LoadUnitInstanceFactory.ts';
 import { EggContextLifecycleUtil } from '../model/EggContext.ts';
 import { EggObjectLifecycleUtil } from '../model/EggObject.ts';
@@ -28,6 +36,17 @@ export class InnerObjectLoadUnitInstance extends ModuleLoadUnitInstance {
   };
 
   readonly #lifecycleObjects: [string, object][] = [];
+  readonly #createdObjects: EggObject[] = [];
+  readonly #createdObjectIds = new Set<string>();
+
+  override async getOrCreateEggObject(name: EggPrototypeName, proto: EggPrototype): Promise<EggObject> {
+    const object = await super.getOrCreateEggObject(name, proto);
+    if (!this.#createdObjectIds.has(object.id)) {
+      this.#createdObjectIds.add(object.id);
+      this.#createdObjects.push(object);
+    }
+    return object;
+  }
 
   async init(ctx: LoadUnitInstanceLifecycleContext): Promise<void> {
     await super.init(ctx);
@@ -50,14 +69,22 @@ export class InnerObjectLoadUnitInstance extends ModuleLoadUnitInstance {
   }
 
   async destroy(): Promise<void> {
-    let toBeDeleted = this.#lifecycleObjects.shift();
+    let toBeDeleted = this.#lifecycleObjects.pop();
     while (toBeDeleted) {
       const [type, lifecycle] = toBeDeleted;
       InnerObjectLoadUnitInstance.LifecycleUtils[type]?.deleteLifecycle(lifecycle);
-      toBeDeleted = this.#lifecycleObjects.shift();
+      toBeDeleted = this.#lifecycleObjects.pop();
     }
 
-    await super.destroy();
+    this.eggObjectMap.clear();
+    this.eggObjectPromiseMap.clear();
+
+    let object = this.#createdObjects.pop();
+    while (object) {
+      await EggObjectFactory.destroyObject(object);
+      this.#createdObjectIds.delete(object.id);
+      object = this.#createdObjects.pop();
+    }
   }
 
   static createInnerObjectLoadUnitInstance(ctx: LoadUnitInstanceLifecycleContext): LoadUnitInstance {

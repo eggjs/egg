@@ -53,7 +53,6 @@ describe('plugin/config/test/ManifestModuleReference.test.ts', () => {
         reference: {
           optional: undefined,
           name: 'moduleA',
-          package: undefined,
           path: moduleDir,
           loaderType: undefined,
         },
@@ -78,5 +77,45 @@ describe('plugin/config/test/ManifestModuleReference.test.ts', () => {
     new App(app).configWillLoad();
 
     expect(app.moduleConfigs.moduleA.reference.name).toBe('moduleA');
+  });
+
+  it('rejects a manifest missing an enabled module plugin', () => {
+    const pluginRoot = getFixtures('plugin-module-json/app/node_modules/aop-like-plugin');
+    const app = createFakeApp([{ name: 'moduleA', path: moduleDir }]);
+    Object.assign(app.loader, {
+      allPlugins: {
+        teggAop: { enable: true, package: 'aop-like-plugin', path: pluginRoot },
+      },
+      lookupDirs: new Set([getFixtures('plugin-module-json/app')]),
+    });
+
+    expect(() => new App(app).configWillLoad()).toThrow(/manifest is missing enabled module plugin "teggAop"/);
+  });
+
+  it('rejects a manifest missing the descriptor for an enabled module plugin', () => {
+    const pluginRoot = getFixtures('plugin-module-json/app/node_modules/aop-like-plugin');
+    const app = createFakeApp([
+      { name: 'moduleA', path: moduleDir },
+      { name: 'teggAop', package: 'aop-like-plugin', path: pluginRoot },
+    ]);
+    Object.assign(app.loader, {
+      allPlugins: {
+        teggAop: { enable: true, package: 'aop-like-plugin', path: pluginRoot },
+      },
+      lookupDirs: new Set([getFixtures('plugin-module-json/app')]),
+      manifest: {
+        getExtension: () => ({
+          moduleReferences: [
+            { name: 'moduleA', path: moduleDir },
+            { name: 'teggAop', package: 'aop-like-plugin', path: pluginRoot },
+          ],
+          moduleDescriptors: [{ name: 'moduleA', unitPath: moduleDir, decoratedFiles: [] }],
+        }),
+      },
+    });
+
+    expect(() => new App(app).configWillLoad()).toThrow(
+      /manifest is missing descriptor for enabled module plugin "teggAop"/,
+    );
   });
 });

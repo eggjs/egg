@@ -171,12 +171,8 @@ export class EggInnerObjectImpl implements EggObject {
   async destroy(ctx: EggObjectLifeCycleContext): Promise<void> {
     if (this.status === EggObjectStatus.READY) {
       this.status = EggObjectStatus.DESTROYING;
-      // global hook
       await EggObjectLifecycleUtil.objectPreDestroy(ctx, this);
-
-      // self hook
       await this.callObjectLifecycle('preDestroy', ctx);
-
       await this.callObjectLifecycle('destroy', ctx);
 
       this.status = EggObjectStatus.DESTROYED;

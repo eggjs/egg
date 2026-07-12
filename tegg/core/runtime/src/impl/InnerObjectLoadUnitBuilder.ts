@@ -28,7 +28,7 @@ export interface InnerObjectModuleReference {
 }
 
 export interface CreateInnerObjectLoadUnitOptions {
-  /** Host-provided, already-constructed objects (logger, router, ...). */
+  /** Host-provided, already-constructed objects (logger, router, config, ...). */
   innerObjects: Record<string, InnerObject[]>;
   name?: string;
   unitPath?: string;

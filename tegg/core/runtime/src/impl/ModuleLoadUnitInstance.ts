@@ -21,8 +21,8 @@ export class ModuleLoadUnitInstance implements LoadUnitInstance {
   readonly id: string;
   readonly name: string;
   private protoToCreateMap: [EggPrototypeName, EggPrototype][] = [];
-  private eggObjectMap: Map<Id, Map<EggPrototypeName, EggObject>> = new Map();
-  private eggObjectPromiseMap: Map<Id, Map<EggPrototypeName, Promise<EggObject>>> = new Map();
+  protected eggObjectMap: Map<Id, Map<EggPrototypeName, EggObject>> = new Map();
+  protected eggObjectPromiseMap: Map<Id, Map<EggPrototypeName, Promise<EggObject>>> = new Map();
 
   constructor(loadUnit: LoadUnit) {
     this.loadUnit = loadUnit;

@@ -26,7 +26,7 @@ export function EggLifecycleProto(params: CommonEggLifecycleProtoParams): Protot
 type EggLifecycleProtoDecoratorFactory = (params?: EggLifecycleProtoParams) => PrototypeDecorator;
 
 const createLifecycleProto = (type: EggLifecycleType): EggLifecycleProtoDecoratorFactory => {
-  return (params?: EggLifecycleProtoParams) => EggLifecycleProto({ type, ...params });
+  return (params?: EggLifecycleProtoParams) => EggLifecycleProto({ ...params, type });
 };
 
 export const LoadUnitLifecycleProto: EggLifecycleProtoDecoratorFactory = createLifecycleProto('LoadUnit');

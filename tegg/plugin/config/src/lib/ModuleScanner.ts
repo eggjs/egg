@@ -3,7 +3,8 @@ import path from 'node:path';
 import { debuglog } from 'node:util';
 
 import { ModuleConfigUtil, type ModuleReference, type ReadModuleReferenceOptions } from '@eggjs/tegg-common-util';
-import { getFrameworkPath } from '@eggjs/utils';
+import type { TeggManifestExtension } from '@eggjs/tegg-loader';
+import { getFrameworkPath, importResolve } from '@eggjs/utils';
 
 const debug = debuglog('egg/tegg/plugin/config/ModuleScanner');
 
@@ -11,22 +12,100 @@ interface WarnLogger {
   warn(message: string): void;
 }
 
+interface ModulePluginInfo {
+  enable: boolean;
+  package?: string;
+  path?: string;
+}
+
+export interface ModulePluginOptions {
+  allPlugins?: Readonly<Record<string, ModulePluginInfo>>;
+  lookupDirs?: Iterable<string>;
+}
+
 export class ModuleScanner {
   private readonly baseDir: string;
   private readonly readModuleOptions: ReadModuleReferenceOptions;
   private readonly appReadModuleOptions: ReadModuleReferenceOptions;
   private readonly logger?: WarnLogger;
+  private readonly modulePluginOptions?: ModulePluginOptions;
 
   constructor(
     baseDir: string,
     readModuleOptions: ReadModuleReferenceOptions,
     logger?: WarnLogger,
     appReadModuleOptions: ReadModuleReferenceOptions = readModuleOptions,
+    modulePluginOptions?: ModulePluginOptions,
   ) {
     this.baseDir = baseDir;
     this.readModuleOptions = readModuleOptions;
     this.appReadModuleOptions = appReadModuleOptions;
     this.logger = logger;
+    this.modulePluginOptions = modulePluginOptions;
+  }
+
+  private loadPluginModuleReferences(enabledOnly = false): readonly ModuleReference[] {
+    const references: ModuleReference[] = [];
+    for (const plugin of Object.values(this.modulePluginOptions?.allPlugins ?? {})) {
+      if (enabledOnly && !plugin.enable) continue;
+
+      let packageJsonPath: string | undefined;
+      if (plugin.package) {
+        try {
+          packageJsonPath = importResolve(`${plugin.package}/package.json`, {
+            paths: [...(this.modulePluginOptions?.lookupDirs ?? [])],
+          });
+        } catch {
+          continue;
+        }
+      } else if (plugin.path) {
+        const directPackageJsonPath = path.join(plugin.path, 'package.json');
+        if (fs.existsSync(directPackageJsonPath)) {
+          packageJsonPath = directPackageJsonPath;
+        }
+      }
+      if (!packageJsonPath) continue;
+
+      let pkg: { name?: string; eggModule?: { name?: string } };
+      try {
+        pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      } catch {
+        continue;
+      }
+      if (!pkg.eggModule?.name) continue;
+
+      references.push({
+        name: pkg.eggModule.name,
+        package: pkg.name,
+        path: fs.realpathSync(path.dirname(packageJsonPath)),
+        optional: true,
+      });
+    }
+    return references;
+  }
+
+  validateManifestModulePlugins(manifest: TeggManifestExtension): void {
+    for (const pluginReference of this.loadPluginModuleReferences(true)) {
+      const reference = manifest.moduleReferences.find((reference) => {
+        if (pluginReference.package && reference.package) {
+          return pluginReference.package === reference.package;
+        }
+        return pluginReference.path === reference.path;
+      });
+      if (!reference) {
+        throw new Error(
+          `[egg/tegg/plugin/config] manifest is missing enabled module plugin "${pluginReference.name}" (${pluginReference.package ?? pluginReference.path})`,
+        );
+      }
+      const descriptor = manifest.moduleDescriptors?.find(
+        (descriptor) => descriptor.unitPath === reference.path && descriptor.name === reference.name,
+      );
+      if (!descriptor) {
+        throw new Error(
+          `[egg/tegg/plugin/config] manifest is missing descriptor for enabled module plugin "${pluginReference.name}" (${reference.path})`,
+        );
+      }
+    }
   }
 
   /**
@@ -75,8 +154,15 @@ export class ModuleScanner {
     const frameworkDirs: string[] = [];
     const seen = new Set<string>();
     let frameworkDir = this.resolveFrameworkDir(this.baseDir);
-    while (frameworkDir && !seen.has(frameworkDir)) {
-      seen.add(frameworkDir);
+    while (frameworkDir) {
+      let canonicalFrameworkDir = frameworkDir;
+      try {
+        canonicalFrameworkDir = fs.realpathSync(frameworkDir);
+      } catch {
+        canonicalFrameworkDir = path.resolve(frameworkDir);
+      }
+      if (seen.has(canonicalFrameworkDir)) break;
+      seen.add(canonicalFrameworkDir);
       frameworkDirs.push(frameworkDir);
       frameworkDir = this.resolveParentFrameworkDir(frameworkDir);
     }
@@ -118,18 +204,66 @@ export class ModuleScanner {
     }
   }
 
-  private deduplicateLayeredModuleReferences(moduleReferences: readonly ModuleReference[]): readonly ModuleReference[] {
+  private deduplicateRootModuleReferences(moduleReferences: readonly ModuleReference[]): readonly ModuleReference[] {
     const result: ModuleReference[] = [];
+    const pathMap = new Map<string, ModuleReference>();
     const nameMap = new Map<string, ModuleReference>();
 
     for (const moduleReference of moduleReferences) {
-      const existing = nameMap.get(moduleReference.name);
-      if (existing) {
-        this.warnDuplicateModuleName(existing, moduleReference);
+      let canonicalPath = moduleReference.path;
+      try {
+        canonicalPath = fs.realpathSync(moduleReference.path);
+      } catch {
+        // Keep the unresolved path. Missing optional modules are valid inputs.
+      }
+
+      const existingByPath = pathMap.get(canonicalPath);
+      if (existingByPath) {
+        if (existingByPath.optional === true && moduleReference.optional !== true) {
+          const index = result.indexOf(existingByPath);
+          const promoted = {
+            ...existingByPath,
+            ...(!existingByPath.package && moduleReference.package ? { package: moduleReference.package } : {}),
+            optional: false,
+          };
+          result[index] = promoted;
+          pathMap.set(canonicalPath, promoted);
+          nameMap.set(existingByPath.name, promoted);
+        }
         continue;
       }
+
+      const existingByName = nameMap.get(moduleReference.name);
+      if (existingByName) {
+        throw new Error(
+          `Duplicate module name "${moduleReference.name}" found: existing at ${existingByName.path}, duplicate at ${moduleReference.path}`,
+        );
+      }
+
+      pathMap.set(canonicalPath, moduleReference);
       nameMap.set(moduleReference.name, moduleReference);
       result.push(moduleReference);
+    }
+
+    return result;
+  }
+
+  private deduplicateLayeredModuleReferences(
+    moduleReferenceLayers: readonly (readonly ModuleReference[])[],
+  ): readonly ModuleReference[] {
+    const result: ModuleReference[] = [];
+    const nameMap = new Map<string, ModuleReference>();
+
+    for (const moduleReferences of moduleReferenceLayers) {
+      for (const moduleReference of moduleReferences) {
+        const existing = nameMap.get(moduleReference.name);
+        if (existing) {
+          this.warnDuplicateModuleName(existing, moduleReference);
+          continue;
+        }
+        nameMap.set(moduleReference.name, moduleReference);
+        result.push(moduleReference);
+      }
     }
 
     return result;
@@ -141,19 +275,18 @@ export class ModuleScanner {
    *   (plugin promotion flips the enabled ones to non-optional)
    */
   loadModuleReferences(): readonly ModuleReference[] {
-    const moduleReferences = this.readModuleReferences(this.baseDir);
+    const appModuleReferences = this.deduplicateRootModuleReferences([
+      ...this.readModuleReferences(this.baseDir),
+      ...this.loadPluginModuleReferences(),
+    ]);
     const frameworkDirs = this.resolveFrameworkDirs();
     debug('loadModuleReferences from frameworkDirs:%o', frameworkDirs);
-    const optionalModuleReferences = frameworkDirs.flatMap((frameworkDir) =>
-      this.readModuleReferences(frameworkDir, frameworkDir),
+    const frameworkModuleReferenceLayers = frameworkDirs.map((frameworkDir) =>
+      this.deduplicateRootModuleReferences(
+        this.readModuleReferences(frameworkDir, frameworkDir).map((ref) => ({ ...ref, optional: true })),
+      ),
     );
 
-    // Merge all module references and deduplicate
-    const allModuleReferences = [
-      ...moduleReferences,
-      ...optionalModuleReferences.map((ref) => ({ ...ref, optional: true })),
-    ];
-
-    return this.deduplicateLayeredModuleReferences(allModuleReferences);
+    return this.deduplicateLayeredModuleReferences([appModuleReferences, ...frameworkModuleReferenceLayers]);
   }
 }

@@ -123,6 +123,15 @@ describe('core/core-decorator/test/inner-object-decorators.test.ts', () => {
       }, /EggLifecycle decorator should have type property/);
     });
 
+    it('should not let factory params override the fixed lifecycle type', () => {
+      class FixedLoadUnitLifecycle {}
+      LoadUnitLifecycleProto({ type: 'EggObject' } as any)(FixedLoadUnitLifecycle);
+
+      assert.deepEqual(PrototypeUtil.getEggLifecyclePrototypeMetadata(FixedLoadUnitLifecycle), {
+        type: 'LoadUnit',
+      });
+    });
+
     it('should return undefined metadata for non lifecycle proto', () => {
       assert.equal(PrototypeUtil.getEggLifecyclePrototypeMetadata(Router), undefined);
     });

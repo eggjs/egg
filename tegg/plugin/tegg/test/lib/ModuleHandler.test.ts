@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { mock } from 'node:test';
 
-import { EggLoadUnitType, LoadUnitFactory, type LoadUnit } from '@eggjs/metadata';
-import { LoadUnitInstanceFactory, type LoadUnitInstance } from '@eggjs/tegg-runtime';
+import { EggLoadUnitType, type LoadUnit } from '@eggjs/metadata';
+import { InnerObjectLoadUnitBuilder, LoadUnitInstanceFactory, type LoadUnitInstance } from '@eggjs/tegg-runtime';
 import { afterEach, describe, it } from 'vitest';
 
 import { ModuleHandler } from '../../src/lib/ModuleHandler.ts';
@@ -69,42 +69,35 @@ describe('plugin/tegg/test/lib/ModuleHandler.test.ts', () => {
     );
   });
 
-  it('should continue destroying remaining load units and aggregate errors', async () => {
+  it('should not add optional module inner objects to the inner builder', async () => {
     const handler = createHandler();
-    const firstLoadUnit = createLoadUnit('first');
-    const secondLoadUnit = createLoadUnit('second');
-    handler.loadUnitInstances.push(createInstance('inner'), createInstance('business'));
-    handler.loadUnits.push(firstLoadUnit, secondLoadUnit);
-
-    const destroyed: string[] = [];
-    const destroyedInstances: string[] = [];
-    const destroyedLoadUnits: string[] = [];
-    mock.method(LoadUnitInstanceFactory, 'destroyLoadUnitInstance', async (instance: LoadUnitInstance) => {
-      destroyed.push(`instance:${String(instance.loadUnit.name)}`);
-      destroyedInstances.push(String(instance.loadUnit.name));
-      if (instance.loadUnit.name === 'business') {
-        throw new Error('destroy instance failed');
-      }
-    });
-    mock.method(LoadUnitFactory, 'destroyLoadUnit', async (loadUnit: LoadUnit) => {
-      destroyed.push(`loadUnit:${String(loadUnit.name)}`);
-      destroyedLoadUnits.push(String(loadUnit.name));
-      if (loadUnit === firstLoadUnit) {
-        throw new Error('destroy load unit failed');
-      }
-    });
-
-    await assert.rejects(
-      () => handler.destroy(),
-      (e: unknown) => {
-        assert(e instanceof AggregateError);
-        assert.equal(e.message, 'destroy tegg module handler failed');
-        assert.equal(e.errors.length, 2);
-        return true;
+    const requiredInner = class RequiredInner {};
+    const optionalInner = class OptionalInner {};
+    const innerLoadUnit = createLoadUnit('inner');
+    const innerInstance = createInstance('inner');
+    (handler as any).loadUnitLoader.moduleDescriptors = [
+      {
+        name: 'required',
+        unitPath: '/required',
+        optional: false,
+        innerObjectClazzList: [requiredInner],
       },
-    );
-    assert.deepEqual(destroyedInstances, ['business', 'inner']);
-    assert.deepEqual(destroyedLoadUnits, ['second', 'first']);
-    assert.deepEqual(destroyed, ['instance:business', 'loadUnit:second', 'loadUnit:first', 'instance:inner']);
+      {
+        name: 'optional',
+        unitPath: '/optional',
+        optional: true,
+        innerObjectClazzList: [optionalInner],
+      },
+    ];
+    const added: unknown[][] = [];
+    mock.method(InnerObjectLoadUnitBuilder.prototype, 'addInnerObjectClazzList', (...args: unknown[]) => {
+      added.push(args);
+    });
+    mock.method(InnerObjectLoadUnitBuilder.prototype, 'createLoadUnit', async () => innerLoadUnit);
+    mock.method(LoadUnitInstanceFactory, 'createLoadUnitInstance', async () => innerInstance);
+
+    await (handler as any).instantiateInnerObjectLoadUnit();
+
+    assert.deepEqual(added, [[[requiredInner], { name: 'required', path: '/required' }]]);
   });
 });

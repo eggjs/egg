@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import path from 'node:path';
 import { mock } from 'node:test';
 
 import {
@@ -10,8 +11,9 @@ import {
   InnerObjectProto,
   LoadUnitLifecycleProto,
 } from '@eggjs/core-decorator';
-import { LifecycleInit, LifecyclePostInject } from '@eggjs/lifecycle';
-import { EggPrototypeFactory, EggPrototypeNotFound, LoadUnitFactory } from '@eggjs/metadata';
+import { LifecycleDestroy, LifecycleInit, LifecyclePostInject } from '@eggjs/lifecycle';
+import { EggPrototypeFactory, EggPrototypeNotFound, GlobalGraph, LoadUnitFactory } from '@eggjs/metadata';
+import { LoaderUtil } from '@eggjs/module-test-util';
 import type {
   EggObject,
   EggObjectLifeCycleContext,
@@ -23,7 +25,7 @@ import type {
 import { AccessLevel } from '@eggjs/tegg-types';
 import { afterEach, beforeEach, describe, it } from 'vitest';
 
-import { InnerObjectLoadUnitBuilder, LoadUnitInstanceFactory } from '../src/index.ts';
+import { InnerObjectLoadUnit, InnerObjectLoadUnitBuilder, LoadUnitInstanceFactory } from '../src/index.ts';
 import { ContextHandler } from '../src/model/ContextHandler.ts';
 import { EggTestContext } from './fixtures/EggTestContext.ts';
 import TestUtil from './util.ts';
@@ -128,7 +130,12 @@ describe('core/runtime/test/InnerObjectLoadUnit.test.ts', () => {
       assert.equal(ObjectHook.interfaceInitCalled, 0);
 
       // lifecycle protos are live: a business load unit created afterwards is hooked
-      businessInstance = await TestUtil.createLoadUnitInstance('module-for-load-unit-instance');
+      const businessModulePath = path.join(import.meta.dirname, 'fixtures/modules/module-for-load-unit-instance');
+      const descriptors = await LoaderUtil.loadModuleDescriptors([businessModulePath]);
+      GlobalGraph.instance = await GlobalGraph.create(descriptors);
+      GlobalGraph.instance.build();
+      GlobalGraph.instance.sort();
+      businessInstance = await TestUtil.createLoadUnitInstance('module-for-load-unit-instance', false);
       assert(UnitHook.createdUnits.includes(String(businessInstance.loadUnit.name)));
       assert(ObjectHook.hookedObjects.length > 0);
 
@@ -139,7 +146,7 @@ describe('core/runtime/test/InnerObjectLoadUnit.test.ts', () => {
       await LoadUnitInstanceFactory.destroyLoadUnitInstance(innerInstance);
       innerInstance = undefined;
       const createdCount = UnitHook.createdUnits.length;
-      businessInstance = await TestUtil.createLoadUnitInstance('module-for-load-unit-instance');
+      businessInstance = await TestUtil.createLoadUnitInstance('module-for-load-unit-instance', false);
       assert.equal(UnitHook.createdUnits.length, createdCount);
     } finally {
       if (businessInstance) {
@@ -173,6 +180,13 @@ describe('core/runtime/test/InnerObjectLoadUnit.test.ts', () => {
     await assert.rejects(async () => {
       await builder.createLoadUnit({ innerObjects: {} });
     }, /recursive deps/);
+  });
+
+  it('should reject non-class descriptors instead of silently skipping them', async () => {
+    const loadUnit = new InnerObjectLoadUnit({
+      protos: [{ protoImplType: 'non-class' } as any],
+    });
+    await assert.rejects(() => loadUnit.init(), /only accepts ClassProtoDescriptor/);
   });
 
   it('should throw on missing non-optional dependency', async () => {
@@ -336,6 +350,87 @@ describe('core/runtime/test/InnerObjectLoadUnit.test.ts', () => {
       if (instance) {
         await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);
       }
+      await LoadUnitFactory.destroyLoadUnit(loadUnit);
+    }
+  });
+
+  it('should preserve prototype order and destroy inner objects in reverse actual creation order', async () => {
+    const events: string[] = [];
+
+    @InnerObjectProto({ name: 'dependency' })
+    class Dependency {
+      alive = true;
+
+      @LifecycleDestroy()
+      destroy(): void {
+        events.push('destroy:dependency');
+        this.alive = false;
+      }
+    }
+
+    @InnerObjectProto({ name: 'consumer' })
+    class Consumer {
+      @Inject()
+      dependency: Dependency;
+
+      @LifecycleDestroy()
+      destroy(): void {
+        assert.equal(this.dependency.alive, true);
+        events.push('destroy:consumer');
+      }
+    }
+
+    const builder = new InnerObjectLoadUnitBuilder();
+    builder.addInnerObjectClazzList([Consumer, Dependency], { name: 'ordered', path: '/ordered' });
+    const loadUnit = await builder.createLoadUnit({ innerObjects: {} });
+    const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
+    try {
+      const consumerProto = EggPrototypeFactory.instance.getPrototype('consumer', loadUnit);
+      await (instance as any).getOrCreateEggObject('consumer', consumerProto);
+    } finally {
+      await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);
+      await LoadUnitFactory.destroyLoadUnit(loadUnit);
+    }
+    assert.deepEqual(events, ['destroy:consumer', 'destroy:dependency']);
+  });
+
+  it('should preserve interleaved order for same-name qualified prototypes', async () => {
+    const events: string[] = [];
+
+    @InnerObjectProto({ name: 'shared' })
+    class FirstShared {
+      @LifecycleInit()
+      init(): void {
+        events.push('shared:first');
+      }
+    }
+
+    @InnerObjectProto()
+    class Middle {
+      @LifecycleInit()
+      init(): void {
+        events.push('middle');
+      }
+    }
+
+    @InnerObjectProto({ name: 'shared' })
+    class SecondShared {
+      @LifecycleInit()
+      init(): void {
+        events.push('shared:second');
+      }
+    }
+
+    const builder = new InnerObjectLoadUnitBuilder();
+    builder.addInnerObjectClazzList([FirstShared], { name: 'first', path: '/first' });
+    builder.addInnerObjectClazzList([Middle], { name: 'middle', path: '/middle' });
+    builder.addInnerObjectClazzList([SecondShared], { name: 'second', path: '/second' });
+    const loadUnit = await builder.createLoadUnit({ innerObjects: {} });
+    const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
+    try {
+      assert.deepEqual(events, ['shared:first', 'middle', 'shared:second']);
+    } finally {
+      await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);
       await LoadUnitFactory.destroyLoadUnit(loadUnit);
     }
   });

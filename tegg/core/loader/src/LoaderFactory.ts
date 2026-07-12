@@ -125,7 +125,7 @@ export class LoaderFactory {
       for (const clazz of clazzList) {
         // Inner object protos are also egg prototypes, so this branch must come first.
         if (PrototypeUtil.isEggInnerObject(clazz)) {
-          res.innerObjectClazzList.push(clazz);
+          res.innerObjectClazzList!.push(clazz);
         } else if (PrototypeUtil.isEggPrototype(clazz)) {
           res.clazzList.push(clazz);
         } else if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {

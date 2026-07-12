@@ -60,6 +60,7 @@ export class GlobalGraph {
   moduleProtoDescriptorMap: Map<string, ProtoDescriptor[]>;
   strict: boolean;
   private buildHooks: GlobalGraphBuildHook[];
+  #buildState: 'created' | 'building' | 'built' = 'created';
   /** Lazily built proto-name index for dependency resolution; invalidated on vertex changes. */
   #protoNameIndex: ProtoNameIndex | null = null;
 
@@ -94,6 +95,9 @@ export class GlobalGraph {
   }
 
   registerBuildHook(hook: GlobalGraphBuildHook): void {
+    if (this.#buildState !== 'created') {
+      throw new Error(`cannot register global graph build hook after build has started (state: ${this.#buildState})`);
+    }
     this.buildHooks.push(hook);
   }
 
@@ -101,24 +105,32 @@ export class GlobalGraph {
     if (!this.moduleGraph.addVertex(new GraphNode<GlobalModuleNode, ModuleDependencyMeta>(moduleNode))) {
       throw new Error(`duplicate module: ${moduleNode}`);
     }
+    this.#protoNameIndex = null;
     for (const protoNode of moduleNode.protos) {
       if (!this.protoGraph.addVertex(protoNode)) {
         throw new Error(`duplicate proto: ${protoNode.val}`);
       }
     }
-    this.#protoNameIndex = null;
   }
 
   build(): void {
-    for (const moduleNode of this.moduleGraph.nodes.values()) {
-      for (const protoNode of moduleNode.val.protos) {
-        for (const injectObj of protoNode.val.proto.injectObjects) {
-          this.buildInjectEdge(moduleNode, protoNode, injectObj);
+    if (this.#buildState !== 'created') {
+      throw new Error(`global graph can only be built once (state: ${this.#buildState})`);
+    }
+    this.#buildState = 'building';
+    try {
+      for (const moduleNode of this.moduleGraph.nodes.values()) {
+        for (const protoNode of moduleNode.val.protos) {
+          for (const injectObj of protoNode.val.proto.injectObjects) {
+            this.buildInjectEdge(moduleNode, protoNode, injectObj);
+          }
         }
       }
-    }
-    for (const buildHook of this.buildHooks) {
-      buildHook(this);
+      for (const buildHook of this.buildHooks) {
+        buildHook(this);
+      }
+    } finally {
+      this.#buildState = 'built';
     }
   }
 

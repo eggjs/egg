@@ -109,6 +109,8 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
         },
       },
     } as any;
+    const originalReferences = [...moduleReferences];
+    const originalNames = moduleReferences.map((reference) => reference.name);
 
     mock.method(LoaderFactory, 'loadApp', async () => []);
     mock.method(GlobalGraph, 'create', async () => {
@@ -118,6 +120,17 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
     });
 
     await new EggModuleLoader(app).initGraph();
+
+    assert.equal(app.moduleReferences, moduleReferences);
+    assert.deepEqual(app.moduleReferences, originalReferences);
+    assert.equal(app.moduleReferences.length, originalReferences.length);
+    for (const [index, reference] of app.moduleReferences.entries()) {
+      assert.equal(reference, originalReferences[index]);
+    }
+    assert.deepEqual(
+      app.moduleReferences.map((reference: { name: string }) => reference.name),
+      originalNames,
+    );
 
     assert.equal(moduleReferences[0].optional, false);
     assert.equal(moduleReferences[1].optional, false);

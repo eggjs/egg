@@ -1,0 +1,7 @@
+{
+  "name": "plugin-module-json-app",
+  "type": "module",
+  "egg": {
+    "framework": "custom-framework"
+  }
+}

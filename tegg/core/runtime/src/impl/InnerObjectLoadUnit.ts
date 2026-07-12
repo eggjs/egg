@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+
 import { ClassProtoDescriptor, EggPrototypeCreatorFactory, EggPrototypeFactory } from '@eggjs/metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
 import type {
@@ -52,6 +54,7 @@ export class InnerObjectLoadUnit implements LoadUnit {
 
   readonly #protos: ProtoDescriptor[];
   readonly #protoMap: Map<EggPrototypeName, EggPrototype[]> = new Map();
+  readonly #orderedProtos: EggPrototype[] = [];
 
   constructor(options: InnerObjectLoadUnitOptions) {
     this.name = options.name ?? INNER_OBJECT_LOAD_UNIT_NAME;
@@ -62,11 +65,13 @@ export class InnerObjectLoadUnit implements LoadUnit {
 
   async init(): Promise<void> {
     for (const protoDescriptor of this.#protos) {
-      if (!ClassProtoDescriptor.isClassProtoDescriptor(protoDescriptor)) {
-        continue;
-      }
+      assert(
+        ClassProtoDescriptor.isClassProtoDescriptor(protoDescriptor),
+        `InnerObjectLoadUnit only accepts ClassProtoDescriptor, got ${protoDescriptor.protoImplType}`,
+      );
       const proto = await EggPrototypeCreatorFactory.createProtoByDescriptor(protoDescriptor, this);
       EggPrototypeFactory.instance.registerPrototype(proto, this);
+      this.#orderedProtos.push(proto);
     }
   }
 
@@ -92,6 +97,10 @@ export class InnerObjectLoadUnit implements LoadUnit {
         protos.splice(index, 1);
       }
     }
+    const orderedIndex = this.#orderedProtos.indexOf(proto);
+    if (orderedIndex !== -1) {
+      this.#orderedProtos.splice(orderedIndex, 1);
+    }
   }
 
   async destroy(): Promise<void> {
@@ -101,13 +110,10 @@ export class InnerObjectLoadUnit implements LoadUnit {
       }
     }
     this.#protoMap.clear();
+    this.#orderedProtos.length = 0;
   }
 
   iterateEggPrototype(): IterableIterator<EggPrototype> {
-    const protos: EggPrototype[] = [];
-    for (const namedProtos of this.#protoMap.values()) {
-      protos.push(...namedProtos);
-    }
-    return protos.values();
+    return this.#orderedProtos.values();
   }
 }

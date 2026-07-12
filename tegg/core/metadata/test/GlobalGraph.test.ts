@@ -184,4 +184,65 @@ describe('test/LoadUnit/GlobalGraph.test.ts', () => {
       ['logger', 'bar', 'constructorBase', 'fooConstructor', 'fooConstructorLogger'],
     );
   });
+
+  it('should reject late build hooks and repeated builds', () => {
+    const graph = new GlobalGraph();
+    let hookCalls = 0;
+    graph.registerBuildHook(() => hookCalls++);
+
+    graph.build();
+
+    assert.equal(hookCalls, 1);
+    assert.throws(
+      () => graph.registerBuildHook(() => {}),
+      /cannot register global graph build hook after build has started/,
+    );
+    assert.throws(() => graph.build(), /global graph can only be built once/);
+  });
+
+  it('should reject build hook registration while build hooks are running', () => {
+    const graph = new GlobalGraph();
+    let nestedHookCalled = false;
+    graph.registerBuildHook(() => {
+      graph.registerBuildHook(() => {
+        nestedHookCalled = true;
+      });
+    });
+
+    assert.throws(
+      () => graph.build(),
+      /cannot register global graph build hook after build has started \(state: building\)/,
+    );
+    assert.equal(nestedHookCalled, false);
+    assert.throws(() => graph.build(), /global graph can only be built once \(state: built\)/);
+  });
+
+  it('should invalidate the proto name index before a partial add failure', () => {
+    const graph = new GlobalGraph();
+    const consumer = createProtoDescriptor({ name: 'consumer' });
+    const existing = createProtoDescriptor({ name: 'existing' });
+    const initialNode = new GlobalModuleNode({ name: 'initial', unitPath: '/fixtures/initial', optional: false });
+    initialNode.addProto(consumer);
+    initialNode.addProto(existing);
+    graph.addModuleNode(initialNode);
+
+    assert(graph.findDependencyProtoNode(consumer, { refName: 'existing', objName: 'existing', qualifiers: [] }));
+
+    const addedBeforeFailure = createProtoDescriptor({ name: 'addedBeforeFailure', moduleName: 'partial' });
+    const duplicate = createProtoDescriptor({ name: 'existing', moduleName: 'partial' });
+    duplicate.instanceModuleName = existing.instanceModuleName;
+    duplicate.instanceDefineUnitPath = existing.instanceDefineUnitPath;
+    const partialNode = new GlobalModuleNode({ name: 'partial', unitPath: '/fixtures/partial', optional: false });
+    partialNode.addProto(addedBeforeFailure);
+    partialNode.addProto(duplicate);
+
+    assert.throws(() => graph.addModuleNode(partialNode), /duplicate proto/);
+    assert(
+      graph.findDependencyProtoNode(consumer, {
+        refName: 'addedBeforeFailure',
+        objName: 'addedBeforeFailure',
+        qualifiers: [],
+      }),
+    );
+  });
 });

@@ -34,11 +34,6 @@ export async function appMain<T = void>(
     if (e instanceof Error) {
       e.message = `[tegg/standalone] bootstrap tegg failed: ${e.message}`;
     }
-    // Boot failed and run()'s finally below is never reached, so tear down here
-    // to release this app's TeggScope so it does not leak into liveScopeBags.
-    await app.destroy().catch(() => {
-      /* swallow: surface the original boot error */
-    });
     throw e;
   }
   try {
@@ -56,7 +51,7 @@ export async function appMain<T = void>(
 }
 
 export async function main<T = void>(cwd: string, options?: StandaloneAppOptions): Promise<T> {
-  if (options && 'innerObjects' in options) {
+  if ((options as { innerObjects?: unknown } | undefined)?.innerObjects !== undefined) {
     throw new Error('[tegg/standalone] options.innerObjects has been removed, use options.innerObjectHandlers instead');
   }
   return await appMain<T>(

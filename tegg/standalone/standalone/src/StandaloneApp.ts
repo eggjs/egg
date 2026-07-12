@@ -47,16 +47,17 @@ export interface StandaloneAppInit {
   frameworkDeps?: (string | ModuleDependency)[];
   dump?: boolean;
   /**
-   * Host-provided inner objects. Entries here win over the framework default
-   * placeholders, except `moduleConfig` entries are extended with module config
-   * objects loaded during init().
+   * Host-provided inner objects. Framework-owned `moduleConfigs`, `moduleConfig`,
+   * and `runtimeConfig` entries are ignored. `logger` is reserved; use the
+   * dedicated `logger` option instead.
    */
   innerObjects?: Record<string, InnerObject[]>;
   /** User-facing option name for diagnostics. Defaults to `innerObjects`. */
   innerObjectsName?: string;
   /**
-   * Logger used by the framework (loader, hooks) and injectable as the
-   * `logger` inner object. Defaults to console.
+   * Logger used by the framework (loader, hooks) and exposed as the injectable
+   * `logger` provided object. This is the only supported logger input. Defaults
+   * to console.
    */
   logger?: Logger;
 }
@@ -82,6 +83,7 @@ export interface StandaloneAppOptions {
   env?: string;
   name?: string;
   logger?: Logger;
+  /** Host-provided objects other than `logger`; use the dedicated logger option. */
   innerObjectHandlers?: Record<string, InnerObject[]>;
   dependencies?: (string | ModuleDependency)[];
   frameworkDeps?: (string | ModuleDependency)[];
@@ -89,6 +91,8 @@ export interface StandaloneAppOptions {
   manifest?: TeggManifestExtension;
   loaderFS?: LoaderFS;
 }
+
+type StandaloneAppState = 'new' | 'initializing' | 'ready' | 'closed';
 
 export class StandaloneApp {
   readonly #frameworkDeps: (string | ModuleDependency)[];
@@ -100,12 +104,12 @@ export class StandaloneApp {
   // so the runtimeConfig inner object can hold it; init() fills the values.
   readonly #runtimeConfig = {} as RuntimeConfig;
   #moduleReferences: readonly ModuleReference[] = [];
-  #initialized = false;
-  #loadUnitLoader: EggModuleLoader;
-  #runnerProto: EggPrototype;
-
-  loadUnits: LoadUnit[] = [];
-  loadUnitInstances: LoadUnitInstance[] = [];
+  #state: StandaloneAppState = 'new';
+  #runnerProto?: EggPrototype;
+  #innerLoadUnit?: LoadUnit;
+  #innerLoadUnitInstance?: LoadUnitInstance;
+  readonly #loadUnits: LoadUnit[] = [];
+  readonly #loadUnitInstances: LoadUnitInstance[] = [];
 
   // This app's own per-app TeggScope bag — all factories/managers/graph/config
   // names resolve here, so multiple StandaloneApps in one process stay isolated.
@@ -114,20 +118,13 @@ export class StandaloneApp {
   constructor(init?: StandaloneAppInit) {
     this.#frameworkDeps = init?.frameworkDeps ?? [];
     this.#dump = init?.dump !== false;
+    this.#logger = init?.logger ?? console;
+    const innerObjectsName = init?.innerObjectsName ?? 'innerObjects';
+    if (init?.innerObjects && Object.hasOwn(init.innerObjects, 'logger')) {
+      throw new Error(`[tegg/standalone] ${innerObjectsName}.logger is reserved; use the logger option instead`);
+    }
     this.#innerObjects = this.#createInnerObjects(init);
-    this.#logger = this.#innerObjects.logger[0].obj as Logger;
     this.scopeBag = TeggScope.createBag();
-    TeggScope.registerScope(this.scopeBag);
-  }
-
-  /** Scanned during init(); empty before that. */
-  get moduleReferences(): readonly ModuleReference[] {
-    return this.#moduleReferences;
-  }
-
-  /** Loaded during init(); empty before that. */
-  get moduleConfigs(): Record<string, ModuleConfigHolder> {
-    return this.#moduleConfigs;
   }
 
   /** Run `fn` within THIS app's per-app scope so factories/managers resolve here. */
@@ -136,31 +133,16 @@ export class StandaloneApp {
   }
 
   #createInnerObjects(init?: StandaloneAppInit): Record<string, InnerObject[]> {
-    const frameworkInnerObjects = {
-      // Framework hooks (e.g. DAL) inject `logger`; an init.innerObjects
-      // entry wins over init.logger, console is the last resort.
-      logger: [{ obj: init?.logger ?? console }],
+    return {
+      ...init?.innerObjects,
       // Framework placeholders pre-created at construction and filled during
       // init() — the inner objects hold these same references unless the caller
-      // intentionally overrides them below.
+      // supplies objects with other names.
+      logger: [{ obj: this.#logger }],
       moduleConfigs: [{ obj: new ModuleConfigs(this.#moduleConfigs) }],
       moduleConfig: [] as InnerObject[],
       runtimeConfig: [{ obj: this.#runtimeConfig }],
     };
-    const innerObjectsName = init?.innerObjectsName ?? 'innerObjects';
-    const logger = init?.logger ?? console;
-    if (init?.innerObjects?.logger) {
-      logger.warn(`[tegg/standalone] ${innerObjectsName}.logger overrides the framework provided inner object`);
-    }
-    for (const name of ['moduleConfigs', 'runtimeConfig']) {
-      if (init?.innerObjects?.[name]) {
-        logger.warn(`[tegg/standalone] ${innerObjectsName}.${name} overrides the framework provided inner object`);
-      }
-    }
-    if (init?.innerObjects?.moduleConfig) {
-      logger.warn(`[tegg/standalone] ${innerObjectsName}.moduleConfig extends the framework provided inner objects`);
-    }
-    return Object.assign(frameworkInnerObjects, init?.innerObjects);
   }
 
   /** Fill the runtimeConfig placeholder and bind module config names. */
@@ -176,11 +158,12 @@ export class StandaloneApp {
 
   /** Load every module's config and expose it as a qualified `moduleConfig` inner object. */
   #loadModuleConfigs(): void {
+    const resolvedReferences: ModuleReference[] = [];
     for (const reference of this.#moduleReferences) {
       const resolved = ModuleConfigUtil.resolveModuleConfigTolerant(reference, this.#runtimeConfig.baseDir);
       const resolvedRef = {
         path: resolved.path,
-        name: reference.name,
+        name: resolved.name,
         package: reference.package,
         optional: reference.optional,
         loaderType: reference.loaderType,
@@ -190,7 +173,9 @@ export class StandaloneApp {
         reference: resolvedRef,
         config: resolved.config,
       };
+      resolvedReferences.push(resolvedRef);
     }
+    this.#moduleReferences = resolvedReferences;
     for (const moduleConfig of Object.values(this.#moduleConfigs)) {
       this.#innerObjects.moduleConfig.push({
         obj: moduleConfig.config,
@@ -271,15 +256,16 @@ export class StandaloneApp {
     });
   }
 
-  async #initLoaderInstance(opts: InitStandaloneAppOptions): Promise<void> {
-    this.#loadUnitLoader = new EggModuleLoader(this.#moduleReferences, {
+  async #createLoadUnitLoader(opts: InitStandaloneAppOptions): Promise<EggModuleLoader> {
+    const loader = new EggModuleLoader(this.#moduleReferences, {
       logger: this.#logger,
       baseDir: opts.baseDir,
       dump: this.#dump,
       manifest: opts.manifest,
       loaderFS: opts.loaderFS,
     });
-    await this.#loadUnitLoader.init();
+    await loader.init();
+    return loader;
   }
 
   /**
@@ -287,30 +273,28 @@ export class StandaloneApp {
    * graph is built, so `@XxxLifecycleProto` hooks (including graph build hooks
    * they register in `@LifecyclePostInject`) are live for every later phase.
    */
-  async #instantiateInnerObjectLoadUnit(): Promise<void> {
+  async #instantiateInnerObjectLoadUnit(loader: EggModuleLoader): Promise<void> {
     StandaloneContextHandler.register();
     const builder = new InnerObjectLoadUnitBuilder();
-    for (const moduleDescriptor of this.#loadUnitLoader.moduleDescriptors) {
-      builder.addInnerObjectClazzList(moduleDescriptor.innerObjectClazzList, {
+    for (const moduleDescriptor of loader.moduleDescriptors) {
+      builder.addInnerObjectClazzList(moduleDescriptor.innerObjectClazzList ?? [], {
         name: moduleDescriptor.name,
         path: moduleDescriptor.unitPath,
       });
     }
-    const innerObjectLoadUnit = await builder.createLoadUnit({
+    const loadUnit = await builder.createLoadUnit({
       innerObjects: this.#innerObjects,
     });
-    this.loadUnits.push(innerObjectLoadUnit);
-    const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(innerObjectLoadUnit);
-    this.loadUnitInstances.push(instance);
+    this.#innerLoadUnit = loadUnit;
+    this.#innerLoadUnitInstance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
   }
 
   /** Phase 3/4: build + sort the business graph, then create and instantiate module load units. */
-  async #instantiateModuleLoadUnits(): Promise<void> {
-    const loadUnits = await this.#loadUnitLoader.load();
-    this.loadUnits.push(...loadUnits);
+  async #instantiateModuleLoadUnits(loader: EggModuleLoader): Promise<void> {
+    const loadUnits = await loader.load();
+    this.#loadUnits.push(...loadUnits);
     for (const loadUnit of loadUnits) {
-      const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
-      this.loadUnitInstances.push(instance);
+      this.#loadUnitInstances.push(await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit));
     }
   }
 
@@ -329,34 +313,48 @@ export class StandaloneApp {
   }
 
   async init(opts: InitStandaloneAppOptions): Promise<void> {
-    // Idempotent (same contract as ServiceWorkerApp.init): a second call must
-    // not reload configs or re-create load units.
-    if (this.#initialized) {
-      return;
+    if (this.#state === 'ready') return;
+    if (this.#state !== 'new') {
+      throw new Error(`[tegg/standalone] cannot init app in ${this.#state} state`);
     }
-    await this.runInScope(async () => {
-      this.#initRuntime(opts);
-      // In manifest-consume mode the module reference graph was already
-      // captured at build time; reuse it instead of re-scanning the filesystem.
-      this.#moduleReferences = opts.manifest?.moduleReferences?.length
-        ? opts.manifest.moduleReferences
-        : StandaloneApp.getModuleReferences(opts.baseDir, opts.dependencies, this.#frameworkDeps);
-      this.#loadModuleConfigs();
-      await this.#initLoaderInstance(opts);
-      await this.#instantiateInnerObjectLoadUnit();
-      await this.#instantiateModuleLoadUnits();
-      this.#initRunner();
-    });
-    this.#initialized = true;
+
+    this.#state = 'initializing';
+    TeggScope.registerScope(this.scopeBag);
+    try {
+      await this.runInScope(async () => {
+        this.#initRuntime(opts);
+        // In manifest-consume mode the module reference graph was already
+        // captured at build time; reuse it instead of re-scanning the filesystem.
+        this.#moduleReferences = opts.manifest?.moduleReferences?.length
+          ? opts.manifest.moduleReferences
+          : StandaloneApp.getModuleReferences(opts.baseDir, opts.dependencies, this.#frameworkDeps);
+        this.#loadModuleConfigs();
+        const loader = await this.#createLoadUnitLoader(opts);
+        await this.#instantiateInnerObjectLoadUnit(loader);
+        await this.#instantiateModuleLoadUnits(loader);
+        this.#initRunner();
+      });
+      this.#state = 'ready';
+    } catch (error) {
+      TeggScope.unregisterScope(this.scopeBag);
+      this.#state = 'closed';
+      throw error;
+    }
   }
 
   async run<T>(aCtx?: EggContext): Promise<T> {
+    if (this.#state !== 'ready') {
+      throw new Error(`[tegg/standalone] cannot run app in ${this.#state} state`);
+    }
     return this.runInScope(async () => {
       const lifecycle = {};
       const ctx = aCtx || new StandaloneContext();
       return await ContextHandler.run(ctx, async () => {
         if (ctx.init) {
           await ctx.init(lifecycle);
+        }
+        if (!this.#runnerProto) {
+          throw new Error('[tegg/standalone] app is not initialized');
         }
         const eggObject = await EggContainerFactory.getOrCreateEggObject(this.#runnerProto);
         const runner = eggObject.obj as MainRunner<T>;
@@ -387,33 +385,41 @@ export class StandaloneApp {
   }
 
   async destroy(): Promise<void> {
+    if (this.#state === 'closed') return;
+    if (this.#state === 'initializing') {
+      throw new Error('[tegg/standalone] cannot destroy app while it is initializing');
+    }
+
+    this.#state = 'closed';
     try {
-      await this.runInScope(() => this.doDestroy());
+      await this.runInScope(() => this.#disposeResources());
     } finally {
-      // Always release the scope, even if doDestroy rejects, so liveScopeBags
-      // (and thus isMultiApp / the sole-app fallback) never leaks a dead app.
       TeggScope.unregisterScope(this.scopeBag);
     }
   }
 
-  private async doDestroy(): Promise<void> {
-    // Reverse creation order: business load units go down first, the
-    // InnerObjectLoadUnit last — its lifecycle protos stay registered until
-    // every object they may hook has been destroyed.
-    if (this.loadUnitInstances) {
-      for (const instance of [...this.loadUnitInstances].reverse()) {
+  async #disposeResources(): Promise<void> {
+    while (this.#loadUnitInstances.length > 0) {
+      const instance = this.#loadUnitInstances.pop();
+      if (instance) {
         await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);
       }
     }
-    if (this.loadUnits) {
-      for (const loadUnit of [...this.loadUnits].reverse()) {
+    while (this.#loadUnits.length > 0) {
+      const loadUnit = this.#loadUnits.pop();
+      if (loadUnit) {
         await LoadUnitFactory.destroyLoadUnit(loadUnit);
       }
     }
-    // Framework hooks (ConfigSource/AOP/DAL) live in the InnerObjectLoadUnit
-    // and deregister themselves — and clean up their own managers — when it
-    // is destroyed above (dal: DalModuleLoadUnitHook#destroy).
-    // Release this app's scoped config name override before unregistering the scope.
+    if (this.#innerLoadUnitInstance) {
+      await LoadUnitInstanceFactory.destroyLoadUnitInstance(this.#innerLoadUnitInstance);
+      this.#innerLoadUnitInstance = undefined;
+    }
+    if (this.#innerLoadUnit) {
+      await LoadUnitFactory.destroyLoadUnit(this.#innerLoadUnit);
+      this.#innerLoadUnit = undefined;
+    }
     ModuleConfigUtil.setConfigNames(undefined);
+    this.#runnerProto = undefined;
   }
 }

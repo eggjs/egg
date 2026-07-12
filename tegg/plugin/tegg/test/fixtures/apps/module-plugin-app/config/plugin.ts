@@ -11,5 +11,9 @@ export default {
     package: '@eggjs/tegg-plugin',
     enable: true,
   },
+  teggAop: {
+    package: '@eggjs/aop-plugin',
+    enable: true,
+  },
   watcher: false,
 };

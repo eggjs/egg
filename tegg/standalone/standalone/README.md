@@ -44,6 +44,10 @@ export class Foo implements MainRunner<string> {
 - cwd 为当前应用工作目录
 - options:
   - innerObjectHandlers: 当前运行环境中内置的对象
+  - logger: standalone 框架及模块注入使用的 logger；不要放入 innerObjectHandlers
+
+`moduleConfigs`、`moduleConfig` 和 `runtimeConfig` 由 standalone 框架维护；
+`innerObjectHandlers` 中的同名项会被忽略。
 
 ```
 await main(cwd, {

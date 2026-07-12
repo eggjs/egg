@@ -1,0 +1,7 @@
+{
+  "name": "test-util-inner-lifecycle",
+  "type": "module",
+  "eggModule": {
+    "name": "testUtilInnerLifecycle"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "framework-shared",
+  "type": "module",
+  "eggModule": {
+    "name": "sharedModule"
+  }
+}

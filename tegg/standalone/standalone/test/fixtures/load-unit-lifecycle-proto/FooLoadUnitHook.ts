@@ -1,11 +1,13 @@
 import { EggPrototypeCreatorFactory, EggPrototypeFactory } from '@eggjs/metadata';
-import { Inject, LoadUnitLifecycleProto, SingletonProto } from '@eggjs/tegg';
+import { Inject, LifecycleDestroy, LoadUnitLifecycleProto, SingletonProto } from '@eggjs/tegg';
 import type { LifecycleHook, LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg-types';
 
 import { Foo } from './Foo.ts';
 
 @LoadUnitLifecycleProto()
 export class FooLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
+  static events: string[] = [];
+
   @Inject()
   foo: Foo;
 
@@ -24,5 +26,16 @@ export class FooLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, 
     for (const proto of protos) {
       EggPrototypeFactory.instance.registerPrototype(proto, loadUnit);
     }
+  }
+
+  async preDestroy(_: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
+    if (loadUnit.name === 'loadUnitLifecycleApp') {
+      FooLoadUnitHook.events.push('business-load-unit-destroy');
+    }
+  }
+
+  @LifecycleDestroy()
+  destroy(): void {
+    FooLoadUnitHook.events.push('inner-hook-destroy');
   }
 }

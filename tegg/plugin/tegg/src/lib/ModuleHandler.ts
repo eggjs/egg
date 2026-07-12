@@ -49,7 +49,7 @@ export class ModuleHandler extends Base {
       if (moduleDescriptor.optional === true) {
         continue;
       }
-      builder.addInnerObjectClazzList(moduleDescriptor.innerObjectClazzList, {
+      builder.addInnerObjectClazzList(moduleDescriptor.innerObjectClazzList ?? [], {
         name: moduleDescriptor.name,
         path: moduleDescriptor.unitPath,
       });
@@ -64,6 +64,7 @@ export class ModuleHandler extends Base {
       // its own resolution surface for these names (egg compatible objects),
       // the provided protos must stay visible to inner objects only.
       innerObjects: {
+        logger: [{ obj: this.app.logger, accessLevel: AccessLevel.PRIVATE }],
         moduleConfigs: [{ obj: new ModuleConfigs(this.app.moduleConfigs), accessLevel: AccessLevel.PRIVATE }],
         runtimeConfig: [
           {
@@ -75,7 +76,6 @@ export class ModuleHandler extends Base {
             accessLevel: AccessLevel.PRIVATE,
           },
         ],
-        logger: [{ obj: this.app.logger, accessLevel: AccessLevel.PRIVATE }],
       },
     });
     this.#innerObjectLoadUnit = innerObjectLoadUnit;
@@ -114,15 +114,6 @@ export class ModuleHandler extends Base {
   }
 
   async destroy(): Promise<void> {
-    const errors: unknown[] = [];
-    const safe = async (destroy: () => Promise<void>) => {
-      try {
-        await destroy();
-      } catch (e) {
-        errors.push(e);
-      }
-    };
-
     // Reverse creation order: business load units go down first; the inner
     // instance and load unit go down after business load-unit metadata so its
     // lifecycle protos still observe LoadUnitFactory.destroyLoadUnit().
@@ -130,24 +121,21 @@ export class ModuleHandler extends Base {
     if (this.loadUnitInstances) {
       const businessInstances = this.loadUnitInstances.filter((instance) => instance !== innerObjectLoadUnitInstance);
       for (const instance of [...businessInstances].reverse()) {
-        await safe(() => LoadUnitInstanceFactory.destroyLoadUnitInstance(instance));
+        await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);
       }
     }
     if (this.loadUnits) {
       for (const loadUnit of [...this.loadUnits].reverse()) {
-        await safe(() => LoadUnitFactory.destroyLoadUnit(loadUnit));
+        await LoadUnitFactory.destroyLoadUnit(loadUnit);
       }
     }
     if (innerObjectLoadUnitInstance) {
-      await safe(() => LoadUnitInstanceFactory.destroyLoadUnitInstance(innerObjectLoadUnitInstance));
+      await LoadUnitInstanceFactory.destroyLoadUnitInstance(innerObjectLoadUnitInstance);
       this.#innerObjectLoadUnitInstance = undefined;
     }
     if (this.#innerObjectLoadUnit) {
-      await safe(() => LoadUnitFactory.destroyLoadUnit(this.#innerObjectLoadUnit!));
+      await LoadUnitFactory.destroyLoadUnit(this.#innerObjectLoadUnit);
       this.#innerObjectLoadUnit = undefined;
-    }
-    if (errors.length) {
-      throw new AggregateError(errors, 'destroy tegg module handler failed');
     }
   }
 }

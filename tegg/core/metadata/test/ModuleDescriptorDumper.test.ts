@@ -25,6 +25,20 @@ describe('test/ModuleDescriptorDumper.test.ts', () => {
       const json = JSON.parse(ModuleDescriptorDumper.stringifyDescriptor(desc));
       assert.deepEqual(json.clazzList, [{ name: 'MissingFilePath' }]);
     });
+
+    it('should treat a legacy descriptor without innerObjectClazzList as empty', () => {
+      const desc: ModuleDescriptor = {
+        name: 'legacy',
+        unitPath: '/tmp/legacy',
+        clazzList: [],
+        multiInstanceClazzList: [],
+        protos: [],
+      };
+
+      const json = JSON.parse(ModuleDescriptorDumper.stringifyDescriptor(desc));
+      assert.deepEqual(json.innerObjectClazzList, []);
+      assert.deepEqual(ModuleDescriptorDumper.getDecoratedFiles(desc), []);
+    });
   });
 
   describe('getDecoratedFiles()', () => {
@@ -118,6 +132,7 @@ describe('test/ModuleDescriptorDumper.test.ts', () => {
           protos: [],
         };
 
+        await ModuleDescriptorDumper.dump(desc, { dumpDir });
         await ModuleDescriptorDumper.dump(desc, { dumpDir });
 
         const dumpPath = ModuleDescriptorDumper.dumpPath(desc, { dumpDir });

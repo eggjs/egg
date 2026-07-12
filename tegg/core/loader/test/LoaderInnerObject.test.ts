@@ -19,7 +19,7 @@ describe('core/loader/test/LoaderInnerObject.test.ts', () => {
   it('should divert inner object clazz to innerObjectClazzList', async () => {
     const [descriptor] = await LoaderFactory.loadApp([moduleRef]);
 
-    const innerNames = descriptor.innerObjectClazzList.map((t) => t.name).sort();
+    const innerNames = descriptor.innerObjectClazzList!.map((t) => t.name).sort();
     assert.deepEqual(innerNames, ['ControllerHook', 'FetchRouter']);
 
     // Inner object classes must NOT stay in clazzList.

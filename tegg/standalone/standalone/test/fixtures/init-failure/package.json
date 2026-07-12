@@ -1,0 +1,7 @@
+{
+  "name": "init-failure",
+  "type": "module",
+  "eggModule": {
+    "name": "initFailure"
+  }
+}
