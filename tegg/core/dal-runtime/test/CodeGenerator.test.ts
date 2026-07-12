@@ -15,6 +15,16 @@ import { MultiPrimaryKey } from './fixtures/modules/generate_codes/MultiPrimaryK
 const execFileAsync = promisify(execFile);
 
 describe('test/CodeGenerator.test.ts', () => {
+  it('should configure templates as build assets', async () => {
+    const config = (await import('../tsdown.config.ts')).default as any;
+    assert.deepEqual(config.copy, [
+      {
+        from: 'src/templates',
+        to: 'dist/templates',
+      },
+    ]);
+  });
+
   it('should load templates under native ESM runtime', async () => {
     const repoDir = path.resolve(__dirname, '../../../..');
     const moduleDir = path.join(__dirname, './fixtures/modules/generate_codes');
