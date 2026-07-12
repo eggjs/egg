@@ -5,7 +5,7 @@ import type { EggContainerFactory } from '@eggjs/tegg-runtime';
 
 import type { ControllerRegister } from '../../ControllerRegister.ts';
 import type { RootProtoManager } from '../../RootProtoManager.ts';
-import type { HTTPMethodRegister } from './HTTPMethodRegisterBase.ts';
+import type { HTTPMethodRegister } from './HTTPMethodRegister.ts';
 
 export type HTTPMethodRegisterCreator = (
   proto: EggPrototype,

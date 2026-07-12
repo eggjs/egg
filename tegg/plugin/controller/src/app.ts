@@ -24,7 +24,7 @@ import { AgentControllerObject } from './lib/AgentControllerObject.ts';
 import { AgentControllerProto } from './lib/AgentControllerProto.ts';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.ts';
 import { EggControllerLoader } from './lib/EggControllerLoader.ts';
-import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.ts';
+import { EggHTTPControllerRegister } from './lib/impl/http/EggHTTPControllerRegister.ts';
 import { EggMcpRouter } from './lib/impl/mcp/EggMcpRouter.ts';
 
 // Load Controller process
@@ -69,7 +69,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     // be provided as an inner object — HTTP registers mount on `app.router`,
     // the MCP router captures the app imperatively.
     ControllerRegisterDefaults.enqueue(ControllerType.HTTP, (proto, meta) =>
-      HTTPControllerRegister.create(proto, meta, this.app),
+      EggHTTPControllerRegister.create(proto, meta, this.app),
     );
     this.app.loadUnitFactory.registerLoadUnitCreator(
       CONTROLLER_LOAD_UNIT,
@@ -184,9 +184,9 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
 
       // The real register HTTP controller/method.
       // HTTP method should sort by priority
-      // The HTTPControllerRegister will collect all the methods
+      // The EggHTTPControllerRegister will collect all the methods
       // and register methods after collect is done.
-      HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
+      EggHTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
 
       this.app.config.mcp.hooks = EggMcpRouter.hooks;
     });
@@ -215,7 +215,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       // The module-declared controller hooks deregister with the
       // InnerObjectLoadUnit teardown.
       ControllerMetadataManager.instance.clear();
-      HTTPControllerRegister.clean();
+      EggHTTPControllerRegister.clean();
       // The MCP register/router are per-boot closures (no static instance to
       // clean); the scope-backed hook list is torn down with the app bag.
     });

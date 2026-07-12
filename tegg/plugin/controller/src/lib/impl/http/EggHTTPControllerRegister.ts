@@ -1,37 +1,37 @@
 import assert from 'node:assert/strict';
 
 import { type ControllerMetadata, ControllerType } from '@eggjs/controller-decorator';
-import { HTTPControllerRegister as BaseHTTPControllerRegister } from '@eggjs/controller-runtime';
+import { HTTPControllerRegister } from '@eggjs/controller-runtime';
 import type { EggPrototype } from '@eggjs/metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, Router } from 'egg';
 
-import { HTTPMethodRegister } from './HTTPMethodRegister.ts';
+import { EggHTTPMethodRegister } from './EggHTTPMethodRegister.ts';
 
 const HTTP_CONTROLLER_REGISTER_SLOT = Symbol('tegg:controller:httpControllerRegister');
 
-export class HTTPControllerRegister extends BaseHTTPControllerRegister {
+export class EggHTTPControllerRegister extends HTTPControllerRegister {
   // Per-app: the register accumulates protos and binds to one app's router, so
   // it must be per-app (resolved from the active TeggScope bag).
-  static get instance(): HTTPControllerRegister | undefined {
-    return TeggScope.getOr(HTTP_CONTROLLER_REGISTER_SLOT, () => undefined, 'HTTPControllerRegister.instance');
+  static get instance(): EggHTTPControllerRegister | undefined {
+    return TeggScope.getOr(HTTP_CONTROLLER_REGISTER_SLOT, () => undefined, 'EggHTTPControllerRegister.instance');
   }
 
-  static set instance(value: HTTPControllerRegister | undefined) {
+  static set instance(value: EggHTTPControllerRegister | undefined) {
     TeggScope.set(HTTP_CONTROLLER_REGISTER_SLOT, value);
   }
 
-  static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application): HTTPControllerRegister {
+  static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application): EggHTTPControllerRegister {
     assert(controllerMeta.type === ControllerType.HTTP, 'controller meta type is not HTTP');
-    if (!HTTPControllerRegister.instance) {
+    if (!EggHTTPControllerRegister.instance) {
       // Import the container factory directly: `app` may arrive through the
       // inject proxy, whose property reads bind function values — a bound
       // class loses its statics.
-      HTTPControllerRegister.instance = new HTTPControllerRegister(app.router, EggContainerFactory);
+      EggHTTPControllerRegister.instance = new EggHTTPControllerRegister(app.router, EggContainerFactory);
     }
-    HTTPControllerRegister.instance.addControllerProto(proto);
-    return HTTPControllerRegister.instance;
+    EggHTTPControllerRegister.instance.addControllerProto(proto);
+    return EggHTTPControllerRegister.instance;
   }
 
   constructor(router: Router, eggContainerFactory: typeof EggContainerFactory) {
@@ -39,7 +39,7 @@ export class HTTPControllerRegister extends BaseHTTPControllerRegister {
       router,
       eggContainerFactory,
       (proto, controllerMeta, methodMeta, methodRouter, checkRouters, containerFactory) =>
-        new HTTPMethodRegister(proto, controllerMeta, methodMeta, methodRouter, checkRouters, containerFactory),
+        new EggHTTPMethodRegister(proto, controllerMeta, methodMeta, methodRouter, checkRouters, containerFactory),
     );
   }
 

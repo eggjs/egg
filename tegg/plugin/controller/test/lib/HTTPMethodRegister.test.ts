@@ -18,7 +18,7 @@ import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { describe, it, beforeAll, afterAll, expect } from 'vitest';
 
 import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';
-import { HTTPMethodRegister } from '../../src/lib/impl/http/HTTPMethodRegister.ts';
+import { EggHTTPMethodRegister } from '../../src/lib/impl/http/EggHTTPMethodRegister.ts';
 import { getFixtures } from '../utils.ts';
 
 describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
@@ -59,7 +59,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
       const controllerMeta = proto.getMetaData<HTTPControllerMeta>(CONTROLLER_META_DATA)!;
       await expect(async () => {
         for (const methodMeta of controllerMeta.methods) {
-          const register = new HTTPMethodRegister(
+          const register = new EggHTTPMethodRegister(
             proto,
             controllerMeta,
             methodMeta,
@@ -78,7 +78,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
       const proto = loadUnit.getEggPrototype('appController', [])[0];
       const controllerMeta = proto.getMetaData<HTTPControllerMeta>(CONTROLLER_META_DATA)!;
       await expect(async () => {
-        const register = new HTTPMethodRegister(
+        const register = new EggHTTPMethodRegister(
           proto,
           controllerMeta,
           {
@@ -105,7 +105,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
       await expect(async () => {
         const routerMap = new Map();
         for (const methodMeta of controllerMeta1.methods) {
-          const register = new HTTPMethodRegister(
+          const register = new EggHTTPMethodRegister(
             proto1,
             controllerMeta1,
             methodMeta,
@@ -116,7 +116,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
           await register.checkDuplicate();
         }
         for (const methodMeta of controllerMeta2.methods) {
-          const register = new HTTPMethodRegister(
+          const register = new EggHTTPMethodRegister(
             proto2,
             controllerMeta2,
             methodMeta,

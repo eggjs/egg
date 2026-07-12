@@ -8,7 +8,7 @@ import {
   Cookies,
   type HTTPMethodMeta,
 } from '@eggjs/controller-decorator';
-import { HTTPMethodRegister as BaseHTTPMethodRegister, type HTTPHandlerFunc } from '@eggjs/controller-runtime';
+import { HTTPMethodRegister, type HTTPHandlerFunc } from '@eggjs/controller-runtime';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import type { MiddlewareFunc } from 'egg';
 
@@ -21,7 +21,7 @@ import { initRequest } from './Req.ts';
  * the controller plugin runtime; this subclass binds the egg ctx request shape
  * to method args and writes the return value back to `ctx.body`.
  */
-export class HTTPMethodRegister extends BaseHTTPMethodRegister {
+export class EggHTTPMethodRegister extends HTTPMethodRegister {
   protected createHandler(methodMeta: HTTPMethodMeta, host: string | undefined): HTTPHandlerFunc {
     const argsLength = methodMeta.paramMap.size;
     const hasContext = methodMeta.contextParamIndex !== undefined;
