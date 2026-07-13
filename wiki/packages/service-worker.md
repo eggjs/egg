@@ -28,8 +28,11 @@ module-plugin mechanism (declarative `@InnerObjectProto` /
   `/mcp[/name]/stream`.
 - `@eggjs/service-worker` — the host app only: the `ServiceWorkerApp` facade
   over `StandaloneApp` with `serve()` (node:http bridge) and embedded
-  `handleEvent()`, loading the runtime + controller packages as frameworkDeps.
-  Its `index` re-exports the controller package so the public API is stable.
+  `handleEvent()`. Its single frameworkDep is its OWN package root, so the
+  framework modules (runtime + controller) are auto-discovered from its package
+  deps via the node_modules eggModule convention — no hand-listed/ordered
+  packages. Its `index` exports only `ServiceWorkerApp`; consumers import
+  controller symbols from `@eggjs/service-worker-controller` directly.
 
 Key mechanics and constraints:
 
@@ -41,7 +44,7 @@ Key mechanics and constraints:
   module) → fetch transport `@eggjs/service-worker-controller` (the
   `serviceWorker` module) → host app `@eggjs/service-worker`. Each HOST package
   owns the scanned eggModule and re-exports the runtime's inner-object protos
-  into it (`ControllerModule.ts`); the runtime library itself is never scanned.
+  into it (`runtimeProtos.ts`); the runtime library itself is never scanned.
   The service worker depends only on the egg-free runtime, never on the egg
   plugin.
 - **Host-agnostic MCP register + `McpRouter` boundary**: the shared
@@ -70,6 +73,16 @@ Key mechanics and constraints:
 - **frameworkDeps scan excludes `test/**`\*\*: the framework packages are
   themselves modules; without the exclusion their test fixtures load as
   business modules (duplicate controller names) in workspace layouts.
+- **`StandaloneEggObjectFactory` pins `name: 'eggObjectFactory'`** (why module
+  discovery order stopped mattering): it extends the base `EggObjectFactory`, so
+  its derived proto name would be `standaloneEggObjectFactory` and would NOT
+  satisfy `ServiceWorkerRunner`'s `@Inject() eggObjectFactory` locally — the
+  inject would fall back to the global PUBLIC `eggObjectFactory` in
+  `@eggjs/dynamic-inject-runtime`, whose availability depends on module scan
+  order (runtime had to be scanned before controller). Pinning the name keeps
+  resolution local to `serviceWorkerRuntime` and order-independent, which is what
+  lets ServiceWorkerApp use a single own-package-root frameworkDep instead of a
+  hand-ordered runtime/controller list.
 - Per-app state is all inner objects in the app's TeggScope bag — two
   concurrent `ServiceWorkerApp`s are isolated (`test/MultiApp.test.ts`).
 

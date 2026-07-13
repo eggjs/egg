@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-14] package | service-worker framework-module auto-discovery (drop hand-ordered frameworkDeps)
+
+- sources touched: `tegg/standalone/service-worker-runtime/src/StandaloneEggObjectFactory.ts`, `tegg/standalone/service-worker/src/{ServiceWorkerApp.ts,index.ts}`, `tegg/standalone/service-worker/test/ServiceWorkerApp.test.ts`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: `ServiceWorkerApp` hand-listed `service-worker-runtime` + `-controller` as explicit `frameworkDeps` in a fixed order (with a long comment about the order being load-bearing), because single-root auto-discovery from the controller root threw `EggPrototypeNotFound: eggObjectFactory in LOAD_UNIT:serviceWorkerRuntime` when the runtime module scanned second. Root cause (reproduced by pointing frameworkDeps at one controller root): `StandaloneEggObjectFactory extends EggObjectFactory` omitted `name`, so it registered as `standaloneEggObjectFactory` and did NOT satisfy `ServiceWorkerRunner`'s by-name `@Inject() eggObjectFactory` locally — the inject fell back to the global PUBLIC `eggObjectFactory` in `@eggjs/dynamic-inject-runtime`, whose availability depended on module scan order. NOT a topological-sort bug (the coupling was a name mismatch forcing reliance on a global proto). Fix: pin `name: 'eggObjectFactory'` on `StandaloneEggObjectFactory` → local, order-independent resolution. That unblocked the upstream reference structure (`standalone-next`): `ServiceWorkerApp` now uses a single frameworkDep = its own package root (`path.join(__dirname, '..')`), auto-discovering runtime + controller via the node_modules eggModule convention; removed the manual `import.meta.resolve` list + the stale comment. Also dropped `export * from '@eggjs/service-worker-controller'` from the facade `index.ts` (align to reference — only exports ServiceWorkerApp; the one SW test using `FetchEventImpl` now imports it from the controller package). Did NOT convert composition→`extends StandaloneApp` (our facade is richer: `serve()` node:http bridge, narrow public surface). Green: SW suite (21) + standalone + controller + tegg (142 passed, only pre-existing dal/MySQL skips); typecheck/oxfmt clean.
+
 ## [2026-07-14] concept | single PUBLIC copy of app-scoped compat protos (dedup)
 
 - sources touched: `tegg/plugin/tegg/src/lib/{ModuleHandler,EggAppLoader}.ts`
