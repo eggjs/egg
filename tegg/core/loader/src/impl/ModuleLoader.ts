@@ -19,6 +19,7 @@ export interface ModuleLoaderOptions {
 export class ModuleLoader implements Loader {
   private readonly moduleDir: string;
   private protoClazzList: EggProtoImplClass[];
+  private loadPromise?: Promise<EggProtoImplClass[]>;
   private readonly precomputedFiles?: string[];
   private readonly loaderFS: LoaderFS;
 
@@ -33,6 +34,22 @@ export class ModuleLoader implements Loader {
     if (this.protoClazzList) {
       return this.protoClazzList;
     }
+    if (this.loadPromise) {
+      return this.loadPromise;
+    }
+
+    const loadPromise = this.loadOnce();
+    this.loadPromise = loadPromise;
+    try {
+      return await loadPromise;
+    } finally {
+      if (this.loadPromise === loadPromise) {
+        this.loadPromise = undefined;
+      }
+    }
+  }
+
+  private async loadOnce(): Promise<EggProtoImplClass[]> {
     const protoClassList: EggProtoImplClass[] = [];
 
     let files: string[];
