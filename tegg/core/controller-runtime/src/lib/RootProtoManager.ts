@@ -1,7 +1,5 @@
-import { InnerObjectProto } from '@eggjs/core-decorator';
 import type { EggPrototype } from '@eggjs/metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import { AccessLevel } from '@eggjs/tegg-types';
 
 /**
  * The structural request shape RootProtoManager needs. Both the egg Context
@@ -15,9 +13,10 @@ export interface RootProtoRequestContext {
 
 export type GetRootProtoCallback = (ctx: RootProtoRequestContext) => EggPrototype | undefined;
 
-// PUBLIC: the egg host resolves it by name to expose `app.rootProtoManager` for
-// the teggRootProto middleware, and the fetch host's FetchEventHandler injects it.
-@InnerObjectProto({ accessLevel: AccessLevel.PUBLIC })
+// Host-agnostic root-proto registry — pure logic, NO proto decorator. Each host
+// wires it: the fetch host applies `@InnerObjectProto` in its runtimeProtos barrel
+// and injects it; the egg host mounts `new RootProtoManager()` on `app` (an APP
+// compat proto that also backs the teggRootProto middleware).
 export class RootProtoManager {
   // <method, GetRootProtoCallback[]>
   protoMap: Map<string, GetRootProtoCallback[]> = new Map();

@@ -6,14 +6,10 @@ import {
   ControllerLoadUnit,
   ControllerMetadataManager,
   middlewareGraphHook,
-  type RootProtoManager,
+  RootProtoManager,
 } from '@eggjs/controller-runtime';
-import { EggPrototypeFactory, type LoadUnitLifecycleContext } from '@eggjs/metadata';
-import {
-  EggContainerFactory,
-  type LoadUnitInstanceLifecycleContext,
-  ModuleLoadUnitInstance,
-} from '@eggjs/tegg-runtime';
+import type { LoadUnitLifecycleContext } from '@eggjs/metadata';
+import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
 import { AGENT_CONTROLLER_PROTO_IMPL_TYPE, TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
@@ -21,7 +17,6 @@ import { AgentControllerObject } from './lib/AgentControllerObject.ts';
 import { AgentControllerProto } from './lib/AgentControllerProto.ts';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.ts';
 import { EggControllerLoader } from './lib/EggControllerLoader.ts';
-import type { EggHTTPRegisterProvider } from './lib/impl/http/EggHTTPRegisterProvider.ts';
 import { EggMcpRouter } from './lib/impl/mcp/EggMcpRouter.ts';
 
 export default class ControllerAppBootHook implements ILifecycleBoot {
@@ -134,33 +129,24 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     return middlewareNames;
   }
 
-  // The boot hook is an egg ILifecycleBoot, not a DI proto, so it cannot `@Inject`.
-  async #resolveInnerObject<T>(name: string): Promise<T> {
-    const proto = EggPrototypeFactory.instance.getPrototype(name);
-    return (await EggContainerFactory.getOrCreateEggObject(proto)).obj as T;
-  }
-
   async didLoad(): Promise<void> {
+    // Mount the per-app RootProtoManager (and, when MCP is on, the router) on
+    // `app` BEFORE the inner-object graph builds: they become `() => app[name]`
+    // APP compat protos, so inner objects inject them the same way business
+    // modules inject `app.router`. `app.rootProtoManager` also backs the
+    // teggRootProto middleware, which is plain egg middleware and cannot inject.
+    this.app.rootProtoManager = new RootProtoManager();
     if (this.mcpEnable()) {
-      // Mount the per-app router on `app` before the inner-object graph builds,
-      // so its compat proto reaches inner objects (see EggMCPRegisterProvider).
       this.app.mcpRouter = new EggMcpRouter(this.app);
     }
     await this.app.moduleHandler.ready();
     await TeggScope.run(this.app._teggScopeBag, async () => {
-      // The inner objects are already instantiated by moduleHandler.ready(), so
-      // the register providers' @LifecyclePostInject has plugged the HTTP/MCP
-      // creators into the factory. We only need the rootProtoManager instance
-      // (teggRootProto middleware reads `ctx.app.rootProtoManager`; it cannot
-      // inject) and the httpRegisterProvider handle to drive doRegister below.
-      this.app.rootProtoManager = await this.#resolveInnerObject<RootProtoManager>('rootProtoManager');
-      const httpRegisterProvider = await this.#resolveInnerObject<EggHTTPRegisterProvider>('httpRegisterProvider');
-
+      // HTTP controller registration is driven by EggHTTPControllerRegistrar when
+      // the CONTROLLER_LOAD_UNIT instance is created inside ready() below — every
+      // controller proto is collected by then.
       this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
       await this.controllerLoadUnitHandler.ready();
 
-      // Mount all HTTP controller methods, priority-sorted, after collection.
-      httpRegisterProvider.doRegister(this.app.rootProtoManager);
       this.app.config.mcp.hooks = EggMcpRouter.hooks;
     });
   }
