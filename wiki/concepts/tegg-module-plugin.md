@@ -19,6 +19,9 @@ source_files:
   - tegg/plugin/tegg/src/lib/ModuleHandler.ts
   - tegg/plugin/tegg/src/lib/AppLoadUnitInstance.ts
   - tegg/plugin/tegg/src/lib/EggModuleLoader.ts
+  - tegg/plugin/tegg/src/lib/EggAppLoader.ts
+  - tegg/plugin/tegg/src/lib/EggCompatibleProtoImpl.ts
+  - tegg/plugin/tegg/src/lib/EggQualifierProtoHook.ts
   - tegg/plugin/aop/src/app.ts
   - tegg/plugin/aop/src/lib/AopContextHook.ts
   - tegg/core/aop-runtime/src/AopContextAdviceRegistry.ts
@@ -85,6 +88,35 @@ Hosts: `StandaloneApp.init()` (standalone) and `ModuleHandler.init()` via
   keeps provided objects PUBLIC (business modules may inject `logger`,
   `moduleConfigs`, etc.); the egg host passes PRIVATE for its base objects so
   they never pollute cross-unit resolution.
+- Egg feeds app properties to inner objects through the egg **compat**
+  mechanism, not a hand-provided list: `ModuleHandler` calls
+  `builder.addCompatibleClazzList(EggAppLoader.buildAppSingletonCompatClazzList(PRIVATE))`,
+  so inner objects inject `router` / `logger` / `runtimeConfig` / ... via the
+  same `() => app[name]` protos business modules use. (Standalone has no egg
+  compat surface, so it provides its own `logger` / `moduleConfigs` through
+  innerObjects; only the egg host uses compat for these.) Key points:
+  - **Built PRIVATE** (`EggCompatibleProtoImpl` now honors the descriptor
+    accessLevel instead of hardcoding PUBLIC): the inner-unit copies resolve
+    for inner objects only and never collide with the app load unit's PUBLIC
+    copies in business-module resolution. This is why they can be fed straight
+    in even though the app load unit is created later — the compat protos are
+    inert `() => app[name]` data providers with no lifecycle, so they don't
+    break the "inner unit first / destroyed last" invariant.
+  - **APP-scoped only** (`buildAppSingletonCompatClazzList` excludes
+    CONTEXT-scoped compat protos): inner objects are singletons and cannot
+    inject request-scoped objects.
+  - **Fed AFTER scanned inner objects**, with `addCompatibleClazzList`
+    skipping (not erroring on) a name a scanned inner object already claims —
+    the inner object wins.
+  - `moduleConfigs` is the ONE base object that stays an explicit provided
+    instance: it is blacklisted in `EggAppLoader` (`APP_CLAZZ_BLACK_LIST`) and
+    consumers want a `ModuleConfigs` wrapper, not the raw `app.moduleConfigs`
+    map. `logger`/`router`/`runtimeConfig` now arrive via the compat protos.
+- Injecting an app property whose name is ALSO a ctx property (e.g. `router`)
+  needs `@EggQualifier(EggType.APP)`: `EggQualifierProtoHook` stamps an
+  otherwise-plain inject with `EggType.CONTEXT` first (ctx wins), which a
+  singleton inner object cannot inject. App-only names (`runtimeConfig`,
+  `logger` — the latter is CONTEXT-blacklisted) are stamped APP automatically.
 
 ## Access and qualifier boundary
 
