@@ -55,14 +55,12 @@ export class ModuleHandler extends Base {
         path: moduleDescriptor.unitPath,
       });
     }
-    // Feed the egg host's APP-scoped compat protos (`() => app[name]`) into the
-    // inner-object graph so inner objects inject app properties (router /
-    // logger / runtimeConfig / ...) through the SAME compat mechanism business
-    // modules use — no hand-provided instances. Built PRIVATE so they resolve
-    // for inner objects only and never collide with the app load unit's PUBLIC
-    // copies in business-module resolution. Added AFTER the scanned inner
-    // objects so a same-named inner object wins (compat proto is skipped).
-    builder.addCompatibleClazzList(new EggAppLoader(this.app).buildAppSingletonCompatClazzList(AccessLevel.PRIVATE), {
+    // The single copy of the egg host's APP-scoped compat protos (`() => app[name]`
+    // for router / logger / runtimeConfig / ...). PUBLIC, so both inner objects AND
+    // business modules resolve app properties from here — the app load unit no longer
+    // duplicates them. Added AFTER the scanned inner objects so a same-named inner
+    // object wins (the compat proto is skipped).
+    builder.addCompatibleClazzList(new EggAppLoader(this.app).buildAppSingletonCompatClazzList(), {
       name: 'app',
       path: this.app.baseDir,
     });

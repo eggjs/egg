@@ -36,7 +36,7 @@ export class EggAppLoader implements Loader {
     this.moduleConfigLoader = new ModuleConfigLoader(this.app);
   }
 
-  private buildClazz(name: string, eggType: EggType, accessLevel: AccessLevel = AccessLevel.PUBLIC): EggProtoImplClass {
+  private buildClazz(name: string, eggType: EggType): EggProtoImplClass {
     const app = this.app;
     let func: EggProtoImplClass;
     if (eggType === EggType.APP) {
@@ -68,7 +68,7 @@ export class EggAppLoader implements Loader {
     PrototypeUtil.setProperty(func, {
       name,
       initType: ObjectInitType.SINGLETON,
-      accessLevel,
+      accessLevel: AccessLevel.PUBLIC,
       protoImplType: COMPATIBLE_PROTO_IMPLE_TYPE,
     });
     QualifierUtil.addProtoQualifier(func, LoadUnitNameQualifierAttribute, 'app');
@@ -77,7 +77,7 @@ export class EggAppLoader implements Loader {
     return func;
   }
 
-  private buildAppLoggerClazz(name: string, accessLevel: AccessLevel = AccessLevel.PUBLIC): EggProtoImplClass {
+  private buildAppLoggerClazz(name: string): EggProtoImplClass {
     const app = this.app;
     const func: EggProtoImplClass = function () {
       return app.getLogger(name);
@@ -93,7 +93,7 @@ export class EggAppLoader implements Loader {
     PrototypeUtil.setProperty(func, {
       name,
       initType: ObjectInitType.SINGLETON,
-      accessLevel,
+      accessLevel: AccessLevel.PUBLIC,
       protoImplType: COMPATIBLE_PROTO_IMPLE_TYPE,
     });
     QualifierUtil.addProtoQualifier(func, LoadUnitNameQualifierAttribute, 'app');
@@ -117,7 +117,7 @@ export class EggAppLoader implements Loader {
    * instances. CONTEXT-scoped compat protos stay out: inner objects are
    * singletons and cannot inject request-scoped objects.
    */
-  buildAppSingletonCompatClazzList(accessLevel: AccessLevel = AccessLevel.PUBLIC): EggProtoImplClass[] {
+  buildAppSingletonCompatClazzList(): EggProtoImplClass[] {
     const app = this.app;
     const appProperties = ObjectUtils.getProperties(app);
     const contextProperties = ObjectUtils.getProperties((app as any).context);
@@ -130,8 +130,8 @@ export class EggAppLoader implements Loader {
     const allContextClazzNames = Array.from(allContextClazzNamesSet);
     const loggerNames = this.getLoggerNames(allContextClazzNames, allSingletonClazzNames);
     return [
-      ...allSingletonClazzNames.map((name) => this.buildClazz(name, EggType.APP, accessLevel)),
-      ...loggerNames.map((name) => this.buildAppLoggerClazz(name, accessLevel)),
+      ...allSingletonClazzNames.map((name) => this.buildClazz(name, EggType.APP)),
+      ...loggerNames.map((name) => this.buildAppLoggerClazz(name)),
     ];
   }
 
@@ -145,7 +145,6 @@ export class EggAppLoader implements Loader {
     const moduleConfigList = this.moduleConfigLoader.loadModuleConfigList();
 
     return [
-      ...this.buildAppSingletonCompatClazzList(),
       ...allContextClazzs,
       ...moduleConfigList,
 
