@@ -81,6 +81,10 @@ export class LoaderUtil {
       '!**/node_modules',
       // node load type definitions
       '!**/*.d.ts',
+      '!**/*.d.mts',
+      '!**/*.d.cts',
+      // test runner configuration is not an application module
+      '!**/vitest.config.*',
       // not load test/coverage files
       '!**/test',
       '!**/coverage',

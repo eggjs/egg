@@ -16,6 +16,14 @@ describe('core/loader/test/Loader.test.ts', () => {
   });
 
   describe('module loader', () => {
+    it('should exclude declarations and test runner configuration', () => {
+      const patterns = LoaderUtil.filePattern();
+      assert(patterns.includes('!**/*.d.ts'));
+      assert(patterns.includes('!**/*.d.mts'));
+      assert(patterns.includes('!**/*.d.cts'));
+      assert(patterns.includes('!**/vitest.config.*'));
+    });
+
     it('should load module', async () => {
       const repoModulePath = path.join(__dirname, './fixtures/modules/module-for-loader');
       const loader = LoaderFactory.createLoader(repoModulePath, EggLoadUnitType.MODULE);

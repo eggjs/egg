@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/view-nunjucks",
-  "version": "3.0.2-beta.20",
+  "version": "3.0.2-beta.24",
   "description": "nunjucks view plugin for egg",
   "keywords": [
     "egg",
