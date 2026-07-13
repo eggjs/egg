@@ -5,9 +5,6 @@ import { LifecyclePostInject } from '@eggjs/lifecycle';
 
 import type { EggMcpRouter } from './EggMcpRouter.ts';
 
-// Plugs the shared MCP collect-register into the factory, bound to EggMcpRouter.
-// Mirrors the fetch host's MCPRegisterProvider; the router is OPTIONAL (mounted
-// on `app` only when mcpProxy is enabled), so when MCP is off this plugs nothing.
 @InnerObjectProto({ name: 'mcpRegisterProvider' })
 export class EggMCPRegisterProvider {
   // `app.mcpRouter` compat proto; @EggQualifier(APP) since `router`-like names

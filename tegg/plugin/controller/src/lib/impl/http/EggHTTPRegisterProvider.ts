@@ -12,9 +12,6 @@ import type { Router } from 'egg';
 
 import { EggHTTPMethodRegister } from './EggHTTPMethodRegister.ts';
 
-// Owns the egg host's HTTPControllerRegister as an inner object (per-app via the
-// InnerObjectLoadUnit), injecting the app `router` and plugging the HTTP register
-// creator into the factory. Mirrors the fetch host's HTTPRegisterProvider.
 // PUBLIC: the controller boot resolves it by name (`getPrototype`) for doRegister.
 @InnerObjectProto({ name: 'httpRegisterProvider', accessLevel: AccessLevel.PUBLIC })
 export class EggHTTPRegisterProvider {

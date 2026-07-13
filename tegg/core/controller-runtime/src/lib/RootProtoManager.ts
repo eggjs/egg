@@ -15,8 +15,6 @@ export interface RootProtoRequestContext {
 
 export type GetRootProtoCallback = (ctx: RootProtoRequestContext) => EggPrototype | undefined;
 
-// A controller-module inner-object proto, defined host-agnostically here and
-// re-exported into each host's scanned eggModule (see the runtimeProtos barrels).
 // PUBLIC: the egg host resolves it by name to expose `app.rootProtoManager` for
 // the teggRootProto middleware, and the fetch host's FetchEventHandler injects it.
 @InnerObjectProto({ accessLevel: AccessLevel.PUBLIC })

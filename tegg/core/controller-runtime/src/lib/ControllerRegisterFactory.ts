@@ -15,9 +15,7 @@ export type RegisterCreator<THost = unknown> = (
   host: THost,
 ) => ControllerRegister;
 
-// A controller-module inner-object proto (see RootProtoManager for the
-// host-agnostic-definition / per-host-re-export contract). PRIVATE: only the
-// register providers and the load-unit hook inject it, all inner objects.
+// PRIVATE: only the register providers and the load-unit hook inject it.
 @InnerObjectProto()
 export class ControllerRegisterFactory<THost = unknown> {
   private readonly host: THost;

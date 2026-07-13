@@ -7,11 +7,6 @@ import { ControllerMetadataManager } from './ControllerMetadataManager.ts';
 import { ControllerRegisterFactory } from './ControllerRegisterFactory.ts';
 import { RootProtoManager } from './RootProtoManager.ts';
 
-/**
- * Host-agnostic load-unit lifecycle proto: for every controller proto in a
- * created load unit, resolve the register for its controller type and run it.
- * Defined once here; each host re-exports it into its own scanned eggModule.
- */
 @LoadUnitLifecycleProto()
 export class ControllerLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly controllerRegisterFactory: ControllerRegisterFactory<any>;

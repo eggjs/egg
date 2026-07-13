@@ -24,21 +24,12 @@ import { EggControllerLoader } from './lib/EggControllerLoader.ts';
 import type { EggHTTPRegisterProvider } from './lib/impl/http/EggHTTPRegisterProvider.ts';
 import { EggMcpRouter } from './lib/impl/mcp/EggMcpRouter.ts';
 
-// Load Controller process
-// 1. await add load unit is ready, controller may depend other load unit
-// 2. load ${app_base_dir}app/controller file
-// 3. ControllerRegister register controller implement
-
 export default class ControllerAppBootHook implements ILifecycleBoot {
   private readonly app: Application;
   private controllerLoadUnitHandler: ControllerLoadUnitHandler;
 
   constructor(app: Application) {
     this.app = app;
-    // rootProtoManager / controllerRegisterFactory / the controller hooks are
-    // the controller-runtime protos re-exported into this module (lib/runtimeProtos.ts)
-    // and instantiated in the InnerObjectLoadUnit — didLoad() below backfills the
-    // per-app instances onto the app surface.
     this.app.controllerMetaBuilderFactory = ControllerMetaBuilderFactory;
     this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
       AGENT_CONTROLLER_PROTO_IMPL_TYPE,
@@ -95,11 +86,8 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
     if (this.mcpEnable()) {
-      // The per-app EggMcpRouter is mounted on `app` in didLoad (before the
-      // module handler builds the inner-object graph) and the collect-only
-      // MCPControllerRegister is plugged into the factory by the
-      // mcpRegisterProvider inner object — see EggMCPRegisterProvider. Here we
-      // only do the MCP config wiring that must land in configWillLoad.
+      // Only the MCP config wiring that must land in configWillLoad; the router
+      // mount + register wiring happen in didLoad / EggMCPRegisterProvider.
 
       // Don't let the mcp's body be consumed
       this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
@@ -146,8 +134,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     return middlewareNames;
   }
 
-  // Resolve an inner object by name from the InnerObjectLoadUnit. The boot hook
-  // is an egg ILifecycleBoot, not a DI proto, so it cannot `@Inject`.
+  // The boot hook is an egg ILifecycleBoot, not a DI proto, so it cannot `@Inject`.
   async #resolveInnerObject<T>(name: string): Promise<T> {
     const proto = EggPrototypeFactory.instance.getPrototype(name);
     return (await EggContainerFactory.getOrCreateEggObject(proto)).obj as T;
