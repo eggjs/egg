@@ -117,6 +117,15 @@ Hosts: `StandaloneApp.init()` (standalone) and `ModuleHandler.init()` via
   otherwise-plain inject with `EggType.CONTEXT` first (ctx wins), which a
   singleton inner object cannot inject. App-only names (`runtimeConfig`,
   `logger` — the latter is CONTEXT-blacklisted) are stamped APP automatically.
+- Mount-then-compat is the idiom for making an imperatively-built host object
+  injectable to inner objects: an object that genuinely needs the live `app`
+  to construct (e.g. the controller plugin's `EggMcpRouter`, built in the boot
+  hook) is assigned to an `app.<name>` property BEFORE the inner-object graph
+  builds; it then becomes an app property with a compat proto, and an inner
+  object injects it with `@EggQualifier(EggType.APP)` (optional when the mount
+  is conditional). This is how the egg MCP register became a container citizen
+  without threading the whole `app` into the DI graph — see the controller
+  plugin's `EggMCPRegisterProvider`.
 
 ## Access and qualifier boundary
 
