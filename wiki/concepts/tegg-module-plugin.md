@@ -150,18 +150,19 @@ hook no longer depends on `rootProtoManager` being an inner object in every host
   they never pollute cross-unit resolution.
 - Egg feeds app properties to inner objects through the egg **compat**
   mechanism, not a hand-provided list: `ModuleHandler` calls
-  `builder.addCompatibleClazzList(EggAppLoader.buildAppSingletonCompatClazzList(PRIVATE))`,
-  so inner objects inject `router` / `logger` / `runtimeConfig` / ... via the
-  same `() => app[name]` protos business modules use. (Standalone has no egg
-  compat surface, so it provides its own `logger` / `moduleConfigs` through
-  innerObjects; only the egg host uses compat for these.) Key points:
-  - **Built PRIVATE** (`EggCompatibleProtoImpl` now honors the descriptor
-    accessLevel instead of hardcoding PUBLIC): the inner-unit copies resolve
-    for inner objects only and never collide with the app load unit's PUBLIC
-    copies in business-module resolution. This is why they can be fed straight
-    in even though the app load unit is created later — the compat protos are
-    inert `() => app[name]` data providers with no lifecycle, so they don't
-    break the "inner unit first / destroyed last" invariant.
+  `builder.addCompatibleClazzList(EggAppLoader.buildAppSingletonCompatClazzList())`,
+  so inner objects inject `router` / `logger` / `runtimeConfig` / ... via
+  `() => app[name]` protos. (Standalone has no egg compat surface, so it provides
+  its own `logger` / `moduleConfigs` through innerObjects; only the egg host uses
+  compat for these.) Key points:
+  - **This is the single copy, PUBLIC.** Business modules resolve app properties
+    from this inner-object-load-unit copy too, so the APP load unit does NOT
+    duplicate them — `EggAppLoader.load()` provides only the CONTEXT-scoped compat
+    protos + `moduleConfigs`. (There used to be a second PRIVATE copy here plus a
+    PUBLIC copy in the APP load unit; that duplication was removed.) The compat
+    protos are inert `() => app[name]` data providers with no lifecycle, so
+    feeding them into the inner unit (created first) doesn't break the "inner
+    unit first / destroyed last" invariant.
   - **APP-scoped only** (`buildAppSingletonCompatClazzList` excludes
     CONTEXT-scoped compat protos): inner objects are singletons and cannot
     inject request-scoped objects.

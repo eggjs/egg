@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-14] concept | single PUBLIC copy of app-scoped compat protos (dedup)
+
+- sources touched: `tegg/plugin/tegg/src/lib/{ModuleHandler,EggAppLoader}.ts`
+- pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/log.md`
+- note: The `() => app[name]` APP-scoped compat protos (router / logger / runtimeConfig / ...) were DUPLICATED — a PUBLIC copy in the APP load unit (for business modules) plus a PRIVATE copy in the inner-object load unit (for inner objects), the PRIVATE-ness chosen to avoid two PUBLIC copies colliding. Verified empirically that business modules resolve the inner-object load unit's PUBLIC protos fine (whole tegg/controller/aop/eventbus/schedule/service-worker suite green, incl. MultiApp, with the APP-unit copy removed), so consolidated to ONE PUBLIC copy in the inner-object load unit: `ModuleHandler` feeds `buildAppSingletonCompatClazzList()` (now default PUBLIC) and `EggAppLoader.load()` no longer prepends `buildAppSingletonCompatClazzList()` — it provides only the CONTEXT-scoped compat + `moduleConfigs`. The `accessLevel` param on `buildClazz`/`buildAppLoggerClazz`/`buildAppSingletonCompatClazzList` existed only to build the PRIVATE copy and was removed (compat protos are always PUBLIC). `EggCompatibleProtoImpl` still honors the descriptor accessLevel (left as-is, just always PUBLIC now). `moduleConfigs` stays the one explicit PRIVATE provided inner object. Pre-existing `tegg-config/DuplicateOptionalModule.test.ts` failure is unrelated (fails on baseline too; asserts a `moduleReferences` list).
+
 ## [2026-07-13] concept | egg HTTP register via LoadUnitInstance hook + inner-object instantiation is complete
 
 - sources touched: `tegg/plugin/controller/src/lib/impl/http/EggHTTPControllerRegistrar.ts` (new, merges the former `EggHTTPRegisterProvider` + a short-lived separate `EggHTTPRegisterHook`), `tegg/plugin/controller/src/app.ts`
