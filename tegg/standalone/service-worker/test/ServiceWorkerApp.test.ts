@@ -117,4 +117,15 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { message: 'hello, tegg' });
   });
+
+  it('should support the service worker fetch-event interface (respondWith)', async () => {
+    // The exact wiring a Service Worker runtime uses:
+    //   self.addEventListener('fetch', e => e.respondWith(app.handleEvent(e)))
+    const onFetch = (event: FetchEventImpl) => event.respondWith(app.handleEvent<Response>(event));
+    const event = new FetchEventImpl(new Request('http://embedded.local/hello/'));
+    onFetch(event);
+    const response = await event.responsePromise!;
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), { message: 'hello, tegg' });
+  });
 });

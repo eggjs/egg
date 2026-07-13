@@ -6,11 +6,13 @@
   "type": "module",
   "scripts": {
     "start": "node --import=@oxc-node/core/register main.ts",
+    "start:fetch-event": "node --import=@oxc-node/core/register fetch-event.ts",
     "test": "vitest run",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@eggjs/service-worker": "workspace:*",
+    "@eggjs/service-worker-controller": "workspace:*",
     "@eggjs/tegg": "workspace:*",
     "zod": "catalog:"
   },

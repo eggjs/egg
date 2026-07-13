@@ -34,6 +34,9 @@ curl -X POST 'http://127.0.0.1:7001/mcp/calc/stream' \
 - `main.ts` — boots `ServiceWorkerApp` on the module dir and serves it over
   `node:http`. The entry lives outside `app/` so the module scan doesn't
   execute it.
+- `fetch-event.ts` — the same app driven through the Web Service Worker fetch
+  interface (`self.addEventListener('fetch', e => e.respondWith(app.handleEvent(e)))`)
+  instead of `serve()`. Run with `npm run start:fetch-event`.
 
 ## Test
 
