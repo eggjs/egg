@@ -5,7 +5,6 @@ import {
   CONTROLLER_LOAD_UNIT,
   ControllerLoadUnit,
   ControllerMetadataManager,
-  type ControllerRegisterFactory,
   middlewareGraphHook,
   type RootProtoManager,
 } from '@eggjs/controller-runtime';
@@ -147,48 +146,34 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     return middlewareNames;
   }
 
+  // Resolve an inner object by name from the InnerObjectLoadUnit. The boot hook
+  // is an egg ILifecycleBoot, not a DI proto, so it cannot `@Inject`.
+  async #resolveInnerObject<T>(name: string): Promise<T> {
+    const proto = EggPrototypeFactory.instance.getPrototype(name);
+    return (await EggContainerFactory.getOrCreateEggObject(proto)).obj as T;
+  }
+
   async didLoad(): Promise<void> {
     if (this.mcpEnable()) {
-      // Mount the per-app MCP router on `app` BEFORE the module handler builds
-      // the inner-object graph: it becomes an app property, so EggAppLoader's
-      // compat proto for `mcpRouter` is fed into the inner-object graph and the
-      // mcpRegisterProvider can inject it. The router owns all egg node-HTTP MCP
-      // transport and needs the live `app`, so it is built imperatively here.
+      // Mount the per-app router on `app` before the inner-object graph builds,
+      // so its compat proto reaches inner objects (see EggMCPRegisterProvider).
       this.app.mcpRouter = new EggMcpRouter(this.app);
     }
     await this.app.moduleHandler.ready();
-    // ControllerLoadUnitHandler extends sdk-base (its ctor kicks off async _init
-    // that touches the per-app factories), and the HTTP/MCP registers below are
-    // per-app — run the whole flow inside this app's scope.
     await TeggScope.run(this.app._teggScopeBag, async () => {
-      // The controller module owns these protos; expose the per-app instances
-      // on the app surface for the teggRootProto middleware and downstream
-      // consumers.
-      const factoryProto = EggPrototypeFactory.instance.getPrototype('controllerRegisterFactory');
-      this.app.controllerRegisterFactory = (await EggContainerFactory.getOrCreateEggObject(factoryProto))
-        .obj as ControllerRegisterFactory;
-      const rootProtoManagerProto = EggPrototypeFactory.instance.getPrototype('rootProtoManager');
-      this.app.rootProtoManager = (await EggContainerFactory.getOrCreateEggObject(rootProtoManagerProto))
-        .obj as RootProtoManager;
-
-      // Resolve the HTTP and MCP register providers up front: their
-      // @LifecyclePostInject plugs the register creators into the factory, which
-      // the load-unit hook needs when ControllerLoadUnitHandler processes
-      // controller protos below. The MCP provider is a no-op when MCP is
-      // disabled (its `app.mcpRouter` optional inject is absent).
-      const httpProviderProto = EggPrototypeFactory.instance.getPrototype('httpRegisterProvider');
-      const httpRegisterProvider = (await EggContainerFactory.getOrCreateEggObject(httpProviderProto))
-        .obj as EggHTTPRegisterProvider;
-      const mcpProviderProto = EggPrototypeFactory.instance.getPrototype('mcpRegisterProvider');
-      await EggContainerFactory.getOrCreateEggObject(mcpProviderProto);
+      // The inner objects are already instantiated by moduleHandler.ready(), so
+      // the register providers' @LifecyclePostInject has plugged the HTTP/MCP
+      // creators into the factory. We only need the rootProtoManager instance
+      // (teggRootProto middleware reads `ctx.app.rootProtoManager`; it cannot
+      // inject) and the httpRegisterProvider handle to drive doRegister below.
+      this.app.rootProtoManager = await this.#resolveInnerObject<RootProtoManager>('rootProtoManager');
+      const httpRegisterProvider = await this.#resolveInnerObject<EggHTTPRegisterProvider>('httpRegisterProvider');
 
       this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
       await this.controllerLoadUnitHandler.ready();
 
-      // The real register HTTP controller/method, after every controller proto
-      // has been collected. HTTP methods are sorted by priority inside.
+      // Mount all HTTP controller methods, priority-sorted, after collection.
       httpRegisterProvider.doRegister(this.app.rootProtoManager);
-
       this.app.config.mcp.hooks = EggMcpRouter.hooks;
     });
   }

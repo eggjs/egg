@@ -1,7 +1,6 @@
 import type { ControllerMetadata, ControllerTypeLike } from '@eggjs/controller-decorator';
 import { InnerObjectProto } from '@eggjs/core-decorator';
 import type { EggPrototype } from '@eggjs/metadata';
-import { AccessLevel } from '@eggjs/tegg-types';
 
 import type { ControllerRegister } from './ControllerRegister.ts';
 
@@ -16,13 +15,10 @@ export type RegisterCreator<THost = unknown> = (
   host: THost,
 ) => ControllerRegister;
 
-/**
- * A controller-module inner-object proto (see {@link RootProtoManager} for the
- * host-agnostic-definition / per-host-re-export contract).
- */
-// PUBLIC: the egg host resolves it by name (`getPrototype`) to expose it on
-// `app.controllerRegisterFactory`, so it must be visible outside the inner unit.
-@InnerObjectProto({ accessLevel: AccessLevel.PUBLIC })
+// A controller-module inner-object proto (see RootProtoManager for the
+// host-agnostic-definition / per-host-re-export contract). PRIVATE: only the
+// register providers and the load-unit hook inject it, all inner objects.
+@InnerObjectProto()
 export class ControllerRegisterFactory<THost = unknown> {
   private readonly host: THost;
   private registerCreatorMap: Map<ControllerTypeLike, RegisterCreator<THost>>;

@@ -12,21 +12,14 @@ import type { Router } from 'egg';
 
 import { EggHTTPMethodRegister } from './EggHTTPMethodRegister.ts';
 
-/**
- * Owns the egg host's HTTPControllerRegister as a container citizen: the
- * provider is an inner object (per-app via the InnerObjectLoadUnit, no static
- * TeggScope slot) that injects the app's `router` — resolved through the egg
- * compat protos ModuleHandler feeds into the inner-object graph — and plugs the
- * HTTP register creator into the controller register factory. Structurally
- * identical to the fetch host's HTTPRegisterProvider; only the injected router
- * and method-register differ.
- */
-// PUBLIC: the controller boot resolves it by name (`getPrototype`) in didLoad.
+// Owns the egg host's HTTPControllerRegister as an inner object (per-app via the
+// InnerObjectLoadUnit), injecting the app `router` and plugging the HTTP register
+// creator into the factory. Mirrors the fetch host's HTTPRegisterProvider.
+// PUBLIC: the controller boot resolves it by name (`getPrototype`) for doRegister.
 @InnerObjectProto({ name: 'httpRegisterProvider', accessLevel: AccessLevel.PUBLIC })
 export class EggHTTPRegisterProvider {
-  // `router` is both an app and a ctx property, so a plain inject would be
-  // stamped EggType.CONTEXT (a singleton inner object cannot inject that).
-  // Qualify to the app-scoped compat proto explicitly.
+  // `router` is both an app and a ctx property; @EggQualifier(APP) forces the
+  // app-scoped compat proto (a plain inject would default to CONTEXT).
   @Inject()
   @EggQualifier(EggType.APP)
   private readonly router: Router;
