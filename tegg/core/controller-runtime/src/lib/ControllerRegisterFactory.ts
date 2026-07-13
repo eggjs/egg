@@ -20,7 +20,9 @@ export type RegisterCreator<THost = unknown> = (
  * A controller-module inner-object proto (see {@link RootProtoManager} for the
  * host-agnostic-definition / per-host-re-export contract).
  */
-@InnerObjectProto({ name: 'controllerRegisterFactory', accessLevel: AccessLevel.PUBLIC })
+// PUBLIC: the egg host resolves it by name (`getPrototype`) to expose it on
+// `app.controllerRegisterFactory`, so it must be visible outside the inner unit.
+@InnerObjectProto({ accessLevel: AccessLevel.PUBLIC })
 export class ControllerRegisterFactory<THost = unknown> {
   private readonly host: THost;
   private registerCreatorMap: Map<ControllerTypeLike, RegisterCreator<THost>>;

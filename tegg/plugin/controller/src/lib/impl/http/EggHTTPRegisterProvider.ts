@@ -21,6 +21,7 @@ import { EggHTTPMethodRegister } from './EggHTTPMethodRegister.ts';
  * identical to the fetch host's HTTPRegisterProvider; only the injected router
  * and method-register differ.
  */
+// PUBLIC: the controller boot resolves it by name (`getPrototype`) in didLoad.
 @InnerObjectProto({ name: 'httpRegisterProvider', accessLevel: AccessLevel.PUBLIC })
 export class EggHTTPRegisterProvider {
   // `router` is both an app and a ctx property, so a plain inject would be

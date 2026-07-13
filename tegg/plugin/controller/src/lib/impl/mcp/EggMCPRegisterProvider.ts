@@ -14,6 +14,7 @@ import type { EggMcpRouter } from './EggMcpRouter.ts';
  * compat proto) only when the mcpProxy plugin is enabled, so when MCP is off the
  * provider simply plugs nothing in.
  */
+// PUBLIC: the controller boot resolves it by name (`getPrototype`) in didLoad.
 @InnerObjectProto({ name: 'mcpRegisterProvider', accessLevel: AccessLevel.PUBLIC })
 export class EggMCPRegisterProvider {
   // `app.mcpRouter` compat proto (see the controller boot). @EggQualifier(APP)

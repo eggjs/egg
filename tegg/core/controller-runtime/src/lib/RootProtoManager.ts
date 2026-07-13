@@ -21,7 +21,7 @@ export type GetRootProtoCallback = (ctx: RootProtoRequestContext) => EggPrototyp
  * into its own scanned eggModule (see the host `ControllerModule.ts` shims), so
  * the container materializes one `rootProtoManager` per app.
  */
-@InnerObjectProto({ name: 'rootProtoManager', accessLevel: AccessLevel.PUBLIC })
+@InnerObjectProto({ accessLevel: AccessLevel.PUBLIC })
 export class RootProtoManager {
   // <method, GetRootProtoCallback[]>
   protoMap: Map<string, GetRootProtoCallback[]> = new Map();

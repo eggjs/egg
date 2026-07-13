@@ -7,7 +7,7 @@ import {
 } from '@eggjs/controller-runtime';
 import { Inject, InnerObjectProto } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
-import { AccessLevel, CONTROLLER_AOP_MIDDLEWARES } from '@eggjs/tegg-types';
+import { CONTROLLER_AOP_MIDDLEWARES } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, EggPrototype } from '@eggjs/tegg-types';
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 
@@ -31,7 +31,7 @@ type MCPMiddleware = (ctx: ServiceWorkerFetchContext, next: () => Promise<void>)
  * load unit exists, so all controller protos — and their middlewares — are
  * present).
  */
-@InnerObjectProto({ name: MCP_ROUTER_NAME, accessLevel: AccessLevel.PUBLIC })
+@InnerObjectProto({ name: MCP_ROUTER_NAME })
 export class ServiceWorkerMcpRouter implements McpRouter {
   @Inject()
   private readonly fetchRouter: FetchRouter;
