@@ -32,10 +32,9 @@ export interface ServeOptions {
 }
 
 /**
- * The service worker facade over StandaloneApp: loads the two service worker
- * framework packages (runtime + fetch adapter) as frameworkDeps ahead of the
- * app's own modules, then serves events either embedded (`handleEvent`) or
- * over node:http (`serve`).
+ * The service worker facade over StandaloneApp: its framework modules (runtime +
+ * fetch controller) are auto-discovered from this package's deps, then it serves
+ * events either embedded (`handleEvent`) or over node:http (`serve`).
  */
 export class ServiceWorkerApp {
   readonly #app: StandaloneApp;
@@ -45,25 +44,12 @@ export class ServiceWorkerApp {
 
   constructor(cwd: string, options?: ServiceWorkerAppOptions) {
     const { config, mcpAuthHandler, ...standaloneOptions } = options ?? {};
-    // The @eggjs/service-worker-controller package root alone would discover
-    // BOTH modules through the node_modules convention (its package.json
-    // depends on @eggjs/service-worker-runtime, which declares `eggModule`),
-    // but that yields [serviceWorker, serviceWorkerRuntime] and reference order
-    // is currently load-bearing: with the runtime module scanned second, the
-    // ServiceWorkerRunner's `eggObjectFactory` inject fails to resolve
-    // (EggPrototypeNotFound in LOAD_UNIT:serviceWorkerRuntime). Keep the
-    // runtime entry explicitly FIRST, then the service-worker-controller
-    // (`serviceWorker` eggModule) entry, until reference order stops affecting
-    // resolution. `!test/**` keeps the packages' test fixture modules out of
-    // the scan in workspace layouts (src/ in dev, dist/ when published — the
-    // package root either way).
+    // Scan this package's own root so its framework-module deps
+    // (service-worker-runtime + -controller) are auto-discovered via the
+    // node_modules eggModule convention. `!test/**` keeps their test fixtures out.
     const frameworkDeps: StandaloneAppOptions['frameworkDeps'] = [
       {
-        baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/service-worker-runtime/package.json'))),
-        extraFilePattern: ['!test/**'],
-      },
-      {
-        baseDir: path.dirname(fileURLToPath(import.meta.resolve('@eggjs/service-worker-controller/package.json'))),
+        baseDir: path.join(path.dirname(fileURLToPath(import.meta.url)), '..'),
         extraFilePattern: ['!test/**'],
       },
       ...(standaloneOptions.frameworkDeps ?? []),

@@ -3,9 +3,10 @@ import type http from 'node:http';
 import type { AddressInfo } from 'node:net';
 import path from 'node:path';
 
+import { FetchEventImpl } from '@eggjs/service-worker-controller';
 import { afterAll, beforeAll, describe, it } from 'vitest';
 
-import { FetchEventImpl, ServiceWorkerApp } from '../src/index.ts';
+import { ServiceWorkerApp } from '../src/index.ts';
 import { backgroundFlags } from './fixtures/hello-app/HelloController.ts';
 
 describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
