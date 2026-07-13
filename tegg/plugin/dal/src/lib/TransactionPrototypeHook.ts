@@ -26,10 +26,14 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
       return;
     }
     const moduleName = ctx.loadUnit.name;
+    const datasourceConfigs = (this.moduleConfigs[moduleName]?.config as any)?.dataSource || {};
+    const dataSources = Object.keys(datasourceConfigs);
+    if (dataSources.length === 0) {
+      return;
+    }
+
     for (const transactionMetadata of transactionMetadataList) {
       const clazzName = `${moduleName}.${ctx.clazz.name}.${String(transactionMetadata.method)}`;
-      const datasourceConfigs = (this.moduleConfigs[moduleName]?.config as any)?.dataSource || {};
-
       let datasourceName: string;
       if (transactionMetadata.datasourceName) {
         assert(
@@ -39,7 +43,6 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
         datasourceName = transactionMetadata.datasourceName;
         this.logger.info(`use datasource [${transactionMetadata.datasourceName}] for class ${clazzName}`);
       } else {
-        const dataSources = Object.keys(datasourceConfigs);
         if (dataSources.length === 1) {
           datasourceName = dataSources[0];
         } else {
