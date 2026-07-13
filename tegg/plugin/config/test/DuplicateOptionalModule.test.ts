@@ -22,9 +22,18 @@ describe('plugin/config/test/DuplicateOptionalModule.test.ts', () => {
       'teggConfig',
       'teggAjv',
       'teggAop',
+      'teggController',
       'teggDal',
       'unused',
     ]);
-    expect(Object.keys(app.moduleConfigs)).toEqual(['used', 'teggConfig', 'teggAjv', 'teggAop', 'teggDal', 'unused']);
+    expect(Object.keys(app.moduleConfigs)).toEqual([
+      'used',
+      'teggConfig',
+      'teggAjv',
+      'teggAop',
+      'teggController',
+      'teggDal',
+      'unused',
+    ]);
   });
 });
