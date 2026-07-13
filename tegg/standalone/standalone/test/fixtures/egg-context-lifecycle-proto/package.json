@@ -1,0 +1,7 @@
+{
+  "name": "egg-context-lifecycle-proto",
+  "type": "module",
+  "eggModule": {
+    "name": "eggContextLifecycleApp"
+  }
+}

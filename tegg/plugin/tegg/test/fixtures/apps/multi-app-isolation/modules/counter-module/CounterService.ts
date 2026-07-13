@@ -1,4 +1,17 @@
-import { AccessLevel, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, InnerObjectProto, SingletonProto } from '@eggjs/tegg';
+
+@InnerObjectProto({ accessLevel: AccessLevel.PUBLIC })
+export class CounterInnerState {
+  private count = 0;
+
+  increment(): void {
+    this.count++;
+  }
+
+  getCount(): number {
+    return this.count;
+  }
+}
 
 /**
  * Per-app singleton state. The SAME class is loaded by two apps; each app must
@@ -11,6 +24,9 @@ import { AccessLevel, SingletonProto } from '@eggjs/tegg';
  */
 @SingletonProto({ accessLevel: AccessLevel.PUBLIC })
 export class CounterService {
+  @Inject()
+  innerState: CounterInnerState;
+
   private count = 0;
   private eventCount = 0;
   private readonly store = new Map<string, number>();
@@ -21,6 +37,14 @@ export class CounterService {
 
   getCount(): number {
     return this.count;
+  }
+
+  incrementInnerState(): void {
+    this.innerState.increment();
+  }
+
+  getInnerStateCount(): number {
+    return this.innerState.getCount();
   }
 
   onEvent(delta: number): void {

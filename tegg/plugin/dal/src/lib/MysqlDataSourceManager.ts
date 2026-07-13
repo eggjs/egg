@@ -1,22 +1,10 @@
 import crypto from 'node:crypto';
 
+import { AccessLevel, InnerObjectProto } from '@eggjs/core-decorator';
 import { type DataSourceOptions, MysqlDataSource } from '@eggjs/dal-runtime';
-import { TeggScope } from '@eggjs/tegg-types';
 
-const MYSQL_DATA_SOURCE_MANAGER_SLOT = Symbol('tegg:dal:mysqlDataSourceManager');
-
+@InnerObjectProto({ name: 'mysqlDataSourceManager', accessLevel: AccessLevel.PUBLIC })
 export class MysqlDataSourceManager {
-  // Per-app: holds live MysqlDataSource connections keyed by config hash. Made
-  // per-app so two apps with identical DB config no longer share one connection
-  // object (and each app's teardown only disposes its own).
-  static get instance(): MysqlDataSourceManager {
-    return TeggScope.resolve(
-      MYSQL_DATA_SOURCE_MANAGER_SLOT,
-      () => new MysqlDataSourceManager(),
-      'MysqlDataSourceManager.instance',
-    );
-  }
-
   private readonly dataSourceIndices: Map<
     string /* moduleName */,
     Map<string /* dataSourceName */, string /* dataSourceIndex */>

@@ -1,6 +1,13 @@
 import { ObjectInitType } from '@eggjs/tegg-types';
 
-import { ContextProto, InitTypeQualifier, Inject, ModuleQualifier, SingletonProto } from '../../../src/index.ts';
+import {
+  ContextProto,
+  DefineModuleQualifier,
+  InitTypeQualifier,
+  Inject,
+  ModuleQualifier,
+  SingletonProto,
+} from '../../../src/index.ts';
 import { type ICache } from './ICache.ts';
 
 @ContextProto()
@@ -15,6 +22,7 @@ export default class CacheService {
     name: 'fooCache',
   })
   @InitTypeQualifier(ObjectInitType.SINGLETON)
+  @DefineModuleQualifier('define-module')
   @ModuleQualifier('foo')
   cache: ICache;
 

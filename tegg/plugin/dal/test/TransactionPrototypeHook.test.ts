@@ -1,3 +1,4 @@
+import { ModuleConfigs } from '@eggjs/tegg-common-util';
 import { Transactional } from '@eggjs/transaction-decorator';
 import { describe, expect, it } from 'vitest';
 
@@ -8,20 +9,26 @@ describe('plugin/dal/test/TransactionPrototypeHook.test.ts', () => {
     info() {},
   } as any;
 
+  function createHook(moduleConfigs: ConstructorParameters<typeof ModuleConfigs>[0]): TransactionPrototypeHook {
+    const hook = new TransactionPrototypeHook();
+    Object.assign(hook, {
+      moduleConfigs: new ModuleConfigs(moduleConfigs),
+      logger,
+    });
+    return hook;
+  }
+
   it('should skip transaction hook when module has no dataSource config', async () => {
     class FooService {
       @Transactional()
       async doSomething() {}
     }
 
-    const hook = new TransactionPrototypeHook(
-      {
-        foo: {
-          config: {},
-        },
+    const hook = createHook({
+      foo: {
+        config: {},
       } as any,
-      logger,
-    );
+    });
 
     await expect(
       hook.preCreate({
@@ -41,16 +48,13 @@ describe('plugin/dal/test/TransactionPrototypeHook.test.ts', () => {
       async doSomething() {}
     }
 
-    const hook = new TransactionPrototypeHook(
-      {
-        bar: {
-          config: {
-            dataSource: {},
-          },
+    const hook = createHook({
+      bar: {
+        config: {
+          dataSource: {},
         },
       } as any,
-      logger,
-    );
+    });
 
     await expect(
       hook.preCreate({

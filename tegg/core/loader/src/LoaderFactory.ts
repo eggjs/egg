@@ -1,6 +1,6 @@
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { LoaderFS } from '@eggjs/loader-fs';
-import type { ModuleDescriptor } from '@eggjs/metadata';
+import { ModuleDescriptorDumper, type ModuleDescriptor } from '@eggjs/metadata';
 import {
   EggLoadUnitType,
   type EggLoadUnitTypeLike,
@@ -13,6 +13,7 @@ export type LoaderCreator = (unitPath: string, loaderFS?: LoaderFS) => Loader;
 
 export interface ManifestModuleReference {
   name: string;
+  package?: string;
   path: string;
   optional?: boolean;
   loaderType?: string;
@@ -33,6 +34,27 @@ export interface TeggManifestExtension {
 }
 
 export const TEGG_MANIFEST_KEY = 'tegg';
+
+export function buildTeggManifestData(
+  moduleReferences: readonly ModuleReference[],
+  moduleDescriptors: readonly ModuleDescriptor[],
+): TeggManifestExtension {
+  return {
+    moduleReferences: moduleReferences.map((ref) => ({
+      name: ref.name,
+      package: ref.package,
+      path: ref.path,
+      optional: ref.optional,
+      loaderType: ref.loaderType,
+    })),
+    moduleDescriptors: moduleDescriptors.map((desc) => ({
+      name: desc.name,
+      unitPath: desc.unitPath,
+      optional: desc.optional,
+      decoratedFiles: ModuleDescriptorDumper.getDecoratedFiles(desc),
+    })),
+  };
+}
 
 export interface LoadAppManifest {
   moduleDescriptors: ManifestModuleDescriptor[];
@@ -95,12 +117,16 @@ export class LoaderFactory {
         clazzList: [],
         protos: [],
         multiInstanceClazzList,
+        innerObjectClazzList: [],
         optional: moduleReference.optional,
       };
       result.push(res);
       const clazzList = await loader.load();
       for (const clazz of clazzList) {
-        if (PrototypeUtil.isEggPrototype(clazz)) {
+        // Inner object protos are also egg prototypes, so this branch must come first.
+        if (PrototypeUtil.isEggInnerObject(clazz)) {
+          res.innerObjectClazzList!.push(clazz);
+        } else if (PrototypeUtil.isEggPrototype(clazz)) {
           res.clazzList.push(clazz);
         } else if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
           res.multiInstanceClazzList.push(clazz);

@@ -114,3 +114,69 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `packages/utils/src/import.ts`, `packages/utils/README.md`, `packages/utils/test/module-importer.test.ts`, `packages/utils/test/fixtures/module-importer-require-esm/run.mjs`, `packages/typings/src/index.ts`
 - pages updated: `wiki/log.md`, `wiki/packages/utils.md`
 - note: Documented the `__EGG_BUNDLE_MODULE_LOADER__` → snapshot loader (`setSnapshotModuleLoader`) → `__EGG_MODULE_IMPORTER__` → native priority as a formal contract (JSDoc on `BundleModuleLoader`/`ModuleImporter` + README). Added regression coverage for the V8 snapshot-restore path where `__EGG_MODULE_IMPORTER__ = require` loads ESM with no dynamic-import callback (inline sync-require test + spawned `node:vm` fixture). No load-semantics change — types/declarations already existed.
+
+## [2026-07-04] architecture | tegg module plugin mechanism (both hosts)
+
+- sources touched: `tegg/core/{types,core-decorator,loader,metadata,runtime}`, `tegg/core/aop-runtime`, `tegg/plugin/{tegg,aop,dal}`, `tegg/standalone/standalone`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Ported tegg#325's declarative module plugin core to next and completed it: @InnerObjectProto/@EggLifecycleProto five variants, host-agnostic InnerObjectLoadUnit instantiated before the business graph builds (restores the two-phase ordering so declarative graph build hooks land in-window), egg-host wiring (#325 left app mode out), and conversion of the built-in AOP/DAL/ConfigSource hooks to module plugins on both hosts. Runner renamed to StandaloneApp (no alias). Also fixed plugin/controller's middlewareGraphHook silent no-op (registered on a not-yet-created graph) on branch fix/controller-middleware-graph-hook.
+
+## [2026-07-09] docs | correct tegg module plugin feeding rules
+
+- sources touched: `tegg/core/runtime/src/impl/InnerObjectLoadUnitBuilder.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/plugin/{aop,config,dal}/src/app.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Corrected stale feeding-rule notes: inner object/lifecycle classes now arrive only through `ModuleDescriptor.innerObjectClazzList`; built-in AOP/DAL/ConfigSource hooks are discovered as normal module plugin classes rather than hard-fed lists, and duplicate inner-object proto ids are errors instead of class-level dedupe.
+
+## [2026-07-09] docs | align tegg module plugin notes with review fixes
+
+- sources touched: `tegg/plugin/aop/src/lib/AopContextHook.ts`, `tegg/core/aop-runtime/src/AopContextAdviceRegistry.ts`, `tegg/core/aop-runtime/src/LoadUnitAopHook.ts`, `tegg/plugin/dal/src/index.ts`, `tegg/plugin/dal/src/lib/DalModuleLoadUnitHook.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Replaced stale DAL source paths and updated the AOP note after `AopContextHook` moved to lifecycle-proto/inner-object registration backed by `AopContextAdviceRegistry`.
+
+## [2026-07-12] architecture | harden module plugin discovery and lifecycle contracts
+
+- sources touched: `tegg/plugin/config/src/app.ts`, `tegg/plugin/config/src/lib/ModuleScanner.ts`, `tegg/core/runtime/src/impl/InnerObjectLoadUnitInstance.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/core/metadata/src/model/graph/GlobalGraph.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Recorded plugin-aware module discovery, strict per-root versus nearest-framework reference dedupe, explicit GlobalGraph build state, reverse actual-creation teardown for inner objects, the shared inner-unit PRIVATE boundary, qualifier rules, and standalone migration details.
+
+## [2026-07-13] architecture | make tegg startup failure cleanup atomic
+
+- sources touched: `tegg/core/metadata/src/factory/LoadUnitFactory.ts`, `tegg/core/lifecycle/src/LifycycleUtil.ts`, `tegg/core/runtime/src/factory/{LoadUnitInstanceFactory,EggObjectFactory}.ts`, `tegg/core/runtime/src/impl/{EggObjectImpl,EggInnerObjectImpl,ModuleLoadUnitInstance}.ts`, `tegg/plugin/tegg/src/lib/AppLoadUnitInstance.ts`, `tegg/standalone/standalone/src/{EggModuleLoader,StandaloneApp}.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Made load-unit and instance creation single-flight and atomic on failure, restricted provisional instance lookup to the active DI chain, added failed-init rollback for standard business/inner EggObjects, made object/lifecycle teardown await and aggregate every cleanup, removed host-side partial-instance recovery, made standalone business-unit loading transactional, and defined StandaloneApp as single-use with terminal cleanup and re-entrant init-chain destroy rejection.
+
+## [2026-07-13] decision | keep module-plugin lifecycle failures fail-fast
+
+- sources touched: `tegg/core/metadata/src/factory/LoadUnitFactory.ts`, `tegg/core/runtime/src/factory/LoadUnitInstanceFactory.ts`, `tegg/core/runtime/src/impl/{EggObjectImpl,EggInnerObjectImpl,InnerObjectLoadUnitInstance}.ts`, `tegg/core/runtime/src/model/AbstractEggContext.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/{EggModuleLoader,StandaloneApp}.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Reverted the broad single-flight, failed-init rollback, and multi-phase error aggregation hardening because it was not required by module-plugin startup. Kept the core inner-object behavior: decorator-only self lifecycle dispatch, lifecycle registration, and reverse actual-creation teardown.
+
+## [2026-07-13] decision | keep StandaloneApp lifecycle linear
+
+- sources touched: `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/standalone/standalone/test/index.test.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Removed shared init/destroy promises, AsyncLocalStorage re-entry detection, concurrent lifecycle coordination, and partial-resource wrappers from StandaloneApp. Kept a linear single-use lifecycle, fail-fast teardown, scope release, and the required business-before-inner destroy order.
+
+## [2026-07-13] architecture | give host logger a dedicated inner-unit input
+
+- sources touched: `tegg/core/runtime/src/impl/InnerObjectLoadUnitBuilder.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/standalone/standalone/README.md`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Separated the host logger from generic `innerObjects` input. Standalone accepts logger only through its dedicated logger option and rejects `innerObjectHandlers.logger`; the builder still represents that value as an injectable provided proto internally.
+
+## [2026-07-13] api | keep StandaloneApp runtime state private
+
+- sources touched: `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/standalone/standalone/test/index.test.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Removed test-only getters for module references, module configs, load units, and load-unit instances. Tests now verify manifest, config, and teardown behavior through the public lifecycle; `scopeBag` remains available for owning-scope object resolution.
+
+## [2026-07-13] behavior | reserve StandaloneApp framework inner objects
+
+- sources touched: `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/standalone/standalone/test/index.test.ts`, `tegg/standalone/standalone/README.md`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Framework-owned `moduleConfigs`, `moduleConfig`, and `runtimeConfig` now take precedence over host input. Same-name host entries are silently ignored.
+
+## [2026-07-13] refactor | keep logger specialization at the standalone API boundary
+
+- sources touched: `tegg/core/runtime/src/impl/InnerObjectLoadUnitBuilder.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Kept logger as a dedicated Standalone public option, but removed the logger-specific builder channel. Each host now adds its logger to the complete provided-inner-object map before invoking the host-agnostic builder.

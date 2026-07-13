@@ -2,13 +2,11 @@
 import './lib/AppLoadUnit.ts';
 import './lib/AppLoadUnitInstance.ts';
 import './lib/EggCompatibleObject.ts';
-import { LoadUnitMultiInstanceProtoHook } from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { TeggScope } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
 import { CompatibleUtil } from './lib/CompatibleUtil.ts';
-import { ConfigSourceLoadUnitHook } from './lib/ConfigSourceLoadUnitHook.ts';
 import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook.ts';
 import { EggContextHandler } from './lib/EggContextHandler.ts';
 import { EggModuleLoader } from './lib/EggModuleLoader.ts';
@@ -21,8 +19,6 @@ export default class TeggAppBoot implements ILifecycleBoot {
   private compatibleHook?: EggContextCompatibleHook;
   private eggContextHandler: EggContextHandler;
   private eggQualifierProtoHook: EggQualifierProtoHook;
-  private loadUnitMultiInstanceProtoHook: LoadUnitMultiInstanceProtoHook;
-  private configSourceEggPrototypeHook: ConfigSourceLoadUnitHook;
 
   constructor(app: Application) {
     this.app = app;
@@ -55,15 +51,9 @@ export default class TeggAppBoot implements ILifecycleBoot {
     // Load tegg objects within this app's factory scope so every factory/graph/
     // lifecycle-util mutation during boot reads/writes the per-app slots.
     await TeggScope.run(this.app._teggScopeBag, async () => {
-      this.loadUnitMultiInstanceProtoHook = new LoadUnitMultiInstanceProtoHook();
-      this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitMultiInstanceProtoHook);
-
       // wait all file loaded, so app/ctx has all properties
       this.eggQualifierProtoHook = new EggQualifierProtoHook(this.app);
       this.app.loadUnitLifecycleUtil.registerLifecycle(this.eggQualifierProtoHook);
-
-      this.configSourceEggPrototypeHook = new ConfigSourceLoadUnitHook();
-      this.app.loadUnitLifecycleUtil.registerLifecycle(this.configSourceEggPrototypeHook);
 
       // start load tegg objects
       await this.app.moduleHandler.init();
@@ -74,8 +64,9 @@ export default class TeggAppBoot implements ILifecycleBoot {
 
   async loadMetadata(): Promise<void> {
     if (!this.app.moduleReferences) return;
+    EggModuleLoader.reconcileModulePluginReferences(this.app);
     const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences);
-    EggModuleLoader.collectTeggManifest(this.app, moduleDescriptors);
+    EggModuleLoader.collectTeggManifest(this.app, this.app.moduleReferences, moduleDescriptors);
   }
 
   async beforeClose(): Promise<void> {
@@ -89,14 +80,6 @@ export default class TeggAppBoot implements ILifecycleBoot {
         if (this.eggQualifierProtoHook) {
           this.app.loadUnitLifecycleUtil.deleteLifecycle(this.eggQualifierProtoHook);
         }
-        if (this.configSourceEggPrototypeHook) {
-          this.app.loadUnitLifecycleUtil.deleteLifecycle(this.configSourceEggPrototypeHook);
-        }
-        if (this.loadUnitMultiInstanceProtoHook) {
-          this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitMultiInstanceProtoHook);
-        }
-        // per-app multi-instance proto set: cleared within this app's scope
-        LoadUnitMultiInstanceProtoHook.clear();
       });
     } finally {
       // The whole per-app scope (bag) is dropped with the app; release the scope

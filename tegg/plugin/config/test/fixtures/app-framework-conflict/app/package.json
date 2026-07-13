@@ -1,0 +1,7 @@
+{
+  "name": "app-framework-conflict",
+  "type": "module",
+  "egg": {
+    "framework": "../chair-framework"
+  }
+}

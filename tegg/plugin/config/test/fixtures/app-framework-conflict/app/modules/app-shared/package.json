@@ -1,0 +1,7 @@
+{
+  "name": "app-shared",
+  "type": "module",
+  "eggModule": {
+    "name": "sharedModule"
+  }
+}

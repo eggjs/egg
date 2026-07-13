@@ -1,6 +1,6 @@
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
-import { LoaderFactory, ModuleLoader, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
+import { buildTeggManifestData, LoaderFactory, ModuleLoader, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
 import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import type { ModuleReference } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
@@ -11,6 +11,7 @@ export class EggModuleLoader {
   app: Application;
   globalGraph: GlobalGraph;
   private pendingBuildHooks: GlobalGraphBuildHook[] = [];
+  #moduleDescriptors: readonly ModuleDescriptor[] = [];
   /**
    * True when the app graph was built from a tegg manifest (bundle mode). In
    * that case the module source files do not exist on disk, so module load
@@ -27,6 +28,28 @@ export class EggModuleLoader {
     this.pendingBuildHooks.push(hook);
   }
 
+  static #isModulePluginReference(moduleReference: ModuleReference, plugin: { package?: string; path?: string }) {
+    if (moduleReference.package && plugin.package) {
+      return moduleReference.package === plugin.package;
+    }
+    return !!plugin.path && moduleReference.path === plugin.path;
+  }
+
+  static reconcileModulePluginReferences(app: Application): void {
+    const enabledPlugins = Object.values(app.plugins).filter((plugin) => plugin.enable);
+    const allPlugins = Object.values(app.loader.allPlugins ?? {});
+
+    for (const moduleReference of app.moduleReferences) {
+      if (enabledPlugins.some((plugin) => EggModuleLoader.#isModulePluginReference(moduleReference, plugin))) {
+        moduleReference.optional = false;
+        continue;
+      }
+      if (allPlugins.some((plugin) => EggModuleLoader.#isModulePluginReference(moduleReference, plugin))) {
+        moduleReference.optional = true;
+      }
+    }
+  }
+
   private async loadApp(): Promise<void> {
     const loader = new EggAppLoader(this.app);
     const loadUnit = await LoadUnitFactory.createLoadUnit(this.app.baseDir, EggLoadUnitType.APP, loader);
@@ -34,13 +57,9 @@ export class EggModuleLoader {
   }
 
   private async buildAppGraph(): Promise<GlobalGraph> {
-    for (const plugin of Object.values(this.app.plugins)) {
-      if (!plugin.enable) continue;
-      const modulePlugin = this.app.moduleReferences.find((t) => t.path === plugin.path);
-      if (modulePlugin) {
-        modulePlugin.optional = false;
-      }
-    }
+    // Normalize module plugin references against the Egg plugin enable state.
+    // Ordinary app modules keep their original optional semantics.
+    EggModuleLoader.reconcileModulePluginReferences(this.app);
 
     // Pass manifest data to LoaderFactory if available
     const manifest = this.app.loader.manifest;
@@ -52,10 +71,11 @@ export class EggModuleLoader {
     // RealLoaderFS in normal mode (zero behavior change), ManifestLoaderFS in bundle mode.
     const loaderFS = this.app.loader.loaderFS;
     const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest, loaderFS);
+    this.#moduleDescriptors = moduleDescriptors;
 
     // Collect manifest data when not loaded from manifest
     if (!loadAppManifest) {
-      EggModuleLoader.collectTeggManifest(this.app, moduleDescriptors);
+      EggModuleLoader.collectTeggManifest(this.app, this.app.moduleReferences, moduleDescriptors);
     }
 
     for (const moduleDescriptor of moduleDescriptors) {
@@ -77,27 +97,18 @@ export class EggModuleLoader {
     moduleReferences: readonly ModuleReference[],
     moduleDescriptors: readonly ModuleDescriptor[],
   ): TeggManifestExtension {
-    return {
-      moduleReferences: moduleReferences.map((ref) => ({
-        name: ref.name,
-        path: ref.path,
-        optional: ref.optional,
-        loaderType: ref.loaderType,
-      })),
-      moduleDescriptors: moduleDescriptors.map((desc) => ({
-        name: desc.name,
-        unitPath: desc.unitPath,
-        optional: desc.optional,
-        decoratedFiles: ModuleDescriptorDumper.getDecoratedFiles(desc),
-      })),
-    };
+    return buildTeggManifestData(moduleReferences, moduleDescriptors);
   }
 
   /**
    * Collect tegg manifest data and store in manifest extensions.
    */
-  static collectTeggManifest(app: Application, moduleDescriptors: readonly ModuleDescriptor[]): void {
-    const data = EggModuleLoader.buildTeggManifestData(app.moduleReferences, moduleDescriptors);
+  static collectTeggManifest(
+    app: Application,
+    moduleReferences: readonly ModuleReference[],
+    moduleDescriptors: readonly ModuleDescriptor[],
+  ): void {
+    const data = EggModuleLoader.buildTeggManifestData(moduleReferences, moduleDescriptors);
     app.loader.manifest.setExtension(TEGG_MANIFEST_KEY, data);
   }
 
@@ -128,16 +139,35 @@ export class EggModuleLoader {
       const loader = precomputedFiles
         ? new ModuleLoader(modulePath, { precomputedFiles, loaderFS })
         : LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, loaderFS);
-      const loadUnit = await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
+      const loadUnit = await LoadUnitFactory.createLoadUnit(
+        modulePath,
+        EggLoadUnitType.MODULE,
+        loader,
+        precomputedFiles ? moduleConfig.name : undefined,
+      );
       this.app.moduleHandler.loadUnits.push(loadUnit);
     }
   }
 
-  async load(): Promise<void> {
+  get moduleDescriptors(): readonly ModuleDescriptor[] {
+    return this.#moduleDescriptors;
+  }
+
+  /**
+   * Phase 1: scan modules and create the business GlobalGraph (nodes only),
+   * then flush buffered build hooks onto it. Kept separate from load() so the
+   * InnerObjectLoadUnit can be instantiated in between — its lifecycle protos
+   * (including graph build hooks they register) must be live before build().
+   */
+  async initGraph(): Promise<void> {
     GlobalGraph.instance = this.globalGraph = await this.buildAppGraph();
     for (const hook of this.pendingBuildHooks) {
       this.globalGraph.registerBuildHook(hook);
     }
+  }
+
+  /** Phase 2: create the APP load unit, build()/sort() the graph and create module load units. */
+  async load(): Promise<void> {
     await this.loadApp();
     await this.loadModule();
   }

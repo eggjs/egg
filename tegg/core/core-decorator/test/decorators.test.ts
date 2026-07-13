@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 
 import {
   AccessLevel,
+  DefineModuleQualifierAttribute,
   ObjectInitType,
   LoadUnitNameQualifierAttribute,
   InitTypeQualifierAttribute,
@@ -133,6 +134,10 @@ describe('test/decorators.test.ts', () => {
       assert(
         QualifierUtil.getProperQualifier(QualifierCacheService, property, InitTypeQualifierAttribute) ===
           ObjectInitType.SINGLETON,
+      );
+      assert(
+        QualifierUtil.getProperQualifier(QualifierCacheService, property, DefineModuleQualifierAttribute) ===
+          'define-module',
       );
     });
 

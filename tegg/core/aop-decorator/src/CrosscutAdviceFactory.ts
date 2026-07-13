@@ -1,9 +1,11 @@
 import assert from 'node:assert';
 
+import { InnerObjectProto } from '@eggjs/core-decorator';
 import type { EggProtoImplClass, IAdvice, AdviceInfo } from '@eggjs/tegg-types';
 
 import { CrosscutInfoUtil } from './util/index.ts';
 
+@InnerObjectProto()
 export class CrosscutAdviceFactory {
   private readonly crosscutAdviceClazzList: Array<EggProtoImplClass<IAdvice>> = [];
 

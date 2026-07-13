@@ -1,0 +1,7 @@
+{
+  "name": "egg-prototype-lifecycle-proto",
+  "type": "module",
+  "eggModule": {
+    "name": "eggPrototypeLifecycleApp"
+  }
+}

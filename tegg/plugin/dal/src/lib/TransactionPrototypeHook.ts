@@ -1,23 +1,27 @@
 import assert from 'node:assert';
 
 import { Pointcut } from '@eggjs/aop-decorator';
+import { EggPrototypeLifecycleProto, Inject } from '@eggjs/core-decorator';
 import type { LifecycleHook } from '@eggjs/lifecycle';
 import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/metadata';
-import type { ModuleConfigHolder, Logger } from '@eggjs/tegg-types';
+import type { ModuleConfigs } from '@eggjs/tegg-common-util';
+import type { Logger } from '@eggjs/tegg-types';
 import { PropagationType } from '@eggjs/tegg-types';
 import { TransactionMetaBuilder } from '@eggjs/transaction-decorator';
 
 import { MysqlDataSourceManager } from './MysqlDataSourceManager.ts';
 import { TransactionalAOP, type TransactionalParams } from './TransactionalAOP.ts';
 
+@EggPrototypeLifecycleProto()
 export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
-  private readonly moduleConfigs: Record<string, ModuleConfigHolder>;
+  @Inject()
+  private readonly moduleConfigs: ModuleConfigs;
+
+  @Inject()
   private readonly logger: Logger;
 
-  constructor(moduleConfigs: Record<string, ModuleConfigHolder>, logger: Logger) {
-    this.moduleConfigs = moduleConfigs;
-    this.logger = logger;
-  }
+  @Inject()
+  private readonly mysqlDataSourceManager: MysqlDataSourceManager;
 
   public async preCreate(ctx: EggPrototypeLifecycleContext): Promise<void> {
     const builder = new TransactionMetaBuilder(ctx.clazz);
@@ -26,7 +30,7 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
       return;
     }
     const moduleName = ctx.loadUnit.name;
-    const datasourceConfigs = (this.moduleConfigs[moduleName]?.config as any)?.dataSource || {};
+    const datasourceConfigs = (this.moduleConfigs.inner[moduleName]?.config as any)?.dataSource || {};
     const dataSources = Object.keys(datasourceConfigs);
     if (dataSources.length === 0) {
       return;
@@ -55,7 +59,7 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
       const adviceParams: TransactionalParams = {
         propagation: transactionMetadata.propagation,
         dataSourceGetter: () => {
-          const mysqlDataSource = MysqlDataSourceManager.instance.get(moduleName, datasourceName);
+          const mysqlDataSource = this.mysqlDataSourceManager.get(moduleName, datasourceName);
           if (!mysqlDataSource) {
             throw new Error(`method ${clazzName} not found datasource ${datasourceName}`);
           }

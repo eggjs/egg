@@ -1,0 +1,7 @@
+{
+  "name": "framework-cycle-app",
+  "type": "module",
+  "egg": {
+    "framework": "chair-framework"
+  }
+}

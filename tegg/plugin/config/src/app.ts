@@ -54,6 +54,31 @@ export default class App implements ILifecycleBoot {
   #scanModuleReferences(): void {
     const { readModuleOptions } = this.app.config.tegg;
 
+    // Auto-exclude outDir (e.g. dist/) from app module scanning to avoid
+    // duplicate modules when both source and compiled output exist.
+    const outDir = this.app.loader.outDir;
+    let appReadModuleOptions = readModuleOptions;
+    if (outDir) {
+      const extraFilePattern = readModuleOptions.extraFilePattern || [];
+      const excludePattern = `!**/${outDir}`;
+      if (!extraFilePattern.includes(excludePattern)) {
+        appReadModuleOptions = {
+          ...readModuleOptions,
+          extraFilePattern: [...extraFilePattern, excludePattern],
+        };
+      }
+    }
+    const moduleScanner = new ModuleScanner(
+      this.app.baseDir,
+      readModuleOptions,
+      this.app.coreLogger,
+      appReadModuleOptions,
+      {
+        allPlugins: this.app.loader.allPlugins,
+        lookupDirs: this.app.loader.lookupDirs,
+      },
+    );
+
     // Try to use manifest for module references (skip expensive globby scan)
     const manifest = this.app.loader.manifest;
     const manifestTegg = manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined;
@@ -65,19 +90,9 @@ export default class App implements ILifecycleBoot {
       // `LoaderFactory.loadApp`. Path resolution to an absolute directory is done
       // in `#loadModuleConfigs` below.
       moduleReferences = manifestTegg.moduleReferences;
+      moduleScanner.validateManifestModulePlugins(manifestTegg);
       debug('load moduleReferences from manifest: %o', moduleReferences);
     } else {
-      // Auto-exclude outDir (e.g. dist/) from module scanning to avoid
-      // duplicate modules when both source and compiled output exist
-      const outDir = this.app.loader.outDir;
-      if (outDir) {
-        const extraFilePattern = readModuleOptions.extraFilePattern || [];
-        const excludePattern = `!**/${outDir}`;
-        if (!extraFilePattern.includes(excludePattern)) {
-          readModuleOptions.extraFilePattern = [...extraFilePattern, excludePattern];
-        }
-      }
-      const moduleScanner = new ModuleScanner(this.app.baseDir, readModuleOptions);
       moduleReferences = moduleScanner.loadModuleReferences();
 
       if (outDir) {
@@ -92,23 +107,18 @@ export default class App implements ILifecycleBoot {
   #loadModuleConfigs(): void {
     this.app.moduleConfigs = {};
     for (const reference of this.app.moduleReferences) {
-      // Module reference paths from the manifest / ModuleScanner are absolute or
-      // relative to baseDir. `ModuleConfigUtil.resolveModuleDir` resolves a
-      // relative path against `baseDir/config` (the `config/module.json`
-      // convention), which is wrong here, so resolve against baseDir directly. In
-      // bundle mode baseDir is the output dir where the bundler copied each
-      // module's package.json.
-      const absoluteRef: ModuleReference = {
-        path: path.isAbsolute(reference.path) ? reference.path : path.resolve(this.app.baseDir, reference.path),
-        name: reference.name,
+      const resolved = ModuleConfigUtil.resolveModuleConfigTolerant(reference, this.app.baseDir);
+      const resolvedRef: ModuleReference = {
+        path: resolved.path,
+        name: resolved.name,
+        package: reference.package,
         optional: reference.optional,
+        loaderType: reference.loaderType,
       };
-
-      const moduleName = ModuleConfigUtil.readModuleNameSync(absoluteRef.path);
-      this.app.moduleConfigs[moduleName] = {
-        name: moduleName,
-        reference: absoluteRef,
-        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path),
+      this.app.moduleConfigs[resolved.name] = {
+        name: resolved.name,
+        reference: resolvedRef,
+        config: resolved.config,
       };
     }
 

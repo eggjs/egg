@@ -1,13 +1,14 @@
 import assert from 'node:assert';
 
 import { Aspect } from '@eggjs/aop-decorator';
-import { PrototypeUtil } from '@eggjs/core-decorator';
+import { EggObjectLifecycleProto, PrototypeUtil } from '@eggjs/core-decorator';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { ASPECT_LIST, InjectType } from '@eggjs/tegg-types';
 import type { EggObject, EggObjectLifeCycleContext, LifecycleHook } from '@eggjs/tegg-types';
 
 import { AspectExecutor } from './AspectExecutor.js';
 
+@EggObjectLifecycleProto()
 export class EggObjectAopHook implements LifecycleHook<EggObjectLifeCycleContext, EggObject> {
   private hijackMethods(obj: any, aspectList: Array<Aspect>) {
     for (const aspect of aspectList) {

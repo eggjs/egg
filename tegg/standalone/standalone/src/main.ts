@@ -1,8 +1,19 @@
-import { Runner, type RunnerOptions } from './Runner.ts';
+import type { EggContext } from '@eggjs/tegg-runtime';
 
-export async function preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']): Promise<void> {
+import {
+  StandaloneApp,
+  type InitStandaloneAppOptions,
+  type StandaloneAppInit,
+  type StandaloneAppOptions,
+} from './StandaloneApp.ts';
+
+export async function preLoad(
+  cwd: string,
+  dependencies?: StandaloneAppOptions['dependencies'],
+  frameworkDeps?: StandaloneAppOptions['frameworkDeps'],
+): Promise<void> {
   try {
-    await Runner.preLoad(cwd, dependencies);
+    await StandaloneApp.preLoad(cwd, dependencies, frameworkDeps);
   } catch (e) {
     if (e instanceof Error) {
       e.message = `[tegg/standalone] bootstrap standalone preLoad failed: ${e.message}`;
@@ -11,27 +22,53 @@ export async function preLoad(cwd: string, dependencies?: RunnerOptions['depende
   }
 }
 
-export async function main<T = void>(cwd: string, options?: RunnerOptions): Promise<T> {
-  const runner = new Runner(cwd, options);
+export async function appMain<T = void>(
+  options: InitStandaloneAppOptions,
+  init?: StandaloneAppInit,
+  ctx?: EggContext,
+): Promise<T> {
+  const app = new StandaloneApp(init);
   try {
-    await runner.init();
+    await app.init(options);
   } catch (e) {
     if (e instanceof Error) {
       e.message = `[tegg/standalone] bootstrap tegg failed: ${e.message}`;
     }
-    // Boot failed and run()'s finally below is never reached, so tear down here
-    // to release this Runner's TeggScope so it does not leak into liveScopeBags.
-    await runner.destroy().catch(() => {
-      /* swallow: surface the original boot error */
-    });
     throw e;
   }
   try {
-    return await runner.run<T>();
+    return await app.run<T>(ctx);
   } finally {
-    runner.destroy().catch((e) => {
-      e.message = `[tegg/standalone] destroy tegg failed: ${e.message}`;
-      console.warn(e);
+    await app.destroy().catch((e: unknown) => {
+      if (e instanceof Error) {
+        e.message = `[tegg/standalone] destroy tegg failed: ${e.message}`;
+        console.warn(e);
+        return;
+      }
+      console.warn('[tegg/standalone] destroy tegg failed:', e);
     });
   }
+}
+
+export async function main<T = void>(cwd: string, options?: StandaloneAppOptions): Promise<T> {
+  if ((options as { innerObjects?: unknown } | undefined)?.innerObjects !== undefined) {
+    throw new Error('[tegg/standalone] options.innerObjects has been removed, use options.innerObjectHandlers instead');
+  }
+  return await appMain<T>(
+    {
+      baseDir: cwd,
+      name: options?.name,
+      env: options?.env,
+      dependencies: options?.dependencies,
+      manifest: options?.manifest,
+      loaderFS: options?.loaderFS,
+    },
+    {
+      frameworkDeps: options?.frameworkDeps,
+      dump: options?.dump,
+      innerObjects: options?.innerObjectHandlers,
+      innerObjectsName: 'innerObjectHandlers',
+      logger: options?.logger,
+    },
+  );
 }

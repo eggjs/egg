@@ -43,12 +43,14 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@eggjs/aop-runtime": "workspace:*",
+    "@eggjs/aop-plugin": "workspace:*",
     "@eggjs/dal-plugin": "workspace:*",
     "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/loader-fs": "workspace:*",
     "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"

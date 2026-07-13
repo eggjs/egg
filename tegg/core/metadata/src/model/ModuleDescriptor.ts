@@ -12,6 +12,7 @@ export interface ModuleDescriptor {
   optional?: boolean;
   clazzList: EggProtoImplClass[];
   multiInstanceClazzList: EggProtoImplClass[];
+  innerObjectClazzList?: EggProtoImplClass[];
   protos: ProtoDescriptor[];
 }
 
@@ -23,8 +24,10 @@ export class ModuleDescriptorDumper {
   static stringifyDescriptor(moduleDescriptor: ModuleDescriptor): string {
     return (
       '{' +
-      `"name": "${moduleDescriptor.name}",` +
-      `"unitPath": "${moduleDescriptor.unitPath}",` +
+      // JSON.stringify the string fields — unitPath/filePath contain
+      // backslashes on Windows, raw interpolation produces invalid JSON.
+      `"name": ${JSON.stringify(moduleDescriptor.name)},` +
+      `"unitPath": ${JSON.stringify(moduleDescriptor.unitPath)},` +
       (typeof moduleDescriptor.optional !== 'undefined' ? `"optional": ${moduleDescriptor.optional},` : '') +
       `"clazzList": [${moduleDescriptor.clazzList
         .map((t) => {
@@ -32,6 +35,11 @@ export class ModuleDescriptorDumper {
         })
         .join(',')}],` +
       `"multiInstanceClazzList": [${moduleDescriptor.multiInstanceClazzList
+        .map((t) => {
+          return ModuleDescriptorDumper.stringifyClazz(t, moduleDescriptor);
+        })
+        .join(',')}],` +
+      `"innerObjectClazzList": [${(moduleDescriptor.innerObjectClazzList ?? [])
         .map((t) => {
           return ModuleDescriptorDumper.stringifyClazz(t, moduleDescriptor);
         })
@@ -46,14 +54,11 @@ export class ModuleDescriptorDumper {
   }
 
   static stringifyClazz(clazz: EggProtoImplClass, moduleDescriptor: ModuleDescriptor): string {
-    return (
-      '{' +
-      `"name": "${clazz.name}",` +
-      (PrototypeUtil.getFilePath(clazz)
-        ? `"filePath": "${path.relative(moduleDescriptor.unitPath, PrototypeUtil.getFilePath(clazz)!)}"`
-        : '') +
-      '}'
-    );
+    const filePath = PrototypeUtil.getFilePath(clazz);
+    return JSON.stringify({
+      name: clazz.name,
+      ...(filePath ? { filePath: path.relative(moduleDescriptor.unitPath, filePath) } : {}),
+    });
   }
 
   static dumpPath(desc: ModuleDescriptor, options?: ModuleDumpOptions): string {
@@ -79,12 +84,24 @@ export class ModuleDescriptorDumper {
     };
     for (const clazz of desc.clazzList) addClazz(clazz);
     for (const clazz of desc.multiInstanceClazzList) addClazz(clazz);
+    // Inner object / lifecycle proto classes are diverted out of clazzList, but
+    // their files must still be recorded so bundle mode re-imports them.
+    for (const clazz of desc.innerObjectClazzList ?? []) addClazz(clazz);
     return Array.from(fileSet);
   }
 
   static async dump(desc: ModuleDescriptor, options?: ModuleDumpOptions): Promise<void> {
     const dumpPath = ModuleDescriptorDumper.dumpPath(desc, options);
-    await fs.mkdir(path.dirname(dumpPath), { recursive: true });
-    await fs.writeFile(dumpPath, ModuleDescriptorDumper.stringifyDescriptor(desc));
+    const dumpDir = path.dirname(dumpPath);
+    await fs.mkdir(dumpDir, { recursive: true });
+    const tmpDir = await fs.mkdtemp(path.join(dumpDir, '.tmp-'));
+    const tmpPath = path.join(tmpDir, path.basename(dumpPath));
+    try {
+      await fs.writeFile(tmpPath, ModuleDescriptorDumper.stringifyDescriptor(desc));
+      await fs.rm(dumpPath, { force: true });
+      await fs.rename(tmpPath, dumpPath);
+    } finally {
+      await fs.rm(tmpDir, { recursive: true, force: true });
+    }
   }
 }

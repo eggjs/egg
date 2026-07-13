@@ -13,7 +13,9 @@ const moduleDir = getFixtures('apps/app-with-modules/app/module-a');
 // Build a minimal fake Application that feeds module references straight from a
 // tegg manifest extension, mirroring how a bundled worker entry primes the loader
 // without running the globby module scan.
-function createFakeApp(moduleReferences: { name?: string; path: string; optional?: boolean }[]): Application {
+function createFakeApp(
+  moduleReferences: { name?: string; package?: string; path: string; optional?: boolean }[],
+): Application {
   return {
     baseDir,
     config: { tegg: { readModuleOptions: {} } },
@@ -52,6 +54,7 @@ describe('plugin/config/test/ManifestModuleReference.test.ts', () => {
           optional: undefined,
           name: 'moduleA',
           path: moduleDir,
+          loaderType: undefined,
         },
       },
     });
@@ -66,5 +69,53 @@ describe('plugin/config/test/ManifestModuleReference.test.ts', () => {
     new App(app).configWillLoad();
 
     expect(app.moduleConfigs.moduleA.reference.path).toBe(moduleDir);
+  });
+
+  it('stores the resolved module name on manifest references without name', () => {
+    const app = createFakeApp([{ path: 'app/module-a' }]);
+
+    new App(app).configWillLoad();
+
+    expect(app.moduleConfigs.moduleA.reference.name).toBe('moduleA');
+  });
+
+  it('rejects a manifest missing an enabled module plugin', () => {
+    const pluginRoot = getFixtures('plugin-module-json/app/node_modules/aop-like-plugin');
+    const app = createFakeApp([{ name: 'moduleA', path: moduleDir }]);
+    Object.assign(app.loader, {
+      allPlugins: {
+        teggAop: { enable: true, package: 'aop-like-plugin', path: pluginRoot },
+      },
+      lookupDirs: new Set([getFixtures('plugin-module-json/app')]),
+    });
+
+    expect(() => new App(app).configWillLoad()).toThrow(/manifest is missing enabled module plugin "teggAop"/);
+  });
+
+  it('rejects a manifest missing the descriptor for an enabled module plugin', () => {
+    const pluginRoot = getFixtures('plugin-module-json/app/node_modules/aop-like-plugin');
+    const app = createFakeApp([
+      { name: 'moduleA', path: moduleDir },
+      { name: 'teggAop', package: 'aop-like-plugin', path: pluginRoot },
+    ]);
+    Object.assign(app.loader, {
+      allPlugins: {
+        teggAop: { enable: true, package: 'aop-like-plugin', path: pluginRoot },
+      },
+      lookupDirs: new Set([getFixtures('plugin-module-json/app')]),
+      manifest: {
+        getExtension: () => ({
+          moduleReferences: [
+            { name: 'moduleA', path: moduleDir },
+            { name: 'teggAop', package: 'aop-like-plugin', path: pluginRoot },
+          ],
+          moduleDescriptors: [{ name: 'moduleA', unitPath: moduleDir, decoratedFiles: [] }],
+        }),
+      },
+    });
+
+    expect(() => new App(app).configWillLoad()).toThrow(
+      /manifest is missing descriptor for enabled module plugin "teggAop"/,
+    );
   });
 });

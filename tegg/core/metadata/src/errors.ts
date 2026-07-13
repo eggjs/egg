@@ -2,6 +2,10 @@ import { FrameworkBaseError } from '@eggjs/errors';
 import { ErrorCodes } from '@eggjs/tegg-types';
 import type { EggPrototypeName, QualifierInfo } from '@eggjs/tegg-types';
 
+function formatQualifiers(qualifiers: readonly QualifierInfo[]): string {
+  return `[${qualifiers.map((qualifier) => `${String(qualifier.attribute)}=${String(qualifier.value)}`).join(',')}]`;
+}
+
 export class TeggError extends FrameworkBaseError {
   get module() {
     return 'TEGG';
@@ -19,7 +23,7 @@ export class EggPrototypeNotFound extends TeggError {
 
 export class MultiPrototypeFound extends TeggError {
   constructor(name: EggPrototypeName, qualifier: QualifierInfo[], result?: string) {
-    const msg = `multi proto found for name:${String(name)} and qualifiers ${JSON.stringify(qualifier)}${
+    const msg = `multi proto found for name:${String(name)} and qualifiers ${formatQualifiers(qualifier)}${
       result ? `, result is ${result}` : ''
     }`;
     super(msg, ErrorCodes.MULTI_PROTO_FOUND);

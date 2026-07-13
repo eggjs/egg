@@ -1,3 +1,4 @@
+import type { MysqlDataSourceManager } from '@eggjs/dal-plugin';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
 
@@ -20,7 +21,8 @@ describe('plugin/dal/test/transaction.test.ts', () => {
   });
 
   afterEach(async () => {
-    const dataSource = app.mysqlDataSourceManager.get('dal', 'foo')!;
+    const mysqlDataSourceManager = await app.getEggObjectFromName<MysqlDataSourceManager>('mysqlDataSourceManager');
+    const dataSource = mysqlDataSourceManager.get('dal', 'foo')!;
     await dataSource.query('delete from egg_foo;');
   });
 
