@@ -29,6 +29,9 @@ source_files:
   - tegg/plugin/config/src/app.ts
   - tegg/plugin/dal/src/index.ts
   - tegg/plugin/dal/src/lib/DalModuleLoadUnitHook.ts
+  - tegg/plugin/controller/src/lib/impl/http/EggHTTPControllerRegistrar.ts
+  - tegg/plugin/controller/src/lib/impl/mcp/EggMCPRegisterProvider.ts
+  - tegg/standalone/service-worker-controller/src/http/FetchEventHandler.ts
 updated_at: 2026-07-13
 status: active
 ---
@@ -65,6 +68,63 @@ its state is `created`; registration after `build()` starts and repeated
 
 Hosts: `StandaloneApp.init()` (standalone) and `ModuleHandler.init()` via
 `EggModuleLoader.initGraph()`/`load()` split (egg).
+
+## Instantiation is complete, not reachability-gated
+
+`InnerObjectLoadUnitBuilder#buildProtoGraph` topologically sorts and returns
+**every** scanned inner-object proto; the graph is used only for ordering, cycle
+detection, and missing-non-optional-dep errors — there is NO reachability
+pruning. `ModuleLoadUnitInstance.init` then eagerly `getOrCreateEggObject`s all
+of them, so every scanned `@InnerObjectProto` / lifecycle proto is instantiated
+regardless of whether anything injects it. Corollary when debugging: "a scanned
+inner object was not instantiated" is a **scan-input** problem (e.g. a stale
+fixture `.egg` manifest — see `workflows/local-ci.md`), not graph gating.
+
+## `@LoadUnitInstanceLifecycleProto` as an eager-registration trigger
+
+Because inner objects are instantiated eagerly, a lifecycle proto's `postCreate`
+is a reliable "run after this load-unit instance is created" signal. The egg
+controller plugin uses it for HTTP route mounting: `EggHTTPControllerRegistrar`
+(`tegg/plugin/controller`) is a single class that both plugs the HTTP register
+creator into the factory (`@LifecyclePostInject`, so controllers accumulate as
+load units are scanned) AND, as a `@LoadUnitInstanceLifecycleProto`, mounts them
+all priority-sorted onto `app.router` in `postCreate` when the
+`CONTROLLER_LOAD_UNIT` (`app/controller`, egg's last controller-bearing load
+unit) instance is created — replacing a manual boot-time `doRegister`. `postCreate`
+fires per load-unit instance, so it filters on `instance.loadUnit.type`.
+
+This pattern is egg-specific: the standalone/service-worker host has no
+`CONTROLLER_LOAD_UNIT` and registers lazily on the first fetch event
+(`FetchEventHandler.doInitRoutes`), so its `HTTPRegisterProvider` stays a plain
+provider and the trigger lives in the event handler (which also drives MCP
+registration + the fetch-router middleware snapshot) — no merge. Egg MCP
+(`EggMCPRegisterProvider`) mounts immediately inside `MCPControllerRegister.register()`
+with no deferred `doRegister`, so it too stays a plain provider.
+
+## Host-split wiring: a runtime class, two host treatments (`RootProtoManager`)
+
+`RootProtoManager` (controller-runtime) is host-agnostic **pure logic and carries
+NO proto decorator**. Each host wires it differently, which is why the decorator
+does not live on the shared class:
+
+- **Fetch host** uses it as a DI inner object: `service-worker-controller`'s
+  `runtimeProtos` barrel applies `InnerObjectProto({accessLevel: PUBLIC})(RootProtoManager)`
+  imperatively before re-exporting it (PUBLIC because `FetchEventHandler`, a
+  business proto, injects it). Applying the decorator in the barrel — rather than
+  a subclass — keeps a single class so the `RootProtoManager` type annotations at
+  the inject sites match the decorated proto; tegg resolves the inject by the
+  field name `rootProtoManager`.
+- **Egg host** does NOT scan it (dropped from `controller-plugin`'s `runtimeProtos`).
+  The boot hook mounts `new RootProtoManager()` on `app.rootProtoManager` BEFORE
+  `moduleHandler.ready()`, so — exactly like `app.mcpRouter` — it becomes a
+  `() => app.rootProtoManager` APP compat proto that inner objects inject via
+  `@EggQualifier(EggType.APP)` (see `EggHTTPControllerRegistrar`), and it also
+  backs the plain `teggRootProto` middleware (which cannot inject).
+
+The former host-agnostic `ControllerLoadUnitHook` injection of `rootProtoManager`
+was vestigial (`ControllerRegister.register()` ignored it — HTTP's is a no-op,
+MCP mounts via its router) and was removed along with the param, so the shared
+hook no longer depends on `rootProtoManager` being an inner object in every host.
 
 ## Feeding rules
 
