@@ -6,7 +6,6 @@ export * from './lib/ControllerLoadUnitInstance.ts';
 export * from './lib/ControllerMetadataManager.ts';
 export * from './lib/ControllerPrototypeHook.ts';
 export * from './lib/ControllerRegister.ts';
-export * from './lib/ControllerRegisterDefaults.ts';
 export * from './lib/ControllerRegisterFactory.ts';
 export * from './lib/MiddlewareGraphHook.ts';
 export * from './lib/RootProtoManager.ts';

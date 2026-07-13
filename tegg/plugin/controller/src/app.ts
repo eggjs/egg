@@ -1,13 +1,11 @@
 import assert from 'node:assert';
 
-import { ControllerMetaBuilderFactory, ControllerType, type MCPControllerMeta } from '@eggjs/controller-decorator';
+import { ControllerMetaBuilderFactory } from '@eggjs/controller-decorator';
 import {
   CONTROLLER_LOAD_UNIT,
   ControllerLoadUnit,
   ControllerMetadataManager,
-  ControllerRegisterDefaults,
   type ControllerRegisterFactory,
-  MCPControllerRegister,
   middlewareGraphHook,
   type RootProtoManager,
 } from '@eggjs/controller-runtime';
@@ -98,18 +96,12 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
     if (this.mcpEnable()) {
-      // One EggMcpRouter + one collect-only MCPControllerRegister per app,
-      // created lazily on the first MCP controller proto (during didLoad, when
-      // app.router/app.config.mcp are ready). The router owns all egg transport;
-      // the register only collects records and delegates to the router.
-      let eggMcpRouter: EggMcpRouter | undefined;
-      let mcpRegister: MCPControllerRegister | undefined;
-      ControllerRegisterDefaults.enqueue(ControllerType.MCP, (proto, meta) => {
-        eggMcpRouter ??= new EggMcpRouter(this.app);
-        mcpRegister ??= new MCPControllerRegister(meta as MCPControllerMeta, eggMcpRouter);
-        mcpRegister.addControllerProto(proto);
-        return mcpRegister;
-      });
+      // The per-app EggMcpRouter is mounted on `app` in didLoad (before the
+      // module handler builds the inner-object graph) and the collect-only
+      // MCPControllerRegister is plugged into the factory by the
+      // mcpRegisterProvider inner object — see EggMCPRegisterProvider. Here we
+      // only do the MCP config wiring that must land in configWillLoad.
+
       // Don't let the mcp's body be consumed
       this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
 
@@ -156,6 +148,14 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   async didLoad(): Promise<void> {
+    if (this.mcpEnable()) {
+      // Mount the per-app MCP router on `app` BEFORE the module handler builds
+      // the inner-object graph: it becomes an app property, so EggAppLoader's
+      // compat proto for `mcpRouter` is fed into the inner-object graph and the
+      // mcpRegisterProvider can inject it. The router owns all egg node-HTTP MCP
+      // transport and needs the live `app`, so it is built imperatively here.
+      this.app.mcpRouter = new EggMcpRouter(this.app);
+    }
     await this.app.moduleHandler.ready();
     // ControllerLoadUnitHandler extends sdk-base (its ctor kicks off async _init
     // that touches the per-app factories), and the HTTP/MCP registers below are
@@ -171,14 +171,16 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       this.app.rootProtoManager = (await EggContainerFactory.getOrCreateEggObject(rootProtoManagerProto))
         .obj as RootProtoManager;
 
-      // Resolve the HTTP register provider up front: its @LifecyclePostInject
-      // plugs the HTTP register creator into the factory, which the load-unit
-      // hook needs when ControllerLoadUnitHandler processes controller protos
-      // below. (MCP's creator is plugged in by the factory's own drain of the
-      // configWillLoad enqueue.)
+      // Resolve the HTTP and MCP register providers up front: their
+      // @LifecyclePostInject plugs the register creators into the factory, which
+      // the load-unit hook needs when ControllerLoadUnitHandler processes
+      // controller protos below. The MCP provider is a no-op when MCP is
+      // disabled (its `app.mcpRouter` optional inject is absent).
       const httpProviderProto = EggPrototypeFactory.instance.getPrototype('httpRegisterProvider');
       const httpRegisterProvider = (await EggContainerFactory.getOrCreateEggObject(httpProviderProto))
         .obj as EggHTTPRegisterProvider;
+      const mcpProviderProto = EggPrototypeFactory.instance.getPrototype('mcpRegisterProvider');
+      await EggContainerFactory.getOrCreateEggObject(mcpProviderProto);
 
       this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
       await this.controllerLoadUnitHandler.ready();

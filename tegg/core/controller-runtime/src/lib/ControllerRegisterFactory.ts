@@ -1,11 +1,9 @@
 import type { ControllerMetadata, ControllerTypeLike } from '@eggjs/controller-decorator';
 import { InnerObjectProto } from '@eggjs/core-decorator';
-import { LifecyclePostInject } from '@eggjs/lifecycle';
 import type { EggPrototype } from '@eggjs/metadata';
 import { AccessLevel } from '@eggjs/tegg-types';
 
 import type { ControllerRegister } from './ControllerRegister.ts';
-import { ControllerRegisterDefaults } from './ControllerRegisterDefaults.ts';
 
 /**
  * `THost` is whatever the host wants to thread through to its register
@@ -30,17 +28,6 @@ export class ControllerRegisterFactory<THost = unknown> {
   constructor(host?: THost) {
     this.host = host as THost;
     this.registerCreatorMap = new Map();
-  }
-
-  /**
-   * Apply the transport creators a host enqueued imperatively before this proto
-   * existed (the egg host's MCP creator closes over boot-time `app` state and
-   * cannot be a container citizen). Hosts whose creators are container citizens
-   * (the fetch providers) never enqueue, so this drain is a no-op for them.
-   */
-  @LifecyclePostInject()
-  applyDefaultRegisters(): void {
-    ControllerRegisterDefaults.drain(this);
   }
 
   registerControllerRegister(type: ControllerTypeLike, creator: RegisterCreator<THost>): void {
