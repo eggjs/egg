@@ -37,8 +37,8 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   constructor(app: Application) {
     this.app = app;
     // rootProtoManager / controllerRegisterFactory / the controller hooks are
-    // declared by the controller MODULE (lib/ControllerModule.ts) and
-    // instantiated in the InnerObjectLoadUnit — didLoad() below backfills the
+    // the controller-runtime protos re-exported into this module (lib/runtimeProtos.ts)
+    // and instantiated in the InnerObjectLoadUnit — didLoad() below backfills the
     // per-app instances onto the app surface.
     this.app.controllerMetaBuilderFactory = ControllerMetaBuilderFactory;
     this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
