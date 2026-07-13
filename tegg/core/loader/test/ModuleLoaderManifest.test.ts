@@ -2,13 +2,18 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import { EggLoadUnitType } from '@eggjs/metadata';
-import { describe, it } from 'vitest';
+import { afterEach, describe, it, vi } from 'vitest';
 
 import { ModuleLoader } from '../src/impl/ModuleLoader.ts';
 import { LoaderFactory } from '../src/index.ts';
+import { LoaderUtil } from '../src/LoaderUtil.ts';
 
 describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
   const repoModulePath = path.join(__dirname, './fixtures/modules/module-for-loader');
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   it('should load only precomputed files when provided', async () => {
     const loader = new ModuleLoader(repoModulePath, { precomputedFiles: ['AppRepo.ts'] });
@@ -48,5 +53,42 @@ describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
     const first = await loader.load();
     const second = await loader.load();
     assert.strictEqual(first, second);
+  });
+
+  it('should share an in-flight load between concurrent callers', async () => {
+    const originalLoadFile = LoaderUtil.loadFile;
+    let release: () => void;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const loadFile = vi.spyOn(LoaderUtil, 'loadFile').mockImplementation(async (filePath) => {
+      await gate;
+      return originalLoadFile.call(LoaderUtil, filePath);
+    });
+    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: ['AppRepo.ts'] });
+
+    const firstLoad = loader.load();
+    const secondLoad = loader.load();
+    assert.equal(loadFile.mock.calls.length, 1);
+    release!();
+
+    const [first, second] = await Promise.all([firstLoad, secondLoad]);
+    assert.strictEqual(first, second);
+    assert.equal(loadFile.mock.calls.length, 1);
+  });
+
+  it('should allow retry after an in-flight load fails', async () => {
+    const originalLoadFile = LoaderUtil.loadFile;
+    const loadFile = vi
+      .spyOn(LoaderUtil, 'loadFile')
+      .mockRejectedValueOnce(new Error('load failed'))
+      .mockImplementation((filePath) => originalLoadFile.call(LoaderUtil, filePath));
+    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: ['AppRepo.ts'] });
+
+    await assert.rejects(loader.load(), /load failed/);
+    const prototypes = await loader.load();
+
+    assert.equal(prototypes.length, 2);
+    assert.equal(loadFile.mock.calls.length, 2);
   });
 });
