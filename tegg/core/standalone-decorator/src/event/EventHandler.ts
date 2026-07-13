@@ -11,7 +11,7 @@ export abstract class AbstractEventHandler<E = any, R = any> {
   abstract handleEvent(event: E): Promise<R>;
 }
 
-export const EVENT_HANDLER_ATTRIBUTE = Symbol.for('EggPrototype#eventHandler');
+export const EVENT_HANDLER_ATTRIBUTE: symbol = Symbol.for('EggPrototype#eventHandler');
 
 export type EventType = Record<string, string>;
 
@@ -19,7 +19,7 @@ export const EventHandler: ImplDecorator<AbstractEventHandler, EventType> =
   QualifierImplDecoratorUtil.generatorDecorator(AbstractEventHandler, EVENT_HANDLER_ATTRIBUTE);
 
 export const EventHandlerProto = (type: EventType[keyof EventType], params?: SingletonProtoParams) => {
-  return (clazz: EggProtoImplClass<AbstractEventHandler>) => {
+  return (clazz: EggProtoImplClass<AbstractEventHandler>): void => {
     EventHandler(type)(clazz);
     SingletonProto(params)(clazz);
   };

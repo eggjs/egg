@@ -10,7 +10,7 @@ export class ServiceWorkerFetchContext extends BaseServiceWorkerContextImpl<Fetc
   // params will be set in @eggjs/router
   params: Record<string, string> = {};
   /** Headers set by middlewares/controllers, merged onto the final response. */
-  readonly responseHeaders = new Headers();
+  readonly responseHeaders: Headers = new Headers();
   #body?: any;
 
   constructor(init: ServiceWorkerContextInit<FetchEvent>) {

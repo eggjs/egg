@@ -1,5 +1,5 @@
 export class RequestUtils {
-  static ContentTypes = {
+  static ContentTypes: { json: string[]; form: string[]; text: string[] } = {
     json: [
       'application/json',
       'application/json-patch+json',
