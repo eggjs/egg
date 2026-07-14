@@ -72,6 +72,13 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     assert.deepEqual(await res.json(), { msg: 'hello', count: 0 });
   });
 
+  it('should run a CONTEXT-init @Pointcut advice with a fresh instance per request', async () => {
+    // ctxCount stays 1 across requests only if the advice is context-scoped
+    // (a fresh instance each request); a leaked singleton would increment.
+    assert.deepEqual(await (await fetch(`${base}/ctxpc/run`)).json(), { msg: 'hello', ctxCount: 1 });
+    assert.deepEqual(await (await fetch(`${base}/ctxpc/run`)).json(), { msg: 'hello', ctxCount: 1 });
+  });
+
   it('should run @Middleware (koa layer) and @Pointcut (aop layer) together', async () => {
     // @Pointcut runs inside the method and mutates the raw return ({ msg, count });
     // the handler normalizes it into ctx.body; the outer koa @Middleware then reads
