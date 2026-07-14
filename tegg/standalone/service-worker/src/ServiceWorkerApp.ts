@@ -4,7 +4,7 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 
-import { FetchEventImpl, type MCPAuthHandler } from '@eggjs/service-worker-controller';
+import { FetchEventImpl, type MCPAuthHandler, type MCPTransportOptions } from '@eggjs/service-worker-controller';
 import { ContextProtoProperty } from '@eggjs/service-worker-runtime';
 import {
   StandaloneApp,
@@ -18,6 +18,8 @@ export interface ServiceWorkerAppOptions extends StandaloneAppOptions {
   config?: Record<string, any>;
   /** Auth hook for MCP routes; the default lets every request through. */
   mcpAuthHandler?: MCPAuthHandler;
+  /** DNS-rebinding protection for the MCP transport (Host/Origin allow-lists). */
+  mcp?: MCPTransportOptions;
 }
 
 const PASS_THROUGH_MCP_AUTH_HANDLER: MCPAuthHandler = {
@@ -43,7 +45,7 @@ export class ServiceWorkerApp {
   #initialized = false;
 
   constructor(cwd: string, options?: ServiceWorkerAppOptions) {
-    const { config, mcpAuthHandler, ...standaloneOptions } = options ?? {};
+    const { config, mcpAuthHandler, mcp, ...standaloneOptions } = options ?? {};
     // Scan this package's own root so its framework-module deps
     // (service-worker-runtime + -controller) are auto-discovered via the
     // node_modules eggModule convention. `!test/**` keeps their test fixtures out.
@@ -64,6 +66,7 @@ export class ServiceWorkerApp {
       innerObjects: {
         config: [{ obj: config ?? {} }],
         mcpAuthHandler: [{ obj: mcpAuthHandler ?? PASS_THROUGH_MCP_AUTH_HANDLER }],
+        mcpTransportOptions: [{ obj: mcp ?? {} }],
         ...standaloneOptions.innerObjectHandlers,
       },
     });

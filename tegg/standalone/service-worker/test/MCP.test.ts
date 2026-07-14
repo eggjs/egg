@@ -8,6 +8,7 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import { afterAll, beforeAll, describe, it } from 'vitest';
 
 import { ServiceWorkerApp } from '../src/index.ts';
+import { MCP_MW_CALLS } from './fixtures/hello-app/mcpMiddlewareRecorder.ts';
 
 const MCP_HEADERS = {
   accept: 'application/json, text/event-stream',
@@ -79,6 +80,34 @@ describe('standalone/service-worker/test/MCP.test.ts', () => {
     assert.equal(body.error.code, -32000);
   });
 
+  it('should run controller + method middlewares only for the targeted tool', async () => {
+    MCP_MW_CALLS.length = 0;
+    // tools/list targets no tool → no business middleware runs
+    await fetch(`${base}/mcp/mwcalc/stream`, {
+      method: 'POST',
+      headers: MCP_HEADERS,
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list', params: {} }),
+    });
+    assert.deepEqual(MCP_MW_CALLS, []);
+
+    // tools/call targets `echo` → controller middleware (outer) then method
+    // middleware (inner) run
+    const res = await fetch(`${base}/mcp/mwcalc/stream`, {
+      method: 'POST',
+      headers: MCP_HEADERS,
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 2,
+        method: 'tools/call',
+        params: { name: 'echo', arguments: { v: 'hi' } },
+      }),
+    });
+    assert.equal(res.status, 200);
+    const message = parseSSEMessage(await res.text());
+    assert.deepEqual(message.result.content, [{ type: 'text', text: 'hi' }]);
+    assert.deepEqual(MCP_MW_CALLS, ['controller-mw', 'tool-mw']);
+  });
+
   it('should serve a full MCP SDK client round-trip', async () => {
     const client = new Client({ name: 'test-client', version: '1.0.0' });
     const transport = new StreamableHTTPClientTransport(new URL(`${base}/mcp/calc`));
@@ -144,5 +173,60 @@ describe('standalone/service-worker/test/MCP.test.ts mcpAuthHandler', () => {
     assert.equal(res.status, 200);
     const message = parseSSEMessage(await res.text());
     assert.equal(message.result.tools.length, 1);
+  });
+});
+
+describe('standalone/service-worker/test/MCP.test.ts hardening', () => {
+  it('should reject a request whose Host is not in allowedHosts', async () => {
+    const app = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'), {
+      mcp: { allowedHosts: ['allowed.example'] },
+    });
+    const server = await app.serve();
+    const { address, port } = server.address() as AddressInfo;
+    try {
+      // The real Host (127.0.0.1:port) is not in the allow-list → SDK rejects.
+      const res = await fetch(`http://${address}:${port}/mcp/calc/stream`, {
+        method: 'POST',
+        headers: MCP_HEADERS,
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list', params: {} }),
+      });
+      assert.equal(res.status, 403);
+    } finally {
+      await app.destroy();
+    }
+  });
+
+  it('should still serve when the auth hook consumes the request body', async () => {
+    const seen: unknown[] = [];
+    const app = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'), {
+      mcpAuthHandler: {
+        async authenticate(request: Request) {
+          // Auth reads the one-shot body; the SDK must still parse via the
+          // pre-read parsedBody rather than the now-consumed stream.
+          seen.push(await request.json());
+          return undefined;
+        },
+      },
+    });
+    const server = await app.serve();
+    const { address, port } = server.address() as AddressInfo;
+    try {
+      const res = await fetch(`http://${address}:${port}/mcp/calc/stream`, {
+        method: 'POST',
+        headers: MCP_HEADERS,
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: { name: 'add', arguments: { a: 2, b: 3 } },
+        }),
+      });
+      assert.equal(res.status, 200);
+      const message = parseSSEMessage(await res.text());
+      assert.deepEqual(message.result.content, [{ type: 'text', text: 'hello, mcp: 5' }]);
+      assert.equal(seen.length, 1);
+    } finally {
+      await app.destroy();
+    }
   });
 });

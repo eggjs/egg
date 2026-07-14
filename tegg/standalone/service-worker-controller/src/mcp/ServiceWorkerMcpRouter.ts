@@ -1,22 +1,45 @@
-import { CONTROLLER_META_DATA, type MCPControllerMeta } from '@eggjs/controller-decorator';
+import { CONTROLLER_META_DATA, type MCPControllerMeta, type MCPToolMeta } from '@eggjs/controller-decorator';
 import {
   MCPServerHelper,
   MCP_ROUTER_NAME,
   type McpRouter,
   type McpServerRegistration,
+  type ServerRegisterRecord,
 } from '@eggjs/controller-runtime';
 import { Inject, InnerObjectProto } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { CONTROLLER_AOP_MIDDLEWARES } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, EggPrototype } from '@eggjs/tegg-types';
-import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
+import {
+  type HandleRequestOptions,
+  WebStandardStreamableHTTPServerTransport,
+} from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 
 import type { FetchRouter } from '../http/FetchRouter.ts';
 import type { ServiceWorkerFetchContext } from '../http/ServiceWorkerFetchContext.ts';
-import type { MCPAuthHandler } from '../types.ts';
+import type { MCPAuthHandler, MCPTransportOptions } from '../types.ts';
 import type { AbstractControllerAdvice } from './AbstractControllerAdvice.ts';
 
 type MCPMiddleware = (ctx: ServiceWorkerFetchContext, next: () => Promise<void>) => Promise<void>;
+
+/** Minimal koa-style onion compose so selected middlewares wrap the dispatch. */
+function composeMiddlewares(middlewares: MCPMiddleware[]): (ctx: ServiceWorkerFetchContext) => Promise<void> {
+  return (ctx) => {
+    let index = -1;
+    const dispatch = (i: number): Promise<void> => {
+      if (i <= index) {
+        return Promise.reject(new Error('next() called multiple times'));
+      }
+      index = i;
+      const fn = middlewares[i];
+      if (!fn) {
+        return Promise.resolve();
+      }
+      return Promise.resolve(fn(ctx, () => dispatch(i + 1)));
+    };
+    return dispatch(0);
+  };
+}
 
 /**
  * The fetch host's MCP transport boundary: stateless streamable HTTP under
@@ -38,6 +61,9 @@ export class ServiceWorkerMcpRouter implements McpRouter {
 
   @Inject()
   private readonly mcpAuthHandler: MCPAuthHandler;
+
+  @Inject()
+  private readonly mcpTransportOptions: MCPTransportOptions;
 
   #registrations: McpServerRegistration[] = [];
   #mounted = false;
@@ -79,38 +105,107 @@ export class ServiceWorkerMcpRouter implements McpRouter {
     }
     const transport = new WebStandardStreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
+      ...this.#dnsRebindingOptions(),
     });
     await mcpServerHelper.server.connect(transport);
     return transport;
   }
 
   /**
-   * Resolve the per-server middlewares from every controller proto that
-   * contributed to this server: function-type middlewares from the controller
-   * metadata plus AOP advice classes declared on the proto.
+   * Forward Host/Origin allow-lists to the SDK transport. Protection turns on
+   * once either list is configured (default off for backward compatibility) —
+   * the host should set it before exposing the endpoint beyond loopback.
    */
-  private buildMiddlewares(reg: McpServerRegistration): MCPMiddleware[] {
+  #dnsRebindingOptions(): {
+    allowedHosts?: string[];
+    allowedOrigins?: string[];
+    enableDnsRebindingProtection?: boolean;
+  } {
+    const { allowedHosts, allowedOrigins, enableDnsRebindingProtection } = this.mcpTransportOptions ?? {};
+    if (!allowedHosts?.length && !allowedOrigins?.length) {
+      return {};
+    }
+    return {
+      allowedHosts,
+      allowedOrigins,
+      enableDnsRebindingProtection: enableDnsRebindingProtection ?? true,
+    };
+  }
+
+  /** Read the JSON-RPC body once via a clone; the original stream stays intact
+   * for the SDK / a middleware, and the parsed value is handed to the SDK so it
+   * never re-reads the one-shot body after auth or a middleware touched it. */
+  async #readJsonRpcBody(request: Request): Promise<unknown> {
+    try {
+      return await request.clone().json();
+    } catch {
+      // Empty / non-JSON: let the SDK read the original and raise its own error.
+      return undefined;
+    }
+  }
+
+  /** Find the tool/prompt/resource a JSON-RPC message targets, if any. */
+  #findTargetRecord(
+    reg: McpServerRegistration,
+    message: unknown,
+  ): ServerRegisterRecord<{ name?: string; mcpName?: string; uri?: string }> | undefined {
+    const method = (message as { method?: string })?.method;
+    const params = ((message as { params?: Record<string, unknown> })?.params ?? {}) as {
+      name?: string;
+      uri?: string;
+    };
+    switch (method) {
+      case 'tools/call':
+        return reg.tools.find((t) => (t.meta.mcpName ?? t.meta.name) === params.name);
+      case 'prompts/get':
+        return reg.prompts.find((p) => (p.meta.mcpName ?? p.meta.name) === params.name);
+      case 'resources/read':
+        return reg.resources.find((r) => r.meta.uri !== undefined && r.meta.uri === params.uri);
+      default:
+        // initialize / tools|prompts|resources/list / ping etc. target no record.
+        return undefined;
+    }
+  }
+
+  /** Controller-level (function + AOP advice) middlewares declared on a proto. */
+  #controllerMiddlewares(proto: EggPrototype): MCPMiddleware[] {
+    const out: MCPMiddleware[] = [];
+    const metadata = proto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
+    for (const mw of metadata.middlewares ?? []) {
+      out.push(mw as unknown as MCPMiddleware);
+    }
+    const aopMiddlewareClasses = (proto.getMetaData(CONTROLLER_AOP_MIDDLEWARES) ??
+      []) as EggProtoImplClass<AbstractControllerAdvice>[];
+    for (const clazz of aopMiddlewareClasses) {
+      out.push(async (ctx, next) => {
+        const eggObj = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz);
+        await (eggObj.obj as AbstractControllerAdvice).middleware(ctx, next);
+      });
+    }
+    return out;
+  }
+
+  /**
+   * Select only the middlewares of the targeted tool/prompt/resource:
+   * controller-level (once per owning proto) plus that method's own
+   * middlewares. So one controller's middleware never runs for another
+   * controller's tool, nor for `initialize` / `tools/list`.
+   */
+  #selectMiddlewares(reg: McpServerRegistration, parsedBody: unknown): MCPMiddleware[] {
+    const messages = Array.isArray(parsedBody) ? parsedBody : [parsedBody];
     const middlewares: MCPMiddleware[] = [];
-    const seen = new Set<EggPrototype>();
-    for (const record of [...reg.tools, ...reg.resources, ...reg.prompts]) {
-      if (seen.has(record.proto)) {
+    const seenProtos = new Set<EggPrototype>();
+    for (const message of messages) {
+      const record = this.#findTargetRecord(reg, message);
+      if (!record) {
         continue;
       }
-      seen.add(record.proto);
-      const metadata = record.proto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
-      // Function-type middlewares from MCPControllerMeta
-      const classMiddlewares = metadata.middlewares ?? [];
-      for (const mw of classMiddlewares) {
-        middlewares.push(mw as unknown as MCPMiddleware);
+      if (!seenProtos.has(record.proto)) {
+        seenProtos.add(record.proto);
+        middlewares.push(...this.#controllerMiddlewares(record.proto));
       }
-      // AOP-type middlewares from class metadata
-      const aopMiddlewareClasses = (record.proto.getMetaData(CONTROLLER_AOP_MIDDLEWARES) ??
-        []) as EggProtoImplClass<AbstractControllerAdvice>[];
-      for (const clazz of aopMiddlewareClasses) {
-        middlewares.push(async (ctx, next) => {
-          const eggObj = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz);
-          await (eggObj.obj as AbstractControllerAdvice).middleware(ctx, next);
-        });
+      for (const mw of (record.meta as MCPToolMeta).middlewares ?? []) {
+        middlewares.push(mw as unknown as MCPMiddleware);
       }
     }
     return middlewares;
@@ -123,24 +218,32 @@ export class ServiceWorkerMcpRouter implements McpRouter {
         name: reg.controllerMeta.name ?? `mcp-${reg.serverName}-server`,
         version: reg.controllerMeta.version ?? '1.0.0',
       });
-    const middlewares = this.buildMiddlewares(reg);
 
     const postRouterFunc = router.post;
     const initHandler = async (ctx: ServiceWorkerFetchContext) => {
-      const denied = await this.mcpAuthHandler.authenticate(ctx.event.request);
+      const request = ctx.event.request;
+      // Parse the body first (via a clone, no side effect) so target selection
+      // and the SDK share one read; authentication remains the outermost gate
+      // before any middleware or transport dispatch runs.
+      const parsedBody = await this.#readJsonRpcBody(request);
+      const denied = await this.mcpAuthHandler.authenticate(request);
       if (denied) {
         ctx.response = denied;
         return;
       }
-      const transport = await this.createServerTransport(reg, helperFactory);
-      ctx.response = await transport.handleRequest(ctx.event.request);
+      const options: HandleRequestOptions | undefined = parsedBody === undefined ? undefined : { parsedBody };
+      const dispatch: MCPMiddleware = async () => {
+        const transport = await this.createServerTransport(reg, helperFactory);
+        ctx.response = await transport.handleRequest(request, options);
+      };
+      await composeMiddlewares([...this.#selectMiddlewares(reg, parsedBody), dispatch])(ctx);
     };
 
     const streamPath = `/mcp${name ? `/${name}` : ''}/stream`;
     const basePath = `/mcp${name ? `/${name}` : ''}`;
     const paths = [streamPath, basePath];
     for (const path of paths) {
-      Reflect.apply(postRouterFunc, router, ['mcpStatelessStreamInit', path, ...middlewares, initHandler]);
+      Reflect.apply(postRouterFunc, router, ['mcpStatelessStreamInit', path, initHandler]);
     }
 
     // Only POST is allowed for stateless streamable HTTP
