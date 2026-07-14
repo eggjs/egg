@@ -2,7 +2,15 @@ import { debuglog } from 'node:util';
 
 import { FrameworkErrorFormatter } from '@eggjs/errors';
 import { Graph, GraphNode, type ModuleReference } from '@eggjs/tegg-common-util';
-import { type InjectObjectDescriptor, type ProtoDescriptor, TeggScope, type TeggScopeBag } from '@eggjs/tegg-types';
+import {
+  AccessLevel,
+  type InjectObjectDescriptor,
+  InitTypeQualifierAttribute,
+  LoadUnitNameQualifierAttribute,
+  type ProtoDescriptor,
+  TeggScope,
+  type TeggScopeBag,
+} from '@eggjs/tegg-types';
 
 import { EggPrototypeNotFound } from '../../errors.ts';
 import type { ModuleDescriptor } from '../ModuleDescriptor.ts';
@@ -113,12 +121,92 @@ export class GlobalGraph {
     }
   }
 
+  /**
+   * The set of protos that genuinely compete for the same injection: same name
+   * + same init type + same USER qualifiers, and — because every proto carries
+   * an auto-added `LoadUnitName` (module) qualifier — a scope that is global for
+   * PUBLIC protos (they override across modules) but module-local for PRIVATE
+   * ones (a private proto is only visible in its own module, so two private
+   * same-name protos in different modules never compete). The auto-added
+   * `LoadUnitName`/`InitType` qualifiers are excluded from the user-qualifier
+   * signature so cross-module PUBLIC protos still group together.
+   */
+  #protoCompeteKey(proto: ProtoDescriptor): string {
+    const userQualifiers = proto.qualifiers
+      .filter((q) => q.attribute !== InitTypeQualifierAttribute && q.attribute !== LoadUnitNameQualifierAttribute)
+      .map((q) => `${String(q.attribute)}=${String(q.value)}`)
+      .sort()
+      .join(',');
+    const scope = proto.accessLevel === AccessLevel.PUBLIC ? 'public' : `module:${proto.instanceModuleName}`;
+    return `${scope}|${String(proto.name)}|${proto.initType}|${userQualifiers}`;
+  }
+
+  /**
+   * Resolve override precedence before any edge is built or any proto is
+   * instantiated. Within each competing group (see {@link #protoCompeteKey})
+   * that carries an `@Override` or `@ConditionalOnMissing` marker, keep the
+   * highest tier — `@Override` > plain > `@ConditionalOnMissing` — and prune the
+   * losers from both the proto graph and their module's proto list, so they
+   * never get an inject edge nor an instantiation slot. Ties within the winning
+   * tier are left to normal resolution (qualifier disambiguation /
+   * MultiPrototypeFound).
+   */
+  #pruneOverriddenProtos(): void {
+    type Node = GraphNode<ProtoNode, ProtoDependencyMeta>;
+    const byKey = new Map<string, Node[]>();
+    for (const node of this.protoGraph.nodes.values()) {
+      const key = this.#protoCompeteKey(node.val.proto);
+      let list = byKey.get(key);
+      if (!list) {
+        list = [];
+        byKey.set(key, list);
+      }
+      list.push(node);
+    }
+
+    const loserIds = new Set<string>();
+    for (const nodes of byKey.values()) {
+      if (nodes.length < 2) {
+        continue;
+      }
+      const hasMarker = nodes.some((n) => n.val.proto.override || n.val.proto.conditionalOnMissing);
+      if (!hasMarker) {
+        continue;
+      }
+      const overrides = nodes.filter((n) => n.val.proto.override);
+      const plains = nodes.filter((n) => !n.val.proto.override && !n.val.proto.conditionalOnMissing);
+      const winners = overrides.length > 0 ? overrides : plains.length > 0 ? plains : nodes;
+      for (const node of nodes) {
+        if (!winners.includes(node)) {
+          loserIds.add(node.id);
+        }
+      }
+    }
+
+    if (loserIds.size === 0) {
+      return;
+    }
+    for (const id of loserIds) {
+      this.protoGraph.removeVertex(id);
+    }
+    for (const moduleNode of this.moduleGraph.nodes.values()) {
+      const protos = moduleNode.val.protos;
+      for (let i = protos.length - 1; i >= 0; i--) {
+        if (loserIds.has(protos[i].id)) {
+          protos.splice(i, 1);
+        }
+      }
+    }
+    this.#protoNameIndex = null;
+  }
+
   build(): void {
     if (this.#buildState !== 'created') {
       throw new Error(`global graph can only be built once (state: ${this.#buildState})`);
     }
     this.#buildState = 'building';
     try {
+      this.#pruneOverriddenProtos();
       for (const moduleNode of this.moduleGraph.nodes.values()) {
         for (const protoNode of moduleNode.val.protos) {
           for (const injectObj of protoNode.val.proto.injectObjects) {

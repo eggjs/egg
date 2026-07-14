@@ -1,3 +1,4 @@
+export * from './ConditionalOnMissing.ts';
 export * from './ConfigSource.ts';
 export * from './ContextProto.ts';
 export * from './DefineModuleQualifier.ts';
@@ -8,6 +9,7 @@ export * from './Inject.ts';
 export * from './InnerObjectProto.ts';
 export * from './ModuleQualifier.ts';
 export * from './MultiInstanceInfo.ts';
+export * from './Override.ts';
 export * from './MultiInstanceProto.ts';
 export * from './Prototype.ts';
 export * from './SingletonProto.ts';

@@ -190,6 +190,8 @@ export class ProtoDescriptorHelper {
       defineModuleName: ctx.defineModuleName || ctx.moduleName,
       clazz,
       properQualifiers: {},
+      override: PrototypeUtil.isOverride(clazz),
+      conditionalOnMissing: PrototypeUtil.isConditionalOnMissing(clazz),
     });
   }
 

@@ -26,6 +26,12 @@ export interface ProtoDescriptor extends EggPrototypeInfo {
   protoImplType: string;
   properQualifiers: Record<PropertyKey, QualifierInfo[]>;
 
+  // override precedence: `@Override` wins over a same-name plain/conditional
+  // proto; `@ConditionalOnMissing` is dropped when any other proto provides the
+  // same name. Both losers are pruned before instantiation.
+  override?: boolean;
+  conditionalOnMissing?: boolean;
+
   // module info
   defineModuleName: string;
   defineUnitPath: string;

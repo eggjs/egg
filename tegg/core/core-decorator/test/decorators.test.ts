@@ -13,7 +13,7 @@ import {
 import type { EggPrototypeInfo, EggMultiInstancePrototypeInfo, InjectObjectInfo } from '@eggjs/tegg-types';
 import { describe, it, expect } from 'vitest';
 
-import { PrototypeUtil, QualifierUtil } from '../src/index.ts';
+import { ConditionalOnMissing, Override, PrototypeUtil, QualifierUtil, SingletonProto } from '../src/index.ts';
 import CacheService from './fixtures/decators/CacheService.ts';
 import {
   ChildDynamicMultiInstanceProto,
@@ -311,6 +311,28 @@ describe('test/decorators.test.ts', () => {
         await PrototypeUtil.getMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx),
         undefined,
       );
+    });
+  });
+
+  describe('@Override / @ConditionalOnMissing', () => {
+    it('should mark the proto class', () => {
+      @Override()
+      @SingletonProto()
+      class OverrideProto {}
+
+      @ConditionalOnMissing()
+      @SingletonProto()
+      class ConditionalProto {}
+
+      @SingletonProto()
+      class PlainProto {}
+
+      assert.equal(PrototypeUtil.isOverride(OverrideProto), true);
+      assert.equal(PrototypeUtil.isConditionalOnMissing(OverrideProto), false);
+      assert.equal(PrototypeUtil.isConditionalOnMissing(ConditionalProto), true);
+      assert.equal(PrototypeUtil.isOverride(ConditionalProto), false);
+      assert.equal(PrototypeUtil.isOverride(PlainProto), false);
+      assert.equal(PrototypeUtil.isConditionalOnMissing(PlainProto), false);
     });
   });
 });

@@ -20,6 +20,8 @@ export interface AbstractProtoDescriptorOptions {
   instanceDefineUnitPath: string;
   type: ProtoDescriptorTypeLike;
   properQualifiers: Record<PropertyKey, QualifierInfo[]>;
+  override?: boolean;
+  conditionalOnMissing?: boolean;
 }
 
 export abstract class AbstractProtoDescriptor implements ProtoDescriptor {
@@ -36,6 +38,8 @@ export abstract class AbstractProtoDescriptor implements ProtoDescriptor {
   className?: string;
   properQualifiers: Record<PropertyKey, QualifierInfo[]>;
   type: ProtoDescriptorTypeLike;
+  override?: boolean;
+  conditionalOnMissing?: boolean;
 
   protected constructor(options: AbstractProtoDescriptorOptions) {
     this.name = options.name;
@@ -50,6 +54,8 @@ export abstract class AbstractProtoDescriptor implements ProtoDescriptor {
     this.instanceDefineUnitPath = options.instanceDefineUnitPath;
     this.type = options.type;
     this.properQualifiers = options.properQualifiers;
+    this.override = options.override;
+    this.conditionalOnMissing = options.conditionalOnMissing;
   }
 
   abstract equal(protoDescriptor: ProtoDescriptor): boolean;

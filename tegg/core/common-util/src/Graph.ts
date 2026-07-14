@@ -104,6 +104,18 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return true;
   }
 
+  /** Remove a vertex and any edges referencing it. Returns false if absent. */
+  removeVertex(id: string): boolean {
+    if (!this.nodes.delete(id)) {
+      return false;
+    }
+    for (const node of this.nodes.values()) {
+      node.toNodeMap.delete(id);
+      node.fromNodeMap.delete(id);
+    }
+    return true;
+  }
+
   addEdge(from: GraphNode<T, M>, to: GraphNode<T, M>, meta?: M): boolean {
     to.addFromVertex(from, meta);
     return from.addToVertex(to, meta);

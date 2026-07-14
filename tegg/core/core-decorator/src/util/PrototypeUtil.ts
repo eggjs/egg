@@ -19,6 +19,8 @@ import { MetadataUtil } from './MetadataUtil.ts';
 
 export class PrototypeUtil {
   static readonly IS_EGG_OBJECT_PROTOTYPE: symbol = Symbol.for('EggPrototype#isEggPrototype');
+  static readonly IS_OVERRIDE: symbol = Symbol.for('EggPrototype#isOverride');
+  static readonly IS_CONDITIONAL_ON_MISSING: symbol = Symbol.for('EggPrototype#isConditionalOnMissing');
   static readonly IS_EGG_OBJECT_MULTI_INSTANCE_PROTOTYPE: symbol = Symbol.for(
     'EggPrototype#isEggMultiInstancePrototype',
   );
@@ -56,6 +58,24 @@ export class PrototypeUtil {
    */
   static isEggPrototype(clazz: EggProtoImplClass): boolean {
     return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.IS_EGG_OBJECT_PROTOTYPE, clazz);
+  }
+
+  /** Mark the proto as an explicit override — it wins over a same-name plain / conditional proto. */
+  static setOverride(clazz: EggProtoImplClass): void {
+    MetadataUtil.defineMetaData(PrototypeUtil.IS_OVERRIDE, true, clazz);
+  }
+
+  static isOverride(clazz: EggProtoImplClass): boolean {
+    return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.IS_OVERRIDE, clazz);
+  }
+
+  /** Mark the proto as a conditional default — it is dropped when any other proto provides the same name. */
+  static setConditionalOnMissing(clazz: EggProtoImplClass): void {
+    MetadataUtil.defineMetaData(PrototypeUtil.IS_CONDITIONAL_ON_MISSING, true, clazz);
+  }
+
+  static isConditionalOnMissing(clazz: EggProtoImplClass): boolean {
+    return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.IS_CONDITIONAL_ON_MISSING, clazz);
   }
 
   /**
