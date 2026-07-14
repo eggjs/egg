@@ -3,7 +3,10 @@ import type { IncomingHttpHeaders } from 'node:http';
 import type { HTTPMethodMeta, PathParamMeta, QueriesParamMeta, QueryParamMeta } from '@eggjs/controller-decorator';
 import { HTTPParamType } from '@eggjs/controller-decorator';
 import { HTTPMethodRegister, type HTTPHandlerFunc } from '@eggjs/controller-runtime';
+import { CONTROLLER_AOP_MIDDLEWARES } from '@eggjs/tegg-types';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
+import type { AbstractControllerAdvice } from '../mcp/AbstractControllerAdvice.ts';
 import { RequestUtils } from '../utils/RequestUtils.ts';
 import type { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext.ts';
 
@@ -13,6 +16,24 @@ import type { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext.ts';
  * method args and writes the return value back as a Response.
  */
 export class FetchHTTPMethodRegister extends HTTPMethodRegister {
+  /**
+   * `@Middleware(SomeAdvice)` advice classes are koa-style middlewares here, not
+   * AOP around advices: resolve each into a middleware that wraps the handler and
+   * runs `advice.middleware(ctx, next)`, mirroring {@link ServiceWorkerMcpRouter}.
+   * The handler is innermost, so an advice reading `ctx.body` after `next()` sees
+   * the controller's normalized return value.
+   */
+  protected getExtraMethodMiddlewares(): HTTPHandlerFunc[] {
+    const adviceClasses = (this.proto.getMetaData(CONTROLLER_AOP_MIDDLEWARES) ??
+      []) as EggProtoImplClass<AbstractControllerAdvice>[];
+    return adviceClasses.map((clazz) => {
+      return (async (ctx: ServiceWorkerFetchContext, next: () => Promise<void>) => {
+        const eggObj = await this.eggContainerFactory.getOrCreateEggObjectFromClazz(clazz);
+        await (eggObj.obj as AbstractControllerAdvice).middleware(ctx, next);
+      }) as HTTPHandlerFunc;
+    });
+  }
+
   protected createHandler(methodMeta: HTTPMethodMeta, host: string | undefined): HTTPHandlerFunc {
     const argsLength = methodMeta.paramMap.size;
     const hasContext = methodMeta.contextParamIndex !== undefined;

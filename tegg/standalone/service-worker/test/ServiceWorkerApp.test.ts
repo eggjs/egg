@@ -57,6 +57,16 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     assert.deepEqual(await res.json(), { fromMiddleware: 'yes' });
   });
 
+  it('should run aop-mode middlewares (@Middleware with advice classes)', async () => {
+    const res = await fetch(`${base}/aop-mw/aop`);
+    assert.deepEqual(await res.json(), { body: { msg: 'hello' } });
+  });
+
+  it('should let an aop-mode middleware catch controller errors', async () => {
+    const res = await fetch(`${base}/aop-mw/error`);
+    assert.deepEqual(await res.json(), { body: { message: 'mock error' } });
+  });
+
   it('should inject the fetch event into context protos', async () => {
     const res = await fetch(`${base}/hello/event`);
     const { url } = (await res.json()) as { url: string };
