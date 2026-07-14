@@ -8,6 +8,7 @@ Read this file before exploring raw sources.
 
 - [Repository Map](./concepts/repository-map.md) - High-level map of the main repository areas and where to look first.
 - [Tegg Module Plugin](./concepts/tegg-module-plugin.md) - Declarative framework hooks (@InnerObjectProto/@EggLifecycleProto), the InnerObjectLoadUnit two-phase boot ordering, and host feeding rules.
+- [Proto Override Precedence](./concepts/proto-override-precedence.md) - @Override / @ConditionalOnMissing decorators for deterministic same-name proto override, resolved by pruning the loser before instantiation.
 - [Vitest isolate:false state leaks](./concepts/vitest-isolate-false-state-leaks.md) - Why pool:threads + isolate:false exposes cross-file/cross-project state leaks, the concrete leaks (import.ts snapshot loader, mock mockContext, teardown close/load race), and how to triage them.
 
 ## Workflows

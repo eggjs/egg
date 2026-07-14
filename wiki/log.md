@@ -180,3 +180,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `tegg/core/runtime/src/impl/InnerObjectLoadUnitBuilder.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`
 - pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
 - note: Kept logger as a dedicated Standalone public option, but removed the logger-specific builder channel. Each host now adds its logger to the complete provided-inner-object map before invoking the host-agnostic builder.
+
+## [2026-07-14] feature | proto override precedence (@Override / @ConditionalOnMissing)
+
+- sources touched: `tegg/core/core-decorator/src/decorator/Override.ts`, `tegg/core/core-decorator/src/decorator/ConditionalOnMissing.ts`, `tegg/core/core-decorator/src/util/PrototypeUtil.ts`, `tegg/core/types/src/metadata/model/ProtoDescriptor.ts`, `tegg/core/metadata/src/model/ProtoDescriptorHelper.ts`, `tegg/core/metadata/src/model/graph/GlobalGraph.ts`, `tegg/core/common-util/src/Graph.ts`
+- pages updated: `wiki/log.md`, `wiki/index.md`, `wiki/concepts/proto-override-precedence.md`
+- note: Two proto-level decorators give deterministic same-name override — `@Override` > plain > `@ConditionalOnMissing`. The loser is pruned in `GlobalGraph.build()` before instantiation (non-instantiation model), so a replaced default never runs its constructor/lifecycle. Competition is scoped by name + init type + user qualifiers + access-level (PUBLIC global, PRIVATE module-local), excluding the auto-added LoadUnitName/InitType qualifiers. `@Primary`/`@Fallback` (select-among-coexisting) intentionally deferred.
