@@ -67,6 +67,19 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     assert.deepEqual(await res.json(), { body: { message: 'mock error' } });
   });
 
+  it('should run a @Pointcut advice on a controller method', async () => {
+    const res = await fetch(`${base}/pc/run`);
+    assert.deepEqual(await res.json(), { msg: 'hello', count: 0 });
+  });
+
+  it('should run @Middleware (koa layer) and @Pointcut (aop layer) together', async () => {
+    // @Pointcut runs inside the method and mutates the raw return ({ msg, count });
+    // the handler normalizes it into ctx.body; the outer koa @Middleware then reads
+    // that normalized body and wraps it. Both layers work with no ResponseAdvice.
+    const res = await fetch(`${base}/combo/run`);
+    assert.deepEqual(await res.json(), { body: { msg: 'hello', count: 0 } });
+  });
+
   it('should inject the fetch event into context protos', async () => {
     const res = await fetch(`${base}/hello/event`);
     const { url } = (await res.json()) as { url: string };
