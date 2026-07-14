@@ -1,7 +1,28 @@
+import type { ServiceWorkerFetchContext } from './http/ServiceWorkerFetchContext.ts';
+
 export interface FetchEvent extends Event {
   request: Request;
   waitUntil(f: Promise<any>): void;
   respondWith(r: Response | PromiseLike<Response>): void;
+}
+
+/**
+ * Optional host hook to build the per-request fetch context. Provide it as the
+ * `fetchContextFactory` inner object to return a richer context (logger/tracer/
+ * user); when absent the plain {@link ServiceWorkerFetchContext} is used.
+ */
+export interface FetchContextFactory {
+  create(init: ServiceWorkerContextInit<FetchEvent>): ServiceWorkerFetchContext;
+}
+
+/**
+ * Optional host hook to turn an unhandled controller error into a Response.
+ * Provide it as the `errorResponseMapper` inner object to map your own error
+ * types (business status/body); return `undefined` to fall back to the
+ * framework's unified `{ code, message }` 500.
+ */
+export interface ErrorResponseMapper {
+  toResponse(error: unknown, ctx: ServiceWorkerFetchContext): Response | undefined;
 }
 
 /**

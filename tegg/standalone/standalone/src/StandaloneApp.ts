@@ -151,9 +151,13 @@ export class StandaloneApp {
     this.#runtimeConfig.env = opts.env ?? '';
     this.#runtimeConfig.baseDir = opts.baseDir;
 
-    // Load module.yml and module.env.yml by default. The override is scoped to
-    // this app's TeggScope bag.
-    ModuleConfigUtil.configNames = opts.env ? ['module.default', `module.${opts.env}`] : ['module.default'];
+    // Load module.default.yml and module.${env}.yml by default. A host that
+    // needs a custom config-name selection chain sets `ModuleConfigUtil.configNames`
+    // inside this app's TeggScope bag before init(); only fill the default when
+    // nothing was pre-set, so that override is not clobbered.
+    if (ModuleConfigUtil.configNames === undefined) {
+      ModuleConfigUtil.configNames = opts.env ? ['module.default', `module.${opts.env}`] : ['module.default'];
+    }
   }
 
   /** Load every module's config and expose it as a qualified `moduleConfig` inner object. */

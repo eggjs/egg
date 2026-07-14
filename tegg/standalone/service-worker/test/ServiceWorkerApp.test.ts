@@ -3,11 +3,15 @@ import type http from 'node:http';
 import type { AddressInfo } from 'node:net';
 import path from 'node:path';
 
-import { FetchEventImpl } from '@eggjs/service-worker-controller';
+import { FetchEventImpl, ServiceWorkerFetchContext } from '@eggjs/service-worker-controller';
+import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import { TeggScope } from '@eggjs/tegg-types';
 import { afterAll, beforeAll, describe, it } from 'vitest';
 
 import { ServiceWorkerApp } from '../src/index.ts';
 import { backgroundFlags } from './fixtures/hello-app/HelloController.ts';
+
+const HELLO_APP = path.join(__dirname, 'fixtures/hello-app');
 
 describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
   let app: ServiceWorkerApp;
@@ -174,5 +178,77 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     const response = await event.responsePromise!;
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { message: 'hello, tegg' });
+  });
+});
+
+describe('standalone/service-worker/test/ServiceWorkerApp.test.ts host seams', () => {
+  it('should map controller errors through a custom errorResponseMapper', async () => {
+    const app = new ServiceWorkerApp(HELLO_APP, {
+      innerObjectHandlers: {
+        errorResponseMapper: [
+          {
+            obj: {
+              toResponse(error: unknown) {
+                return new Response(JSON.stringify({ mapped: (error as Error).message }), {
+                  status: 418,
+                  headers: { 'content-type': 'application/json' },
+                });
+              },
+            },
+          },
+        ],
+      },
+    });
+    const server = await app.serve();
+    const { address, port } = server.address() as AddressInfo;
+    try {
+      const res = await fetch(`http://${address}:${port}/stream/boom`);
+      assert.equal(res.status, 418);
+      assert.deepEqual(await res.json(), { mapped: 'stream controller boom' });
+    } finally {
+      await app.destroy();
+    }
+  });
+
+  it('should build the request context through a custom fetchContextFactory', async () => {
+    const seen: string[] = [];
+    const app = new ServiceWorkerApp(HELLO_APP, {
+      innerObjectHandlers: {
+        fetchContextFactory: [
+          {
+            obj: {
+              create(init: ConstructorParameters<typeof ServiceWorkerFetchContext>[0]) {
+                seen.push(new URL(init.event.request.url).pathname);
+                return new ServiceWorkerFetchContext(init);
+              },
+            },
+          },
+        ],
+      },
+    });
+    const server = await app.serve();
+    const { address, port } = server.address() as AddressInfo;
+    try {
+      await fetch(`http://${address}:${port}/hello/`);
+      assert.deepEqual(seen, ['/hello/']);
+    } finally {
+      await app.destroy();
+    }
+  });
+
+  it('should not clobber a pre-set ModuleConfigUtil.configNames', async () => {
+    const app = new ServiceWorkerApp(HELLO_APP);
+    // Host selection chain set in the app's scope bag before init must survive.
+    TeggScope.run(app.app.scopeBag, () => {
+      ModuleConfigUtil.configNames = ['module.default', 'module.beta'];
+    });
+    const server = await app.serve();
+    const { address, port } = server.address() as AddressInfo;
+    try {
+      const res = await fetch(`http://${address}:${port}/hello/module-config`);
+      assert.deepEqual(await res.json(), { features: { greeting: 'beta-hi' } });
+    } finally {
+      await app.destroy();
+    }
   });
 });

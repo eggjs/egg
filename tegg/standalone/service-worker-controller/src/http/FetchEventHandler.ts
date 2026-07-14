@@ -1,12 +1,12 @@
 import type { RootProtoManager } from '@eggjs/controller-runtime';
 import { BackgroundTaskHelper } from '@eggjs/service-worker-runtime';
-import { AccessLevel, Inject } from '@eggjs/tegg';
+import { AccessLevel, Inject, InjectOptional } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { AbstractEventHandler, EventHandlerProto } from '@eggjs/tegg/standalone';
 
 import { MCPRegisterProvider } from '../mcp/MCPRegisterProvider.ts';
-import type { FetchEvent } from '../types.ts';
+import type { ErrorResponseMapper, FetchContextFactory, FetchEvent } from '../types.ts';
 import { ResponseUtils } from '../utils/ResponseUtils.ts';
 import { FetchRouter } from './FetchRouter.ts';
 import { HTTPRegisterProvider } from './HTTPRegisterProvider.ts';
@@ -27,6 +27,12 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
 
   @Inject()
   private readonly mcpRegisterProvider: MCPRegisterProvider;
+
+  @InjectOptional()
+  private readonly fetchContextFactory?: FetchContextFactory;
+
+  @InjectOptional()
+  private readonly errorResponseMapper?: ErrorResponseMapper;
 
   #routes?: RouterMiddleware;
   #initPromise?: Promise<void>;
@@ -52,7 +58,7 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
 
   async handleEvent(event: FetchEvent): Promise<Response> {
     await this.initRoutes();
-    const ctx = new ServiceWorkerFetchContext({ event });
+    const ctx = this.fetchContextFactory?.create({ event }) ?? new ServiceWorkerFetchContext({ event });
     try {
       await this.#routes!(ctx, async () => {
         /* noop */
@@ -63,6 +69,10 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
       }
       return await this.#guardResponseStream(this.#mergeResponseHeaders(response, ctx.responseHeaders));
     } catch (e: any) {
+      const mapped = this.errorResponseMapper?.toResponse(e, ctx);
+      if (mapped) {
+        return mapped;
+      }
       console.error('[service-worker] handle fetch event failed:', e);
       return ResponseUtils.createErrorResponse(500, 'INTERNAL_SERVER_ERROR', e?.message ?? 'internal error');
     }
