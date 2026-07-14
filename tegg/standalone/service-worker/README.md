@@ -13,18 +13,25 @@ fetch-specific.
 
 ## Usage
 
+Serve over `node:http`:
+
 ```ts
 import { ServiceWorkerApp } from '@eggjs/service-worker';
 
 const app = new ServiceWorkerApp('/path/to/module');
-
-// over node:http
 const server = await app.serve({ port: 7001 });
+// ... handle requests ...
+await app.destroy();
+```
 
-// or embedded: hand it a fetch event, get a Response back
-import { FetchEventImpl } from '@eggjs/service-worker';
+Or embedded — hand it a fetch event, get a `Response` back (`handleEvent`
+initializes the app on first call):
+
+```ts
+import { ServiceWorkerApp, FetchEventImpl } from '@eggjs/service-worker';
+
+const app = new ServiceWorkerApp('/path/to/module');
 const response = await app.handleEvent<Response>(new FetchEventImpl(new Request('http://localhost/hello/')));
-
 await app.destroy();
 ```
 

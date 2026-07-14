@@ -61,14 +61,37 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
       if (!response) {
         return ResponseUtils.createErrorResponse(404, 'NOT_FOUND', `${ctx.method} ${ctx.path} not found`);
       }
-      for (const [key, value] of ctx.responseHeaders.entries()) {
-        response.headers.set(key, value);
-      }
-      return await this.#guardResponseStream(response);
+      return await this.#guardResponseStream(this.#mergeResponseHeaders(response, ctx.responseHeaders));
     } catch (e: any) {
       console.error('[service-worker] handle fetch event failed:', e);
       return ResponseUtils.createErrorResponse(500, 'INTERNAL_SERVER_ERROR', e?.message ?? 'internal error');
     }
+  }
+
+  /**
+   * Merge headers set by middlewares/controllers onto the response. A native /
+   * redirect / error Response has immutable headers, so mutating in place would
+   * throw; rebuild through a fresh Headers copy only when there is something to
+   * merge.
+   */
+  #mergeResponseHeaders(response: Response, extra: Headers): Response {
+    let hasExtra = false;
+    for (const _ of extra.keys()) {
+      hasExtra = true;
+      break;
+    }
+    if (!hasExtra) {
+      return response;
+    }
+    const headers = new Headers(response.headers);
+    for (const [key, value] of extra.entries()) {
+      headers.set(key, value);
+    }
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   }
 
   /**

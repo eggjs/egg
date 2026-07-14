@@ -1,4 +1,4 @@
-import { ControllerType, type MCPControllerMeta } from '@eggjs/controller-decorator';
+import { ControllerType } from '@eggjs/controller-decorator';
 import { MCPControllerRegister, type ControllerRegisterFactory } from '@eggjs/controller-runtime';
 import { EggQualifier, EggType, Inject, InjectOptional, InnerObjectProto } from '@eggjs/core-decorator';
 import { LifecyclePostInject } from '@eggjs/lifecycle';
@@ -24,8 +24,8 @@ export class EggMCPRegisterProvider {
     if (!mcpRouter) {
       return;
     }
-    this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, (proto, controllerMeta) => {
-      this.#register ??= new MCPControllerRegister(controllerMeta as MCPControllerMeta, mcpRouter);
+    this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, (proto) => {
+      this.#register ??= new MCPControllerRegister(mcpRouter);
       this.#register.addControllerProto(proto);
       return this.#register;
     });

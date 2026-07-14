@@ -57,6 +57,23 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     assert.deepEqual(await res.json(), { fromMiddleware: 'yes' });
   });
 
+  it('should stream a Node Readable return value', async () => {
+    const res = await fetch(`${base}/edge/node-stream`);
+    assert.equal(res.status, 200);
+    assert.equal(await res.text(), 'node-readable');
+  });
+
+  it('should preserve multiple Set-Cookie headers over node:http', async () => {
+    const res = await fetch(`${base}/edge/cookies`);
+    assert.deepEqual(res.headers.getSetCookie(), ['a=1', 'b=2']);
+  });
+
+  it('should merge responseHeaders onto an immutable Response without 500', async () => {
+    const res = await fetch(`${base}/edge/immutable`, { redirect: 'manual' });
+    assert.equal(res.status, 302);
+    assert.equal(res.headers.get('x-added'), '1');
+  });
+
   it('should run aop-mode middlewares (@Middleware with advice classes)', async () => {
     const res = await fetch(`${base}/aop-mw/aop`);
     assert.deepEqual(await res.json(), { body: { msg: 'hello' } });

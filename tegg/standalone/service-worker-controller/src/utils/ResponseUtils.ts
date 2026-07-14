@@ -1,3 +1,5 @@
+import { Readable } from 'node:stream';
+
 export class ResponseUtils {
   /**
    * The unified error shape for framework-generated failures (routing 404,
@@ -19,6 +21,9 @@ export class ResponseUtils {
     }
     if (Buffer.isBuffer(body) || typeof body === 'string' || body instanceof ReadableStream) {
       return new Response(body as BodyInit, { status: 200 });
+    }
+    if (body instanceof Readable) {
+      return new Response(Readable.toWeb(body) as unknown as ReadableStream, { status: 200 });
     }
     return new Response(JSON.stringify(body), {
       status: 200,

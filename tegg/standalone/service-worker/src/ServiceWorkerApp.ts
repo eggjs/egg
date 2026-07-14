@@ -90,6 +90,9 @@ export class ServiceWorkerApp {
   }
 
   async handleEvent<T = unknown>(event: Event): Promise<T> {
+    // Auto-init so embedded callers can hand over a fetch event without a
+    // separate init()/serve() step; init() is idempotent.
+    await this.init();
     const context = new StandaloneContext();
     context.set(ContextProtoProperty.Event.contextKey, event);
 
@@ -143,7 +146,16 @@ export class ServiceWorkerApp {
     const response = await this.handleEvent<Response>(event);
     res.statusCode = response.status;
     for (const [key, value] of response.headers.entries()) {
+      // `entries()` folds multiple Set-Cookie into one comma-joined value, which
+      // corrupts cookies (commas appear inside Expires); write them as an array.
+      if (key === 'set-cookie') {
+        continue;
+      }
       res.setHeader(key, value);
+    }
+    const setCookies = response.headers.getSetCookie();
+    if (setCookies.length > 0) {
+      res.setHeader('set-cookie', setCookies);
     }
     if (response.body) {
       await pipeline(Readable.fromWeb(response.body as any), res);

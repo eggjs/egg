@@ -19,7 +19,6 @@ import type { McpRouter, ServerRegisterRecord } from './McpRouter.ts';
  */
 export class MCPControllerRegister implements ControllerRegister {
   readonly eggContainerFactory: typeof EggContainerFactory;
-  private readonly controllerMeta: MCPControllerMeta;
   private readonly mcpRouter: McpRouter;
   private controllerProtos: EggPrototype[] = [];
   private registeredControllerProtos: EggPrototype[] = [];
@@ -33,11 +32,10 @@ export class MCPControllerRegister implements ControllerRegister {
     }
   > = {};
 
-  constructor(controllerMeta: MCPControllerMeta, mcpRouter: McpRouter) {
+  constructor(mcpRouter: McpRouter) {
     // Direct import, not a read off the (possibly proxied) app — see
     // HTTPControllerRegister.create.
     this.eggContainerFactory = EggContainerFactory;
-    this.controllerMeta = controllerMeta;
     this.mcpRouter = mcpRouter;
   }
 
@@ -62,9 +60,12 @@ export class MCPControllerRegister implements ControllerRegister {
         tools: [],
       });
       if (isNew) {
+        // Use THIS server's own controller metadata (name/version), not the
+        // first-registered controller's — otherwise a second MCP server reports
+        // the first server's serverInfo.
         this.mcpRouter.registerServer({
           serverName,
-          controllerMeta: this.controllerMeta,
+          controllerMeta: metadata,
           tools: entry.tools,
           resources: entry.resources,
           prompts: entry.prompts,

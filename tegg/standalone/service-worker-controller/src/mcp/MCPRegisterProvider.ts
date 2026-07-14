@@ -1,4 +1,4 @@
-import { ControllerType, type MCPControllerMeta } from '@eggjs/controller-decorator';
+import { ControllerType } from '@eggjs/controller-decorator';
 import { MCPControllerRegister, type ControllerRegisterFactory } from '@eggjs/controller-runtime';
 import { Inject, InnerObjectProto, LifecyclePostInject } from '@eggjs/tegg';
 import { AccessLevel } from '@eggjs/tegg-types';
@@ -22,8 +22,8 @@ export class MCPRegisterProvider {
 
   @LifecyclePostInject()
   protected init(): void {
-    this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, (proto, controllerMeta) => {
-      this.#register ??= new MCPControllerRegister(controllerMeta as MCPControllerMeta, this.mcpRouter);
+    this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, (proto) => {
+      this.#register ??= new MCPControllerRegister(this.mcpRouter);
       this.#register.addControllerProto(proto);
       return this.#register;
     });
