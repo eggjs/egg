@@ -78,6 +78,17 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     assert.equal(res.headers.get('x-added'), '1');
   });
 
+  it('should return a Uint8Array body as bytes, not JSON', async () => {
+    const res = await fetch(`${base}/edge/bytes`);
+    assert.equal(await res.text(), 'byte-body');
+  });
+
+  it('should preserve multiple ctx.responseHeaders Set-Cookie on the merged response', async () => {
+    const res = await fetch(`${base}/edge/mw-cookies`);
+    assert.deepEqual(res.headers.getSetCookie(), ['x=1', 'y=2']);
+    assert.deepEqual(await res.json(), { ok: true });
+  });
+
   it('should run aop-mode middlewares (@Middleware with advice classes)', async () => {
     const res = await fetch(`${base}/aop-mw/aop`);
     assert.deepEqual(await res.json(), { body: { msg: 'hello' } });

@@ -9,7 +9,7 @@ source_files:
   - tegg/core/controller-runtime/src
   - tegg/plugin/controller/src
   - examples/helloworld-service-worker
-updated_at: 2026-07-10
+updated_at: 2026-07-14
 status: active
 ---
 

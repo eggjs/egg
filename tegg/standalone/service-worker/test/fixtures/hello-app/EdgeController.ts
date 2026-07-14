@@ -24,4 +24,16 @@ export class EdgeController {
     ctx.responseHeaders.set('x-added', '1');
     return Response.redirect('http://localhost/dest', 302);
   }
+
+  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/bytes' })
+  async bytes() {
+    return new TextEncoder().encode('byte-body');
+  }
+
+  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/mw-cookies' })
+  async mwCookies(@InjectContext() ctx: any) {
+    ctx.responseHeaders.append('set-cookie', 'x=1');
+    ctx.responseHeaders.append('set-cookie', 'y=2');
+    return { ok: true };
+  }
 }

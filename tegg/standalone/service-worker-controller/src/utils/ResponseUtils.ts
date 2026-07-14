@@ -19,7 +19,18 @@ export class ResponseUtils {
     if (typeof body === 'undefined' || body === null) {
       return new Response(null, { status: 204 });
     }
-    if (Buffer.isBuffer(body) || typeof body === 'string' || body instanceof ReadableStream) {
+    if (
+      typeof body === 'string' ||
+      body instanceof ReadableStream ||
+      // Buffer is a Uint8Array; also cover the other web-standard BodyInit types
+      // so a controller returning binary/form bodies is not JSON-serialized.
+      body instanceof Uint8Array ||
+      body instanceof ArrayBuffer ||
+      body instanceof Blob ||
+      body instanceof URLSearchParams ||
+      body instanceof FormData ||
+      ArrayBuffer.isView(body)
+    ) {
       return new Response(body as BodyInit, { status: 200 });
     }
     if (body instanceof Readable) {

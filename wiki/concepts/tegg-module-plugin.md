@@ -32,7 +32,7 @@ source_files:
   - tegg/plugin/controller/src/lib/impl/http/EggHTTPControllerRegistrar.ts
   - tegg/plugin/controller/src/lib/impl/mcp/EggMCPRegisterProvider.ts
   - tegg/standalone/service-worker-controller/src/http/FetchEventHandler.ts
-updated_at: 2026-07-13
+updated_at: 2026-07-14
 status: active
 ---
 

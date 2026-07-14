@@ -147,7 +147,11 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
       await this.controllerLoadUnitHandler.ready();
 
-      this.app.config.mcp.hooks = EggMcpRouter.hooks;
+      // Guarded like every other config.mcp access — when MCP is disabled
+      // config.mcp may be absent, and there is no router to publish hooks for.
+      if (this.mcpEnable()) {
+        this.app.config.mcp.hooks = EggMcpRouter.hooks;
+      }
     });
   }
 

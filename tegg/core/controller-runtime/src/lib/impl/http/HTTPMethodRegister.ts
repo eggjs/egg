@@ -61,9 +61,10 @@ export abstract class HTTPMethodRegister {
     this.checkDuplicateInRouter(this.router);
 
     // 2. check duplicate with host tegg controller
-    let hostRouter: Router | undefined;
     const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) || [];
     hosts.forEach((h) => {
+      // Per-iteration so a falsy host does not inherit the previous host's router.
+      let hostRouter: Router | undefined;
       if (h) {
         hostRouter = this.checkRouters.get(h);
         if (!hostRouter) {

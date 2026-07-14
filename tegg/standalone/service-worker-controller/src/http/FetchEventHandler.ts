@@ -57,9 +57,11 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
   }
 
   async handleEvent(event: FetchEvent): Promise<Response> {
-    await this.initRoutes();
     const ctx = this.fetchContextFactory?.create({ event }) ?? new ServiceWorkerFetchContext({ event });
     try {
+      // Inside the try so a route-registration failure returns the unified 500
+      // error shape instead of rejecting handleEvent's promise.
+      await this.initRoutes();
       await this.#routes!(ctx, async () => {
         /* noop */
       });
@@ -68,13 +70,14 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
         return ResponseUtils.createErrorResponse(404, 'NOT_FOUND', `${ctx.method} ${ctx.path} not found`);
       }
       return await this.#guardResponseStream(this.#mergeResponseHeaders(response, ctx.responseHeaders));
-    } catch (e: any) {
+    } catch (e) {
       const mapped = this.errorResponseMapper?.toResponse(e, ctx);
       if (mapped) {
         return mapped;
       }
       console.error('[service-worker] handle fetch event failed:', e);
-      return ResponseUtils.createErrorResponse(500, 'INTERNAL_SERVER_ERROR', e?.message ?? 'internal error');
+      const message = e instanceof Error ? e.message : String(e);
+      return ResponseUtils.createErrorResponse(500, 'INTERNAL_SERVER_ERROR', message);
     }
   }
 
@@ -95,7 +98,15 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
     }
     const headers = new Headers(response.headers);
     for (const [key, value] of extra.entries()) {
+      // `entries()` folds multiple Set-Cookie into one comma-joined value, which
+      // corrupts cookies; carry them over individually via getSetCookie().
+      if (key === 'set-cookie') {
+        continue;
+      }
       headers.set(key, value);
+    }
+    for (const cookie of extra.getSetCookie()) {
+      headers.append('set-cookie', cookie);
     }
     return new Response(response.body, {
       status: response.status,
