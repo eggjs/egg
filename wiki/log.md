@@ -2,6 +2,18 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-14] feature | fetch-host MCP config-selected transport provider
+
+- sources touched: `tegg/standalone/service-worker-controller/src/mcp/{ServiceWorkerMcpRouter.ts,types.ts}`, `tegg/standalone/service-worker/test/MCP.test.ts`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: `config.mcp.transport` selects the fetch-host MCP transport per app: the built-in `'web'` (web-standard streamable, default) or a host-registered alternative by name via `ServiceWorkerMcpRouter.registerTransport(name, provider)`. The selected provider fully owns the server's transport (mutually exclusive with the built-in), so a host can swap in an alternative transport (e.g. a node-based SSE `/sse`+`/messages` + streamable) WHOLESALE via config — no router fork, no facade `mcp` option, no IoC override, no module swap; node:http stays in the registering host. Registry is `TeggScope`-scoped per app (mirrors `EggMcpRouter.hooks`); unknown name falls back to built-in. `McpTransportProvider` gets an `McpServerMountContext` (router, live registration, serverName/basePath, shared authenticate/createServerHelper/selectMiddlewares/compose). Built-in path shares `#mountStreamable` + `#createServerHelper`.
+
+## [2026-07-14] behavior | service-worker standalone: single config surface + capability-object seam
+
+- sources touched: `tegg/standalone/standalone/src/{StandaloneApp.ts,main.ts}`, `tegg/standalone/standalone/README.md`, `tegg/standalone/service-worker/src/ServiceWorkerApp.ts`, `tegg/standalone/service-worker-controller/src/{mcp/ServiceWorkerMcpRouter.ts,types.ts}`, `tegg/standalone/service-worker/test/{ServiceWorkerApp.test.ts,MCP.test.ts,fixtures/hello-app/*}`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: `StandaloneApp` exposes the entry app module's `module.yml` (the module scanned from `baseDir`) as the framework-owned app-wide `config` inner object — the single user config surface, with NO programmatic override (subsystems read their slice, e.g. `config.backgroundTask.timeout`, `config.mcp.*`). Capability objects are `@InjectOptional()` inner objects supplied via the generic `innerObjectHandlers` seam, each defaulting when absent: `mcpAuthHandler` (absent → allow-all), `fetchContextFactory`, `errorResponseMapper`. So `ServiceWorkerApp` has no bespoke options — `ServiceWorkerAppOptions` aliases `StandaloneAppOptions`. Removed the earlier `mcp` facade option + `mcpTransportOptions` inner object; DNS-rebinding options move to `config.mcp`. Tests use `module.<env>.yml` fixtures (via `env`) for per-app mcp config and `innerObjectHandlers` for auth.
+
 ## [2026-07-14] package | service-worker framework-module auto-discovery (drop hand-ordered frameworkDeps)
 
 - sources touched: `tegg/standalone/service-worker-runtime/src/StandaloneEggObjectFactory.ts`, `tegg/standalone/service-worker/src/{ServiceWorkerApp.ts,index.ts}`, `tegg/standalone/service-worker/test/ServiceWorkerApp.test.ts`

@@ -46,7 +46,7 @@ export class Foo implements MainRunner<string> {
   - innerObjectHandlers: 当前运行环境中内置的对象
   - logger: standalone 框架及模块注入使用的 logger；不要放入 innerObjectHandlers
 
-`moduleConfigs`、`moduleConfig` 和 `runtimeConfig` 由 standalone 框架维护；
+`config`、`moduleConfigs`、`moduleConfig` 和 `runtimeConfig` 由 standalone 框架维护；
 `innerObjectHandlers` 中的同名项会被忽略。
 
 ```
@@ -64,6 +64,11 @@ await main(cwd, {
 ### 配置
 
 module 支持通过 module.yml 来定义配置，在代码中可以通过注入 moduleConfigs 获取全局配置，通过注入 moduleConfig 来获取单 module 的配置。
+
+入口应用 module（从 baseDir 扫描到的那个 module，其 module 目录即 cwd）的 `module.yml`
+会作为应用级的 `config` 内置对象暴露出来，通过 `@Inject() config` 注入即可读取。
+这是唯一的应用级配置来源（没有程序化 config 覆盖入口）；子系统各取所需
+（如 `config.backgroundTask.timeout`），环境变体写 `module.<env>.yml`。
 
 ```yaml
 # module.yml

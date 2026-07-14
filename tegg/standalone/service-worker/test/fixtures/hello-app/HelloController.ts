@@ -36,6 +36,9 @@ export class HelloController {
   @Inject()
   private readonly moduleConfigs: ModuleConfigs;
 
+  @Inject()
+  private readonly config: Record<string, unknown>;
+
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/' })
   async index() {
     return { message: this.helloService.hello('tegg') };
@@ -73,6 +76,11 @@ export class HelloController {
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/module-config' })
   async moduleConfig() {
     return this.moduleConfigs.get('helloApp');
+  }
+
+  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/app-config' })
+  async appConfig() {
+    return this.config;
   }
 
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/background' })

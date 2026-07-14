@@ -3,6 +3,13 @@ import type http from 'node:http';
 import type { AddressInfo } from 'node:net';
 import path from 'node:path';
 
+import {
+  ServiceWorkerMcpRouter,
+  type McpServerMountContext,
+  type McpTransportProvider,
+  type ServiceWorkerFetchContext,
+} from '@eggjs/service-worker-controller';
+import { TeggScope } from '@eggjs/tegg-types';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { afterAll, beforeAll, describe, it } from 'vitest';
@@ -131,17 +138,25 @@ describe('standalone/service-worker/test/MCP.test.ts mcpAuthHandler', () => {
   let base: string;
 
   beforeAll(async () => {
+    // mcpAuthHandler is a capability object → provided through innerObjectHandlers
+    // (the generic host-object seam), not a bespoke facade option.
     app = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'), {
-      mcpAuthHandler: {
-        async authenticate(request: Request) {
-          if (request.headers.get('x-mcp-token') !== 'secret') {
-            return new Response(JSON.stringify({ code: 'UNAUTHORIZED', message: 'missing x-mcp-token' }), {
-              status: 401,
-              headers: { 'content-type': 'application/json' },
-            });
-          }
-          return undefined;
-        },
+      innerObjectHandlers: {
+        mcpAuthHandler: [
+          {
+            obj: {
+              async authenticate(request: Request) {
+                if (request.headers.get('x-mcp-token') !== 'secret') {
+                  return new Response(JSON.stringify({ code: 'UNAUTHORIZED', message: 'missing x-mcp-token' }), {
+                    status: 401,
+                    headers: { 'content-type': 'application/json' },
+                  });
+                }
+                return undefined;
+              },
+            },
+          },
+        ],
       },
     });
     const server = await app.serve();
@@ -178,8 +193,10 @@ describe('standalone/service-worker/test/MCP.test.ts mcpAuthHandler', () => {
 
 describe('standalone/service-worker/test/MCP.test.ts hardening', () => {
   it('should reject a request whose Host is not in allowedHosts', async () => {
+    // module.allowedhost.yml carries `mcp.allowedHosts`; config comes from the
+    // app's module.yml, so the test picks it via env, not a programmatic option.
     const app = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'), {
-      mcp: { allowedHosts: ['allowed.example'] },
+      env: 'allowedhost',
     });
     const server = await app.serve();
     const { address, port } = server.address() as AddressInfo;
@@ -199,13 +216,19 @@ describe('standalone/service-worker/test/MCP.test.ts hardening', () => {
   it('should still serve when the auth hook consumes the request body', async () => {
     const seen: unknown[] = [];
     const app = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'), {
-      mcpAuthHandler: {
-        async authenticate(request: Request) {
-          // Auth reads the one-shot body; the SDK must still parse via the
-          // pre-read parsedBody rather than the now-consumed stream.
-          seen.push(await request.json());
-          return undefined;
-        },
+      innerObjectHandlers: {
+        mcpAuthHandler: [
+          {
+            obj: {
+              async authenticate(request: Request) {
+                // Auth reads the one-shot body; the SDK must still parse via the
+                // pre-read parsedBody rather than the now-consumed stream.
+                seen.push(await request.json());
+                return undefined;
+              },
+            },
+          },
+        ],
       },
     });
     const server = await app.serve();
@@ -225,6 +248,87 @@ describe('standalone/service-worker/test/MCP.test.ts hardening', () => {
       const message = parseSSEMessage(await res.text());
       assert.deepEqual(message.result.content, [{ type: 'text', text: 'hello, mcp: 5' }]);
       assert.equal(seen.length, 1);
+    } finally {
+      await app.destroy();
+    }
+  });
+});
+
+describe('standalone/service-worker/test/MCP.test.ts transport selection', () => {
+  it('should mount a host-registered transport when config.mcp.transport selects it', async () => {
+    const seen: Array<string | undefined> = [];
+    // A stand-in for the internal node-mock provider: it fully owns the server's
+    // transport, mounting its own route via the shared context (auth + helper +
+    // live records) instead of the built-in web-standard streamable.
+    const fakeProvider: McpTransportProvider = {
+      mount(context: McpServerMountContext) {
+        seen.push(context.serverName);
+        Reflect.apply(context.router.post, context.router, [
+          'fakeTransport',
+          `${context.basePath}/stream`,
+          async (ctx: ServiceWorkerFetchContext) => {
+            const denied = await context.authenticate(ctx.event.request);
+            if (denied) {
+              ctx.response = denied;
+              return;
+            }
+            const helper = await context.createServerHelper();
+            ctx.response = Response.json({
+              via: 'fake',
+              server: context.serverName ?? 'default',
+              tools: context.registration.tools.length,
+              hasServer: Boolean(helper.server),
+            });
+          },
+        ]);
+      },
+    };
+
+    // module.faketransport.yml sets `mcp.transport: fake`.
+    const app = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'), {
+      env: 'faketransport',
+    });
+    // Register the provider inside THIS app's scope so the per-app registry holds
+    // it before the router mounts each server on the first request.
+    TeggScope.run(app.app.scopeBag, () => {
+      ServiceWorkerMcpRouter.registerTransport('fake', fakeProvider);
+    });
+    const server = await app.serve();
+    const { address, port } = server.address() as AddressInfo;
+    try {
+      // The selected provider owns the streamable endpoint (built-in web-standard
+      // did NOT mount here) and reuses the shared auth gate + server helper.
+      const res = await fetch(`http://${address}:${port}/mcp/calc/stream`, {
+        method: 'POST',
+        headers: MCP_HEADERS,
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list', params: {} }),
+      });
+      assert.equal(res.status, 200);
+      assert.deepEqual(await res.json(), { via: 'fake', server: 'calc', tools: 1, hasServer: true });
+      // the provider is selected for every server (calc + mwcalc)
+      assert.ok(seen.includes('calc'));
+    } finally {
+      await app.destroy();
+    }
+  });
+
+  it('should fall back to the built-in web-standard transport for an unknown name', async () => {
+    // config selects transport 'fake' (module.faketransport.yml) but no provider
+    // is registered for it → the router falls back to the built-in web-standard.
+    const app = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'), {
+      env: 'faketransport',
+    });
+    const server = await app.serve();
+    const { address, port } = server.address() as AddressInfo;
+    try {
+      const res = await fetch(`http://${address}:${port}/mcp/calc/stream`, {
+        method: 'POST',
+        headers: MCP_HEADERS,
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list', params: {} }),
+      });
+      assert.equal(res.status, 200);
+      const message = parseSSEMessage(await res.text());
+      assert.equal(message.result.tools.length, 1);
     } finally {
       await app.destroy();
     }

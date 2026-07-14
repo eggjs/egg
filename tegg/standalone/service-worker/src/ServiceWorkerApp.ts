@@ -4,7 +4,7 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 
-import { FetchEventImpl, type MCPAuthHandler, type MCPTransportOptions } from '@eggjs/service-worker-controller';
+import { FetchEventImpl } from '@eggjs/service-worker-controller';
 import { ContextProtoProperty } from '@eggjs/service-worker-runtime';
 import {
   StandaloneApp,
@@ -13,20 +13,13 @@ import {
   type StandaloneAppOptions,
 } from '@eggjs/standalone';
 
-export interface ServiceWorkerAppOptions extends StandaloneAppOptions {
-  /** Injected as the `config` inner object (BackgroundTaskHelper reads `config.backgroundTask.timeout`). */
-  config?: Record<string, any>;
-  /** Auth hook for MCP routes; the default lets every request through. */
-  mcpAuthHandler?: MCPAuthHandler;
-  /** DNS-rebinding protection for the MCP transport (Host/Origin allow-lists). */
-  mcp?: MCPTransportOptions;
-}
-
-const PASS_THROUGH_MCP_AUTH_HANDLER: MCPAuthHandler = {
-  async authenticate() {
-    return undefined;
-  },
-};
+/**
+ * The service worker app has no bespoke options of its own — everything is a
+ * standalone option. Config values come from the app's `module.yml`; capability
+ * objects (mcpAuthHandler, fetchContextFactory, errorResponseMapper) are provided
+ * through `innerObjectHandlers`.
+ */
+export type ServiceWorkerAppOptions = StandaloneAppOptions;
 
 export interface ServeOptions {
   port?: number;
@@ -45,7 +38,7 @@ export class ServiceWorkerApp {
   #initialized = false;
 
   constructor(cwd: string, options?: ServiceWorkerAppOptions) {
-    const { config, mcpAuthHandler, mcp, ...standaloneOptions } = options ?? {};
+    const standaloneOptions = options ?? {};
     // Scan this package's own root so its framework-module deps
     // (service-worker-runtime + -controller) are auto-discovered via the
     // node_modules eggModule convention. `!test/**` keeps their test fixtures out.
@@ -63,12 +56,7 @@ export class ServiceWorkerApp {
       frameworkDeps,
       dump: standaloneOptions.dump,
       logger: standaloneOptions.logger,
-      innerObjects: {
-        config: [{ obj: config ?? {} }],
-        mcpAuthHandler: [{ obj: mcpAuthHandler ?? PASS_THROUGH_MCP_AUTH_HANDLER }],
-        mcpTransportOptions: [{ obj: mcp ?? {} }],
-        ...standaloneOptions.innerObjectHandlers,
-      },
+      innerObjects: standaloneOptions.innerObjectHandlers,
     });
     this.#initOptions = {
       baseDir: cwd,

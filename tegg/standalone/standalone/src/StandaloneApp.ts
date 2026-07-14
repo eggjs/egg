@@ -47,9 +47,9 @@ export interface StandaloneAppInit {
   frameworkDeps?: (string | ModuleDependency)[];
   dump?: boolean;
   /**
-   * Host-provided inner objects. Framework-owned `moduleConfigs`, `moduleConfig`,
-   * and `runtimeConfig` entries are ignored. `logger` is reserved; use the
-   * dedicated `logger` option instead.
+   * Host-provided inner objects. Framework-owned `config`, `moduleConfigs`,
+   * `moduleConfig`, and `runtimeConfig` entries are ignored. `logger` is
+   * reserved; use the dedicated `logger` option instead.
    */
   innerObjects?: Record<string, InnerObject[]>;
   /** User-facing option name for diagnostics. Defaults to `innerObjects`. */
@@ -103,6 +103,11 @@ export class StandaloneApp {
   // In the constructor there is no runtime config yet — pre-create the object
   // so the runtimeConfig inner object can hold it; init() fills the values.
   readonly #runtimeConfig = {} as RuntimeConfig;
+  // The app-wide `config` inner object: the entry app module's module.yml.
+  // Pre-created so the inner object can hold it; #loadModuleConfigs fills it
+  // once the entry module is known.
+  readonly #config: Record<string, unknown> = {};
+  #appModuleName?: string;
   #moduleReferences: readonly ModuleReference[] = [];
   #state: StandaloneAppState = 'new';
   #runnerProto?: EggPrototype;
@@ -139,6 +144,7 @@ export class StandaloneApp {
       // init() — the inner objects hold these same references unless the caller
       // supplies objects with other names.
       logger: [{ obj: this.#logger }],
+      config: [{ obj: this.#config }],
       moduleConfigs: [{ obj: new ModuleConfigs(this.#moduleConfigs) }],
       moduleConfig: [] as InnerObject[],
       runtimeConfig: [{ obj: this.#runtimeConfig }],
@@ -162,6 +168,7 @@ export class StandaloneApp {
 
   /** Load every module's config and expose it as a qualified `moduleConfig` inner object. */
   #loadModuleConfigs(): void {
+    const baseDir = path.resolve(this.#runtimeConfig.baseDir);
     const resolvedReferences: ModuleReference[] = [];
     for (const reference of this.#moduleReferences) {
       const resolved = ModuleConfigUtil.resolveModuleConfigTolerant(reference, this.#runtimeConfig.baseDir);
@@ -177,9 +184,18 @@ export class StandaloneApp {
         reference: resolvedRef,
         config: resolved.config,
       };
+      // The entry app module is the one scanned from baseDir (its module dir IS
+      // the cwd); its module.yml is exposed as the app-wide `config`.
+      if (path.resolve(resolved.path) === baseDir) {
+        this.#appModuleName = resolved.name;
+      }
       resolvedReferences.push(resolvedRef);
     }
     this.#moduleReferences = resolvedReferences;
+    // The app-wide config is the entry app module's module.yml.
+    if (this.#appModuleName) {
+      Object.assign(this.#config, this.#moduleConfigs[this.#appModuleName].config);
+    }
     for (const moduleConfig of Object.values(this.#moduleConfigs)) {
       this.#innerObjects.moduleConfig.push({
         obj: moduleConfig.config,

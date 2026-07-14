@@ -36,6 +36,22 @@ module-plugin mechanism (declarative `@InnerObjectProto` /
 
 Key mechanics and constraints:
 
+- **App-wide `config` inner object = the entry app module's `module.yml`**:
+  `StandaloneApp` designates the module scanned from `baseDir` (its module dir IS
+  the cwd) as the entry app module and exposes its `module.yml` as the app-wide
+  `config` inner object (`@Inject() config`), the single config surface — there is
+  no programmatic `config` override. Subsystems read their own slice:
+  `config.backgroundTask.timeout` (BackgroundTaskHelper), `config.mcp` (transport
+  selection + DNS-rebinding options `allowedHosts`/`allowedOrigins`/
+  `enableDnsRebindingProtection`). Config VALUES live in the app's `module.yml`
+  (env variants via `module.<env>.yml`); capability OBJECTS (`mcpAuthHandler`,
+  `fetchContextFactory`, `errorResponseMapper`) are `@InjectOptional()` inner
+  objects a host supplies through the generic `innerObjectHandlers` seam, each
+  with a default when absent (allow-all auth, plain context, unmapped error). So
+  `ServiceWorkerApp` has no options of its own — `ServiceWorkerAppOptions` is an
+  alias of `StandaloneAppOptions`. `config` joins `logger`/`moduleConfigs`/
+  `moduleConfig`/`runtimeConfig` as a framework-owned inner object (a host-provided
+  `config` handler is ignored).
 - **Four-package controller layering** (mirrors the egg host): host-agnostic
   runtime `@eggjs/controller-runtime` (a plain LIBRARY, not an eggModule — base
   register classes, collect-only `MCPControllerRegister`, `McpRouter`/`Router`
@@ -62,7 +78,27 @@ Key mechanics and constraints:
   from register records collected at boot. The service worker's
   `ServiceWorkerMcpRouter` uses `WebStandardStreamableHTTPServerTransport`
   (Request in, Response out) — no node req/res bridging. Auth is an
-  `mcpAuthHandler` extension point (default: allow).
+  `mcpAuthHandler` extension point (`@InjectOptional`, via `innerObjectHandlers`;
+  absent → allow); DNS-rebinding options are
+  read from `config.mcp` (see the app-wide config bullet).
+- **Config-selected transport provider** (`config.mcp.transport` +
+  `ServiceWorkerMcpRouter.registerTransport`): `config.mcp.transport` (from the
+  app's `module.yml`) selects which transport mounts per app — the built-in
+  `'web'` (web-standard streamable HTTP, the default) or a host-registered
+  alternative by name. A host registers an alternative via
+  `registerTransport(name, provider)` and points its app config at it
+  (`mcp.transport: <name>`); the provider then fully OWNS the server's transport
+  (mutually exclusive with the built-in), so a host can select an alternative
+  transport (e.g. a node-based SSE `/sse`+`/messages`, which the SDK has no
+  web-standard equivalent for, plus streamable) WHOLESALE without forking the
+  router, a facade `mcp` option, an IoC override, or a module swap. The provider
+  receives an `McpServerMountContext` (the `FetchRouter`, live `registration`,
+  `serverName`/`basePath`, and shared
+  `authenticate`/`createServerHelper`/`selectMiddlewares`/`compose` so it reuses
+  the same auth gate, MCP server helper, and middleware pipeline). The registry
+  is `TeggScope`-scoped per app (mirrors `EggMcpRouter.hooks`), an unknown name
+  falls back to the built-in, and node:http stays entirely in the host that
+  registers the alternative.
 - **Streaming lifecycle**: `FetchEventHandler` routes every response body
   through a passthrough and registers the drain as a background task, so ctx
   destroy waits (bounded by `config.backgroundTask.timeout`) until the client

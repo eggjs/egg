@@ -140,6 +140,11 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     assert.deepEqual(await res.json(), { features: { greeting: 'howdy' } });
   });
 
+  it('should expose the entry app module.yml as the app-wide config', async () => {
+    const res = await fetch(`${base}/hello/app-config`);
+    assert.deepEqual(await res.json(), { features: { greeting: 'howdy' } });
+  });
+
   it('should return the unified error shape for unknown routes', async () => {
     const res = await fetch(`${base}/nope`);
     assert.equal(res.status, 404);
