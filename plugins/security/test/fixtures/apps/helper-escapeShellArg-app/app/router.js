@@ -10,7 +10,7 @@ module.exports = (app) => {
     const port = "8889'|chmod 777 /tmp/muma.sh;echo \\";
     this.body =
       `cp.exec('./start.sh '+${this.helper.escapeShellArg(port)})` ===
-      "cp.exec('./start.sh '+'8889\\'|chmod 777 /tmp/muma.sh;echo \\\\')";
+      "cp.exec('./start.sh '+'8889'\\''|chmod 777 /tmp/muma.sh;echo \\')";
   });
 
   app.get('/escapeShellArg-3', async function () {
