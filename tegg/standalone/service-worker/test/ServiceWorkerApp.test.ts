@@ -89,6 +89,21 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     assert.deepEqual(await res.json(), { ok: true });
   });
 
+  it('should read/write cookies via @HTTPCookies', async () => {
+    const res = await fetch(`${base}/edge/cookie`, { headers: { cookie: 'sid=abc123; other=x' } });
+    assert.deepEqual(await res.json(), { sid: 'abc123' });
+    const setCookies = res.headers.getSetCookie();
+    const answer = setCookies.find((c) => c.startsWith('answer=42'));
+    assert.ok(
+      answer &&
+        /;\s*HttpOnly/i.test(answer) &&
+        /;\s*Secure/i.test(answer) &&
+        /;\s*Partitioned/i.test(answer) &&
+        /;\s*Priority=High/i.test(answer),
+      `answer cookie missing attributes: ${answer}`,
+    );
+  });
+
   it('should run aop-mode middlewares (@Middleware with advice classes)', async () => {
     const res = await fetch(`${base}/aop-mw/aop`);
     assert.deepEqual(await res.json(), { body: { msg: 'hello' } });

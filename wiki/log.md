@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-15] feature | fetch-host `@HTTPCookies` (fetch-native cookies)
+
+- sources touched: `tegg/standalone/service-worker-controller/src/http/{ServiceWorkerCookies.ts,FetchHTTPMethodRegister.ts}`, `tegg/standalone/service-worker-controller/src/index.ts`, `tegg/standalone/service-worker/test/{ServiceWorkerApp.test.ts,fixtures/hello-app/EdgeController.ts}`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Added `@HTTPCookies()` to the fetch host — `FetchHTTPMethodRegister` gains the `HTTPParamType.COOKIES` branch binding a fetch-native `ServiceWorkerCookies` (`@eggjs/cookies`-compatible `get`/`set`; Set-Cookie attrs path/domain/expires/maxAge/httpOnly/secure/sameSite/partitioned/priority/overwrite) that reads the `Cookie` header + writes `Set-Cookie` onto `ctx.responseHeaders`. Previously the fetch host had no COOKIES param branch (threw "unsupported param type"). Unsigned by design (edge-clean; not `@eggjs/cookies`, which has app coupling + heavy deps) — signing/encryption are not implemented; a host that needs them injects `@eggjs/cookies`. Users annotate `@HTTPCookies() cookies: Cookies` with the `Cookies` type from `@eggjs/tegg`; `ServiceWorkerCookies` is the internal impl.
+
 ## [2026-07-15] fix | fetch-host streaming keepalive via tee + context preDestroy
 
 - sources touched: `tegg/standalone/service-worker-controller/src/http/FetchEventHandler.ts`

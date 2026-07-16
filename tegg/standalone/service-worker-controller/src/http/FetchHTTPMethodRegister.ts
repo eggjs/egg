@@ -8,6 +8,7 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
 import type { AbstractControllerAdvice } from '../mcp/AbstractControllerAdvice.ts';
 import { RequestUtils } from '../utils/RequestUtils.ts';
+import { ServiceWorkerCookies } from './ServiceWorkerCookies.ts';
 import type { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext.ts';
 
 /**
@@ -87,6 +88,10 @@ export class FetchHTTPMethodRegister extends HTTPMethodRegister {
               headers[k] = v;
             }
             args[index] = headers;
+            break;
+          }
+          case HTTPParamType.COOKIES: {
+            args[index] = new ServiceWorkerCookies(ctx.event.request, ctx.responseHeaders);
             break;
           }
           case HTTPParamType.REQUEST: {

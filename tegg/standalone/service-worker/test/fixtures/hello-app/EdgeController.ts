@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream';
 
-import { HTTPController, HTTPMethod, HTTPMethodEnum, InjectContext } from '@eggjs/tegg';
+import { type Cookies, HTTPController, HTTPCookies, HTTPMethod, HTTPMethodEnum, InjectContext } from '@eggjs/tegg';
 
 @HTTPController({ path: '/edge' })
 export class EdgeController {
@@ -35,5 +35,11 @@ export class EdgeController {
     ctx.responseHeaders.append('set-cookie', 'x=1');
     ctx.responseHeaders.append('set-cookie', 'y=2');
     return { ok: true };
+  }
+
+  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/cookie' })
+  async cookie(@HTTPCookies() cookies: Cookies) {
+    cookies.set('answer', '42', { httpOnly: true, secure: true, partitioned: true, priority: 'high' });
+    return { sid: cookies.get('sid') ?? null };
   }
 }

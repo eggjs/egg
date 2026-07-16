@@ -23,9 +23,16 @@ module-plugin mechanism (declarative `@InnerObjectProto` /
   (ctx-destroy draining).
 - `@eggjs/service-worker-controller` — the fetch controller transport (the
   `serviceWorker` eggModule): `FetchEventHandler`, `FetchRouter` + fetch
-  parameter binding (no `@Cookies`), `HTTP/MCP RegisterProvider`,
-  `ServiceWorkerMcpRouter`, MCP stateless streamable HTTP under
-  `/mcp[/name]/stream`.
+  parameter binding (body/param/query/queries/headers/cookies/request via the
+  `@HTTP*` decorators), `HTTP/MCP RegisterProvider`, `ServiceWorkerMcpRouter`,
+  MCP stateless streamable HTTP under `/mcp[/name]/stream`. `@HTTPCookies()`
+  binds a fetch-native `ServiceWorkerCookies` — an `@eggjs/cookies`-compatible
+  `get`/`set` (reads the `Cookie` header, writes `Set-Cookie` onto
+  `ctx.responseHeaders`) — chosen over `@eggjs/cookies`, which has app coupling
+  (`app.emit('cookieLimitExceed')`, unguarded) + heavy egg-flavored deps unwanted
+  at the edge. Signing/encryption are not implemented (inject `@eggjs/cookies` if
+  needed). Users annotate with the `Cookies` type from `@eggjs/tegg`;
+  `ServiceWorkerCookies` is the internal impl.
 - `@eggjs/service-worker` — the host app only: the `ServiceWorkerApp` facade
   over `StandaloneApp` with `serve()` (node:http bridge) and embedded
   `handleEvent()`. Its single frameworkDep is its OWN package root, so the
