@@ -1,8 +1,6 @@
 import type { RootProtoManager } from '@eggjs/controller-runtime';
-import { BackgroundTaskHelper } from '@eggjs/service-worker-runtime';
 import { AccessLevel, Inject, InjectOptional } from '@eggjs/tegg';
-import { EggContainerFactory } from '@eggjs/tegg-runtime';
-import type { EggProtoImplClass } from '@eggjs/tegg-types';
+import { ContextHandler, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
 import { AbstractEventHandler, EventHandlerProto } from '@eggjs/tegg/standalone';
 
 import { MCPRegisterProvider } from '../mcp/MCPRegisterProvider.ts';
@@ -117,25 +115,29 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
 
   /**
    * The tegg context is destroyed as soon as the runner returns, but a
-   * streaming body keeps pulling from ContextProto objects afterwards. Route
-   * the body through a passthrough and register the drain as a background
-   * task: ctx destroy then waits (bounded by `config.backgroundTask.timeout`)
-   * until the client has fully consumed the stream. Client aborts are a
-   * normal way for the drain to end, not an error.
+   * streaming body keeps pulling from the ContextProto objects afterwards. Tee
+   * the body: the client consumes one branch, and the request context's
+   * `preDestroy` awaits the other draining — so the ContextProto objects the
+   * stream pulls from stay alive until the source is fully produced, then the
+   * context tears down. Client aborts end the drain normally, not as an error.
    */
   async #guardResponseStream(response: Response): Promise<Response> {
     if (!response.body) {
       return response;
     }
-    const { readable, writable } = new TransformStream();
-    const drained = response.body.pipeTo(writable).catch(() => {
-      /* client abort / stream error: consumption is over either way */
+    const ctx = ContextHandler.getContext();
+    if (!ctx) {
+      return response;
+    }
+    const [clientStream, monitorStream] = response.body.tee();
+    EggContextLifecycleUtil.registerObjectLifecycle(ctx, {
+      preDestroy: async () => {
+        await monitorStream.pipeTo(new WritableStream()).catch(() => {
+          /* client abort / stream error: consumption is over either way */
+        });
+      },
     });
-    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(
-      BackgroundTaskHelper as unknown as EggProtoImplClass,
-    );
-    (eggObject.obj as BackgroundTaskHelper).run(() => drained);
-    return new Response(readable, {
+    return new Response(clientStream, {
       status: response.status,
       statusText: response.statusText,
       headers: response.headers,

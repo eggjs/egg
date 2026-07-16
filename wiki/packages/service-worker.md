@@ -99,10 +99,15 @@ Key mechanics and constraints:
   is `TeggScope`-scoped per app (mirrors `EggMcpRouter.hooks`), an unknown name
   falls back to the built-in, and node:http stays entirely in the host that
   registers the alternative.
-- **Streaming lifecycle**: `FetchEventHandler` routes every response body
-  through a passthrough and registers the drain as a background task, so ctx
-  destroy waits (bounded by `config.backgroundTask.timeout`) until the client
-  consumes the stream.
+- **Streaming lifecycle**: a streaming body keeps pulling from ContextProto
+  objects after the runner returns, but the tegg context is destroyed at return.
+  `FetchEventHandler.#guardResponseStream` tees the body — the client consumes
+  one branch, and the request context's `preDestroy`
+  (`EggContextLifecycleUtil.registerObjectLifecycle`) awaits the other branch
+  draining to a sink — so the ContextProto objects the stream reads from stay
+  alive until the source is fully produced, then the context tears down.
+  (No `config.backgroundTask.timeout` cap, so a legitimately long stream — SSE —
+  is never cut short.)
 - **Unified errors**: framework failures reply `{ code, message }` JSON
   (`NOT_FOUND` / `INTERNAL_SERVER_ERROR`); `ctx.responseHeaders` merge onto
   the final response.

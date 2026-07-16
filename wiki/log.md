@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-15] fix | fetch-host streaming keepalive via tee + context preDestroy
+
+- sources touched: `tegg/standalone/service-worker-controller/src/http/FetchEventHandler.ts`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Reworked streaming keepalive from the BackgroundTaskHelper passthrough to `stream.tee()` + a request-context `preDestroy` (`EggContextLifecycleUtil.registerObjectLifecycle`) that awaits the monitor branch draining — no `backgroundTask.timeout` cap, so a legitimately long stream (SSE) is never cut short.
+
 ## [2026-07-14] feature | fetch-host MCP config-selected transport provider
 
 - sources touched: `tegg/standalone/service-worker-controller/src/mcp/{ServiceWorkerMcpRouter.ts,types.ts}`, `tegg/standalone/service-worker/test/MCP.test.ts`
