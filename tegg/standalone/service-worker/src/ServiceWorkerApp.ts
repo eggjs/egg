@@ -1,7 +1,10 @@
-import http from 'node:http';
+// node:http / node:stream are used ONLY by the optional node:http `serve()`
+// bridge, and are imported lazily inside it (see `serve`/`#handleHttpRequest`).
+// The type-only import is erased at build, so importing this module and using the
+// fetch-native `handleEvent()` path never loads them — the fetch runtime (e.g. a
+// Service Worker / Cloudflare Worker) has no `node:http`.
+import type http from 'node:http';
 import path from 'node:path';
-import { Readable } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 
 import { FetchEventImpl } from '@eggjs/service-worker-controller';
@@ -92,7 +95,8 @@ export class ServiceWorkerApp {
 
   async serve(options?: ServeOptions): Promise<http.Server> {
     await this.init();
-    const server = http.createServer((req, res) => {
+    const nodeHttp = await import('node:http');
+    const server = nodeHttp.createServer((req, res) => {
       this.#handleHttpRequest(req, res).catch((e) => {
         console.error('[service-worker] serve request failed:', e);
         if (!res.headersSent) {
@@ -113,6 +117,8 @@ export class ServiceWorkerApp {
   }
 
   async #handleHttpRequest(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    const { Readable } = await import('node:stream');
+    const { pipeline } = await import('node:stream/promises');
     const url = `http://${req.headers.host ?? 'localhost'}${req.url ?? '/'}`;
     const method = (req.method ?? 'GET').toUpperCase();
     const headers = new Headers();
