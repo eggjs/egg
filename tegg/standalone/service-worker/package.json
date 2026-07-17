@@ -44,7 +44,8 @@
   "dependencies": {
     "@eggjs/service-worker-controller": "workspace:*",
     "@eggjs/service-worker-runtime": "workspace:*",
-    "@eggjs/standalone": "workspace:*"
+    "@eggjs/standalone": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.23.0",

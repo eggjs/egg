@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@eggjs/service-worker": "workspace:*",
-    "@eggjs/service-worker-controller": "workspace:*",
     "@eggjs/tegg": "workspace:*",
     "zod": "catalog:"
   },

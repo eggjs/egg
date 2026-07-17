@@ -3,7 +3,7 @@ import type http from 'node:http';
 import type { AddressInfo } from 'node:net';
 import path from 'node:path';
 
-import { FetchEventImpl, ServiceWorkerFetchContext } from '@eggjs/service-worker-controller';
+import { ServiceWorkerFetchContext } from '@eggjs/service-worker-controller';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { TeggScope } from '@eggjs/tegg-types';
 import { afterAll, beforeAll, describe, it } from 'vitest';
@@ -193,20 +193,27 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     assert.equal(text, 'data: chunk-0\n\ndata: chunk-1\n\ndata: chunk-2\n\n');
   });
 
-  it('should handle embedded events without a server', async () => {
-    const event = new FetchEventImpl(new Request('http://embedded.local/hello/'));
+  it('should handle embedded requests without a server', async () => {
+    const event = { type: 'fetch' as const, request: new Request('http://embedded.local/hello/') };
     const response = await app.handleEvent<Response>(event);
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { message: 'hello, tegg' });
   });
 
   it('should support the service worker fetch-event interface (respondWith)', async () => {
-    // The exact wiring a Service Worker runtime uses:
+    // The exact wiring a Service Worker runtime uses — a native FetchEvent
+    // satisfies the app's minimal { type, request } contract:
     //   self.addEventListener('fetch', e => e.respondWith(app.handleEvent(e)))
-    const onFetch = (event: FetchEventImpl) => event.respondWith(app.handleEvent<Response>(event));
-    const event = new FetchEventImpl(new Request('http://embedded.local/hello/'));
-    onFetch(event);
-    const response = await event.responsePromise!;
+    let captured: Promise<Response> | undefined;
+    const event = {
+      type: 'fetch' as const,
+      request: new Request('http://embedded.local/hello/'),
+      respondWith(r: Promise<Response>) {
+        captured = r;
+      },
+    };
+    event.respondWith(app.handleEvent<Response>(event));
+    const response = await captured!;
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { message: 'hello, tegg' });
   });

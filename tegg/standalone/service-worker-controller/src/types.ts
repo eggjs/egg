@@ -1,10 +1,6 @@
-import type { ServiceWorkerFetchContext } from './http/ServiceWorkerFetchContext.ts';
+import type { FetchEvent } from '@eggjs/tegg-types';
 
-export interface FetchEvent extends Event {
-  request: Request;
-  waitUntil(f: Promise<any>): void;
-  respondWith(r: Response | PromiseLike<Response>): void;
-}
+import type { ServiceWorkerFetchContext } from './http/ServiceWorkerFetchContext.ts';
 
 /**
  * Optional host hook to build the per-request fetch context. Provide it as the

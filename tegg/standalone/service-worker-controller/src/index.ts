@@ -1,5 +1,4 @@
 export * from './controller/ServiceWorkerContext.ts';
-export * from './event/FetchEventImpl.ts';
 export * from './http/FetchEventHandler.ts';
 export * from './http/FetchHTTPMethodRegister.ts';
 export * from './http/FetchRouter.ts';

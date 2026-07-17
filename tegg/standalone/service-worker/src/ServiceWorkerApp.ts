@@ -7,7 +7,6 @@ import type http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { FetchEventImpl } from '@eggjs/service-worker-controller';
 import { ContextProtoProperty } from '@eggjs/service-worker-runtime';
 import {
   StandaloneApp,
@@ -15,6 +14,7 @@ import {
   type InitStandaloneAppOptions,
   type StandaloneAppOptions,
 } from '@eggjs/standalone';
+import type { StandaloneEvent } from '@eggjs/tegg-types';
 
 /**
  * The service worker app has no bespoke options of its own — everything is a
@@ -83,9 +83,20 @@ export class ServiceWorkerApp {
     this.#initialized = true;
   }
 
-  async handleEvent<T = unknown>(event: Event): Promise<T> {
-    // Auto-init so embedded callers can hand over a fetch event without a
-    // separate init()/serve() step; init() is idempotent.
+  /**
+   * The entry: dispatch an event to its `@EventHandlerProto` handler by
+   * `event.type`. It is protocol-agnostic — only `type` is read here; each
+   * protocol handler reads its own payload (e.g. `request`) off the event. A
+   * native SW/edge `FetchEvent` satisfies this, so both worker formats wire in:
+   *
+   *   SW:     addEventListener('fetch', e => e.respondWith(app.handleEvent(e)))
+   *   module: from `export default { fetch }`, build a fetch event
+   *           `{ type: 'fetch', request, waitUntil: p => ctx.waitUntil(p) }` and
+   *           hand it to `handleEvent`.
+   */
+  async handleEvent<T = unknown>(event: StandaloneEvent): Promise<T> {
+    // Auto-init so embedded callers can hand over an event without a separate
+    // init()/serve() step; init() is idempotent.
     await this.init();
     const context = new StandaloneContext();
     context.set(ContextProtoProperty.Event.contextKey, event);
@@ -139,7 +150,9 @@ export class ServiceWorkerApp {
       // @ts-expect-error duplex is required for stream bodies but missing from the lib type
       duplex: hasBody ? 'half' : undefined,
     });
-    const event = new FetchEventImpl(request);
+    // node:http has no isolate to keep alive, so waitUntil is a no-op placeholder
+    // until real background support lands.
+    const event = { type: 'fetch', request, waitUntil: () => {} };
     const response = await this.handleEvent<Response>(event);
     res.statusCode = response.status;
     for (const [key, value] of response.headers.entries()) {
@@ -159,9 +172,6 @@ export class ServiceWorkerApp {
     } else {
       res.end();
     }
-    event.waitUntilSettled().catch(() => {
-      /* logged by the tasks themselves */
-    });
   }
 
   async destroy(): Promise<void> {

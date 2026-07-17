@@ -1,6 +1,6 @@
 import type { EggObjectFactory } from '@eggjs/dynamic-inject-runtime';
 import { Inject, SingletonProto } from '@eggjs/tegg';
-import { AbstractEventHandler, type MainRunner, Runner } from '@eggjs/tegg/standalone';
+import { AbstractEventHandler, type MainRunner, Runner, type StandaloneEvent } from '@eggjs/tegg/standalone';
 
 /**
  * The standalone service worker entry runner: resolve the event handler
@@ -11,7 +11,7 @@ import { AbstractEventHandler, type MainRunner, Runner } from '@eggjs/tegg/stand
 @SingletonProto()
 export class ServiceWorkerRunner implements MainRunner<unknown> {
   @Inject()
-  private readonly event: Event;
+  private readonly event: StandaloneEvent;
 
   @Inject()
   private readonly eggObjectFactory: EggObjectFactory;

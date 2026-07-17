@@ -1,11 +1,12 @@
 import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import type { FetchEvent } from '@eggjs/tegg/standalone';
 
 @ContextProto({ accessLevel: AccessLevel.PUBLIC })
 export class EventEchoService {
   @Inject()
-  private readonly event: Event;
+  private readonly event: FetchEvent;
 
   requestUrl(): string {
-    return (this.event as any).request.url;
+    return this.event.request.url;
   }
 }

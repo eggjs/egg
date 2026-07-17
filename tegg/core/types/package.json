@@ -129,6 +129,7 @@
     "./schedule": "./src/schedule.ts",
     "./scope": "./src/scope/index.ts",
     "./scope/TeggScope": "./src/scope/TeggScope.ts",
+    "./standalone": "./src/standalone/index.ts",
     "./transaction": "./src/transaction.ts",
     "./package.json": "./package.json"
   },
@@ -237,6 +238,7 @@
       "./schedule": "./dist/schedule.js",
       "./scope": "./dist/scope/index.js",
       "./scope/TeggScope": "./dist/scope/TeggScope.js",
+      "./standalone": "./dist/standalone/index.js",
       "./transaction": "./dist/transaction.js",
       "./package.json": "./package.json"
     }

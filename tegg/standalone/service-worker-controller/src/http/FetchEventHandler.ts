@@ -1,10 +1,11 @@
 import type { RootProtoManager } from '@eggjs/controller-runtime';
 import { AccessLevel, Inject, InjectOptional } from '@eggjs/tegg';
 import { ContextHandler, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
+import type { FetchEvent } from '@eggjs/tegg-types';
 import { AbstractEventHandler, EventHandlerProto } from '@eggjs/tegg/standalone';
 
 import { MCPRegisterProvider } from '../mcp/MCPRegisterProvider.ts';
-import type { ErrorResponseMapper, FetchContextFactory, FetchEvent } from '../types.ts';
+import type { ErrorResponseMapper, FetchContextFactory } from '../types.ts';
 import { ResponseUtils } from '../utils/ResponseUtils.ts';
 import { FetchRouter } from './FetchRouter.ts';
 import { HTTPRegisterProvider } from './HTTPRegisterProvider.ts';

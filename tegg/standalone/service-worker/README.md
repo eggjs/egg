@@ -24,14 +24,18 @@ const server = await app.serve({ port: 7001 });
 await app.destroy();
 ```
 
-Or embedded — hand it a fetch event, get a `Response` back (`handleEvent`
-initializes the app on first call):
+Or embedded — hand `handleEvent` a fetch event, get a `Response` back (it
+initializes the app on first call). On a real Service Worker / edge runtime wire
+the native event straight through: `addEventListener('fetch', e => e.respondWith(app.handleEvent(e)))`.
 
 ```ts
-import { ServiceWorkerApp, FetchEventImpl } from '@eggjs/service-worker';
+import { ServiceWorkerApp } from '@eggjs/service-worker';
 
 const app = new ServiceWorkerApp('/path/to/module');
-const response = await app.handleEvent<Response>(new FetchEventImpl(new Request('http://localhost/hello/')));
+const response = await app.handleEvent<Response>({
+  type: 'fetch',
+  request: new Request('http://localhost/hello/'),
+});
 await app.destroy();
 ```
 
