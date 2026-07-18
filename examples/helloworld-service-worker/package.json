@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node --import=@oxc-node/core/register main.ts",
     "start:fetch-event": "node --import=@oxc-node/core/register fetch-event.ts",
+    "bundle:cf": "node --import=@oxc-node/core/register bundle-cf.mjs",
     "test": "vitest run",
     "typecheck": "tsgo --noEmit"
   },
@@ -16,6 +17,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@eggjs/egg-bundler": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@oxc-node/core": "catalog:",
     "@types/node": "catalog:",

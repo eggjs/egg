@@ -36,6 +36,15 @@ export interface PackRunnerOptions {
    * `require("./_turbopack__runtime.js")` and pulls in sibling chunks at runtime.
    */
   readonly singleFile?: boolean;
+  /**
+   * Compiler `useDefineForClassFields`. Defaults to `false` for Egg apps (see
+   * COMPILER_TSCONFIG — leoric ORM needs declared-uninitialized fields erased).
+   * Set `true` for targets without ORM (standalone service worker): `false`
+   * also erases uninitialized PRIVATE field declarations (`#x?: T;`) while the
+   * code still references `this.#x`, producing "private name not declared" —
+   * invalid on stricter re-parsers (e.g. wrangler/esbuild, workerd).
+   */
+  readonly useDefineForClassFields?: boolean;
 }
 
 export interface PackRunnerResult {
@@ -65,14 +74,14 @@ export interface PackRunnerResult {
 // attributes — silently breaking attribute writes (observed as omitted columns such
 // as `gmt_create` on INSERT). With this tsconfig in the resolved location the bare
 // field declarations are erased, so no output post-processing is needed.
-const COMPILER_TSCONFIG = {
+const compilerTsconfig = (useDefineForClassFields: boolean) => ({
   compilerOptions: {
     experimentalDecorators: true,
     emitDecoratorMetadata: true,
     target: 'es2022',
-    useDefineForClassFields: false,
+    useDefineForClassFields,
   },
-};
+});
 
 // @utoo/pack emits CJS files; a nested `type: commonjs` package.json
 // prevents the parent ESM package from forcing these into ESM parse mode.
@@ -113,6 +122,7 @@ export class PackRunner {
       buildFunc = DEFAULT_BUILD_FUNC,
       resolve,
       singleFile = true,
+      useDefineForClassFields = false,
     } = this.#options;
 
     await fs.mkdir(outputDir, { recursive: true });
@@ -124,7 +134,7 @@ export class PackRunner {
     // an API misuse that points projectPath at a real project: never silently
     // overwrite a tsconfig.json egg-bundler did not create.
     const projectTsconfigPath = path.join(projectPath, 'tsconfig.json');
-    const desiredTsconfig = JSON.stringify(COMPILER_TSCONFIG, null, 2);
+    const desiredTsconfig = JSON.stringify(compilerTsconfig(useDefineForClassFields), null, 2);
     if (!isBuildManaged(projectPath)) {
       const existing = await fs.readFile(projectTsconfigPath, 'utf8').catch(() => undefined);
       // Overwrite only what we produced ourselves (idempotent re-runs); never

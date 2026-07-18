@@ -37,6 +37,24 @@ curl -X POST 'http://127.0.0.1:7001/mcp/calc/stream' \
 - `fetch-event.ts` — the same app driven through the Web Service Worker fetch
   interface (`self.addEventListener('fetch', e => e.respondWith(app.handleEvent(e)))`)
   instead of `serve()`. Run with `npm run start:fetch-event`.
+- `bundle-cf.mjs` — the Cloudflare Workers build: `ServiceWorkerApp.loadMetadata`
+  produces the tegg manifest, then `@eggjs/egg-bundler`'s `StandaloneWorkerBundler`
+  bundles the app + framework into `.worker-cf/` (an ESM module-worker entry).
+
+## Cloudflare Workers
+
+The same app runs on Cloudflare workerd. Node needs no bundle (it reads the
+module dir directly); workerd has no runtime filesystem, so the modules are
+discovered at build time and inlined:
+
+```bash
+npm run bundle:cf            # -> .worker-cf/index.mjs (export default { fetch })
+wrangler dev                 # local workerd, or `wrangler deploy`
+```
+
+`wrangler.jsonc` sets `nodejs_compat` (tegg needs `AsyncLocalStorage`) and points
+`main` at the bundle. The same `GET /hello/` and `POST /mcp/calc/stream` routes
+work unchanged.
 
 ## Test
 

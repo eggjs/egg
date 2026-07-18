@@ -19,6 +19,14 @@ export {
   type PackRunnerResult,
   type PackRunnerResolveConfig,
 } from './lib/PackRunner.ts';
+export {
+  StandaloneWorkerBundler,
+  type StandaloneWorkerBundlerOptions,
+  type StandaloneWorkerBundleResult,
+  type StandaloneManifest,
+  type StandaloneManifestModule,
+} from './lib/StandaloneWorkerBundler.ts';
+export { patchImportMetaInContent } from './lib/importMetaPatch.ts';
 
 import { Bundler } from './lib/Bundler.ts';
 import type { BuildFunc, PackRunnerResolveConfig } from './lib/PackRunner.ts';

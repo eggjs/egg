@@ -42,16 +42,7 @@ export class ServiceWorkerApp {
 
   constructor(cwd: string, options?: ServiceWorkerAppOptions) {
     const standaloneOptions = options ?? {};
-    // Scan this package's own root so its framework-module deps
-    // (service-worker-runtime + -controller) are auto-discovered via the
-    // node_modules eggModule convention. `!test/**` keeps their test fixtures out.
-    const frameworkDeps: StandaloneAppOptions['frameworkDeps'] = [
-      {
-        baseDir: path.join(path.dirname(fileURLToPath(import.meta.url)), '..'),
-        extraFilePattern: ['!test/**'],
-      },
-      ...(standaloneOptions.frameworkDeps ?? []),
-    ];
+    const frameworkDeps = ServiceWorkerApp.#frameworkDeps(standaloneOptions);
     // Construction-time wiring (capabilities + provided objects); the app
     // binding (baseDir/name/env and scan sources) goes to init() below —
     // the StandaloneAppInit/InitStandaloneAppOptions split.
@@ -69,6 +60,26 @@ export class ServiceWorkerApp {
       manifest: standaloneOptions.manifest,
       loaderFS: standaloneOptions.loaderFS,
     };
+  }
+
+  // Scan this package's own root so its framework-module deps (service-worker-runtime
+  // + -controller) are auto-discovered via the node_modules eggModule convention.
+  // `!test/**` keeps their test fixtures out.
+  static #frameworkDeps(options?: ServiceWorkerAppOptions): StandaloneAppOptions['frameworkDeps'] {
+    return [
+      { baseDir: path.join(path.dirname(fileURLToPath(import.meta.url)), '..'), extraFilePattern: ['!test/**'] },
+      ...(options?.frameworkDeps ?? []),
+    ];
+  }
+
+  /**
+   * Scan-only manifest generation for bundlers: returns the tegg manifest
+   * (moduleReferences + moduleDescriptors) for the service worker app at `cwd`,
+   * so a bundle boots with no runtime fs scanning. Mirrors the constructor's
+   * framework-dep discovery; runs at build time (needs fs).
+   */
+  static async loadMetadata(cwd: string, options?: ServiceWorkerAppOptions) {
+    return StandaloneApp.loadMetadata(cwd, { ...options, frameworkDeps: ServiceWorkerApp.#frameworkDeps(options) });
   }
 
   get app(): StandaloneApp {

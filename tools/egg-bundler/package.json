@@ -44,6 +44,10 @@
       "types": "./src/lib/PackRunner.ts",
       "import": "./src/lib/PackRunner.ts"
     },
+    "./lib/StandaloneWorkerBundler": {
+      "types": "./src/lib/StandaloneWorkerBundler.ts",
+      "import": "./src/lib/StandaloneWorkerBundler.ts"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
