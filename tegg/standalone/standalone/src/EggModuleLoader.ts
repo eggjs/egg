@@ -102,7 +102,10 @@ export class EggModuleLoader {
     for (const moduleConfig of moduleConfigList) {
       const modulePath = moduleConfig.path;
       const loader = this.#createModuleLoader(modulePath);
-      const loadUnit = await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
+      // Bundle mode: pass the manifest's module name so ModuleLoadUnit.createModule
+      // doesn't read `<unitPath>/package.json` (no fs on the edge/worker runtime).
+      const unitName = this.options.manifest?.moduleDescriptors?.find((d) => d.unitPath === modulePath)?.name;
+      const loadUnit = await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader, unitName);
       loadUnits.push(loadUnit);
     }
     return loadUnits;
