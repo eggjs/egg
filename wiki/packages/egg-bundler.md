@@ -8,9 +8,13 @@ source_files:
   - tools/egg-bundler/src/lib/EntryGenerator.ts
   - tools/egg-bundler/src/lib/ExternalsResolver.ts
   - tools/egg-bundler/src/lib/prelude.ts
+  - tools/egg-bundler/src/lib/PackRunner.ts
+  - tools/egg-bundler/src/lib/StandaloneWorkerBundler.ts
+  - tools/egg-bundler/src/lib/importMetaPatch.ts
   - tools/egg-bin/src/commands/bundle.ts
   - tools/egg-bundler/docs/output-structure.md
-updated_at: 2026-06-28
+  - examples/helloworld-service-worker
+updated_at: 2026-07-19
 status: active
 ---
 
@@ -18,7 +22,17 @@ status: active
 
 `@eggjs/egg-bundler` is a developer tooling package under `tools/egg-bundler/`.
 It exposes `bundle(config)` and the `Bundler` class for producing a deployable
-CommonJS artifact from an Egg application.
+CommonJS artifact from an Egg application, plus `StandaloneWorkerBundler` for the
+tegg standalone service worker (Cloudflare Workers) — see the section below.
+
+The bundler engine (`PackRunner`) is `@utoo/pack`, whose engine is **Turbopack**
+(not mako). `@utoo/pack` only emits **CommonJS** — `output.type` is `standalone`
+or `export` (single-file self-executing IIFE); there is no ESM output. In
+single-file (`export`) mode the IIFE ends with `module.exports = factory()` where
+`factory()` returns the entry's ES-module namespace, so a Node `require()` of the
+output exposes the entry's `export default`/named exports; `library.name`/`export`
+only affect the `exports[name]`/`globalThis[name]` fallback branches. That CJS-only
+constraint is why worker output always needs a thin ESM wrapper.
 
 ## Public Surfaces
 
@@ -115,3 +129,48 @@ plugins, and the suspect packages' module-eval closures. The opt-in
 (`eventsource`/`cross-spawn`/`pkce-challenge`); if an app enables those and
 snapshots, re-assess via `egg.snapshot.lazyModules` — that is an app concern, not
 a framework default.
+
+## Standalone Worker Bundle (Cloudflare Workers)
+
+`StandaloneWorkerBundler` (`src/lib/StandaloneWorkerBundler.ts`) bundles a tegg
+**standalone service worker** (`@eggjs/service-worker`, see the
+[service worker page](./service-worker.md)) for Cloudflare workerd. This is a
+separate path from the Egg app `Bundler`/`EntryGenerator` flow above — there is no
+`startEgg`/`app.listen`; the artifact is a fetch handler.
+
+**Injection-based seam.** The bundler does NOT synthesize the host entry. The user
+authors a plain, locally-runnable `worker.ts`
+(`new ServiceWorkerApp(dir)` + `export default { fetch }`, or `addEventListener`).
+`run()` then:
+
+1. Filters the caller-supplied tegg manifest (`ServiceWorkerApp.loadMetadata`)
+   by `excludeModules` (e.g. `teggDal` — dynamic multiInstance loads break bundle
+   mode).
+2. Writes a **build-managed copy of the user's `entry` beside it** (a
+   `.egg-worker-entry.ts` sibling, so the user's relative imports and
+   `import.meta` resolve unchanged), prepending an injected prelude that
+   static-imports every decorated file (so Turbopack bundles them) and installs
+   `globalThis.__EGG_BUNDLE_MODULE_LOADER__` + `globalThis.__EGG_BUNDLE_MANIFEST__`.
+   Evaluation order is safe because import declarations load before module bodies,
+   so the globals are set before the user's `new ServiceWorkerApp(dir)` runs.
+   `StandaloneApp.init` falls back to `__EGG_BUNDLE_MANIFEST__` when no `manifest`
+   option is passed, so the same `worker.ts` runs bundled (global manifest) and
+   unbundled under Node (runtime fs scan).
+3. Runs `PackRunner` (`singleFile: true`, `useDefineForClassFields: true` — the
+   `false` egg-app default would erase uninitialized `#x?: T;` private fields while
+   the code still references `this.#x`), with node builtins external and
+   `resolve.alias` mapping `globby`/`os`/`node:os` to inert stubs (bundle mode never
+   globs; workerd's `nodejs_compat` has no `node:os`).
+4. Applies `patchImportMetaInContent` (`src/lib/importMetaPatch.ts`) to fix
+   Turbopack's broken `import.meta` shim (`__turbopack_context__.F` is otherwise
+   undefined — breaks in Node AND workerd), writes the result as `worker.cjs`, and
+   deletes the injected copy.
+5. Emits the ESM wrapper `index.mjs` per `format`: `module` (default) →
+   `import worker from './worker.cjs'; export default worker.default;` (Cloudflare
+   module worker); `service-worker` → `import './worker.cjs';` (side-effect only —
+   the entry's `addEventListener('fetch')` ran during evaluation).
+
+`wrangler.jsonc` sets `nodejs_compat` (tegg needs `AsyncLocalStorage`) and points
+`main` at the wrapper. Verified on Node and workerd (`wrangler dev`): the example's
+`GET /hello/` and `POST /mcp/calc/stream` both return 200. Example:
+`examples/helloworld-service-worker/{worker.ts,bundle-cf.mjs,wrangler.jsonc}`.

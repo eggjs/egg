@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-19] refactor | standalone service worker Cloudflare bundle → injection-based seam
+
+- sources touched: `tools/egg-bundler/src/lib/StandaloneWorkerBundler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`, `packages/typings/src/global.ts`, `examples/helloworld-service-worker/{worker.ts,bundle-cf.mjs,README.md,.gitignore}`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Reworked `StandaloneWorkerBundler` from synthesizing the host entry (hardcoded `export default { fetch }`) to an INJECTION seam. The user now authors a plain, locally-runnable `worker.ts` (`new ServiceWorkerApp(dir)` + `export default { fetch }` or `addEventListener`); the bundler takes an `entry` path + `format` ('module' | 'service-worker') and prepends a scanned-imports + manifest prelude to a build-managed copy beside `worker.ts` (so relative imports/`import.meta` resolve unchanged, no build-only specifier leaks). `StandaloneApp.init` falls back to `globalThis.__EGG_BUNDLE_MANIFEST__` (declared in `packages/typings/src/global.ts`, mirroring `__EGG_BUNDLE_MODULE_LOADER__`) when no `manifest` option is given, so one `worker.ts` runs bundled (global manifest) and unbundled (runtime fs scan). ESM wrapper re-exports the entry default (module worker) or runs it for side effects (service-worker). Also corrected a long-standing mislabel: `@eggjs/egg-bundler`'s `@utoo/pack` engine is **Turbopack**, not mako; it only emits CJS (`OutputType` = standalone|export), which is why worker output needs the thin ESM wrapper (source-confirmed at tag `utoopack-v1.4.17`). Verified on Node and workerd (`wrangler dev`): example `GET /hello/` + `POST /mcp/calc/stream` both 200.
+
 ## [2026-07-15] feature | fetch-host `@HTTPCookies` (fetch-native cookies)
 
 - sources touched: `tegg/standalone/service-worker-controller/src/http/{ServiceWorkerCookies.ts,FetchHTTPMethodRegister.ts}`, `tegg/standalone/service-worker-controller/src/index.ts`, `tegg/standalone/service-worker/test/{ServiceWorkerApp.test.ts,fixtures/hello-app/EdgeController.ts}`

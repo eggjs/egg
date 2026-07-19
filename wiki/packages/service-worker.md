@@ -9,7 +9,8 @@ source_files:
   - tegg/core/controller-runtime/src
   - tegg/plugin/controller/src
   - examples/helloworld-service-worker
-updated_at: 2026-07-14
+  - tools/egg-bundler/src/lib/StandaloneWorkerBundler.ts
+updated_at: 2026-07-19
 status: active
 ---
 
@@ -133,7 +134,20 @@ Key mechanics and constraints:
   hand-ordered runtime/controller list.
 - Per-app state is all inner objects in the app's TeggScope bag — two
   concurrent `ServiceWorkerApp`s are isolated (`test/MultiApp.test.ts`).
+- **Cloudflare Workers bundle (injection-based)**: Node runs a `ServiceWorkerApp`
+  directly (runtime fs scan); workerd has no runtime filesystem, so modules are
+  discovered at build time and inlined by `@eggjs/egg-bundler`'s
+  `StandaloneWorkerBundler` (see the [egg-bundler page](./egg-bundler.md)). The
+  seam keeps the host entry as USER code: a plain `worker.ts`
+  (`new ServiceWorkerApp(dir)` + `export default { fetch }`) that also runs
+  unbundled under Node. The bundler injects the scanned imports + manifest into a
+  build-managed copy beside `worker.ts`; `StandaloneApp.init` falls back to
+  `globalThis.__EGG_BUNDLE_MANIFEST__` (mirroring the existing
+  `__EGG_BUNDLE_MODULE_LOADER__` global) when no `manifest` option is passed, so a
+  single `worker.ts` serves both environments with no build-only import. Verified
+  on workerd (`wrangler dev`): `GET /hello/` + `POST /mcp/calc/stream` both 200.
 
 Example: `examples/helloworld-service-worker` (entry `main.ts` lives outside
 the scanned `app/` module dir on purpose — the scan imports every module
-file, and importing an entry that boots the app recurses).
+file, and importing an entry that boots the app recurses; `worker.ts` is the
+Cloudflare Workers entry, `bundle-cf.mjs` builds it).
