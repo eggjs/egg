@@ -1,4 +1,5 @@
 .worker-cf/
+.worker-sw/
 .egg-bundle/
 .egg-worker-entry.ts
 .wrangler/

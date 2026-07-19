@@ -207,16 +207,22 @@ export class StandaloneWorkerBundler {
     await fs.writeFile(workerCjs, patched.content);
     await fs.rm(workerJs, { force: true });
 
-    // @utoo/pack single-file output is a self-executing CJS IIFE that does
-    // `module.exports = <entry namespace>`, so this ESM wrapper re-exports the user
-    // entry's default (module worker) or just runs it for its side effects
-    // (service-worker format registered via `addEventListener`).
+    // @utoo/pack single-file output is a self-executing CJS IIFE (no import/export)
+    // that does `module.exports = <entry namespace>`.
+    if (format === 'service-worker') {
+      // Legacy service-worker format: the entry's `addEventListener('fetch')` ran on
+      // the global scope when worker.cjs evaluated. It must stay a classic (non-module)
+      // script — an ESM wrapper would move it to module scope, where workerd does not
+      // dispatch fetch events — so `main` points straight at the CJS script.
+      return { outputDir: absOutputDir, entry: 'worker.cjs' };
+    }
+    // Module worker: a thin ESM wrapper re-exports the entry's default so workerd sees
+    // `export default { fetch }`.
     const wrapperName = 'index.mjs';
-    const wrapper =
-      format === 'service-worker'
-        ? "import './worker.cjs';\n"
-        : "import worker from './worker.cjs';\nexport default worker.default;\n";
-    await fs.writeFile(path.join(absOutputDir, wrapperName), wrapper);
+    await fs.writeFile(
+      path.join(absOutputDir, wrapperName),
+      "import worker from './worker.cjs';\nexport default worker.default;\n",
+    );
 
     return { outputDir: absOutputDir, entry: wrapperName };
   }

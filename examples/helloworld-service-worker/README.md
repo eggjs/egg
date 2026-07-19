@@ -45,6 +45,9 @@ curl -X POST 'http://127.0.0.1:7001/mcp/calc/stream' \
   produces the tegg manifest, then `@eggjs/egg-bundler`'s `StandaloneWorkerBundler`
   bundles `worker.ts` (with the injected prelude) into `.worker-cf/` (an ESM
   module-worker wrapper over the CJS bundle).
+- `worker-sw.ts` + `bundle-sw.mjs` + `run-sw.mjs` — the same app in the legacy
+  **service-worker format** (`addEventListener('fetch', …)` instead of
+  `export default { fetch }`). See "Service-worker format" below.
 
 ## Cloudflare Workers
 
@@ -62,6 +65,30 @@ wrangler dev                 # local workerd, or `wrangler deploy`
 `wrangler.jsonc` sets `nodejs_compat` (tegg needs `AsyncLocalStorage`) and points
 `main` at the bundle. The same `GET /hello/` and `POST /mcp/calc/stream` routes
 work unchanged.
+
+## Service-worker format
+
+`StandaloneWorkerBundler` also supports the legacy **service-worker format** —
+`format: 'service-worker'`, driven by `worker-sw.ts`
+(`addEventListener('fetch', e => e.respondWith(app.handleEvent(e)))`). The output
+is a classic (non-module) script that registers its fetch listener on evaluation,
+so the bundler points the entry straight at `.worker-sw/worker.cjs` with no ESM
+wrapper.
+
+```bash
+npm run bundle:sw            # -> .worker-sw/worker.cjs (addEventListener('fetch'))
+npm run start:sw-bundle      # run the bundle in a minimal Web Service Worker shell
+# service-worker bundle /hello: 200 { message: 'hello, sw' }
+# service-worker bundle /mcp:  200 ... "hello, mcp: 42"
+```
+
+This format targets **Web Service Worker / edge runtimes** that expose a global
+`addEventListener('fetch')`. It is **not** a Cloudflare workerd target: workerd's
+`nodejs_compat` — which tegg needs for `AsyncLocalStorage` — only supports the
+module-worker format, and `wrangler` rejects a service-worker-format script that
+imports Node builtins. Use `worker.ts` (module format) for Cloudflare; use this
+format for hosts that provide the fetch-event global without Node builtins.
+`run-sw.mjs` demonstrates it by shimming that global under Node.
 
 ## Test
 

@@ -8,6 +8,8 @@
     "start": "node --import=@oxc-node/core/register main.ts",
     "start:fetch-event": "node --import=@oxc-node/core/register fetch-event.ts",
     "bundle:cf": "node --import=@oxc-node/core/register bundle-cf.mjs",
+    "bundle:sw": "node --import=@oxc-node/core/register bundle-sw.mjs",
+    "start:sw-bundle": "node run-sw.mjs",
     "test": "vitest run",
     "typecheck": "tsgo --noEmit"
   },

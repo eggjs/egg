@@ -165,12 +165,25 @@ authors a plain, locally-runnable `worker.ts`
    Turbopack's broken `import.meta` shim (`__turbopack_context__.F` is otherwise
    undefined — breaks in Node AND workerd), writes the result as `worker.cjs`, and
    deletes the injected copy.
-5. Emits the ESM wrapper `index.mjs` per `format`: `module` (default) →
-   `import worker from './worker.cjs'; export default worker.default;` (Cloudflare
-   module worker); `service-worker` → `import './worker.cjs';` (side-effect only —
-   the entry's `addEventListener('fetch')` ran during evaluation).
+5. Emits the entry per `format`: `module` (default) → an ESM wrapper `index.mjs`
+   (`import worker from './worker.cjs'; export default worker.default;` — a
+   Cloudflare module worker); `service-worker` → no wrapper, the entry is
+   `worker.cjs` itself (a classic, non-module script whose
+   `addEventListener('fetch')` registered on evaluation; an ESM wrapper would move
+   it to module scope where workerd does not dispatch fetch events).
 
 `wrangler.jsonc` sets `nodejs_compat` (tegg needs `AsyncLocalStorage`) and points
 `main` at the wrapper. Verified on Node and workerd (`wrangler dev`): the example's
 `GET /hello/` and `POST /mcp/calc/stream` both return 200. Example:
 `examples/helloworld-service-worker/{worker.ts,bundle-cf.mjs,wrangler.jsonc}`.
+
+**Format targets differ.** The `module` format runs on Cloudflare workerd. The
+`service-worker` format targets Web Service Worker / edge runtimes that expose a
+global `addEventListener('fetch')` — it is **not** a workerd target: workerd's
+`nodejs_compat` (required for tegg's `AsyncLocalStorage`) only supports the
+module-worker format, and `wrangler` rejects a service-worker-format script that
+imports Node builtins (`Unexpected external import of "assert"…, no default
+export`). The `service-worker` example
+(`worker-sw.ts`/`bundle-sw.mjs`/`run-sw.mjs`) is verified under Node by shimming
+`globalThis.addEventListener` around the bundled classic script (`GET /hello/` +
+`POST /mcp/calc/stream` both 200); a real edge SW runtime wires it natively.
