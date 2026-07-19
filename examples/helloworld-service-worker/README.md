@@ -37,15 +37,22 @@ curl -X POST 'http://127.0.0.1:7001/mcp/calc/stream' \
 - `fetch-event.ts` — the same app driven through the Web Service Worker fetch
   interface (`self.addEventListener('fetch', e => e.respondWith(app.handleEvent(e)))`)
   instead of `serve()`. Run with `npm run start:fetch-event`.
+- `worker.ts` — the Cloudflare Workers entry: a plain `new ServiceWorkerApp(dir)`
+  plus `export default { fetch }`. Nothing here is bundle-only, so it also runs
+  directly under Node (runtime module scan). The bundler injects the
+  framework-scanned imports and the manifest ahead of this file at build time.
 - `bundle-cf.mjs` — the Cloudflare Workers build: `ServiceWorkerApp.loadMetadata`
   produces the tegg manifest, then `@eggjs/egg-bundler`'s `StandaloneWorkerBundler`
-  bundles the app + framework into `.worker-cf/` (an ESM module-worker entry).
+  bundles `worker.ts` (with the injected prelude) into `.worker-cf/` (an ESM
+  module-worker wrapper over the CJS bundle).
 
 ## Cloudflare Workers
 
-The same app runs on Cloudflare workerd. Node needs no bundle (it reads the
-module dir directly); workerd has no runtime filesystem, so the modules are
-discovered at build time and inlined:
+The same `worker.ts` runs on Cloudflare workerd. Node needs no bundle (it reads the
+module dir directly at runtime); workerd has no runtime filesystem, so the modules
+are discovered at build time and inlined. The bundler prepends the scanned imports
+and the manifest to a build-managed copy of `worker.ts` (leaving your source
+untouched), so `worker.ts` stays a plain, locally-runnable entry:
 
 ```bash
 npm run bundle:cf            # -> .worker-cf/index.mjs (export default { fetch })

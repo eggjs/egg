@@ -338,6 +338,17 @@ export class StandaloneApp {
       throw new Error(`[tegg/standalone] cannot init app in ${this.#state} state`);
     }
 
+    // Bundle mode: the worker bundler's injected prelude inlines the manifest on
+    // globalThis (alongside __EGG_BUNDLE_MODULE_LOADER__), so the user's entry can
+    // stay a plain `new ServiceWorkerApp(dir)` with no build-only import and still
+    // run outside the bundle (no global → filesystem scan below).
+    if (!opts.manifest) {
+      const bundleManifest = (globalThis as { __EGG_BUNDLE_MANIFEST__?: unknown }).__EGG_BUNDLE_MANIFEST__;
+      if (bundleManifest) {
+        opts = { ...opts, manifest: bundleManifest as TeggManifestExtension };
+      }
+    }
+
     this.#state = 'initializing';
     TeggScope.registerScope(this.scopeBag);
     try {
