@@ -85,21 +85,23 @@ export class EggModuleLoader {
     const loadUnits: LoadUnit[] = [];
     this.globalGraph.build();
     this.globalGraph.sort();
-    const moduleConfigList = GlobalGraph.instance!.moduleConfigList;
-    for (const moduleConfig of moduleConfigList) {
+    // Bundle mode: index the manifest's precomputed decorated files by unit path
+    // once (O(1) lookup per module) instead of rescanning the manifest per module.
+    const decoratedFilesMap = new Map<string, string[]>();
+    for (const desc of this.options.manifest?.moduleDescriptors ?? []) {
+      decoratedFilesMap.set(desc.unitPath, desc.decoratedFiles);
+    }
+    for (const moduleConfig of GlobalGraph.instance!.moduleConfigList) {
       const modulePath = moduleConfig.path;
-      // Bundle mode: module source files are not on disk — reuse the manifest's
+      // In bundle mode the module source files are not on disk — reuse the
       // precomputed decorated files so the loader skips globbing, and pass the
       // module name so ModuleLoadUnit.createModule skips reading
       // `<unitPath>/package.json` (no fs on the edge/worker runtime).
-      const manifestDesc = this.options.manifest?.moduleDescriptors?.find((d) => d.unitPath === modulePath);
-      const loader = manifestDesc
-        ? new ModuleLoader(modulePath, {
-            precomputedFiles: manifestDesc.decoratedFiles,
-            loaderFS: this.options.loaderFS,
-          })
+      const precomputedFiles = decoratedFilesMap.get(modulePath);
+      const loader = precomputedFiles
+        ? new ModuleLoader(modulePath, { precomputedFiles, loaderFS: this.options.loaderFS })
         : LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, this.options.loaderFS);
-      const unitName = manifestDesc ? moduleConfig.name : undefined;
+      const unitName = precomputedFiles ? moduleConfig.name : undefined;
       loadUnits.push(await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader, unitName));
     }
     return loadUnits;
