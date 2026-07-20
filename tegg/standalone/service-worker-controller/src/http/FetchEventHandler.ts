@@ -51,7 +51,7 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
     // Routes land on the router lazily at the first event: every load unit has
     // been created by now, so all controller protos are collected.
     this.httpRegisterProvider.doRegister(this.rootProtoManager);
-    await this.mcpRegisterProvider.doRegister();
+    this.mcpRegisterProvider.doRegister();
     this.#routes = this.fetchRouter.middleware() as unknown as RouterMiddleware;
   }
 

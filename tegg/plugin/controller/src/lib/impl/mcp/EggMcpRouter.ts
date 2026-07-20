@@ -83,7 +83,7 @@ class InnerSSEServerTransport extends SSEServerTransport {
  * threaded through the DI graph as an inner object.
  *
  * The host-agnostic {@link MCPControllerRegister} only COLLECTS records; this
- * router turns each server name's live records into per-request MCP servers.
+ * router turns each server name's complete records into per-request MCP servers.
  */
 export class EggMcpRouter implements McpRouter {
   // Per-app hook list (mcp-proxy registers its hook here at agent boot). Each
@@ -119,8 +119,8 @@ export class EggMcpRouter implements McpRouter {
     >
   > = new Map();
 
-  // The live collected records, keyed by server name; the route handlers read
-  // these lazily at request time.
+  // The complete collected records, keyed by server name; route handlers use
+  // them to build request/session-specific MCP SDK servers.
   private registrations: Record<string, McpServerRegistration> = {};
 
   // Optional: resolved + composed lazily on the first request (see
@@ -143,6 +143,7 @@ export class EggMcpRouter implements McpRouter {
       return new MCPServerHelper({
         name: reg.controllerMeta.name ?? `chair-mcp-${name ?? this.app.name}-server`,
         version: reg.controllerMeta.version ?? '1.0.0',
+        eggContainerFactory: this.app.eggContainerFactory,
         hooks: EggMcpRouter.hooks,
       });
     };
@@ -169,13 +170,13 @@ export class EggMcpRouter implements McpRouter {
       const registerEntry = self.registrations[name ?? 'default'];
       if (registerEntry) {
         for (const tool of registerEntry.tools) {
-          await mcpServerHelper.mcpToolRegister(tool.getOrCreateEggObject, tool.proto, tool.meta);
+          await mcpServerHelper.mcpToolRegister(tool.proto, tool.meta);
         }
         for (const resource of registerEntry.resources) {
-          await mcpServerHelper.mcpResourceRegister(resource.getOrCreateEggObject, resource.proto, resource.meta);
+          await mcpServerHelper.mcpResourceRegister(resource.proto, resource.meta);
         }
         for (const prompt of registerEntry.prompts) {
-          await mcpServerHelper.mcpPromptRegister(prompt.getOrCreateEggObject, prompt.proto, prompt.meta);
+          await mcpServerHelper.mcpPromptRegister(prompt.proto, prompt.meta);
         }
       }
       await mcpServerHelper.server.connect(transport);
@@ -278,13 +279,13 @@ export class EggMcpRouter implements McpRouter {
           const eventStore = this.mcpConfig.getEventStore();
           const mcpServerHelper = self.mcpServerHelperMap[name ?? 'default']();
           for (const tool of self.registrations[name ?? 'default'].tools) {
-            await mcpServerHelper.mcpToolRegister(tool.getOrCreateEggObject, tool.proto, tool.meta);
+            await mcpServerHelper.mcpToolRegister(tool.proto, tool.meta);
           }
           for (const resource of self.registrations[name ?? 'default'].resources) {
-            await mcpServerHelper.mcpResourceRegister(resource.getOrCreateEggObject, resource.proto, resource.meta);
+            await mcpServerHelper.mcpResourceRegister(resource.proto, resource.meta);
           }
           for (const prompt of self.registrations[name ?? 'default'].prompts) {
-            await mcpServerHelper.mcpPromptRegister(prompt.getOrCreateEggObject, prompt.proto, prompt.meta);
+            await mcpServerHelper.mcpPromptRegister(prompt.proto, prompt.meta);
           }
           const transport = new StreamableHTTPServerTransport({
             sessionIdGenerator: () => this.mcpConfig.getSessionIdGenerator(name)(ctx),
@@ -414,13 +415,13 @@ export class EggMcpRouter implements McpRouter {
       ctx.respond = false;
       const mcpServerHelper = self.mcpServerHelperMap[name ?? 'default']();
       for (const tool of self.registrations[name ?? 'default'].tools) {
-        mcpServerHelper.mcpToolRegister(tool.getOrCreateEggObject, tool.proto, tool.meta);
+        mcpServerHelper.mcpToolRegister(tool.proto, tool.meta);
       }
       for (const resource of self.registrations[name ?? 'default'].resources) {
-        mcpServerHelper.mcpResourceRegister(resource.getOrCreateEggObject, resource.proto, resource.meta);
+        mcpServerHelper.mcpResourceRegister(resource.proto, resource.meta);
       }
       for (const prompt of self.registrations[name ?? 'default'].prompts) {
-        mcpServerHelper.mcpPromptRegister(prompt.getOrCreateEggObject, prompt.proto, prompt.meta);
+        mcpServerHelper.mcpPromptRegister(prompt.proto, prompt.meta);
       }
       await mcpServerHelper.server.connect(transport);
       self.mcpServerMap[id] = mcpServerHelper.server;

@@ -2,6 +2,18 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-20] refactor | finalize MCP registration once like HTTP
+
+- sources touched: `tegg/core/controller-runtime/src/lib/impl/mcp/{MCPControllerRegister.ts,McpRouter.ts}`, `tegg/core/controller-runtime/test/MCPControllerRegister.test.ts`, `tegg/plugin/controller/src/lib/impl/mcp/{EggMCPRegisterProvider.ts,EggMcpRouter.ts}`, `tegg/standalone/service-worker-controller/src/{http/FetchEventHandler.ts,mcp/MCPRegisterProvider.ts,mcp/ServiceWorkerMcpRouter.ts}`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: MCP per-proto `register()` now only collects, matching HTTP. A single `MCPControllerRegister.doRegister()` groups complete records by server name and calls the host router once per server; this removes `registeredControllerProtos`, the persistent `registerMap`, and the service-worker router's second `doRegister()`/pending-registration state. Egg finalizes on `CONTROLLER_LOAD_UNIT`; the fetch host finalizes before taking its router middleware snapshot on the first event. `MCPServerHelper` remains request/session-scoped because MCP SDK transports are single-use. This supersedes the older log note that egg MCP had no deferred finalization.
+
+## [2026-07-20] refactor | align MCP controller resolution with HTTP
+
+- sources touched: `tegg/core/controller-runtime/src/lib/impl/mcp/{MCPControllerRegister.ts,MCPServerHelper.ts,McpRouter.ts}`, `tegg/plugin/controller/src/lib/impl/mcp/EggMcpRouter.ts`, `tegg/standalone/service-worker-controller/src/mcp/ServiceWorkerMcpRouter.ts`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: MCP registration records now contain only the controller proto and tool/resource/prompt metadata. Removed the identical bound `getOrCreateEggObject` callback from every record and removed `MCPControllerRegister`'s concrete factory dependency. As with HTTP method registration, each host supplies its container factory once when constructing `MCPServerHelper`; the request-time SDK callback then resolves the controller lazily through the helper.
+
 ## [2026-07-20] docs | simplify the standalone service-worker example
 
 - sources touched: `examples/helloworld-service-worker/{README.md,package.json,.gitignore,wrangler.jsonc,fetch-event.ts,worker-sw.ts,run-sw.mjs}`

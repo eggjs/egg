@@ -81,6 +81,16 @@ Key mechanics and constraints:
   plugins are never used together, so the shared name does not collide. Because
   the register needs no `app`, the egg host no longer provides `eggApp` as a
   module inner object — the Egg `Application` is out of the module DI graph.
+  Like HTTP, per-proto `register()` only collects during load-unit creation;
+  one `MCPControllerRegister.doRegister()` groups the complete records by
+  server name and calls `mcpRouter.registerServer()` once per server. Egg
+  finalizes on the last `CONTROLLER_LOAD_UNIT`; the fetch host finalizes while
+  constructing its routes on the first event. Each host's `registerServer()`
+  mounts directly — there is no second router `doRegister()` phase.
+  Each collected record contains only its controller proto and MCP metadata;
+  the host passes its container factory once when it creates an
+  `MCPServerHelper`, matching the HTTP register's dependency flow. The helper's
+  request callback resolves the controller lazily in the active context.
 - **MCP SDK >= 1.29 stateless transports are single-shot** (reuse throws), so
   each MCP request builds a fresh `MCPServerHelper` + web-standard transport
   from register records collected at boot. The service worker's

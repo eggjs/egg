@@ -57,7 +57,7 @@ export const MCP_BUILTIN_TRANSPORT = 'web';
 export interface McpServerMountContext {
   /** The fetch router to mount transport routes on. */
   readonly router: FetchRouter;
-  /** The live collected records for this MCP server. */
+  /** The complete collected records for this MCP server. */
   readonly registration: McpServerRegistration;
   /** undefined for the default (unnamed) server; the multiple-server name otherwise. */
   readonly serverName: string | undefined;
@@ -89,13 +89,12 @@ export interface McpTransportProvider {
  * `/mcp[/name]/stream` (POST only). The service worker speaks Fetch natively,
  * so the SDK's web-standard transport handles Request/Response directly — no
  * node req/res bridging. In stateless mode the SDK forbids transport reuse, so
- * each request gets a fresh MCPServerHelper + transport built from the live
+ * each request gets a fresh MCPServerHelper + transport built from the complete
  * records the host-agnostic register collected.
  *
- * The register collects and calls {@link registerServer} once per server name;
- * the actual fetch routes are mounted lazily in {@link doRegister} (after every
- * load unit exists, so all controller protos — and their middlewares — are
- * present).
+ * After every load unit exists, the register calls {@link registerServer} once
+ * per server name with the complete records, and this router mounts the
+ * selected transport immediately.
  */
 @InnerObjectProto({ name: MCP_ROUTER_NAME })
 export class ServiceWorkerMcpRouter implements McpRouter {
@@ -125,44 +124,33 @@ export class ServiceWorkerMcpRouter implements McpRouter {
   @Inject()
   private readonly config: { mcp?: MCPTransportOptions };
 
-  #registrations: McpServerRegistration[] = [];
-  #mounted = false;
-
   registerServer(reg: McpServerRegistration): void {
-    this.#registrations.push(reg);
-  }
-
-  async doRegister(): Promise<void> {
-    if (this.#mounted) {
-      return;
-    }
-    this.#mounted = true;
-    for (const reg of this.#registrations) {
-      const name = reg.serverName === 'default' ? undefined : reg.serverName;
-      this.mountServer(reg, name);
-    }
+    const name = reg.serverName === 'default' ? undefined : reg.serverName;
+    this.mountServer(reg, name);
   }
 
   /**
    * Build a fresh MCPServerHelper for one server with its tool/resource/prompt
    * records registered. The SDK's stateless transport is single-shot (reuse
-   * throws), so this runs per request against the live records; registration is
-   * in-memory callback wiring and the callbacks resolve egg objects lazily.
+   * throws), so this runs per request against the collected records; registration is
+   * in-memory callback wiring, and the callbacks resolve egg objects lazily
+   * through the host-supplied container factory held by the helper.
    * Shared by the built-in streamable transport and any additional mounter.
    */
   async #createServerHelper(reg: McpServerRegistration): Promise<MCPServerHelper> {
     const mcpServerHelper = new MCPServerHelper({
       name: reg.controllerMeta.name ?? `mcp-${reg.serverName}-server`,
       version: reg.controllerMeta.version ?? '1.0.0',
+      eggContainerFactory: EggContainerFactory,
     });
     for (const tool of reg.tools) {
-      await mcpServerHelper.mcpToolRegister(tool.getOrCreateEggObject, tool.proto, tool.meta);
+      await mcpServerHelper.mcpToolRegister(tool.proto, tool.meta);
     }
     for (const resource of reg.resources) {
-      await mcpServerHelper.mcpResourceRegister(resource.getOrCreateEggObject, resource.proto, resource.meta);
+      await mcpServerHelper.mcpResourceRegister(resource.proto, resource.meta);
     }
     for (const prompt of reg.prompts) {
-      await mcpServerHelper.mcpPromptRegister(prompt.getOrCreateEggObject, prompt.proto, prompt.meta);
+      await mcpServerHelper.mcpPromptRegister(prompt.proto, prompt.meta);
     }
     return mcpServerHelper;
   }

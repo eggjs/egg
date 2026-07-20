@@ -1,12 +1,13 @@
 import { ControllerType } from '@eggjs/controller-decorator';
-import { MCPControllerRegister, type ControllerRegisterFactory } from '@eggjs/controller-runtime';
-import { EggQualifier, EggType, Inject, InjectOptional, InnerObjectProto } from '@eggjs/core-decorator';
-import { LifecyclePostInject } from '@eggjs/lifecycle';
+import { CONTROLLER_LOAD_UNIT, MCPControllerRegister, type ControllerRegisterFactory } from '@eggjs/controller-runtime';
+import { EggQualifier, EggType, Inject, InjectOptional, LoadUnitInstanceLifecycleProto } from '@eggjs/core-decorator';
+import { LifecyclePostInject, type LifecycleHook } from '@eggjs/lifecycle';
+import type { LoadUnitInstance, LoadUnitInstanceLifecycleContext } from '@eggjs/tegg-runtime';
 
 import type { EggMcpRouter } from './EggMcpRouter.ts';
 
-@InnerObjectProto({ name: 'mcpRegisterProvider' })
-export class EggMCPRegisterProvider {
+@LoadUnitInstanceLifecycleProto({ name: 'mcpRegisterProvider' })
+export class EggMCPRegisterProvider implements LifecycleHook<LoadUnitInstanceLifecycleContext, LoadUnitInstance> {
   // `app.mcpRouter` compat proto; @EggQualifier(APP) since `router`-like names
   // default to CONTEXT. Optional because it only exists when MCP is enabled.
   @InjectOptional()
@@ -29,5 +30,12 @@ export class EggMCPRegisterProvider {
       this.#register.addControllerProto(proto);
       return this.#register;
     });
+  }
+
+  async postCreate(_ctx: LoadUnitInstanceLifecycleContext, instance: LoadUnitInstance): Promise<void> {
+    if (instance.loadUnit.type !== CONTROLLER_LOAD_UNIT) {
+      return;
+    }
+    this.#register?.doRegister();
   }
 }

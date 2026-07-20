@@ -1,41 +1,24 @@
 import type { MCPControllerMeta } from '@eggjs/controller-decorator';
 import type { EggPrototype } from '@eggjs/metadata';
-import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { CONTROLLER_META_DATA } from '@eggjs/tegg-types';
 
 import type { ControllerRegister } from '../../ControllerRegister.ts';
-import type { McpRouter, ServerRegisterRecord } from './McpRouter.ts';
+import type { McpRouter, McpServerRegistration } from './McpRouter.ts';
 
 /**
  * Host-agnostic, COLLECT-ONLY MCP controller register.
  *
- * It accumulates controller protos and, on `register()`, reads each proto's
- * MCP metadata and collects tool/resource/prompt records into a per-server-name
- * map. All transport (route mounting, sessions, SSE/stream/stateless handling,
- * ping, proxy hooks) lives behind the injected {@link McpRouter}: the first
- * time a server name is seen the register hands the router the LIVE record
- * arrays via `registerServer`, and the router mounts transport once and reads
- * those arrays lazily at request time.
+ * It accumulates controller protos while load units are created, then
+ * `doRegister()` groups all tool/resource/prompt records by server name and
+ * hands each complete registration to the host router once. All transport
+ * concerns (route mounting, sessions, SSE/stream/stateless handling, ping,
+ * proxy hooks) live behind the injected {@link McpRouter}.
  */
 export class MCPControllerRegister implements ControllerRegister {
-  readonly eggContainerFactory: typeof EggContainerFactory;
   private readonly mcpRouter: McpRouter;
   private controllerProtos: EggPrototype[] = [];
-  private registeredControllerProtos: EggPrototype[] = [];
-
-  registerMap: Record<
-    string,
-    {
-      tools: ServerRegisterRecord<any>[];
-      prompts: ServerRegisterRecord<any>[];
-      resources: ServerRegisterRecord<any>[];
-    }
-  > = {};
 
   constructor(mcpRouter: McpRouter) {
-    // Direct import, not a read off the (possibly proxied) app — see
-    // HTTPControllerRegister.create.
-    this.eggContainerFactory = EggContainerFactory;
     this.mcpRouter = mcpRouter;
   }
 
@@ -43,46 +26,45 @@ export class MCPControllerRegister implements ControllerRegister {
     this.controllerProtos.push(proto);
   }
 
-  async register(): Promise<void> {
+  register(): Promise<void> {
+    // Registration is finalized once, after all controller-bearing load units
+    // have been created. This mirrors HTTPControllerRegister.register().
+    return Promise.resolve();
+  }
+
+  doRegister(): void {
+    const registrationMap = new Map<string, McpServerRegistration>();
     for (const proto of this.controllerProtos) {
-      if (this.registeredControllerProtos.includes(proto)) {
-        continue;
-      }
       const metadata = proto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
       const serverName = metadata.name ?? 'default';
 
-      // The first time a server name appears, create its (live) record entry
-      // and hand it to the host router so the router mounts transport once.
-      const isNew = !this.registerMap[serverName];
-      const entry = (this.registerMap[serverName] ??= {
-        prompts: [],
-        resources: [],
-        tools: [],
-      });
-      if (isNew) {
-        // Use THIS server's own controller metadata (name/version), not the
-        // first-registered controller's — otherwise a second MCP server reports
-        // the first server's serverInfo.
-        this.mcpRouter.registerServer({
+      let registration = registrationMap.get(serverName);
+      if (!registration) {
+        registration = {
           serverName,
+          // Preserve the existing first-controller-wins rule for a server's
+          // advertised name/version while aggregating every controller's methods.
           controllerMeta: metadata,
-          tools: entry.tools,
-          resources: entry.resources,
-          prompts: entry.prompts,
-        });
+          prompts: [],
+          resources: [],
+          tools: [],
+        };
+        registrationMap.set(serverName, registration);
       }
 
-      const getOrCreateEggObject = this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory);
       for (const prompt of metadata.prompts) {
-        entry.prompts.push({ getOrCreateEggObject, proto, meta: prompt });
+        registration.prompts.push({ proto, meta: prompt });
       }
       for (const resource of metadata.resources) {
-        entry.resources.push({ getOrCreateEggObject, proto, meta: resource });
+        registration.resources.push({ proto, meta: resource });
       }
       for (const tool of metadata.tools) {
-        entry.tools.push({ getOrCreateEggObject, proto, meta: tool });
+        registration.tools.push({ proto, meta: tool });
       }
-      this.registeredControllerProtos.push(proto);
+    }
+
+    for (const registration of registrationMap.values()) {
+      this.mcpRouter.registerServer(registration);
     }
   }
 }

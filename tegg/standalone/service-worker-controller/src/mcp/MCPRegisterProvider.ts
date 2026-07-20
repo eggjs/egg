@@ -29,7 +29,7 @@ export class MCPRegisterProvider {
     });
   }
 
-  async doRegister(): Promise<void> {
-    await this.mcpRouter.doRegister();
+  doRegister(): void {
+    this.#register?.doRegister();
   }
 }

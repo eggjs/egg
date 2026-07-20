@@ -259,7 +259,7 @@ describe('standalone/service-worker/test/MCP.test.ts transport selection', () =>
     const seen: Array<string | undefined> = [];
     // A stand-in for the internal node-mock provider: it fully owns the server's
     // transport, mounting its own route via the shared context (auth + helper +
-    // live records) instead of the built-in web-standard streamable.
+    // complete records) instead of the built-in web-standard streamable.
     const fakeProvider: McpTransportProvider = {
       mount(context: McpServerMountContext) {
         seen.push(context.serverName);
