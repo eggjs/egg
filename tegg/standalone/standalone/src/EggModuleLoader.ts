@@ -81,19 +81,6 @@ export class EggModuleLoader {
     return buildTeggManifestData(moduleReferences, moduleDescriptors);
   }
 
-  #createModuleLoader(modulePath: string) {
-    // Bundle mode: module source files are not on disk, reuse the manifest's
-    // precomputed decorated files so the loader skips globbing.
-    const manifestDesc = this.options.manifest?.moduleDescriptors?.find((desc) => desc.unitPath === modulePath);
-    if (manifestDesc) {
-      return new ModuleLoader(modulePath, {
-        precomputedFiles: manifestDesc.decoratedFiles,
-        loaderFS: this.options.loaderFS,
-      });
-    }
-    return LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, this.options.loaderFS);
-  }
-
   async load(): Promise<LoadUnit[]> {
     const loadUnits: LoadUnit[] = [];
     this.globalGraph.build();
@@ -101,12 +88,19 @@ export class EggModuleLoader {
     const moduleConfigList = GlobalGraph.instance!.moduleConfigList;
     for (const moduleConfig of moduleConfigList) {
       const modulePath = moduleConfig.path;
-      const loader = this.#createModuleLoader(modulePath);
-      // Bundle mode: pass the manifest's module name so ModuleLoadUnit.createModule
-      // doesn't read `<unitPath>/package.json` (no fs on the edge/worker runtime).
-      const unitName = this.options.manifest?.moduleDescriptors?.find((d) => d.unitPath === modulePath)?.name;
-      const loadUnit = await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader, unitName);
-      loadUnits.push(loadUnit);
+      // Bundle mode: module source files are not on disk — reuse the manifest's
+      // precomputed decorated files so the loader skips globbing, and pass the
+      // module name so ModuleLoadUnit.createModule skips reading
+      // `<unitPath>/package.json` (no fs on the edge/worker runtime).
+      const manifestDesc = this.options.manifest?.moduleDescriptors?.find((d) => d.unitPath === modulePath);
+      const loader = manifestDesc
+        ? new ModuleLoader(modulePath, {
+            precomputedFiles: manifestDesc.decoratedFiles,
+            loaderFS: this.options.loaderFS,
+          })
+        : LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, this.options.loaderFS);
+      const unitName = manifestDesc ? moduleConfig.name : undefined;
+      loadUnits.push(await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader, unitName));
     }
     return loadUnits;
   }
