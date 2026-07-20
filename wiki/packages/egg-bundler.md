@@ -12,9 +12,11 @@ source_files:
   - tools/egg-bundler/src/lib/StandaloneWorkerBundler.ts
   - tools/egg-bundler/src/lib/importMetaPatch.ts
   - tools/egg-bin/src/commands/bundle.ts
+  - tegg/core/loader/src/impl/ModuleLoader.ts
+  - tegg/plugin/dal/src/lib/DataSource.ts
   - tools/egg-bundler/docs/output-structure.md
   - examples/helloworld-service-worker
-updated_at: 2026-07-19
+updated_at: 2026-07-20
 status: active
 ---
 
@@ -138,14 +140,23 @@ a framework default.
 separate path from the Egg app `Bundler`/`EntryGenerator` flow above — there is no
 `startEgg`/`app.listen`; the artifact is a fetch handler.
 
+**CLI.** `egg-bin bundle` drives it as a one-shot command (mirroring the egg-app
+`egg-bin bundle`): a standalone bundle is selected by `--entry` (or `--target
+standalone`); `--framework` names the app package (e.g. `@eggjs/service-worker`),
+which must export `loadMetadata` (the standalone counterpart of the egg app's
+framework specifier — no separate app-module/app-export flags). The command runs
+`loadMetadata` + `StandaloneWorkerBundler` internally, so the caller never threads
+the manifest by hand. `tools/egg-bin/src/commands/bundle.ts` branches on the target.
+
 **Injection-based seam.** The bundler does NOT synthesize the host entry. The user
 authors a plain, locally-runnable `worker.ts`
 (`new ServiceWorkerApp(dir)` + `export default { fetch }`, or `addEventListener`).
 `run()` then:
 
 1. Filters the caller-supplied tegg manifest (`ServiceWorkerApp.loadMetadata`)
-   by `excludeModules` (e.g. `teggDal` — dynamic multiInstance loads break bundle
-   mode).
+   by `excludeModules` — a general escape hatch (teggDal no longer needs it: the
+   bundle-mode dynamic-loader fix below makes a scanned-but-unused DAL module load
+   cleanly).
 2. Writes a **build-managed copy of the user's `entry` beside it** (a
    `.egg-worker-entry.ts` sibling, so the user's relative imports and
    `import.meta` resolve unchanged), prepending an injected prelude that
@@ -175,7 +186,18 @@ authors a plain, locally-runnable `worker.ts`
 `wrangler.jsonc` sets `nodejs_compat` (tegg needs `AsyncLocalStorage`) and points
 `main` at the wrapper. Verified on Node and workerd (`wrangler dev`): the example's
 `GET /hello/` and `POST /mcp/calc/stream` both return 200. Example:
-`examples/helloworld-service-worker/{worker.ts,bundle-cf.mjs,wrangler.jsonc}`.
+`examples/helloworld-service-worker/{worker.ts,wrangler.jsonc}`, built via
+`npm run bundle:cf` (`egg-bin bundle --framework @eggjs/service-worker --entry worker.ts`).
+
+**Bundle-mode dynamic module loading.** The static boot threads the manifest's
+decorated files, but a loader created on the _dynamic_ path (`ModuleLoader.createModuleLoader`,
+e.g. DAL's multiInstance `getObjects` calling `LoaderFactory.createLoader(unitPath).load()`)
+used to glob and load non-decorated files (an egg plugin's `app.ts`) that aren't in the
+bundle map — the fallback dynamic require then failed. `createModuleLoader` now reuses the
+decorated files from `globalThis.__EGG_BUNDLE_MANIFEST__` in bundle mode (non-bundle runs
+glob as before), mirroring how the egg app bundle stays loadable (it bundles all
+`fileDiscovery` files + a `ManifestLoaderFS`). This is why a standalone bundle can now
+include teggDal without excluding it.
 
 **Format targets differ.** The `module` format runs on Cloudflare workerd. The
 `service-worker` format targets Web Service Worker / edge runtimes that expose a

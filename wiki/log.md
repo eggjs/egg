@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-20] fix+feature | standalone bundle dynamic-load parity, DAL fix, egg-bin bundle CLI
+
+- sources touched: `tegg/core/loader/src/impl/ModuleLoader.ts`, `tegg/plugin/dal/src/lib/DataSource.ts`, `tegg/standalone/service-worker/src/{index.ts,ServiceWorkerApp.ts}`, `tegg/standalone/service-worker/tsdown.config.ts`, `tegg/standalone/service-worker-controller/package.json`, `tools/egg-bundler/src/lib/importMetaPatch.ts`, `tools/egg-bin/src/commands/bundle.ts`, `examples/helloworld-service-worker/*`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/log.md`
+- note: Fixed the standalone bundle's dynamic-module-loading gap so it aligns with the egg app bundle: `ModuleLoader.createModuleLoader` now reuses the manifest's decorated files from `globalThis.__EGG_BUNDLE_MANIFEST__` in bundle mode, so DAL's multiInstance `getObjects` (which does `LoaderFactory.createLoader(unitPath).load()`) no longer globs non-decorated files (an egg plugin's `app.ts`) missing from the bundle map. Root cause traced through `createByDynamicMultiInstanceClazz → getObjects → ModuleLoader.load`; the egg app avoided it by bundling all `fileDiscovery` files + a `ManifestLoaderFS`, which standalone (decorated-only) lacked. Also fixed DAL's `DataSource.getObjects` to return before loading a module with no `dataSource` config. This lets a standalone service-worker bundle include teggDal without `excludeModules`. Added `egg-bin bundle` support for standalone targets (selected by `--entry`/`--target standalone`; `--framework` names an app package exporting `loadMetadata`, e.g. `@eggjs/service-worker` which now exports it) — the example replaces its hand-written bundle-cf.mjs/bundle-sw.mjs with `egg-bin bundle`. Also cleared CI build blockers: isolatedDeclarations types on `importMetaPatch` + `ServiceWorkerApp.loadMetadata`, and unplugin-unused deps (dropped unused `@eggjs/service-worker-runtime` from the controller, ignored the scan-only `@eggjs/service-worker-controller` on the host). Verified: `ut run build` green; both module + service-worker formats bundle via the CLI and run on Node + workerd (teggDal included) — `/hello` + `/mcp/calc/stream` 200.
+
 ## [2026-07-19] refactor | standalone service worker Cloudflare bundle → injection-based seam
 
 - sources touched: `tools/egg-bundler/src/lib/StandaloneWorkerBundler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`, `packages/typings/src/global.ts`, `examples/helloworld-service-worker/{worker.ts,bundle-cf.mjs,README.md,.gitignore}`
