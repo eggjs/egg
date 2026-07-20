@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node --import=@oxc-node/core/register main.ts",
-    "bundle:cf": "NODE_OPTIONS='--import @oxc-node/core/register' egg-bin bundle --framework @eggjs/service-worker --entry worker.ts -o .worker-cf --root ../..",
+    "bundle:cf": "egg-bin bundle --framework @eggjs/service-worker --entry worker.ts -o .worker-cf --root ../..",
     "test": "vitest run",
     "typecheck": "tsgo --noEmit"
   },

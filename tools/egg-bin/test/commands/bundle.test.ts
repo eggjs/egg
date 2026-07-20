@@ -6,9 +6,20 @@ import Bundle from '../../src/commands/bundle.ts';
 import { getFixtures } from '../helper.ts';
 
 const bundleMock = vi.hoisted(() => vi.fn());
+const standaloneOptionsMock = vi.hoisted(() => vi.fn());
+const standaloneRunMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@eggjs/egg-bundler', () => ({
   bundle: bundleMock,
+  StandaloneWorkerBundler: class {
+    constructor(options: unknown) {
+      standaloneOptionsMock(options);
+    }
+
+    run() {
+      return standaloneRunMock();
+    }
+  },
 }));
 
 describe('test/commands/bundle.test.ts', () => {
@@ -20,6 +31,12 @@ describe('test/commands/bundle.test.ts', () => {
       outputDir: path.join(baseDir, 'dist-bundle'),
       manifestPath: path.join(baseDir, '.egg/manifest.json'),
       files: ['server.js'],
+    });
+    standaloneOptionsMock.mockReset();
+    standaloneRunMock.mockReset();
+    standaloneRunMock.mockResolvedValue({
+      outputDir: path.join(baseDir, 'dist-worker'),
+      entry: 'index.mjs',
     });
   });
 
@@ -119,5 +136,45 @@ describe('test/commands/bundle.test.ts', () => {
         inline: [],
       },
     });
+  });
+
+  it('should scan standalone TypeScript metadata in a loader-enabled child process', async () => {
+    const standaloneBaseDir = getFixtures('standalone-bundle-ts');
+    const originalNodeOptions = process.env.NODE_OPTIONS;
+    delete process.env.NODE_OPTIONS;
+
+    try {
+      await Bundle.run([
+        '--base',
+        standaloneBaseDir,
+        '--framework',
+        path.join(standaloneBaseDir, 'framework.ts'),
+        '--entry',
+        'worker.ts',
+      ]);
+    } finally {
+      if (originalNodeOptions === undefined) {
+        delete process.env.NODE_OPTIONS;
+      } else {
+        process.env.NODE_OPTIONS = originalNodeOptions;
+      }
+    }
+
+    expect(standaloneOptionsMock).toHaveBeenCalledTimes(1);
+    expect(standaloneOptionsMock).toHaveBeenCalledWith({
+      baseDir: path.join(standaloneBaseDir, 'app'),
+      entry: path.join(standaloneBaseDir, 'worker.ts'),
+      format: 'module',
+      outputDir: path.join(standaloneBaseDir, 'dist-worker'),
+      manifest: {
+        appDir: path.join(standaloneBaseDir, 'app'),
+        decoratedFramework: 'DecoratedFramework',
+        scannerPid: expect.any(Number),
+      },
+      excludeModules: [],
+      rootPath: standaloneBaseDir,
+      mode: 'production',
+    });
+    expect(standaloneOptionsMock.mock.calls[0][0].manifest.scannerPid).not.toBe(process.pid);
   });
 });

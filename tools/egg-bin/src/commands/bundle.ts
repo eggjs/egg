@@ -1,19 +1,15 @@
-import { createRequire } from 'node:module';
+import fs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
 import { Flags } from '@oclif/core';
 
 import { BaseCommand } from '../baseCommand.ts';
 import { bundleModes, getBundleFrameworkSpecifier, getBundleMode, parsePackAliases } from '../bundleOptions.ts';
+import { getSourceFilename } from '../utils.ts';
 
 const debug = debuglog('egg/bin/commands/bundle');
-
-/** A framework/app package that exposes scan-only manifest generation (standalone target). */
-interface StandaloneFramework {
-  loadMetadata(cwd: string, options?: unknown): Promise<unknown>;
-}
 
 export default class Bundle extends BaseCommand<typeof Bundle> {
   static override description =
@@ -41,7 +37,6 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
       options: [...bundleModes],
       default: 'production',
     }),
-    // app-only
     manifest: Flags.string({
       description: 'app: path to manifest.json (defaults to <baseDir>/.egg/manifest.json)',
     }),
@@ -60,7 +55,6 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
       multiple: true,
       default: [],
     }),
-    // standalone-only
     target: Flags.string({
       description: 'bundle target; auto-detected from --framework when omitted',
       options: ['app', 'standalone'],
@@ -91,9 +85,6 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
     const { flags } = this;
     const baseDir = flags.base;
 
-    // `--entry` is standalone-only, so its presence selects the standalone target;
-    // `--target` forces the choice. The standalone path validates that `--framework`
-    // names a package exporting `loadMetadata`.
     const isStandalone = flags.target === 'standalone' || (!flags.target && !!flags.entry);
 
     if (isStandalone) {
@@ -148,11 +139,6 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
     if (!flags.entry) {
       this.error('--target standalone requires --entry (the worker entry, e.g. worker.ts)');
     }
-    const framework = await this.#importFramework(baseDir, flags.framework);
-    if (!framework || typeof framework.loadMetadata !== 'function') {
-      this.error(`--framework ${flags.framework} does not export loadMetadata; it is not a standalone bundle target`);
-    }
-
     const appDir = path.resolve(baseDir, flags['app-dir']);
     const entry = path.resolve(baseDir, flags.entry);
     const output = flags.output ?? './dist-worker';
@@ -161,8 +147,8 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
 
     debug('bundle standalone: appDir=%s, entry=%s, format=%s, outputDir=%s', appDir, entry, flags.format, outputDir);
 
+    const manifest = await this.#loadStandaloneMetadata(baseDir, appDir, flags.framework);
     const { StandaloneWorkerBundler } = await import('@eggjs/egg-bundler');
-    const manifest = await framework.loadMetadata(appDir);
     const result = await new StandaloneWorkerBundler({
       baseDir: appDir,
       entry,
@@ -177,15 +163,18 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
     this.log(`bundled ${flags.format} worker to ${result.outputDir}/${result.entry}`);
   }
 
-  /** Import a framework/app package resolved from the app's baseDir, or undefined if unresolvable. */
-  async #importFramework(baseDir: string, specifier: string): Promise<StandaloneFramework | undefined> {
-    const require = createRequire(pathToFileURL(path.join(baseDir, 'package.json')));
-    let resolved: string;
+  async #loadStandaloneMetadata(baseDir: string, appDir: string, framework: string): Promise<unknown> {
+    // Run the scan where BaseCommand's TypeScript and import hooks are active.
+    const temporaryDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bin-standalone-metadata-'));
+    const outputFile = path.join(temporaryDir, 'manifest.json');
     try {
-      resolved = require.resolve(specifier);
-    } catch {
-      return undefined;
+      const script = getSourceFilename('../scripts/standalone-metadata.mjs');
+      const args = [JSON.stringify({ baseDir, appDir, framework, outputFile })];
+      const execArgv = await this.buildRequiresExecArgv();
+      await this.forkNode(script, args, { execArgv });
+      return JSON.parse(await fs.readFile(outputFile, 'utf8')) as unknown;
+    } finally {
+      await fs.rm(temporaryDir, { recursive: true, force: true });
     }
-    return (await import(pathToFileURL(resolved).href)) as StandaloneFramework;
   }
 }
