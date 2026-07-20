@@ -29,11 +29,16 @@ export const IMPORT_META_URL_EXPR: string = `(() => { const u = new URL("file://
 export const THROWING_IMPORT_META_URL: RegExp =
   /\(\(\)\s*=>\s*\{\s*throw\s+new\s+Error\(\s*['"][^'"]*import\.meta\.url[^'"]*['"]\s*\)\s*;?\s*\}\)\s*\(\)/g;
 
+// Matches a single-getter object declaration `<kind> <ident> = { get url() { … } }`.
+// The identifier is a plain `[\w$]*` (no embedded `import$2e$meta__` literal, whose
+// word-chars would make the surrounding `[\w$]*` backtrack polynomially over a large
+// bundle) and the getter body is `[^}]*` — both linear; the actual import.meta filter
+// is `IMPORT_META_MARKER` in the replace callback.
 export const TURBOPACK_IMPORT_META_OBJECT: RegExp =
-  // The getter body is a single `return __turbopack_context__.F(...)` with no nested
-  // braces, so `[^}]*` (not `[\s\S]*?`) keeps this linear — no polynomial backtracking
-  // when scanning a large emitted bundle.
-  /\b(var|let|const)\s+([A-Za-z_$][\w$]*import\$2e\$meta__[A-Za-z0-9_$]*)\s*=\s*\{\s*get\s+url\s*\(\)\s*\{[^}]*\}\s*\};?/g;
+  /\b(var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*\{\s*get\s+url\s*\(\)\s*\{[^}]*\}\s*\};?/g;
+
+/** Turbopack encodes `import.meta` as this variable-name marker (`.` → `$2e$`). */
+const IMPORT_META_MARKER = 'import$2e$meta__';
 
 export function renderImportMetaObject(declarationKind: string, metaName: string): string {
   return `${declarationKind} ${metaName} = (() => {
@@ -63,7 +68,8 @@ export function renderImportMetaObject(declarationKind: string, metaName: string
 /** Replace Turbopack's broken import.meta shims in one emitted file's content. */
 export function patchImportMetaInContent(content: string): { content: string; patchCount: number } {
   let metaMatches = 0;
-  let patched = content.replace(TURBOPACK_IMPORT_META_OBJECT, (_match, declarationKind: string, metaName: string) => {
+  let patched = content.replace(TURBOPACK_IMPORT_META_OBJECT, (match, declarationKind: string, metaName: string) => {
+    if (!metaName.includes(IMPORT_META_MARKER)) return match;
     metaMatches++;
     return renderImportMetaObject(declarationKind, metaName);
   });
