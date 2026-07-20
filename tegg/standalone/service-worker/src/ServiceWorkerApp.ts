@@ -78,7 +78,10 @@ export class ServiceWorkerApp {
    * so a bundle boots with no runtime fs scanning. Mirrors the constructor's
    * framework-dep discovery; runs at build time (needs fs).
    */
-  static async loadMetadata(cwd: string, options?: ServiceWorkerAppOptions) {
+  static async loadMetadata(
+    cwd: string,
+    options?: ServiceWorkerAppOptions,
+  ): ReturnType<typeof StandaloneApp.loadMetadata> {
     return StandaloneApp.loadMetadata(cwd, { ...options, frameworkDeps: ServiceWorkerApp.#frameworkDeps(options) });
   }
 

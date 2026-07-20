@@ -46,7 +46,6 @@
     "@eggjs/controller-decorator": "workspace:*",
     "@eggjs/controller-runtime": "workspace:*",
     "@eggjs/router": "workspace:*",
-    "@eggjs/service-worker-runtime": "workspace:*",
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",

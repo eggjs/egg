@@ -72,9 +72,26 @@ export class ModuleLoader implements Loader {
     return this.protoClazzList;
   }
 
-  static createModuleLoader(path: string, loaderFS?: LoaderFS): ModuleLoader {
-    return new ModuleLoader(path, { loaderFS });
+  static createModuleLoader(modulePath: string, loaderFS?: LoaderFS): ModuleLoader {
+    // Bundle mode: a loader created on the dynamic path (e.g. DAL's multiInstance
+    // `getObjects`) must reuse the manifest's decorated files instead of globbing —
+    // otherwise it loads non-decorated files that aren't in the bundle map, and the
+    // fallback dynamic require fails ("Cannot find module as expression is too dynamic").
+    // The static boot path already passes precomputedFiles directly.
+    return new ModuleLoader(modulePath, { precomputedFiles: bundleModuleFiles(modulePath), loaderFS });
   }
+}
+
+/** Decorated files for `modulePath` from the bundle manifest on globalThis, if any. */
+function bundleModuleFiles(modulePath: string): string[] | undefined {
+  const manifest = (
+    globalThis as {
+      __EGG_BUNDLE_MANIFEST__?: { moduleDescriptors?: Array<{ unitPath: string; decoratedFiles: string[] }> };
+    }
+  ).__EGG_BUNDLE_MANIFEST__;
+  if (!manifest?.moduleDescriptors) return undefined;
+  const key = modulePath.split('\\').join('/');
+  return manifest.moduleDescriptors.find((d) => d.unitPath.split('\\').join('/') === key)?.decoratedFiles;
 }
 
 LoaderFactory.registerLoader('MODULE', ModuleLoader.createModuleLoader);

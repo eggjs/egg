@@ -22,14 +22,14 @@ const IMPORT_META_FALLBACK_FILENAME_EXPR = [
   '})()',
 ].join(' ');
 
-export const IMPORT_META_FILENAME_EXPR = `(typeof __filename === "string" ? __filename : ${IMPORT_META_FALLBACK_FILENAME_EXPR})`;
+export const IMPORT_META_FILENAME_EXPR: string = `(typeof __filename === "string" ? __filename : ${IMPORT_META_FALLBACK_FILENAME_EXPR})`;
 
-export const IMPORT_META_URL_EXPR = `(() => { const u = new URL("file:///"); u.pathname = ${IMPORT_META_FILENAME_EXPR}.replace(/\\\\/g, "/"); return u.href; })()`;
+export const IMPORT_META_URL_EXPR: string = `(() => { const u = new URL("file:///"); u.pathname = ${IMPORT_META_FILENAME_EXPR}.replace(/\\\\/g, "/"); return u.href; })()`;
 
-export const THROWING_IMPORT_META_URL =
+export const THROWING_IMPORT_META_URL: RegExp =
   /\(\(\)\s*=>\s*\{\s*throw\s+new\s+Error\(\s*['"][^'"]*import\.meta\.url[^'"]*['"]\s*\)\s*;?\s*\}\)\s*\(\)/g;
 
-export const TURBOPACK_IMPORT_META_OBJECT =
+export const TURBOPACK_IMPORT_META_OBJECT: RegExp =
   /\b(var|let|const)\s+([A-Za-z_$][\w$]*import\$2e\$meta__[A-Za-z0-9_$]*)\s*=\s*\{\s*get\s+url\s*\(\)\s*\{[\s\S]*?\}\s*\};?/g;
 
 export function renderImportMetaObject(declarationKind: string, metaName: string): string {
