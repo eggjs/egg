@@ -4,12 +4,10 @@ declare global {
   // eslint-disable-next-line no-var
   var __EGG_BUNDLE_MODULE_LOADER__: BundleModuleLoader | undefined;
   /**
-   * The tegg manifest (`{ moduleReferences, moduleDescriptors }`) inlined by the
-   * standalone worker bundler's injected prelude. A standalone app constructed
-   * without an explicit `manifest` option falls back to this, so a user's bundle
-   * entry (`new ServiceWorkerApp(dir)`) needs no special import and stays runnable
-   * outside the bundle. Structurally a tegg `TeggManifestExtension`; typed
-   * `unknown` here to keep `@eggjs/typings` free of a `@eggjs/tegg-loader` dep.
+   * The tegg manifest inlined by the standalone worker bundler's injected prelude; a
+   * standalone app with no explicit `manifest` option falls back to it. Typed `unknown`
+   * to keep `@eggjs/typings` free of a `@eggjs/tegg-loader` dep (structurally a
+   * `TeggManifestExtension`).
    */
   // eslint-disable-next-line no-var
   var __EGG_BUNDLE_MANIFEST__: unknown;

@@ -163,11 +163,10 @@ export class StandaloneWorkerBundler {
     await fs.writeFile(stubGlobby, STUB_GLOBBY);
     await fs.writeFile(stubOs, STUB_OS);
 
-    // The Turbopack entry = injected prelude + the user's entry content, copied beside
-    // the user's source. The prelude sets the bundle-mode globals BEFORE the user body
-    // runs (import declarations load first, then bodies run in source order), so the
-    // user's plain `new ServiceWorkerApp(dir)` picks up the manifest with no build-only
-    // import. The user's own `export default`/`addEventListener` is preserved verbatim.
+    // The Turbopack entry = injected prelude + the user's entry, copied beside the
+    // source. Import declarations load before module bodies, so the prelude's globals
+    // are set before the user's `new ServiceWorkerApp(dir)` reads them — the user entry
+    // needs no build-only import and stays runnable unbundled.
     const userSource = await fs.readFile(absEntry, 'utf8');
     const injectedEntry = path.join(userEntryDir, '.egg-worker-entry.ts');
     await fs.writeFile(injectedEntry, `${this.#renderPrelude(filtered, userEntryDir)}\n${userSource}`);
@@ -207,8 +206,6 @@ export class StandaloneWorkerBundler {
     await fs.writeFile(workerCjs, patched.content);
     await fs.rm(workerJs, { force: true });
 
-    // @utoo/pack single-file output is a self-executing CJS IIFE (no import/export)
-    // that does `module.exports = <entry namespace>`.
     if (format === 'service-worker') {
       // Legacy service-worker format: the entry's `addEventListener('fetch')` ran on
       // the global scope when worker.cjs evaluated. It must stay a classic (non-module)

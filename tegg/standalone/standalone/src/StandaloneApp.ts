@@ -339,9 +339,8 @@ export class StandaloneApp {
     }
 
     // Bundle mode: the worker bundler's injected prelude inlines the manifest on
-    // globalThis (alongside __EGG_BUNDLE_MODULE_LOADER__), so the user's entry can
-    // stay a plain `new ServiceWorkerApp(dir)` with no build-only import and still
-    // run outside the bundle (no global → filesystem scan below).
+    // globalThis, so the user's entry stays a plain `new ServiceWorkerApp(dir)` with no
+    // build-only import (no global → filesystem scan, unchanged for non-bundle runs).
     if (!opts.manifest) {
       const bundleManifest = (globalThis as { __EGG_BUNDLE_MANIFEST__?: unknown }).__EGG_BUNDLE_MANIFEST__;
       if (bundleManifest) {

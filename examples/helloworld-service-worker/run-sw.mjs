@@ -2,12 +2,10 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// Drive the service-worker-format bundle (`npm run bundle:sw`) in a minimal Web
-// Service Worker shell: provide a global `addEventListener('fetch')`, load the
-// classic-script bundle (which registers its listener on evaluation), then dispatch
-// FetchEvents and read what `respondWith` captured. A real edge SW runtime does the
-// same wiring natively. (Cloudflare workerd is NOT a target for this format — its
-// nodejs_compat only supports the module-worker format; use `worker.ts` there.)
+// Drive the service-worker-format bundle (`npm run bundle:sw`) in a minimal Web Service
+// Worker shell: shim a global `addEventListener('fetch')`, load the classic script (it
+// registers its listener on load), then dispatch FetchEvents. A real edge SW runtime
+// wires this natively (not workerd — see README).
 const here = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 

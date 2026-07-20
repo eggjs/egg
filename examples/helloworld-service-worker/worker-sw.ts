@@ -3,19 +3,14 @@ import { fileURLToPath } from 'node:url';
 
 import { ServiceWorkerApp } from '@eggjs/service-worker';
 
-// The *service-worker* format entry: instead of `export default { fetch }`, it
-// registers a listener on the global `fetch` event. This targets Web Service
-// Worker / edge runtimes that expose `addEventListener('fetch')` — NOT Cloudflare
-// workerd, whose `nodejs_compat` (which tegg needs for AsyncLocalStorage) only
-// supports the module-worker format (`worker.ts`). Like `worker.ts`, nothing here
-// is bundle-only; the bundler injects the scanned imports + manifest ahead of it.
-// Bundle with `format: 'service-worker'` (see `bundle-sw.mjs`); the artifact is a
-// classic script, not an ES module.
+// The *service-worker* format entry: registers on the global `fetch` event instead of
+// `export default { fetch }`. Targets Web Service Worker / edge runtimes — NOT workerd
+// (its nodejs_compat only supports module format; see README). Bundle with
+// `format: 'service-worker'` (bundle-sw.mjs).
 const app = new ServiceWorkerApp(path.join(path.dirname(fileURLToPath(import.meta.url)), 'app'));
 
-// The platform hands a native FetchEvent (type + request + respondWith + waitUntil);
-// it satisfies the app's minimal `{ type, request }` contract. These globals are the
-// runtime's (workerd) — declared locally since this example compiles under Node libs.
+// A native FetchEvent satisfies the app's minimal `{ type, request }` contract; these
+// globals are the runtime's, declared locally since the example compiles under Node libs.
 interface ServiceWorkerFetchEvent {
   type: 'fetch';
   request: Request;
