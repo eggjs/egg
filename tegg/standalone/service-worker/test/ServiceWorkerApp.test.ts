@@ -168,12 +168,14 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     assert.match(body.message, /GET \/nope/);
   });
 
-  it('should return the unified error shape for controller errors', async () => {
+  it('should return a generic 500 that does not leak the internal error message', async () => {
     const res = await fetch(`${base}/stream/boom`);
     assert.equal(res.status, 500);
+    // The thrown 'stream controller boom' is logged server-side but never reaches the
+    // client; a host surfaces details through an `errorResponseMapper` instead.
     assert.deepEqual(await res.json(), {
       code: 'INTERNAL_SERVER_ERROR',
-      message: 'stream controller boom',
+      message: 'Internal Server Error',
     });
   });
 

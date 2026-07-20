@@ -30,7 +30,10 @@ export const THROWING_IMPORT_META_URL: RegExp =
   /\(\(\)\s*=>\s*\{\s*throw\s+new\s+Error\(\s*['"][^'"]*import\.meta\.url[^'"]*['"]\s*\)\s*;?\s*\}\)\s*\(\)/g;
 
 export const TURBOPACK_IMPORT_META_OBJECT: RegExp =
-  /\b(var|let|const)\s+([A-Za-z_$][\w$]*import\$2e\$meta__[A-Za-z0-9_$]*)\s*=\s*\{\s*get\s+url\s*\(\)\s*\{[\s\S]*?\}\s*\};?/g;
+  // The getter body is a single `return __turbopack_context__.F(...)` with no nested
+  // braces, so `[^}]*` (not `[\s\S]*?`) keeps this linear — no polynomial backtracking
+  // when scanning a large emitted bundle.
+  /\b(var|let|const)\s+([A-Za-z_$][\w$]*import\$2e\$meta__[A-Za-z0-9_$]*)\s*=\s*\{\s*get\s+url\s*\(\)\s*\{[^}]*\}\s*\};?/g;
 
 export function renderImportMetaObject(declarationKind: string, metaName: string): string {
   return `${declarationKind} ${metaName} = (() => {

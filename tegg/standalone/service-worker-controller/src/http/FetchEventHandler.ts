@@ -74,9 +74,11 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
       if (mapped) {
         return mapped;
       }
+      // Log the real error server-side; reply a generic message so internal error
+      // details never reach the client (a host that wants to surface them provides
+      // an `errorResponseMapper`, handled above).
       console.error('[service-worker] handle fetch event failed:', e);
-      const message = e instanceof Error ? e.message : String(e);
-      return ResponseUtils.createErrorResponse(500, 'INTERNAL_SERVER_ERROR', message);
+      return ResponseUtils.createErrorResponse(500, 'INTERNAL_SERVER_ERROR', 'Internal Server Error');
     }
   }
 
