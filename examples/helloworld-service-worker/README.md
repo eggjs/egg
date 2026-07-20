@@ -41,13 +41,10 @@ curl -X POST 'http://127.0.0.1:7001/mcp/calc/stream' \
   plus `export default { fetch }`. Nothing here is bundle-only, so it also runs
   directly under Node (runtime module scan). The bundler injects the
   framework-scanned imports and the manifest ahead of this file at build time.
-- `bundle-cf.mjs` — the Cloudflare Workers build: `ServiceWorkerApp.loadMetadata`
-  produces the tegg manifest, then `@eggjs/egg-bundler`'s `StandaloneWorkerBundler`
-  bundles `worker.ts` (with the injected prelude) into `.worker-cf/` (an ESM
-  module-worker wrapper over the CJS bundle).
-- `worker-sw.ts` + `bundle-sw.mjs` + `run-sw.mjs` — the same app in the legacy
-  **service-worker format** (`addEventListener('fetch', …)` instead of
-  `export default { fetch }`). See "Service-worker format" below.
+  Bundled with `npm run bundle:cf` (`egg-bin bundle`, see below).
+- `worker-sw.ts` + `run-sw.mjs` — the same app in the legacy **service-worker
+  format** (`addEventListener('fetch', …)` instead of `export default { fetch }`).
+  See "Service-worker format" below.
 
 ## Cloudflare Workers
 
@@ -58,9 +55,16 @@ and the manifest to a build-managed copy of `worker.ts` (leaving your source
 untouched), so `worker.ts` stays a plain, locally-runnable entry:
 
 ```bash
-npm run bundle:cf            # -> .worker-cf/index.mjs (export default { fetch })
+npm run bundle:cf            # egg-bin bundle --framework @eggjs/service-worker --entry worker.ts
+                            # -> .worker-cf/index.mjs (export default { fetch })
 wrangler dev                 # local workerd, or `wrangler deploy`
 ```
+
+`egg-bin bundle` is the one-shot CLI: it selects the standalone target because
+`--framework @eggjs/service-worker` exports `loadMetadata` (there is no separate
+metadata step), then bundles `--entry worker.ts`. A published `@eggjs/service-worker`
+runs it under plain Node; inside this monorepo the script wraps it with
+`@oxc-node/core/register` so the workspace's TypeScript sources load.
 
 `wrangler.jsonc` sets `nodejs_compat` (tegg needs `AsyncLocalStorage`) and points
 `main` at the bundle. The same `GET /hello/` and `POST /mcp/calc/stream` routes
