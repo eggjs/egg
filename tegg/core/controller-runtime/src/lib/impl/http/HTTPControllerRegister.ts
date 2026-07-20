@@ -47,7 +47,6 @@ export class HTTPControllerRegister implements ControllerRegister {
   }
 
   register(): Promise<void> {
-    // do noting
     return Promise.resolve();
   }
 
@@ -65,12 +64,10 @@ export class HTTPControllerRegister implements ControllerRegister {
       }
     }
     const allMethods = Array.from(methodMap.keys()).sort((a, b) => b.priority - a.priority);
-
-    // FIXME: why init method register twice?
-    for (const method of allMethods) {
+    const methodRegisters = allMethods.map((method) => {
       const controllerProto = methodMap.get(method)!;
       const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as HTTPControllerMeta;
-      const methodRegister = this.methodRegisterCreator(
+      return this.methodRegisterCreator(
         controllerProto,
         controllerMeta,
         method,
@@ -78,22 +75,13 @@ export class HTTPControllerRegister implements ControllerRegister {
         this.checkRouters,
         this.eggContainerFactory,
       );
+    });
+
+    for (const methodRegister of methodRegisters) {
       methodRegister.checkDuplicate();
     }
 
-    for (const method of allMethods) {
-      const controllerProto = methodMap.get(method)!;
-      const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as HTTPControllerMeta;
-      const methodRegister = this.methodRegisterCreator(
-        controllerProto,
-        controllerMeta,
-        method,
-        this.router,
-        this.checkRouters,
-        this.eggContainerFactory,
-      );
-      // Error: framework.RouterConflictError: register http controller GET AppController2.get failed, GET /apps/:id is conflict with exists rule /apps/:id [ https://eggjs.org/faq/TEGG_ROUTER_CONFLICT ]
-      // methodRegister.checkDuplicate();
+    for (const methodRegister of methodRegisters) {
       methodRegister.register(rootProtoManager);
     }
   }
