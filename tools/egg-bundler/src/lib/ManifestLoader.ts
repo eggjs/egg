@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
 import { ManifestStore, type StartupManifest } from '@eggjs/core';
+import type { TeggManifest } from '@eggjs/tegg-types';
 import { execaNode } from 'execa';
 
 const debug = debuglog('egg/bundler/manifest-loader');
@@ -21,24 +22,6 @@ export interface ManifestLoaderOptions {
   env?: string;
   scope?: string;
   execArgv?: string[];
-}
-
-interface TeggModuleDescriptor {
-  unitPath: string;
-  decoratedFiles?: string[];
-}
-
-interface TeggModuleReference {
-  name: string;
-  package?: string;
-  path: string;
-  optional?: boolean;
-  loaderType?: string;
-}
-
-interface TeggManifestExtension {
-  moduleReferences?: TeggModuleReference[];
-  moduleDescriptors?: TeggModuleDescriptor[];
 }
 
 interface ModuleMapEntry {
@@ -120,7 +103,7 @@ export class ManifestLoader {
   }
 
   getTeggDecoratedFiles(): string[] {
-    const ext = this.manifest.extensions?.tegg as TeggManifestExtension | undefined;
+    const ext = this.manifest.extensions?.tegg as Partial<TeggManifest> | undefined;
     const descriptors = ext?.moduleDescriptors;
     if (!descriptors) return [];
     const files: string[] = [];
@@ -409,9 +392,9 @@ export class ManifestLoader {
     moduleMap: ModuleMapEntry[],
   ): Promise<Record<string, unknown>> {
     const result: Record<string, unknown> = { ...extensions };
-    const tegg = extensions?.tegg as TeggManifestExtension | undefined;
+    const tegg = extensions?.tegg as Partial<TeggManifest> | undefined;
     if (tegg?.moduleReferences || tegg?.moduleDescriptors) {
-      const normalizedTegg: TeggManifestExtension = { ...tegg };
+      const normalizedTegg: Partial<TeggManifest> = { ...tegg };
       if (tegg.moduleReferences) {
         normalizedTegg.moduleReferences = await Promise.all(
           tegg.moduleReferences.map(async (ref) => ({

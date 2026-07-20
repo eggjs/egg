@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
+import { ManifestLoaderFS } from '@eggjs/loader-fs';
 import { EggLoadUnitType } from '@eggjs/metadata';
 import { afterEach, describe, it, vi } from 'vitest';
 
@@ -11,45 +12,40 @@ import { LoaderUtil } from '../src/LoaderUtil.ts';
 describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
   const repoModulePath = path.join(__dirname, './fixtures/modules/module-for-loader');
 
+  function createLoader(files: string[]): ModuleLoader {
+    const loaderFS = new ManifestLoaderFS({
+      baseDir: repoModulePath,
+      data: { fileDiscovery: { '': files }, resolveCache: {} },
+    });
+    return new ModuleLoader(repoModulePath, { loaderFS });
+  }
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it('should load only precomputed files when provided', async () => {
-    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: ['AppRepo.ts'] });
-    const prototypes = await loader.load();
-    // AppRepo.ts has 2 decorated classes: AppRepo and AppRepo2
-    assert.equal(prototypes.length, 2);
-    assert(prototypes.find((t) => t.name === 'AppRepo'));
-    assert(prototypes.find((t) => t.name === 'AppRepo2'));
+  it('should load only files exposed by the manifest view', async () => {
+    const prototypes = await createLoader(['AppRepo.ts']).load();
+    assert.deepStrictEqual(prototypes.map((prototype) => prototype.name).sort(), ['AppRepo', 'AppRepo2']);
   });
 
-  it('should produce same result as globby-based loading', async () => {
-    // Load via globby (normal path)
+  it('should produce the same result as real filesystem discovery', async () => {
     const normalLoader = LoaderFactory.createLoader(repoModulePath, EggLoadUnitType.MODULE);
     const normalProtos = await normalLoader.load();
+    const manifestProtos = await createLoader(['AppRepo.ts', 'SprintRepo.ts', 'UserRepo.ts']).load();
 
-    // Load via precomputed files (manifest path)
-    // Get the file list from normal loading to ensure consistency
-    const fileNames = ['AppRepo.ts', 'SprintRepo.ts', 'UserRepo.ts'];
-    const manifestLoader = new ModuleLoader(repoModulePath, { precomputedFiles: fileNames });
-    const manifestProtos = await manifestLoader.load();
-
-    // Same number and same class names
-    assert.equal(manifestProtos.length, normalProtos.length);
-    const normalNames = normalProtos.map((p) => p.name).sort();
-    const manifestNames = manifestProtos.map((p) => p.name).sort();
-    assert.deepStrictEqual(manifestNames, normalNames);
+    assert.deepStrictEqual(
+      manifestProtos.map((prototype) => prototype.name).sort(),
+      normalProtos.map((prototype) => prototype.name).sort(),
+    );
   });
 
-  it('should return empty list for empty precomputedFiles', async () => {
-    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: [] });
-    const prototypes = await loader.load();
-    assert.equal(prototypes.length, 0);
+  it('should return an empty list for an empty manifest directory', async () => {
+    assert.deepStrictEqual(await createLoader([]).load(), []);
   });
 
   it('should cache result on subsequent calls', async () => {
-    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: ['AppRepo.ts'] });
+    const loader = createLoader(['AppRepo.ts']);
     const first = await loader.load();
     const second = await loader.load();
     assert.strictEqual(first, second);
@@ -65,7 +61,7 @@ describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
       await gate;
       return originalLoadFile.call(LoaderUtil, filePath);
     });
-    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: ['AppRepo.ts'] });
+    const loader = createLoader(['AppRepo.ts']);
 
     const firstLoad = loader.load();
     const secondLoad = loader.load();
@@ -83,7 +79,7 @@ describe('core/loader/test/ModuleLoaderManifest.test.ts', () => {
       .spyOn(LoaderUtil, 'loadFile')
       .mockRejectedValueOnce(new Error('load failed'))
       .mockImplementation((filePath) => originalLoadFile.call(LoaderUtil, filePath));
-    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: ['AppRepo.ts'] });
+    const loader = createLoader(['AppRepo.ts']);
 
     await assert.rejects(loader.load(), /load failed/);
     const prototypes = await loader.load();

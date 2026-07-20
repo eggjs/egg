@@ -1,8 +1,12 @@
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/metadata';
 import type { GlobalGraphBuildHook, ModuleDescriptor } from '@eggjs/metadata';
-import { buildTeggManifestData, LoaderFactory, ModuleLoader, TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
-import type { TeggManifestExtension } from '@eggjs/tegg-loader';
-import type { ModuleReference } from '@eggjs/tegg-types';
+import {
+  buildTeggManifestData,
+  createTeggManifestLoaderFS,
+  LoaderFactory,
+  TEGG_MANIFEST_KEY,
+} from '@eggjs/tegg-loader';
+import type { ModuleReference, TeggManifest } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 
 import { EggAppLoader } from './EggAppLoader.ts';
@@ -12,13 +16,6 @@ export class EggModuleLoader {
   globalGraph: GlobalGraph;
   private pendingBuildHooks: GlobalGraphBuildHook[] = [];
   #moduleDescriptors: readonly ModuleDescriptor[] = [];
-  /**
-   * True when the app graph was built from a tegg manifest (bundle mode). In
-   * that case the module source files do not exist on disk, so module load
-   * units must reuse the manifest's precomputed decorated files instead of
-   * globbing the file system.
-   */
-  private loadedFromManifest = false;
 
   constructor(app: Application) {
     this.app = app;
@@ -61,20 +58,20 @@ export class EggModuleLoader {
     // Ordinary app modules keep their original optional semantics.
     EggModuleLoader.reconcileModulePluginReferences(this.app);
 
-    // Pass manifest data to LoaderFactory if available
+    // Build the module file view once for this host.
     const manifest = this.app.loader.manifest;
-    const manifestTegg = manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined;
-    const loadAppManifest = manifestTegg?.moduleDescriptors?.length ? manifestTegg : undefined;
-    this.loadedFromManifest = !!loadAppManifest;
-
-    // Reuse egg-core's loader fs so discovery goes through the shared VFS:
-    // RealLoaderFS in normal mode (zero behavior change), ManifestLoaderFS in bundle mode.
-    const loaderFS = this.app.loader.loaderFS;
-    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loadAppManifest, loaderFS);
+    const manifestTegg = manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifest | undefined;
+    // Overlay tegg's decorated-file index on Egg's loader view. In bundle mode
+    // the fallback is Egg's StartupManifest-backed LoaderFS; in normal mode the
+    // tegg extension is absent and discovery continues through RealLoaderFS.
+    const loaderFS = manifestTegg
+      ? createTeggManifestLoaderFS(this.app.baseDir, manifestTegg, this.app.loader.loaderFS)
+      : this.app.loader.loaderFS;
+    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, loaderFS);
     this.#moduleDescriptors = moduleDescriptors;
 
     // Collect manifest data when not loaded from manifest
-    if (!loadAppManifest) {
+    if (!manifestTegg?.moduleDescriptors.length) {
       EggModuleLoader.collectTeggManifest(this.app, this.app.moduleReferences, moduleDescriptors);
     }
 
@@ -96,7 +93,7 @@ export class EggModuleLoader {
   static buildTeggManifestData(
     moduleReferences: readonly ModuleReference[],
     moduleDescriptors: readonly ModuleDescriptor[],
-  ): TeggManifestExtension {
+  ): TeggManifest {
     return buildTeggManifestData(moduleReferences, moduleDescriptors);
   }
 
@@ -116,34 +113,15 @@ export class EggModuleLoader {
     this.globalGraph.build();
     this.globalGraph.sort();
     const moduleConfigList = this.globalGraph.moduleConfigList;
-    const loaderFS = this.app.loader.loaderFS;
-
-    // In bundle mode the module source files are not present on disk, so a
-    // globbing loader returns nothing. Reuse the manifest's precomputed
-    // decorated files (the same list buildAppGraph loaded the graph from) so
-    // load-unit lifecycle hooks such as EggQualifierProtoHook still see the
-    // real decorated classes via `ctx.loader.load()`.
-    const decoratedFilesMap = new Map<string, string[]>();
-    if (this.loadedFromManifest) {
-      const manifestTegg = this.app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as
-        | TeggManifestExtension
-        | undefined;
-      for (const desc of manifestTegg?.moduleDescriptors ?? []) {
-        decoratedFilesMap.set(desc.unitPath, desc.decoratedFiles);
-      }
-    }
 
     for (const moduleConfig of moduleConfigList) {
       const modulePath = moduleConfig.path;
-      const precomputedFiles = decoratedFilesMap.get(modulePath);
-      const loader = precomputedFiles
-        ? new ModuleLoader(modulePath, { precomputedFiles, loaderFS })
-        : LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, loaderFS);
+      const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
       const loadUnit = await LoadUnitFactory.createLoadUnit(
         modulePath,
         EggLoadUnitType.MODULE,
         loader,
-        precomputedFiles ? moduleConfig.name : undefined,
+        moduleConfig.name,
       );
       this.app.moduleHandler.loadUnits.push(loadUnit);
     }

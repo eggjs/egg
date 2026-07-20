@@ -64,9 +64,11 @@ export default class TeggAppBoot implements ILifecycleBoot {
 
   async loadMetadata(): Promise<void> {
     if (!this.app.moduleReferences) return;
-    EggModuleLoader.reconcileModulePluginReferences(this.app);
-    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences);
-    EggModuleLoader.collectTeggManifest(this.app, this.app.moduleReferences, moduleDescriptors);
+    await TeggScope.runMaybe(this.app._teggScopeBag, async () => {
+      EggModuleLoader.reconcileModulePluginReferences(this.app);
+      const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences, this.app.loader.loaderFS);
+      EggModuleLoader.collectTeggManifest(this.app, this.app.moduleReferences, moduleDescriptors);
+    });
   }
 
   async beforeClose(): Promise<void> {

@@ -1,23 +1,31 @@
 import fs, { type Stats } from 'node:fs';
 import path from 'node:path';
 
-import { RealLoaderFS, type LoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
-import type {} from '@eggjs/typings/global';
 import multimatch, { type Options as MultimatchOptions } from 'multimatch';
 
-import type { ManifestStore } from './manifest.ts';
+import { RealLoaderFS, type LoaderFS, type LoaderFSGlobOptions } from './index.ts';
 
-export { RealLoaderFS };
-export type { LoaderFS, LoaderFSGlobOptions };
+export interface LoaderFSManifestData {
+  /** resolveModule cache: relative filepath -> resolved relative path | null */
+  resolveCache: Record<string, string | null>;
+  /** relative directory path -> file paths relative to that directory */
+  fileDiscovery: Record<string, string[]>;
+}
+
+/** Host-neutral manifest view consumed by ManifestLoaderFS. */
+export interface LoaderFSManifest {
+  readonly baseDir: string;
+  readonly data: LoaderFSManifestData;
+}
 
 export class ManifestLoaderFS implements LoaderFS {
-  readonly #manifest: ManifestStore;
+  readonly #manifest: LoaderFSManifest;
   readonly #fallback: LoaderFS;
   readonly #manifestFiles: Set<string>;
   readonly #manifestDirectories: Set<string>;
   readonly #resolveCacheTargets: Set<string>;
 
-  constructor(manifest: ManifestStore, fallback: LoaderFS = new RealLoaderFS()) {
+  constructor(manifest: LoaderFSManifest, fallback: LoaderFS = new RealLoaderFS()) {
     this.#manifest = manifest;
     this.#fallback = fallback;
     this.#resolveCacheTargets = new Set(
@@ -210,7 +218,11 @@ export class ManifestLoaderFS implements LoaderFS {
   }
 
   #loadBundledModule(rel: string): unknown {
-    const loader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
+    const loader = (
+      globalThis as typeof globalThis & {
+        __EGG_BUNDLE_MODULE_LOADER__?: (filepath: string) => unknown;
+      }
+    ).__EGG_BUNDLE_MODULE_LOADER__;
     if (!loader) return undefined;
 
     for (const key of this.#bundleKeys(rel)) {

@@ -23,8 +23,6 @@ export {
   StandaloneWorkerBundler,
   type StandaloneWorkerBundlerOptions,
   type StandaloneWorkerBundleResult,
-  type StandaloneManifest,
-  type StandaloneManifestModule,
 } from './lib/StandaloneWorkerBundler.ts';
 export { patchImportMetaInContent } from './lib/importMetaPatch.ts';
 

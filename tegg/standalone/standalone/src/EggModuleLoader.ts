@@ -9,18 +9,18 @@ import {
 } from '@eggjs/metadata';
 import type { Logger } from '@eggjs/tegg';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
-import { buildTeggManifestData, LoaderFactory, ModuleLoader, type TeggManifestExtension } from '@eggjs/tegg-loader';
-import { TeggScope } from '@eggjs/tegg-types';
+import { buildTeggManifestData, createTeggManifestLoaderFS, LoaderFactory } from '@eggjs/tegg-loader';
+import { type TeggManifest, TeggScope } from '@eggjs/tegg-types';
 
 export interface EggModuleLoaderOptions {
   logger: Logger;
   baseDir: string;
   dump?: boolean;
   /**
-   * Tegg manifest data (bundle mode). When provided the module scan reuses the
-   * precomputed decorated files instead of globbing the file system.
+   * Tegg manifest data (bundle mode). Its decorated-file index is exposed
+   * through a manifest-backed LoaderFS instead of the runtime filesystem.
    */
-  manifest?: TeggManifestExtension;
+  manifest?: TeggManifest;
   /** Virtual fs used together with manifest in bundle mode. */
   loaderFS?: LoaderFS;
 }
@@ -53,8 +53,10 @@ export class EggModuleLoader {
     moduleReferences: readonly ModuleReference[],
     options: EggModuleLoaderOptions,
   ): Promise<{ globalGraph: GlobalGraph; moduleDescriptors: readonly ModuleDescriptor[] }> {
-    const manifest = options.manifest?.moduleDescriptors?.length ? options.manifest : undefined;
-    const moduleDescriptors = await LoaderFactory.loadApp(moduleReferences, manifest, options.loaderFS);
+    const loaderFS = options.manifest
+      ? createTeggManifestLoaderFS(options.baseDir, options.manifest, options.loaderFS)
+      : options.loaderFS;
+    const moduleDescriptors = await LoaderFactory.loadApp(moduleReferences, loaderFS);
     if (options.dump !== false) {
       for (const moduleDescriptor of moduleDescriptors) {
         ModuleDescriptorDumper.dump(moduleDescriptor, {
@@ -73,7 +75,7 @@ export class EggModuleLoader {
   static buildTeggManifestData(
     moduleReferences: readonly ModuleReference[],
     moduleDescriptors: readonly ModuleDescriptor[],
-  ): TeggManifestExtension {
+  ): TeggManifest {
     return buildTeggManifestData(moduleReferences, moduleDescriptors);
   }
 
@@ -81,19 +83,12 @@ export class EggModuleLoader {
     const loadUnits: LoadUnit[] = [];
     this.globalGraph.build();
     this.globalGraph.sort();
-    // Index bundled metadata once by module path.
-    const decoratedFilesMap = new Map<string, string[]>();
-    for (const desc of this.options.manifest?.moduleDescriptors ?? []) {
-      decoratedFilesMap.set(desc.unitPath, desc.decoratedFiles);
-    }
     for (const moduleConfig of GlobalGraph.instance!.moduleConfigList) {
       const modulePath = moduleConfig.path;
-      const precomputedFiles = decoratedFilesMap.get(modulePath);
-      const loader = precomputedFiles
-        ? new ModuleLoader(modulePath, { precomputedFiles, loaderFS: this.options.loaderFS })
-        : LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, this.options.loaderFS);
-      const unitName = precomputedFiles ? moduleConfig.name : undefined;
-      loadUnits.push(await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader, unitName));
+      const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
+      loadUnits.push(
+        await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader, moduleConfig.name),
+      );
     }
     return loadUnits;
   }
@@ -109,8 +104,13 @@ export class EggModuleLoader {
       const moduleConfigList = globalGraph.moduleConfigList;
       for (const moduleConfig of moduleConfigList) {
         const modulePath = moduleConfig.path;
-        const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE, options.loaderFS);
-        const loadUnit = await LoadUnitFactory.createPreloadLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
+        const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
+        const loadUnit = await LoadUnitFactory.createPreloadLoadUnit(
+          modulePath,
+          EggLoadUnitType.MODULE,
+          loader,
+          moduleConfig.name,
+        );
         loadUnits.push(loadUnit);
       }
       for (const load of loadUnits) {

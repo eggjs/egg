@@ -3,7 +3,7 @@ import path from 'node:path';
 import { debuglog } from 'node:util';
 
 import { ModuleConfigUtil, type ModuleReference, type ReadModuleReferenceOptions } from '@eggjs/tegg-common-util';
-import type { TeggManifestExtension } from '@eggjs/tegg-loader';
+import type { TeggManifest } from '@eggjs/tegg-types';
 import { getFrameworkPath, importResolve } from '@eggjs/utils';
 
 const debug = debuglog('egg/tegg/plugin/config/ModuleScanner');
@@ -84,7 +84,7 @@ export class ModuleScanner {
     return references;
   }
 
-  validateManifestModulePlugins(manifest: TeggManifestExtension): void {
+  validateManifestModulePlugins(manifest: TeggManifest): void {
     for (const pluginReference of this.loadPluginModuleReferences(true)) {
       const reference = manifest.moduleReferences.find((reference) => {
         if (pluginReference.package && reference.package) {

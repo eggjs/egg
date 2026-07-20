@@ -12,8 +12,14 @@ source_files:
   - tools/egg-bundler/src/lib/StandaloneWorkerBundler.ts
   - tools/egg-bundler/src/lib/importMetaPatch.ts
   - tools/egg-bin/src/commands/bundle.ts
+  - packages/loader-fs/src/manifest_loader_fs.ts
+  - tegg/core/types/src/metadata/model/TeggManifest.ts
+  - tegg/core/loader/src/LoaderFactory.ts
+  - tegg/core/loader/src/TeggManifestLoaderFS.ts
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/plugin/dal/src/lib/DataSource.ts
+  - tegg/plugin/tegg/src/lib/EggModuleLoader.ts
+  - tegg/standalone/standalone/src/EggModuleLoader.ts
   - tools/egg-bundler/docs/output-structure.md
   - examples/helloworld-service-worker
 updated_at: 2026-07-20
@@ -194,15 +200,26 @@ authors a plain, locally-runnable `worker.ts`
 `examples/helloworld-service-worker/{worker.ts,wrangler.jsonc}`, built via
 `npm run bundle:cf` (`egg-bin bundle --framework @eggjs/service-worker --entry worker.ts`).
 
-**Bundle-mode dynamic module loading.** The static boot threads the manifest's
-decorated files, but a loader created on the _dynamic_ path (`ModuleLoader.createModuleLoader`,
-e.g. DAL's multiInstance `getObjects` calling `LoaderFactory.createLoader(unitPath).load()`)
-used to glob and load non-decorated files (an egg plugin's `app.ts`) that aren't in the
-bundle map — the fallback dynamic require then failed. `createModuleLoader` now reuses the
-decorated files from `globalThis.__EGG_BUNDLE_MANIFEST__` in bundle mode (non-bundle runs
-glob as before), mirroring how the egg app bundle stays loadable (it bundles all
-`fileDiscovery` files + a `ManifestLoaderFS`). This is why a standalone bundle can now
-include teggDal without excluding it.
+**Bundle-mode dynamic module loading.** Egg and standalone each adapt the shared
+`TeggManifest.moduleDescriptors[].decoratedFiles` data into a
+`ManifestLoaderFS` overlay and retain that file view in their host-owned module
+loader. They pass it explicitly to graph scanning, module load units, and
+preload; `LoaderFactory` does not retain a hidden file-source context.
+
+Dynamic multi-instance callbacks receive the module classes already discovered
+for `ModuleDescriptor` through `MultiInstancePrototypeGetObjectsContext`; DAL
+uses that list for table discovery instead of starting another scan. Load-unit
+lifecycle hooks already receive `LoadUnitLifecycleContext.loader`, which DAL
+reuses for DAO discovery. The common `ModuleLoader` only calls `LoaderFS.glob()`
+and no longer reads the standalone-only `globalThis.__EGG_BUNDLE_MANIFEST__` or
+accepts a separate precomputed-file path.
+
+Module identity follows a separate path. Bundle hosts obtain the name from the
+shared `TeggManifest`, normal hosts resolve it while scanning module config, and
+both store it on `ModuleDescriptor`. `GlobalGraph.moduleConfigList` then carries
+that name into `LoadUnitFactory`; neither `LoaderFS` nor `LoaderFactory` resolves
+`unitName`. Manifest reference/descriptor names for the same unit path are
+validated for consistency.
 
 **Format targets differ.** The `module` format runs on Cloudflare workerd. The
 `service-worker` format targets Web Service Worker / edge runtimes that expose a

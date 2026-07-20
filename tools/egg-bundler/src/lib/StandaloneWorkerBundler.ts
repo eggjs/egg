@@ -2,25 +2,12 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
+import type { TeggManifest } from '@eggjs/tegg-types';
+
 import { patchImportMetaInContent } from './importMetaPatch.ts';
 import { PackRunner } from './PackRunner.ts';
 
 const debug = debuglog('egg/bundler/standalone-worker');
-
-export interface StandaloneManifestModule {
-  readonly name: string;
-  readonly unitPath: string;
-  readonly decoratedFiles: readonly string[];
-}
-
-export interface StandaloneManifest {
-  readonly moduleReferences: ReadonlyArray<{
-    readonly name: string;
-    readonly path: string;
-    readonly [k: string]: unknown;
-  }>;
-  readonly moduleDescriptors: readonly StandaloneManifestModule[];
-}
 
 export interface StandaloneWorkerBundlerOptions {
   /** Application module directory. */
@@ -30,7 +17,7 @@ export interface StandaloneWorkerBundlerOptions {
   /** Output directory for the bundled worker. */
   readonly outputDir: string;
   /** Tegg metadata produced by the standalone framework scan. */
-  readonly manifest: StandaloneManifest;
+  readonly manifest: TeggManifest;
   /** `module` emits an ESM worker; `service-worker` emits a classic script. */
   readonly format?: 'module' | 'service-worker';
   /** Module names to omit from the bundle. */
@@ -125,7 +112,7 @@ export class StandaloneWorkerBundler {
     const userEntryDir = path.dirname(absEntry);
 
     const excluded = new Set(excludeModules);
-    const filtered: StandaloneManifest = {
+    const filtered: TeggManifest = {
       moduleReferences: manifest.moduleReferences
         .filter((r) => !excluded.has(r.name))
         .map((r) => ({ ...r, path: posix(r.path) })),
@@ -195,7 +182,7 @@ export class StandaloneWorkerBundler {
   }
 
   /** Render static module imports and the manifest globals. */
-  #renderPrelude(manifest: StandaloneManifest, entryDir: string): string {
+  #renderPrelude(manifest: TeggManifest, entryDir: string): string {
     const files: string[] = [];
     for (const d of manifest.moduleDescriptors) {
       for (const f of d.decoratedFiles) files.push(posix(path.join(d.unitPath, f)));

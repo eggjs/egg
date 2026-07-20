@@ -111,3 +111,5 @@ export class RealLoaderFS implements LoaderFS {
     }
   }
 }
+
+export { ManifestLoaderFS, type LoaderFSManifest, type LoaderFSManifestData } from './manifest_loader_fs.ts';

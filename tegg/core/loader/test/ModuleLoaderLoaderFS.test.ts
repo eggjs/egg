@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
-import { RealLoaderFS, type LoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
+import { ManifestLoaderFS, RealLoaderFS, type LoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
+import { TeggScope } from '@eggjs/tegg-types';
 import { describe, it } from 'vitest';
 
 import { ModuleLoader } from '../src/impl/ModuleLoader.ts';
@@ -36,14 +37,20 @@ describe('core/loader/test/ModuleLoaderLoaderFS.test.ts', () => {
     assert.equal(loaderFS.globCalls[0].options?.cwd, repoModulePath);
   });
 
-  it('should not call glob when precomputed files are provided', async () => {
-    const loaderFS = new StubLoaderFS(['UserRepo.ts']);
-    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: ['AppRepo.ts'], loaderFS });
+  it('should use the manifest view instead of its fallback glob', async () => {
+    const fallback = new StubLoaderFS(['UserRepo.ts']);
+    const loaderFS = new ManifestLoaderFS(
+      {
+        baseDir: repoModulePath,
+        data: { fileDiscovery: { '': ['AppRepo.ts'] }, resolveCache: {} },
+      },
+      fallback,
+    );
+    const loader = new ModuleLoader(repoModulePath, { loaderFS });
     const prototypes = await loader.load();
 
-    // AppRepo.ts has 2 decorated classes; glob is never consulted.
     assert.equal(prototypes.length, 2);
-    assert.equal(loaderFS.globCalls.length, 0);
+    assert.equal(fallback.globCalls.length, 0);
   });
 
   it('should default to RealLoaderFS discovery when no LoaderFS is injected', async () => {
@@ -57,8 +64,10 @@ describe('core/loader/test/ModuleLoaderLoaderFS.test.ts', () => {
 
   it('createModuleLoader should forward the injected LoaderFS', async () => {
     const loaderFS = new StubLoaderFS(['SprintRepo.ts']);
-    const loader = ModuleLoader.createModuleLoader(repoModulePath, loaderFS);
-    const prototypes = await loader.load();
+    const prototypes = await TeggScope.run(TeggScope.createBag(), async () => {
+      const loader = ModuleLoader.createModuleLoader(repoModulePath, loaderFS);
+      return await loader.load();
+    });
 
     assert.equal(prototypes.length, 1);
     assert(prototypes.find((t) => t.name === 'SprintRepo'));

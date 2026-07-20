@@ -10,7 +10,6 @@ import {
   type ReadModuleReferenceOptions,
   type RuntimeConfig,
 } from '@eggjs/tegg-common-util';
-import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import {
   ContextHandler,
   EggContainerFactory,
@@ -20,6 +19,7 @@ import {
   type LoadUnitInstance,
   LoadUnitInstanceFactory,
 } from '@eggjs/tegg-runtime';
+import type { TeggManifest } from '@eggjs/tegg-types';
 import { TeggScope } from '@eggjs/tegg-types';
 import type { TeggScopeBag } from '@eggjs/tegg-types';
 import { StandaloneUtil, type MainRunner } from '@eggjs/tegg/standalone';
@@ -57,10 +57,10 @@ export interface InitStandaloneAppOptions {
   /** Extra module dirs (e.g. npm packages) joining the scan after framework deps. */
   dependencies?: (string | ModuleDependency)[];
   /**
-   * Tegg manifest data (bundle mode). When provided the module scan reuses the
-   * precomputed decorated files instead of globbing the file system.
+   * Tegg manifest data (bundle mode). Its decorated-file index is exposed
+   * through a manifest-backed LoaderFS instead of the runtime filesystem.
    */
-  manifest?: TeggManifestExtension;
+  manifest?: TeggManifest;
   /** Virtual fs used together with manifest in bundle mode. */
   loaderFS?: LoaderFS;
 }
@@ -75,7 +75,7 @@ export interface StandaloneAppOptions {
   dependencies?: (string | ModuleDependency)[];
   frameworkDeps?: (string | ModuleDependency)[];
   dump?: boolean;
-  manifest?: TeggManifestExtension;
+  manifest?: TeggManifest;
   loaderFS?: LoaderFS;
 }
 
@@ -229,7 +229,7 @@ export class StandaloneApp {
   }
 
   /** Scan modules for a bundle without instantiating the application. */
-  static async loadMetadata(cwd: string, options?: StandaloneAppOptions): Promise<TeggManifestExtension> {
+  static async loadMetadata(cwd: string, options?: StandaloneAppOptions): Promise<TeggManifest> {
     const moduleReferences = StandaloneApp.getModuleReferences(cwd, options?.dependencies, options?.frameworkDeps);
     return await TeggScope.run(TeggScope.createBag(), async () => {
       const loader = new EggModuleLoader(moduleReferences, {
@@ -305,7 +305,7 @@ export class StandaloneApp {
     if (!opts.manifest) {
       const bundleManifest = (globalThis as { __EGG_BUNDLE_MANIFEST__?: unknown }).__EGG_BUNDLE_MANIFEST__;
       if (bundleManifest) {
-        opts = { ...opts, manifest: bundleManifest as TeggManifestExtension };
+        opts = { ...opts, manifest: bundleManifest as TeggManifest };
       }
     }
 

@@ -5,7 +5,7 @@ import { ManifestStore, ManifestLoaderFS, RealLoaderFS } from '@eggjs/core';
 import type { LoaderFSGlobOptions } from '@eggjs/core';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
-import type { TeggManifestExtension } from '@eggjs/tegg-loader';
+import type { TeggManifest } from '@eggjs/tegg-types';
 import { describe, it, beforeAll, afterEach, afterAll } from 'vitest';
 
 import { getAppBaseDir } from './utils.ts';
@@ -15,8 +15,8 @@ import { getAppBaseDir } from './utils.ts';
  *
  * Reproduces the production bundled startup path (see egg-bundler EntryGenerator):
  *   ManifestStore.fromBundle(data) -> setBundleStore -> start app
- * so the tegg loader runs through EggModuleLoader.buildAppGraph's `loadAppManifest`
- * (manifest-consume) branch instead of globby discovery.
+ * so the tegg loader consumes the same manifest-backed LoaderFS view as a
+ * bundled artifact instead of using globby discovery.
  *
  * Step 1: a tegg app boots (`app.ready()`) in manifest-consume mode.
  * Step 2: core framework features work end to end in that mode — an HTTP request
@@ -79,7 +79,7 @@ describe('plugin/tegg/test/BundledAppBoot.test.ts', () => {
   });
 
   it('phase-1 manifest should capture the tegg moduleDescriptors with decoratedFiles', () => {
-    const tegg = manifestData.extensions?.[TEGG_MANIFEST_KEY] as TeggManifestExtension | undefined;
+    const tegg = manifestData.extensions?.[TEGG_MANIFEST_KEY] as TeggManifest | undefined;
     assert.ok(tegg, 'tegg extension should be present in the generated manifest');
     assert.ok(tegg.moduleDescriptors?.length, 'should have moduleDescriptors');
     assert.ok(
@@ -88,12 +88,12 @@ describe('plugin/tegg/test/BundledAppBoot.test.ts', () => {
     );
   });
 
-  it('should boot a tegg app in manifest-consume mode (loadAppManifest branch)', () => {
+  it('should boot a tegg app through the manifest-backed LoaderFS', () => {
     // generatedAt is only set on a *loaded* manifest, proving we consumed a
     // prebuilt manifest rather than collecting a fresh one.
     assert.ok(app.loader.manifest.data.generatedAt, 'app should have booted from a prebuilt manifest');
 
-    const consumed = app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined;
+    const consumed = app.loader.manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifest | undefined;
     assert.ok(consumed?.moduleDescriptors?.length, 'tegg extension should be consumed from the bundle manifest');
   });
 
@@ -125,13 +125,9 @@ describe('plugin/tegg/test/BundledAppBoot.test.ts', () => {
       `app's own discovery should be fully manifest-served, but globbed: ${JSON.stringify(firstPartyGlobs)}`,
     );
 
-    // In consume mode EggModuleLoader.loadModule now reuses the manifest's
-    // precomputed tegg `decoratedFiles` instead of re-globbing each module dir,
-    // so tegg module discovery is fully manifest-served and NO fallback glob runs
-    // under a module dir either. This is what lets the load-unit lifecycle hooks
-    // (e.g. EggQualifierProtoHook) still see the real decorated classes via
-    // `ctx.loader.load()` in a bundle, where the module source files do not exist
-    // on disk for a glob to find.
+    // Tegg module discovery uses the same manifest-backed LoaderFS as Egg core,
+    // so no fallback glob runs under a module directory. Load-unit lifecycle
+    // hooks still see the decorated classes through ctx.loader.load().
     assert.deepEqual(
       bootFallbackGlobTargets.filter(isUnderModulesDir),
       [],

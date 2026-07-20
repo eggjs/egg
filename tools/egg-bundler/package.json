@@ -91,6 +91,7 @@
   },
   "dependencies": {
     "@eggjs/core": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
     "@eggjs/typings": "workspace:*",
     "@utoo/pack": "catalog:",
     "execa": "catalog:",

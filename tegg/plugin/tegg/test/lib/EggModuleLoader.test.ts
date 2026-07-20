@@ -213,26 +213,23 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
     });
   });
 
-  it('should pass manifest module name when creating bundled module load units', async () => {
+  it('should pass the graph module name when creating module load units', async () => {
     const app = {
       loader: {
-        loaderFS: undefined,
+        loaderFS: {},
         manifest: {
-          getExtension: () => ({
-            moduleDescriptors: [
-              {
-                name: 'bundledModule',
-                unitPath: '/virtual/bundled-module',
-                decoratedFiles: ['src/index.ts'],
-              },
-            ],
-          }),
+          getExtension: () => undefined,
         },
       },
       moduleHandler: {
         loadUnits: [],
       },
     } as any;
+    const loaderCalls: unknown[][] = [];
+    mock.method(LoaderFactory, 'createLoader', (...args: unknown[]) => {
+      loaderCalls.push(args);
+      return { load: async () => [] };
+    });
     const moduleLoader = new EggModuleLoader(app);
     moduleLoader.globalGraph = {
       build() {},
@@ -244,8 +241,6 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
         },
       ],
     } as any;
-    (moduleLoader as any).loadedFromManifest = true;
-
     const calls: unknown[][] = [];
     mock.method(LoadUnitFactory, 'createLoadUnit', async (...args: unknown[]) => {
       calls.push(args);
@@ -258,6 +253,7 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
     assert.equal(calls[0][0], '/virtual/bundled-module');
     assert.equal(calls[0][1], EggLoadUnitType.MODULE);
     assert.equal(calls[0][3], 'bundledModule');
+    assert.equal(loaderCalls[0].length, 2);
     assert.equal(app.moduleHandler.loadUnits.length, 1);
   });
 
