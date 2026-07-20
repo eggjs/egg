@@ -8,8 +8,7 @@ import type { EggMcpRouter } from './EggMcpRouter.ts';
 
 @LoadUnitInstanceLifecycleProto({ name: 'mcpRegisterProvider' })
 export class EggMCPRegisterProvider implements LifecycleHook<LoadUnitInstanceLifecycleContext, LoadUnitInstance> {
-  // `app.mcpRouter` compat proto; @EggQualifier(APP) since `router`-like names
-  // default to CONTEXT. Optional because it only exists when MCP is enabled.
+  // The router exists only when the MCP plugin is enabled.
   @InjectOptional()
   @EggQualifier(EggType.APP)
   private readonly mcpRouter?: EggMcpRouter;

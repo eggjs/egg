@@ -89,7 +89,6 @@ describe('standalone/service-worker/test/MCP.test.ts', () => {
 
   it('should run controller + method middlewares only for the targeted tool', async () => {
     MCP_MW_CALLS.length = 0;
-    // tools/list targets no tool → no business middleware runs
     await fetch(`${base}/mcp/mwcalc/stream`, {
       method: 'POST',
       headers: MCP_HEADERS,
@@ -97,8 +96,6 @@ describe('standalone/service-worker/test/MCP.test.ts', () => {
     });
     assert.deepEqual(MCP_MW_CALLS, []);
 
-    // tools/call targets `echo` → controller middleware (outer) then method
-    // middleware (inner) run
     const res = await fetch(`${base}/mcp/mwcalc/stream`, {
       method: 'POST',
       headers: MCP_HEADERS,
@@ -138,8 +135,6 @@ describe('standalone/service-worker/test/MCP.test.ts mcpAuthHandler', () => {
   let base: string;
 
   beforeAll(async () => {
-    // mcpAuthHandler is a capability object → provided through innerObjectHandlers
-    // (the generic host-object seam), not a bespoke facade option.
     app = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'), {
       innerObjectHandlers: {
         mcpAuthHandler: [
@@ -193,15 +188,12 @@ describe('standalone/service-worker/test/MCP.test.ts mcpAuthHandler', () => {
 
 describe('standalone/service-worker/test/MCP.test.ts hardening', () => {
   it('should reject a request whose Host is not in allowedHosts', async () => {
-    // module.allowedhost.yml carries `mcp.allowedHosts`; config comes from the
-    // app's module.yml, so the test picks it via env, not a programmatic option.
     const app = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'), {
       env: 'allowedhost',
     });
     const server = await app.serve();
     const { address, port } = server.address() as AddressInfo;
     try {
-      // The real Host (127.0.0.1:port) is not in the allow-list → SDK rejects.
       const res = await fetch(`http://${address}:${port}/mcp/calc/stream`, {
         method: 'POST',
         headers: MCP_HEADERS,
@@ -257,9 +249,7 @@ describe('standalone/service-worker/test/MCP.test.ts hardening', () => {
 describe('standalone/service-worker/test/MCP.test.ts transport selection', () => {
   it('should mount a host-registered transport when config.mcp.transport selects it', async () => {
     const seen: Array<string | undefined> = [];
-    // A stand-in for the internal node-mock provider: it fully owns the server's
-    // transport, mounting its own route via the shared context (auth + helper +
-    // complete records) instead of the built-in web-standard streamable.
+    // A custom provider owns route mounting and can reuse shared MCP capabilities.
     const fakeProvider: McpTransportProvider = {
       mount(context: McpServerMountContext) {
         seen.push(context.serverName);
@@ -284,20 +274,16 @@ describe('standalone/service-worker/test/MCP.test.ts transport selection', () =>
       },
     };
 
-    // module.faketransport.yml sets `mcp.transport: fake`.
     const app = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'), {
       env: 'faketransport',
     });
-    // Register the provider inside THIS app's scope so the per-app registry holds
-    // it before the router mounts each server on the first request.
+    // Transport providers are scoped to one app.
     TeggScope.run(app.app.scopeBag, () => {
       ServiceWorkerMcpRouter.registerTransport('fake', fakeProvider);
     });
     const server = await app.serve();
     const { address, port } = server.address() as AddressInfo;
     try {
-      // The selected provider owns the streamable endpoint (built-in web-standard
-      // did NOT mount here) and reuses the shared auth gate + server helper.
       const res = await fetch(`http://${address}:${port}/mcp/calc/stream`, {
         method: 'POST',
         headers: MCP_HEADERS,
@@ -305,7 +291,6 @@ describe('standalone/service-worker/test/MCP.test.ts transport selection', () =>
       });
       assert.equal(res.status, 200);
       assert.deepEqual(await res.json(), { via: 'fake', server: 'calc', tools: 1, hasServer: true });
-      // the provider is selected for every server (calc + mwcalc)
       assert.ok(seen.includes('calc'));
     } finally {
       await app.destroy();
@@ -313,8 +298,6 @@ describe('standalone/service-worker/test/MCP.test.ts transport selection', () =>
   });
 
   it('should fall back to the built-in web-standard transport for an unknown name', async () => {
-    // config selects transport 'fake' (module.faketransport.yml) but no provider
-    // is registered for it → the router falls back to the built-in web-standard.
     const app = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'), {
       env: 'faketransport',
     });

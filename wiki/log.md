@@ -2,6 +2,18 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-20] refactor+docs | clarify HTTP registration phases and service-worker usage
+
+- sources touched: `tegg/core/controller-runtime/src/lib/impl/http/{HTTPControllerRegister.ts,HTTPMethodRegister.ts}`, `tegg/core/controller-runtime/test/HTTPControllerRegister.test.ts`, `tegg/plugin/controller/test/lib/HTTPMethodRegister.test.ts`, `examples/helloworld-service-worker/README.md`, `tegg/standalone/{standalone,service-worker,service-worker-runtime}/README.md`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: HTTP methods are now represented by one `HTTPMethodRegister` instance across the existing validate-then-register phases. The first phase checks the real router and uses the existing `checkRouters` state for host-gated conflict checks; the second phase performs normal registration. Reworked the affected READMEs around public installation, runtime, configuration, HTTP/MCP, and deployment contracts, removing implementation-plan narration and correcting stale controller package, cookie, MCP option, and method-handling claims.
+
+## [2026-07-20] fix | run standalone metadata scan with the detected TypeScript loader
+
+- sources touched: `tools/egg-bin/src/commands/bundle.ts`, `tools/egg-bin/scripts/standalone-metadata.mjs`, `tools/egg-bin/test/{commands/bundle.test.ts,fixtures/standalone-bundle-ts/*}`, `examples/helloworld-service-worker/{package.json,README.md}`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/log.md`
+- note: `BaseCommand` installs the detected TypeScript compiler in the environment inherited by child processes, but standalone bundle metadata was previously loaded in the already-running CLI process. Moved framework resolution and `loadMetadata()` to a dedicated child process, matching the existing dev/manifest command model and preserving custom `--require`/`--import` hooks. The example no longer sets an outer `NODE_OPTIONS`; a decorator-bearing TypeScript fixture verifies that scanning happens in a distinct loader-enabled process.
+
 ## [2026-07-20] refactor | finalize MCP registration once like HTTP
 
 - sources touched: `tegg/core/controller-runtime/src/lib/impl/mcp/{MCPControllerRegister.ts,McpRouter.ts}`, `tegg/core/controller-runtime/test/MCPControllerRegister.test.ts`, `tegg/plugin/controller/src/lib/impl/mcp/{EggMCPRegisterProvider.ts,EggMcpRouter.ts}`, `tegg/standalone/service-worker-controller/src/{http/FetchEventHandler.ts,mcp/MCPRegisterProvider.ts,mcp/ServiceWorkerMcpRouter.ts}`

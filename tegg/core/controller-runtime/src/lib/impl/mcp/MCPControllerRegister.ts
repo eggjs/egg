@@ -5,15 +5,7 @@ import { CONTROLLER_META_DATA } from '@eggjs/tegg-types';
 import type { ControllerRegister } from '../../ControllerRegister.ts';
 import type { McpRouter, McpServerRegistration } from './McpRouter.ts';
 
-/**
- * Host-agnostic, COLLECT-ONLY MCP controller register.
- *
- * It accumulates controller protos while load units are created, then
- * `doRegister()` groups all tool/resource/prompt records by server name and
- * hands each complete registration to the host router once. All transport
- * concerns (route mounting, sessions, SSE/stream/stateless handling, ping,
- * proxy hooks) live behind the injected {@link McpRouter}.
- */
+/** Collects MCP controllers and groups their methods by server name. */
 export class MCPControllerRegister implements ControllerRegister {
   private readonly mcpRouter: McpRouter;
   private controllerProtos: EggPrototype[] = [];
@@ -27,8 +19,6 @@ export class MCPControllerRegister implements ControllerRegister {
   }
 
   register(): Promise<void> {
-    // Registration is finalized once, after all controller-bearing load units
-    // have been created. This mirrors HTTPControllerRegister.register().
     return Promise.resolve();
   }
 
@@ -42,8 +32,7 @@ export class MCPControllerRegister implements ControllerRegister {
       if (!registration) {
         registration = {
           serverName,
-          // Preserve the existing first-controller-wins rule for a server's
-          // advertised name/version while aggregating every controller's methods.
+          // The first controller supplies the shared server metadata.
           controllerMeta: metadata,
           prompts: [],
           resources: [],

@@ -27,9 +27,7 @@ import { TransactionalAOP } from './TransactionalAOP.ts';
   async getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
     const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath) as any | undefined;
     const dataSources = Object.keys(config?.dataSource || {});
-    // A module without a `dataSource` config contributes no DataSource instances, so
-    // return before loading it — every scanned module (e.g. a service worker's own
-    // modules) otherwise gets loaded here even when it uses no DAL.
+    // Modules without dataSource configuration contribute no instances.
     if (dataSources.length === 0) {
       return [];
     }

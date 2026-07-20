@@ -22,7 +22,7 @@ import type { AbstractControllerAdvice } from './AbstractControllerAdvice.ts';
 
 type MCPMiddleware = (ctx: ServiceWorkerFetchContext, next: () => Promise<void>) => Promise<void>;
 
-/** Minimal koa-style onion compose so selected middlewares wrap the dispatch. */
+/** Compose selected middleware around one MCP dispatch. */
 function composeMiddlewares(middlewares: MCPMiddleware[]): (ctx: ServiceWorkerFetchContext) => Promise<void> {
   return (ctx) => {
     let index = -1;
@@ -43,29 +43,22 @@ function composeMiddlewares(middlewares: MCPMiddleware[]): (ctx: ServiceWorkerFe
 
 const MCP_TRANSPORTS_SLOT = Symbol('tegg:service-worker:mcpTransportProviders');
 
-/** The built-in transport name (web-standard streamable HTTP); the default when
- * `config.mcp.transport` is unset. */
+/** Built-in web-standard Streamable HTTP transport. */
 export const MCP_BUILTIN_TRANSPORT = 'web';
 
-/**
- * The context an MCP transport provider receives for one server — everything it
- * needs to mount its own fetch routes without reaching into the router's
- * internals. A provider fully OWNS the transport for the server it mounts (the
- * built-in web-standard provider and any registered alternative are mutually
- * exclusive, selected by `config.mcp.transport`).
- */
+/** Capabilities available to a custom MCP transport provider. */
 export interface McpServerMountContext {
   /** The fetch router to mount transport routes on. */
   readonly router: FetchRouter;
-  /** The complete collected records for this MCP server. */
+  /** All controller records for this MCP server. */
   readonly registration: McpServerRegistration;
-  /** undefined for the default (unnamed) server; the multiple-server name otherwise. */
+  /** Undefined for the default server. */
   readonly serverName: string | undefined;
   /** `/mcp` for the default server, `/mcp/<name>` otherwise. */
   readonly basePath: string;
-  /** The outermost auth gate; returns a denial Response, or undefined to allow. */
+  /** Return a denial response, or undefined to allow the request. */
   authenticate(request: Request): Promise<Response | undefined>;
-  /** Build a fresh MCPServerHelper with this server's tools/resources/prompts registered. */
+  /** Create a server helper with this registration's methods. */
   createServerHelper(): Promise<MCPServerHelper>;
   /** Controller + method AOP middlewares selected for a parsed JSON-RPC body. */
   selectMiddlewares(parsedBody: unknown): MCPMiddleware[];
@@ -73,36 +66,15 @@ export interface McpServerMountContext {
   compose(middlewares: MCPMiddleware[]): (ctx: ServiceWorkerFetchContext) => Promise<void>;
 }
 
-/**
- * A host-provided MCP transport, registered by name via
- * {@link ServiceWorkerMcpRouter.registerTransport} and selected per app through
- * `config.mcp.transport`. Lets a host swap in a transport the edge-clean core
- * omits (e.g. a node-mock SSE + streamable transport) without forking the
- * router; node:http stays entirely in the host that registers it.
- */
+/** Mounts a custom transport instead of the built-in transport. */
 export interface McpTransportProvider {
   mount(context: McpServerMountContext): void;
 }
 
-/**
- * The fetch host's MCP transport boundary: stateless streamable HTTP under
- * `/mcp[/name]/stream` (POST only). The service worker speaks Fetch natively,
- * so the SDK's web-standard transport handles Request/Response directly — no
- * node req/res bridging. In stateless mode the SDK forbids transport reuse, so
- * each request gets a fresh MCPServerHelper + transport built from the complete
- * records the host-agnostic register collected.
- *
- * After every load unit exists, the register calls {@link registerServer} once
- * per server name with the complete records, and this router mounts the
- * selected transport immediately.
- */
+/** Mounts fetch-native MCP transports for collected controller registrations. */
 @InnerObjectProto({ name: MCP_ROUTER_NAME })
 export class ServiceWorkerMcpRouter implements McpRouter {
-  // Per-app named transport providers (scope-backed so concurrent apps do not
-  // accumulate each other's). A host registers an alternative transport during
-  // boot; `config.mcp.transport` selects which one mounts per server (default is
-  // the built-in web-standard). Static so a host can register before any router
-  // instance exists.
+  // Scope-backed so providers can be registered before the router is constructed.
   static get transports(): Map<string, McpTransportProvider> {
     return TeggScope.resolve(MCP_TRANSPORTS_SLOT, () => new Map(), 'ServiceWorkerMcpRouter.transports');
   }
@@ -114,13 +86,10 @@ export class ServiceWorkerMcpRouter implements McpRouter {
   @Inject()
   private readonly fetchRouter: FetchRouter;
 
-  // Optional MCP auth gate; when no host provides one, every request is allowed
-  // (same optional-capability pattern as fetchContextFactory/errorResponseMapper).
+  // Missing authentication handlers allow the request.
   @InjectOptional()
   private readonly mcpAuthHandler?: MCPAuthHandler;
 
-  // The app-wide config inner object (the app's module.yml); MCP transport
-  // options live under its `mcp` key.
   @Inject()
   private readonly config: { mcp?: MCPTransportOptions };
 
@@ -129,14 +98,7 @@ export class ServiceWorkerMcpRouter implements McpRouter {
     this.mountServer(reg, name);
   }
 
-  /**
-   * Build a fresh MCPServerHelper for one server with its tool/resource/prompt
-   * records registered. The SDK's stateless transport is single-shot (reuse
-   * throws), so this runs per request against the collected records; registration is
-   * in-memory callback wiring, and the callbacks resolve egg objects lazily
-   * through the host-supplied container factory held by the helper.
-   * Shared by the built-in streamable transport and any additional mounter.
-   */
+  /** Create the request-scoped MCP server required by stateless transport. */
   async #createServerHelper(reg: McpServerRegistration): Promise<MCPServerHelper> {
     const mcpServerHelper = new MCPServerHelper({
       name: reg.controllerMeta.name ?? `mcp-${reg.serverName}-server`,
@@ -155,16 +117,12 @@ export class ServiceWorkerMcpRouter implements McpRouter {
     return mcpServerHelper;
   }
 
-  /** Run the optional auth gate; absent handler → allowed (undefined). */
+  /** Run the optional authentication gate. */
   #authenticate(request: Request): Promise<Response | undefined> {
     return this.mcpAuthHandler?.authenticate(request) ?? Promise.resolve(undefined);
   }
 
-  /**
-   * Forward Host/Origin allow-lists to the SDK transport. Protection turns on
-   * once either list is configured (default off for backward compatibility) —
-   * the host should set it before exposing the endpoint beyond loopback.
-   */
+  /** Enable SDK DNS-rebinding checks when an allow-list is configured. */
   #dnsRebindingOptions(): {
     allowedHosts?: string[];
     allowedOrigins?: string[];
@@ -181,14 +139,12 @@ export class ServiceWorkerMcpRouter implements McpRouter {
     };
   }
 
-  /** Read the JSON-RPC body once via a clone; the original stream stays intact
-   * for the SDK / a middleware, and the parsed value is handed to the SDK so it
-   * never re-reads the one-shot body after auth or a middleware touched it. */
+  /** Parse a clone so the SDK can reuse the body even if authentication consumes it. */
   async #readJsonRpcBody(request: Request): Promise<unknown> {
     try {
       return await request.clone().json();
     } catch {
-      // Empty / non-JSON: let the SDK read the original and raise its own error.
+      // Let the SDK report malformed or empty bodies.
       return undefined;
     }
   }
@@ -211,12 +167,11 @@ export class ServiceWorkerMcpRouter implements McpRouter {
       case 'resources/read':
         return reg.resources.find((r) => r.meta.uri !== undefined && r.meta.uri === params.uri);
       default:
-        // initialize / tools|prompts|resources/list / ping etc. target no record.
         return undefined;
     }
   }
 
-  /** Controller-level (function + AOP advice) middlewares declared on a proto. */
+  /** Return controller-level middleware for a prototype. */
   #controllerMiddlewares(proto: EggPrototype): MCPMiddleware[] {
     const out: MCPMiddleware[] = [];
     const metadata = proto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
@@ -234,12 +189,7 @@ export class ServiceWorkerMcpRouter implements McpRouter {
     return out;
   }
 
-  /**
-   * Select only the middlewares of the targeted tool/prompt/resource:
-   * controller-level (once per owning proto) plus that method's own
-   * middlewares. So one controller's middleware never runs for another
-   * controller's tool, nor for `initialize` / `tools/list`.
-   */
+  /** Select middleware for the methods targeted by a JSON-RPC body. */
   #selectMiddlewares(reg: McpServerRegistration, parsedBody: unknown): MCPMiddleware[] {
     const messages = Array.isArray(parsedBody) ? parsedBody : [parsedBody];
     const middlewares: MCPMiddleware[] = [];
@@ -261,9 +211,7 @@ export class ServiceWorkerMcpRouter implements McpRouter {
   }
 
   private mountServer(reg: McpServerRegistration, name?: string): void {
-    // `config.mcp.transport` selects the transport per app: the built-in
-    // web-standard streamable (default), or a host-registered alternative (e.g.
-    // node-mock SSE + streamable). An unknown name falls back to the built-in.
+    // Unknown provider names fall back to the built-in transport.
     const transportName = this.config?.mcp?.transport ?? MCP_BUILTIN_TRANSPORT;
     const provider =
       transportName === MCP_BUILTIN_TRANSPORT ? undefined : ServiceWorkerMcpRouter.transports.get(transportName);
@@ -274,18 +222,12 @@ export class ServiceWorkerMcpRouter implements McpRouter {
     this.#mountStreamable(reg, name);
   }
 
-  /**
-   * The built-in transport: stateless web-standard streamable HTTP (POST only)
-   * under `/mcp[/name]/stream` and `/mcp[/name]`.
-   */
+  /** Mount the built-in stateless Streamable HTTP routes. */
   #mountStreamable(reg: McpServerRegistration, name?: string): void {
     const router = this.fetchRouter;
     const postRouterFunc = router.post;
     const initHandler = async (ctx: ServiceWorkerFetchContext) => {
       const request = ctx.event.request;
-      // Parse the body first (via a clone, no side effect) so target selection
-      // and the SDK share one read; authentication remains the outermost gate
-      // before any middleware or transport dispatch runs.
       const parsedBody = await this.#readJsonRpcBody(request);
       const denied = await this.#authenticate(request);
       if (denied) {
@@ -311,7 +253,6 @@ export class ServiceWorkerMcpRouter implements McpRouter {
       Reflect.apply(postRouterFunc, router, ['mcpStatelessStreamInit', path, initHandler]);
     }
 
-    // Only POST is allowed for stateless streamable HTTP
     const notAllowedHandler = async (ctx: ServiceWorkerFetchContext) => {
       ctx.response = new Response(
         JSON.stringify({
@@ -338,7 +279,7 @@ export class ServiceWorkerMcpRouter implements McpRouter {
     }
   }
 
-  /** The context handed to each additional {@link McpServerMounter}. */
+  /** Build the context passed to a {@link McpTransportProvider}. */
   #createMountContext(reg: McpServerRegistration, name?: string): McpServerMountContext {
     return {
       router: this.fetchRouter,

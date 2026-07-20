@@ -12,97 +12,89 @@
 [download-image]: https://img.shields.io/npm/dm/@eggjs/standalone.svg?style=flat-square
 [download-url]: https://npmjs.org/package/@eggjs/standalone
 
-通过 `@eggjs/standalone` 在一个独立环境去中运行 tegg 应用。
+`@eggjs/standalone` 用于在没有 Egg Application 的环境中加载并运行 tegg
+module。
 
-## install
+## 安装
 
-```sh
-npm i --save @eggjs/standalone
+```bash
+npm install @eggjs/standalone
 ```
 
-## Usage
+## 使用
 
-当一个类上有 Runner 注解时，会自动运行其 main 函数。注无需再使用 `ContextProto` 注解，因为独立运行跑完即销毁，不用再区分独立上下文。
+使用 `@Runner()` 标记入口类。入口类仍需声明为 tegg proto，例如
+`@SingletonProto()`。
 
 ```ts
+import { main } from '@eggjs/standalone';
+import { Inject, SingletonProto } from '@eggjs/tegg';
 import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
 
 @Runner()
 @SingletonProto()
 export class Foo implements MainRunner<string> {
   @Inject()
-  hello: Hello;
+  hello: { hello(): string };
 
   async main(): Promise<string> {
     return this.hello.hello();
   }
 }
-```
 
-运行代码
-
-- cwd 为当前应用工作目录
-- options:
-  - innerObjectHandlers: 当前运行环境中内置的对象
-  - logger: standalone 框架及模块注入使用的 logger；不要放入 innerObjectHandlers
-
-`config`、`moduleConfigs`、`moduleConfig` 和 `runtimeConfig` 由 standalone 框架维护；
-`innerObjectHandlers` 中的同名项会被忽略。
-
-```
-await main(cwd, {
+await main('/path/to/module', {
   innerObjectHandlers: {
-    hello: {
-      hello: () => {
-        return 'hello, inner';
-      },
-    },
+    hello: [{ obj: { hello: () => 'hello, standalone' } }],
   },
 });
 ```
 
-### 配置
+第一个参数是入口 module 目录。常用选项包括：
 
-module 支持通过 module.yml 来定义配置，在代码中可以通过注入 moduleConfigs 获取全局配置，通过注入 moduleConfig 来获取单 module 的配置。
+- `name`、`env`：运行时名称和环境；
+- `dependencies`：需要一同扫描的业务 module；
+- `frameworkDeps`：在业务 module 之前加载的框架 module；
+- `innerObjectHandlers`：宿主提供的可注入对象；
+- `logger`：框架日志和注入使用的 logger；
+- `manifest`、`loaderFS`：无文件系统运行环境使用的预扫描数据。
 
-入口应用 module（从 baseDir 扫描到的那个 module，其 module 目录即 cwd）的 `module.yml`
-会作为应用级的 `config` 内置对象暴露出来，通过 `@Inject() config` 注入即可读取。
-这是唯一的应用级配置来源（没有程序化 config 覆盖入口）；子系统各取所需
-（如 `config.backgroundTask.timeout`），环境变体写 `module.<env>.yml`。
+`logger` 必须通过专用选项传入。`config`、`moduleConfigs`、
+`moduleConfig` 和 `runtimeConfig` 由 standalone 维护，不能通过
+`innerObjectHandlers` 覆盖。
+
+## 配置
+
+每个 module 可以使用 `module.yml` 定义配置，并通过以下对象读取：
+
+- `moduleConfigs`：所有 module 的配置集合；
+- `moduleConfig`：当前 module 的配置；
+- 带 `@ConfigSourceQualifier('<name>')` 的 `moduleConfig`：指定 module
+  的配置；
+- `config`：入口 module 的应用级配置。
+
+当指定 `env` 时，`module.default.yml` 和 `module.<env>.yml` 会参与配置合并。
 
 ```yaml
 # module.yml
-# module 根目录中
-
 features:
   dynamic:
-    foo: 'bar'
+    foo: bar
 ```
 
 ```ts
 @ContextProto()
 export class Foo {
-  // 获取全局配置, 通过 get 方法来获取特定 module 的配置
   @Inject()
   moduleConfigs: ModuleConfigs;
 
-  // 注入当前 module 的配置
   @Inject()
   moduleConfig: ModuleConfig;
 
-  // 注入 "bar" module 的配置
-  @Inject({
-    name: 'moduleConfig',
-  })
+  @Inject()
   @ConfigSourceQualifier('bar')
   barModuleConfig: ModuleConfig;
 
-  async main() {
-    return {
-      configs: this.moduleConfigs,
-      foo: this.moduleConfig,
-      bar: this.barModuleConfig,
-    };
-  }
+  @Inject()
+  config: Record<string, unknown>;
 }
 ```

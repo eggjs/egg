@@ -2,11 +2,7 @@ import { SingletonProto } from '@eggjs/core-decorator';
 import { QualifierImplDecoratorUtil } from '@eggjs/dynamic-inject';
 import type { EggProtoImplClass, ImplDecorator, SingletonProtoParams } from '@eggjs/tegg-types';
 
-/**
- * Standalone event dispatch abstraction: implementations handle one event
- * type (e.g. 'fetch') and are resolved at runtime via
- * `eggObjectFactory.getEggObject(AbstractEventHandler, event.type)`.
- */
+/** Handles one standalone event type. */
 export abstract class AbstractEventHandler<E = any, R = any> {
   abstract handleEvent(event: E): Promise<R>;
 }

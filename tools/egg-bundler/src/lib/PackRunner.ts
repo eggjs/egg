@@ -23,26 +23,11 @@ export interface PackRunnerOptions {
   readonly mode?: 'production' | 'development';
   readonly buildFunc?: BuildFunc;
   readonly resolve?: PackRunnerResolveConfig;
-  /**
-   * Emit a single self-contained file per entry. This is the DEFAULT (`true`).
-   *
-   * In single-file mode @utoo/pack inlines every module into one self-executing
-   * IIFE (`((__UTOOPACK__)=>{...})([...modules])`), so the output worker.js
-   * requires no sibling chunk and is V8 startup-snapshot eligible — a snapshot
-   * builder forbids the user-land require of sibling chunks.
-   *
-   * Set to `false` to fall back to @utoo/pack's legacy multi-chunk standalone
-   * output, where `worker.js` is a tiny loader that does
-   * `require("./_turbopack__runtime.js")` and pulls in sibling chunks at runtime.
-   */
+  /** Emit one self-contained file per entry. Defaults to true. */
   readonly singleFile?: boolean;
   /**
-   * Compiler `useDefineForClassFields`. Defaults to `false` for Egg apps (see
-   * COMPILER_TSCONFIG — leoric ORM needs declared-uninitialized fields erased).
-   * Set `true` for targets without ORM (standalone service worker): `false`
-   * also erases uninitialized PRIVATE field declarations (`#x?: T;`) while the
-   * code still references `this.#x`, producing "private name not declared" —
-   * invalid on stricter re-parsers (e.g. wrangler/esbuild, workerd).
+   * Compiler class-field semantics. Egg apps use false for ORM compatibility;
+   * standalone workers use true to preserve private field declarations.
    */
   readonly useDefineForClassFields?: boolean;
 }
@@ -52,28 +37,9 @@ export interface PackRunnerResult {
   readonly files: readonly string[];
 }
 
-// @utoo/pack (Turbopack) resolves the tsconfig that governs compilation from the
-// PROJECT directory (the `projectPath` passed to `build()`), NOT the output dir and
-// NOT via per-file find-up to the nearest tsconfig. Verified against @utoo/pack
-// 1.4.13/1.4.14: a tsconfig in the output dir is ignored, and a tsconfig nearer the
-// source than projectPath is ignored — only `projectPath/tsconfig.json` wins.
-//
-// So PackRunner writes this tsconfig into `projectPath`. The Bundler points
-// `projectPath` at the generated entry dir (a build-managed `.egg-bundle/entries`
-// directory) with `rootPath` at the app baseDir, so this config governs the whole
-// build without touching the application's own tsconfig.
-//
-// `experimentalDecorators` / `emitDecoratorMetadata`: required so tegg decorator
-// metadata is emitted (design:type).
-//
-// `useDefineForClassFields: false` matches how Egg apps compile (target <= ES2021):
-// declared-but-uninitialized TypeScript class fields (e.g. `createdAt: Date;` on a
-// leoric `Bone` model) must NOT become native own class fields. At `target: es2022`
-// TS/SWC default this to `true`, emitting own `undefined` properties that shadow the
-// getter/setter accessors ORMs like leoric install on the prototype for decorated
-// attributes — silently breaking attribute writes (observed as omitted columns such
-// as `gmt_create` on INSERT). With this tsconfig in the resolved location the bare
-// field declarations are erased, so no output post-processing is needed.
+// @utoo/pack reads compiler options from projectPath/tsconfig.json. Decorator
+// metadata is required by tegg; Egg's default class-field mode avoids shadowing
+// ORM accessors with declared-but-uninitialized fields.
 const compilerTsconfig = (useDefineForClassFields: boolean) => ({
   compilerOptions: {
     experimentalDecorators: true,
@@ -83,20 +49,17 @@ const compilerTsconfig = (useDefineForClassFields: boolean) => ({
   },
 });
 
-// @utoo/pack emits CJS files; a nested `type: commonjs` package.json
-// prevents the parent ESM package from forcing these into ESM parse mode.
+// Keep @utoo/pack's CommonJS output independent of a parent ESM package.
 const OUTPUT_PACKAGE_JSON = { type: 'commonjs' };
 
-// A directory egg-bundler owns and may freely write the compiler tsconfig into
-// (the generated entry dir lives under `.egg-bundle`).
+// Only .egg-bundle directories are unconditionally writable build state.
 function isBuildManaged(dir: string): boolean {
   return dir.split(path.sep).includes('.egg-bundle');
 }
 
 const require = createRequire(import.meta.url);
 
-// Use CJS entry explicitly: under pnpm workspace links the ESM build's
-// extensionless relative imports fail to resolve.
+// The CJS entry resolves correctly through pnpm workspace links.
 const DEFAULT_BUILD_FUNC: BuildFunc = async (wrapped, projectPath, rootPath) => {
   const mod = require('@utoo/pack/cjs/commands/build.js') as {
     build: (options: unknown, projectPath?: string, rootPath?: string) => Promise<void>;
@@ -128,17 +91,11 @@ export class PackRunner {
     await fs.mkdir(outputDir, { recursive: true });
     await fs.writeFile(path.join(outputDir, 'package.json'), JSON.stringify(OUTPUT_PACKAGE_JSON, null, 2));
 
-    // Write the compiler tsconfig into the PROJECT dir, where @utoo/pack resolves
-    // it (see COMPILER_TSCONFIG). projectPath must be a build-managed directory
-    // (the Bundler passes the generated `.egg-bundle/entries` dir). Guard against
-    // an API misuse that points projectPath at a real project: never silently
-    // overwrite a tsconfig.json egg-bundler did not create.
+    // Never overwrite a user-owned tsconfig when projectPath is misconfigured.
     const projectTsconfigPath = path.join(projectPath, 'tsconfig.json');
     const desiredTsconfig = JSON.stringify(compilerTsconfig(useDefineForClassFields), null, 2);
     if (!isBuildManaged(projectPath)) {
       const existing = await fs.readFile(projectTsconfigPath, 'utf8').catch(() => undefined);
-      // Overwrite only what we produced ourselves (idempotent re-runs); never
-      // clobber a different, user-authored tsconfig.
       if (existing !== undefined && existing !== desiredTsconfig) {
         throw new Error(
           `PackRunner: refusing to overwrite an existing tsconfig.json at ${projectPath}. ` +
@@ -149,20 +106,8 @@ export class PackRunner {
     await fs.mkdir(projectPath, { recursive: true });
     await fs.writeFile(projectTsconfigPath, desiredTsconfig);
 
-    // External-config form depends on the output type:
-    //
-    // - standalone: UMD form ({ commonjs, root }) emits a
-    //   `typeof exports === 'object' ? require(name) : globalThis[name]` guard.
-    //   The standalone loader runs module factories with a real CommonJS
-    //   module/exports, so the guard picks `require(name)` — what node wants.
-    //
-    // - single-file (snapshot): the `export`/`library` output inlines every
-    //   factory into one IIFE with NO CommonJS module/exports in scope, so the
-    //   UMD guard falls through to `globalThis[name]` (undefined) and EVERY
-    //   external breaks. ExternalType `commonjs` instead emits a direct
-    //   `require(name)` (surfaced as the runtime `externalRequire` helper), which
-    //   the snapshot prelude's lazy hook can intercept. See the snapshot
-    //   lazy-external mechanism in prelude.ts.
+    // Single-file output has no CommonJS exports scope, so externals must emit
+    // direct require() calls. Multi-file standalone output uses its UMD form.
     const externalsConfig: Record<string, { commonjs: string; root: string } | { root: string; type: 'commonjs' }> = {};
     for (const [k, v] of Object.entries(externals)) {
       externalsConfig[k] = singleFile ? { root: v, type: 'commonjs' } : { commonjs: v, root: v };
@@ -170,12 +115,7 @@ export class PackRunner {
 
     const resolveConfig = this.#buildResolveConfig(resolve);
 
-    // Single-file mode (the default): @utoo/pack's `export` output type with a
-    // per-entry `library: { name }` inlines every module into one self-executing
-    // IIFE (`((__UTOOPACK__)=>{...})([...modules])`), so the emitted worker.js
-    // carries no sibling-chunk require — required for V8 startup snapshots. When
-    // `singleFile` is false the legacy `standalone` type emits a tiny loader plus
-    // sibling chunks instead.
+    // `export` inlines one entry; `standalone` emits a loader and sibling chunks.
     const config = {
       entry: entries.map((e) => ({
         name: e.name,

@@ -5,11 +5,7 @@ import type { EggPrototype } from '@eggjs/tegg-types';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ReadResourceCallback, ToolCallback, PromptCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 
-/**
- * The host-agnostic slice of the MCP controller hooks: a schema loader that
- * resolves tool/prompt args schemas when the decorated metadata has none.
- * The egg host passes its (per-app, live) EggMcpRouter.hooks list.
- */
+/** Allows a host to supply tool or prompt schemas missing from metadata. */
 export interface MCPSchemaLoaderHook {
   schemaLoader?: (
     controllerMeta: MCPControllerMeta,

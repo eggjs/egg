@@ -1,21 +1,12 @@
-/**
- * The minimal contract the standalone engine dispatches on: every event carries
- * a `type`, resolved to an `@EventHandlerProto('<type>')` handler. Protocol
- * events narrow it and add their own payload (e.g. `FetchEvent`).
- */
+/** Event dispatched by the standalone runtime. */
 export interface StandaloneEvent {
   type: string;
 }
 
-/**
- * The standalone engine's fetch event — import from `@eggjs/tegg/standalone`. A
- * native SW/edge `FetchEvent` satisfies it structurally (passes straight
- * through); the entry adapter threads `waitUntil` from the platform (native
- * `event.waitUntil` / module `ctx.waitUntil`), and the node:http bridge passes a
- * no-op (nothing to keep alive on Node).
- */
+/** Fetch request dispatched by a service-worker host. */
 export interface FetchEvent extends StandaloneEvent {
   type: 'fetch';
   request: Request;
+  /** Keep asynchronous work alive after the response is returned. */
   waitUntil: (f: Promise<any>) => void;
 }

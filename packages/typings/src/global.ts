@@ -4,10 +4,8 @@ declare global {
   // eslint-disable-next-line no-var
   var __EGG_BUNDLE_MODULE_LOADER__: BundleModuleLoader | undefined;
   /**
-   * The tegg manifest inlined by the standalone worker bundler's injected prelude; a
-   * standalone app with no explicit `manifest` option falls back to it. Typed `unknown`
-   * to keep `@eggjs/typings` free of a `@eggjs/tegg-loader` dep (structurally a
-   * `TeggManifestExtension`).
+   * Tegg manifest inlined into a standalone worker bundle. Kept as `unknown`
+   * to avoid coupling typings to the tegg loader package.
    */
   // eslint-disable-next-line no-var
   var __EGG_BUNDLE_MANIFEST__: unknown;

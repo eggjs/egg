@@ -5,11 +5,7 @@ import { AccessLevel } from '@eggjs/tegg-types';
 
 import { ServiceWorkerMcpRouter } from './ServiceWorkerMcpRouter.ts';
 
-/**
- * Plugs the shared, host-agnostic MCP collect-register into the controller
- * register factory, bound to the fetch host's {@link ServiceWorkerMcpRouter}.
- * The register only collects records; the router owns the fetch transport.
- */
+/** Collects and finalizes MCP registrations for the fetch host. */
 @InnerObjectProto({ name: 'mcpRegisterProvider', accessLevel: AccessLevel.PUBLIC })
 export class MCPRegisterProvider {
   @Inject()

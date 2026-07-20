@@ -3,13 +3,7 @@ import path from 'node:path';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, afterAll, beforeAll, expect } from 'vitest';
 
-// Boots an egg app with teggController + mcpProxy enabled and a tegg
-// @MCPController, exercising the egg MCP registration path end to end:
-// app.mcpRouter is mounted in the controller boot, fed to inner objects via the
-// egg compat proto, injected by EggMCPRegisterProvider which plugs the MCP
-// register creator into the factory; the controller load then drives
-// EggMcpRouter.registerServer to mount the MCP routes. If any of that wiring
-// breaks, app.ready() throws "not find controller implement ... MCP".
+// End-to-end coverage for Egg MCP controller registration and route mounting.
 describe('plugin/mcp-proxy/test/mcp-tegg-register.test.ts', () => {
   let app: MockApplication;
 
@@ -30,8 +24,6 @@ describe('plugin/mcp-proxy/test/mcp-tegg-register.test.ts', () => {
   });
 
   it('registers the MCP routes (registerServer ran)', async () => {
-    // GET on the stateless stream path is registered to a 405 notHandler when
-    // the server is registered; a 404 would mean the route was never mounted.
     const res = await app.httpRequest().get('/mcp/stateless/stream');
     expect(res.status).toBe(405);
   });

@@ -1,5 +1,5 @@
 ---
-title: Standalone service worker (@eggjs/service-worker[-runtime])
+title: Standalone service worker stack
 type: package
 summary: Fetch-semantics standalone runtime — HTTP controllers and MCP tools served from a tegg module without an egg application
 source_files:
@@ -10,11 +10,11 @@ source_files:
   - tegg/plugin/controller/src
   - examples/helloworld-service-worker
   - tools/egg-bundler/src/lib/StandaloneWorkerBundler.ts
-updated_at: 2026-07-19
+updated_at: 2026-07-20
 status: active
 ---
 
-Two packages provide the standalone service worker runtime on top of the
+Three packages provide the standalone service worker runtime on top of the
 module-plugin mechanism (declarative `@InnerObjectProto` /
 `@XxxLifecycleProto` hooks, see the module-plugin pages):
 
@@ -72,7 +72,7 @@ Key mechanics and constraints:
   The service worker depends only on the egg-free runtime, never on the egg
   plugin.
 - **Host-agnostic MCP register + `McpRouter` boundary**: the shared
-  `MCPControllerRegister` (controller-plugin) only COLLECTS tool/resource/prompt
+  `MCPControllerRegister` (`@eggjs/controller-runtime`) only COLLECTS tool/resource/prompt
   records and delegates transport to an injected `McpRouter`
   (`registerServer(reg)`); it no longer touches `app`. The egg host's node-HTTP
   transport is `EggMcpRouter` (built imperatively in the controller plugin's
@@ -91,6 +91,12 @@ Key mechanics and constraints:
   the host passes its container factory once when it creates an
   `MCPServerHelper`, matching the HTTP register's dependency flow. The helper's
   request callback resolves the controller lazily in the active context.
+- **HTTP registration has separate validation and mutation phases**:
+  `HTTPControllerRegister` creates each `HTTPMethodRegister` once in priority
+  order, calls `checkDuplicate()` on all of them, then calls `register()` on all
+  of them. `checkDuplicate()` checks the real host router and, for host-gated
+  routes, tracks same-host rules in the existing `checkRouters` map. The first
+  phase is not a temporary copy of the complete host router.
 - **MCP SDK >= 1.29 stateless transports are single-shot** (reuse throws), so
   each MCP request builds a fresh `MCPServerHelper` + web-standard transport
   from register records collected at boot. The service worker's

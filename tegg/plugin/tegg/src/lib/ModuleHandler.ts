@@ -55,22 +55,12 @@ export class ModuleHandler extends Base {
         path: moduleDescriptor.unitPath,
       });
     }
-    // The single copy of the egg host's APP-scoped compat protos (`() => app[name]`
-    // for router / logger / runtimeConfig / ...). PUBLIC, so both inner objects AND
-    // business modules resolve app properties from here — the app load unit no longer
-    // duplicates them. Added AFTER the scanned inner objects so a same-named inner
-    // object wins (the compat proto is skipped).
+    // Add app compatibility protos after inner objects so inner objects win collisions.
     builder.addCompatibleClazzList(new EggAppLoader(this.app).buildAppSingletonCompatClazzList(), {
       name: 'app',
       path: this.app.baseDir,
     });
-    // `moduleConfigs` is the one base object that is NOT a plain app-property
-    // compat proto: it is blacklisted in EggAppLoader and consumers want a
-    // ModuleConfigs wrapper (not the raw `app.moduleConfigs` map), so it stays
-    // an explicit provided inner object. PRIVATE: visible to inner objects only.
-    // (`logger` / `router` / `runtimeConfig` now arrive via the compat protos
-    // fed above; standalone, which has no egg compat surface, provides its own
-    // `logger` through its innerObjects instead.)
+    // moduleConfigs needs its wrapper rather than the raw app property.
     const innerObjectLoadUnit = await builder.createLoadUnit({
       innerObjects: {
         moduleConfigs: [{ obj: new ModuleConfigs(this.app.moduleConfigs), accessLevel: AccessLevel.PRIVATE }],

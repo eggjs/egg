@@ -2,13 +2,9 @@ import type { AdviceContext, IAdvice } from '@eggjs/tegg-types';
 
 import type { ServiceWorkerFetchContext } from '../http/ServiceWorkerFetchContext.ts';
 
-/**
- * Base class for MCP controller AOP middlewares under the service worker
- * runtime: `@Middleware(SomeAdvice)` classes extending this run as koa-style
- * middlewares around the MCP transport handler.
- */
+/** Base class for Koa-style MCP controller advice. */
 export abstract class AbstractControllerAdvice implements IAdvice {
-  // Default no-op around to satisfy IAdvice structural type check
+  // Required by the IAdvice contract; MCP uses middleware().
   async around(_ctx: AdviceContext, next: () => Promise<any>): Promise<any> {
     return next();
   }

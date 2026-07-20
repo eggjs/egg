@@ -13,8 +13,6 @@ describe('standalone/service-worker/test/MultiApp.test.ts', () => {
   let base2: string;
 
   beforeAll(async () => {
-    // Two apps loading the SAME fixture concurrently: routers, registries and
-    // singletons must stay per-app (TeggScope isolation).
     app1 = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'));
     app2 = new ServiceWorkerApp(path.join(__dirname, 'fixtures/hello-app'));
     const [server1, server2] = await Promise.all([app1.serve(), app2.serve()]);

@@ -2,10 +2,7 @@ export * from './ServiceWorkerApp.ts';
 
 import { ServiceWorkerApp, type ServiceWorkerAppOptions } from './ServiceWorkerApp.ts';
 
-/**
- * Scan-only tegg manifest generation for the bundler CLI. `egg-bin bundle` treats a
- * `--framework` package that exposes `loadMetadata` as a standalone bundle target.
- */
+/** Scan a service-worker application for the standalone bundler. */
 export function loadMetadata(
   cwd: string,
   options?: ServiceWorkerAppOptions,

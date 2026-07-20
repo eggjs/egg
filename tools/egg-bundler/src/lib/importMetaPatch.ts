@@ -1,10 +1,5 @@
-// @utoo/pack (Turbopack) rewrites `import.meta` in bundled modules to a runtime
-// shim that either throws or calls an undefined context method
-// (`__turbopack_context__.F(...)`), so ANY bundled module using `import.meta.url`
-// breaks at module evaluation — in Node and on Cloudflare workerd alike. This
-// patches the emitted output to a working, self-locating implementation derived
-// from `__filename` / `process.argv`, with a `"worker.js"` fallback for runtimes
-// that have neither. Shared by the Node (Bundler) and standalone/worker targets.
+// Replace Turbopack's unusable import.meta shims with values derived from the
+// CommonJS filename, or the process entry when no filename exists.
 
 const IMPORT_META_FALLBACK_FILENAME_EXPR = [
   '(() => {',
@@ -29,11 +24,8 @@ export const IMPORT_META_URL_EXPR: string = `(() => { const u = new URL("file://
 export const THROWING_IMPORT_META_URL: RegExp =
   /\(\(\)\s*=>\s*\{\s*throw\s+new\s+Error\(\s*['"][^'"]*import\.meta\.url[^'"]*['"]\s*\)\s*;?\s*\}\)\s*\(\)/g;
 
-// Matches a single-getter object declaration `<kind> <ident> = { get url() { … } }`.
-// The identifier is a plain `[\w$]*` (no embedded `import$2e$meta__` literal, whose
-// word-chars would make the surrounding `[\w$]*` backtrack polynomially over a large
-// bundle) and the getter body is `[^}]*` — both linear; the actual import.meta filter
-// is `IMPORT_META_MARKER` in the replace callback.
+// Keep both variable-name and getter-body patterns linear; filter the
+// import.meta marker in the replacement callback.
 export const TURBOPACK_IMPORT_META_OBJECT: RegExp =
   /\b(var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*\{\s*get\s+url\s*\(\)\s*\{[^}]*\}\s*\};?/g;
 

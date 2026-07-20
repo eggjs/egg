@@ -6,10 +6,7 @@ export default defineConfig({
   },
   unused: {
     level: 'error',
-    // The fetch controller transport joins the app through the package.json-driven
-    // framework-module scan (its own package root is scanned for eggModule deps), not
-    // a code import — being a dependency IS the declaration. service-worker-runtime is
-    // imported (ContextProtoProperty), so it is not listed here.
+    // Loaded through the package's eggModule dependency scan, not a code import.
     ignore: ['@eggjs/service-worker-controller'],
   },
 });

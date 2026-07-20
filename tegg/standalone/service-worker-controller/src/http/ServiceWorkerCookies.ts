@@ -15,7 +15,7 @@ export interface CookieSetOptions {
   overwrite?: boolean;
 }
 
-// `@eggjs/cookies` field validation (RFC 7230 field-content + attribute values).
+// RFC 7230 field-content validation.
 // oxlint-disable-next-line no-control-regex
 const FIELD_CONTENT_REGEXP = /^[	 -~-ÿ]+$/;
 const SAME_SITE_REGEXP = /^(?:none|lax|strict)$/i;
@@ -38,7 +38,7 @@ function parseCookieHeader(header: string | null): Map<string, string> {
       continue;
     }
     const name = part.slice(0, eq).trim();
-    // Raw value (no decode / dequote), matching `@eggjs/cookies`.
+    // Cookie values remain encoded as received.
     if (!cookies.has(name)) {
       cookies.set(name, part.slice(eq + 1).trim());
     }
@@ -65,7 +65,7 @@ function serializeCookie(name: string, value: string | null | undefined, opts: C
     'argument option priority is invalid',
   );
 
-  // Raw value (no encode), matching `@eggjs/cookies`.
+  // Callers are responsible for encoding cookie values.
   let cookie = `${name}=${deleting ? '' : value}`;
   cookie += `; Path=${opts.path ?? '/'}`;
   if (opts.domain) {
@@ -97,15 +97,7 @@ function serializeCookie(name: string, value: string | null | undefined, opts: C
   return cookie;
 }
 
-/**
- * The fetch host's `@HTTPCookies()` implementation — web-standard and edge-clean
- * (no `@eggjs/cookies` app coupling or its heavy egg-flavored deps). Reads
- * request cookies from the `Cookie` header and writes response cookies as
- * `Set-Cookie` onto the context's `responseHeaders` (merged onto the final
- * Response). Values are stored/read raw and validated the same way as
- * `@eggjs/cookies`; signing/encryption are not implemented (inject
- * `@eggjs/cookies` if needed).
- */
+/** Fetch-native cookie reader and unsigned Set-Cookie writer. */
 export class ServiceWorkerCookies {
   readonly #request: Request;
   readonly #responseHeaders: Headers;

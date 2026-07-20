@@ -1,11 +1,7 @@
 import { Readable } from 'node:stream';
 
 export class ResponseUtils {
-  /**
-   * The unified error shape for framework-generated failures (routing 404,
-   * unhandled controller errors): `{ code, message }` JSON. Controller-crafted
-   * Responses pass through untouched.
-   */
+  /** Create a framework error response with a `{ code, message }` body. */
   static createErrorResponse(status: number, code: string, message: string): Response {
     return new Response(JSON.stringify({ code, message }), {
       status,
@@ -22,8 +18,7 @@ export class ResponseUtils {
     if (
       typeof body === 'string' ||
       body instanceof ReadableStream ||
-      // Buffer is a Uint8Array; also cover the other web-standard BodyInit types
-      // so a controller returning binary/form bodies is not JSON-serialized.
+      // Buffer is covered by Uint8Array.
       body instanceof Uint8Array ||
       body instanceof ArrayBuffer ||
       body instanceof Blob ||

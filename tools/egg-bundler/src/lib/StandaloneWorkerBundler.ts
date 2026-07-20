@@ -23,31 +23,17 @@ export interface StandaloneManifest {
 }
 
 export interface StandaloneWorkerBundlerOptions {
-  /** The app module directory (the tegg module scanned for the manifest). */
+  /** Application module directory. */
   readonly baseDir: string;
-  /**
-   * Path to the user-authored worker entry (e.g. `worker.ts`). The bundler never
-   * generates the host wiring — the user's entry constructs the app and picks the
-   * host shape (`export default { fetch }` or `addEventListener`). The bundler only
-   * injects the framework-scanned imports + manifest ahead of it (see {@link run}).
-   */
+  /** User-authored worker entry. */
   readonly entry: string;
   /** Output directory for the bundled worker. */
   readonly outputDir: string;
-  /**
-   * The tegg manifest (moduleReferences + moduleDescriptors) produced by the
-   * framework's scan-only metadata pass (e.g. `ServiceWorkerApp.loadMetadata`).
-   * The bundler never boots the app; the caller supplies this.
-   */
+  /** Tegg metadata produced by the standalone framework scan. */
   readonly manifest: StandaloneManifest;
-  /**
-   * Host format of the user's entry. `module` (default) emits an ESM wrapper that
-   * re-exports the entry's `export default` (Cloudflare module worker); `service-worker`
-   * emits a side-effect-only wrapper (the entry's `addEventListener('fetch')` ran
-   * during evaluation — legacy service-worker format).
-   */
+  /** `module` emits an ESM worker; `service-worker` emits a classic script. */
   readonly format?: 'module' | 'service-worker';
-  /** Module names to drop from the manifest (e.g. `teggDal` — dynamic multiInstance loads break bundle mode). */
+  /** Module names to omit from the bundle. */
   readonly excludeModules?: readonly string[];
   /** Node monorepo/app root for @utoo/pack node_modules resolution. Defaults to baseDir. */
   readonly rootPath?: string;
@@ -56,12 +42,11 @@ export interface StandaloneWorkerBundlerOptions {
 
 export interface StandaloneWorkerBundleResult {
   readonly outputDir: string;
-  /** The ESM wrapper entry, for `wrangler`'s `main`. */
+  /** Generated worker entry filename. */
   readonly entry: string;
 }
 
-// Under nodejs_compat these are provided by workerd; kept external so @utoo/pack
-// emits a `require(id)` the runtime resolves rather than trying to bundle them.
+// workerd provides these through nodejs_compat.
 const NODE_BUILTINS = [
   'assert',
   'async_hooks',
@@ -92,9 +77,7 @@ const NODE_BUILTINS = [
   'zlib',
 ];
 
-// Bundle mode never globs (the manifest lists every module file), and workerd's
-// nodejs_compat has no `node:os`; both are aliased to inert stubs so their code
-// (globby's dynamic `require('fs')`, egg-errors' `os.hostname/EOL`) leaves the bundle.
+// These APIs are unreachable in bundle mode and unavailable in workerd.
 const STUB_GLOBBY = `const noop = () => [];
 export default { sync: noop, globby: noop, globbySync: noop };
 export const sync = noop; export const globby = noop; export const globbySync = noop;
@@ -138,8 +121,7 @@ export class StandaloneWorkerBundler {
     const absBaseDir = path.resolve(baseDir);
     const absOutputDir = path.resolve(absBaseDir, outputDir);
     const absEntry = path.resolve(entry);
-    // The injected entry copy lives beside the user's entry so the user's own
-    // relative imports and `import.meta` resolve exactly as they do unbundled.
+    // Keep the injected copy beside the entry to preserve relative resolution.
     const userEntryDir = path.dirname(absEntry);
 
     const excluded = new Set(excludeModules);
@@ -152,10 +134,7 @@ export class StandaloneWorkerBundler {
         .map((d) => ({ ...d, unitPath: posix(d.unitPath) })),
     };
 
-    // Build-managed project dir — a `.egg-bundle` sibling of the output dir. PackRunner
-    // writes its compiler tsconfig here and requires a `.egg-bundle` path segment; a
-    // single projectPath tsconfig governs the whole build regardless of entry location,
-    // so the injected entry can live next to the user's source instead.
+    // PackRunner owns the compiler configuration under .egg-bundle.
     const projectDir = path.join(path.dirname(absOutputDir), '.egg-bundle', 'sw-entries');
     await fs.mkdir(projectDir, { recursive: true });
     const stubGlobby = path.join(projectDir, 'stub-globby.mjs');
@@ -163,10 +142,7 @@ export class StandaloneWorkerBundler {
     await fs.writeFile(stubGlobby, STUB_GLOBBY);
     await fs.writeFile(stubOs, STUB_OS);
 
-    // The Turbopack entry = injected prelude + the user's entry, copied beside the
-    // source. Import declarations load before module bodies, so the prelude's globals
-    // are set before the user's `new ServiceWorkerApp(dir)` reads them — the user entry
-    // needs no build-only import and stays runnable unbundled.
+    // Static imports load before the entry reads the injected manifest globals.
     const userSource = await fs.readFile(absEntry, 'utf8');
     const injectedEntry = path.join(userEntryDir, '.egg-worker-entry.ts');
     await fs.writeFile(injectedEntry, `${this.#renderPrelude(filtered, userEntryDir)}\n${userSource}`);
@@ -188,33 +164,27 @@ export class StandaloneWorkerBundler {
         mode,
         resolve: { alias: { globby: stubGlobby, os: stubOs, 'node:os': stubOs } },
         singleFile: true,
-        // No ORM here: `false` erases uninitialized private fields (`#x?: T;`) while
-        // code still references `this.#x`, producing "private name not declared".
+        // Preserve private field declarations in the worker output.
         useDefineForClassFields: true,
       }).run();
     } finally {
       await fs.rm(injectedEntry, { force: true });
     }
 
-    // Patch Turbopack's broken import.meta shim so bundled modules using
-    // import.meta.url work (in Node and on workerd).
+    // Replace Turbopack's unusable import.meta shim.
     const workerJs = path.join(absOutputDir, 'worker.js');
     const patched = patchImportMetaInContent(await fs.readFile(workerJs, 'utf8'));
     debug('patched %d import.meta occurrences', patched.patchCount);
-    // The IIFE is CommonJS; give it a .cjs extension so the ESM wrapper can import it.
+    // The generated IIFE is CommonJS.
     const workerCjs = path.join(absOutputDir, 'worker.cjs');
     await fs.writeFile(workerCjs, patched.content);
     await fs.rm(workerJs, { force: true });
 
     if (format === 'service-worker') {
-      // Legacy service-worker format: the entry's `addEventListener('fetch')` ran on
-      // the global scope when worker.cjs evaluated. It must stay a classic (non-module)
-      // script — an ESM wrapper would move it to module scope, where workerd does not
-      // dispatch fetch events — so `main` points straight at the CJS script.
+      // Classic workers execute the CommonJS artifact for its global side effects.
       return { outputDir: absOutputDir, entry: 'worker.cjs' };
     }
-    // Module worker: a thin ESM wrapper re-exports the entry's default so workerd sees
-    // `export default { fetch }`.
+    // Module workers require a default ESM export.
     const wrapperName = 'index.mjs';
     await fs.writeFile(
       path.join(absOutputDir, wrapperName),
@@ -224,16 +194,13 @@ export class StandaloneWorkerBundler {
     return { outputDir: absOutputDir, entry: wrapperName };
   }
 
-  /**
-   * The injected prelude: static-import every decorated file so @utoo/pack bundles
-   * it, then install the bundle-mode globals the standalone loader reads.
-   */
+  /** Render static module imports and the manifest globals. */
   #renderPrelude(manifest: StandaloneManifest, entryDir: string): string {
     const files: string[] = [];
     for (const d of manifest.moduleDescriptors) {
       for (const f of d.decoratedFiles) files.push(posix(path.join(d.unitPath, f)));
     }
-    // Relative specifier from the injected entry dir — @utoo/pack cannot resolve absolute paths.
+    // @utoo/pack requires module specifiers relative to the entry.
     const rel = (abs: string) => {
       const r = posix(path.relative(entryDir, abs));
       return r.startsWith('.') ? r : `./${r}`;

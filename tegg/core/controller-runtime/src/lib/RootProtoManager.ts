@@ -1,10 +1,7 @@
 import type { EggPrototype } from '@eggjs/metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
-/**
- * The structural request shape RootProtoManager needs. Both the egg Context
- * and fetch-style contexts satisfy it.
- */
+/** Request fields used to resolve the controller for a route. */
 export interface RootProtoRequestContext {
   method: string;
   host: string;
@@ -13,12 +10,8 @@ export interface RootProtoRequestContext {
 
 export type GetRootProtoCallback = (ctx: RootProtoRequestContext) => EggPrototype | undefined;
 
-// Host-agnostic root-proto registry — pure logic, NO proto decorator. Each host
-// wires it: the fetch host applies `@InnerObjectProto` in its runtimeProtos barrel
-// and injects it; the egg host mounts `new RootProtoManager()` on `app` (an APP
-// compat proto that also backs the teggRootProto middleware).
+/** Resolves the root controller prototype for a matched route. */
 export class RootProtoManager {
-  // <method, GetRootProtoCallback[]>
   protoMap: Map<string, GetRootProtoCallback[]> = new Map();
 
   registerRootProto(method: string, cb: GetRootProtoCallback, host: string): void {

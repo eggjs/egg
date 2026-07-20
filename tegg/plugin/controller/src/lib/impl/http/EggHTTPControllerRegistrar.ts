@@ -12,18 +12,10 @@ import type { Router } from 'egg';
 
 import { EggHTTPMethodRegister } from './EggHTTPMethodRegister.ts';
 
-// Owns egg's HTTP controller registration end to end: it plugs the HTTP register
-// creator into the factory (@LifecyclePostInject) so controllers accumulate as
-// load units are scanned, then mounts them all — priority-sorted — onto
-// `app.router` as a LoadUnitInstance lifecycle hook. `app/controller`
-// (CONTROLLER_LOAD_UNIT) is the last controller-bearing load unit egg creates,
-// so once its instance is created every controller proto across all load units
-// has been collected; postCreate is the container-native replacement for a
-// boot-time manual doRegister.
+/** Finalizes Egg HTTP routes after the controller load unit is created. */
 @LoadUnitInstanceLifecycleProto()
 export class EggHTTPControllerRegistrar implements LifecycleHook<LoadUnitInstanceLifecycleContext, LoadUnitInstance> {
-  // `router` is both an app and a ctx property; @EggQualifier(APP) forces the
-  // app-scoped compat proto (a plain inject would default to CONTEXT).
+  // `router` also exists on ctx, so select the application object explicitly.
   @Inject()
   @EggQualifier(EggType.APP)
   private readonly router: Router;
@@ -31,8 +23,6 @@ export class EggHTTPControllerRegistrar implements LifecycleHook<LoadUnitInstanc
   @Inject()
   private readonly controllerRegisterFactory: ControllerRegisterFactory;
 
-  // `app.rootProtoManager` is mounted on the app before the inner-object graph
-  // builds, so it arrives as an APP compat proto — same as `router`.
   @Inject()
   @EggQualifier(EggType.APP)
   private readonly rootProtoManager: RootProtoManager;

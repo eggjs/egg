@@ -9,7 +9,7 @@ export class ServiceWorkerFetchContext extends BaseServiceWorkerContextImpl<Fetc
   method: string;
   path: string;
   host: string;
-  // params will be set in @eggjs/router
+  // Populated by @eggjs/router after a route match.
   params: Record<string, string> = {};
   /** Headers set by middlewares/controllers, merged onto the final response. */
   readonly responseHeaders: Headers = new Headers();

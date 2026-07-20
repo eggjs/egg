@@ -4,18 +4,13 @@ import type { EggPrototype } from '@eggjs/metadata';
 
 import type { ControllerRegister } from './ControllerRegister.ts';
 
-/**
- * `THost` is whatever the host wants to thread through to its register
- * creators (the egg plugin passes the Application; standalone runtimes
- * typically pass nothing).
- */
+/** Creates the register implementation for each controller type. */
 export type RegisterCreator<THost = unknown> = (
   proto: EggPrototype,
   controllerMeta: ControllerMetadata,
   host: THost,
 ) => ControllerRegister;
 
-// PRIVATE: only the register providers and the load-unit hook inject it.
 @InnerObjectProto()
 export class ControllerRegisterFactory<THost = unknown> {
   private readonly host: THost;

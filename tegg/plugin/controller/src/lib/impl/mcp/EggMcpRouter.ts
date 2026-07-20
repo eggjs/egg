@@ -52,7 +52,7 @@ export interface MCPControllerHook {
 }
 
 class InnerSSEServerTransport extends SSEServerTransport {
-  // Capture the owning per-app router so send() (driven by the MCP SDK, often
+  // Capture the owning router so send() (driven by the MCP SDK, often
   // outside any ALS frame) resolves the correct app's request map directly.
   router?: EggMcpRouter;
 
@@ -75,21 +75,9 @@ class InnerSSEServerTransport extends SSEServerTransport {
   }
 }
 
-/**
- * The egg host's MCP transport boundary: holds this app's MCP
- * transports/servers/timers and mounts node HTTP routes (SSE, streamable HTTP,
- * stateless streamable HTTP) on `app.router`. It is created imperatively per
- * app during controller boot (see `app.ts`) so the egg `app` never has to be
- * threaded through the DI graph as an inner object.
- *
- * The host-agnostic {@link MCPControllerRegister} only COLLECTS records; this
- * router turns each server name's complete records into per-request MCP servers.
- */
+/** Mounts the Egg MCP transports for collected controller registrations. */
 export class EggMcpRouter implements McpRouter {
-  // Per-app hook list (mcp-proxy registers its hook here at agent boot). Each
-  // app gets its own list (scope-backed) so concurrent apps do not accumulate
-  // each other's hooks. Kept static so mcp-proxy can register a hook before any
-  // router instance exists.
+  // Scope-backed so hooks can be registered before the router is constructed.
   static get hooks(): MCPControllerHook[] {
     return TeggScope.resolve(MCP_HOOKS_SLOT, () => [], 'EggMcpRouter.hooks');
   }
@@ -119,8 +107,7 @@ export class EggMcpRouter implements McpRouter {
     >
   > = new Map();
 
-  // The complete collected records, keyed by server name; route handlers use
-  // them to build request/session-specific MCP SDK servers.
+  // Route handlers build request-specific MCP servers from these records.
   private registrations: Record<string, McpServerRegistration> = {};
 
   // Optional: resolved + composed lazily on the first request (see
@@ -135,8 +122,7 @@ export class EggMcpRouter implements McpRouter {
 
   registerServer(reg: McpServerRegistration): void {
     const serverName = reg.serverName;
-    // The unnamed ('default') server uses the base MCP paths (name === undefined);
-    // named servers use the multiple-server paths.
+    // The unnamed server uses the base MCP paths.
     const name = serverName === 'default' ? undefined : serverName;
     this.registrations[serverName] = reg;
     this.mcpServerHelperMap[serverName] = () => {

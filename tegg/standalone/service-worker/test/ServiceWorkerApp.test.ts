@@ -120,16 +120,12 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
   });
 
   it('should run a CONTEXT-init @Pointcut advice with a fresh instance per request', async () => {
-    // ctxCount stays 1 across requests only if the advice is context-scoped
-    // (a fresh instance each request); a leaked singleton would increment.
+    // A leaked advice singleton would increment ctxCount on the second request.
     assert.deepEqual(await (await fetch(`${base}/ctxpc/run`)).json(), { msg: 'hello', ctxCount: 1 });
     assert.deepEqual(await (await fetch(`${base}/ctxpc/run`)).json(), { msg: 'hello', ctxCount: 1 });
   });
 
   it('should run @Middleware (koa layer) and @Pointcut (aop layer) together', async () => {
-    // @Pointcut runs inside the method and mutates the raw return ({ msg, count });
-    // the handler normalizes it into ctx.body; the outer koa @Middleware then reads
-    // that normalized body and wraps it. Both layers work with no ResponseAdvice.
     const res = await fetch(`${base}/combo/run`);
     assert.deepEqual(await res.json(), { body: { msg: 'hello', count: 0 } });
   });
@@ -143,7 +139,6 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
   it('should support BackgroundTaskHelper and drain on ctx destroy', async () => {
     const res = await fetch(`${base}/hello/background`);
     assert.deepEqual(await res.json(), { started: true });
-    // ctx destroy drains background tasks; give the event loop a tick
     for (let i = 0; i < 50 && backgroundFlags.length === 0; i++) {
       await new Promise((resolve) => setTimeout(resolve, 10));
     }
@@ -171,8 +166,6 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
   it('should return a generic 500 that does not leak the internal error message', async () => {
     const res = await fetch(`${base}/stream/boom`);
     assert.equal(res.status, 500);
-    // The thrown 'stream controller boom' is logged server-side but never reaches the
-    // client; a host surfaces details through an `errorResponseMapper` instead.
     assert.deepEqual(await res.json(), {
       code: 'INTERNAL_SERVER_ERROR',
       message: 'Internal Server Error',
@@ -189,8 +182,7 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     const res = await fetch(`${base}/stream/sse`);
     assert.equal(res.status, 200);
     assert.equal(res.headers.get('content-type'), 'text/event-stream');
-    // chunks are produced 30ms apart, well after handleEvent has returned;
-    // without the stream guard the probe is destroyed first and emits DEAD
+    // Without the stream guard, context destruction changes later chunks to DEAD.
     const text = await res.text();
     assert.equal(text, 'data: chunk-0\n\ndata: chunk-1\n\ndata: chunk-2\n\n');
   });
@@ -203,9 +195,6 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
   });
 
   it('should support the service worker fetch-event interface (respondWith)', async () => {
-    // The exact wiring a Service Worker runtime uses — a native FetchEvent
-    // satisfies the app's minimal { type, request } contract:
-    //   self.addEventListener('fetch', e => e.respondWith(app.handleEvent(e)))
     let captured: Promise<Response> | undefined;
     const event = {
       type: 'fetch' as const,
@@ -278,7 +267,6 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts host seams', (
 
   it('should not clobber a pre-set ModuleConfigUtil.configNames', async () => {
     const app = new ServiceWorkerApp(HELLO_APP);
-    // Host selection chain set in the app's scope bag before init must survive.
     TeggScope.run(app.app.scopeBag, () => {
       ModuleConfigUtil.configNames = ['module.default', 'module.beta'];
     });

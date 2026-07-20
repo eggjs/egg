@@ -2,54 +2,30 @@ import type { FetchEvent } from '@eggjs/tegg-types';
 
 import type { ServiceWorkerFetchContext } from './http/ServiceWorkerFetchContext.ts';
 
-/**
- * Optional host hook to build the per-request fetch context. Provide it as the
- * `fetchContextFactory` inner object to return a richer context (logger/tracer/
- * user); when absent the plain {@link ServiceWorkerFetchContext} is used.
- */
+/** Creates the context for a fetch request. */
 export interface FetchContextFactory {
   create(init: ServiceWorkerContextInit<FetchEvent>): ServiceWorkerFetchContext;
 }
 
-/**
- * Optional host hook to turn an unhandled controller error into a Response.
- * Provide it as the `errorResponseMapper` inner object to map your own error
- * types (business status/body); return `undefined` to fall back to the
- * framework's unified `{ code, message }` 500.
- */
+/** Maps an unhandled controller error to a response. */
 export interface ErrorResponseMapper {
   toResponse(error: unknown, ctx: ServiceWorkerFetchContext): Response | undefined;
 }
 
-/**
- * The auth extension point for MCP routes. The host provides an
- * implementation via `ServiceWorkerAppOptions.mcpAuthHandler` (backed by the
- * `mcpAuthHandler` inner object); the default passes every request through.
- * Return a Response to reject the request, or undefined to let it in.
- */
+/** Returns a response to reject an MCP request, or undefined to allow it. */
 export interface MCPAuthHandler {
   authenticate(request: Request): Promise<Response | undefined>;
 }
 
-/**
- * MCP transport config, read from the app-wide `config` inner object under the
- * `mcp` key (the app's `module.yml`, or a programmatic `config` override).
- *
- * `transport` selects which transport mounts: the built-in `'web'` (web-standard
- * streamable HTTP, the default) or a host-registered alternative by name (see
- * `ServiceWorkerMcpRouter.registerTransport`) — e.g. a node-mock SSE + streamable
- * transport. An unknown name falls back to the built-in.
- *
- * The `allowedHosts`/`allowedOrigins`/`enableDnsRebindingProtection` fields are
- * DNS-rebinding protection forwarded to the SDK's web-standard transport: when a
- * list is configured the SDK validates the request Host/Origin, and protection
- * defaults on once either list is set. Left empty (the default) there is no
- * host/origin gate — set it before exposing the MCP endpoint beyond loopback.
- */
+/** MCP settings read from the entry module's `module.yml`. */
 export interface MCPTransportOptions {
+  /** Built-in `web` transport or a name registered with `registerTransport()`. */
   transport?: string;
+  /** Host header allow-list passed to the MCP SDK. */
   allowedHosts?: string[];
+  /** Origin header allow-list passed to the MCP SDK. */
   allowedOrigins?: string[];
+  /** Defaults to true when either allow-list is configured. */
   enableDnsRebindingProtection?: boolean;
 }
 

@@ -48,8 +48,7 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
   }
 
   private async doInitRoutes(): Promise<void> {
-    // Routes land on the router lazily at the first event: every load unit has
-    // been created by now, so all controller protos are collected.
+    // Finalize routes after all application load units have been created.
     this.httpRegisterProvider.doRegister(this.rootProtoManager);
     this.mcpRegisterProvider.doRegister();
     this.#routes = this.fetchRouter.middleware() as unknown as RouterMiddleware;
@@ -58,8 +57,6 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
   async handleEvent(event: FetchEvent): Promise<Response> {
     const ctx = this.fetchContextFactory?.create({ event }) ?? new ServiceWorkerFetchContext({ event });
     try {
-      // Inside the try so a route-registration failure returns the unified 500
-      // error shape instead of rejecting handleEvent's promise.
       await this.initRoutes();
       await this.#routes!(ctx, async () => {
         /* noop */
@@ -74,20 +71,13 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
       if (mapped) {
         return mapped;
       }
-      // Log the real error server-side; reply a generic message so internal error
-      // details never reach the client (a host that wants to surface them provides
-      // an `errorResponseMapper`, handled above).
+      // Keep internal details out of the default response.
       console.error('[service-worker] handle fetch event failed:', e);
       return ResponseUtils.createErrorResponse(500, 'INTERNAL_SERVER_ERROR', 'Internal Server Error');
     }
   }
 
-  /**
-   * Merge headers set by middlewares/controllers onto the response. A native /
-   * redirect / error Response has immutable headers, so mutating in place would
-   * throw; rebuild through a fresh Headers copy only when there is something to
-   * merge.
-   */
+  /** Merge context headers without mutating an immutable Response. */
   #mergeResponseHeaders(response: Response, extra: Headers): Response {
     let hasExtra = false;
     for (const _ of extra.keys()) {
@@ -99,8 +89,7 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
     }
     const headers = new Headers(response.headers);
     for (const [key, value] of extra.entries()) {
-      // `entries()` folds multiple Set-Cookie into one comma-joined value, which
-      // corrupts cookies; carry them over individually via getSetCookie().
+      // Preserve Set-Cookie as separate header values.
       if (key === 'set-cookie') {
         continue;
       }
@@ -116,14 +105,7 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
     });
   }
 
-  /**
-   * The tegg context is destroyed as soon as the runner returns, but a
-   * streaming body keeps pulling from the ContextProto objects afterwards. Tee
-   * the body: the client consumes one branch, and the request context's
-   * `preDestroy` awaits the other draining — so the ContextProto objects the
-   * stream pulls from stay alive until the source is fully produced, then the
-   * context tears down. Client aborts end the drain normally, not as an error.
-   */
+  /** Keep the request context alive until a streaming response completes. */
   async #guardResponseStream(response: Response): Promise<Response> {
     if (!response.body) {
       return response;
@@ -136,7 +118,7 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
     EggContextLifecycleUtil.registerObjectLifecycle(ctx, {
       preDestroy: async () => {
         await monitorStream.pipeTo(new WritableStream()).catch(() => {
-          /* client abort / stream error: consumption is over either way */
+          /* stream consumption has ended */
         });
       },
     });

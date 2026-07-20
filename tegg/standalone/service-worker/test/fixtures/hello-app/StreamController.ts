@@ -30,8 +30,7 @@ export class StreamController {
       async start(controller) {
         const encoder = new TextEncoder();
         for (let i = 0; i < 3; i++) {
-          // stay slower than the ctx-destroy tick so a missing stream guard
-          // surfaces as DEAD chunks
+          // Delay chunks so premature context destruction surfaces as DEAD.
           await sleep(30);
           controller.enqueue(encoder.encode(`data: ${probe.chunk(i)}\n\n`));
         }

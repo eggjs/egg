@@ -1,5 +1,4 @@
-// tegg host-agnostic controller runtime surface: both the egg plugin host and
-// the standalone service-worker host subclass/consume these.
+// Shared controller primitives for Egg and standalone hosts.
 export * from './lib/ControllerLoadUnit.ts';
 export * from './lib/ControllerLoadUnitHook.ts';
 export * from './lib/ControllerLoadUnitInstance.ts';

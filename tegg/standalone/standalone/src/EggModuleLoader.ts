@@ -69,11 +69,7 @@ export class EggModuleLoader {
     return { globalGraph, moduleDescriptors };
   }
 
-  /**
-   * Build tegg manifest data from module references and descriptors, the
-   * standalone counterpart of the egg plugin's manifest collection. A bundler
-   * persists this so bundle-mode boot can skip globbing.
-   */
+  /** Build manifest data that allows a bundled host to skip filesystem scans. */
   static buildTeggManifestData(
     moduleReferences: readonly ModuleReference[],
     moduleDescriptors: readonly ModuleDescriptor[],
@@ -85,9 +81,7 @@ export class EggModuleLoader {
     const loadUnits: LoadUnit[] = [];
     this.globalGraph.build();
     this.globalGraph.sort();
-    // Bundle mode has no fs: reuse the manifest's precomputed decorated files (skip
-    // globbing) and its module name (skip reading <unitPath>/package.json), indexed
-    // by unit path once for O(1) lookup below.
+    // Index bundled metadata once by module path.
     const decoratedFilesMap = new Map<string, string[]>();
     for (const desc of this.options.manifest?.moduleDescriptors ?? []) {
       decoratedFilesMap.set(desc.unitPath, desc.decoratedFiles);

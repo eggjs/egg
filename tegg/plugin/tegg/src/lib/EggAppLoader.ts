@@ -108,15 +108,7 @@ export class EggAppLoader implements Loader {
     return loggerNames.filter((t) => !ctxClazzNames.includes(t) && !singletonClazzNames.includes(t));
   }
 
-  /**
-   * The APP-scoped egg compatible protos: `() => app[name]` for every app
-   * property (minus the blacklist) plus the named app loggers. Extracted so
-   * ModuleHandler can feed the SAME compat protos into the InnerObjectLoadUnit,
-   * letting inner objects inject app properties (router / logger / ...) through
-   * the very mechanism business modules use — instead of hand-provided
-   * instances. CONTEXT-scoped compat protos stay out: inner objects are
-   * singletons and cannot inject request-scoped objects.
-   */
+  /** Build APP-scoped compatibility protos for app properties and loggers. */
   buildAppSingletonCompatClazzList(): EggProtoImplClass[] {
     const app = this.app;
     const appProperties = ObjectUtils.getProperties(app);

@@ -34,8 +34,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   configWillLoad(): void {
-    // Controller boot registers lifecycle hooks and a per-app-capturing load-unit
-    // creator, all of which must land in this app's TeggScope.
+    // Keep all registered factories and hooks in this application's scope.
     TeggScope.run(this.app._teggScopeBag, () => {
       this.doConfigWillLoad();
     });
@@ -81,9 +80,6 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
     if (this.mcpEnable()) {
-      // Only the MCP config wiring that must land in configWillLoad; the router
-      // mount + register wiring happen in didLoad / EggMCPRegisterProvider.
-
       // Don't let the mcp's body be consumed
       this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
 
@@ -130,25 +126,16 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   async didLoad(): Promise<void> {
-    // Mount the per-app RootProtoManager (and, when MCP is on, the router) on
-    // `app` BEFORE the inner-object graph builds: they become `() => app[name]`
-    // APP compat protos, so inner objects inject them the same way business
-    // modules inject `app.router`. `app.rootProtoManager` also backs the
-    // teggRootProto middleware, which is plain egg middleware and cannot inject.
+    // Publish host objects before the inner-object graph creates app compat protos.
     this.app.rootProtoManager = new RootProtoManager();
     if (this.mcpEnable()) {
       this.app.mcpRouter = new EggMcpRouter(this.app);
     }
     await this.app.moduleHandler.ready();
     await TeggScope.run(this.app._teggScopeBag, async () => {
-      // HTTP controller registration is driven by EggHTTPControllerRegistrar when
-      // the CONTROLLER_LOAD_UNIT instance is created inside ready() below — every
-      // controller proto is collected by then.
       this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
       await this.controllerLoadUnitHandler.ready();
 
-      // Guarded like every other config.mcp access — when MCP is disabled
-      // config.mcp may be absent, and there is no router to publish hooks for.
       if (this.mcpEnable()) {
         this.app.config.mcp.hooks = EggMcpRouter.hooks;
       }
@@ -156,13 +143,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   configDidLoad(): void {
-    // The per-app GlobalGraph does not exist yet (it is created inside
-    // moduleHandler.init() during didLoad), so registering on the graph here
-    // would be a silent no-op and cross-module controller middleware inject
-    // edges would never be woven. Buffer the hook on moduleHandler instead —
-    // it is flushed onto the graph right after creation, before build() runs.
-    // moduleHandler is created in the tegg plugin's configDidLoad, which runs
-    // before ours (teggController declares a dependency on tegg).
+    // The graph is created later; ModuleHandler attaches this hook before build.
     this.app.moduleHandler.registerGlobalGraphBuildHook(middlewareGraphHook);
   }
 
@@ -175,10 +156,6 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       if (this.controllerLoadUnitHandler) {
         await this.controllerLoadUnitHandler.destroy();
       }
-      // The module-declared controller hooks, the httpRegisterProvider (and its
-      // HTTPControllerRegister), and the MCP register/router all deregister /
-      // tear down with the InnerObjectLoadUnit and the app bag — no static
-      // instance to clean.
       ControllerMetadataManager.instance.clear();
     });
   }

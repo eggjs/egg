@@ -8,11 +8,7 @@ import { AccessLevel } from '@eggjs/tegg-types';
 import { FetchHTTPMethodRegister } from './FetchHTTPMethodRegister.ts';
 import type { FetchRouter } from './FetchRouter.ts';
 
-/**
- * Owns the fetch host's HTTPControllerRegister (no per-app statics: the
- * provider is an inner object, scoped to its app by the InnerObjectLoadUnit)
- * and plugs the HTTP register creator into the controller register factory.
- */
+/** Collects and finalizes HTTP routes for the fetch host. */
 @InnerObjectProto({ name: 'httpRegisterProvider', accessLevel: AccessLevel.PUBLIC })
 export class HTTPRegisterProvider {
   @Inject()

@@ -11,19 +11,9 @@ import { RequestUtils } from '../utils/RequestUtils.ts';
 import { ServiceWorkerCookies } from './ServiceWorkerCookies.ts';
 import type { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext.ts';
 
-/**
- * The fetch host's HTTP method register: the shared skeleton lives in
- * the controller plugin runtime; this subclass binds the Fetch Request shape to
- * method args and writes the return value back as a Response.
- */
+/** Binds Fetch API requests and responses to HTTP controller methods. */
 export class FetchHTTPMethodRegister extends HTTPMethodRegister {
-  /**
-   * `@Middleware(SomeAdvice)` advice classes are koa-style middlewares here, not
-   * AOP around advices: resolve each into a middleware that wraps the handler and
-   * runs `advice.middleware(ctx, next)`, mirroring {@link ServiceWorkerMcpRouter}.
-   * The handler is innermost, so an advice reading `ctx.body` after `next()` sees
-   * the controller's normalized return value.
-   */
+  /** Adapt controller advice classes to Koa-style method middleware. */
   protected getExtraMethodMiddlewares(): HTTPHandlerFunc[] {
     const adviceClasses = (this.proto.getMetaData(CONTROLLER_AOP_MIDDLEWARES) ??
       []) as EggProtoImplClass<AbstractControllerAdvice>[];
@@ -43,12 +33,9 @@ export class FetchHTTPMethodRegister extends HTTPMethodRegister {
     // oxlint-disable-next-line no-this-alias
     const methodRegister = this;
     return async function (ctx: ServiceWorkerFetchContext, next: () => Promise<void>) {
-      // if hosts is not empty and host is not matched, not execute
       if (host && host !== ctx.host) {
         return await next();
       }
-      // HTTP decorator core implement
-      // use controller metadata map http request to function arguments
       const eggObj = await methodRegister.eggContainerFactory.getOrCreateEggObject(
         methodRegister.proto,
         methodRegister.proto.name,

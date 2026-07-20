@@ -15,12 +15,7 @@ import type { MiddlewareFunc } from 'egg';
 import { aclMiddlewareFactory } from './Acl.ts';
 import { initRequest } from './Req.ts';
 
-/**
- * The egg host's HTTP method register: the shared skeleton
- * (route registration / duplicate check / root proto wiring) lives in
- * the controller plugin runtime; this subclass binds the egg ctx request shape
- * to method args and writes the return value back to `ctx.body`.
- */
+/** Binds Egg requests and responses to HTTP controller methods. */
 export class EggHTTPMethodRegister extends HTTPMethodRegister {
   protected createHandler(methodMeta: HTTPMethodMeta, host: string | undefined): HTTPHandlerFunc {
     const argsLength = methodMeta.paramMap.size;

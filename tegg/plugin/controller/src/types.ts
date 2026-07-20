@@ -8,8 +8,7 @@ declare module 'egg' {
   interface Application {
     rootProtoManager: RootProtoManager;
     controllerMetaBuilderFactory: typeof ControllerMetaBuilderFactory;
-    // Mounted per app in the controller boot when mcpProxy is enabled; the
-    // mcpRegisterProvider injects it via the egg compat proto.
+    /** Available when the MCP proxy plugin is enabled. */
     mcpRouter?: EggMcpRouter;
   }
 }

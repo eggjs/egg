@@ -1,6 +1,3 @@
-// Deploy the bundled service worker to Cloudflare Workers.
-// Build first:  npm run bundle:cf
-// Dev/deploy:   wrangler dev   |   wrangler deploy
 {
   "name": "helloworld-service-worker",
   "main": ".worker-cf/index.mjs",

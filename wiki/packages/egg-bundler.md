@@ -146,7 +146,12 @@ standalone`); `--framework` names the app package (e.g. `@eggjs/service-worker`)
 which must export `loadMetadata` (the standalone counterpart of the egg app's
 framework specifier — no separate app-module/app-export flags). The command runs
 `loadMetadata` + `StandaloneWorkerBundler` internally, so the caller never threads
-the manifest by hand. `tools/egg-bin/src/commands/bundle.ts` branches on the target.
+the manifest by hand. The metadata scan runs in an `egg-bin` child process, where
+the CLI's detected TypeScript compiler and configured `--require`/`--import`
+hooks are active; a TypeScript standalone app therefore does not need to wrap the
+bundle command in its own `NODE_OPTIONS`. `tools/egg-bin/src/commands/bundle.ts`
+branches on the target, and `tools/egg-bin/scripts/standalone-metadata.mjs`
+performs the scan.
 
 **Injection-based seam.** The bundler does NOT synthesize the host entry. The user
 authors a plain, locally-runnable `worker.ts`

@@ -1,72 +1,56 @@
 # helloworld-service-worker
 
-Minimal example of `@eggjs/service-worker`: a tegg module served through the
-standalone service worker runtime — HTTP controllers and MCP tools over the
-same fetch event loop, no egg application required.
+A minimal `@eggjs/service-worker` application with an HTTP controller and an
+MCP tool in the same tegg module.
 
-## Run
+## Start locally
 
 ```bash
-# from the monorepo root
+# From the monorepo root
 ut install --from pnpm
-node --import=@oxc-node/core/register examples/helloworld-service-worker/main.ts
+cd examples/helloworld-service-worker
+npm run start
 ```
 
-Then:
+Try the HTTP controller:
 
 ```bash
 curl 'http://127.0.0.1:7001/hello/?name=you'
 # {"message":"hello, you"}
+```
 
+Try the MCP tool:
+
+```bash
 curl -X POST 'http://127.0.0.1:7001/mcp/calc/stream' \
   -H 'accept: application/json, text/event-stream' \
   -H 'content-type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"add","arguments":{"a":1,"b":41}}}'
 ```
 
-## What's inside
+## Project structure
 
-- `app/` — the tegg module (its `package.json` declares `eggModule.name`):
-  - `HelloController.ts` — an `@HTTPController` bound to `GET /hello/`.
-  - `CalcMCPController.ts` — an `@MCPController` exposing an `add` tool over
-    MCP stateless streamable HTTP at `/mcp/calc`.
-  - `HelloService.ts` — a `@ContextProto` service injected into both.
-- `main.ts` — boots `ServiceWorkerApp` on the module dir and serves it over
-  `node:http`. The entry lives outside `app/` so the module scan doesn't
-  execute it.
-- `worker.ts` — the Cloudflare Workers entry: a plain `new ServiceWorkerApp(dir)`
-  plus `export default { fetch }`. Nothing here is bundle-only, so it also runs
-  directly under Node (runtime module scan). The bundler injects the
-  framework-scanned imports and the manifest ahead of this file at build time.
-  Bundled with `npm run bundle:cf` (`egg-bin bundle`, see below).
+- `app/` contains the tegg module and its HTTP, MCP, and service classes.
+- `main.ts` starts a local `node:http` server.
+- `worker.ts` exports a Cloudflare module worker.
+- `wrangler.jsonc` points Cloudflare Workers at the generated bundle.
 
-## Cloudflare Workers
+## Run on Cloudflare Workers
 
-The same `worker.ts` runs on Cloudflare workerd. Node needs no bundle (it reads the
-module dir directly at runtime); workerd has no runtime filesystem, so the modules
-are discovered at build time and inlined. The bundler prepends the scanned imports
-and the manifest to a build-managed copy of `worker.ts` (leaving your source
-untouched), so `worker.ts` stays a plain, locally-runnable entry:
+Build the worker before running or deploying it with Wrangler:
 
 ```bash
-npm run bundle:cf            # egg-bin bundle --framework @eggjs/service-worker --entry worker.ts
-                            # -> .worker-cf/index.mjs (export default { fetch })
-wrangler dev                 # local workerd, or `wrangler deploy`
+npm run bundle:cf
+npx wrangler dev
+# npx wrangler deploy
 ```
 
-`egg-bin bundle` is the one-shot CLI: it selects the standalone target because
-`--framework @eggjs/service-worker` exports `loadMetadata` (there is no separate
-metadata step), then bundles `--entry worker.ts`. A published `@eggjs/service-worker`
-runs it under plain Node; inside this monorepo the script wraps it with
-`@oxc-node/core/register` so the workspace's TypeScript sources load.
-
-`wrangler.jsonc` sets `nodejs_compat` (tegg needs `AsyncLocalStorage`) and points
-`main` at the bundle. The same `GET /hello/` and `POST /mcp/calc/stream` routes
-work unchanged.
+The bundle is written to `.worker-cf/index.mjs`. The `nodejs_compat`
+compatibility flag in `wrangler.jsonc` provides the Node.js APIs required by
+tegg.
 
 ## Test
 
 ```bash
-# from the monorepo root
-utx vitest run --root examples/helloworld-service-worker --config vitest.config.ts
+npm test
 ```

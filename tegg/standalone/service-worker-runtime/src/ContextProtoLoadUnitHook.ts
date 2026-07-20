@@ -8,15 +8,11 @@ import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 
 import { type ContextProtoMeta, ContextProtoProperty } from './constants.ts';
 
-/**
- * Registers context-level protos resolved from the current tegg context (e.g.
- * `event`), so any module can `@Inject() event` in a request scope.
- */
+/** Registers injectable values sourced from the active request context. */
 @LoadUnitLifecycleProto()
 export class ContextProtoLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   async preCreate(_: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
     if (loadUnit.name === 'serviceWorkerRuntime') {
-      // can `@Inject() event`
       ContextProtoLoadUnitHook.registerPrototype(ContextProtoProperty.Event, loadUnit);
     }
   }

@@ -1,28 +1,18 @@
 # @eggjs/service-worker-runtime
 
-The protocol-agnostic half of the standalone service worker: an event-driven
-runner on top of `@eggjs/standalone` that dispatches incoming events to
-handlers by `event.type`.
+The protocol-independent event dispatcher used by
+`@eggjs/service-worker`. Most applications should depend on
+`@eggjs/service-worker` instead of this package directly.
 
-Protocol packages (e.g. `@eggjs/service-worker` for fetch/HTTP/MCP) build on
-this by contributing:
+This package provides:
 
-- an event handler: a class extending `AbstractEventHandler`, registered with
-  `@EventHandlerProto('<event type>')`;
-- whatever inner objects / lifecycle hooks their protocol needs, declared with
-  the module plugin decorators (`@InnerObjectProto`, `@LoadUnitLifecycleProto`,
-  …).
+- `ServiceWorkerRunner`, which dispatches each event by its `type`;
+- `ContextProtoLoadUnitHook` and `ContextProtoProperty`, which make the current
+  event injectable in request-scoped objects;
+- `StandaloneEggObjectFactory`, which resolves the matching event handler;
+- `BackgroundTaskHelper`, which drains request-scoped background work during
+  context destruction.
 
-What this package provides:
-
-- `ServiceWorkerRunner` — the `@Runner()` entry: resolves the handler for
-  `event.type` and dispatches.
-- `ContextProtoLoadUnitHook` / `ContextProtoProperty` — injects the current
-  event into ContextProto objects (`@Inject() event`).
-- `StandaloneEggObjectFactory` — qualifier-based handler resolution.
-- `BackgroundTaskHelper` (re-exported from `@eggjs/background-task`) —
-  request-scoped background tasks drained at ctx destroy. The host must
-  provide `logger` and `config` inner objects (`ServiceWorkerApp` does).
-
-Most applications should depend on `@eggjs/service-worker` instead; this
-package is the extension surface for new event protocols.
+Protocol adapters register an `AbstractEventHandler` implementation with
+`@EventHandlerProto('<type>')` and provide any required inner objects or
+lifecycle hooks through their tegg module.
