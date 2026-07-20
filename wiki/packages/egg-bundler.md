@@ -205,7 +205,6 @@ global `addEventListener('fetch')` — it is **not** a workerd target: workerd's
 `nodejs_compat` (required for tegg's `AsyncLocalStorage`) only supports the
 module-worker format, and `wrangler` rejects a service-worker-format script that
 imports Node builtins (`Unexpected external import of "assert"…, no default
-export`). The `service-worker` example
-(`worker-sw.ts`/`bundle-sw.mjs`/`run-sw.mjs`) is verified under Node by shimming
-`globalThis.addEventListener` around the bundled classic script (`GET /hello/` +
-`POST /mcp/calc/stream` both 200); a real edge SW runtime wires it natively.
+export`). The minimal `helloworld-service-worker` example intentionally demonstrates
+only the deployable module-worker path; the classic format remains available through
+the bundler and CLI for compatible hosts.

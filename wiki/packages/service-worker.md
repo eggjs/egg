@@ -150,4 +150,4 @@ Key mechanics and constraints:
 Example: `examples/helloworld-service-worker` (entry `main.ts` lives outside
 the scanned `app/` module dir on purpose — the scan imports every module
 file, and importing an entry that boots the app recurses; `worker.ts` is the
-Cloudflare Workers entry, `bundle-cf.mjs` builds it).
+Cloudflare Workers entry, built by `npm run bundle:cf` through `egg-bin bundle`).

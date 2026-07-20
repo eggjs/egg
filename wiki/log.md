@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-20] docs | simplify the standalone service-worker example
+
+- sources touched: `examples/helloworld-service-worker/{README.md,package.json,.gitignore,wrangler.jsonc,fetch-event.ts,worker-sw.ts,run-sw.mjs}`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Reduced the minimal example to its two actual entry points: `main.ts` for the Node HTTP server and `worker.ts` for the deployable Cloudflare module worker. Removed the redundant unbundled fetch-event shim and the classic-service-worker Node harness, plus their npm scripts and generated-output ignore. The bundler's public `service-worker` format remains supported; it is no longer presented as a primary runtime path in this minimal example. Also removed stale references to the deleted hand-written `bundle-cf.mjs`/`bundle-sw.mjs` scripts.
+
 ## [2026-07-20] fix+feature | standalone bundle dynamic-load parity, DAL fix, egg-bin bundle CLI
 
 - sources touched: `tegg/core/loader/src/impl/ModuleLoader.ts`, `tegg/plugin/dal/src/lib/DataSource.ts`, `tegg/standalone/service-worker/src/{index.ts,ServiceWorkerApp.ts}`, `tegg/standalone/service-worker/tsdown.config.ts`, `tegg/standalone/service-worker-controller/package.json`, `tools/egg-bundler/src/lib/importMetaPatch.ts`, `tools/egg-bin/src/commands/bundle.ts`, `examples/helloworld-service-worker/*`

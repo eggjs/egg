@@ -1,5 +1,5 @@
 // Deploy the bundled service worker to Cloudflare Workers.
-// Build first:  node --import=@oxc-node/core/register bundle-cf.mjs
+// Build first:  npm run bundle:cf
 // Dev/deploy:   wrangler dev   |   wrangler deploy
 {
   "name": "helloworld-service-worker",

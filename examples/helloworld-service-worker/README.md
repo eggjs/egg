@@ -34,17 +34,11 @@ curl -X POST 'http://127.0.0.1:7001/mcp/calc/stream' \
 - `main.ts` — boots `ServiceWorkerApp` on the module dir and serves it over
   `node:http`. The entry lives outside `app/` so the module scan doesn't
   execute it.
-- `fetch-event.ts` — the same app driven through the Web Service Worker fetch
-  interface (`self.addEventListener('fetch', e => e.respondWith(app.handleEvent(e)))`)
-  instead of `serve()`. Run with `npm run start:fetch-event`.
 - `worker.ts` — the Cloudflare Workers entry: a plain `new ServiceWorkerApp(dir)`
   plus `export default { fetch }`. Nothing here is bundle-only, so it also runs
   directly under Node (runtime module scan). The bundler injects the
   framework-scanned imports and the manifest ahead of this file at build time.
   Bundled with `npm run bundle:cf` (`egg-bin bundle`, see below).
-- `worker-sw.ts` + `run-sw.mjs` — the same app in the legacy **service-worker
-  format** (`addEventListener('fetch', …)` instead of `export default { fetch }`).
-  See "Service-worker format" below.
 
 ## Cloudflare Workers
 
@@ -70,33 +64,9 @@ runs it under plain Node; inside this monorepo the script wraps it with
 `main` at the bundle. The same `GET /hello/` and `POST /mcp/calc/stream` routes
 work unchanged.
 
-## Service-worker format
-
-`StandaloneWorkerBundler` also supports the legacy **service-worker format** —
-`format: 'service-worker'`, driven by `worker-sw.ts`
-(`addEventListener('fetch', e => e.respondWith(app.handleEvent(e)))`). The output
-is a classic (non-module) script that registers its fetch listener on evaluation,
-so the bundler points the entry straight at `.worker-sw/worker.cjs` with no ESM
-wrapper.
-
-```bash
-npm run bundle:sw            # -> .worker-sw/worker.cjs (addEventListener('fetch'))
-npm run start:sw-bundle      # run the bundle in a minimal Web Service Worker shell
-# service-worker bundle /hello: 200 { message: 'hello, sw' }
-# service-worker bundle /mcp:  200 ... "hello, mcp: 42"
-```
-
-This format targets **Web Service Worker / edge runtimes** that expose a global
-`addEventListener('fetch')`. It is **not** a Cloudflare workerd target: workerd's
-`nodejs_compat` — which tegg needs for `AsyncLocalStorage` — only supports the
-module-worker format, and `wrangler` rejects a service-worker-format script that
-imports Node builtins. Use `worker.ts` (module format) for Cloudflare; use this
-format for hosts that provide the fetch-event global without Node builtins.
-`run-sw.mjs` demonstrates it by shimming that global under Node.
-
 ## Test
 
 ```bash
 # from the monorepo root
-utx vitest run examples/helloworld-service-worker --config examples/helloworld-service-worker/vitest.config.ts
+utx vitest run --root examples/helloworld-service-worker --config vitest.config.ts
 ```

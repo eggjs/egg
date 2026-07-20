@@ -6,10 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node --import=@oxc-node/core/register main.ts",
-    "start:fetch-event": "node --import=@oxc-node/core/register fetch-event.ts",
     "bundle:cf": "NODE_OPTIONS='--import @oxc-node/core/register' egg-bin bundle --framework @eggjs/service-worker --entry worker.ts -o .worker-cf --root ../..",
-    "bundle:sw": "NODE_OPTIONS='--import @oxc-node/core/register' egg-bin bundle --framework @eggjs/service-worker --entry worker-sw.ts --format service-worker -o .worker-sw --root ../..",
-    "start:sw-bundle": "node run-sw.mjs",
     "test": "vitest run",
     "typecheck": "tsgo --noEmit"
   },
