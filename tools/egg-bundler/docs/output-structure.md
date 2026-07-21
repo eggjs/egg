@@ -21,6 +21,21 @@ the chunks.
 └── bundle-manifest.json               # written by Bundler; reference / debug metadata
 ```
 
+For `target: 'cluster'`, `worker.js` is replaced by two role-specific entry
+files:
+
+```text
+<outputDir>/
+├── app_worker.js
+├── agent_worker.js
+└── bundle-manifest.json
+```
+
+Both worker files are self-contained when `snapshot: true`; there is no shared
+runtime chunk between them. The source generator shares its rendering logic,
+but `@utoo/pack` inlines the complete dependency graph into each output so each
+file can independently build and restore its own V8 snapshot blob.
+
 Chunk filenames prefixed with `_turbopack__` or `_root-of-the-server___` come
 from `@utoo/pack`'s internal chunking; exact names (and their count) can
 change across @utoo/pack versions, so treat them as opaque.
@@ -81,6 +96,7 @@ A reference file produced by `Bundler` (not consumed at runtime). Shape:
   "version": 1,
   "generatedAt": "2026-04-11T00:00:00.000Z",
   "mode": "production",
+  "target": "single",
   "baseDir": "/abs/path/to/app",
   "framework": "egg",
   "entries": [{ "name": "worker", "source": "/abs/path/to/app/.egg-bundle/entries/worker.entry.ts" }],
@@ -119,9 +135,10 @@ external.
 
 ## Known limitations
 
-- **Agent process**: the bundled app runs in `mode: 'single'`, so the agent
-  runs in-process with the worker. Cluster-mode bundles (separate agent
-  chunk) are not yet supported.
+- **Cluster launcher integration**: `target: 'cluster'` produces the two worker
+  files, but `egg-bin snapshot` and `egg-scripts start` do not select or launch
+  those files yet. Until that wiring lands, callers must pass them explicitly as
+  `appWorkerFile` and `agentWorkerFile` to `@eggjs/cluster`.
 - **Native addons**: always external. If a native module is missing from the
   deployment target, the bundle will fail to start at runtime with the usual
   Node module resolution error.

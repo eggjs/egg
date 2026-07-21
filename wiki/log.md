@@ -8,6 +8,12 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
 - note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
 
+## [2026-07-21] architecture | generate explicit app and agent bundle entries
+
+- sources touched: `tools/egg-bundler/src/lib/EntryGenerator.ts`, `tools/egg-bundler/src/lib/Bundler.ts`, `tools/egg-bundler/src/index.ts`
+- pages updated: `tools/egg-bundler/README.md`, `tools/egg-bundler/docs/output-structure.md`, `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added a `cluster` bundle target that emits role-specific `app_worker.js` and `agent_worker.js` files. Runtime role selection is removed from the generated workers; snapshot mode independently inlines the full graph into both outputs instead of producing a shared chunk.
+
 ## [2026-07-21] architecture | enforce the startup-snapshot runtime boundary
 
 - sources touched: `AGENTS.md`, `packages/core/src/lifecycle.ts`, `packages/egg/src/lib/egg.ts`, `plugins/watcher/src/lib/boot.ts`

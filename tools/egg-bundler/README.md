@@ -74,6 +74,7 @@ not run.
 | `manifestPath`                | Path to `manifest.json`. Defaults to `<baseDir>/.egg/manifest.json`.            |
 | `framework`                   | Framework package specifier. Defaults to `egg`; absolute paths are unsupported. |
 | `mode`                        | Build mode, `production` or `development`. Defaults to `production`.            |
+| `target`                      | Runtime shape, `single` or `cluster`. Defaults to `single`.                     |
 | `tegg`                        | Accepted by `BundlerConfig`, but not applied by the current implementation yet. |
 | `externals.force`             | Package names to always keep external.                                          |
 | `externals.inline`            | Package names to force inline even if auto-detected as external.                |
@@ -102,6 +103,14 @@ node worker.js
 
 The generated worker entry runs the app in Egg's single-process mode and serves
 framework file discovery/module resolution from the inlined bundle map.
+
+With `target: 'cluster'`, the bundler emits two role-specific, self-contained
+files instead: `app_worker.js` and `agent_worker.js`. They are intended to be
+passed to `@eggjs/cluster` as `appWorkerFile` and `agentWorkerFile`; the role is
+baked into each entry and is not selected from an environment variable at
+runtime. Snapshot builds still force single-file packaging, so shared source
+dependencies are inlined separately into both worker files rather than emitted
+as a common runtime chunk.
 
 See [output-structure.md](./docs/output-structure.md) for artifact layout,
 externals behavior, and current limitations.

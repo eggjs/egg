@@ -9,7 +9,10 @@ import { SNAPSHOT_PRELUDE_MARKER } from '../src/lib/prelude.ts';
 const mocks = vi.hoisted(() => ({
   manifestLoad: vi.fn(async () => undefined),
   externalsResolve: vi.fn(async () => ({}) as Record<string, string>),
-  entryGenerate: vi.fn(async () => ({ workerEntry: '', entryDir: '' })),
+  entryGenerate: vi.fn(async () => ({
+    entries: [] as Array<{ name: 'worker' | 'app_worker' | 'agent_worker'; filepath: string }>,
+    entryDir: '',
+  })),
 }));
 
 const MANIFEST = {
@@ -82,7 +85,7 @@ describe('Bundler snapshot lazy-external wiring', () => {
     tmpOutput = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-snaplazy-out-'));
     const entryDir = path.join(tmpApp, '.egg-bundle', 'entries');
     mocks.entryGenerate.mockResolvedValue({
-      workerEntry: path.join(entryDir, 'worker.entry.ts'),
+      entries: [{ name: 'worker', filepath: path.join(entryDir, 'worker.entry.ts') }],
       entryDir,
     });
   });

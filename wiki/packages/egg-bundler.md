@@ -57,8 +57,9 @@ constraint is why worker output always needs a thin ESM wrapper.
 1. `ManifestLoader` loads the app startup manifest, defaulting to
    `<baseDir>/.egg/manifest.json`.
 2. `ExternalsResolver` classifies packages that should stay external.
-3. `EntryGenerator` writes a synthetic worker entry that installs the bundle
-   manifest/module loader before starting Egg.
+3. `EntryGenerator` writes either one single-process worker entry or separate
+   app-worker and agent-worker entries. Each installs the bundle manifest/module
+   loader before starting its Egg runtime role.
 4. `PackRunner` invokes `@utoo/pack`.
 5. `Bundler` writes `bundle-manifest.json` and returns absolute output paths.
 
@@ -71,12 +72,18 @@ constraint is why worker output always needs a thin ESM wrapper.
   lifecycle, runs `loadMetadata()` hooks, and the manifest generation child
   process exits after writing the manifest, so registered `beforeClose` hooks do
   not run.
-- The generated app runs in Egg single-process mode. Its worker entry treats the
+- The default `single` target runs in Egg single-process mode. Its worker entry treats the
   deploy output directory as the runtime Egg `baseDir`, passes the framework
   specifier explicitly to `startEgg`, maps that specifier to the already bundled
   framework module, and precomputes original app absolute aliases so bundled
   module lookup can serve relKeys, output-dir absolute paths, original app
   absolute paths, and manifest `resolveCache` request aliases.
+- The `cluster` target emits `app_worker.js` and `agent_worker.js`. Their roles
+  are fixed while generating the entries rather than selected by
+  `EGG_PROCESS_TYPE` or another runtime switch. Both entries use the shared
+  `@eggjs/cluster/worker_protocol` implementation and accept the master's normal
+  JSON argv contract. Snapshot builds force each output to remain independently
+  self-contained, so no common runtime chunk is emitted between the two files.
 - Explicit `externals.force` entries are external, and `ExternalsResolver`
   auto-detects root `peerDependencies`, root `optionalDependencies`, root
   dependency packages with native addons, root dependency packages whose optional
