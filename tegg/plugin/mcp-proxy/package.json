@@ -53,6 +53,8 @@
   },
   "dependencies": {
     "@eggjs/controller-plugin": "workspace:*",
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/lifecycle": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.23.0",
     "await-event": "catalog:",

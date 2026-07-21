@@ -200,19 +200,26 @@ authors a plain, locally-runnable `worker.ts`
 `examples/helloworld-service-worker/{worker.ts,wrangler.jsonc}`, built via
 `npm run bundle:cf` (`egg-bin bundle --framework @eggjs/service-worker --entry worker.ts`).
 
-**Bundle-mode dynamic module loading.** Egg and standalone each adapt the shared
-`TeggManifest.moduleDescriptors[].decoratedFiles` data into a
-`ManifestLoaderFS` overlay and retain that file view in their host-owned module
-loader. They pass it explicitly to graph scanning, module load units, and
-preload; `LoaderFactory` does not retain a hidden file-source context.
+**Bundle-mode dynamic module loading.** Egg and standalone adapt the shared
+`TeggManifest.moduleDescriptors[].decoratedFiles` data through the same
+`createTeggManifestLoaderFS()` helper. The result is a `ManifestLoaderFS`
+overlay: manifest-indexed decorated files are authoritative, while the host's
+normal loader view may remain as a fallback for unrelated files.
 
-Dynamic multi-instance callbacks receive the module classes already discovered
-for `ModuleDescriptor` through `MultiInstancePrototypeGetObjectsContext`; DAL
-uses that list for table discovery instead of starting another scan. Load-unit
-lifecycle hooks already receive `LoadUnitLifecycleContext.loader`, which DAL
-reuses for DAO discovery. The common `ModuleLoader` only calls `LoaderFS.glob()`
-and no longer reads the standalone-only `globalThis.__EGG_BUNDLE_MANIFEST__` or
-accepts a separate precomputed-file path.
+The host passes that view into the initial `LoaderFactory.loadApp()` scan.
+`ModuleLoader.createModuleLoader()` then installs an explicitly supplied view in
+the current application's `TeggScope`; later loader creation in the same app
+reuses it. This matters for dynamic multi-instance discovery: DAL's
+`DataSource.getObjects()` still creates a module loader and calls `load()` to
+find table classes, but in a bundle that scan now reads the scoped manifest view
+instead of the unavailable runtime filesystem. No class list is added to
+`MultiInstancePrototypeGetObjectsContext`, and generic `LoaderFS` construction
+remains side-effect free.
+
+The common `ModuleLoader` only discovers files through `LoaderFS.glob()`; it
+does not read `globalThis.__EGG_BUNDLE_MANIFEST__` itself. The standalone host
+uses that injected global only as an entry source for the shared manifest, then
+constructs the same loader view as Egg.
 
 Module identity follows a separate path. Bundle hosts obtain the name from the
 shared `TeggManifest`, normal hosts resolve it while scanning module config, and

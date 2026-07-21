@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-21] refactor+docs | make controller extension hooks declarative
+
+- sources touched: `tegg/core/controller-runtime/src/lib/MiddlewareGraphHook.ts`, `tegg/plugin/controller`, `tegg/plugin/mcp-proxy`, `tegg/standalone/service-worker-controller`
+- pages updated: `wiki/concepts/{tegg-module-plugin,controller-advice}.md`, `wiki/packages/{egg-bundler,service-worker}.md`, `wiki/log.md`
+- note: Replaced the controller boot hook for middleware graph weaving with a scanned `ControllerGraphHookRegistrar`, and replaced the MCP proxy's static scope-backed hook list/configWillLoad registration with a scanned DI registrar plus per-router instance state. Corrected stale docs for Egg MCP finalization, manifest-backed dynamic DAL loading, controller Advice nesting, and per-app service-worker state. The MCP proxy regression fixture now uses normal package plugin configuration so its eggModule registrar is represented in the generated manifest.
+
 ## [2026-07-21] refactor | separate controller advice execution from method AOP
 
 - sources touched: `tegg/core/{types,aop-decorator,controller-decorator,controller-runtime,tegg}`, `tegg/plugin/controller`, `tegg/standalone/{service-worker-controller,service-worker}`

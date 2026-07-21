@@ -22,8 +22,11 @@ not depend on the AOP decorator or runtime packages.
 At the actual controller invocation point, the controller runtime resolves every
 Advice class recorded by `@Middleware`. Ordinary Advice classes contribute only
 their `around(adviceContext, next)` hook; an Advice without `around()` immediately
-advances to the next middleware. Method-level Advice wraps controller-level
-Advice, matching the nesting order of the historical Pointcut conversion.
+advances to the next middleware. HTTP and the Egg MCP helper compose method
+Advice before controller Advice, matching the nesting order of the historical
+Pointcut conversion. The fetch MCP host deliberately separates the two
+boundaries: controller Advice wraps transport dispatch, while method Advice
+wraps the bound SDK callback.
 
 `AbstractControllerAdvice.around()` directly forwards to
 `middleware(hostContext, next, adviceContext)`. The host context comes from the

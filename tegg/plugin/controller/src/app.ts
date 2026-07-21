@@ -5,7 +5,6 @@ import {
   CONTROLLER_LOAD_UNIT,
   ControllerLoadUnit,
   ControllerMetadataManager,
-  middlewareGraphHook,
   RootProtoManager,
 } from '@eggjs/controller-runtime';
 import type { LoadUnitLifecycleContext } from '@eggjs/metadata';
@@ -137,14 +136,9 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       await this.controllerLoadUnitHandler.ready();
 
       if (this.mcpEnable()) {
-        this.app.config.mcp.hooks = EggMcpRouter.hooks;
+        this.app.config.mcp.hooks = this.app.mcpRouter!.hooks;
       }
     });
-  }
-
-  configDidLoad(): void {
-    // The graph is created later; ModuleHandler attaches this hook before build.
-    this.app.moduleHandler.registerGlobalGraphBuildHook(middlewareGraphHook);
   }
 
   mcpEnable(): boolean {

@@ -5,7 +5,6 @@ import type { McpRouter, McpServerRegistration } from '@eggjs/controller-runtime
 import { MCPServerHelper } from '@eggjs/controller-runtime';
 import { MCPProtocols } from '@eggjs/tegg';
 import type { MCPControllerMeta, MCPPromptMeta, MCPToolMeta, EggContext } from '@eggjs/tegg';
-import { TeggScope } from '@eggjs/tegg-types';
 import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
@@ -20,8 +19,6 @@ import compose from 'koa-compose';
 import getRawBody from 'raw-body';
 
 import { MCPConfig } from './MCPConfig.ts';
-
-const MCP_HOOKS_SLOT = Symbol('tegg:controller:mcpControllerHooks');
 
 export interface MCPControllerHook {
   // SSE
@@ -77,13 +74,10 @@ class InnerSSEServerTransport extends SSEServerTransport {
 
 /** Mounts the Egg MCP transports for collected controller registrations. */
 export class EggMcpRouter implements McpRouter {
-  // Scope-backed so hooks can be registered before the router is constructed.
-  static get hooks(): MCPControllerHook[] {
-    return TeggScope.resolve(MCP_HOOKS_SLOT, () => [], 'EggMcpRouter.hooks');
-  }
+  readonly hooks: MCPControllerHook[] = [];
 
-  static addHook(hook: MCPControllerHook): void {
-    EggMcpRouter.hooks.push(hook);
+  addHook(hook: MCPControllerHook): void {
+    this.hooks.push(hook);
   }
 
   readonly app: Application;
@@ -131,7 +125,7 @@ export class EggMcpRouter implements McpRouter {
         version: reg.controllerMeta.version ?? '1.0.0',
         eggContainerFactory: this.app.eggContainerFactory,
         getControllerContext: () => this.app.currentContext,
-        hooks: EggMcpRouter.hooks,
+        hooks: this.hooks,
       });
     };
     this.mcpStatelessStreamServerInit(name);
@@ -174,8 +168,8 @@ export class EggMcpRouter implements McpRouter {
         }
         onmessage && (await onmessage(message, extra));
       };
-      if (EggMcpRouter.hooks.length > 0) {
-        for (const hook of EggMcpRouter.hooks) {
+      if (self.hooks.length > 0) {
+        for (const hook of self.hooks) {
           await hook.preHandle?.(self.app.currentContext!);
         }
       }
@@ -230,8 +224,8 @@ export class EggMcpRouter implements McpRouter {
     const mw = self.composeGlobalMiddleware(() => (self.app.middleware as any).teggCtxLifecycleMiddleware());
     const initHandler = async (ctx: Context) => {
       ctx.respond = false;
-      if (EggMcpRouter.hooks.length > 0) {
-        for (const hook of EggMcpRouter.hooks) {
+      if (self.hooks.length > 0) {
+        for (const hook of self.hooks) {
           await hook.preHandle?.(self.app.currentContext!);
         }
       }
@@ -278,8 +272,8 @@ export class EggMcpRouter implements McpRouter {
             sessionIdGenerator: () => this.mcpConfig.getSessionIdGenerator(name)(ctx),
             eventStore,
             onsessioninitialized: async (sessionId) => {
-              if (EggMcpRouter.hooks.length > 0) {
-                for (const hook of EggMcpRouter.hooks) {
+              if (self.hooks.length > 0) {
+                for (const hook of self.hooks) {
                   await hook.onStreamSessionInitialized?.(
                     self.app.currentContext!,
                     transport,
@@ -337,8 +331,8 @@ export class EggMcpRouter implements McpRouter {
       } else if (sessionId) {
         const transport = self.streamTransports[sessionId];
         if (transport) {
-          if (EggMcpRouter.hooks.length > 0) {
-            for (const hook of EggMcpRouter.hooks) {
+          if (self.hooks.length > 0) {
+            for (const hook of self.hooks) {
               await hook.preHandle?.(self.app.currentContext!);
             }
           }
@@ -355,8 +349,8 @@ export class EggMcpRouter implements McpRouter {
           });
           return;
         }
-        if (EggMcpRouter.hooks.length > 0) {
-          for (const hook of EggMcpRouter.hooks) {
+        if (self.hooks.length > 0) {
+          for (const hook of self.hooks) {
             const checked = await hook.checkAndRunProxy?.(self.app.currentContext!, MCPProtocols.STREAM, sessionId);
             if (checked) {
               return;
@@ -381,8 +375,8 @@ export class EggMcpRouter implements McpRouter {
       const transport = new InnerSSEServerTransport(self.mcpConfig.getSseMessagePath(name), ctx.res);
       transport.router = self;
       const id = transport.sessionId;
-      if (EggMcpRouter.hooks.length > 0) {
-        for (const hook of EggMcpRouter.hooks) {
+      if (self.hooks.length > 0) {
+        for (const hook of self.hooks) {
           await hook.preSSEInitHandle?.(self.app.currentContext!, transport, self);
         }
       }
@@ -460,8 +454,8 @@ export class EggMcpRouter implements McpRouter {
       const newCtx = self.app.createContext(req, res) as unknown as Context;
       await ctx.app.ctxStorage.run(newCtx, async () => {
         await mw(newCtx, async () => {
-          if (EggMcpRouter.hooks.length > 0) {
-            for (const hook of EggMcpRouter.hooks) {
+          if (self.hooks.length > 0) {
+            for (const hook of self.hooks) {
               await hook.preHandle?.(newCtx);
             }
           }
@@ -489,8 +483,8 @@ export class EggMcpRouter implements McpRouter {
       const sessionId = ctx.query.sessionId as string;
 
       if (self.transports[sessionId]) {
-        if (EggMcpRouter.hooks.length > 0) {
-          for (const hook of EggMcpRouter.hooks) {
+        if (self.hooks.length > 0) {
+          for (const hook of self.hooks) {
             await hook.preHandleInitHandle?.(self.app.currentContext!);
           }
         }
@@ -522,8 +516,8 @@ export class EggMcpRouter implements McpRouter {
         }
         return;
       }
-      if (EggMcpRouter.hooks.length > 0) {
-        for (const hook of EggMcpRouter.hooks) {
+      if (self.hooks.length > 0) {
+        for (const hook of self.hooks) {
           const checked = await hook.checkAndRunProxy?.(self.app.currentContext!, MCPProtocols.SSE, sessionId);
           if (checked) {
             return;

@@ -6,6 +6,8 @@ import url from 'node:url';
 
 import { EggMcpRouter } from '@eggjs/controller-plugin/lib/impl/mcp/EggMcpRouter';
 import type { MCPControllerHook } from '@eggjs/controller-plugin/lib/impl/mcp/EggMcpRouter';
+import { EggQualifier, EggType, Inject, InnerObjectProto } from '@eggjs/core-decorator';
+import { LifecyclePostInject } from '@eggjs/lifecycle';
 import { MCPProtocols, TeggScope, type TeggScopeBag } from '@eggjs/tegg-types';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -61,11 +63,11 @@ export const MCPProxyHook: MCPControllerHook = {
       const sessionId = querystring.parse(url.parse(req.url!).query ?? '').sessionId as string;
       const ctx = self.app.createContext(req, res) as unknown as Context;
       // This proxy handler runs detached from the request, so re-enter the
-      // owning app's scope before reading the scope-backed hook list.
+      // owning app's scope before invoking extension hooks.
       const bag = (self.app as { _teggScopeBag?: TeggScopeBag })._teggScopeBag;
       await TeggScope.runMaybe(bag, async () => {
-        if (EggMcpRouter.hooks.length > 0) {
-          for (const hook of EggMcpRouter.hooks) {
+        if (self.hooks.length > 0) {
+          for (const hook of self.hooks) {
             await hook.preProxy?.(ctx, req, res);
           }
         }
@@ -141,11 +143,11 @@ export const MCPProxyHook: MCPControllerHook = {
         }
         const ctx = self.app.createContext(req, res) as unknown as Context;
         // Detached proxy handler — re-enter the owning app's scope before
-        // reading the scope-backed hook list.
+        // invoking extension hooks.
         const bag = (self.app as { _teggScopeBag?: TeggScopeBag })._teggScopeBag;
         await TeggScope.runMaybe(bag, async () => {
-          if (EggMcpRouter.hooks.length > 0) {
-            for (const hook of EggMcpRouter.hooks) {
+          if (self.hooks.length > 0) {
+            for (const hook of self.hooks) {
               await hook.preProxy?.(ctx, req, res);
             }
           }
@@ -228,6 +230,18 @@ export const MCPProxyHook: MCPControllerHook = {
     return false;
   },
 };
+
+@InnerObjectProto()
+export class MCPProxyHookRegistrar {
+  @Inject()
+  @EggQualifier(EggType.APP)
+  private readonly mcpRouter: EggMcpRouter;
+
+  @LifecyclePostInject()
+  protected registerHook(): void {
+    this.mcpRouter.addHook(MCPProxyHook);
+  }
+}
 
 export class MCPProxyApiClient extends APIClientBase {
   // `declare`: APIClientBase's constructor assigns `this._client`. Without

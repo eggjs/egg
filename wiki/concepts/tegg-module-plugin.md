@@ -31,8 +31,10 @@ source_files:
   - tegg/plugin/dal/src/lib/DalModuleLoadUnitHook.ts
   - tegg/plugin/controller/src/lib/impl/http/EggHTTPControllerRegistrar.ts
   - tegg/plugin/controller/src/lib/impl/mcp/EggMCPRegisterProvider.ts
+  - tegg/core/controller-runtime/src/lib/MiddlewareGraphHook.ts
+  - tegg/plugin/mcp-proxy/src/index.ts
   - tegg/standalone/service-worker-controller/src/http/FetchEventHandler.ts
-updated_at: 2026-07-14
+updated_at: 2026-07-21
 status: active
 ---
 
@@ -61,7 +63,8 @@ its state is `created`; registration after `build()` starts and repeated
 2. create AND instantiate the `InnerObjectLoadUnit` (own topologically
    sorted proto graph; cycle detection; hard error on missing non-optional
    deps unless host-provided) — hooks register here, including graph build
-   hooks from `@LifecyclePostInject` (see `AopGraphHookRegistrar`)
+   hooks from `@LifecyclePostInject` (see `AopGraphHookRegistrar` and
+   `ControllerGraphHookRegistrar`)
 3. `build()` / `sort()` → business load units (EggPrototype/LoadUnit hooks
    observe them) → business instances
 4. destroy in reverse creation order (inner unit last)
@@ -83,23 +86,26 @@ fixture `.egg` manifest — see `workflows/local-ci.md`), not graph gating.
 ## `@LoadUnitInstanceLifecycleProto` as an eager-registration trigger
 
 Because inner objects are instantiated eagerly, a lifecycle proto's `postCreate`
-is a reliable "run after this load-unit instance is created" signal. The egg
-controller plugin uses it for HTTP route mounting: `EggHTTPControllerRegistrar`
-(`tegg/plugin/controller`) is a single class that both plugs the HTTP register
-creator into the factory (`@LifecyclePostInject`, so controllers accumulate as
-load units are scanned) AND, as a `@LoadUnitInstanceLifecycleProto`, mounts them
-all priority-sorted onto `app.router` in `postCreate` when the
-`CONTROLLER_LOAD_UNIT` (`app/controller`, egg's last controller-bearing load
-unit) instance is created — replacing a manual boot-time `doRegister`. `postCreate`
-fires per load-unit instance, so it filters on `instance.loadUnit.type`.
+is a reliable "run after this load-unit instance is created" signal. The Egg
+controller plugin uses the same pattern for both protocols:
+`EggHTTPControllerRegistrar` and `EggMCPRegisterProvider` register their
+collectors in `@LifecyclePostInject`, then, as
+`@LoadUnitInstanceLifecycleProto` objects, call the corresponding `doRegister()`
+from `postCreate` when the `CONTROLLER_LOAD_UNIT` (`app/controller`, Egg's last
+controller-bearing load unit) instance is created. `postCreate` fires for every
+load-unit instance, so both providers filter on `instance.loadUnit.type`.
 
-This pattern is egg-specific: the standalone/service-worker host has no
-`CONTROLLER_LOAD_UNIT` and registers lazily on the first fetch event
-(`FetchEventHandler.doInitRoutes`), so its `HTTPRegisterProvider` stays a plain
-provider and the trigger lives in the event handler (which also drives MCP
-registration + the fetch-router middleware snapshot) — no merge. Egg MCP
-(`EggMCPRegisterProvider`) mounts immediately inside `MCPControllerRegister.register()`
-with no deferred `doRegister`, so it too stays a plain provider.
+The standalone/service-worker host has no `CONTROLLER_LOAD_UNIT`; its HTTP and
+MCP providers collect during startup and `FetchEventHandler.doInitRoutes()`
+finalizes both once on the first fetch, before taking the router middleware
+snapshot.
+
+Graph hooks use the same declarative ownership at a different lifecycle point.
+`ControllerGraphHookRegistrar` is an `@InnerObjectProto` whose
+`@LifecyclePostInject` method attaches `middlewareGraphHook` to the current
+`GlobalGraph`. Both controller hosts re-export that registrar from their scanned
+`runtimeProtos.ts`, so middleware inject edges are installed after graph creation
+and before `build()` without a host boot-hook call.
 
 ## Host-split wiring: a runtime class, two host treatments (`RootProtoManager`)
 
@@ -187,6 +193,13 @@ hook no longer depends on `rootProtoManager` being an inner object in every host
   is conditional). This is how the egg MCP register became a container citizen
   without threading the whole `app` into the DI graph — see the controller
   plugin's `EggMCPRegisterProvider`.
+- A module plugin can extend such a host object declaratively too. The MCP proxy
+  module's `MCPProxyHookRegistrar` is an `@InnerObjectProto`; it injects the Egg
+  host's `mcpRouter` compat proto and adds `MCPProxyHook` in
+  `@LifecyclePostInject`. Consequently the router's hook list is ordinary
+  per-app instance state rather than a static scope-backed registry. The plugin
+  must be discovered as an eggModule (normal `package` plugin configuration),
+  so its decorated registrar is present in the module descriptor/manifest.
 
 ## Access and qualifier boundary
 

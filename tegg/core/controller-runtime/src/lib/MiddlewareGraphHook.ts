@@ -1,8 +1,24 @@
 import { ControllerInfoUtil, MethodInfoUtil } from '@eggjs/controller-decorator';
-import type { GlobalGraph, ProtoDependencyMeta, ProtoNode } from '@eggjs/metadata';
-import { ClassProtoDescriptor as ClassProtoDescriptorImpl } from '@eggjs/metadata';
+import { InnerObjectProto } from '@eggjs/core-decorator';
+import { LifecyclePostInject } from '@eggjs/lifecycle';
+import type { ProtoDependencyMeta, ProtoNode } from '@eggjs/metadata';
+import { ClassProtoDescriptor as ClassProtoDescriptorImpl, GlobalGraph } from '@eggjs/metadata';
 import type { GraphNode } from '@eggjs/tegg-common-util';
 import type { EggProtoImplClass, IAdvice } from '@eggjs/tegg-types';
+
+@InnerObjectProto()
+export class ControllerGraphHookRegistrar {
+  @LifecyclePostInject()
+  protected registerGraphHook(): void {
+    const globalGraph = GlobalGraph.instance;
+    if (!globalGraph) {
+      throw new Error(
+        '[controller-runtime] GlobalGraph must be created before ControllerGraphHookRegistrar is instantiated',
+      );
+    }
+    globalGraph.registerBuildHook(middlewareGraphHook);
+  }
+}
 
 export function middlewareGraphHook(globalGraph: GlobalGraph): void {
   for (const moduleNode of globalGraph.moduleGraph.nodes.values()) {

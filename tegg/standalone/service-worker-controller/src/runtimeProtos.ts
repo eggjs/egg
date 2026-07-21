@@ -7,4 +7,9 @@ import { AccessLevel } from '@eggjs/tegg-types';
 InnerObjectProto({ accessLevel: AccessLevel.PUBLIC })(RootProtoManager);
 
 export { RootProtoManager };
-export { ControllerRegisterFactory, ControllerLoadUnitHook, ControllerPrototypeHook } from '@eggjs/controller-runtime';
+export {
+  ControllerGraphHookRegistrar,
+  ControllerRegisterFactory,
+  ControllerLoadUnitHook,
+  ControllerPrototypeHook,
+} from '@eggjs/controller-runtime';

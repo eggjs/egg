@@ -138,9 +138,10 @@ Key mechanics and constraints:
   `serverName`/`basePath`, and shared
   `authenticate`/`createServerHelper`/`selectMiddlewares`/`compose` so it reuses
   the same auth gate, MCP server helper, and middleware pipeline). The registry
-  is `TeggScope`-scoped per app (mirrors `EggMcpRouter.hooks`), an unknown name
-  falls back to the built-in, and node:http stays entirely in the host that
-  registers the alternative.
+  is `TeggScope`-scoped per app; an unknown name falls back to the built-in, and
+  node:http stays entirely in the host that registers the alternative. Egg's
+  separate `EggMcpRouter` keeps its extension hooks directly on the router
+  instance.
 - **Streaming lifecycle**: a streaming body keeps pulling from ContextProto
   objects after the runner returns, but the tegg context is destroyed at return.
   `FetchEventHandler.#guardResponseStream` tees the body — the client consumes
@@ -166,8 +167,10 @@ Key mechanics and constraints:
   resolution local to `serviceWorkerRuntime` and order-independent, which is what
   lets ServiceWorkerApp use a single own-package-root frameworkDep instead of a
   hand-ordered runtime/controller list.
-- Per-app state is all inner objects in the app's TeggScope bag — two
-  concurrent `ServiceWorkerApp`s are isolated (`test/MultiApp.test.ts`).
+- Per-app mutable state is owned by the app's TeggScope bag, either through its
+  inner objects or explicit scope slots such as the manifest loader view and MCP
+  transport registry. Two concurrent `ServiceWorkerApp`s are isolated
+  (`test/MultiApp.test.ts`).
 - **Cloudflare Workers bundle (injection-based)**: Node runs a `ServiceWorkerApp`
   directly (runtime fs scan); workerd has no runtime filesystem, so modules are
   discovered at build time and inlined by `@eggjs/egg-bundler`'s
