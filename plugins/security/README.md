@@ -440,7 +440,9 @@ cp.exec('bash /home/admin/ali-knowledge-graph-backend/initrun.sh ' + ctx.helper.
 
 ### .escapeShellArg()
 
-Escape command line arguments. Add single quotes around a string and quotes/escapes any existing single quotes allowing you to pass a string directly to a shell function and having it be treated as a single safe argument.
+Escape POSIX shell command line arguments. Add single quotes around a string and quotes/escapes any existing single quotes allowing you to pass a string directly to a shell function and having it be treated as a single safe argument.
+
+Prefer `child_process.execFile()` or `child_process.spawn()` with an arguments array when possible. This helper is for a single argument in a POSIX shell command string, and is not a Windows `cmd.exe` or PowerShell escaping helper.
 
 ```js
 const ip = '127.0.0.1 && cat /etc/passwd';
