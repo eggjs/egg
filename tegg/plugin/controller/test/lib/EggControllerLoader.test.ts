@@ -10,7 +10,7 @@ describe('plugin/controller/test/lib/EggModuleLoader.test.ts', () => {
     const loader = new EggControllerLoader(controllerDir);
     const classes = await loader.load();
 
-    expect(classes.length).toBe(7);
+    expect(classes.length).toBe(8);
     const AppController = classes[0];
     const metadata = ControllerMetadataUtil.getControllerMetadata(AppController);
     expect(metadata).toBeDefined();
