@@ -47,7 +47,7 @@ export class AgentThreadUtils extends BaseAgentUtils {
 
     // start agent worker
     const argv = [JSON.stringify(this.options)];
-    const agentPath = this.getAgentWorkerFile();
+    const agentPath = this.options.agentWorkerFile ?? this.getAgentWorkerFile();
     const worker = (this.#worker = new workerThreads.Worker(agentPath, {
       argv,
     }));

@@ -40,8 +40,12 @@ export class AppProcessUtils extends BaseAppUtils {
 
     const args = [JSON.stringify(this.options)];
     this.log('[master] start appWorker with args %j (process)', args);
+    const execArgv = this.options.appSnapshotBlob
+      ? [...process.execArgv, '--snapshot-blob', this.options.appSnapshotBlob]
+      : undefined;
     cfork({
-      exec: this.getAppWorkerFile(),
+      exec: this.options.appWorkerFile ?? this.getAppWorkerFile(),
+      ...(execArgv ? { execArgv } : {}),
       args,
       silent: false,
       count: this.options.workers,
