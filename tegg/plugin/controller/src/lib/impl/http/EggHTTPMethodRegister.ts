@@ -81,30 +81,55 @@ export class EggHTTPMethodRegister extends HTTPMethodRegister {
             assert.fail('never arrive');
         }
       }
-      let body: unknown;
-      try {
-        body = await TimerUtil.timeout<unknown>(() => Reflect.apply(realMethod, realObj, args), timeout);
-      } catch (e: any) {
-        if (e instanceof TimerUtil.TimeoutError) {
-          ctx.logger.error(`timeout after ${timeout}ms`);
-          ctx.throw(500, 'timeout');
+      const responseBeforeAdvice = ctx.body;
+      let invocationCompleted = false;
+      let invocationResult: unknown;
+      let responseAfterInvocation = responseBeforeAdvice;
+      const writeResponse = (body: unknown) => {
+        // https://github.com/koajs/koa/blob/master/lib/response.js#L88
+        // ctx.status is set
+        const explicitStatus = ctx.response._explicitStatus;
+
+        if (
+          // has body
+          (body !== null && body !== undefined) ||
+          // status is not set and has no body
+          // code should by 204
+          // https://github.com/koajs/koa/blob/master/lib/response.js#L140
+          !explicitStatus
+        ) {
+          ctx.body = body;
         }
-        throw e;
-      }
-
-      // https://github.com/koajs/koa/blob/master/lib/response.js#L88
-      // ctx.status is set
-      const explicitStatus = ctx.response._explicitStatus;
-
-      if (
-        // has body
-        (body !== null && body !== undefined) ||
-        // status is not set and has no body
-        // code should by 204
-        // https://github.com/koajs/koa/blob/master/lib/response.js#L140
-        !explicitStatus
-      ) {
-        ctx.body = body;
+      };
+      const result = await methodRegister.executeControllerAdvices(
+        ctx,
+        realObj,
+        args,
+        async (invocationThat, invocationArgs) => {
+          try {
+            invocationResult = await TimerUtil.timeout<unknown>(
+              () => Reflect.apply(realMethod, invocationThat, invocationArgs),
+              timeout,
+            );
+          } catch (e: any) {
+            if (e instanceof TimerUtil.TimeoutError) {
+              ctx.logger.error(`timeout after ${timeout}ms`);
+              ctx.throw(500, 'timeout');
+            }
+            throw e;
+          }
+          invocationCompleted = true;
+          writeResponse(invocationResult);
+          responseAfterInvocation = ctx.body;
+          return invocationResult;
+        },
+      );
+      if (!invocationCompleted) {
+        if (ctx.body === responseBeforeAdvice) {
+          writeResponse(result);
+        }
+      } else if (result !== invocationResult && ctx.body === responseAfterInvocation) {
+        writeResponse(result);
       }
     };
     return handler as HTTPHandlerFunc;

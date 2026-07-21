@@ -42,7 +42,6 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@eggjs/aop-decorator": "workspace:*",
     "@eggjs/cookies": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/metadata": "workspace:*",
@@ -53,6 +52,7 @@
     "path-to-regexp": "catalog:path-to-regexp1"
   },
   "devDependencies": {
+    "@eggjs/aop-decorator": "workspace:*",
     "@types/node": "catalog:",
     "egg": "workspace:*",
     "typescript": "catalog:"

@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-07-21] refactor | separate controller advice execution from method AOP
+
+- sources touched: `tegg/core/{types,aop-decorator,controller-decorator,controller-runtime,tegg}`, `tegg/plugin/controller`, `tegg/standalone/{service-worker-controller,service-worker}`
+- pages updated: `wiki/concepts/controller-advice.md`, `wiki/packages/service-worker.md`, `wiki/index.md`, `wiki/log.md`
+- note: `@Middleware(AdviceClass)` is recorded in the built-in HTTP/MCP controller metadata and resolved through the active host container. Every class is composed through `around()`; `AbstractControllerAdvice.around()` forwards the host context, `next`, and `AdviceContext` to `middleware()`. HTTP writes its method result before `next()` unwinds. MCP method-level Advice wraps the bound SDK callback, while the service-worker host keeps controller-level Advice outside transport dispatch so legacy middleware can inspect or replace the streaming response after `next()`. The shared `IS_ADVICE` marker avoids a controller-to-AOP package dependency, while explicit `@Pointcut` remains independently owned by AOP.
+
 ## [2026-07-20] refactor+docs | clarify HTTP registration phases and service-worker usage
 
 - sources touched: `tegg/core/controller-runtime/src/lib/impl/http/{HTTPControllerRegister.ts,HTTPMethodRegister.ts}`, `tegg/core/controller-runtime/test/HTTPControllerRegister.test.ts`, `tegg/plugin/controller/test/lib/HTTPMethodRegister.test.ts`, `examples/helloworld-service-worker/README.md`, `tegg/standalone/{standalone,service-worker,service-worker-runtime}/README.md`

@@ -7,10 +7,12 @@ source_files:
   - tegg/standalone/service-worker/src
   - tegg/standalone/service-worker-controller/src
   - tegg/core/controller-runtime/src
+  - tegg/core/controller-decorator/src
+  - tegg/core/types/src/controller-decorator
   - tegg/plugin/controller/src
   - examples/helloworld-service-worker
   - tools/egg-bundler/src/lib/StandaloneWorkerBundler.ts
-updated_at: 2026-07-20
+updated_at: 2026-07-21
 status: active
 ---
 
@@ -40,7 +42,9 @@ module-plugin mechanism (declarative `@InnerObjectProto` /
   framework modules (runtime + controller) are auto-discovered from its package
   deps via the node_modules eggModule convention — no hand-listed/ordered
   packages. Its `index` exports only `ServiceWorkerApp`; consumers import
-  controller symbols from `@eggjs/service-worker-controller` directly.
+  controller decorators and middleware contracts from `@eggjs/tegg`, and the
+  fetch context type from `@eggjs/tegg/standalone`. The transport package remains
+  a host adapter rather than a user-facing controller API.
 
 Key mechanics and constraints:
 
@@ -71,6 +75,20 @@ Key mechanics and constraints:
   into it (`runtimeProtos.ts`); the runtime library itself is never scanned.
   The service worker depends only on the egg-free runtime, never on the egg
   plugin.
+- **Controller Advice executes at the bound invocation boundary**: applications
+  apply an `@Advice` class with `@Middleware` on a controller or method. The shared
+  runtime resolves every such class through the active host container and composes
+  only its `around()` hook around the terminal HTTP or MCP invocation; a class with
+  no `around()` hook simply advances to the next middleware. Argument binding
+  happens before the chain. HTTP writes the method result to the host response
+  before `next()` unwinds. MCP method-level Advice wraps the bound SDK callback;
+  controller-level Advice remains outside transport dispatch so the legacy
+  middleware contract can inspect or replace the streaming response after
+  `next()`.
+  `AbstractControllerAdvice.around()` forwards the host context, `next`, and
+  `AdviceContext` to the existing `middleware()` contract. Explicit `@Pointcut`
+  remains an independent AOP path. Controller packages do not depend on the AOP
+  package, and host context is passed directly with no process-global context map.
 - **Host-agnostic MCP register + `McpRouter` boundary**: the shared
   `MCPControllerRegister` (`@eggjs/controller-runtime`) only COLLECTS tool/resource/prompt
   records and delegates transport to an injected `McpRouter`

@@ -3,28 +3,13 @@ import type { IncomingHttpHeaders } from 'node:http';
 import type { HTTPMethodMeta, PathParamMeta, QueriesParamMeta, QueryParamMeta } from '@eggjs/controller-decorator';
 import { HTTPParamType } from '@eggjs/controller-decorator';
 import { HTTPMethodRegister, type HTTPHandlerFunc } from '@eggjs/controller-runtime';
-import { CONTROLLER_AOP_MIDDLEWARES } from '@eggjs/tegg-types';
-import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
-import type { AbstractControllerAdvice } from '../mcp/AbstractControllerAdvice.ts';
 import { RequestUtils } from '../utils/RequestUtils.ts';
 import { ServiceWorkerCookies } from './ServiceWorkerCookies.ts';
 import type { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext.ts';
 
 /** Binds Fetch API requests and responses to HTTP controller methods. */
 export class FetchHTTPMethodRegister extends HTTPMethodRegister {
-  /** Adapt controller advice classes to Koa-style method middleware. */
-  protected getExtraMethodMiddlewares(): HTTPHandlerFunc[] {
-    const adviceClasses = (this.proto.getMetaData(CONTROLLER_AOP_MIDDLEWARES) ??
-      []) as EggProtoImplClass<AbstractControllerAdvice>[];
-    return adviceClasses.map((clazz) => {
-      return (async (ctx: ServiceWorkerFetchContext, next: () => Promise<void>) => {
-        const eggObj = await this.eggContainerFactory.getOrCreateEggObjectFromClazz(clazz);
-        await (eggObj.obj as AbstractControllerAdvice).middleware(ctx, next);
-      }) as HTTPHandlerFunc;
-    });
-  }
-
   protected createHandler(methodMeta: HTTPMethodMeta, host: string | undefined): HTTPHandlerFunc {
     const argsLength = methodMeta.paramMap.size;
     const hasContext = methodMeta.contextParamIndex !== undefined;
@@ -91,11 +76,42 @@ export class FetchHTTPMethodRegister extends HTTPMethodRegister {
             );
         }
       }
-      const res = await Reflect.apply(realMethod, realObj, args);
-      if (res instanceof Response) {
-        ctx.response = res;
-      } else {
-        ctx.body = res;
+      const responseBeforeAdvice = ctx.response;
+      const bodyBeforeAdvice = ctx.body;
+      let invocationCompleted = false;
+      let invocationResult: unknown;
+      let responseAfterInvocation = responseBeforeAdvice;
+      let bodyAfterInvocation = bodyBeforeAdvice;
+      const writeResponse = (result: unknown) => {
+        if (result instanceof Response) {
+          ctx.response = result;
+        } else {
+          ctx.body = result;
+        }
+      };
+      const result = await methodRegister.executeControllerAdvices(
+        ctx,
+        realObj,
+        args,
+        async (invocationThat, invocationArgs) => {
+          invocationResult = await Reflect.apply(realMethod, invocationThat, invocationArgs);
+          invocationCompleted = true;
+          writeResponse(invocationResult);
+          responseAfterInvocation = ctx.response;
+          bodyAfterInvocation = ctx.body;
+          return invocationResult;
+        },
+      );
+      if (!invocationCompleted) {
+        if (ctx.response === responseBeforeAdvice && ctx.body === bodyBeforeAdvice) {
+          writeResponse(result);
+        }
+      } else if (
+        result !== invocationResult &&
+        ctx.response === responseAfterInvocation &&
+        ctx.body === bodyAfterInvocation
+      ) {
+        writeResponse(result);
       }
     } as HTTPHandlerFunc;
   }

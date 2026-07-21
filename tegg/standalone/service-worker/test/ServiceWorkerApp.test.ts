@@ -104,12 +104,12 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     );
   });
 
-  it('should run aop-mode middlewares (@Middleware with advice classes)', async () => {
+  it('should run @Middleware with a dependency-injected controller advice', async () => {
     const res = await fetch(`${base}/aop-mw/aop`);
     assert.deepEqual(await res.json(), { body: { msg: 'hello' } });
   });
 
-  it('should let an aop-mode middleware catch controller errors', async () => {
+  it('should let controller advice catch controller errors', async () => {
     const res = await fetch(`${base}/aop-mw/error`);
     assert.deepEqual(await res.json(), { body: { message: 'mock error' } });
   });
@@ -125,7 +125,7 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     assert.deepEqual(await (await fetch(`${base}/ctxpc/run`)).json(), { msg: 'hello', ctxCount: 1 });
   });
 
-  it('should run @Middleware (koa layer) and @Pointcut (aop layer) together', async () => {
+  it('should run controller advice outside @Pointcut', async () => {
     const res = await fetch(`${base}/combo/run`);
     assert.deepEqual(await res.json(), { body: { msg: 'hello', count: 0 } });
   });

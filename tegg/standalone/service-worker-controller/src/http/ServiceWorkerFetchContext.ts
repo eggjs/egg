@@ -1,10 +1,13 @@
-import type { FetchEvent } from '@eggjs/tegg-types';
+import type { FetchEvent, ServiceWorkerFetchContext as ServiceWorkerFetchContextContract } from '@eggjs/tegg-types';
 
 import { BaseServiceWorkerContextImpl } from '../controller/ServiceWorkerContext.ts';
 import type { ServiceWorkerContextInit } from '../types.ts';
 import { ResponseUtils } from '../utils/ResponseUtils.ts';
 
-export class ServiceWorkerFetchContext extends BaseServiceWorkerContextImpl<FetchEvent, Response> {
+export class ServiceWorkerFetchContext
+  extends BaseServiceWorkerContextImpl<FetchEvent, Response>
+  implements ServiceWorkerFetchContextContract
+{
   url: URL;
   method: string;
   path: string;

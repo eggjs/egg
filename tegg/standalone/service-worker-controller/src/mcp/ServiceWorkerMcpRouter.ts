@@ -1,5 +1,12 @@
-import { CONTROLLER_META_DATA, type MCPControllerMeta, type MCPToolMeta } from '@eggjs/controller-decorator';
 import {
+  CONTROLLER_META_DATA,
+  type MCPControllerMeta,
+  type MCPPromptMeta,
+  type MCPResourceMeta,
+  type MCPToolMeta,
+} from '@eggjs/controller-decorator';
+import {
+  executeControllerAdvices,
   MCPServerHelper,
   MCP_ROUTER_NAME,
   type McpRouter,
@@ -8,8 +15,8 @@ import {
 } from '@eggjs/controller-runtime';
 import { Inject, InjectOptional, InnerObjectProto } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
-import { CONTROLLER_AOP_MIDDLEWARES, TeggScope } from '@eggjs/tegg-types';
-import type { EggProtoImplClass, EggPrototype } from '@eggjs/tegg-types';
+import { TeggScope } from '@eggjs/tegg-types';
+import type { EggPrototype } from '@eggjs/tegg-types';
 import {
   type HandleRequestOptions,
   WebStandardStreamableHTTPServerTransport,
@@ -18,9 +25,9 @@ import {
 import type { FetchRouter } from '../http/FetchRouter.ts';
 import type { ServiceWorkerFetchContext } from '../http/ServiceWorkerFetchContext.ts';
 import type { MCPAuthHandler, MCPTransportOptions } from '../types.ts';
-import type { AbstractControllerAdvice } from './AbstractControllerAdvice.ts';
 
 type MCPMiddleware = (ctx: ServiceWorkerFetchContext, next: () => Promise<void>) => Promise<void>;
+type MCPMethodMeta = MCPPromptMeta | MCPResourceMeta | MCPToolMeta;
 
 /** Compose selected middleware around one MCP dispatch. */
 function composeMiddlewares(middlewares: MCPMiddleware[]): (ctx: ServiceWorkerFetchContext) => Promise<void> {
@@ -58,9 +65,9 @@ export interface McpServerMountContext {
   readonly basePath: string;
   /** Return a denial response, or undefined to allow the request. */
   authenticate(request: Request): Promise<Response | undefined>;
-  /** Create a server helper with this registration's methods. */
-  createServerHelper(): Promise<MCPServerHelper>;
-  /** Controller + method AOP middlewares selected for a parsed JSON-RPC body. */
+  /** Create a server helper inside the middleware chain; pass the active request context. */
+  createServerHelper(controllerContext?: ServiceWorkerFetchContext): Promise<MCPServerHelper>;
+  /** Controller Advice plus function middlewares selected for a parsed JSON-RPC body. */
   selectMiddlewares(parsedBody: unknown): MCPMiddleware[];
   /** Compose middlewares koa-style around a terminal dispatch. */
   compose(middlewares: MCPMiddleware[]): (ctx: ServiceWorkerFetchContext) => Promise<void>;
@@ -99,11 +106,16 @@ export class ServiceWorkerMcpRouter implements McpRouter {
   }
 
   /** Create the request-scoped MCP server required by stateless transport. */
-  async #createServerHelper(reg: McpServerRegistration): Promise<MCPServerHelper> {
+  async #createServerHelper(
+    reg: McpServerRegistration,
+    controllerContext?: ServiceWorkerFetchContext,
+  ): Promise<MCPServerHelper> {
     const mcpServerHelper = new MCPServerHelper({
       name: reg.controllerMeta.name ?? `mcp-${reg.serverName}-server`,
       version: reg.controllerMeta.version ?? '1.0.0',
       eggContainerFactory: EggContainerFactory,
+      getControllerContext: () => controllerContext,
+      controllerAdvicesHandledByHost: true,
     });
     for (const tool of reg.tools) {
       await mcpServerHelper.mcpToolRegister(tool.proto, tool.meta);
@@ -150,10 +162,7 @@ export class ServiceWorkerMcpRouter implements McpRouter {
   }
 
   /** Find the tool/prompt/resource a JSON-RPC message targets, if any. */
-  #findTargetRecord(
-    reg: McpServerRegistration,
-    message: unknown,
-  ): ServerRegisterRecord<{ name?: string; mcpName?: string; uri?: string }> | undefined {
+  #findTargetRecord(reg: McpServerRegistration, message: unknown): ServerRegisterRecord<MCPMethodMeta> | undefined {
     const method = (message as { method?: string })?.method;
     const params = ((message as { params?: Record<string, unknown> })?.params ?? {}) as {
       name?: string;
@@ -172,18 +181,33 @@ export class ServiceWorkerMcpRouter implements McpRouter {
   }
 
   /** Return controller-level middleware for a prototype. */
-  #controllerMiddlewares(proto: EggPrototype): MCPMiddleware[] {
+  #controllerMiddlewares(proto: EggPrototype, methodMeta: MCPMethodMeta): MCPMiddleware[] {
     const out: MCPMiddleware[] = [];
     const metadata = proto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
     for (const mw of metadata.middlewares ?? []) {
       out.push(mw as unknown as MCPMiddleware);
     }
-    const aopMiddlewareClasses = (proto.getMetaData(CONTROLLER_AOP_MIDDLEWARES) ??
-      []) as EggProtoImplClass<AbstractControllerAdvice>[];
-    for (const clazz of aopMiddlewareClasses) {
+    const advices = metadata.getControllerAdvices(methodMeta);
+    if (advices.length > 0) {
       out.push(async (ctx, next) => {
-        const eggObj = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz);
-        await (eggObj.obj as AbstractControllerAdvice).middleware(ctx, next);
+        const eggObject = await EggContainerFactory.getOrCreateEggObject(proto, proto.name);
+        let responseAfterDispatch = ctx.response;
+        const result = await executeControllerAdvices(
+          ctx,
+          eggObject.obj,
+          methodMeta.name,
+          [],
+          advices,
+          EggContainerFactory,
+          async () => {
+            await next();
+            responseAfterDispatch = ctx.response;
+            return responseAfterDispatch;
+          },
+        );
+        if (result instanceof Response && ctx.response === responseAfterDispatch) {
+          ctx.response = result;
+        }
       });
     }
     return out;
@@ -201,7 +225,7 @@ export class ServiceWorkerMcpRouter implements McpRouter {
       }
       if (!seenProtos.has(record.proto)) {
         seenProtos.add(record.proto);
-        middlewares.push(...this.#controllerMiddlewares(record.proto));
+        middlewares.push(...this.#controllerMiddlewares(record.proto, record.meta));
       }
       for (const mw of (record.meta as MCPToolMeta).middlewares ?? []) {
         middlewares.push(mw as unknown as MCPMiddleware);
@@ -236,7 +260,7 @@ export class ServiceWorkerMcpRouter implements McpRouter {
       }
       const options: HandleRequestOptions | undefined = parsedBody === undefined ? undefined : { parsedBody };
       const dispatch: MCPMiddleware = async () => {
-        const helper = await this.#createServerHelper(reg);
+        const helper = await this.#createServerHelper(reg, ctx);
         const transport = new WebStandardStreamableHTTPServerTransport({
           sessionIdGenerator: undefined,
           ...this.#dnsRebindingOptions(),
@@ -287,7 +311,7 @@ export class ServiceWorkerMcpRouter implements McpRouter {
       serverName: name,
       basePath: `/mcp${name ? `/${name}` : ''}`,
       authenticate: (request) => this.#authenticate(request),
-      createServerHelper: () => this.#createServerHelper(reg),
+      createServerHelper: (controllerContext) => this.#createServerHelper(reg, controllerContext),
       selectMiddlewares: (parsedBody) => this.#selectMiddlewares(reg, parsedBody),
       compose: (middlewares) => composeMiddlewares(middlewares),
     };

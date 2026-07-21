@@ -5,6 +5,8 @@ import type { EggPrototype } from '@eggjs/tegg-types';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ReadResourceCallback, ToolCallback, PromptCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+import { executeControllerAdvices } from '../../ControllerAdvice.ts';
+
 /** Allows a host to supply tool or prompt schemas missing from metadata. */
 export interface MCPSchemaLoaderHook {
   schemaLoader?: (
@@ -17,6 +19,9 @@ export interface MCPServerHelperOptions {
   name: string;
   version: string;
   eggContainerFactory: typeof EggContainerFactory;
+  getControllerContext?: () => unknown;
+  /** The host wraps controller-level Advice around transport dispatch. */
+  controllerAdvicesHandledByHost?: boolean;
   hooks?: readonly MCPSchemaLoaderHook[];
 }
 
@@ -24,6 +29,8 @@ export class MCPServerHelper {
   server: McpServer;
   hooks: readonly MCPSchemaLoaderHook[];
   private readonly eggContainerFactory: typeof EggContainerFactory;
+  private readonly getControllerContext?: () => unknown;
+  private readonly controllerAdvicesHandledByHost: boolean;
 
   constructor(opts: MCPServerHelperOptions) {
     this.server = new McpServer(
@@ -34,7 +41,37 @@ export class MCPServerHelper {
       { capabilities: { logging: {} } },
     );
     this.eggContainerFactory = opts.eggContainerFactory;
+    this.getControllerContext = opts.getControllerContext;
+    this.controllerAdvicesHandledByHost = opts.controllerAdvicesHandledByHost ?? false;
     this.hooks = opts.hooks ?? [];
+  }
+
+  private invokeControllerAdvices(
+    controllerMeta: MCPControllerMeta,
+    methodMeta: MCPPromptMeta | MCPResourceMeta | MCPToolMeta,
+    that: object,
+    args: any[],
+    invoke: (that: object, args: any[]) => Promise<unknown>,
+  ): Promise<unknown> {
+    const advices = controllerMeta.getMethodAdvices(methodMeta, !this.controllerAdvicesHandledByHost);
+    if (advices.length === 0) {
+      return invoke(that, args);
+    }
+    const controllerContext = this.getControllerContext?.();
+    if (controllerContext === undefined) {
+      throw new Error(
+        `Controller context is required to execute Advice middleware for ${controllerMeta.controllerName}.${methodMeta.name}`,
+      );
+    }
+    return executeControllerAdvices(
+      controllerContext,
+      that,
+      methodMeta.name,
+      args,
+      advices,
+      this.eggContainerFactory,
+      invoke,
+    );
   }
 
   private async loadSchema(
@@ -50,11 +87,18 @@ export class MCPServerHelper {
   }
 
   async mcpResourceRegister(controllerProto: EggPrototype, resourceMeta: MCPResourceMeta): Promise<void> {
+    const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
     const handler = async (...args: any[]) => {
       const eggObj = await this.eggContainerFactory.getOrCreateEggObject(controllerProto, controllerProto.name);
       const realObj = eggObj.obj;
       const realMethod = realObj[resourceMeta.name];
-      return Reflect.apply(realMethod, realObj, args) as ReturnType<ReadResourceCallback>;
+      return this.invokeControllerAdvices(
+        controllerMeta,
+        resourceMeta,
+        realObj,
+        args,
+        async (invocationThat, invocationArgs) => Reflect.apply(realMethod, invocationThat, invocationArgs),
+      ) as ReturnType<ReadResourceCallback>;
     };
     const name = resourceMeta.mcpName ?? resourceMeta.name;
     if (resourceMeta.uri) {
@@ -90,7 +134,13 @@ export class MCPServerHelper {
         newArgs[toolMeta.extra] = args[0];
       }
       newArgs = [...newArgs, ...args];
-      return Reflect.apply(realMethod, realObj, newArgs) as ReturnType<ToolCallback>;
+      return this.invokeControllerAdvices(
+        controllerMeta,
+        toolMeta,
+        realObj,
+        newArgs,
+        async (invocationThat, invocationArgs) => Reflect.apply(realMethod, invocationThat, invocationArgs),
+      ) as ReturnType<ToolCallback>;
     };
     this.server.registerTool(
       name,
@@ -126,7 +176,13 @@ export class MCPServerHelper {
         newArgs[promptMeta.extra] = args[0];
       }
       newArgs = [...newArgs, ...args];
-      return Reflect.apply(realMethod, realObj, newArgs) as ReturnType<PromptCallback>;
+      return this.invokeControllerAdvices(
+        controllerMeta,
+        promptMeta,
+        realObj,
+        newArgs,
+        async (invocationThat, invocationArgs) => Reflect.apply(realMethod, invocationThat, invocationArgs),
+      ) as ReturnType<PromptCallback>;
     };
     this.server.registerPrompt(
       name,

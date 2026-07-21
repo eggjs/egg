@@ -82,6 +82,34 @@ Framework-generated errors use a `{ code, message }` JSON body. Applications
 can provide an `errorResponseMapper` inner object to map unhandled controller
 errors to a custom `Response`.
 
+Declare dependency-injected controller middleware with the existing `@Advice`
+and `@Middleware` API, extending `AbstractControllerAdvice`:
+
+```ts
+import { AbstractControllerAdvice, Middleware } from '@eggjs/tegg';
+import { Advice } from '@eggjs/tegg/aop';
+import type { ServiceWorkerFetchContext } from '@eggjs/tegg/standalone';
+
+@Advice()
+export class WrapResponse extends AbstractControllerAdvice<ServiceWorkerFetchContext> {
+  async middleware(ctx: ServiceWorkerFetchContext, next: () => Promise<void>): Promise<void> {
+    await next();
+    ctx.body = { data: ctx.body };
+  }
+}
+
+@Middleware(WrapResponse)
+export class FooController {}
+```
+
+For HTTP controllers, code after `next()` can read or replace the normalized
+response. Ordinary Advice classes declared through `@Middleware` execute only
+`around()`; classes without an `around()` hook simply continue to the next
+middleware. The existing
+`AbstractControllerAdvice.around()` forwards the host context, `next`, and an
+optional third `AdviceContext` argument to `middleware()`. Explicit `@Pointcut`
+behavior is unchanged.
+
 ## MCP controllers
 
 `@MCPController`, `@MCPTool`, `@MCPPrompt`, and `@MCPResource` are exposed as
@@ -92,6 +120,11 @@ stateless Streamable HTTP endpoints:
 
 POST handles MCP requests. GET and DELETE return 405. Each request uses a new
 MCP server and transport instance.
+
+Controller-level Advice wraps the transport dispatch, so code after `next()` can
+inspect or replace the streaming `ctx.response`. Method-level Advice runs around
+the bound MCP SDK callback and receives the actual method arguments through its
+`AdviceContext`.
 
 MCP transport settings come from the entry module's `module.yml`:
 

@@ -107,9 +107,16 @@ describe('standalone/service-worker/test/MCP.test.ts', () => {
       }),
     });
     assert.equal(res.status, 200);
+    assert.equal(res.headers.get('x-controller-advice'), 'applied');
     const message = parseSSEMessage(await res.text());
     assert.deepEqual(message.result.content, [{ type: 'text', text: 'hi' }]);
-    assert.deepEqual(MCP_MW_CALLS, ['controller-mw', 'tool-mw']);
+    assert.deepEqual(MCP_MW_CALLS, [
+      'controller-mw',
+      'controller-advice-before',
+      'tool-mw',
+      'controller-advice-after:200',
+      'tool-advice:echo:hi',
+    ]);
   });
 
   it('should serve a full MCP SDK client round-trip', async () => {

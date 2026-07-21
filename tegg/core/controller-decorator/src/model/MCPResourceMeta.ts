@@ -1,4 +1,4 @@
-import type { MiddlewareFunc } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, IAdvice, MiddlewareFunc } from '@eggjs/tegg-types';
 import { ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ResourceMetadata } from '@modelcontextprotocol/sdk/server/mcp.js';
 
@@ -11,11 +11,13 @@ export class MCPResourceMeta {
   readonly template?: ResourceTemplate;
   readonly metadata?: ResourceMetadata;
   readonly middlewares: readonly MiddlewareFunc[];
+  readonly advices: readonly EggProtoImplClass<IAdvice>[];
   readonly extra?: number;
 
   constructor(opt: {
     name: string;
     middlewares: MiddlewareFunc[];
+    advices?: EggProtoImplClass<IAdvice>[];
     needAcl?: boolean;
     aclCode?: string;
     mcpName?: string;
@@ -32,6 +34,7 @@ export class MCPResourceMeta {
       this.template = new ResourceTemplate(opt.template[0], opt.template[1]);
     }
     this.middlewares = opt.middlewares;
+    this.advices = opt.advices ?? [];
     this.aclCode = opt.aclCode;
     this.mcpName = opt.mcpName;
     this.extra = opt.extra;

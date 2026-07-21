@@ -67,4 +67,38 @@ describe('plugin/controller/test/http/middleware.test.ts', () => {
       count: 0,
     });
   });
+
+  it('controller advice should observe the normalized body', async () => {
+    app.mockCsrf();
+    const res = await app.httpRequest().get('/controller-advice/success').expect(200);
+    expect(res.body).toEqual({ wrapped: { success: true }, dependency: 'injected' });
+  });
+
+  it('controller advice should catch controller errors', async () => {
+    app.mockCsrf();
+    const res = await app.httpRequest().get('/controller-advice/error').expect(200);
+    expect(res.body).toEqual({ wrapped: { message: 'controller advice error' }, dependency: 'injected' });
+  });
+
+  it('controller advice should catch controller timeouts', async () => {
+    app.mockCsrf();
+    const res = await app.httpRequest().get('/controller-advice/timeout').expect(200);
+    expect(res.body).toEqual({ wrapped: { message: 'timeout' }, dependency: 'injected' });
+  });
+
+  it('controller advice should run outside method pointcuts', async () => {
+    app.mockCsrf();
+    const res = await app.httpRequest().get('/controller-advice/pointcut').expect(200);
+    expect(res.body).toEqual({
+      method: {
+        wrapped: { success: true, pointcut: true },
+        dependency: 'injected',
+      },
+      adviceContext: {
+        controller: 'ControllerAdviceController',
+        method: 'pointcut',
+        args: 0,
+      },
+    });
+  });
 });

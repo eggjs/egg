@@ -80,6 +80,32 @@ export class FooController {
 }
 ```
 
+需要依赖注入的 controller 中间件继续使用 `@Advice` 和 `@Middleware`，
+并继承 `AbstractControllerAdvice`。`next()` 返回时，controller 的返回值已经
+写入 `ctx.body`，因此中间件可以读取或替换最终响应。
+需要调用信息时，可以声明第三个 `AdviceContext` 参数；其中包含实际的
+controller 对象、方法名和绑定后的参数。
+
+```ts
+import { AbstractControllerAdvice, Middleware, type EggContext } from '@eggjs/tegg';
+import { Advice } from '@eggjs/tegg/aop';
+
+@Advice()
+export class WrapResponse extends AbstractControllerAdvice<EggContext> {
+  async middleware(ctx: EggContext, next: () => Promise<void>): Promise<void> {
+    await next();
+    ctx.body = { data: ctx.body };
+  }
+}
+
+@Middleware(WrapResponse)
+export class FooController {}
+```
+
+通过 `@Middleware` 声明的普通 Advice 只执行 `around()`；没有实现 `around()` 时会直接执行
+下一个 middleware。`AbstractControllerAdvice.around()` 会把 context、`next` 和
+`AdviceContext` 转发给已有的 `middleware()` 契约。显式 `@Pointcut` 的行为不变。
+
 ### Context
 
 当需要 egg context 时，可以使用 `@Context` 注解来声明。

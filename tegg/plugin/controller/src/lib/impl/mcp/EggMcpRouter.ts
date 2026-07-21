@@ -130,6 +130,7 @@ export class EggMcpRouter implements McpRouter {
         name: reg.controllerMeta.name ?? `chair-mcp-${name ?? this.app.name}-server`,
         version: reg.controllerMeta.version ?? '1.0.0',
         eggContainerFactory: this.app.eggContainerFactory,
+        getControllerContext: () => this.app.currentContext,
         hooks: EggMcpRouter.hooks,
       });
     };

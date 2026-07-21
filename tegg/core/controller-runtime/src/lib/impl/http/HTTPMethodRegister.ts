@@ -5,6 +5,7 @@ import type { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { FrameworkErrorFormater } from 'egg-errors';
 import pathToRegexp from 'path-to-regexp';
 
+import { executeControllerAdvices } from '../../ControllerAdvice.ts';
 import { RouterConflictError } from '../../errors.ts';
 import type { RootProtoManager, RootProtoRequestContext } from '../../RootProtoManager.ts';
 
@@ -54,6 +55,25 @@ export abstract class HTTPMethodRegister {
   /** Host hook for extra method middlewares (e.g. the egg acl middleware). */
   protected getExtraMethodMiddlewares(): HTTPHandlerFunc[] {
     return [];
+  }
+
+  /** Execute ControllerAdvice after the host has bound the real method arguments. */
+  protected executeControllerAdvices<TContext>(
+    controllerContext: TContext,
+    that: object,
+    args: any[],
+    invoke: (that: object, args: any[]) => Promise<unknown>,
+  ): Promise<unknown> {
+    const advices = this.controllerMeta.getMethodAdvices(this.methodMeta);
+    return executeControllerAdvices(
+      controllerContext,
+      that,
+      this.methodMeta.name,
+      args,
+      advices,
+      this.eggContainerFactory,
+      invoke,
+    );
   }
 
   checkDuplicate(): void {
