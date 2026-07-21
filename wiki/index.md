@@ -25,7 +25,7 @@ Read this file before exploring raw sources.
 ## Packages
 
 - [Core Package](./packages/core.md) - Loader, lifecycle, and application core primitives used by Egg runtime packages.
-- [Egg Bundler](./packages/egg-bundler.md) - Tooling package that bundles Egg applications (backs `egg-bin bundle`) and the tegg standalone service worker for Cloudflare Workers (`StandaloneWorkerBundler`, @utoo/pack = Turbopack, CJS-only).
+- [Egg Bundler](./packages/egg-bundler.md) - Bundles Egg applications for Node startup snapshots and tegg standalone service workers.
 - [Loader FS Package](./packages/loader-fs.md) - Shared loader-facing filesystem boundary for Egg loaders and future bundled runtimes.
 - [Onerror Plugin](./packages/onerror.md) - Default Egg error-handling plugin and configurable response negotiation layer.
 - [Standalone Service Worker](./packages/service-worker.md) - Fetch-semantics standalone runtime serving HTTP controllers and MCP tools from a tegg module without an egg application.

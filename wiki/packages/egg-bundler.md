@@ -1,8 +1,11 @@
 ---
 title: Egg Bundler
 type: package
-summary: Bundles Egg applications into deployable CommonJS artifacts and powers the egg-bin bundle command.
+summary: Bundles Egg applications for Node startup snapshots and tegg standalone service-worker targets.
 source_files:
+  - packages/core/src/lifecycle.ts
+  - packages/egg/src/lib/egg.ts
+  - plugins/watcher/src/lib/boot.ts
   - tools/egg-bundler/src/index.ts
   - tools/egg-bundler/src/lib/Bundler.ts
   - tools/egg-bundler/src/lib/EntryGenerator.ts
@@ -22,7 +25,7 @@ source_files:
   - tegg/standalone/standalone/src/EggModuleLoader.ts
   - tools/egg-bundler/docs/output-structure.md
   - examples/helloworld-service-worker
-updated_at: 2026-07-20
+updated_at: 2026-07-21
 status: active
 ---
 
@@ -89,6 +92,35 @@ constraint is why worker output always needs a thin ESM wrapper.
   external.
 - `BundlerConfig.tegg` is accepted but intentionally not wired into the current
   implementation yet.
+
+### Snapshot lifecycle boundary
+
+With `snapshot: true`, Egg executes `configWillLoad` during snapshot construction
+and stops before `configDidLoad`. After V8 restores the heap, Egg runs the
+registered `snapshotDidDeserialize` hooks and then resumes the ordinary lifecycle
+from `configDidLoad`. Function-style app and agent boot hooks are registered as
+`configDidLoad` hooks, so they already run on the runtime side of this boundary.
+
+Plugin constructors and `configWillLoad` may prepare only serializable
+configuration or metadata. Runtime resources such as cluster clients, sockets,
+servers, filesystem watchers, timers, and native clients must be created in
+`configDidLoad` or later. A plugin that consumes another plugin's runtime object
+must also declare that plugin dependency; this makes the corresponding
+`configDidLoad` order explicit instead of relying on incidental discovery order.
+
+`EggApplicationCore.clusterWrapper()` enforces this contract by throwing during
+snapshot construction and becoming available after restore. The watcher plugin
+is the reference pattern: its boot constructor stores the app only,
+`configDidLoad` creates and wires the watcher cluster client, and `didLoad` waits
+for readiness. A generic deferred proxy is intentionally not used because it
+would silently record arbitrary calls, cover only clients created through
+`clusterWrapper()`, and move failures away from the actual lifecycle violation.
+
+Framework-owned resources that necessarily exist before the cutoff may instead
+implement a symmetric `snapshotWillSerialize`/`snapshotDidDeserialize` pair, as
+Egg does for its messenger and logger transports. That mechanism is for explicit
+resource ownership, not a substitute for moving plugin runtime initialization to
+`configDidLoad`.
 
 ### Snapshot lazy-external defaults
 

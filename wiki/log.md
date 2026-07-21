@@ -8,6 +8,12 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
 - note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
 
+## [2026-07-21] architecture | enforce the startup-snapshot runtime boundary
+
+- sources touched: `AGENTS.md`, `packages/core/src/lifecycle.ts`, `packages/egg/src/lib/egg.ts`, `plugins/watcher/src/lib/boot.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Made `configDidLoad` or later the required initialization phase for plugin runtime resources, documented explicit plugin dependencies for runtime consumers, made `clusterWrapper()` fail fast during snapshot construction, and moved watcher creation out of its boot constructor. Deferred placeholder/replay wrappers are explicitly rejected as a lifecycle workaround.
+
 ## [2026-07-21] refactor+docs | make controller extension hooks declarative
 
 - sources touched: `tegg/core/controller-runtime/src/lib/MiddlewareGraphHook.ts`, `tegg/plugin/controller`, `tegg/plugin/mcp-proxy`, `tegg/standalone/service-worker-controller`
