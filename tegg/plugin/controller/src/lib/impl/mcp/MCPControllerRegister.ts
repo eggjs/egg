@@ -444,13 +444,13 @@ export class MCPControllerRegister implements ControllerRegister {
       ctx.respond = false;
       const mcpServerHelper = self.mcpServerHelperMap[name ?? 'default']();
       for (const tool of self.registerMap[name ?? 'default'].tools) {
-        mcpServerHelper.mcpToolRegister(tool.getOrCreateEggObject, tool.proto, tool.meta);
+        await mcpServerHelper.mcpToolRegister(tool.getOrCreateEggObject, tool.proto, tool.meta);
       }
       for (const resource of self.registerMap[name ?? 'default'].resources) {
-        mcpServerHelper.mcpResourceRegister(resource.getOrCreateEggObject, resource.proto, resource.meta);
+        await mcpServerHelper.mcpResourceRegister(resource.getOrCreateEggObject, resource.proto, resource.meta);
       }
       for (const prompt of self.registerMap[name ?? 'default'].prompts) {
-        mcpServerHelper.mcpPromptRegister(prompt.getOrCreateEggObject, prompt.proto, prompt.meta);
+        await mcpServerHelper.mcpPromptRegister(prompt.getOrCreateEggObject, prompt.proto, prompt.meta);
       }
       await mcpServerHelper.server.connect(transport);
       self.mcpServerMap[id] = mcpServerHelper.server;
