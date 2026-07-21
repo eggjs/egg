@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import { execSync } from 'node:child_process';
+import { execFileSync, execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import semver from 'semver';
 
-import { getPublishablePackages } from './utils.js';
+import { assertValidNpmPackageName, getPublishablePackages } from './utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -67,6 +67,7 @@ packageFolders.forEach(({ folder, directory }) => {
 
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    assertValidNpmPackageName(packageJson.name);
     const originalContent = JSON.stringify(packageJson, null, 2) + '\n';
 
     if (!isDryRun) {
@@ -135,14 +136,15 @@ try {
 
 ${updatedVersions.map((pkg) => `- ${pkg.name}@${pkg.newVersion}`).join('\n')}`;
 
-  // Commit changes
+  // Commit changes. Pass the message as an argv entry (execFileSync), never as
+  // an interpolated shell string — the message embeds package names.
   console.log('\n💾 Creating version commit...');
-  execSync(`git commit -m "${commitMessage}"`, { stdio: 'inherit' });
+  execFileSync('git', ['commit', '-m', commitMessage], { stdio: 'inherit' });
 
   // Create tag using the main egg version
   const tagName = `v${eggVersion}`;
   console.log(`\n🏷️  Creating tag ${tagName}...`);
-  execSync(`git tag ${tagName}`, { stdio: 'inherit' });
+  execFileSync('git', ['tag', tagName], { stdio: 'inherit' });
 
   console.log('\n✅ Version bump complete!');
   console.log(`\nTo publish, push the changes and tag:`);

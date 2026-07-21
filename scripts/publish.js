@@ -26,6 +26,7 @@ import path from 'node:path';
 
 import {
   applyPublishConfigOverrides,
+  assertValidNpmPackageName,
   getCatalogs,
   getPublishablePackages,
   getWorkspaceVersionMap,
@@ -48,6 +49,28 @@ const versionMap = getWorkspaceVersionMap(baseDir);
 const catalogs = getCatalogs(baseDir);
 const npmBin = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
+// Reject any malformed package name before it reaches `npm publish` (a typo'd
+// name would otherwise publish a brand-new bogus package).
+for (const pkg of packages) {
+  assertValidNpmPackageName(pkg.name);
+}
+
+// Never let a prerelease version land on the `latest` dist-tag (that would make
+// it the default install for every consumer). The release workflow derives the
+// tag, but this is the last line of defence regardless of how it was invoked.
+if (npmTag === 'latest') {
+  const prereleases = packages.filter((pkg) => pkg.version.includes('-'));
+  if (prereleases.length > 0) {
+    const sample = prereleases
+      .slice(0, 5)
+      .map((pkg) => `${pkg.name}@${pkg.version}`)
+      .join(', ');
+    const more = prereleases.length > 5 ? ` (+${prereleases.length - 5} more)` : '';
+    console.error(`❌ Refusing to publish prerelease version(s) to the "latest" tag: ${sample}${more}`);
+    process.exit(1);
+  }
+}
+
 console.log(
   `📦 Publishing ${packages.length} packages (tag: ${npmTag}${isDryRun ? ', dry-run' : ''}${useProvenance ? ', provenance' : ''})`,
 );
@@ -63,9 +86,16 @@ function isPublished(name, version) {
       timeout: 15000,
     }).trim();
     return result === version;
-  } catch {
-    // Could be 404 (not published) or network error.
-    // Either way, we should attempt to publish.
+  } catch (err) {
+    const stderr = String(err?.stderr ?? '');
+    // A genuine 404 means the version is not published yet — expected, stay quiet.
+    // Anything else (network, 5xx, auth) is indeterminate: we cannot confirm, so
+    // warn loudly. We still return false, but npm's version immutability prevents
+    // an accidental overwrite if a publish is then attempted.
+    if (!/E404|404 Not Found/i.test(stderr)) {
+      const detail = stderr.split('\n')[0] || (err instanceof Error ? err.message : String(err));
+      console.warn(`  ⚠️  could not verify ${name}@${version} on npm: ${detail}`);
+    }
     return false;
   }
 }
@@ -98,7 +128,10 @@ function publishOne(pkg) {
     execFileSync(npmBin, publishArgs, {
       cwd: packageDir,
       stdio: 'inherit',
-      env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose' },
+      // Verbose logging only on dry-run. On a real publish, force a non-verbose
+      // level so an inherited NPM_CONFIG_LOGLEVEL=verbose can't surface auth
+      // headers in CI logs.
+      env: { ...process.env, NPM_CONFIG_LOGLEVEL: isDryRun ? 'verbose' : 'notice' },
       timeout: 120000,
     });
   } finally {

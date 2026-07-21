@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-06-28] decision | secure release pipeline design + P0 hardening
+
+- sources touched: `.github/workflows/release.yml`, `scripts/version.js`, `scripts/publish.js`, `scripts/utils.js`, `scripts/sync-cnpm.js`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/decisions/secure-release-pipeline.md`
+- note: Recorded the target secure-release design from a multi-agent design pass (3 architectures red-teamed → synthesized). Maintainer chose a GitHub-Release-triggered model: `release-prepare.yml` (dispatch) bumps + signs + drafts a Release; publishing the Release triggers `release.yml` (`on: release`, read from default branch `next`) → guard → zero-secret build → Environment-gated OIDC publish → finalize. Verified GitHub facts: release events read the workflow from the default branch with `GITHUB_SHA`=tag commit; `choice` inputs aren't API-enforced; egg default branch is `next`. P0 (code/workflow hardening: argv git ops, npm-name validation, prerelease→latest guard, isPublished 404-handling, notice loglevel, branch choice+guard) landed in #6017; `--ignore-scripts` deferred to P1 because `@eggjs/egg-bundler` has a `prepublishOnly` build.
+
 ## [2026-06-28] workflow | record egg-bin Windows shell probe hotspot
 
 - sources touched: `tools/egg-bin/bin/run.js`, `tools/egg-bin/test/fixtures/my-egg-bin/bin/run.js`, PR #6014 CI logs

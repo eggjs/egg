@@ -19,7 +19,7 @@ Read this file before exploring raw sources.
 
 ## Decisions
 
-- No decision pages yet.
+- [Secure release pipeline](./decisions/secure-release-pipeline.md) - Target design for hardening npm release: GitHub-Release-triggered, Environment-gated second-person approval, OIDC pinned to workflow+environment, build/publish privilege split, GitHub App token replacing the PAT; P0 script/workflow hardening landed in #6017.
 
 ## Packages
 

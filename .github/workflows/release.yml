@@ -8,10 +8,13 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to release from'
+        description: 'Branch to release from (must be a protected release branch)'
         required: true
         default: 'next'
-        type: string
+        type: choice
+        options:
+          - next
+          - master
       version_type:
         description: 'Version bump type'
         required: true
@@ -55,6 +58,25 @@ jobs:
       id-token: write
 
     steps:
+      # The `branch` choice is not enforced for API-triggered dispatches, so
+      # re-validate it here and require the workflow to be dispatched from the
+      # very branch it releases (dispatch ref == release branch). This is the
+      # load-bearing guard against releasing an arbitrary ref.
+      - name: Guard release branch
+        env:
+          INPUT_BRANCH: ${{ github.event.inputs.branch }}
+          DISPATCH_REF: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          case "$INPUT_BRANCH" in
+            next|master) ;;
+            *) echo "::error::Disallowed release branch '$INPUT_BRANCH' (allowed: next, master)"; exit 1 ;;
+          esac
+          if [ "$DISPATCH_REF" != "$INPUT_BRANCH" ]; then
+            echo "::error::Dispatched from '$DISPATCH_REF' but branch input is '$INPUT_BRANCH'. Re-run 'Use workflow from' set to '$INPUT_BRANCH'."
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
