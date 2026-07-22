@@ -10,7 +10,6 @@ import {
   type ReadModuleReferenceOptions,
   type RuntimeConfig,
 } from '@eggjs/tegg-common-util';
-import type { TeggManifestExtension } from '@eggjs/tegg-loader';
 import {
   ContextHandler,
   EggContainerFactory,
@@ -20,6 +19,7 @@ import {
   type LoadUnitInstance,
   LoadUnitInstanceFactory,
 } from '@eggjs/tegg-runtime';
+import type { TeggManifest } from '@eggjs/tegg-types';
 import { TeggScope } from '@eggjs/tegg-types';
 import type { TeggScopeBag } from '@eggjs/tegg-types';
 import { StandaloneUtil, type MainRunner } from '@eggjs/tegg/standalone';
@@ -32,37 +32,24 @@ export interface ModuleDependency extends ReadModuleReferenceOptions {
   baseDir: string;
 }
 
-/**
- * Construction-time wiring: capabilities and provided objects. No app binding
- * happens here — WHICH app to load (baseDir/name/env) arrives at init().
- */
+/** Construction-time framework modules and host-provided objects. */
 export interface StandaloneAppInit {
-  /**
-   * Framework-level module plugins loaded BEFORE the app's own modules
-   * (e.g. a service-worker runtime package providing controller support).
-   * They join the same scan; their `@InnerObjectProto` / `@XxxLifecycleProto`
-   * classes are instantiated in the InnerObjectLoadUnit ahead of every
-   * business load unit.
-   */
+  /** Framework modules loaded before application modules. */
   frameworkDeps?: (string | ModuleDependency)[];
   dump?: boolean;
   /**
-   * Host-provided inner objects. Framework-owned `moduleConfigs`, `moduleConfig`,
-   * and `runtimeConfig` entries are ignored. `logger` is reserved; use the
-   * dedicated `logger` option instead.
+   * Host-provided inner objects. Framework-owned `config`, `moduleConfigs`,
+   * `moduleConfig`, and `runtimeConfig` entries are ignored. `logger` is
+   * reserved; use the dedicated `logger` option instead.
    */
   innerObjects?: Record<string, InnerObject[]>;
   /** User-facing option name for diagnostics. Defaults to `innerObjects`. */
   innerObjectsName?: string;
-  /**
-   * Logger used by the framework (loader, hooks) and exposed as the injectable
-   * `logger` provided object. This is the only supported logger input. Defaults
-   * to console.
-   */
+  /** Framework and injectable logger. Defaults to console. */
   logger?: Logger;
 }
 
-/** init()-time binding: which app to load and its runtime identity. */
+/** Application identity and scan inputs passed to `init()`. */
 export interface InitStandaloneAppOptions {
   name?: string;
   env?: string;
@@ -70,10 +57,10 @@ export interface InitStandaloneAppOptions {
   /** Extra module dirs (e.g. npm packages) joining the scan after framework deps. */
   dependencies?: (string | ModuleDependency)[];
   /**
-   * Tegg manifest data (bundle mode). When provided the module scan reuses the
-   * precomputed decorated files instead of globbing the file system.
+   * Tegg manifest data (bundle mode). Its decorated-file index is exposed
+   * through a manifest-backed LoaderFS instead of the runtime filesystem.
    */
-  manifest?: TeggManifestExtension;
+  manifest?: TeggManifest;
   /** Virtual fs used together with manifest in bundle mode. */
   loaderFS?: LoaderFS;
 }
@@ -88,7 +75,7 @@ export interface StandaloneAppOptions {
   dependencies?: (string | ModuleDependency)[];
   frameworkDeps?: (string | ModuleDependency)[];
   dump?: boolean;
-  manifest?: TeggManifestExtension;
+  manifest?: TeggManifest;
   loaderFS?: LoaderFS;
 }
 
@@ -103,6 +90,9 @@ export class StandaloneApp {
   // In the constructor there is no runtime config yet — pre-create the object
   // so the runtimeConfig inner object can hold it; init() fills the values.
   readonly #runtimeConfig = {} as RuntimeConfig;
+  // Filled from the entry module's configuration during init().
+  readonly #config: Record<string, unknown> = {};
+  #appModuleName?: string;
   #moduleReferences: readonly ModuleReference[] = [];
   #state: StandaloneAppState = 'new';
   #runnerProto?: EggPrototype;
@@ -139,6 +129,7 @@ export class StandaloneApp {
       // init() — the inner objects hold these same references unless the caller
       // supplies objects with other names.
       logger: [{ obj: this.#logger }],
+      config: [{ obj: this.#config }],
       moduleConfigs: [{ obj: new ModuleConfigs(this.#moduleConfigs) }],
       moduleConfig: [] as InnerObject[],
       runtimeConfig: [{ obj: this.#runtimeConfig }],
@@ -151,13 +142,15 @@ export class StandaloneApp {
     this.#runtimeConfig.env = opts.env ?? '';
     this.#runtimeConfig.baseDir = opts.baseDir;
 
-    // Load module.yml and module.env.yml by default. The override is scoped to
-    // this app's TeggScope bag.
-    ModuleConfigUtil.configNames = opts.env ? ['module.default', `module.${opts.env}`] : ['module.default'];
+    // Preserve a config-name chain already set in this application's scope.
+    if (ModuleConfigUtil.configNames === undefined) {
+      ModuleConfigUtil.configNames = opts.env ? ['module.default', `module.${opts.env}`] : ['module.default'];
+    }
   }
 
   /** Load every module's config and expose it as a qualified `moduleConfig` inner object. */
   #loadModuleConfigs(): void {
+    const baseDir = path.resolve(this.#runtimeConfig.baseDir);
     const resolvedReferences: ModuleReference[] = [];
     for (const reference of this.#moduleReferences) {
       const resolved = ModuleConfigUtil.resolveModuleConfigTolerant(reference, this.#runtimeConfig.baseDir);
@@ -173,9 +166,16 @@ export class StandaloneApp {
         reference: resolvedRef,
         config: resolved.config,
       };
+      // baseDir identifies the entry module that provides application config.
+      if (path.resolve(resolved.path) === baseDir) {
+        this.#appModuleName = resolved.name;
+      }
       resolvedReferences.push(resolvedRef);
     }
     this.#moduleReferences = resolvedReferences;
+    if (this.#appModuleName) {
+      Object.assign(this.#config, this.#moduleConfigs[this.#appModuleName].config);
+    }
     for (const moduleConfig of Object.values(this.#moduleConfigs)) {
       this.#innerObjects.moduleConfig.push({
         obj: moduleConfig.config,
@@ -194,18 +194,12 @@ export class StandaloneApp {
     dependencies?: (string | ModuleDependency)[],
     frameworkDeps?: (string | ModuleDependency)[],
   ): readonly ModuleReference[] {
-    // The standalone package itself is the built-in framework scan root: its
-    // own package.json dependencies that declare `eggModule` (the aop/dal/
-    // config plugin packages) are discovered through the SAME node_modules
-    // convention as app dependencies — no hand-maintained package list.
-    // `!test/**` keeps this package's own test fixture modules out of the
-    // scan in workspace layouts (src/ in dev, dist/ when published — the
-    // package root is one level up either way).
+    // Discover built-in framework modules from this package's eggModule dependencies.
     const standaloneRoot: ModuleDependency = {
       baseDir: path.join(path.dirname(fileURLToPath(import.meta.url)), '..'),
       extraFilePattern: ['!test/**'],
     };
-    // framework deps first so their modules are scanned ahead of app modules
+    // Framework modules must be scanned before application modules.
     const moduleDirs = ([standaloneRoot] as (string | ModuleDependency)[])
       .concat(frameworkDeps || [])
       .concat(dependencies || [])
@@ -217,9 +211,7 @@ export class StandaloneApp {
       },
       [] as readonly ModuleReference[],
     );
-    // The same module may be reachable from multiple scan roots (a built-in
-    // framework module the app also depends on) — shared dedupe (first path
-    // wins, conflicting duplicate names throw).
+    // Multiple scan roots can reach the same module; the loader deduplicates them.
     return ModuleConfigUtil.deduplicateModules(references);
   }
 
@@ -236,13 +228,8 @@ export class StandaloneApp {
     });
   }
 
-  /**
-   * Scan-only metadata generation entry (the standalone counterpart of the egg
-   * plugin's loadMetadata): produce the tegg manifest extension a bundler can
-   * persist, without instantiating anything. Runs in a temporary scope so no
-   * state leaks into the process-default bag.
-   */
-  static async loadMetadata(cwd: string, options?: StandaloneAppOptions): Promise<TeggManifestExtension> {
+  /** Scan modules for a bundle without instantiating the application. */
+  static async loadMetadata(cwd: string, options?: StandaloneAppOptions): Promise<TeggManifest> {
     const moduleReferences = StandaloneApp.getModuleReferences(cwd, options?.dependencies, options?.frameworkDeps);
     return await TeggScope.run(TeggScope.createBag(), async () => {
       const loader = new EggModuleLoader(moduleReferences, {
@@ -268,11 +255,7 @@ export class StandaloneApp {
     return loader;
   }
 
-  /**
-   * Phase 2: create AND instantiate the InnerObjectLoadUnit before the business
-   * graph is built, so `@XxxLifecycleProto` hooks (including graph build hooks
-   * they register in `@LifecyclePostInject`) are live for every later phase.
-   */
+  /** Create framework inner objects before building the business graph. */
   async #instantiateInnerObjectLoadUnit(loader: EggModuleLoader): Promise<void> {
     StandaloneContextHandler.register();
     const builder = new InnerObjectLoadUnitBuilder();
@@ -289,7 +272,7 @@ export class StandaloneApp {
     this.#innerLoadUnitInstance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
   }
 
-  /** Phase 3/4: build + sort the business graph, then create and instantiate module load units. */
+  /** Build the business graph and instantiate its module load units. */
   async #instantiateModuleLoadUnits(loader: EggModuleLoader): Promise<void> {
     const loadUnits = await loader.load();
     this.#loadUnits.push(...loadUnits);
@@ -316,6 +299,14 @@ export class StandaloneApp {
     if (this.#state === 'ready') return;
     if (this.#state !== 'new') {
       throw new Error(`[tegg/standalone] cannot init app in ${this.#state} state`);
+    }
+
+    // A bundled host can provide the manifest globally; otherwise scan the filesystem.
+    if (!opts.manifest) {
+      const bundleManifest = (globalThis as { __EGG_BUNDLE_MANIFEST__?: unknown }).__EGG_BUNDLE_MANIFEST__;
+      if (bundleManifest) {
+        opts = { ...opts, manifest: bundleManifest as TeggManifest };
+      }
     }
 
     this.#state = 'initializing';
@@ -362,14 +353,7 @@ export class StandaloneApp {
           return await runner.main();
         } finally {
           if (ctx.destroy) {
-            // Fire-and-forget on purpose: do NOT await here. A host may return a
-            // response whose body is drained by the CALLER after run() returns
-            // (e.g. the service-worker pipes a streaming Response body and keeps
-            // context protos alive via a BackgroundTaskHelper drain task).
-            // ctx.destroy() drains those tasks, so awaiting it here would block
-            // run() from returning the Response the caller must consume first —
-            // a deadlock. App-level teardown determinism is handled by the
-            // awaited app.destroy() in appMain (main.ts).
+            // The caller may need the response body before context teardown can finish.
             void ctx.destroy(lifecycle).catch((e: unknown) => {
               if (e instanceof Error) {
                 e.message = `[tegg/standalone] destroy tegg context failed: ${e.message}`;

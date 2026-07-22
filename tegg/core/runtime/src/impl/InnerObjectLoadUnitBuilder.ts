@@ -80,6 +80,24 @@ export class InnerObjectLoadUnitBuilder {
     }
   }
 
+  /** Add compatibility protos without replacing same-named inner objects. */
+  addCompatibleClazzList(clazzList: readonly EggProtoImplClass[], moduleReference: InnerObjectModuleReference): void {
+    for (const clazz of clazzList) {
+      const descriptor = ProtoDescriptorHelper.createByInstanceClazz(clazz, {
+        moduleName: INNER_OBJECT_LOAD_UNIT_NAME,
+        unitPath: INNER_OBJECT_LOAD_UNIT_PATH,
+        defineModuleName: moduleReference.name,
+        defineUnitPath: moduleReference.path,
+      });
+      descriptor.qualifiers = InnerObjectLoadUnitBuilder.#addDefaultDefineModuleQualifier(
+        descriptor.qualifiers,
+        moduleReference.name,
+      );
+      const protoGraphNode = new GraphNode<ProtoNode, ProtoDependencyMeta>(new ProtoNode(descriptor));
+      this.#protoGraph.addVertex(protoGraphNode);
+    }
+  }
+
   /**
    * Host-provided instances are ordinary protos, exactly as before the
    * module-plugin refactor (StandaloneInnerObjectProto): the descriptor

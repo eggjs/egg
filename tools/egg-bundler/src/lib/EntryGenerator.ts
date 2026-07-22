@@ -5,6 +5,7 @@ import { pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
 import type { StartupManifest } from '@eggjs/core';
+import type { TeggManifest } from '@eggjs/tegg-types';
 
 import { assertFrameworkPackageSpecifier } from './frameworkSpecifier.ts';
 import type { ManifestLoader } from './ManifestLoader.ts';
@@ -33,15 +34,6 @@ interface BundleEntry {
   external?: boolean;
   /** bare package specifier with subpath for runtime require(), e.g. "@eggjs/onerror/config/config.default" */
   bareSpecifier?: string;
-}
-
-interface TeggModuleDescriptor {
-  unitPath: string;
-  decoratedFiles?: string[];
-}
-
-interface TeggManifestExtension {
-  moduleDescriptors?: TeggModuleDescriptor[];
 }
 
 export class EntryGenerator {
@@ -93,7 +85,7 @@ export class EntryGenerator {
     }
 
     // 3. Tegg decorated files (unitPath is either absolute or node_modules-normalized)
-    const tegg = manifest.extensions?.tegg as TeggManifestExtension | undefined;
+    const tegg = manifest.extensions?.tegg as Partial<TeggManifest> | undefined;
     if (tegg?.moduleDescriptors) {
       for (const desc of tegg.moduleDescriptors) {
         for (const rel of desc.decoratedFiles ?? []) {
@@ -184,7 +176,7 @@ export class EntryGenerator {
    * path is unreliable in a bundle — see the worker entry comment).
    */
   #collectDecoratedFileKeys(manifest: StartupManifest): string[] {
-    const tegg = manifest.extensions?.tegg as TeggManifestExtension | undefined;
+    const tegg = manifest.extensions?.tegg as Partial<TeggManifest> | undefined;
     const keys: string[] = [];
     const seen = new Set<string>();
     for (const desc of tegg?.moduleDescriptors ?? []) {
@@ -382,8 +374,8 @@ const __DECORATED_FILE_KEYS: string[] = ${decoratedFileKeys};
 
 // Tegg module reference / descriptor paths are stored relative to baseDir in the
 // manifest. Resolve them to absolute paths under the runtime output dir so every
-// tegg loader consumer (ModuleConfigUtil, EggAppLoader, LoaderFactory.loadApp
-// matching) sees the same absolute-path contract as a non-bundle run. The bundler
+// tegg loader consumer (ModuleConfigUtil, EggAppLoader, and the manifest LoaderFS
+// adapter) sees the same absolute-path contract as a non-bundle run. The bundler
 // copies each module's package.json under __outputDir, so these resolve correctly.
 const __teggExt: any = (MANIFEST_DATA as any).extensions?.tegg;
 if (__teggExt) {

@@ -1,7 +1,6 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
+import { IS_ADVICE } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, IAdvice } from '@eggjs/tegg-types';
-
-export const IS_ADVICE: symbol = Symbol.for('EggPrototype#isAdvice');
 
 export class AdviceInfoUtil {
   static setIsAdvice(isAdvice: boolean, clazz: EggProtoImplClass<IAdvice>): void {

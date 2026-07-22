@@ -1,3 +1,6 @@
+/** Shared metadata marker written by @Advice. */
+export const IS_ADVICE: symbol = Symbol.for('EggPrototype#isAdvice');
+
 export interface AdviceContext<T = object, K = any> {
   that: T;
   method: PropertyKey;

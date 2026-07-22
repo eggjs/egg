@@ -3,6 +3,12 @@ import type { BundleModuleLoader, ModuleImporter } from './index.ts';
 declare global {
   // eslint-disable-next-line no-var
   var __EGG_BUNDLE_MODULE_LOADER__: BundleModuleLoader | undefined;
+  /**
+   * Tegg manifest inlined into a standalone worker bundle. Kept as `unknown`
+   * to avoid coupling typings to the tegg loader package.
+   */
+  // eslint-disable-next-line no-var
+  var __EGG_BUNDLE_MANIFEST__: unknown;
   // eslint-disable-next-line no-var
   var __EGG_MODULE_IMPORTER__: ModuleImporter | undefined;
   /**

@@ -168,6 +168,7 @@ exports[`should export stable 1`] = `
     "SINGLETON",
     "ALWAYS_NEW",
   ],
+  "IS_ADVICE": Symbol(EggPrototype#isAdvice),
   "IS_CROSSCUT_ADVICE": Symbol(EggPrototype#isCrosscutAdvice),
   "IS_MODEL": Symbol(EggPrototype#model#isModel),
   "IS_SCHEDULE": Symbol(EggPrototype#isSchedule),

@@ -29,6 +29,7 @@ function createHandler(): ModuleHandler {
       registerPrototypeCreator() {},
     },
     logger: console,
+    loggers: new Map(),
     moduleConfigs: {},
     name: 'test-app',
   } as any;

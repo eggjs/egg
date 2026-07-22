@@ -118,6 +118,7 @@
     "./metadata/model/Loader": "./src/metadata/model/Loader.ts",
     "./metadata/model/LoadUnit": "./src/metadata/model/LoadUnit.ts",
     "./metadata/model/ProtoDescriptor": "./src/metadata/model/ProtoDescriptor.ts",
+    "./metadata/model/TeggManifest": "./src/metadata/model/TeggManifest.ts",
     "./orm": "./src/orm.ts",
     "./runtime": "./src/runtime/index.ts",
     "./runtime/Factory": "./src/runtime/Factory.ts",
@@ -129,6 +130,7 @@
     "./schedule": "./src/schedule.ts",
     "./scope": "./src/scope/index.ts",
     "./scope/TeggScope": "./src/scope/TeggScope.ts",
+    "./standalone": "./src/standalone/index.ts",
     "./transaction": "./src/transaction.ts",
     "./package.json": "./package.json"
   },
@@ -226,6 +228,7 @@
       "./metadata/model/Loader": "./dist/metadata/model/Loader.js",
       "./metadata/model/LoadUnit": "./dist/metadata/model/LoadUnit.js",
       "./metadata/model/ProtoDescriptor": "./dist/metadata/model/ProtoDescriptor.js",
+      "./metadata/model/TeggManifest": "./dist/metadata/model/TeggManifest.js",
       "./orm": "./dist/orm.js",
       "./runtime": "./dist/runtime/index.js",
       "./runtime/Factory": "./dist/runtime/Factory.js",
@@ -237,6 +240,7 @@
       "./schedule": "./dist/schedule.js",
       "./scope": "./dist/scope/index.js",
       "./scope/TeggScope": "./dist/scope/TeggScope.js",
+      "./standalone": "./dist/standalone/index.js",
       "./transaction": "./dist/transaction.js",
       "./package.json": "./package.json"
     }

@@ -1,0 +1,5 @@
+{
+  "name": "standalone-bundle-ts",
+  "private": true,
+  "type": "module"
+}

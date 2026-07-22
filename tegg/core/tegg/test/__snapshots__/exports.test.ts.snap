@@ -3,6 +3,7 @@
 exports[`should export stable 1`] = `
 {
   "AGENT_CONTROLLER_PROTO_IMPL_TYPE": "AGENT_CONTROLLER_PROTO",
+  "AbstractControllerAdvice": [Function],
   "AccessLevel": {
     "PRIVATE": "PRIVATE",
     "PUBLIC": "PUBLIC",
@@ -46,6 +47,7 @@ exports[`should export stable 1`] = `
   "ConfigSourceQualifier": [Function],
   "ConfigSourceQualifierAttribute": Symbol(Qualifier.ConfigSource),
   "ContextProto": [Function],
+  "ControllerAdviceInfoUtil": [Function],
   "ControllerInfoUtil": [Function],
   "ControllerMetaBuilderFactory": [Function],
   "ControllerMetadataUtil": [Function],

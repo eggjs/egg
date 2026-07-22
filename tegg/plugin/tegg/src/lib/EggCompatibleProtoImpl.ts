@@ -34,12 +34,13 @@ export class EggCompatibleProtoImpl implements EggPrototype {
     initType: ObjectInitTypeLike,
     loadUnitId: Id,
     qualifiers: QualifierInfo[],
+    accessLevel: AccessLevel = AccessLevel.PUBLIC,
   ) {
     this.id = id;
     this.clazz = clazz;
     this.name = name;
     this.initType = initType;
-    this.accessLevel = AccessLevel.PUBLIC;
+    this.accessLevel = accessLevel;
     this.injectObjects = [];
     this.loadUnitId = loadUnitId;
     this.qualifiers = qualifiers;
@@ -82,6 +83,7 @@ export class EggCompatibleProtoImpl implements EggPrototype {
       ctx.prototypeInfo.initType,
       loadUnit.id,
       QualifierUtil.mergeQualifiers(QualifierUtil.getProtoQualifiers(clazz), ctx.prototypeInfo.qualifiers ?? []),
+      ctx.prototypeInfo.accessLevel,
     );
     return proto;
   }

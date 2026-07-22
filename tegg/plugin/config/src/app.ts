@@ -5,7 +5,7 @@ import { debuglog } from 'node:util';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
 import { TEGG_MANIFEST_KEY } from '@eggjs/tegg-loader';
-import type { TeggManifestExtension } from '@eggjs/tegg-loader';
+import type { TeggManifest } from '@eggjs/tegg-types';
 import { TeggScope, type TeggScopeBag } from '@eggjs/tegg-types';
 import type { Application, ILifecycleBoot } from 'egg';
 
@@ -81,7 +81,7 @@ export default class App implements ILifecycleBoot {
 
     // Try to use manifest for module references (skip expensive globby scan)
     const manifest = this.app.loader.manifest;
-    const manifestTegg = manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifestExtension | undefined;
+    const manifestTegg = manifest.getExtension(TEGG_MANIFEST_KEY) as TeggManifest | undefined;
 
     let moduleReferences: readonly ModuleReference[];
     if (manifestTegg?.moduleReferences?.length) {

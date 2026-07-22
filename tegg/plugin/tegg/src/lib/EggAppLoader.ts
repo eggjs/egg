@@ -108,7 +108,8 @@ export class EggAppLoader implements Loader {
     return loggerNames.filter((t) => !ctxClazzNames.includes(t) && !singletonClazzNames.includes(t));
   }
 
-  async load(): Promise<EggProtoImplClass[]> {
+  /** Build APP-scoped compatibility protos for app properties and loggers. */
+  buildAppSingletonCompatClazzList(): EggProtoImplClass[] {
     const app = this.app;
     const appProperties = ObjectUtils.getProperties(app);
     const contextProperties = ObjectUtils.getProperties((app as any).context);
@@ -120,15 +121,23 @@ export class EggAppLoader implements Loader {
     CONTEXT_CLAZZ_BLACK_LIST.forEach((t) => allContextClazzNamesSet.delete(t));
     const allContextClazzNames = Array.from(allContextClazzNamesSet);
     const loggerNames = this.getLoggerNames(allContextClazzNames, allSingletonClazzNames);
-    const allSingletonClazzs = allSingletonClazzNames.map((name) => this.buildClazz(name, EggType.APP));
+    return [
+      ...allSingletonClazzNames.map((name) => this.buildClazz(name, EggType.APP)),
+      ...loggerNames.map((name) => this.buildAppLoggerClazz(name)),
+    ];
+  }
+
+  async load(): Promise<EggProtoImplClass[]> {
+    const app = this.app;
+    const contextProperties = ObjectUtils.getProperties((app as any).context);
+    const allContextClazzNamesSet = new Set([...contextProperties, ...DEFAULT_CONTEXT_CLAZZ]);
+    CONTEXT_CLAZZ_BLACK_LIST.forEach((t) => allContextClazzNamesSet.delete(t));
+    const allContextClazzNames = Array.from(allContextClazzNamesSet);
     const allContextClazzs = allContextClazzNames.map((name) => this.buildClazz(name, EggType.CONTEXT));
-    const appLoggerClazzs = loggerNames.map((name) => this.buildAppLoggerClazz(name));
     const moduleConfigList = this.moduleConfigLoader.loadModuleConfigList();
 
     return [
-      ...allSingletonClazzs,
       ...allContextClazzs,
-      ...appLoggerClazzs,
       ...moduleConfigList,
 
       // inner helper class list

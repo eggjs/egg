@@ -1,6 +1,12 @@
 import assert from 'node:assert';
 
-import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/controller-decorator';
+import { ControllerMetaBuilderFactory } from '@eggjs/controller-decorator';
+import {
+  CONTROLLER_LOAD_UNIT,
+  ControllerLoadUnit,
+  ControllerMetadataManager,
+  RootProtoManager,
+} from '@eggjs/controller-runtime';
 import type { LoadUnitLifecycleContext } from '@eggjs/metadata';
 import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
 import { AGENT_CONTROLLER_PROTO_IMPL_TYPE, TeggScope } from '@eggjs/tegg-types';
@@ -8,38 +14,17 @@ import type { Application, ILifecycleBoot } from 'egg';
 
 import { AgentControllerObject } from './lib/AgentControllerObject.ts';
 import { AgentControllerProto } from './lib/AgentControllerProto.ts';
-import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook.ts';
-import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.ts';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.ts';
-import { ControllerMetadataManager } from './lib/ControllerMetadataManager.ts';
-import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';
 import { EggControllerLoader } from './lib/EggControllerLoader.ts';
-import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook.ts';
-import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.ts';
-import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister.ts';
-import { middlewareGraphHook } from './lib/MiddlewareGraphHook.ts';
-import { RootProtoManager } from './lib/RootProtoManager.ts';
-
-// Load Controller process
-// 1. await add load unit is ready, controller may depend other load unit
-// 2. load ${app_base_dir}app/controller file
-// 3. ControllerRegister register controller implement
+import { EggMcpRouter } from './lib/impl/mcp/EggMcpRouter.ts';
 
 export default class ControllerAppBootHook implements ILifecycleBoot {
   private readonly app: Application;
-  private readonly loadUnitHook: AppLoadUnitControllerHook;
-  private readonly controllerRegisterFactory: ControllerRegisterFactory;
   private controllerLoadUnitHandler: ControllerLoadUnitHandler;
-  private readonly controllerPrototypeHook: EggControllerPrototypeHook;
 
   constructor(app: Application) {
     this.app = app;
-    this.controllerRegisterFactory = new ControllerRegisterFactory(this.app);
-    this.app.rootProtoManager = new RootProtoManager();
-    this.app.controllerRegisterFactory = this.controllerRegisterFactory;
     this.app.controllerMetaBuilderFactory = ControllerMetaBuilderFactory;
-    this.loadUnitHook = new AppLoadUnitControllerHook(this.controllerRegisterFactory, this.app.rootProtoManager);
-    this.controllerPrototypeHook = new EggControllerPrototypeHook();
     this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
       AGENT_CONTROLLER_PROTO_IMPL_TYPE,
       AgentControllerProto.createProto,
@@ -48,21 +33,17 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   configWillLoad(): void {
-    // Controller boot registers lifecycle hooks and a per-app-capturing load-unit
-    // creator, all of which must land in this app's TeggScope.
+    // Keep all registered factories and hooks in this application's scope.
     TeggScope.run(this.app._teggScopeBag, () => {
       this.doConfigWillLoad();
     });
   }
 
   private doConfigWillLoad(): void {
-    this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitHook);
-    this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.controllerPrototypeHook);
     this.app.eggObjectFactory.registerEggObjectCreateMethod(AgentControllerProto, AgentControllerObject.createObject);
     this.app.loaderFactory.registerLoader(CONTROLLER_LOAD_UNIT, (unitPath) => {
       return new EggControllerLoader(unitPath);
     });
-    this.controllerRegisterFactory.registerControllerRegister(ControllerType.HTTP, HTTPControllerRegister.create);
     this.app.loadUnitFactory.registerLoadUnitCreator(
       CONTROLLER_LOAD_UNIT,
       (ctx: LoadUnitLifecycleContext): ControllerLoadUnit => {
@@ -98,7 +79,6 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
     if (this.mcpEnable()) {
-      this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, MCPControllerRegister.create);
       // Don't let the mcp's body be consumed
       this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
 
@@ -145,33 +125,20 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   async didLoad(): Promise<void> {
+    // Publish host objects before the inner-object graph creates app compat protos.
+    this.app.rootProtoManager = new RootProtoManager();
+    if (this.mcpEnable()) {
+      this.app.mcpRouter = new EggMcpRouter(this.app);
+    }
     await this.app.moduleHandler.ready();
-    // ControllerLoadUnitHandler extends sdk-base (its ctor kicks off async _init
-    // that touches the per-app factories), and the HTTP/MCP registers below are
-    // per-app — run the whole flow inside this app's scope.
     await TeggScope.run(this.app._teggScopeBag, async () => {
       this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
       await this.controllerLoadUnitHandler.ready();
 
-      // The real register HTTP controller/method.
-      // HTTP method should sort by priority
-      // The HTTPControllerRegister will collect all the methods
-      // and register methods after collect is done.
-      HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
-
-      this.app.config.mcp.hooks = MCPControllerRegister.hooks;
+      if (this.mcpEnable()) {
+        this.app.config.mcp.hooks = this.app.mcpRouter!.hooks;
+      }
     });
-  }
-
-  configDidLoad(): void {
-    // The per-app GlobalGraph does not exist yet (it is created inside
-    // moduleHandler.init() during didLoad), so registering on the graph here
-    // would be a silent no-op and cross-module controller middleware inject
-    // edges would never be woven. Buffer the hook on moduleHandler instead —
-    // it is flushed onto the graph right after creation, before build() runs.
-    // moduleHandler is created in the tegg plugin's configDidLoad, which runs
-    // before ours (teggController declares a dependency on tegg).
-    this.app.moduleHandler.registerGlobalGraphBuildHook(middlewareGraphHook);
   }
 
   mcpEnable(): boolean {
@@ -183,11 +150,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
       if (this.controllerLoadUnitHandler) {
         await this.controllerLoadUnitHandler.destroy();
       }
-      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitHook);
-      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
       ControllerMetadataManager.instance.clear();
-      HTTPControllerRegister.clean();
-      MCPControllerRegister.clean();
     });
   }
 }

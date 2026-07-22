@@ -7,6 +7,7 @@ import type { Application } from 'egg';
 import { Base } from 'sdk-base';
 
 import { CompatibleUtil } from './CompatibleUtil.ts';
+import { EggAppLoader } from './EggAppLoader.ts';
 import { COMPATIBLE_PROTO_IMPLE_TYPE, EggCompatibleProtoImpl } from './EggCompatibleProtoImpl.ts';
 import { EggModuleLoader } from './EggModuleLoader.ts';
 
@@ -54,28 +55,15 @@ export class ModuleHandler extends Base {
         path: moduleDescriptor.unitPath,
       });
     }
+    // Add app compatibility protos after inner objects so inner objects win collisions.
+    builder.addCompatibleClazzList(new EggAppLoader(this.app).buildAppSingletonCompatClazzList(), {
+      name: 'app',
+      path: this.app.baseDir,
+    });
+    // moduleConfigs needs its wrapper rather than the raw app property.
     const innerObjectLoadUnit = await builder.createLoadUnit({
-      // Base host objects for framework hooks — the SAME instances mounted on
-      // `app`, fed through the host-agnostic provided-objects contract. They
-      // cannot resolve via the egg compatible mechanism (EggAppLoader's
-      // COMPATIBLE protos): that load unit is only created in load(), AFTER
-      // this unit — which must instantiate first so its lifecycle hooks see
-      // every later load unit, egg-app included. PRIVATE: the egg host has
-      // its own resolution surface for these names (egg compatible objects),
-      // the provided protos must stay visible to inner objects only.
       innerObjects: {
-        logger: [{ obj: this.app.logger, accessLevel: AccessLevel.PRIVATE }],
         moduleConfigs: [{ obj: new ModuleConfigs(this.app.moduleConfigs), accessLevel: AccessLevel.PRIVATE }],
-        runtimeConfig: [
-          {
-            obj: {
-              baseDir: this.app.baseDir,
-              env: this.app.config.env,
-              name: this.app.name,
-            },
-            accessLevel: AccessLevel.PRIVATE,
-          },
-        ],
       },
     });
     this.#innerObjectLoadUnit = innerObjectLoadUnit;

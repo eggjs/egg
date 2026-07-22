@@ -29,7 +29,8 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
         await this.doPreDestroy();
       },
     });
-    if (this.config.backgroundTask?.timeout) {
+    // Zero disables the timeout, so only an absent value uses the default.
+    if (this.config.backgroundTask?.timeout !== undefined) {
       this.timeout = this.config.backgroundTask.timeout;
     }
   }

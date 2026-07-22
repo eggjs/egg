@@ -156,6 +156,7 @@ exports[`should helper exports stable 1`] = `
   "TeggError": [Function],
   "TimerUtil": [Function],
   "buildTeggManifestData": [Function],
+  "createTeggManifestLoaderFS": [Function],
   "eggContextLifecycleUtilFromBag": [Function],
   "eggObjectLifecycleUtilFromBag": [Function],
   "eggPrototypeLifecycleUtilFromBag": [Function],

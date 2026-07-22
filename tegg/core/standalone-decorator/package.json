@@ -41,7 +41,11 @@
   "scripts": {
     "typecheck": "tsgo --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/dynamic-inject": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "catalog:",
     "typescript": "catalog:"

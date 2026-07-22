@@ -19,6 +19,9 @@ source_files:
   - tegg/plugin/tegg/src/lib/ModuleHandler.ts
   - tegg/plugin/tegg/src/lib/AppLoadUnitInstance.ts
   - tegg/plugin/tegg/src/lib/EggModuleLoader.ts
+  - tegg/plugin/tegg/src/lib/EggAppLoader.ts
+  - tegg/plugin/tegg/src/lib/EggCompatibleProtoImpl.ts
+  - tegg/plugin/tegg/src/lib/EggQualifierProtoHook.ts
   - tegg/plugin/aop/src/app.ts
   - tegg/plugin/aop/src/lib/AopContextHook.ts
   - tegg/core/aop-runtime/src/AopContextAdviceRegistry.ts
@@ -26,7 +29,12 @@ source_files:
   - tegg/plugin/config/src/app.ts
   - tegg/plugin/dal/src/index.ts
   - tegg/plugin/dal/src/lib/DalModuleLoadUnitHook.ts
-updated_at: 2026-07-13
+  - tegg/plugin/controller/src/lib/impl/http/EggHTTPControllerRegistrar.ts
+  - tegg/plugin/controller/src/lib/impl/mcp/EggMCPRegisterProvider.ts
+  - tegg/core/controller-runtime/src/lib/MiddlewareGraphHook.ts
+  - tegg/plugin/mcp-proxy/src/index.ts
+  - tegg/standalone/service-worker-controller/src/http/FetchEventHandler.ts
+updated_at: 2026-07-21
 status: active
 ---
 
@@ -55,13 +63,74 @@ its state is `created`; registration after `build()` starts and repeated
 2. create AND instantiate the `InnerObjectLoadUnit` (own topologically
    sorted proto graph; cycle detection; hard error on missing non-optional
    deps unless host-provided) — hooks register here, including graph build
-   hooks from `@LifecyclePostInject` (see `AopGraphHookRegistrar`)
+   hooks from `@LifecyclePostInject` (see `AopGraphHookRegistrar` and
+   `ControllerGraphHookRegistrar`)
 3. `build()` / `sort()` → business load units (EggPrototype/LoadUnit hooks
    observe them) → business instances
 4. destroy in reverse creation order (inner unit last)
 
 Hosts: `StandaloneApp.init()` (standalone) and `ModuleHandler.init()` via
 `EggModuleLoader.initGraph()`/`load()` split (egg).
+
+## Instantiation is complete, not reachability-gated
+
+`InnerObjectLoadUnitBuilder#buildProtoGraph` topologically sorts and returns
+**every** scanned inner-object proto; the graph is used only for ordering, cycle
+detection, and missing-non-optional-dep errors — there is NO reachability
+pruning. `ModuleLoadUnitInstance.init` then eagerly `getOrCreateEggObject`s all
+of them, so every scanned `@InnerObjectProto` / lifecycle proto is instantiated
+regardless of whether anything injects it. Corollary when debugging: "a scanned
+inner object was not instantiated" is a **scan-input** problem (e.g. a stale
+fixture `.egg` manifest — see `workflows/local-ci.md`), not graph gating.
+
+## `@LoadUnitInstanceLifecycleProto` as an eager-registration trigger
+
+Because inner objects are instantiated eagerly, a lifecycle proto's `postCreate`
+is a reliable "run after this load-unit instance is created" signal. The Egg
+controller plugin uses the same pattern for both protocols:
+`EggHTTPControllerRegistrar` and `EggMCPRegisterProvider` register their
+collectors in `@LifecyclePostInject`, then, as
+`@LoadUnitInstanceLifecycleProto` objects, call the corresponding `doRegister()`
+from `postCreate` when the `CONTROLLER_LOAD_UNIT` (`app/controller`, Egg's last
+controller-bearing load unit) instance is created. `postCreate` fires for every
+load-unit instance, so both providers filter on `instance.loadUnit.type`.
+
+The standalone/service-worker host has no `CONTROLLER_LOAD_UNIT`; its HTTP and
+MCP providers collect during startup and `FetchEventHandler.doInitRoutes()`
+finalizes both once on the first fetch, before taking the router middleware
+snapshot.
+
+Graph hooks use the same declarative ownership at a different lifecycle point.
+`ControllerGraphHookRegistrar` is an `@InnerObjectProto` whose
+`@LifecyclePostInject` method attaches `middlewareGraphHook` to the current
+`GlobalGraph`. Both controller hosts re-export that registrar from their scanned
+`runtimeProtos.ts`, so middleware inject edges are installed after graph creation
+and before `build()` without a host boot-hook call.
+
+## Host-split wiring: a runtime class, two host treatments (`RootProtoManager`)
+
+`RootProtoManager` (controller-runtime) is host-agnostic **pure logic and carries
+NO proto decorator**. Each host wires it differently, which is why the decorator
+does not live on the shared class:
+
+- **Fetch host** uses it as a DI inner object: `service-worker-controller`'s
+  `runtimeProtos` barrel applies `InnerObjectProto({accessLevel: PUBLIC})(RootProtoManager)`
+  imperatively before re-exporting it (PUBLIC because `FetchEventHandler`, a
+  business proto, injects it). Applying the decorator in the barrel — rather than
+  a subclass — keeps a single class so the `RootProtoManager` type annotations at
+  the inject sites match the decorated proto; tegg resolves the inject by the
+  field name `rootProtoManager`.
+- **Egg host** does NOT scan it (dropped from `controller-plugin`'s `runtimeProtos`).
+  The boot hook mounts `new RootProtoManager()` on `app.rootProtoManager` BEFORE
+  `moduleHandler.ready()`, so — exactly like `app.mcpRouter` — it becomes a
+  `() => app.rootProtoManager` APP compat proto that inner objects inject via
+  `@EggQualifier(EggType.APP)` (see `EggHTTPControllerRegistrar`), and it also
+  backs the plain `teggRootProto` middleware (which cannot inject).
+
+The former host-agnostic `ControllerLoadUnitHook` injection of `rootProtoManager`
+was vestigial (`ControllerRegister.register()` ignored it — HTTP's is a no-op,
+MCP mounts via its router) and was removed along with the param, so the shared
+hook no longer depends on `rootProtoManager` being an inner object in every host.
 
 ## Feeding rules
 
@@ -85,6 +154,52 @@ Hosts: `StandaloneApp.init()` (standalone) and `ModuleHandler.init()` via
   keeps provided objects PUBLIC (business modules may inject `logger`,
   `moduleConfigs`, etc.); the egg host passes PRIVATE for its base objects so
   they never pollute cross-unit resolution.
+- Egg feeds app properties to inner objects through the egg **compat**
+  mechanism, not a hand-provided list: `ModuleHandler` calls
+  `builder.addCompatibleClazzList(EggAppLoader.buildAppSingletonCompatClazzList())`,
+  so inner objects inject `router` / `logger` / `runtimeConfig` / ... via
+  `() => app[name]` protos. (Standalone has no egg compat surface, so it provides
+  its own `logger` / `moduleConfigs` through innerObjects; only the egg host uses
+  compat for these.) Key points:
+  - **This is the single copy, PUBLIC.** Business modules resolve app properties
+    from this inner-object-load-unit copy too, so the APP load unit does NOT
+    duplicate them — `EggAppLoader.load()` provides only the CONTEXT-scoped compat
+    protos + `moduleConfigs`. (There used to be a second PRIVATE copy here plus a
+    PUBLIC copy in the APP load unit; that duplication was removed.) The compat
+    protos are inert `() => app[name]` data providers with no lifecycle, so
+    feeding them into the inner unit (created first) doesn't break the "inner
+    unit first / destroyed last" invariant.
+  - **APP-scoped only** (`buildAppSingletonCompatClazzList` excludes
+    CONTEXT-scoped compat protos): inner objects are singletons and cannot
+    inject request-scoped objects.
+  - **Fed AFTER scanned inner objects**, with `addCompatibleClazzList`
+    skipping (not erroring on) a name a scanned inner object already claims —
+    the inner object wins.
+  - `moduleConfigs` is the ONE base object that stays an explicit provided
+    instance: it is blacklisted in `EggAppLoader` (`APP_CLAZZ_BLACK_LIST`) and
+    consumers want a `ModuleConfigs` wrapper, not the raw `app.moduleConfigs`
+    map. `logger`/`router`/`runtimeConfig` now arrive via the compat protos.
+- Injecting an app property whose name is ALSO a ctx property (e.g. `router`)
+  needs `@EggQualifier(EggType.APP)`: `EggQualifierProtoHook` stamps an
+  otherwise-plain inject with `EggType.CONTEXT` first (ctx wins), which a
+  singleton inner object cannot inject. App-only names (`runtimeConfig`,
+  `logger` — the latter is CONTEXT-blacklisted) are stamped APP automatically.
+- Mount-then-compat is the idiom for making an imperatively-built host object
+  injectable to inner objects: an object that genuinely needs the live `app`
+  to construct (e.g. the controller plugin's `EggMcpRouter`, built in the boot
+  hook) is assigned to an `app.<name>` property BEFORE the inner-object graph
+  builds; it then becomes an app property with a compat proto, and an inner
+  object injects it with `@EggQualifier(EggType.APP)` (optional when the mount
+  is conditional). This is how the egg MCP register became a container citizen
+  without threading the whole `app` into the DI graph — see the controller
+  plugin's `EggMCPRegisterProvider`.
+- A module plugin can extend such a host object declaratively too. The MCP proxy
+  module's `MCPProxyHookRegistrar` is an `@InnerObjectProto`; it injects the Egg
+  host's `mcpRouter` compat proto and adds `MCPProxyHook` in
+  `@LifecyclePostInject`. Consequently the router's hook list is ordinary
+  per-app instance state rather than a static scope-backed registry. The plugin
+  must be discovered as an eggModule (normal `package` plugin configuration),
+  so its decorated registrar is present in the module descriptor/manifest.
 
 ## Access and qualifier boundary
 

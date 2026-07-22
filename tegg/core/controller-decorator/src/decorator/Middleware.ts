@@ -1,10 +1,9 @@
 import assert from 'node:assert';
 
-import { AdviceInfoUtil } from '@eggjs/aop-decorator';
-import type { IAdvice, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, IAdvice, MiddlewareFunc } from '@eggjs/tegg-types';
 import { isClass } from 'is-type-of';
 
-import { ControllerInfoUtil, MethodInfoUtil } from '../util/index.ts';
+import { ControllerAdviceInfoUtil, ControllerInfoUtil, MethodInfoUtil } from '../util/index.ts';
 
 const MiddlewareType = {
   AOP: 'AOP',
@@ -13,7 +12,7 @@ const MiddlewareType = {
 type MiddlewareType = (typeof MiddlewareType)[keyof typeof MiddlewareType];
 
 function isAop(mw: MiddlewareFunc | EggProtoImplClass<IAdvice>) {
-  return isClass(mw) && AdviceInfoUtil.isAdvice(mw as EggProtoImplClass<IAdvice>);
+  return isClass(mw) && ControllerAdviceInfoUtil.isAdvice(mw as EggProtoImplClass<IAdvice>);
 }
 
 function isAopTypeOrMiddlewareType(

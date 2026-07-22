@@ -2,6 +2,10 @@
 
 exports[`should export stable 1`] = `
 {
+  "AbstractEventHandler": [Function],
+  "EVENT_HANDLER_ATTRIBUTE": Symbol(EggPrototype#eventHandler),
+  "EventHandler": [Function],
+  "EventHandlerProto": [Function],
   "Runner": [Function],
   "StandaloneUtil": [Function],
 }

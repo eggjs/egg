@@ -27,6 +27,10 @@ import { TransactionalAOP } from './TransactionalAOP.ts';
   async getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
     const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath) as any | undefined;
     const dataSources = Object.keys(config?.dataSource || {});
+    // Modules without dataSource configuration contribute no instances.
+    if (dataSources.length === 0) {
+      return [];
+    }
     const result: ObjectInfo[] = [];
     const loader = LoaderFactory.createLoader(ctx.unitPath, EggLoadUnitType.MODULE);
     const clazzList = await loader.load();

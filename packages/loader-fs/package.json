@@ -43,6 +43,7 @@
   "dependencies": {
     "@eggjs/utils": "workspace:*",
     "globby": "catalog:",
+    "multimatch": "catalog:",
     "utility": "catalog:"
   },
   "devDependencies": {

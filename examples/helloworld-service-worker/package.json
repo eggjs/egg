@@ -1,0 +1,29 @@
+{
+  "name": "helloworld-service-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hello World example using the standalone service worker",
+  "type": "module",
+  "scripts": {
+    "start": "node --import=@oxc-node/core/register main.ts",
+    "bundle:cf": "egg-bin bundle --framework @eggjs/service-worker --entry worker.ts -o .worker-cf --root ../..",
+    "test": "vitest run",
+    "typecheck": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@eggjs/service-worker": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@oxc-node/core": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

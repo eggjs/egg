@@ -2,8 +2,15 @@ export type { IncomingHttpHeaders } from 'node:http';
 
 import type { Context, Next, MiddlewareFunc } from 'egg';
 
+import type { AdviceContext } from '../../aop/Advice.ts';
+
 export type EggContext = Context;
 export type { Next, MiddlewareFunc };
+
+/** Advice context supplied when an Advice is executed through @Middleware. */
+export interface ControllerAdviceContext<TContext = unknown> extends AdviceContext {
+  readonly controllerContext: TContext;
+}
 
 export const ControllerType = {
   HTTP: 'HTTP',
