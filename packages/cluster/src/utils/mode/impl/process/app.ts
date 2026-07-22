@@ -5,6 +5,7 @@ import { cfork } from 'cfork';
 import { graceful as gracefulExit, type Options as gracefulExitOptions } from 'graceful-process';
 import { sendmessage } from 'sendmessage';
 
+import { ipcLogger, formatIpcMessage, internalIpcLogEnabled } from '../../../ipc_logger.ts';
 import type { MessageBody } from '../../../messenger.ts';
 import { terminate } from '../../../terminate.ts';
 import { BaseAppWorker, BaseAppUtils } from '../../base/app.ts';
@@ -29,6 +30,7 @@ export class AppProcessWorker extends BaseAppWorker<ClusterProcessWorker> {
   }
 
   send(message: MessageBody): void {
+    ipcLogger.info(formatIpcMessage(`master->app#${this.workerId}`, message));
     sendmessage(this.instance, message);
   }
 
@@ -48,6 +50,7 @@ export class AppProcessWorker extends BaseAppWorker<ClusterProcessWorker> {
 
   static send(message: MessageBody): void {
     message.senderWorkerId = String(process.pid);
+    ipcLogger.info(formatIpcMessage(`app#${process.pid}->master`, message));
     // cluster won't get `listening` event when reusePort is true,
     // use cluster `message` event instead
     if (message.action === 'app-start' && message.reusePort) {
@@ -90,7 +93,10 @@ export class AppProcessUtils extends BaseAppUtils {
       const appWorker = new AppProcessWorker(worker);
       this.emit('worker_forked', appWorker);
       appWorker.disableRefork = true;
-      worker.on('message', (msg) => {
+      // B. master <- app (recv). Handle is present when master receives a net.Socket
+      // (e.g. forwarded sticky-session connection).
+      // Log AFTER forwarding to avoid adding log-serialization latency to the forward path.
+      worker.on('message', (msg, handle) => {
         if (typeof msg === 'string') {
           msg = {
             action: msg,
@@ -99,7 +105,21 @@ export class AppProcessUtils extends BaseAppUtils {
         }
         msg.from = 'app';
         this.messenger.send(msg);
+        ipcLogger.info(formatIpcMessage(`master<-app#${worker.process.pid}`, msg, handle));
       });
+
+      // E. cluster internal NODE_CLUSTER messages from worker to master:
+      // listening / online / queryServer / accepted (fd ack) / close / ...
+      // Must hook on `worker.process` (ChildProcess) — `cluster.Worker` doesn't forward `internalMessage`.
+      // `internalMessage` is undocumented but stable across Node.js versions.
+      // Opt-in via EGG_CLUSTER_IPC_LOG because this is verbose under load.
+      if (internalIpcLogEnabled) {
+        worker.process.on('internalMessage', (msg: { cmd?: string; act?: string; ack?: number }, handle: unknown) => {
+          if (!msg || msg.cmd !== 'NODE_CLUSTER') return;
+          const label = msg.act ? `cluster:${msg.act}` : `cluster:ack#${msg.ack ?? '?'}`;
+          ipcLogger.info(formatIpcMessage(`master<-app#${worker.process.pid}`, { action: label, data: msg }, handle));
+        });
+      }
       this.log(
         '[master] app_worker#%s:%s start, state: %s, current workers: %j',
         appWorker.id,
