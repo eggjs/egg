@@ -27,7 +27,7 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
   static override examples = [
     '<%= config.bin %> <%= command.id %> build',
     '<%= config.bin %> <%= command.id %> build --output ./dist-bundle --blob ./dist-bundle/snapshot.blob',
-    '<%= config.bin %> <%= command.id %> build --cluster --app-blob ./dist-bundle/app.snapshot.blob --agent-blob ./dist-bundle/agent.snapshot.blob',
+    '<%= config.bin %> <%= command.id %> build --cluster --app-snapshot-blob ./dist-bundle/app.snapshot.blob --agent-snapshot-blob ./dist-bundle/agent.snapshot.blob',
     '<%= config.bin %> <%= command.id %> build --skip-bundle',
   ];
 
@@ -49,11 +49,11 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
       description: 'single-process snapshot blob path (defaults to <output>/snapshot.blob)',
       exclusive: ['cluster'],
     }),
-    'app-blob': Flags.string({
+    'app-snapshot-blob': Flags.string({
       description: 'app worker snapshot blob path in cluster mode (defaults to <output>/app.snapshot.blob)',
       dependsOn: ['cluster'],
     }),
-    'agent-blob': Flags.string({
+    'agent-snapshot-blob': Flags.string({
       description: 'agent worker snapshot blob path in cluster mode (defaults to <output>/agent.snapshot.blob)',
       dependsOn: ['cluster'],
     }),
@@ -113,15 +113,15 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
   }
 
   #resolveClusterBlobPath(role: 'app' | 'agent', outputDir: string): string {
-    const value = this.flags[`${role}-blob`];
+    const value = this.flags[`${role}-snapshot-blob`];
     if (!value) return path.join(outputDir, `${role}.snapshot.blob`);
     return path.isAbsolute(value) ? value : path.join(this.flags.base, value);
   }
 
   private async runBuild(): Promise<void> {
     const { flags } = this;
-    if (!flags.cluster && (flags['app-blob'] || flags['agent-blob'])) {
-      throw new Error('--app-blob and --agent-blob require --cluster');
+    if (!flags.cluster && (flags['app-snapshot-blob'] || flags['agent-snapshot-blob'])) {
+      throw new Error('--app-snapshot-blob and --agent-snapshot-blob require --cluster');
     }
     const outputDir = this.#resolveOutputDir();
     const snapshotEntries = flags.cluster

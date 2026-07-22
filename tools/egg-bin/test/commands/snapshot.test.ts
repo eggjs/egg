@@ -136,16 +136,16 @@ describe('test/commands/snapshot.test.ts', () => {
     expect(spawnArgs(1).args).toContain(path.join(baseDir, 'dist-bundle', 'agent_worker.js'));
   });
 
-  it('build --cluster honours independent --app-blob and --agent-blob paths', async () => {
+  it('build --cluster honours independent app and agent snapshot blob paths', async () => {
     await Snapshot.run([
       'build',
       '--base',
       baseDir,
       '--skip-bundle',
       '--cluster',
-      '--app-blob',
+      '--app-snapshot-blob',
       'out/custom-app.blob',
-      '--agent-blob',
+      '--agent-snapshot-blob',
       'out/custom-agent.blob',
     ]);
 
@@ -168,8 +168,8 @@ describe('test/commands/snapshot.test.ts', () => {
 
   it('rejects cluster blob flags without --cluster', async () => {
     await expect(
-      Snapshot.run(['build', '--base', baseDir, '--skip-bundle', '--app-blob', 'out/app.blob']),
-    ).rejects.toThrow('--app-blob and --agent-blob require --cluster');
+      Snapshot.run(['build', '--base', baseDir, '--skip-bundle', '--app-snapshot-blob', 'out/app.blob']),
+    ).rejects.toThrow(/--cluster/);
   });
 
   it('build --dry-run neither bundles-spawn nor spawns node', async () => {

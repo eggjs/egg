@@ -15,6 +15,8 @@ source_files:
   - tools/egg-bundler/src/lib/StandaloneWorkerBundler.ts
   - tools/egg-bundler/src/lib/importMetaPatch.ts
   - tools/egg-bin/src/commands/bundle.ts
+  - tools/egg-bin/src/commands/snapshot.ts
+  - tools/scripts/src/commands/start.ts
   - packages/loader-fs/src/manifest_loader_fs.ts
   - tegg/core/types/src/metadata/model/TeggManifest.ts
   - tegg/core/loader/src/LoaderFactory.ts
@@ -87,9 +89,19 @@ constraint is why worker output always needs a thin ESM wrapper.
 - `egg-bin snapshot build --cluster` selects that target and runs two independent
   V8 snapshot builds: `app_worker.js` produces `app.snapshot.blob`, while
   `agent_worker.js` produces `agent.snapshot.blob`. Their paths can be set
-  independently with `--app-blob` and `--agent-blob`; the existing `--blob` flag
-  remains exclusive to single-process builds. The role comes from the entry
-  filename/code, so snapshot construction does not use `EGG_SNAPSHOT_ROLE`.
+  independently with `--app-snapshot-blob` and `--agent-snapshot-blob`; the
+  existing `--blob` flag remains exclusive to single-process builds. The role
+  comes from the entry filename/code, so snapshot construction does not use
+  `EGG_SNAPSHOT_ROLE`.
+- `egg-scripts start --bundle` explicitly selects bundled cluster workers.
+  `--bundle-dir` defaults to `./dist-bundle`, and supplies the fixed defaults
+  `<bundle-dir>/app_worker.js` and `<bundle-dir>/agent_worker.js`; either worker
+  path can be overridden explicitly. Snapshot restore is enabled per role only
+  when `--app-snapshot-blob` or `--agent-snapshot-blob` is provided. Blob
+  locations never determine worker paths, and one role's arguments never
+  determine the other's. Bundle path and role options are ignored unless
+  `--bundle` is present. The existing `--snapshot-blob` remains the single-process
+  launcher and takes precedence when it is supplied together with `--bundle`.
 - Explicit `externals.force` entries are external, and `ExternalsResolver`
   auto-detects root `peerDependencies`, root `optionalDependencies`, root
   dependency packages with native addons, root dependency packages whose optional
