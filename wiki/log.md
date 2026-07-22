@@ -8,6 +8,12 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
 - note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
 
+## [2026-07-22] feature | build separate app and agent snapshot blobs
+
+- sources touched: `tools/egg-bin/src/commands/snapshot.ts`, `tools/egg-bin/test/commands/snapshot.test.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added `egg-bin snapshot build --cluster`, which selects the bundler's explicit cluster target and builds independently configurable `app.snapshot.blob` from `app_worker.js` plus `agent.snapshot.blob` from `agent_worker.js`. `--app-blob` and `--agent-blob` configure cluster outputs; the existing `--blob` remains single-process-only. Each entry owns its role, so the build no longer uses an environment variable to switch one bundle between app and agent.
+
 ## [2026-07-21] architecture | generate explicit app and agent bundle entries
 
 - sources touched: `tools/egg-bundler/src/lib/EntryGenerator.ts`, `tools/egg-bundler/src/lib/Bundler.ts`, `tools/egg-bundler/src/index.ts`

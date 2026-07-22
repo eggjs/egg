@@ -25,7 +25,7 @@ source_files:
   - tegg/standalone/standalone/src/EggModuleLoader.ts
   - tools/egg-bundler/docs/output-structure.md
   - examples/helloworld-service-worker
-updated_at: 2026-07-21
+updated_at: 2026-07-22
 status: active
 ---
 
@@ -84,6 +84,12 @@ constraint is why worker output always needs a thin ESM wrapper.
   `@eggjs/cluster/worker_protocol` implementation and accept the master's normal
   JSON argv contract. Snapshot builds force each output to remain independently
   self-contained, so no common runtime chunk is emitted between the two files.
+- `egg-bin snapshot build --cluster` selects that target and runs two independent
+  V8 snapshot builds: `app_worker.js` produces `app.snapshot.blob`, while
+  `agent_worker.js` produces `agent.snapshot.blob`. Their paths can be set
+  independently with `--app-blob` and `--agent-blob`; the existing `--blob` flag
+  remains exclusive to single-process builds. The role comes from the entry
+  filename/code, so snapshot construction does not use `EGG_SNAPSHOT_ROLE`.
 - Explicit `externals.force` entries are external, and `ExternalsResolver`
   auto-detects root `peerDependencies`, root `optionalDependencies`, root
   dependency packages with native addons, root dependency packages whose optional
