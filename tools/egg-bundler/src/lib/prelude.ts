@@ -255,7 +255,21 @@ export function renderSnapshotPrelude(
         }
         return v;
       };
-      var protoProxy = new Proxy({}, { get: function (t, p) { var r = resolve(); return r && r.prototype ? r.prototype[p] : undefined; } });
+      // Accessors on the real prototype must keep the original receiver when
+      // this proxy sits in an inheritance chain. Direct access to the proxy
+      // still uses the real prototype so accessors never observe a proxy \`this\`.
+      var protoProxy = new Proxy({}, {
+        get: function (t, p, receiver) {
+          var r = resolve();
+          if (!(r && r.prototype)) return undefined;
+          return Reflect.get(r.prototype, p, receiver === protoProxy || receiver === undefined ? r.prototype : receiver);
+        },
+        set: function (t, p, v, receiver) {
+          var r = resolve();
+          if (r && r.prototype) return Reflect.set(r.prototype, p, v, receiver === protoProxy || receiver === undefined ? r.prototype : receiver);
+          return Reflect.set(t, p, v, receiver);
+        },
+      });
       // Pick the proxy target so \`typeof member\` matches what the resolved value will be:
       // a call/construct RESULT is normally an instance (typeof 'object'), while a plain
       // member access is usually a class/function (typeof 'function'). Libraries branch on
@@ -266,7 +280,8 @@ export function renderSnapshotPrelude(
       var __lastOp = ops.length ? ops[ops.length - 1] : null;
       var __target = __lastOp && (__lastOp.t === 'a' || __lastOp.t === 'c') ? {} : function () {};
       var member = new Proxy(__target, {
-        get: function (t, p) { if (p === __MR) return resolve(); if (p === 'prototype') return protoProxy; var r = resolve(); if (r != null) return r[p]; if (p === 'then') return undefined; if (typeof p === 'symbol') return undefined; return makeMember(ops.concat([{ t: 'g', k: p }])); },
+        get: function (t, p, receiver) { if (p === __MR) return resolve(); if (p === 'prototype') return protoProxy; var r = resolve(); if (r != null) return Reflect.get(Object(r), p, receiver === member || receiver === undefined ? r : receiver); if (p === 'then') return undefined; if (typeof p === 'symbol') return undefined; return makeMember(ops.concat([{ t: 'g', k: p }])); },
+        set: function (t, p, v, receiver) { var r = resolve(); if (r != null) return Reflect.set(Object(r), p, v, receiver === member || receiver === undefined ? r : receiver); return Reflect.set(t, p, v, receiver); },
         apply: function (t, thisArg, args) { var r = resolve(); if (typeof r === 'function') return Reflect.apply(r, thisArg, resolveArgs(args)); return makeMember(ops.concat([{ t: 'a', args: args }])); },
         construct: function (t, args, nt) { var r = resolve(); if (typeof r === 'function') return Reflect.construct(r, resolveArgs(args), nt || r); return makeMember(ops.concat([{ t: 'c', args: args }])); }
       });
@@ -274,11 +289,11 @@ export function renderSnapshotPrelude(
     }
 
     var proxy = new Proxy(function () {}, {
-      get: function (target, prop) {
+      get: function (target, prop, receiver) {
         if (prop === __MR) return realMod();
         if (prop === 'default') return proxy;
         var real = realMod();
-        if (real != null) return real[prop];
+        if (real != null) return Reflect.get(Object(real), prop, receiver === proxy || receiver === undefined ? real : receiver);
         // Build-time http constants so a library iterating http.METHODS etc.
         // (e.g. \`for (const m of http.METHODS)\`) does not crash.
         if (isHttp && typeof prop === 'string' && globalThis.__HTTP_CONSTS && Object.prototype.hasOwnProperty.call(globalThis.__HTTP_CONSTS, prop)) return globalThis.__HTTP_CONSTS[prop];

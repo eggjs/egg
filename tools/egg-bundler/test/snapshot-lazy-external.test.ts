@@ -250,6 +250,30 @@ describe('snapshot lazy-external', () => {
       expect(http.METHODS).toEqual(['REALGET']);
     });
 
+    it('restore time: static accessors on a proxied base see the subclass receiver', () => {
+      const { makeLazyExt, sandbox } = makeContext(['leoric']);
+      const stub = makeLazyExt('leoric', null) as Record<string, any>;
+      class User extends (stub.Bone as any) {}
+
+      const marker = Symbol('marker');
+      class RealBone {
+        static set synchronized(value: unknown) {
+          (this as any)[marker] = value;
+        }
+
+        static get synchronized() {
+          return (this as any)[marker];
+        }
+      }
+      sandbox.__RUNTIME_REQUIRE = (id: string) => (id === 'leoric' ? { Bone: RealBone } : undefined);
+
+      (User as any).synchronized = true;
+      expect((User as any).synchronized).toBe(true);
+      expect((User as any)[marker]).toBe(true);
+      expect(Object.hasOwn(User, 'synchronized')).toBe(false);
+      expect((RealBone as any).synchronized).toBeUndefined();
+    });
+
     it('restore time: structural traps reflect the real module exports', () => {
       const { makeLazyExt, sandbox } = makeContext(['http']);
       const realHttp = { createServer: () => 'srv', METHODS: ['GET'] };

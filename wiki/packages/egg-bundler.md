@@ -171,6 +171,11 @@ would otherwise be inlined.
 urllib.HttpClient` (and urllib's own `class BaseAgent extends undici.Agent`) keep
   working: the `extends` is evaluated against the build stub, then `super(...)` /
   inherited methods resolve to the real base class after deserialization.
+- Proxy reads and writes preserve the inherited receiver at restore. Static or
+  prototype accessors on the real base therefore observe the application subclass
+  or instance as `this`, while direct proxy access still uses the real exported
+  object. This is required by symbol-backed model state such as Leoric's
+  `Bone.synchronized` accessor.
 
 #### When does a new dependency need adding?
 
