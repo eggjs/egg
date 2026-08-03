@@ -43,6 +43,17 @@ describe('snapshot lazy-external', () => {
       expect(result).toContain('urllib');
     });
 
+    it('lazy-externalizes cluster so restored workers load the worker implementation', async () => {
+      // Node selects cluster's primary/worker implementation at first evaluation.
+      // Snapshot construction happens in a non-worker process, so restoring an
+      // eagerly loaded cluster module would retain the wrong implementation.
+      expect(DEFAULT_SNAPSHOT_LAZY_MODULES).toContain('cluster');
+      expect(DEFAULT_SNAPSHOT_LAZY_MODULES).toContain('node:cluster');
+      const result = await resolveSnapshotLazyModules(tmp);
+      expect(result).toContain('cluster');
+      expect(result).toContain('node:cluster');
+    });
+
     it('returns the default list when package.json has no egg.snapshot.lazyModules', async () => {
       await fs.writeFile(path.join(tmp, 'package.json'), JSON.stringify({ name: 'app', egg: {} }));
       expect(await resolveSnapshotLazyModules(tmp)).toEqual([...DEFAULT_SNAPSHOT_LAZY_MODULES]);

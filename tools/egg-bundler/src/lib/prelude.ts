@@ -50,6 +50,10 @@ export const SNAPSHOT_PRELUDE_MARKER = '@eggjs/egg-bundler:snapshot-prelude';
  *   (readline/repl + http2 nghttp2 native), making the heap unserializable. Keep
  *   it lazy so the build-time stub is used; the live process gets the real module
  *   on restore.
+ * - `cluster`: Node selects the primary or worker implementation when the module
+ *   is first evaluated. A snapshot build runs outside a cluster worker, so loading
+ *   it eagerly would freeze the primary implementation into restored workers and
+ *   break Node's worker bootstrap before Egg starts.
  * - `undici` / `urllib`: egg's HTTP client stack, built during boot
  *   (`class HttpClient extends urllib.HttpClient`, and urllib's own
  *   `class BaseAgent extends undici.Agent`). undici instantiates an llhttp
@@ -74,6 +78,8 @@ export const DEFAULT_SNAPSHOT_LAZY_MODULES: readonly string[] = [
   'node:dns',
   'inspector',
   'node:inspector',
+  'cluster',
+  'node:cluster',
   'undici',
   'urllib',
 ];

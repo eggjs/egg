@@ -151,7 +151,7 @@ describe('Bundler snapshot lazy-external wiring', () => {
     ).resolves.toBeDefined();
   });
 
-  it('keeps the default network-stack ids external in the bundle manifest', async () => {
+  it('keeps the default runtime-sensitive builtins external in the bundle manifest', async () => {
     await writePkg();
     await bundle({
       baseDir: tmpApp,
@@ -161,7 +161,7 @@ describe('Bundler snapshot lazy-external wiring', () => {
     });
 
     const manifest = JSON.parse(await fs.readFile(path.join(tmpOutput, 'bundle-manifest.json'), 'utf8'));
-    for (const id of ['http', 'https', 'http2', 'node:http', 'node:tls', 'node:dns']) {
+    for (const id of ['http', 'https', 'http2', 'node:http', 'node:tls', 'node:dns', 'cluster', 'node:cluster']) {
       expect(manifest.externals).toContain(id);
     }
   });

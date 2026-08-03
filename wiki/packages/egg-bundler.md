@@ -27,7 +27,7 @@ source_files:
   - tegg/standalone/standalone/src/EggModuleLoader.ts
   - tools/egg-bundler/docs/output-structure.md
   - examples/helloworld-service-worker
-updated_at: 2026-07-22
+updated_at: 2026-08-03
 status: active
 ---
 
@@ -159,8 +159,12 @@ builtins the `!isBuiltin` rule skips and (b) **force npm packages external** tha
 would otherwise be inlined.
 
 - `DEFAULT_SNAPSHOT_LAZY_MODULES` (in `src/lib/prelude.ts`) covers the Node network
-  stack (`http`/`https`/`http2`/`tls`/`dns`), `inspector`, **and egg's HTTP client
-  stack `undici` + `urllib`**. Egg builds its `HttpClient` (urllib → undici) during
+  stack (`http`/`https`/`http2`/`tls`/`dns`), `inspector`, `cluster`/`node:cluster`,
+  **and egg's HTTP client stack `undici` + `urllib`**. `cluster` is runtime-sensitive:
+  Node chooses its primary or worker implementation when the module is first loaded,
+  while snapshot construction happens outside a cluster worker. Keeping both module
+  specifiers lazy ensures each restored worker loads the worker implementation instead
+  of retaining the builder's primary implementation. Egg builds its `HttpClient` (urllib → undici) during
   boot, and undici instantiates an llhttp `WebAssembly` (disabled under
   `--build-snapshot`) + `HTTPParser` that cannot be serialized. As npm packages
   urllib/undici would be inlined; listing them forces them external (`Bundler` adds

@@ -8,6 +8,12 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
 - note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
 
+## [2026-08-03] fix | load cluster builtins after snapshot restore
+
+- sources touched: `tools/egg-bundler/src/lib/prelude.ts`, `tools/egg-bundler/test/{snapshot-lazy-external,snapshot-lazy-bundler}.test.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added `cluster` and `node:cluster` to the framework snapshot lazy-external defaults. Node chooses the primary or worker cluster implementation at first module evaluation; deferring both specifiers prevents snapshot construction from freezing the primary implementation into restored app workers. Added coverage for default resolution and bundle-manifest externalization.
+
 ## [2026-07-22] fix | preserve lazy-external accessor receivers after restore
 
 - sources touched: `tools/egg-bundler/src/lib/prelude.ts`, `tools/egg-bundler/test/snapshot-lazy-external.test.ts`
