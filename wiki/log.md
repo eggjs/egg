@@ -402,3 +402,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `site/docs/{core/bundle,advanced/snapshot,advanced/snapshot-troubleshooting}.md`, `site/docs/zh-CN/{core/bundle,advanced/snapshot,advanced/snapshot-troubleshooting}.md`, `tools/egg-bundler/{README,docs/output-structure}.md`
 - pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
 - note: Replaced stale single-process-only guidance with the supported `egg-bin bundle --cluster`, role-specific snapshot build, and `egg-scripts start --bundle` workflows. Corrected the default single-file artifact layout, external dependency deployment guidance, lazy-module defaults, restored web-global behavior, and runtime-asset examples.
+
+## [2026-08-02] fix | preserve signal exit codes in CLI child-process handling
+
+- sources touched: `tools/scripts/src/commands/start.ts`, `tools/egg-bin/src/baseCommand.ts`, `tools/create-egg/src/index.ts`
+- pages updated: `wiki/log.md`, `wiki/workflows/local-ci.md`
+- note: A child killed by a signal reports `code=null` on its exit event; three CLIs mishandled that (egg-scripts foreground start exited 0, egg-bin forkNode reported "exit with code null" and flattened every child failure to exit 1, create-egg's latent custom-command path ran `process.exit(status ?? 0)`). All three now map signal deaths to the shell convention `128 + signal number`, and egg-bin propagates the child's exit code through `ForkError.oclif.exit`. Durable finding recorded in local-ci.md: egg-bin's coffee tests run the compiled `dist/commands` CLI, so its suite needs `ut run build -- --workspace ./tools/egg-bin` first (the dedicated `test-egg-bin` CI job does exactly this), unlike the rest of the repo which tests unbuilt sources.

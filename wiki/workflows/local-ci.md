@@ -9,7 +9,7 @@ source_files:
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/core/metadata/src/model/graph/GlobalGraph.ts
   - tegg/plugin/controller/test/fixtures/apps
-updated_at: 2026-07-13
+updated_at: 2026-08-02
 status: active
 ---
 
@@ -18,6 +18,21 @@ status: active
 The repository's GitHub CI test job installs dependencies with
 `ut install --from pnpm` and runs tests with `ut run ci` for the main test
 matrix. It does not build packages before running tests.
+
+## Exception: egg-bin tests need a built dist
+
+The dedicated `test-egg-bin` CI job runs
+`ut run build -- --workspace ./tools/egg-bin` before
+`ut run test --workspace @eggjs/bin`. The oclif CLI under test loads commands
+from `tools/egg-bin/dist/commands` (`oclif.commands` in its package.json), and
+oclif's tsconfig fallback cannot map that path back to `src/` (no
+`rootDir`/`baseUrl` in the package tsconfig), so an unbuilt checkout fails every
+coffee-forked test with `Error: command dev not found`.
+
+Locally: build egg-bin before running its test suite, re-build after every
+source change under `tools/egg-bin/src` (tests exercise the compiled output),
+and remove `tools/egg-bin/dist` afterwards so the stale-dist rules below hold
+for tegg runs.
 
 Local validation should follow the same shape for unit tests: run tests from
 clean source files, and build separately when validating generated output,
