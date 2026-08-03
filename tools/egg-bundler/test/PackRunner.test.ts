@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { PackRunner, type BuildFunc, type PackEntry } from '../src/lib/PackRunner.ts';
+import { PackRunner, type BuildFunc, type PackEntry, type PackRunnerModuleConfig } from '../src/lib/PackRunner.ts';
 
 describe('PackRunner', () => {
   let tmpDir: string;
@@ -35,6 +35,7 @@ describe('PackRunner', () => {
         alias?: Record<string, string>;
         [key: string]: unknown;
       };
+      module?: PackRunnerModuleConfig;
       singleFile?: boolean;
     } = {},
   ): PackRunner {
@@ -48,6 +49,7 @@ describe('PackRunner', () => {
       ...(overrides.rootPath !== undefined ? { rootPath: overrides.rootPath } : {}),
       ...(overrides.mode !== undefined ? { mode: overrides.mode } : {}),
       ...(overrides.resolve !== undefined ? { resolve: overrides.resolve } : {}),
+      ...(overrides.module !== undefined ? { module: overrides.module } : {}),
       ...(overrides.singleFile !== undefined ? { singleFile: overrides.singleFile } : {}),
       buildFunc: overrides.buildFunc ?? (async () => {}),
     });
@@ -190,6 +192,23 @@ describe('PackRunner', () => {
       alias,
     });
     expect((config.resolve as { alias: Record<string, string> }).alias).not.toBe(alias);
+  });
+
+  it('passes internal source-transform module rules through to @utoo/pack', async () => {
+    const buildFunc = vi.fn<BuildFunc>(async () => {});
+    const module: PackRunnerModuleConfig = {
+      rules: {
+        '*.js': {
+          condition: { path: /[\\/]leoric[\\/]lib[\\/]/ },
+          loaders: [{ loader: '/loaders/leoric-runtime-require-loader.cjs' }],
+        },
+      },
+    };
+
+    await makeRunner({ buildFunc, module }).run();
+
+    const config = (buildFunc.mock.calls[0]![0] as { config: Record<string, unknown> }).config;
+    expect(config.module).toBe(module);
   });
 
   it('disables treeShaking and minify in the pack config (tegg runtime requires the full graph)', async () => {

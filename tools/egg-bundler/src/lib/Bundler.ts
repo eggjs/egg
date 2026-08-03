@@ -4,6 +4,7 @@ import { debuglog } from 'node:util';
 
 import { load as yamlLoad } from 'js-yaml';
 
+import { resolveLeoricSnapshotCompatibility } from '../compat/leoric/index.ts';
 import type { BundlerConfig, BundleResult } from '../index.ts';
 import { EntryGenerator } from './EntryGenerator.ts';
 import { ExternalsResolver } from './ExternalsResolver.ts';
@@ -366,6 +367,13 @@ export class Bundler {
     const snapshotLazyModules = snapshot
       ? await wrapStep('resolve snapshot lazy modules', () => resolveSnapshotLazyModules(absBaseDir))
       : [];
+    const leoricSnapshotCompat = snapshot
+      ? resolveLeoricSnapshotCompatibility({
+          baseDir: absBaseDir,
+          lazyModules: snapshotLazyModules,
+          forcedExternals: externals?.force,
+        })
+      : undefined;
 
     const manifestLoader = new ManifestLoader({
       baseDir: absBaseDir,
@@ -381,13 +389,19 @@ export class Bundler {
       inline: externals?.inline,
     });
     const resolvedExternals = await wrapStep('externals resolve', () => externalsResolver.resolve());
+    for (const packageName of leoricSnapshotCompat?.inlinePackages ?? []) {
+      delete resolvedExternals[packageName];
+    }
     debug('externals resolved: %d packages', Object.keys(resolvedExternals).length);
 
     // Keep the lazy network-stack ids external so @utoo/pack does not inline them
     // (an inlined http/tls/dns would load — and fail to serialize — at snapshot
     // build time). A builtin id maps to itself for the runtime require().
     const externalsMap: Record<string, string> = snapshot
-      ? { ...resolvedExternals, ...Object.fromEntries(snapshotLazyModules.map((id) => [id, id])) }
+      ? {
+          ...resolvedExternals,
+          ...Object.fromEntries(snapshotLazyModules.map((id) => [id, id])),
+        }
       : resolvedExternals;
 
     const entryGen = new EntryGenerator({
@@ -417,6 +431,7 @@ export class Bundler {
       mode,
       buildFunc: mergedPack?.buildFunc,
       resolve: mergedPack?.resolve,
+      module: leoricSnapshotCompat?.module,
       singleFile,
     });
     const packResult = await wrapStep('pack build', () => packRunner.run());
