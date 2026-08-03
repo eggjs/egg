@@ -47,6 +47,12 @@ export interface LoaderFS {
   stat(filepath: string): Stats;
   realpath(filepath: string): string;
   readJSON<T = unknown>(filepath: string): T;
+  /**
+   * Return an authoritative, precomputed file list for a directory when one is
+   * available. `undefined` means the source has no precomputed view and callers
+   * should fall back to normal discovery; an empty array is authoritative.
+   */
+  getKnownFiles?(directory: string): readonly string[] | undefined;
   glob(patterns: string | string[], options?: LoaderFSGlobOptions): string[];
   loadFile(filepath: string): Promise<unknown>;
 }

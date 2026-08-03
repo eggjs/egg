@@ -17,9 +17,11 @@ source_files:
   - tools/egg-bin/src/commands/bundle.ts
   - tools/egg-bin/src/commands/snapshot.ts
   - tools/scripts/src/commands/start.ts
+  - packages/loader-fs/src/index.ts
   - packages/loader-fs/src/manifest_loader_fs.ts
   - tegg/core/types/src/metadata/model/TeggManifest.ts
   - tegg/core/loader/src/LoaderFactory.ts
+  - tegg/core/loader/src/LoaderUtil.ts
   - tegg/core/loader/src/TeggManifestLoaderFS.ts
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/plugin/dal/src/lib/DataSource.ts
@@ -290,10 +292,19 @@ instead of the unavailable runtime filesystem. No class list is added to
 `MultiInstancePrototypeGetObjectsContext`, and generic `LoaderFS` construction
 remains side-effect free.
 
-The common `ModuleLoader` only discovers files through `LoaderFS.glob()`; it
-does not read `globalThis.__EGG_BUNDLE_MANIFEST__` itself. The standalone host
-uses that injected global only as an entry source for the shared manifest, then
-constructs the same loader view as Egg.
+The common `ModuleLoader` does not read bundle globals. It first asks its
+`LoaderFS` for an authoritative file list. `ManifestLoaderFS` returns the exact
+manifest-indexed decorated files, including TypeScript-origin keys and an
+authoritative empty list; only a source without such a view falls back to
+`LoaderUtil.filePattern()` plus `LoaderFS.glob()`. The standalone host uses
+`globalThis.__EGG_BUNDLE_MANIFEST__` only as an entry source for the shared
+manifest and constructs the same loader view as Egg.
+
+This source-level distinction matters when `egg-scripts start` sets
+`EGG_TS_ENABLE=false`: real filesystem discovery still excludes TypeScript,
+while `.ts`/`.mts`/`.cts` manifest keys remain discoverable because they resolve
+from the in-memory bundle module map rather than files Node must execute. No
+bundle-specific condition is added to `LoaderUtil`.
 
 Module identity follows a separate path. Bundle hosts obtain the name from the
 shared `TeggManifest`, normal hosts resolve it while scanning module config, and

@@ -8,6 +8,12 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
 - note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
 
+## [2026-08-03] fix | preserve authoritative manifest discovery in Tegg loaders
+
+- sources touched: `packages/loader-fs/src/{index.ts,manifest_loader_fs.ts}`, `tegg/core/loader/src/impl/ModuleLoader.ts`, related tests and package docs
+- pages updated: `wiki/log.md`, `wiki/packages/{loader-fs,egg-bundler}.md`
+- note: Added an optional authoritative directory-file view to `LoaderFS`. `ModuleLoader` consumes exact manifest lists, including TypeScript-origin keys and authoritative empty directories, before falling back to runtime extension patterns and glob discovery. This prevents `egg-scripts start` with `EGG_TS_ENABLE=false` from dropping bundled Tegg controllers/services, without coupling `LoaderUtil` to bundle globals or changing real-filesystem TypeScript behavior.
+
 ## [2026-08-03] fix | keep snapshot-ready bundles directly runnable
 
 - sources touched: `tools/egg-bundler/src/{index.ts,lib/EntryGenerator.ts,lib/prelude.ts}`, `tools/egg-bin/src/commands/snapshot.ts`, `site/docs/{zh-CN/,}advanced/snapshot-troubleshooting.md`, related tests

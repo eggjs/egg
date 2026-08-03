@@ -94,6 +94,14 @@ export class ManifestLoaderFS implements LoaderFS {
     return this.#fallback.readJSON(filepath);
   }
 
+  getKnownFiles(directory: string): readonly string[] | undefined {
+    const relativeDirectory = this.#toRelative(directory);
+    if (Object.hasOwn(this.#manifest.data.fileDiscovery, relativeDirectory)) {
+      return [...this.#manifest.data.fileDiscovery[relativeDirectory]].sort();
+    }
+    return this.#fallback.getKnownFiles?.(directory);
+  }
+
   glob(patterns: string | string[], options?: LoaderFSGlobOptions): string[] {
     const cwd = options?.cwd === undefined ? process.cwd() : String(options.cwd);
     const absoluteCwd = path.resolve(cwd);
