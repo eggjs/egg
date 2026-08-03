@@ -44,7 +44,18 @@ describe('cluster entries — real @utoo/pack build', () => {
     await writePackage(
       baseDir,
       'fake-egg',
-      'export class Application {}\nexport class Agent {}\nexport async function startEgg() {}\n',
+      [
+        'class Worker {',
+        '  constructor(options) { this.options = options; }',
+        '  async ready() {}',
+        '  async triggerSnapshotWillSerialize() {}',
+        '  async triggerSnapshotDidDeserialize() {}',
+        '}',
+        'export class Application extends Worker {}',
+        'export class Agent extends Worker {}',
+        'export async function startEgg() {}',
+        '',
+      ].join('\n'),
       './index.js',
     );
     await writePackage(
@@ -94,6 +105,28 @@ describe('cluster entries — real @utoo/pack build', () => {
       expect(source).not.toMatch(/_turbopack__runtime/);
       expect(source).not.toMatch(/R\.c\(/);
       await execFileAsync(process.execPath, ['--check', filepath]);
+    }
+
+    if (Number(process.versions.node.split('.')[0]) >= 24) {
+      const workerPath = path.join(outputDir, 'agent_worker.js');
+      const blobPath = path.join(outputDir, 'agent.snapshot.blob');
+      await execFileAsync(process.execPath, ['--snapshot-blob', blobPath, '--build-snapshot', workerPath], {
+        cwd: baseDir,
+      });
+
+      const masterOptions = JSON.stringify({ baseDir, framework: 'fake-egg' });
+      await expect(
+        execFileAsync(process.execPath, ['--snapshot-blob', blobPath, workerPath, masterOptions], { cwd: baseDir }),
+      ).resolves.toBeDefined();
+
+      const otherCwd = path.join(baseDir, 'relocated');
+      await fs.mkdir(otherCwd);
+      await expect(
+        execFileAsync(process.execPath, ['--snapshot-blob', blobPath, workerPath, masterOptions], { cwd: otherCwd }),
+      ).rejects.toMatchObject({
+        code: 1,
+        stderr: expect.stringContaining('snapshot working directory mismatch'),
+      });
     }
   }, 60_000);
 });

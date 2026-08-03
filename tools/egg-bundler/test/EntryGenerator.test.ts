@@ -127,6 +127,8 @@ describe('EntryGenerator', () => {
       expect(worker).toContain('import * as __m0 from "../../app/router.ts"');
       expect(worker).toContain('ManifestStore.setBundleStore');
       expect(worker).toContain('if (v8.startupSnapshot.isBuildingSnapshot())');
+      expect(worker).toContain('const __snapshotBuildCwd = path.resolve(process.cwd())');
+      expect(worker).toContain('if (!__assertSnapshotBuildCwd()) return');
       expect(worker).not.toContain('EGG_BUNDLE_SNAPSHOT');
       expect(worker).not.toContain('EGG_PROCESS_TYPE');
       expect(worker).not.toContain('EGG_SNAPSHOT_ROLE');
@@ -334,6 +336,9 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('startEgg({ ...__startOptions, snapshot: true })');
     expect(worker).toContain('app.triggerSnapshotWillSerialize()');
     expect(worker).toContain('v8.startupSnapshot.setDeserializeMainFunction(() =>');
+    expect(worker).toContain('const __snapshotBuildCwd = path.resolve(process.cwd())');
+    expect(worker).toContain('snapshot working directory mismatch');
+    expect(worker).toContain('if (!__assertSnapshotBuildCwd()) return');
     // restore main must defer (ESM loader not ready) and route imports via require()
     expect(worker).toContain('setImmediate(() =>');
     expect(worker).toContain("process.getBuiltinModule('node:module')");

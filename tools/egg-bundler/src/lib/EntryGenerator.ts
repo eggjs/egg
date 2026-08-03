@@ -316,6 +316,25 @@ ${importLines.join('\n')}
 // path of the INPUT file, not the OUTPUT directory.
 const __outputDir = path.dirname(path.resolve(process.argv[1] || '.'));
 const __framework = ${frameworkSpec};
+const __snapshotBuildCwd = path.resolve(process.cwd());
+
+const __assertSnapshotBuildCwd = (): boolean => {
+  const runtimeCwd = path.resolve(process.cwd());
+  const normalizeForComparison = (value: string) =>
+    process.platform === 'win32' ? value.toLowerCase() : value;
+  if (normalizeForComparison(__snapshotBuildCwd) === normalizeForComparison(runtimeCwd)) {
+    return true;
+  }
+  // eslint-disable-next-line no-console
+  console.error(
+    '[egg-bundler] snapshot working directory mismatch: the blob was built from %s but is being restored from %s. ' +
+      'Startup snapshot blobs are bound to their build-time absolute working directory; build the blob at its final deployment path.',
+    __snapshotBuildCwd,
+    runtimeCwd,
+  );
+  process.exit(1);
+  return false;
+};
 
 const MANIFEST_DATA = ${manifestJson} as const;
 const __APP_ABSOLUTE_ALIASES: Array<[string, string]> = ${appAbsoluteAliases};
@@ -523,6 +542,7 @@ if (v8.startupSnapshot.isBuildingSnapshot()) {
         console.error('[egg-bundler] V8 snapshot restore requires Node.js >= 24, but this process is ' + process.version + '. Build works on Node.js >= 22; restore must run on Node.js >= 24.');
         process.exit(1);
       }
+      if (!__assertSnapshotBuildCwd()) return;
       setImmediate(() => {
         // A restored snapshot process has no dynamic import() callback
         // (ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING). Route every egg loader import
@@ -724,6 +744,7 @@ if (v8.startupSnapshot.isBuildingSnapshot()) {
     await worker.triggerSnapshotWillSerialize();
     v8.startupSnapshot.setDeserializeMainFunction(() => {
       __assertRestoreNodeVersion();
+      if (!__assertSnapshotBuildCwd()) return;
       setImmediate(() => {
         __installRestoreRuntime();
         (async () => {
