@@ -477,7 +477,9 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       // the command's lifetime is the child's lifetime: wait for the child
       // inside the run stack so the exit code flows through oclif's normal
       // exit path and the command lifecycle (catch/finally) still applies
-      const code = await new Promise<number>((resolve) => {
+      const code = await new Promise<number>((resolve, reject) => {
+        // a spawn failure emits 'error' and may never emit 'exit'
+        child.once('error', reject);
         child.once('exit', (code, signal) => resolve(toExitCode(code, signal)));
       });
       if (code !== 0) {

@@ -114,4 +114,20 @@ describe('test/start-unit.test.ts', () => {
       oclif: { exit: 128 + os.constants.signals.SIGKILL },
     });
   });
+
+  it('foreground mode rejects when the child fails to spawn', async () => {
+    let onError: ((err: Error) => void) | undefined;
+    spawnMock.mockImplementation(() => ({
+      once: vi.fn((event: string, cb: (err: Error) => void) => {
+        if (event === 'error') onError = cb;
+      }),
+    }));
+    const run = TestStart.run(['--workers=1', baseDir]);
+    await vi.waitFor(() => {
+      if (!onError) throw new Error('child not spawned yet');
+    });
+    // e.g. a nonexistent --node executable: 'error' fires and 'exit' never does
+    onError!(new Error('spawn ENOENT'));
+    await expect(run).rejects.toThrow('spawn ENOENT');
+  });
 });

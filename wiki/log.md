@@ -403,7 +403,7 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
 - note: Replaced stale single-process-only guidance with the supported `egg-bin bundle --cluster`, role-specific snapshot build, and `egg-scripts start --bundle` workflows. Corrected the default single-file artifact layout, external dependency deployment guidance, lazy-module defaults, restored web-global behavior, and runtime-asset examples.
 
-## [2026-08-02] fix | preserve signal exit codes in CLI child-process handling
+## [2026-08-03] fix | preserve signal exit codes in CLI child-process handling
 
 - sources touched: `tools/scripts/src/commands/start.ts`, `tools/egg-bin/src/baseCommand.ts`, `tools/create-egg/src/index.ts`
 - pages updated: `wiki/log.md`, `wiki/workflows/local-ci.md`

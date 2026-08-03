@@ -43,8 +43,12 @@ function graceful(proc: ChildProcess) {
 // CLIError carries the exit code through `oclif.exit`, which oclif's error
 // handler applies, so the CLI exits with the child's code instead of 1
 export class ForkError extends Errors.CLIError {
+  // numeric child exit status for consumers; CLIError's own `code` slot is
+  // a string error code rendered by oclif's pretty-printer, so it stays unset
+  readonly exitCode: number;
   constructor(message: string, code: number) {
     super(message, { exit: code });
+    this.exitCode = code;
   }
 }
 

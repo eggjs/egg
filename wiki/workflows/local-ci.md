@@ -6,10 +6,12 @@ source_files:
   - AGENTS.md
   - .github/workflows/ci.yml
   - package.json
+  - tools/egg-bin/package.json
+  - tools/egg-bin/tsconfig.json
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/core/metadata/src/model/graph/GlobalGraph.ts
   - tegg/plugin/controller/test/fixtures/apps
-updated_at: 2026-08-02
+updated_at: 2026-08-03
 status: active
 ---
 
