@@ -464,15 +464,6 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     } else {
       options.stdio = ['inherit', 'inherit', 'inherit', 'ipc'];
       const child = (this.#child = spawn(command, eggArgs, options));
-      child.once('exit', (code, signal) => {
-        const exitCode = toExitCode(code, signal);
-        if (exitCode === 0) return;
-        // command should exit after child process exit;
-        // use process.exit() instead of this.exit() because the ExitError thrown
-        // by this.exit() has no catcher inside this event callback and would
-        // surface as an uncaughtException with exit code 1
-        process.exit(exitCode);
-      });
 
       // attach master signal to child
       const signals = ['SIGINT', 'SIGQUIT', 'SIGTERM'] as NodeJS.Signals[];
@@ -482,6 +473,16 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
           child.kill(event);
         });
       });
+
+      // the command's lifetime is the child's lifetime: wait for the child
+      // inside the run stack so the exit code flows through oclif's normal
+      // exit path and the command lifecycle (catch/finally) still applies
+      const code = await new Promise<number>((resolve) => {
+        child.once('exit', (code, signal) => resolve(toExitCode(code, signal)));
+      });
+      if (code !== 0) {
+        this.exit(code);
+      }
     }
   }
 
@@ -538,12 +539,12 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
   }
 }
 
-// A child killed by a signal exits with code=null, which must not read as
-// success; map it to the shell convention 128 + signal number.
+// A child killed by a signal reports code=null on exit; map it to the
+// shell convention of 128 + signal number so it does not read as success.
 function toExitCode(code: number | null, signal: NodeJS.Signals | null): number {
   if (code !== null) return code;
   const signalNumber = signal ? os.constants.signals[signal] : undefined;
-  return signalNumber === undefined ? 1 : 128 + signalNumber;
+  return signalNumber ? 128 + signalNumber : 1;
 }
 
 function stringify(obj: Record<string, any>, ignore: string[]) {

@@ -5,7 +5,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
-import { Command, Flags, Interfaces } from '@oclif/core';
+import { Command, Errors, Flags, Interfaces } from '@oclif/core';
 
 import { type PackageEgg } from './types.ts';
 import { getSourceDirname, readPackageJSON, hasTsConfig } from './utils.ts';
@@ -40,16 +40,20 @@ function graceful(proc: ChildProcess) {
   }
 }
 
-export class ForkError extends Error {
-  code: number | null;
-  // oclif's error handler exits with `err.oclif.exit`, so the CLI
-  // propagates the child's exit code instead of the generic 1
-  oclif: { exit: number };
-  constructor(message: string, code: number | null) {
-    super(message);
-    this.code = code;
-    this.oclif = { exit: code ?? 1 };
+// CLIError carries the exit code through `oclif.exit`, which oclif's error
+// handler applies, so the CLI exits with the child's code instead of 1
+export class ForkError extends Errors.CLIError {
+  constructor(message: string, code: number) {
+    super(message, { exit: code });
   }
+}
+
+// A child killed by a signal reports code=null on exit; map it to the
+// shell convention of 128 + signal number so it does not read as success.
+function toExitCode(code: number | null, signal: NodeJS.Signals | null): number {
+  if (code !== null) return code;
+  const signalNumber = signal ? os.constants.signals[signal] : undefined;
+  return signalNumber ? 128 + signalNumber : 1;
 }
 
 export interface ForkNodeOptions extends ForkOptions {
@@ -325,12 +329,12 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     debug('enter real command: %o', this.id);
   }
 
-  protected async catch(err: Error & { exitCode?: number }): Promise<any> {
-    if (err instanceof ForkError) {
-      // print the message raw: oclif's pretty-print word-wraps long
-      // messages, which breaks single-line matching in logs and tests
+  protected async catch(err: Error & { exitCode?: number; skipOclifErrorHandling?: boolean }): Promise<any> {
+    if (err.skipOclifErrorHandling) {
+      // this error opted out of oclif's pretty-printer, which hard-wraps
+      // long messages; print the message verbatim instead, and oclif's
+      // handler still exits with `err.oclif.exit`
       console.error(err.message);
-      return this.exit(err.oclif.exit);
     }
     // add any custom logic to handle errors from the command
     // or simply return the parent class error handling
@@ -428,13 +432,13 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
           return;
         }
         const command = modulePath + ' ' + forkArgs.join(' ');
-        if (code !== null) {
-          reject(new ForkError(command + ' exit with code ' + code, code));
-        } else {
-          // killed by a signal: follow the shell convention of 128 + signal number
-          const signalNumber = signal ? os.constants.signals[signal] : undefined;
-          reject(new ForkError(command + ' was killed by signal ' + signal, signalNumber ? 128 + signalNumber : 1));
-        }
+        const message =
+          code === null ? `${command} was killed by signal ${signal}` : `${command} exit with code ${code}`;
+        const err = new ForkError(message, toExitCode(code, signal));
+        // the message embeds the full fork command line, which oclif's
+        // pretty-printer would hard-wrap; print it verbatim in catch()
+        err.skipOclifErrorHandling = true;
+        reject(err);
       });
     });
   }

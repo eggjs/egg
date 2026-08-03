@@ -45,17 +45,25 @@ describe('test/start-unit.test.ts', () => {
     await fs.rm(homeDir, { recursive: true, force: true });
   });
 
-  it('cluster mode spawns the start-cluster server bin with cluster options', async () => {
+  // foreground mode waits for the child inside run(), so tests must report a
+  // child exit for the command to settle
+  async function runStartWithChildExit(code: number | null, signal: NodeJS.Signals | null): Promise<void> {
+    let onExit: ((code: number | null, signal: NodeJS.Signals | null) => void) | undefined;
     spawnMock.mockImplementation(() => ({
-      once: vi.fn().mockReturnThis(),
-      on: vi.fn().mockReturnThis(),
-      unref: vi.fn(),
-      disconnect: vi.fn(),
-      kill: vi.fn(),
-      pid: 1111,
+      once: vi.fn((event: string, cb: (code: number | null, signal: NodeJS.Signals | null) => void) => {
+        if (event === 'exit') onExit = cb;
+      }),
     }));
+    const run = TestStart.run(['--workers=1', baseDir]);
+    await vi.waitFor(() => {
+      if (!onExit) throw new Error('child not spawned yet');
+    });
+    onExit!(code, signal);
+    return run;
+  }
 
-    await TestStart.run(['--workers=1', baseDir]);
+  it('cluster mode spawns the start-cluster server bin with cluster options', async () => {
+    await runStartWithChildExit(0, null);
 
     expect(spawnMock).toHaveBeenCalledTimes(1);
     const [command, args, options] = spawnMock.mock.calls[0] as [string, string[], { env: NodeJS.ProcessEnv }];
@@ -97,37 +105,13 @@ describe('test/start-unit.test.ts', () => {
   });
 
   it('foreground mode mirrors the child exit code and maps signal deaths to 128+n', async () => {
-    const handlers: Record<string, (code: number | null, signal: NodeJS.Signals | null) => void> = {};
-    spawnMock.mockImplementation(() => ({
-      once: vi.fn((event: string, cb: (code: number | null, signal: NodeJS.Signals | null) => void) => {
-        handlers[event] = cb;
-      }),
-      on: vi.fn(),
-      kill: vi.fn(),
-      pid: 3333,
-    }));
-    // this.exit() throws inside the child's event callback where nothing catches
-    // it, so the command must call process.exit() directly — spy on it
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as unknown as typeof process.exit);
+    // a non-zero exit code is mirrored as-is through oclif's exit path
+    await expect(runStartWithChildExit(3, null)).rejects.toMatchObject({ oclif: { exit: 3 } });
 
-    await TestStart.run(['--workers=1', baseDir]);
-    const onExit = handlers.exit;
-    expect(onExit).toBeTypeOf('function');
-
-    // clean exit: no explicit process.exit, the parent event loop drains naturally
-    onExit(0, null);
-    expect(exitSpy).not.toHaveBeenCalled();
-
-    // a non-zero exit code is mirrored as-is
-    onExit(3, null);
-    expect(exitSpy).toHaveBeenLastCalledWith(3);
-
-    // a signal death reports code=null: mirror it as 128 + signal number
-    // instead of letting the parent exit 0
-    onExit(null, 'SIGKILL');
-    expect(exitSpy).toHaveBeenLastCalledWith(128 + os.constants.signals.SIGKILL);
-
-    onExit(null, 'SIGTERM');
-    expect(exitSpy).toHaveBeenLastCalledWith(128 + os.constants.signals.SIGTERM);
+    // a signal death reports code=null: mirrored as 128 + signal number
+    // instead of resolving as success
+    await expect(runStartWithChildExit(null, 'SIGKILL')).rejects.toMatchObject({
+      oclif: { exit: 128 + os.constants.signals.SIGKILL },
+    });
   });
 });
