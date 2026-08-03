@@ -191,17 +191,19 @@ describe('test/loader/egg_loader.test.ts', () => {
     assert(Reflect.get(app.context, prop).user);
   });
 
-  it('should pass loaderFS to loadToApp and loadToContext', async () => {
+  it('should pass the current loaderFS to loadToApp and loadToContext', async () => {
     const baseDir = getFilepath('load_to_app');
-    const loaderFS = new RealLoaderFS();
+    const initialLoaderFS = new RealLoaderFS();
+    const runtimeLoaderFS = new RealLoaderFS();
     const loaderApp = { context: {} } as EggLoaderOptions['app'];
     const loader = new EggLoader({
       env: 'unittest',
       baseDir,
       app: loaderApp,
       logger: app.logger,
-      loaderFS,
+      loaderFS: initialLoaderFS,
     });
+    loader.loaderFS = runtimeLoaderFS;
     const passedLoaderFS: LoaderFS[] = [];
 
     mm(FileLoader.prototype, 'load', async function (this: FileLoader) {
@@ -217,7 +219,8 @@ describe('test/loader/egg_loader.test.ts', () => {
       await loader.loadToApp(path.join(baseDir, 'app/model'), 'model');
       await loader.loadToContext(path.join(baseDir, 'app/service'), 'service');
 
-      assert.deepEqual(passedLoaderFS, [loaderFS, loaderFS]);
+      assert.equal(loader.loaderFS, runtimeLoaderFS);
+      assert.deepEqual(passedLoaderFS, [runtimeLoaderFS, runtimeLoaderFS]);
     } finally {
       mm.restore();
     }
