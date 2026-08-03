@@ -153,8 +153,7 @@ hand from the output directory — this is exactly what `egg-bin` runs:
 
 ```bash
 $ cd ./dist-bundle
-$ EGG_BUNDLE_SNAPSHOT=build \
-    node --snapshot-blob ./snapshot.blob --build-snapshot ./worker.js
+$ node --snapshot-blob ./snapshot.blob --build-snapshot ./worker.js
 ```
 
 When the serializer aborts it usually names the object type it could not encode

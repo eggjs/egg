@@ -165,13 +165,11 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
       this.log(`bundled (snapshot mode) to ${result.outputDir} (${result.files.length} files)`);
     }
 
-    // Each cluster role has its own generated entry and heap. Build them
-    // independently instead of asking one entry to switch roles through an env
-    // variable; EGG_BUNDLE_SNAPSHOT only selects build versus normal runtime.
+    // Each cluster role has its own generated entry and heap. Node's startup
+    // snapshot runtime API tells the entry that this process is building a
+    // snapshot, so no environment convention is needed.
     for (const entry of snapshotEntries) {
-      await this.#spawnNode(['--snapshot-blob', entry.blobPath, '--build-snapshot', entry.workerPath], {
-        EGG_BUNDLE_SNAPSHOT: 'build',
-      });
+      await this.#spawnNode(['--snapshot-blob', entry.blobPath, '--build-snapshot', entry.workerPath]);
     }
 
     // In dry-run nothing was spawned, so do not claim a blob was produced.
@@ -197,13 +195,13 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
     this.log('note: restoring this snapshot requires Node.js >= 24 (e.g. `egg-scripts start --snapshot-blob`)');
   }
 
-  async #spawnNode(nodeArgs: readonly string[], extraEnv: NodeJS.ProcessEnv = {}): Promise<void> {
+  async #spawnNode(nodeArgs: readonly string[]): Promise<void> {
     // Run the self-contained bundle with a clean env: start from process.env, NOT
     // this.env. BaseCommand.#afterInit injects NODE_OPTIONS=--import @oxc-node/core/register
     // (plus tsconfig-paths) into this.env for TypeScript apps;
     // applying that to `node --build-snapshot worker.js` would pull a non-bundled
     // loader into the snapshot build. process.env never carries that injection.
-    const env = { ...process.env, ...extraEnv };
+    const env = { ...process.env };
     const args = [...this.globalExecArgv, ...nodeArgs];
     const fullCommand = `${process.execPath} ${args.join(' ')}`;
     if (this.flags['dry-run']) {

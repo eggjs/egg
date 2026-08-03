@@ -1,3 +1,5 @@
+import vm from 'node:vm';
+
 import { describe, expect, it } from 'vitest';
 
 import { prependSnapshotPrelude, renderSnapshotPrelude, SNAPSHOT_PRELUDE_MARKER } from '../src/lib/prelude.ts';
@@ -9,6 +11,41 @@ describe('snapshot prelude', () => {
     expect(prelude).toContain('eggBundlerSnapshotPrelude');
     // ends with a newline so it cleanly precedes the bundle IIFE
     expect(prelude.endsWith('\n')).toBe(true);
+  });
+
+  it('plain runtime installs a real require hook and leaves web globals untouched', () => {
+    const fetch = () => undefined;
+    let requireBase: string | undefined;
+    const runtimeRequire = Object.assign((id: string) => `module:${id}`, {
+      resolve: (id: string) => `/resolved/${id}`,
+    });
+    const sandbox: Record<string, any> = {
+      __filename: '/app/dist-bundle/worker.js',
+      fetch,
+      process: {
+        getBuiltinModule(id: string) {
+          if (id === 'node:v8') return { startupSnapshot: { isBuildingSnapshot: () => false } };
+          if (id === 'node:module') {
+            return {
+              createRequire(base: string) {
+                requireBase = base;
+                return runtimeRequire;
+              },
+            };
+          }
+          throw new Error(`unexpected builtin: ${id}`);
+        },
+      },
+    };
+    vm.createContext(sandbox);
+    vm.runInContext(renderSnapshotPrelude(), sandbox);
+
+    expect(requireBase).toBe('/app/dist-bundle/worker.js');
+    expect(sandbox.__RUNTIME_REQUIRE('mysql2')).toBe('module:mysql2');
+    expect(sandbox.__RUNTIME_REQUIRE.resolve('mysql2')).toBe('/resolved/mysql2');
+    expect(sandbox.fetch).toBe(fetch);
+    expect(sandbox.__LAZY_EXT).toBeUndefined();
+    expect(sandbox.__makeLazyExt).toBeUndefined();
   });
 
   it('prepends the prelude before the bundle IIFE', () => {

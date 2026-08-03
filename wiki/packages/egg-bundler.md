@@ -93,6 +93,14 @@ constraint is why worker output always needs a thin ESM wrapper.
   existing `--blob` flag remains exclusive to single-process builds. The role
   comes from the entry filename/code, so snapshot construction does not use
   `EGG_SNAPSHOT_ROLE`.
+- A `snapshot: true` output remains a normal runnable bundle; generating it does
+  not dedicate the JavaScript file to blob restore. The prelude and generated
+  entry use `v8.startupSnapshot.isBuildingSnapshot()` to detect a real
+  `--build-snapshot` process. A plain invocation keeps Node's web globals intact,
+  installs `__RUNTIME_REQUIRE` before the bundle IIFE, and follows the ordinary
+  bundle startup path. Only snapshot construction installs build-time stubs. On
+  restore, V8 does not re-evaluate the file and instead invokes the serialized
+  deserialize main, which installs the same runtime require hook before resuming.
 - `egg-scripts start --bundle` explicitly selects bundled cluster workers.
   `--bundle-dir` defaults to `./dist-bundle`, and supplies the fixed defaults
   `<bundle-dir>/app_worker.js` and `<bundle-dir>/agent_worker.js`; either worker

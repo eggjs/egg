@@ -177,6 +177,20 @@ export function renderSnapshotPrelude(
 /* eslint-disable */
 (function eggBundlerSnapshotPrelude() {
   'use strict';
+  // A snapshot-ready bundle is also a normal runnable bundle. Use Node's actual
+  // runtime state instead of an environment convention to choose the phase.
+  // During a plain run, install the runtime require before the bundle IIFE so
+  // transformed dynamic requires work and leave the real web globals untouched.
+  if (!process.getBuiltinModule('node:v8').startupSnapshot.isBuildingSnapshot()) {
+    if (!globalThis.__RUNTIME_REQUIRE) {
+      var __runtimeRequire = process.getBuiltinModule('node:module').createRequire(__filename);
+      var __requireWithResolve = function (id) { return __runtimeRequire(id); };
+      __requireWithResolve.resolve = function (id, options) { return __runtimeRequire.resolve(id, options); };
+      globalThis.__RUNTIME_REQUIRE = __requireWithResolve;
+    }
+    return;
+  }
+
   // Neutralize Node's undici-backed web globals (fetch/Headers/Request/...) so they
   // never lazily initialize Node's undici stack (llhttp HTTPParser + nghttp2), whose
   // native bindings a V8 startup snapshot cannot serialize.

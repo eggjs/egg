@@ -69,7 +69,7 @@ describe('test/commands/snapshot.test.ts', () => {
       }),
     );
 
-    const { bin, args, options } = spawnArgs();
+    const { bin, args } = spawnArgs();
     expect(bin).toBe(process.execPath);
     expect(args).toEqual(
       expect.arrayContaining([
@@ -79,7 +79,6 @@ describe('test/commands/snapshot.test.ts', () => {
         path.join(baseDir, 'dist-bundle', 'worker.js'),
       ]),
     );
-    expect(options.env.EGG_BUNDLE_SNAPSHOT).toBe('build');
   });
 
   it('build --cluster bundles and builds independent app and agent snapshots', async () => {
@@ -103,7 +102,6 @@ describe('test/commands/snapshot.test.ts', () => {
         path.join(baseDir, 'dist-bundle', 'app_worker.js'),
       ]),
     );
-    expect(app.options.env.EGG_BUNDLE_SNAPSHOT).toBe('build');
     expect(app.options.env.EGG_SNAPSHOT_ROLE).toBeUndefined();
 
     const agent = spawnArgs(1);
@@ -115,7 +113,6 @@ describe('test/commands/snapshot.test.ts', () => {
         path.join(baseDir, 'dist-bundle', 'agent_worker.js'),
       ]),
     );
-    expect(agent.options.env.EGG_BUNDLE_SNAPSHOT).toBe('build');
     expect(agent.options.env.EGG_SNAPSHOT_ROLE).toBeUndefined();
   });
 

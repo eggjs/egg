@@ -93,9 +93,9 @@ export interface BundlerConfig {
    * Build a V8 startup snapshot-ready artifact. When `true` the bundler emits a
    * self-contained file for every generated entry (implies
    * {@link BundlerPackConfig.singleFile}) and prepends a runtime prelude before each
-   * bundle IIFE so it runs before any module loads. Every generated entry also
-   * honours the `EGG_BUNDLE_SNAPSHOT` env var at runtime to switch between normal
-   * start, snapshot build, and snapshot restore. Defaults to `false`.
+   * bundle IIFE so it runs before any module loads. Every generated entry uses
+   * Node's `v8.startupSnapshot.isBuildingSnapshot()` runtime state to switch
+   * between normal start, snapshot build, and snapshot restore. Defaults to `false`.
    */
   readonly snapshot?: boolean;
 }

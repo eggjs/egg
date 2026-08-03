@@ -139,8 +139,7 @@ $ NODE_DEBUG='egg/scripts/commands/start' egg-scripts start --snapshot-blob ./di
 
 ```bash
 $ cd ./dist-bundle
-$ EGG_BUNDLE_SNAPSHOT=build \
-    node --snapshot-blob ./snapshot.blob --build-snapshot ./worker.js
+$ node --snapshot-blob ./snapshot.blob --build-snapshot ./worker.js
 ```
 
 序列化器中止时通常会指出它无法编码的对象类型（例如某个原生句柄），其周边栈会指向

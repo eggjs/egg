@@ -455,7 +455,7 @@ const __resolvePort = (app: any) => {
   return app.config.cluster?.listen?.port ?? 7001;
 };
 
-if (process.env.EGG_BUNDLE_SNAPSHOT === 'build') {
+if (v8.startupSnapshot.isBuildingSnapshot()) {
   // ── snapshot build mode ─────────────────────────────────────────────────
   // Runs under \`node --snapshot-blob <blob> --build-snapshot worker.js\`.
   // Load all metadata with snapshot:true (the lifecycle stops at configWillLoad,
@@ -714,7 +714,7 @@ const __startWorker = (worker: any, masterOptions: any) => {
   ${startProtocol}
 };
 
-if (process.env.EGG_BUNDLE_SNAPSHOT === 'build') {
+if (v8.startupSnapshot.isBuildingSnapshot()) {
   // Build one role-specific heap. configDidLoad and later hooks resume only in
   // the forked runtime process after the master options have been rebound.
   __installBuildModuleImporter();

@@ -126,7 +126,8 @@ describe('EntryGenerator', () => {
     for (const worker of [appWorker, agentWorker]) {
       expect(worker).toContain('import * as __m0 from "../../app/router.ts"');
       expect(worker).toContain('ManifestStore.setBundleStore');
-      expect(worker).toContain("if (process.env.EGG_BUNDLE_SNAPSHOT === 'build')");
+      expect(worker).toContain('if (v8.startupSnapshot.isBuildingSnapshot())');
+      expect(worker).not.toContain('EGG_BUNDLE_SNAPSHOT');
       expect(worker).not.toContain('EGG_PROCESS_TYPE');
       expect(worker).not.toContain('EGG_SNAPSHOT_ROLE');
     }
@@ -328,7 +329,8 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('startEgg(__startOptions)');
     // 3-mode snapshot dispatch (normal / snapshot-build / restore-main)
     expect(worker).toContain("import v8 from 'node:v8'");
-    expect(worker).toContain("if (process.env.EGG_BUNDLE_SNAPSHOT === 'build')");
+    expect(worker).toContain('if (v8.startupSnapshot.isBuildingSnapshot())');
+    expect(worker).not.toContain('EGG_BUNDLE_SNAPSHOT');
     expect(worker).toContain('startEgg({ ...__startOptions, snapshot: true })');
     expect(worker).toContain('app.triggerSnapshotWillSerialize()');
     expect(worker).toContain('v8.startupSnapshot.setDeserializeMainFunction(() =>');

@@ -8,6 +8,12 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
 - note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
 
+## [2026-08-03] fix | keep snapshot-ready bundles directly runnable
+
+- sources touched: `tools/egg-bundler/src/{index.ts,lib/EntryGenerator.ts,lib/prelude.ts}`, `tools/egg-bin/src/commands/snapshot.ts`, `site/docs/{zh-CN/,}advanced/snapshot-troubleshooting.md`, related tests
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced the `EGG_BUNDLE_SNAPSHOT` build convention with Node's `v8.startupSnapshot.isBuildingSnapshot()` state. A snapshot-ready JavaScript artifact now installs its real runtime require hook and follows the ordinary bundle path when executed without a blob; only a real snapshot build stubs lazy externals and web globals. Added a real `@utoo/pack` regression covering plain execution, `--build-snapshot`, and blob restore with the same artifact.
+
 ## [2026-08-03] fix | load cluster builtins after snapshot restore
 
 - sources touched: `tools/egg-bundler/src/lib/prelude.ts`, `tools/egg-bundler/test/{snapshot-lazy-external,snapshot-lazy-bundler}.test.ts`
