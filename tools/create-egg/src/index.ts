@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 import * as prompts from '@clack/prompts';
@@ -195,10 +196,10 @@ export async function init(): Promise<void> {
     const [command, ...args] = fullCustomCommand.split(' ');
     // we replace TARGET_DIR here because targetDir may include a space
     const replacedArgs = args.map((arg) => arg.replace('TARGET_DIR', () => targetDir));
-    const { status } = spawn.sync(command, replacedArgs, {
+    const result = spawn.sync(command, replacedArgs, {
       stdio: 'inherit',
     });
-    process.exit(status ?? 0);
+    process.exit(spawnSyncExitCode(result));
   }
 
   prompts.log.step(`Scaffolding project with ${blueBright(template)} in ${root}...`);
@@ -331,6 +332,18 @@ function pkgFromUserAgent(userAgent: string | undefined): PkgInfo | undefined {
 //   const content = fs.readFileSync(file, 'utf-8')
 //   fs.writeFileSync(file, callback(content), 'utf-8')
 // }
+
+// `spawn.sync` reports `status: null` when the child was terminated by a
+// signal on Unix; map that to the conventional 128 + signal number exit code.
+export function spawnSyncExitCode(result: { status: number | null; signal: NodeJS.Signals | null }): number {
+  if (result.status !== null) {
+    return result.status;
+  }
+  if (result.signal && result.signal in os.constants.signals) {
+    return 128 + os.constants.signals[result.signal];
+  }
+  return 1;
+}
 
 function getFullCustomCommand(customCommand: string, pkgInfo?: PkgInfo) {
   const pkgManager = pkgInfo ? pkgInfo.name : 'npm';

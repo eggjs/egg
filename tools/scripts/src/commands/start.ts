@@ -1,5 +1,6 @@
 import { spawn, type SpawnOptions, type ChildProcess, execFile as _execFile } from 'node:child_process';
 import { mkdir, rename, stat, open } from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 import { debuglog, promisify } from 'node:util';
@@ -463,10 +464,14 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     } else {
       options.stdio = ['inherit', 'inherit', 'inherit', 'ipc'];
       const child = (this.#child = spawn(command, eggArgs, options));
-      child.once('exit', (code) => {
-        if (!code) return;
-        // command should exit after child process exit
-        this.exit(code);
+      child.once('exit', (code, signal) => {
+        const exitCode = toExitCode(code, signal);
+        if (exitCode === 0) return;
+        // command should exit after child process exit;
+        // use process.exit() instead of this.exit() because the ExitError thrown
+        // by this.exit() has no catcher inside this event callback and would
+        // surface as an uncaughtException with exit code 1
+        process.exit(exitCode);
       });
 
       // attach master signal to child
@@ -531,6 +536,14 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       this.exit(1);
     }
   }
+}
+
+// A child killed by a signal exits with code=null, which must not read as
+// success; map it to the shell convention 128 + signal number.
+function toExitCode(code: number | null, signal: NodeJS.Signals | null): number {
+  if (code !== null) return code;
+  const signalNumber = signal ? os.constants.signals[signal] : undefined;
+  return signalNumber === undefined ? 1 : 128 + signalNumber;
 }
 
 function stringify(obj: Record<string, any>, ignore: string[]) {

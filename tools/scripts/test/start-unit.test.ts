@@ -95,4 +95,39 @@ describe('test/start-unit.test.ts', () => {
     expect(unref).toHaveBeenCalledTimes(1);
     expect(disconnect).toHaveBeenCalledTimes(1);
   });
+
+  it('foreground mode mirrors the child exit code and maps signal deaths to 128+n', async () => {
+    const handlers: Record<string, (code: number | null, signal: NodeJS.Signals | null) => void> = {};
+    spawnMock.mockImplementation(() => ({
+      once: vi.fn((event: string, cb: (code: number | null, signal: NodeJS.Signals | null) => void) => {
+        handlers[event] = cb;
+      }),
+      on: vi.fn(),
+      kill: vi.fn(),
+      pid: 3333,
+    }));
+    // this.exit() throws inside the child's event callback where nothing catches
+    // it, so the command must call process.exit() directly — spy on it
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as unknown as typeof process.exit);
+
+    await TestStart.run(['--workers=1', baseDir]);
+    const onExit = handlers.exit;
+    expect(onExit).toBeTypeOf('function');
+
+    // clean exit: no explicit process.exit, the parent event loop drains naturally
+    onExit(0, null);
+    expect(exitSpy).not.toHaveBeenCalled();
+
+    // a non-zero exit code is mirrored as-is
+    onExit(3, null);
+    expect(exitSpy).toHaveBeenLastCalledWith(3);
+
+    // a signal death reports code=null: mirror it as 128 + signal number
+    // instead of letting the parent exit 0
+    onExit(null, 'SIGKILL');
+    expect(exitSpy).toHaveBeenLastCalledWith(128 + os.constants.signals.SIGKILL);
+
+    onExit(null, 'SIGTERM');
+    expect(exitSpy).toHaveBeenLastCalledWith(128 + os.constants.signals.SIGTERM);
+  });
 });

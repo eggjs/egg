@@ -42,9 +42,13 @@ function graceful(proc: ChildProcess) {
 
 export class ForkError extends Error {
   code: number | null;
+  // oclif's error handler exits with `err.oclif.exit`, so the CLI
+  // propagates the child's exit code instead of the generic 1
+  oclif: { exit: number };
   constructor(message: string, code: number | null) {
     super(message);
     this.code = code;
+    this.oclif = { exit: code ?? 1 };
   }
 }
 
@@ -322,6 +326,12 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
   }
 
   protected async catch(err: Error & { exitCode?: number }): Promise<any> {
+    if (err instanceof ForkError) {
+      // print the message raw: oclif's pretty-print word-wraps long
+      // messages, which breaks single-line matching in logs and tests
+      console.error(err.message);
+      return this.exit(err.oclif.exit);
+    }
     // add any custom logic to handle errors from the command
     // or simply return the parent class error handling
     return super.catch(err);
@@ -410,14 +420,20 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     graceful(proc);
 
     return new Promise<void>((resolve, reject) => {
-      proc.once('exit', (code) => {
-        debug('fork pid: %o exit code %o', proc.pid, code);
+      proc.once('exit', (code, signal) => {
+        debug('fork pid: %o exit code %o, signal %o', proc.pid, code, signal);
         children.delete(proc);
-        if (code !== 0) {
-          const err = new ForkError(modulePath + ' ' + forkArgs.join(' ') + ' exit with code ' + code, code);
-          reject(err);
-        } else {
+        if (code === 0) {
           resolve();
+          return;
+        }
+        const command = modulePath + ' ' + forkArgs.join(' ');
+        if (code !== null) {
+          reject(new ForkError(command + ' exit with code ' + code, code));
+        } else {
+          // killed by a signal: follow the shell convention of 128 + signal number
+          const signalNumber = signal ? os.constants.signals[signal] : undefined;
+          reject(new ForkError(command + ' was killed by signal ' + signal, signalNumber ? 128 + signalNumber : 1));
         }
       });
     });
