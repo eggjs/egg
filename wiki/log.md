@@ -378,3 +378,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `tools/egg-bin/src/commands/bundle.ts`
 - pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
 - note: Added `egg-bin bundle --cluster` as the non-snapshot producer for `app_worker.js` and `agent_worker.js`, completing the CLI path to `egg-scripts start --bundle`. The app-only flag is rejected when standalone mode is selected through `--target standalone` or `--entry`.
+
+## [2026-08-04] docs | document cluster bundle and snapshot workflows
+
+- sources touched: `site/docs/{core/bundle,advanced/snapshot,advanced/snapshot-troubleshooting}.md`, `site/docs/zh-CN/{core/bundle,advanced/snapshot,advanced/snapshot-troubleshooting}.md`, `tools/egg-bundler/{README,docs/output-structure}.md`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced stale single-process-only guidance with the supported `egg-bin bundle --cluster`, role-specific snapshot build, and `egg-scripts start --bundle` workflows. Corrected the default single-file artifact layout, external dependency deployment guidance, lazy-module defaults, restored web-global behavior, and runtime-asset examples.

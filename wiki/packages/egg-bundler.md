@@ -71,17 +71,21 @@ constraint is why worker output always needs a thin ESM wrapper.
 
 - Relative `outputDir` values are resolved from `baseDir`.
 - Default mode is `production`; `development` is also accepted.
+- `PackRunner` defaults to `singleFile: true`, so each normal worker entry is a
+  self-contained CommonJS file. Snapshot builds require and force that setting.
+  A programmatic caller may opt into opaque `@utoo/pack` runtime/module chunks
+  for a non-snapshot build with `singleFile: false`.
 - If `<baseDir>/.egg/manifest.json` is missing, `ManifestLoader` starts the app
   with `metadataOnly: true` to generate it. This skips the agent and normal boot
   lifecycle, runs `loadMetadata()` hooks, and the manifest generation child
   process exits after writing the manifest, so registered `beforeClose` hooks do
   not run.
-- The default `single` target runs in Egg single-process mode. Its worker entry treats the
-  deploy output directory as the runtime Egg `baseDir`, passes the framework
-  specifier explicitly to `startEgg`, maps that specifier to the already bundled
-  framework module, and precomputes original app absolute aliases so bundled
-  module lookup can serve relKeys, output-dir absolute paths, original app
-  absolute paths, and manifest `resolveCache` request aliases.
+- The default `single` target runs in Egg single-process mode. Its worker entry
+  treats the deploy output directory as the runtime Egg `baseDir`, passes the
+  framework specifier explicitly to `startEgg`, maps that specifier to the
+  already bundled framework module, and precomputes original app absolute
+  aliases so bundled module lookup can serve relKeys, output-dir absolute paths,
+  original app absolute paths, and manifest `resolveCache` request aliases.
 - The `cluster` target emits `app_worker.js` and `agent_worker.js`. Their roles
   are fixed while generating the entries rather than selected by
   `EGG_PROCESS_TYPE` or another runtime switch. Both entries use the shared
@@ -188,16 +192,18 @@ would otherwise be inlined.
   **and egg's HTTP client stack `undici` + `urllib`**. `cluster` is runtime-sensitive:
   Node chooses its primary or worker implementation when the module is first loaded,
   while snapshot construction happens outside a cluster worker. Keeping both module
-  specifiers lazy ensures each restored worker loads the worker implementation instead
-  of retaining the builder's primary implementation. Egg builds its `HttpClient` (urllib → undici) during
-  boot, and undici instantiates an llhttp `WebAssembly` (disabled under
+  specifiers lazy ensures each restored worker loads the worker implementation
+  instead of retaining the builder's primary implementation. Egg builds its
+  `HttpClient` (urllib → undici) during boot, and undici instantiates an llhttp
+  `WebAssembly` (disabled under
   `--build-snapshot`) + `HTTPParser` that cannot be serialized. As npm packages
   urllib/undici would be inlined; listing them forces them external (`Bundler` adds
   the lazy ids to the externals map) so the member-proxy stub is used at build — an
   app gets a serializable snapshot without listing them in `egg.snapshot.lazyModules`.
-- The member-proxy records the build-time access path (`get`/`apply`/`construct`) and
-  replays it against the real module on restore, so `class HttpClient extends
-urllib.HttpClient` (and urllib's own `class BaseAgent extends undici.Agent`) keep
+- The member-proxy records the build-time access path (`get`/`apply`/`construct`)
+  and replays it against the real module on restore, so
+  `class HttpClient extends urllib.HttpClient` (and urllib's own
+  `class BaseAgent extends undici.Agent`) keep
   working: the `extends` is evaluated against the build stub, then `super(...)` /
   inherited methods resolve to the real base class after deserialization.
 - Proxy reads and writes preserve the inherited receiver at restore. Static or

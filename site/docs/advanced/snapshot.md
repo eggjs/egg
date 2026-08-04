@@ -14,15 +14,16 @@ and starts listening, so the process is ready to serve traffic almost
 immediately.
 
 This builds on [Bundle Deployment](../core/bundle.md): the snapshot is produced
-from a single self-contained bundle, so a snapshot is essentially a pre-booted
-bundle.
+from a self-contained bundle, so a snapshot is essentially a pre-booted bundle.
+Single-process mode produces one bundle and one blob. Cluster mode produces
+independent app and agent bundles, each with its own blob and V8 heap.
 
 ## Node.js version requirements
 
-| Phase                | Command                             | Node.js |
-| -------------------- | ----------------------------------- | ------- |
-| **Build** a snapshot | `egg-bin snapshot build`            | >= 22   |
-| **Restore** (run)    | `egg-scripts start --snapshot-blob` | >= 24   |
+| Phase                | Command                                           | Node.js |
+| -------------------- | ------------------------------------------------- | ------- |
+| **Build** a snapshot | `egg-bin snapshot build`                          | >= 22   |
+| **Restore** (run)    | `egg-scripts start --snapshot-blob` or `--bundle` | >= 24   |
 
 ::: warning Restoring requires Node.js >= 24
 A snapshot can be **built** on Node.js >= 22, but **restoring** a non-trivial Egg
@@ -30,13 +31,14 @@ heap on Node.js 22 aborts the process during deserialization with a native fatal
 error (`Check failed: current == end_slot_index`, a V8 bug). Always restore on
 Node.js **>= 24**.
 
-The supported launcher enforces this: `egg-scripts start --snapshot-blob` refuses
-to launch on Node.js < 24 with a clear error before spawning anything. If you
-bypass it and run `node --snapshot-blob` directly on Node.js 22, the process still
-aborts mid-deserialization with the native fatal above — the snapshot's own
-runtime guard can only print a friendly message on a runtime new enough to finish
-deserializing but still below 24. So always restore through `egg-scripts` on
-Node.js >= 24.
+The supported launcher enforces this for both the single-process
+`--snapshot-blob` path and cluster `--bundle` launches that provide role blobs:
+it refuses to launch on Node.js < 24 with a clear error before spawning
+anything. If you bypass it and run `node --snapshot-blob` directly on Node.js
+22, the process still aborts mid-deserialization with the native fatal above —
+the snapshot's own runtime guard can only print a friendly message on a runtime
+new enough to finish deserializing but still below 24. So always restore through
+`egg-scripts` on Node.js >= 24.
 :::
 
 ## Build and restore with the CLI
@@ -54,14 +56,26 @@ $ egg-bin snapshot build
 ```
 
 By default this writes the bundle to `./dist-bundle` and the blob to
-`./dist-bundle/snapshot.blob`. Useful options:
+`./dist-bundle/snapshot.blob`.
 
-| Option             | Description                                                    |
-| ------------------ | -------------------------------------------------------------- |
-| `--output <dir>`   | Bundle output directory (also where `worker.js` lives).        |
-| `--blob <path>`    | Snapshot blob path. Defaults to `<output>/snapshot.blob`.      |
-| `--force-external` | Package to always keep external, repeatable (see Limitations). |
-| `--skip-bundle`    | Build the blob from an existing `worker.js` (skip bundling).   |
+To build independent app and agent snapshots for cluster mode:
+
+```bash
+$ egg-bin snapshot build --cluster
+```
+
+This writes `app_worker.js`, `agent_worker.js`, `app.snapshot.blob`, and
+`agent.snapshot.blob` under `./dist-bundle`. Useful options:
+
+| Option                         | Description                                                                   |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| `--output <dir>`               | Bundle output directory.                                                      |
+| `--cluster`                    | Build separate app and agent worker bundles and blobs.                        |
+| `--blob <path>`                | Single-process blob path. Defaults to `<output>/snapshot.blob`.               |
+| `--app-snapshot-blob <path>`   | Cluster app blob path. Defaults to `<output>/app.snapshot.blob`.              |
+| `--agent-snapshot-blob <path>` | Cluster agent blob path. Defaults to `<output>/agent.snapshot.blob`.          |
+| `--force-external`             | Package to always keep external, repeatable (see Limitations).                |
+| `--skip-bundle`                | Rebuild blobs from existing snapshot-ready worker entries without rebundling. |
 
 ### Restore and serve
 
@@ -76,9 +90,24 @@ egg-cluster, no framework resolution). The snapshot main reads the listen port
 from `PORT` (or `--port`), runs `snapshotDidDeserialize` hooks, and calls
 `app.listen()`.
 
+For cluster mode, enable the bundle worker entries and provide either or both
+role blobs:
+
+```bash
+$ egg-scripts start --bundle \
+    --app-snapshot-blob ./dist-bundle/app.snapshot.blob \
+    --agent-snapshot-blob ./dist-bundle/agent.snapshot.blob
+```
+
+`--bundle-dir` defaults to `./dist-bundle`. The app and agent blobs are
+independent: when only one is provided, that role restores from its blob and the
+other role starts from its generated bundle JavaScript. Snapshot-backed cluster
+workers require process mode; ordinary cluster bundles without blobs can also
+use `worker_threads`.
+
 ## Programmatic API
 
-For custom entry files, Egg also exports two helpers from `egg`:
+For custom single-process entry files, Egg also exports two helpers from `egg`:
 
 ```ts
 import { buildSnapshot, restoreSnapshot } from 'egg';
@@ -117,6 +146,9 @@ await app.listen(7001);
 `didReady`, so the returned app is ready for runtime setup such as creating
 servers or opening external connections.
 
+These helpers represent one application heap. The cluster workflow uses the CLI
+to generate and restore the role-specific app and agent entries instead.
+
 ## How it works
 
 During snapshot build, Egg runs with `snapshot: true`. In this mode Egg loads
@@ -133,10 +165,15 @@ At restore time V8 deserializes the heap, then the snapshot main runs
 `snapshotDidDeserialize` hooks to recreate those runtime-only resources, finishes
 the deferred lifecycle through `didReady`, and starts listening.
 
+In cluster mode, the app and agent workers run this sequence independently.
+Each blob captures the heap built by its role-specific entry, and each restored
+process resumes that role's lifecycle and communication protocol.
+
 The set of modules kept external and lazy defaults to the Node network stack
-(`http`, `https`, `http2`, `tls`, `dns`, `inspector`, with their `node:` forms).
-If a builtin beyond that list initializes native state at import, extend the set
-via `egg.snapshot.lazyModules` in the app `package.json`:
+(`http`, `https`, `http2`, `tls`, `dns`), `inspector`, and `cluster`, with their
+`node:` forms, plus `undici` and `urllib`. If another builtin or package
+initializes native state at import, extend the set via
+`egg.snapshot.lazyModules` in the app `package.json`:
 
 ```json
 {
@@ -179,8 +216,9 @@ loggers, or other handles that must be recreated in a live runtime.
 
 ## Performance
 
-Because the module graph is already loaded and the app is booted up to
-`configWillLoad`, restore only pays for `didReady` and connecting/listening.
+The following numbers measure the single-process path. Because the module graph
+is already loaded and the app is booted up to `configWillLoad`, restore only
+pays for `didReady` and connecting/listening.
 Measured on [cnpmcore](https://github.com/cnpm/cnpmcore):
 
 | Boot mode          | Restore → listening  |
@@ -194,8 +232,11 @@ which is exactly the cost a snapshot front-loads into build time.
 ## Known limitations
 
 - **Restore requires Node.js >= 24** (see above).
-- **Single process only**: the snapshot runs as one self-contained process
-  (`mode: 'single'`), like a bundle. Cluster mode is not supported.
+- **Cluster snapshot blobs require process mode**: ordinary cluster bundles
+  support `worker_threads`, but Node cannot restore a custom V8 startup blob
+  inside a worker thread.
+- **Bundled cluster bootstrap modules are unsupported**: a cluster launch that
+  uses `options.require` fails before workers are spawned.
 - **Native addons are external** and must be present in the deploy target.
 - **Third-party dependencies are constrained**: any dependency that opens live
   resources or captures non-serializable state at module-evaluation time (open
