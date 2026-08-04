@@ -372,3 +372,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `tools/scripts/src/commands/start.ts`, `tools/egg-bundler/src/lib/EntryGenerator.ts`
 - pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
 - note: Replaced the bundled cluster worker's warning-and-ignore behavior for `options.require` with explicit startup errors in both ordinary bundle and snapshot restore modes. The scripts CLI rejects the supported `--bundle` path before spawning; generated workers retain a defense-in-depth assertion for direct/programmatic launches.
+
+## [2026-08-04] api | expose ordinary cluster bundle production
+
+- sources touched: `tools/egg-bin/src/commands/bundle.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added `egg-bin bundle --cluster` as the non-snapshot producer for `app_worker.js` and `agent_worker.js`, completing the CLI path to `egg-scripts start --bundle`. The app-only flag is rejected when standalone mode is selected through `--target standalone` or `--entry`.

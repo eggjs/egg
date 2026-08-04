@@ -92,6 +92,12 @@ constraint is why worker output always needs a thin ESM wrapper.
   Custom V8 snapshot blobs remain process-only because Node does not expose a
   per-Worker snapshot-blob API; option parsing rejects that combination before
   creating a worker thread.
+- `egg-bin bundle --cluster` is the ordinary cluster-bundle producer. It selects
+  the bundler's `cluster` target and writes `app_worker.js`, `agent_worker.js`,
+  and the bundle manifest without constructing snapshot blobs. Its output can
+  be passed directly to `egg-scripts start --bundle`. `--cluster` is an Egg app
+  mode and is rejected when standalone mode is selected explicitly or inferred
+  from `--entry`.
 - `egg-bin snapshot build --cluster` selects that target and runs two independent
   V8 snapshot builds: `app_worker.js` produces `app.snapshot.blob`, while
   `agent_worker.js` produces `agent.snapshot.blob`. Their paths can be set
