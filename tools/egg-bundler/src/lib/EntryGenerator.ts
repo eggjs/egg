@@ -710,10 +710,14 @@ const __requireMasterOptions = (): any => {
   return options;
 };
 
-const __warnIgnoredRequire = (masterOptions: any) => {
-  if (Array.isArray(masterOptions.require) && masterOptions.require.length > 0) {
-    // eslint-disable-next-line no-console
-    console.warn('[egg-bundler] options.require is not supported in a bundled worker, ignored: %j', masterOptions.require);
+const __assertNoRequire = (masterOptions: any) => {
+  const requiredModules = Array.isArray(masterOptions.require)
+    ? masterOptions.require
+    : masterOptions.require
+      ? [masterOptions.require]
+      : [];
+  if (requiredModules.length > 0) {
+    throw new Error('[egg-bundler] options.require is not supported in bundled cluster workers');
   }
 };
 
@@ -748,10 +752,10 @@ if (v8.startupSnapshot.isBuildingSnapshot()) {
       __assertRestoreNodeVersion();
       if (!__assertSnapshotBuildCwd()) return;
       setImmediate(() => {
-        __installRestoreRuntime();
         (async () => {
           const masterOptions = __requireMasterOptions();
-          __warnIgnoredRequire(masterOptions);
+          __assertNoRequire(masterOptions);
+          __installRestoreRuntime();
           __mergeMasterOptions(worker, masterOptions);
           await worker.triggerSnapshotDidDeserialize();
           __startWorker(worker, masterOptions);
@@ -772,7 +776,7 @@ if (v8.startupSnapshot.isBuildingSnapshot()) {
   // snapshot blob. The master options follow the standard worker argv contract.
   try {
     const masterOptions = __requireMasterOptions();
-    __warnIgnoredRequire(masterOptions);
+    __assertNoRequire(masterOptions);
     const worker = __newWorker(masterOptions);
     __startWorker(worker, masterOptions);
   } catch (err) {

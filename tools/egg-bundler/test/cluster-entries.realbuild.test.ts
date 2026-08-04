@@ -126,6 +126,17 @@ describe('cluster entries — real @utoo/pack build', () => {
       const masterOptions = JSON.stringify({ baseDir, framework: 'fake-egg', startMode: 'process' });
       await expect(execFileAsync(process.execPath, [filepath, masterOptions])).resolves.toBeDefined();
 
+      const unsupportedOptions = JSON.stringify({
+        baseDir,
+        framework: 'fake-egg',
+        startMode: 'process',
+        require: ['./bootstrap.js'],
+      });
+      await expect(execFileAsync(process.execPath, [filepath, unsupportedOptions])).rejects.toMatchObject({
+        code: 1,
+        stderr: expect.stringContaining('options.require is not supported in bundled cluster workers'),
+      });
+
       const worker = new ThreadWorker(filepath, {
         argv: [JSON.stringify({ baseDir, framework: 'fake-egg', startMode: 'worker_threads' })],
       });
@@ -152,6 +163,16 @@ describe('cluster entries — real @utoo/pack build', () => {
       await expect(
         execFileAsync(process.execPath, ['--snapshot-blob', blobPath, workerPath, masterOptions], { cwd: baseDir }),
       ).resolves.toBeDefined();
+
+      const unsupportedOptions = JSON.stringify({ baseDir, framework: 'fake-egg', require: ['./bootstrap.js'] });
+      await expect(
+        execFileAsync(process.execPath, ['--snapshot-blob', blobPath, workerPath, unsupportedOptions], {
+          cwd: baseDir,
+        }),
+      ).rejects.toMatchObject({
+        code: 1,
+        stderr: expect.stringContaining('options.require is not supported in bundled cluster workers'),
+      });
 
       const otherCwd = path.join(baseDir, 'relocated');
       await fs.mkdir(otherCwd);

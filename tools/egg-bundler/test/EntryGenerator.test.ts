@@ -134,6 +134,9 @@ describe('EntryGenerator', () => {
       expect(worker).not.toContain('EGG_SNAPSHOT_ROLE');
       expect(worker).toContain('createWorkerThreadIO');
       expect(worker).toContain("masterOptions.startMode === 'worker_threads'");
+      expect(worker).toContain('const __assertNoRequire =');
+      expect(worker).toContain('__assertNoRequire(masterOptions)');
+      expect(worker).not.toContain('__warnIgnoredRequire');
     }
     await expect(fs.stat(path.join(result.entryDir, 'runtime.ts'))).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(fs.stat(path.join(result.entryDir, 'worker.entry.ts'))).rejects.toMatchObject({ code: 'ENOENT' });

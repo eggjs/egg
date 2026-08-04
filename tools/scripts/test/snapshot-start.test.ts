@@ -200,6 +200,27 @@ describe('test/snapshot-start.test.ts', () => {
     expect(clusterOptions['bundle-dir']).toBeUndefined();
   });
 
+  it('rejects options.require for an ordinary multi-process bundle before spawning', async () => {
+    await expect(Start.run(['--bundle', '--require', './bootstrap.js', baseDir])).rejects.toThrow(
+      /options\.require is not supported with bundled cluster workers/,
+    );
+    expect(spawnMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects options.require for cluster snapshot restore before spawning', async () => {
+    await expect(
+      Start.run([
+        '--bundle',
+        '--app-snapshot-blob',
+        './dist-bundle/app.snapshot.blob',
+        '--require',
+        './bootstrap.js',
+        baseDir,
+      ]),
+    ).rejects.toThrow(/options\.require is not supported with bundled cluster workers/);
+    expect(spawnMock).not.toHaveBeenCalled();
+  });
+
   it('silently ignores bundle path and role options without --bundle', async () => {
     pinNodeVersion('22.22.3');
     await Start.run([

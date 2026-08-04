@@ -336,6 +336,13 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       flags.bundle && Boolean(flags['app-snapshot-blob'] || flags['agent-snapshot-blob']);
     const snapshotRequested = Boolean(flags['snapshot-blob'] || clusterSnapshotRequested);
 
+    if (flags.bundle && !flags['snapshot-blob'] && flags.require?.length) {
+      this.error(
+        'options.require is not supported with bundled cluster workers; remove --require and eggScriptsConfig.require',
+        { exit: 1 },
+      );
+    }
+
     if (snapshotRequested) {
       // Restoring a V8 startup snapshot requires Node.js >= 24. A snapshot can be
       // built on Node.js >= 22, but restoring a non-trivial egg heap on Node.js 22

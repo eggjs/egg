@@ -366,3 +366,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `packages/cluster/src/worker_protocol`, `packages/cluster/src/{app_worker,agent_worker}.ts`, `tools/egg-bundler/src/lib/EntryGenerator.ts`
 - pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
 - note: Added a shared `parentPort` worker transport and made generated app/agent bundle entries select it when the cluster master supplies `startMode: worker_threads`. Plain bundle workers now support both process and thread modes; custom V8 snapshot blobs remain process-only.
+
+## [2026-08-04] behavior | reject unsupported bundle bootstrap modules
+
+- sources touched: `tools/scripts/src/commands/start.ts`, `tools/egg-bundler/src/lib/EntryGenerator.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced the bundled cluster worker's warning-and-ignore behavior for `options.require` with explicit startup errors in both ordinary bundle and snapshot restore modes. The scripts CLI rejects the supported `--bundle` path before spawning; generated workers retain a defense-in-depth assertion for direct/programmatic launches.

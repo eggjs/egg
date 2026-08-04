@@ -116,6 +116,11 @@ constraint is why worker output always needs a thin ESM wrapper.
   determine the other's. Bundle path and role options are ignored unless
   `--bundle` is present. The existing `--snapshot-blob` remains the single-process
   launcher and takes precedence when it is supplied together with `--bundle`.
+- Bundled cluster workers reject non-empty `options.require` before startup in
+  both ordinary and snapshot modes. A runtime bootstrap module cannot preserve
+  the source worker's before-framework ordering once the bundle graph has been
+  statically evaluated; silently ignoring it would disable instrumentation or
+  patches without failing the deployment.
 - Explicit `externals.force` entries are external, and `ExternalsResolver`
   auto-detects root `peerDependencies`, root `optionalDependencies`, root
   dependency packages with native addons, root dependency packages whose optional
