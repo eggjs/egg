@@ -21,12 +21,3 @@ export async function startCluster(options: ClusterOptions): Promise<void> {
 export { Master, type MasterOptions, type ClusterOptions, type ClusterHTTPSSecureOptions, type ClusterStartMode };
 
 export * from './error/index.ts';
-export {
-  startAppWorker,
-  startAgentWorker,
-  createProcessWorkerIO,
-  createWorkerThreadIO,
-  type AppWorkerIO,
-  type AgentWorkerIO,
-  type AppWorkerProtocolOptions,
-} from './worker_protocol/index.ts';
