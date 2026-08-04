@@ -57,6 +57,53 @@ bundle:
         some-package: ./node_modules/some-package/index.js
 ```
 
+When explicitly configured, `roots` and `forceCopyDirs` each replace their
+respective defaults rather than extending them. Keep any default directories
+that the application still needs when adding another scan or force-copy path.
+
+### Copying migration files when using Leoric migrate
+
+This configuration is optional. Normal ORM model loading and queries do not
+require migration files to be copied. If the application calls Leoric's
+`migrate` or `rollback` in the bundled runtime, Leoric scans its `migrations`
+directory and loads migration modules at runtime. Those files are not
+automatically included merely because the application code is bundled, so the
+migration directory must be declared as a runtime asset:
+
+```yaml
+# module.yml
+bundle:
+  runtimeAssets:
+    roots:
+      - app
+      - database
+    forceCopyDirs:
+      - app/public
+      - app/assets
+      - app/static
+      - database
+```
+
+Resolve the relative path against `appInfo.baseDir` as well. In source mode,
+`appInfo.baseDir` is the application directory; in bundle mode, it is the
+bundle output directory. Each mode therefore reads its own `database` directory
+instead of accidentally depending on the build-time source tree:
+
+```ts
+// config/config.default.ts
+import path from 'node:path';
+
+export default (appInfo: { baseDir: string }) => ({
+  orm: {
+    migrations: path.join(appInfo.baseDir, 'database'),
+  },
+});
+```
+
+With `orm.datasources`, apply the same path handling to every datasource that
+defines `migrations`. This approach reuses the existing runtime-asset copy
+support and requires no Egg or Leoric code changes.
+
 ## Output
 
 ```

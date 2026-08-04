@@ -47,6 +47,48 @@ bundle:
         some-package: ./node_modules/some-package/index.js
 ```
 
+`roots` 和 `forceCopyDirs` 一旦显式配置就会分别替换对应的默认值，而不是追加到默认值。
+因此扩展扫描或强制拷贝目录时，应同时保留应用仍然需要的默认目录。
+
+### 使用 Leoric migrate 时拷贝 migration 文件
+
+这是一个可选配置。普通 ORM 模型加载和查询不需要复制 migration 文件；如果应用会在
+bundle 运行环境中调用 Leoric 的 `migrate` 或 `rollback`，Leoric 会在运行时扫描
+`migrations` 目录并加载其中的 migration 模块。这类文件不会仅因应用代码进入 bundle
+而自动包含在产物中，此时需要把 migration 目录声明为运行时资源：
+
+```yaml
+# module.yml
+bundle:
+  runtimeAssets:
+    roots:
+      - app
+      - database
+    forceCopyDirs:
+      - app/public
+      - app/assets
+      - app/static
+      - database
+```
+
+相对路径还应基于 `appInfo.baseDir` 转换为绝对路径。源码模式下 `appInfo.baseDir` 是应用
+目录；bundle 模式下则是 bundle 输出目录，因此两种模式会分别读取各自产物中的
+`database` 目录，而不会意外依赖构建时的源码目录：
+
+```ts
+// config/config.default.ts
+import path from 'node:path';
+
+export default (appInfo: { baseDir: string }) => ({
+  orm: {
+    migrations: path.join(appInfo.baseDir, 'database'),
+  },
+});
+```
+
+使用 `orm.datasources` 时，应对每个配置了 `migrations` 的数据源采用相同的路径处理。
+这套方式复用既有的运行时资源拷贝能力，无需修改 Egg 或 Leoric。
+
 ## 产物
 
 ```
