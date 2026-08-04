@@ -132,6 +132,8 @@ describe('EntryGenerator', () => {
       expect(worker).not.toContain('EGG_BUNDLE_SNAPSHOT');
       expect(worker).not.toContain('EGG_PROCESS_TYPE');
       expect(worker).not.toContain('EGG_SNAPSHOT_ROLE');
+      expect(worker).toContain('createWorkerThreadIO');
+      expect(worker).toContain("masterOptions.startMode === 'worker_threads'");
     }
     await expect(fs.stat(path.join(result.entryDir, 'runtime.ts'))).rejects.toMatchObject({ code: 'ENOENT' });
     await expect(fs.stat(path.join(result.entryDir, 'worker.entry.ts'))).rejects.toMatchObject({ code: 'ENOENT' });

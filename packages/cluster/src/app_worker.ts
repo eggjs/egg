@@ -3,9 +3,9 @@ import { debuglog } from 'node:util';
 import { importModule } from '@eggjs/utils';
 import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
 
-import { AppThreadWorker } from './utils/mode/impl/worker_threads/app.ts';
 import { startAppWorker, type AppWorkerIO } from './worker_protocol/app.ts';
 import { createProcessWorkerIO } from './worker_protocol/process.ts';
+import { createWorkerThreadIO } from './worker_protocol/worker-thread.ts';
 
 const debug = debuglog('egg/cluster/app_worker');
 
@@ -33,7 +33,7 @@ async function main() {
   }
 
   const workerIO: AppWorkerIO =
-    options.startMode === 'worker_threads' ? (AppThreadWorker as unknown as AppWorkerIO) : createProcessWorkerIO();
+    options.startMode === 'worker_threads' ? createWorkerThreadIO() : createProcessWorkerIO();
 
   const consoleLogger = new ConsoleLogger({
     level: process.env.EGG_APP_WORKER_LOGGER_LEVEL,

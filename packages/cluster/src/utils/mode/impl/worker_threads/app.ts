@@ -1,7 +1,5 @@
 import { setTimeout as sleep } from 'node:timers/promises';
-import { Worker as ThreadWorker, threadId, parentPort, type WorkerOptions } from 'node:worker_threads';
-
-import type { Options as gracefulExitOptions } from 'graceful-process';
+import { Worker as ThreadWorker, type WorkerOptions } from 'node:worker_threads';
 
 import type { MessageBody } from '../../../messenger.ts';
 import { BaseAppWorker, BaseAppUtils } from '../../base/app.ts';
@@ -46,34 +44,6 @@ export class AppThreadWorker extends BaseAppWorker<ThreadWorker> {
 
   clean(): void {
     this.instance.removeAllListeners();
-  }
-
-  // static methods use on src/app_worker.ts
-
-  static get workerId(): number {
-    return threadId;
-  }
-
-  static on(event: string, listener: (...args: any[]) => void): void {
-    parentPort!.on(event, listener);
-  }
-
-  static send(message: MessageBody): void {
-    message.senderWorkerId = String(threadId);
-    parentPort!.postMessage(message);
-  }
-
-  static kill(): void {
-    process.exit(1);
-  }
-
-  static gracefulExit(options: gracefulExitOptions): void {
-    process.on('exit', async (code) => {
-      if (typeof options.beforeExit === 'function') {
-        await options.beforeExit();
-      }
-      process.exit(code);
-    });
   }
 }
 

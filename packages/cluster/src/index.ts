@@ -25,6 +25,7 @@ export {
   startAppWorker,
   startAgentWorker,
   createProcessWorkerIO,
+  createWorkerThreadIO,
   type AppWorkerIO,
   type AgentWorkerIO,
   type AppWorkerProtocolOptions,

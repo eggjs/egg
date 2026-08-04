@@ -628,17 +628,19 @@ if (v8.startupSnapshot.isBuildingSnapshot()) {
       entries,
       manifest,
       `import v8 from 'node:v8';`,
-      `import { createProcessWorkerIO, ${protocolFunction} as __startWorkerProtocol } from '@eggjs/cluster/worker_protocol';`,
+      `import { createProcessWorkerIO, createWorkerThreadIO, ${protocolFunction} as __startWorkerProtocol } from '@eggjs/cluster/worker_protocol';`,
     );
     return `${bundleRuntime}${this.#renderClusterWorkerRuntime(role)}`;
   }
 
   #renderClusterWorkerRuntime(role: ClusterWorkerRole): string {
     const workerClass = role === 'app' ? 'Application' : 'Agent';
+    const createWorkerIO =
+      "masterOptions.startMode === 'worker_threads' ? createWorkerThreadIO() : createProcessWorkerIO()";
     const startProtocol =
       role === 'app'
-        ? '__startWorkerProtocol(worker, masterOptions, createProcessWorkerIO());'
-        : '__startWorkerProtocol(worker, createProcessWorkerIO());';
+        ? `__startWorkerProtocol(worker, masterOptions, ${createWorkerIO});`
+        : `__startWorkerProtocol(worker, ${createWorkerIO});`;
     const roleLabel = role === 'app' ? 'app worker' : 'agent worker';
 
     return `// This entry's role is baked in at bundle time. It never inspects the

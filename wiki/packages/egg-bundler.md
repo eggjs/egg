@@ -29,7 +29,7 @@ source_files:
   - tegg/standalone/standalone/src/EggModuleLoader.ts
   - tools/egg-bundler/docs/output-structure.md
   - examples/helloworld-service-worker
-updated_at: 2026-08-03
+updated_at: 2026-08-04
 status: active
 ---
 
@@ -85,9 +85,13 @@ constraint is why worker output always needs a thin ESM wrapper.
 - The `cluster` target emits `app_worker.js` and `agent_worker.js`. Their roles
   are fixed while generating the entries rather than selected by
   `EGG_PROCESS_TYPE` or another runtime switch. Both entries use the shared
-  `@eggjs/cluster/worker_protocol` implementation and accept the master's normal
-  JSON argv contract. Snapshot builds force each output to remain independently
+  `@eggjs/cluster/worker_protocol` implementation, accept the master's normal
+  JSON argv contract, and select process IPC or `worker_threads.parentPort`
+  from `startMode`. Snapshot builds force each output to remain independently
   self-contained, so no common runtime chunk is emitted between the two files.
+  Custom V8 snapshot blobs remain process-only because Node does not expose a
+  per-Worker snapshot-blob API; option parsing rejects that combination before
+  creating a worker thread.
 - `egg-bin snapshot build --cluster` selects that target and runs two independent
   V8 snapshot builds: `app_worker.js` produces `app.snapshot.blob`, while
   `agent_worker.js` produces `agent.snapshot.blob`. Their paths can be set

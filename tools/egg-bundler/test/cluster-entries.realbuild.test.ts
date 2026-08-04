@@ -1,8 +1,10 @@
 import { execFile } from 'node:child_process';
+import { once } from 'node:events';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
+import { Worker as ThreadWorker } from 'node:worker_threads';
 
 import type { StartupManifest } from '@eggjs/core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -67,7 +69,19 @@ describe('cluster entries — real @utoo/pack build', () => {
     await writePackage(
       baseDir,
       '@eggjs/cluster',
-      'export function createProcessWorkerIO() { return {}; }\nexport function startAppWorker() {}\nexport function startAgentWorker() {}\n',
+      [
+        "import { parentPort, threadId } from 'node:worker_threads';",
+        "export function createProcessWorkerIO() { return { transport: 'process', send() {} }; }",
+        'export function createWorkerThreadIO() {',
+        '  return {',
+        "    transport: 'worker_threads',",
+        '    send(message) { parentPort.postMessage({ ...message, senderWorkerId: String(threadId) }); },',
+        '  };',
+        '}',
+        "export function startAppWorker(_worker, _options, io) { io.send({ action: 'app-start', transport: io.transport }); }",
+        "export function startAgentWorker(_worker, io) { io.send({ action: 'agent-start', transport: io.transport }); }",
+        '',
+      ].join('\n'),
       { './worker_protocol': './index.js' },
     );
   });
@@ -105,6 +119,26 @@ describe('cluster entries — real @utoo/pack build', () => {
       expect(source).not.toMatch(/_turbopack__runtime/);
       expect(source).not.toMatch(/R\.c\(/);
       await execFileAsync(process.execPath, ['--check', filepath]);
+    }
+
+    for (const role of ['app', 'agent'] as const) {
+      const filepath = path.join(outputDir, `${role}_worker.js`);
+      const masterOptions = JSON.stringify({ baseDir, framework: 'fake-egg', startMode: 'process' });
+      await expect(execFileAsync(process.execPath, [filepath, masterOptions])).resolves.toBeDefined();
+
+      const worker = new ThreadWorker(filepath, {
+        argv: [JSON.stringify({ baseDir, framework: 'fake-egg', startMode: 'worker_threads' })],
+      });
+      try {
+        const [message] = await once(worker, 'message');
+        expect(message).toMatchObject({
+          action: `${role}-start`,
+          transport: 'worker_threads',
+        });
+        expect(message.senderWorkerId).toBe(String(worker.threadId));
+      } finally {
+        await worker.terminate();
+      }
     }
 
     if (Number(process.versions.node.split('.')[0]) >= 24) {

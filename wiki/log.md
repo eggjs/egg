@@ -360,3 +360,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `packages/loader-fs`, `tegg/core/{types,loader}`, `tegg/plugin/tegg`, `tegg/standalone/standalone`, `tools/egg-bundler`
 - pages updated: `wiki/log.md`, `wiki/packages/{loader-fs,egg-bundler}.md`
 - note: Promoted the host-neutral `TeggManifest` contract, moved `ManifestLoaderFS` to the shared loader-fs package, and made Egg and standalone use the same manifest-backed file view through module scanning, load units, preload, and dynamic DAL discovery. `ModuleLoader.createModuleLoader()` installs its initialized filesystem into the current `TeggScope`; explicit host views replace earlier defaults, so later module loaders reuse the per-app view without expanding multi-instance callback context. Generic `LoaderFS` construction remains host-neutral and side-effect free. Module identity travels separately through `ModuleDescriptor -> GlobalGraph -> LoadUnit`.
+
+## [2026-08-04] behavior | support cluster bundles in worker threads
+
+- sources touched: `packages/cluster/src/worker_protocol`, `packages/cluster/src/{app_worker,agent_worker}.ts`, `tools/egg-bundler/src/lib/EntryGenerator.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added a shared `parentPort` worker transport and made generated app/agent bundle entries select it when the cluster master supplies `startMode: worker_threads`. Plain bundle workers now support both process and thread modes; custom V8 snapshot blobs remain process-only.
