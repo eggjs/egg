@@ -47,20 +47,21 @@ export function startAppWorker(
   io: AppWorkerIO,
   consoleLogger: ConsoleLogger = new ConsoleLogger({ level: process.env.EGG_APP_WORKER_LOGGER_LEVEL }),
 ): void {
-  app.ready(startServer);
-
   function exitProcess() {
     // Use SIGTERM kill process, ensure trigger the gracefulExit
     io.kill();
   }
 
-  // exit if worker start timeout
-  app.once('startTimeout', startTimeoutHandler);
-
   function startTimeoutHandler() {
     consoleLogger.error('[app_worker] start timeout, exiting with code:1');
     exitProcess();
   }
+
+  // Register the startup timeout handler before ready(). A restored snapshot is
+  // already ready and invokes startServer synchronously; registering afterwards
+  // would leave this startup-only listener attached permanently.
+  app.once('startTimeout', startTimeoutHandler);
+  app.ready(startServer);
 
   function startServer(err?: Error) {
     if (err) {

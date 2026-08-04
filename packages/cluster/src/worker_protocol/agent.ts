@@ -29,6 +29,11 @@ export function startAgentWorker(
     io.kill();
   }
 
+  // Register the startup error handler before ready(). An already-ready agent
+  // invokes its ready callback synchronously, so registering afterwards would
+  // leave this startup-only listener attached for the rest of the process.
+  agent.once('error', startErrorHandler);
+
   agent.ready((err?: Error) => {
     // don't send started message to master when start error
     if (err) {
@@ -38,9 +43,6 @@ export function startAgentWorker(
     agent.removeListener('error', startErrorHandler);
     io.send({ action: 'agent-start', to: 'master' });
   });
-
-  // exit if agent start error
-  agent.once('error', startErrorHandler);
 
   io.gracefulExit({
     logger: consoleLogger,
