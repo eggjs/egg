@@ -149,7 +149,10 @@ export class AppThreadUtils extends BaseAppUtils {
         worker.removeAllListeners();
         const exited = once(worker, 'exit').then(
           () => true,
-          () => false,
+          (err) => {
+            this.logger.error('[master] app worker#%s error during graceful shutdown: ', id, err);
+            return false;
+          },
         );
         worker.postMessage(WORKER_THREAD_GRACEFUL_EXIT);
         if (!(await Promise.race([exited, sleep(timeout).then(() => false)]))) {

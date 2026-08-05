@@ -78,7 +78,10 @@ export class AgentThreadUtils extends BaseAgentUtils {
       this.clean();
       const exited = once(this.#worker, 'exit').then(
         () => true,
-        () => false,
+        (err) => {
+          this.logger.error('[master] agent worker#%s error during graceful shutdown: ', this.#id, err);
+          return false;
+        },
       );
       this.#worker.postMessage(WORKER_THREAD_GRACEFUL_EXIT);
       if (!(await Promise.race([exited, sleep(timeout).then(() => false)]))) {

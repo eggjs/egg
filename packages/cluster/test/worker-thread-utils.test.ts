@@ -3,6 +3,7 @@ import { strict as assert } from 'node:assert';
 import { beforeEach, describe, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
+  errorOnGracefulMessage: false,
   exitOnGracefulMessage: true,
   nextThreadId: 1,
   workers: [] as Array<{
@@ -17,7 +18,9 @@ vi.mock('node:worker_threads', async () => {
   class Worker extends EventEmitter {
     threadId = mocks.nextThreadId++;
     postMessage = vi.fn(() => {
-      if (mocks.exitOnGracefulMessage) {
+      if (mocks.errorOnGracefulMessage) {
+        this.emit('error', new Error('graceful shutdown failed'));
+      } else if (mocks.exitOnGracefulMessage) {
         this.emit('exit', 0);
       }
     });
@@ -48,6 +51,7 @@ describe('test/worker-thread-utils.test.ts', () => {
   };
 
   beforeEach(() => {
+    mocks.errorOnGracefulMessage = false;
     mocks.exitOnGracefulMessage = true;
     mocks.nextThreadId = 1;
     mocks.workers.length = 0;
@@ -73,6 +77,18 @@ describe('test/worker-thread-utils.test.ts', () => {
 
     assert.deepEqual(mocks.workers[0].postMessage.mock.calls, [[WORKER_THREAD_GRACEFUL_EXIT]]);
     assert.equal(mocks.workers[0].terminate.mock.calls.length, 1);
+  });
+
+  it('logs and terminates when the agent worker errors during graceful exit', async () => {
+    mocks.errorOnGracefulMessage = true;
+    const utils = new AgentThreadUtils({ agentWorkerFile: 'agent.js' } as any, dependencies as any);
+    utils.fork();
+
+    await utils.kill(10);
+
+    assert.equal(mocks.workers[0].terminate.mock.calls.length, 1);
+    assert.equal(dependencies.logger.error.mock.calls.length, 1);
+    assert.match(String(dependencies.logger.error.mock.calls[0].at(-1)), /graceful shutdown failed/);
   });
 
   it('lets every app worker exit gracefully before the timeout', async () => {
@@ -105,6 +121,25 @@ describe('test/worker-thread-utils.test.ts', () => {
     for (const worker of mocks.workers) {
       assert.deepEqual(worker.postMessage.mock.calls, [[WORKER_THREAD_GRACEFUL_EXIT]]);
       assert.equal(worker.terminate.mock.calls.length, 1);
+    }
+  });
+
+  it('logs and terminates when app workers error during graceful exit', async () => {
+    mocks.errorOnGracefulMessage = true;
+    const utils = new AppThreadUtils(
+      { appWorkerFile: 'app.js', port: 7001, reusePort: true, workers: 2 } as any,
+      dependencies as any,
+    );
+    utils.fork();
+
+    await utils.kill(10);
+
+    assert.equal(dependencies.logger.error.mock.calls.length, 2);
+    for (const worker of mocks.workers) {
+      assert.equal(worker.terminate.mock.calls.length, 1);
+    }
+    for (const call of dependencies.logger.error.mock.calls) {
+      assert.match(String(call.at(-1)), /graceful shutdown failed/);
     }
   });
 });
