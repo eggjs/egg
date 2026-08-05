@@ -156,6 +156,43 @@ describe('test/worker-protocol.test.ts', () => {
     });
   });
 
+  it('uses the configured port when the master port is zero', async () => {
+    const app = new EventEmitter() as any;
+    app.config = { cluster: { listen: { port: 7001 } } };
+    app.options = {};
+    app.ready = (callback: (err?: Error) => void) => callback();
+    app.callback = () => (_request: unknown, response: { end(): void }) => response.end();
+    app.close = () => {};
+
+    let server: Server | undefined;
+    app.once('server', (value: Server) => {
+      server = value;
+    });
+    const messages: any[] = [];
+    startAppWorker(
+      app,
+      { port: 0 },
+      {
+        workerId: 1,
+        send(message) {
+          messages.push(message);
+        },
+        kill() {
+          assert.fail('configured-port app should not be killed');
+        },
+        gracefulExit() {},
+        on() {},
+      },
+    );
+    await Promise.resolve();
+
+    assert.equal(app.options.port, 7001);
+    assert.equal(messages[0].action, 'realport');
+    assert.equal(messages[0].data.port, 7001);
+    assert.ok(server);
+    server.close();
+  });
+
   it('kills an app that fails or times out during startup', () => {
     const readyError = new Error('app start failed');
     const failedApp = new EventEmitter() as any;
@@ -256,7 +293,7 @@ describe('test/worker-protocol.test.ts', () => {
   it('reports reusePort startup to the master', async () => {
     vi.spyOn(os, 'platform').mockReturnValue('linux');
     const app = new EventEmitter() as any;
-    app.config = { cluster: { listen: { port: 7001, reusePort: true } } };
+    app.config = { cluster: { listen: { port: 7001, hostname: '127.0.0.1', reusePort: true } } };
     app.options = {};
     app.ready = (callback: (err?: Error) => void) => callback();
     app.callback = () => (_request: unknown, response: { end(): void }) => response.end();
@@ -354,6 +391,42 @@ describe('test/worker-protocol.test.ts', () => {
     assert.equal(kill.mock.calls.length, 1);
     assert.equal(logger.error.mock.calls.length, 1);
     assert.match(logger.error.mock.calls[0][0], /port should be number/);
+  });
+
+  it('kills an app when a path-listening server emits an error', () => {
+    const app = new EventEmitter() as any;
+    app.config = { cluster: { listen: { path: '/tmp/egg-worker-protocol.sock' } } };
+    app.options = {};
+    app.ready = (callback: (err?: Error) => void) => callback();
+    app.callback = () => (_request: unknown, response: { end(): void }) => response.end();
+    app.close = () => {};
+
+    let server: Server | undefined;
+    app.once('server', (value: Server) => {
+      server = value;
+    });
+    const kill = vi.fn();
+    const logger = { error: vi.fn() } as any;
+    startAppWorker(
+      app,
+      {},
+      {
+        workerId: 1,
+        send() {},
+        kill,
+        gracefulExit() {},
+        on() {},
+      },
+      logger,
+    );
+
+    assert.ok(server);
+    server.emit('error', Object.assign(new Error('listen failed'), { code: 'EADDRINUSE' }));
+    assert.equal(kill.mock.calls.length, 1);
+    assert.deepEqual(logger.error.mock.calls, [
+      ['[app_worker] server got error: %s, code: %s', 'listen failed', 'EADDRINUSE'],
+    ]);
+    server.close();
   });
 
   it('closes the app during graceful exit', () => {
