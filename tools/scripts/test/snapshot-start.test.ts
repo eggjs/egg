@@ -221,6 +221,13 @@ describe('test/snapshot-start.test.ts', () => {
     expect(spawnMock).not.toHaveBeenCalled();
   });
 
+  it('rejects options.require for single-process snapshot restore before spawning', async () => {
+    await expect(
+      Start.run(['--snapshot-blob', './snapshot.blob', '--require', './bootstrap.js', baseDir]),
+    ).rejects.toThrow(/options\.require is not supported with snapshot restore/);
+    expect(spawnMock).not.toHaveBeenCalled();
+  });
+
   it('silently ignores bundle path and role options without --bundle', async () => {
     pinNodeVersion('22.22.3');
     await Start.run([

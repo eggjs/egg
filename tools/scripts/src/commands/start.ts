@@ -336,6 +336,15 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       flags.bundle && Boolean(flags['app-snapshot-blob'] || flags['agent-snapshot-blob']);
     const snapshotRequested = Boolean(flags['snapshot-blob'] || clusterSnapshotRequested);
 
+    if (flags['snapshot-blob'] && flags.require?.length) {
+      this.error(
+        'options.require is not supported with snapshot restore; remove --require and eggScriptsConfig.require',
+        {
+          exit: 1,
+        },
+      );
+    }
+
     if (flags.bundle && !flags['snapshot-blob'] && flags.require?.length) {
       this.error(
         'options.require is not supported with bundled cluster workers; remove --require and eggScriptsConfig.require',

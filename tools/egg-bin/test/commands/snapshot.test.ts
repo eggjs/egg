@@ -30,6 +30,7 @@ describe('test/commands/snapshot.test.ts', () => {
     });
     // The blob is produced by the (mocked) spawned node, so pretend it exists.
     vi.spyOn(fsp, 'access').mockResolvedValue(undefined);
+    vi.spyOn(fsp, 'rm').mockResolvedValue(undefined);
     spawnMock.mockReset();
     // Fake child process that exits cleanly on the next microtask.
     spawnMock.mockImplementation(() => {
@@ -150,6 +151,23 @@ describe('test/commands/snapshot.test.ts', () => {
     expect(spawnArgs(1).args).toContain(path.join(baseDir, 'out', 'custom-agent.blob'));
   });
 
+  it('rejects identical app and agent snapshot blob paths', async () => {
+    await expect(
+      Snapshot.run([
+        'build',
+        '--base',
+        baseDir,
+        '--skip-bundle',
+        '--cluster',
+        '--app-snapshot-blob',
+        'out/shared.blob',
+        '--agent-snapshot-blob',
+        'out/shared.blob',
+      ]),
+    ).rejects.toThrow(/snapshot blob paths must be different/);
+    expect(spawnMock).not.toHaveBeenCalled();
+  });
+
   it('build honours a custom --blob path', async () => {
     await Snapshot.run(['build', '--base', baseDir, '--skip-bundle', '--blob', 'out/app.blob']);
 
@@ -172,6 +190,16 @@ describe('test/commands/snapshot.test.ts', () => {
   it('build --dry-run neither bundles-spawn nor spawns node', async () => {
     await Snapshot.run(['build', '--base', baseDir, '--skip-bundle', '--dry-run']);
     expect(spawnMock).not.toHaveBeenCalled();
+    expect(fsp.rm).not.toHaveBeenCalled();
+  });
+
+  it('removes a stale blob before building', async () => {
+    await Snapshot.run(['build', '--base', baseDir, '--skip-bundle', '--blob', 'out/app.blob']);
+
+    expect(fsp.rm).toHaveBeenCalledWith(path.join(baseDir, 'out', 'app.blob'), { force: true });
+    expect((fsp.rm as unknown as ReturnType<typeof vi.fn>).mock.invocationCallOrder[0]).toBeLessThan(
+      spawnMock.mock.invocationCallOrder[0],
+    );
   });
 
   it('build rejects when the spawned node exits non-zero', async () => {

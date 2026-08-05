@@ -82,7 +82,7 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
       default: [],
     }),
     'skip-bundle': Flags.boolean({
-      description: 'skip bundling and build from existing worker file(s) (build only)',
+      description: 'skip bundling and reuse snapshot-ready worker entries from an earlier snapshot build',
       default: false,
     }),
     cluster: Flags.boolean({
@@ -145,6 +145,10 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
           },
         ];
 
+    if (flags.cluster && snapshotEntries[0].blobPath === snapshotEntries[1].blobPath) {
+      throw new Error('app and agent snapshot blob paths must be different');
+    }
+
     if (!flags['skip-bundle']) {
       const { bundle } = await import('@eggjs/egg-bundler');
       const packAlias = parsePackAliases(flags['pack-alias'], flags.base);
@@ -169,6 +173,9 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
     // snapshot runtime API tells the entry that this process is building a
     // snapshot, so no environment convention is needed.
     for (const entry of snapshotEntries) {
+      if (!flags['dry-run']) {
+        await fs.rm(entry.blobPath, { force: true });
+      }
       await this.#spawnNode(['--snapshot-blob', entry.blobPath, '--build-snapshot', entry.workerPath]);
     }
 
