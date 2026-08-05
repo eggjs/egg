@@ -98,4 +98,36 @@ describe('core/loader/test/ModuleLoaderLoaderFS.test.ts', () => {
     assert(prototypes.find((t) => t.name === 'SprintRepo'));
     assert.equal(loaderFS.globCalls.length, 1);
   });
+
+  it('should isolate manifest file views between concurrent app scopes', async () => {
+    const fallbackA = new StubLoaderFS(['UserRepo.ts']);
+    const fallbackB = new StubLoaderFS(['AppRepo.ts']);
+    const loaderFSA = new ManifestLoaderFS(
+      {
+        baseDir: repoModulePath,
+        data: { fileDiscovery: { '': ['AppRepo.ts'] }, resolveCache: {} },
+      },
+      fallbackA,
+    );
+    const loaderFSB = new ManifestLoaderFS(
+      {
+        baseDir: repoModulePath,
+        data: { fileDiscovery: { '': ['UserRepo.ts'] }, resolveCache: {} },
+      },
+      fallbackB,
+    );
+
+    const [prototypesA, prototypesB] = await Promise.all([
+      TeggScope.run(TeggScope.createBag(), () => ModuleLoader.createModuleLoader(repoModulePath, loaderFSA).load()),
+      TeggScope.run(TeggScope.createBag(), () => ModuleLoader.createModuleLoader(repoModulePath, loaderFSB).load()),
+    ]);
+
+    assert.deepStrictEqual(prototypesA.map((prototype) => prototype.name).sort(), ['AppRepo', 'AppRepo2']);
+    assert.deepStrictEqual(
+      prototypesB.map((prototype) => prototype.name),
+      ['UserRepo'],
+    );
+    assert.equal(fallbackA.globCalls.length, 0);
+    assert.equal(fallbackB.globCalls.length, 0);
+  });
 });

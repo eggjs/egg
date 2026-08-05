@@ -141,7 +141,15 @@ describe('cluster entries — real @utoo/pack build', () => {
         argv: [JSON.stringify({ baseDir, framework: 'fake-egg', startMode: 'worker_threads' })],
       });
       try {
-        const [message] = await once(worker, 'message');
+        const [message] = await Promise.race([
+          once(worker, 'message'),
+          once(worker, 'error').then(([err]) => {
+            throw err;
+          }),
+          once(worker, 'exit').then(([code]) => {
+            throw new Error(`worker exited early with code ${code}`);
+          }),
+        ]);
         expect(message).toMatchObject({
           action: `${role}-start`,
           transport: 'worker_threads',

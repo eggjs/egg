@@ -215,9 +215,9 @@ describe('Bundler snapshot lazy-external wiring', () => {
 
     const manifest = JSON.parse(await fs.readFile(path.join(tmpOutput, 'bundle-manifest.json'), 'utf8'));
     expect(manifest.externals).not.toContain('leoric');
-    expect(manifest.externals).not.toEqual(
-      expect.arrayContaining(['mysql', 'mysql2', 'sqlite3', 'pg', 'pg-types', 'sql.js']),
-    );
+    for (const id of ['mysql', 'mysql2', 'sqlite3', 'pg', 'pg-types', 'sql.js']) {
+      expect(manifest.externals).not.toContain(id);
+    }
   });
 
   it('rejects legacy explicit Leoric external configuration in snapshot mode', async () => {
