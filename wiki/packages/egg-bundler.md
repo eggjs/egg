@@ -31,6 +31,8 @@ source_files:
   - tegg/plugin/tegg/src/lib/EggModuleLoader.ts
   - tegg/standalone/standalone/src/EggModuleLoader.ts
   - tools/egg-bundler/docs/output-structure.md
+  - site/docs/advanced/snapshot.md
+  - site/docs/zh-CN/advanced/snapshot.md
   - examples/helloworld-service-worker
 updated_at: 2026-08-05
 status: active
@@ -333,6 +335,19 @@ This source-level distinction matters when `egg-scripts start` sets
 while `.ts`/`.mts`/`.cts` manifest keys remain discoverable because they resolve
 from the in-memory bundle module map rather than files Node must execute. No
 bundle-specific condition is added to `LoaderUtil`.
+
+### Startup benchmark methodology
+
+The module graph and lifecycle through `configWillLoad` are already captured in
+the blob, so restore mainly runs runtime initialization from `configDidLoad`
+onward, including `didReady` and connection/listening. The cnpmcore comparison
+executes the snapshot-ready JavaScript artifacts normally for the bundle
+baseline, then restores blobs built from those same files. On Node.js 24.18.1
+and Apple M1 Pro, it runs one warm-up plus ten interleaved measurements per mode.
+Single process measures direct Node.js spawn through listening; cluster uses the
+master's internal orchestration-to-ready timer to exclude launcher and master
+bootstrap. The recorded medians were 947 ms vs 379 ms for single process and
+1356 ms vs 591 ms for cluster, or 2.50x and 2.30x faster restores.
 
 Module identity follows a separate path. Bundle hosts obtain the name from the
 shared `TeggManifest`, normal hosts resolve it while scanning module config, and

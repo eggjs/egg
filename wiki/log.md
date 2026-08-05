@@ -8,6 +8,12 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
 - note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
 
+## [2026-08-05] docs | replace snapshot startup benchmark with a reproducible baseline
+
+- sources touched: `site/docs/{zh-CN/,}advanced/snapshot.md`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced startup numbers whose original timing boundary and artifact parity could not be established. The cnpmcore benchmark now holds snapshot-ready JavaScript constant between plain execution and blob restore and interleaves one warm-up plus ten measured runs per mode. Single process measures direct Node spawn to listening; cluster uses the master's internal orchestration-to-ready timer to exclude launcher and master-bootstrap overhead.
+
 ## [2026-08-05] fix | harden cluster worker and snapshot output contracts
 
 - sources touched: `packages/cluster/src/{worker_protocol,utils/mode}`, `tools/egg-bin/src/commands/snapshot.ts`, `tools/scripts/src/commands/start.ts`, `tools/egg-bundler/src/lib/prelude.ts`, related tests and user docs

@@ -217,22 +217,20 @@ loggers, or other handles that must be recreated in a live runtime.
 
 ## Performance
 
-The following numbers measure the single-process path. Because the module graph
-is already loaded and the app is booted up to `configWillLoad`, restore only
-pays for `didReady` and connecting/listening.
-Measured on [cnpmcore](https://github.com/cnpm/cnpmcore):
+Because the module graph is already loaded and the application has booted
+through `configWillLoad`, restore mainly pays for runtime initialization from
+`configDidLoad` onward, including `didReady` and connection/listening. The
+following measurements use the same generated JavaScript artifacts on
+[cnpmcore](https://github.com/cnpm/cnpmcore) 4.32.1, Node.js 24.18.1, Apple M1 Pro,
+and the prod environment. Each mode had one warm-up plus ten interleaved measured
+runs. Single-process timing covers direct Node.js spawn through listening;
+cluster uses process mode with one agent and two app workers, and its
+master-internal ready timer excludes launcher and master-bootstrap overhead:
 
-| Process model  | Boot mode          | Restore → listening  |
-| -------------- | ------------------ | -------------------- |
-| Single process | Normal bundle boot | ~942 ms              |
-| Single process | Snapshot restore   | ~233 ms (~4x faster) |
-
-Cluster readiness includes master, agent, and app-worker coordination and was
-not measured in this sample, so these single-process numbers should not be used
-as cluster-mode timings.
-
-The win grows with the size of the module graph (plugins, tegg modules, routers),
-which is exactly the cost a snapshot front-loads into build time.
+| Process model   | Bundle median | Snapshot median | Improvement              |
+| --------------- | ------------- | --------------- | ------------------------ |
+| Single process  | 947 ms        | 379 ms          | 2.50x faster, 59.9% less |
+| Cluster (2 app) | 1356 ms       | 591 ms          | 2.30x faster, 56.5% less |
 
 ## Known limitations
 

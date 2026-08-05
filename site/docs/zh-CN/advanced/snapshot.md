@@ -194,19 +194,17 @@ module.exports = AppBootHook;
 
 ## 性能
 
-下面的数据来自单进程路径。由于模块图已经加载、应用也已启动到 `configWillLoad`，恢复阶段只需要付出 `didReady` 与
-连接/监听的成本。在 [cnpmcore](https://github.com/cnpm/cnpmcore) 上实测：
+由于模块图已经加载、应用也已启动到 `configWillLoad`，恢复阶段主要执行 `configDidLoad`
+之后的运行期初始化、`didReady` 与连接/监听。下面在
+[cnpmcore](https://github.com/cnpm/cnpmcore) 4.32.1、Node.js 24.18.1、Apple M1 Pro、prod
+环境下，对同一份生成的 JavaScript 产物进行实测；每种模式预热 1 次，再交错测量 10 次。
+单进程计时范围为直接 spawn Node.js 到开始监听；Cluster 使用 process 模式、1 个 agent +
+2 个 app worker，并采用 master 内部 ready 计时，排除 launcher 和 master 引导开销：
 
-| 进程模型 | 启动方式         | 恢复 → 监听          |
-| -------- | ---------------- | -------------------- |
-| 单进程   | 普通 bundle 启动 | ~942 ms              |
-| 单进程   | 快照恢复         | ~233 ms（快约 4 倍） |
-
-Cluster 就绪时间还包含 master、agent 和 app worker 的协同，本次样本没有单独测量，
-因此不能把这里的单进程数据直接当作 cluster 模式数据。
-
-模块图越大（插件、tegg 模块、Router 越多），收益越明显——这正是快照在构建期提前承担的
-开销。
+| 进程模型         | Bundle 中位数 | Snapshot 中位数 | 提升                   |
+| ---------------- | ------------- | --------------- | ---------------------- |
+| 单进程           | 947 ms        | 379 ms          | 快 2.50 倍，降低 59.9% |
+| Cluster（2 app） | 1356 ms       | 591 ms          | 快 2.30 倍，降低 56.5% |
 
 ## 已知限制
 
