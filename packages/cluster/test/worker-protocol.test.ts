@@ -8,6 +8,7 @@ import { describe, it, vi } from 'vitest';
 
 import { startAgentWorker } from '../src/worker_protocol/agent.ts';
 import { startAppWorker } from '../src/worker_protocol/app.ts';
+import { WORKER_THREAD_GRACEFUL_EXIT } from '../src/worker_protocol/worker-thread.ts';
 
 vi.mock('node:http', async (importOriginal) => {
   const original = await importOriginal<typeof import('node:http')>();
@@ -47,6 +48,19 @@ describe('test/worker-protocol.test.ts', () => {
     worker.postMessage('kill');
     const [exitCode] = await once(worker, 'exit');
     assert.equal(exitCode, 1);
+  });
+
+  it('awaits worker-thread cleanup before exiting', async () => {
+    const worker = new Worker(new URL('./fixtures/worker-thread-io.mjs', import.meta.url));
+    await once(worker, 'message');
+
+    const exitPromise = once(worker, 'exit');
+    worker.postMessage(WORKER_THREAD_GRACEFUL_EXIT);
+    const [message] = await once(worker, 'message');
+    const [exitCode] = await exitPromise;
+
+    assert.equal(message.action, 'closed');
+    assert.equal(exitCode, 0);
   });
 
   it('removes the startup error listener from an already-ready agent', () => {

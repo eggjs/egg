@@ -24,7 +24,7 @@ vi.mock('node:worker_threads', async (importOriginal) => ({
 }));
 
 import { createProcessWorkerIO } from '../src/worker_protocol/process.ts';
-import { createWorkerThreadIO } from '../src/worker_protocol/worker-thread.ts';
+import { createWorkerThreadIO, WORKER_THREAD_GRACEFUL_EXIT } from '../src/worker_protocol/worker-thread.ts';
 
 describe('test/worker-protocol-io.test.ts', () => {
   const originalSendDescriptor = Object.getOwnPropertyDescriptor(process, 'send');
@@ -90,7 +90,7 @@ describe('test/worker-protocol-io.test.ts', () => {
     assert.equal(processSend.mock.calls.length, 0);
   });
 
-  it('adapts worker-thread messaging, events, and kill', () => {
+  it('adapts worker-thread messaging, events, kill, and graceful exit', async () => {
     const exit = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
     const io = createWorkerThreadIO();
 
@@ -106,6 +106,33 @@ describe('test/worker-protocol-io.test.ts', () => {
 
     io.kill();
     assert.deepEqual(exit.mock.calls, [[1]]);
+
+    const beforeExit = vi.fn().mockResolvedValue(undefined);
+    io.gracefulExit({ beforeExit } as any);
+    const gracefulListener = mocks.parentPort!.on.mock.calls.at(-1)?.[1] as
+      | ((message: unknown) => Promise<void>)
+      | undefined;
+    assert.ok(gracefulListener);
+    await gracefulListener('unrelated-message');
+    assert.equal(beforeExit.mock.calls.length, 0);
+    await gracefulListener(WORKER_THREAD_GRACEFUL_EXIT);
+    assert.equal(beforeExit.mock.calls.length, 1);
+    assert.deepEqual(exit.mock.calls, [[1], [0]]);
+    await gracefulListener(WORKER_THREAD_GRACEFUL_EXIT);
+    assert.equal(beforeExit.mock.calls.length, 1);
+  });
+
+  it('exits a worker thread with code 1 when graceful cleanup fails', async () => {
+    const exit = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
+    const logger = { error: vi.fn() };
+    const io = createWorkerThreadIO();
+    io.gracefulExit({ beforeExit: () => Promise.reject(new Error('close failed')), logger } as any);
+    const gracefulListener = mocks.parentPort!.on.mock.calls[0][1] as (message: unknown) => Promise<void>;
+
+    await gracefulListener(WORKER_THREAD_GRACEFUL_EXIT);
+
+    assert.deepEqual(exit.mock.calls, [[1]]);
+    assert.equal(logger.error.mock.calls.length, 1);
   });
 
   it('rejects worker-thread IO outside a worker', () => {
