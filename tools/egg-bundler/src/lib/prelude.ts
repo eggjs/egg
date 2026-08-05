@@ -259,7 +259,9 @@ export function renderSnapshotPrelude(
     // e.g. \`class X extends urllib.HttpClient\` (build: stub superclass; restore:
     // real super()/methods) and \`DataTypes.INTEGER(11).UNSIGNED\` keep working.
     function makeMember(ops) {
+      var __resolved, __hasResolved = false;
       var resolve = function () {
+        if (__hasResolved) return __resolved;
         var v = realMod(), prev;
         for (var i = 0; i < ops.length; i++) {
           if (v == null) return undefined;
@@ -273,6 +275,7 @@ export function renderSnapshotPrelude(
           else if (op.t === 'a') { v = (typeof v === 'function') ? Reflect.apply(v, prev, resolveArgs(op.args)) : undefined; prev = undefined; }
           else if (op.t === 'c') { v = (typeof v === 'function') ? Reflect.construct(v, resolveArgs(op.args)) : undefined; prev = undefined; }
         }
+        if (v !== undefined) { __resolved = v; __hasResolved = true; }
         return v;
       };
       // Accessors on the real prototype must keep the original receiver when

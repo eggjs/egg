@@ -48,6 +48,34 @@ describe('snapshot prelude', () => {
     expect(sandbox.__makeLazyExt).toBeUndefined();
   });
 
+  it('memoizes a resolved call-result member proxy', () => {
+    const sandbox: Record<string, any> = {
+      process: {
+        getBuiltinModule(id: string) {
+          if (id === 'node:v8') return { startupSnapshot: { isBuildingSnapshot: () => true } };
+          if (id === 'node:module') return { isBuiltin: () => false };
+          throw new Error(`unexpected builtin: ${id}`);
+        },
+      },
+    };
+    vm.createContext(sandbox);
+    vm.runInContext(renderSnapshotPrelude(['lazy-package'], { 'lazy-package': ['createValue'] }), sandbox);
+
+    const lazyModule = sandbox.__makeLazyExt('lazy-package');
+    const value = lazyModule.createValue();
+    let createCount = 0;
+    sandbox.__RUNTIME_REQUIRE = () => ({
+      createValue() {
+        createCount++;
+        return {};
+      },
+    });
+
+    value.custom = 1;
+    expect(value.custom).toBe(1);
+    expect(createCount).toBe(1);
+  });
+
   it('prepends the prelude before the bundle IIFE', () => {
     const bundle = '((__UTOOPACK__)=>{/* modules */})([]);\n';
     const out = prependSnapshotPrelude(bundle);
