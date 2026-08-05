@@ -44,7 +44,7 @@ export class AppProcessUtils extends BaseAppUtils {
       ? [...process.execArgv, '--snapshot-blob', this.options.appSnapshotBlob]
       : undefined;
     cfork({
-      exec: this.options.appWorkerFile ?? this.getAppWorkerFile(),
+      exec: this.options.appWorkerFile || this.getAppWorkerFile(),
       ...(execArgv ? { execArgv } : {}),
       args,
       silent: false,

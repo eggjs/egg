@@ -109,7 +109,7 @@ export class AppThreadUtils extends BaseAppUtils {
   fork(): this {
     this.startTime = Date.now();
     this.startSuccessCount = 0;
-    const appWorkerFile = this.options.appWorkerFile ?? this.getAppWorkerFile();
+    const appWorkerFile = this.options.appWorkerFile || this.getAppWorkerFile();
 
     if (this.options.reusePort) {
       // When reusePort is enabled, all workers share the same port

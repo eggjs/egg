@@ -169,13 +169,18 @@ describe('test/options.test.ts', () => {
       it(`should reject a missing ${optionName}`, async () => {
         await assert.rejects(
           parseOptions({ baseDir, [optionName]: 'no-such-worker.js' }),
-          new RegExp(`options\\.${optionName} file should exists`),
+          new RegExp(`options\\.${optionName} file should exist`),
         );
       });
 
       it(`should accept ${optionName} with worker_threads startMode`, async () => {
         const options = await parseOptions({ baseDir, [optionName]: 'package.json', startMode: 'worker_threads' });
         assert.equal(options[optionName], path.join(baseDir, 'package.json'));
+      });
+
+      it(`should normalize an empty ${optionName}`, async () => {
+        const options = await parseOptions({ baseDir, [optionName]: '' });
+        assert.equal(options[optionName], undefined);
       });
     }
 
@@ -188,7 +193,7 @@ describe('test/options.test.ts', () => {
       it(`should reject a missing ${optionName}`, async () => {
         await assert.rejects(
           parseOptions({ baseDir, [optionName]: 'no-such-snapshot.blob' }),
-          new RegExp(`options\\.${optionName} file should exists`),
+          new RegExp(`options\\.${optionName} file should exist`),
         );
       });
 
@@ -197,6 +202,11 @@ describe('test/options.test.ts', () => {
           parseOptions({ baseDir, [optionName]: 'package.json', startMode: 'worker_threads' }),
           new RegExp(`options\\.${optionName} only supports startMode "process"`),
         );
+      });
+
+      it(`should normalize an empty ${optionName}`, async () => {
+        const options = await parseOptions({ baseDir, [optionName]: '' });
+        assert.equal(options[optionName], undefined);
       });
     }
   });

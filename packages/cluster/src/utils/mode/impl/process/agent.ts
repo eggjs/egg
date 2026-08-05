@@ -49,7 +49,7 @@ export class AgentProcessUtils extends BaseAgentUtils {
     }
 
     debug('forkOptions: %j, args: %s', forkOptions, args);
-    const agentWorkerFile = this.options.agentWorkerFile ?? this.getAgentWorkerFile();
+    const agentWorkerFile = this.options.agentWorkerFile || this.getAgentWorkerFile();
     const agentProcess = (this.#agentProcess = fork(agentWorkerFile, args, forkOptions));
     const agentWorker = (this.instance = new AgentProcessWorker(agentProcess));
     agentWorker.status = 'starting';

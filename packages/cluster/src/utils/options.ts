@@ -185,18 +185,23 @@ export async function parseOptions(options?: ClusterOptions): Promise<ParsedClus
 
   for (const optionName of ['appWorkerFile', 'agentWorkerFile'] as const) {
     const workerFile = options[optionName];
-    if (!workerFile) continue;
+    if (!workerFile) {
+      options[optionName] = undefined;
+      continue;
+    }
     options[optionName] = path.resolve(options.baseDir!, workerFile);
-    assert(fs.existsSync(options[optionName]), `options.${optionName} file should exists: ${options[optionName]}`);
+    assert(fs.existsSync(options[optionName]), `options.${optionName} file should exist: ${options[optionName]}`);
   }
   for (const optionName of ['appSnapshotBlob', 'agentSnapshotBlob'] as const) {
     const snapshotBlob = options[optionName];
-    if (!snapshotBlob) continue;
+    if (!snapshotBlob) {
+      options[optionName] = undefined;
+      continue;
+    }
     options[optionName] = path.resolve(options.baseDir!, snapshotBlob);
-    assert(fs.existsSync(options[optionName]), `options.${optionName} file should exists: ${options[optionName]}`);
+    assert(fs.existsSync(options[optionName]), `options.${optionName} file should exist: ${options[optionName]}`);
     assert(options.startMode !== 'worker_threads', `options.${optionName} only supports startMode "process"`);
   }
-
   // don't print deprecated message in production env.
   // it will print to stderr.
   if (process.env.NODE_ENV === 'production') {
