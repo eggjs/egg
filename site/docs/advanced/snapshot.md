@@ -20,10 +20,11 @@ independent app and agent bundles, each with its own blob and V8 heap.
 
 ## Node.js version requirements
 
-| Phase                | Command                                           | Node.js |
-| -------------------- | ------------------------------------------------- | ------- |
-| **Build** a snapshot | `egg-bin snapshot build`                          | >= 22   |
-| **Restore** (run)    | `egg-scripts start --snapshot-blob` or `--bundle` | >= 24   |
+| Phase                              | Command                                                   | Node.js |
+| ---------------------------------- | --------------------------------------------------------- | ------- |
+| **Build** a snapshot               | `egg-bin snapshot build`                                  | >= 22   |
+| Run an ordinary cluster bundle     | `egg-scripts start --bundle` without role snapshot blobs  | >= 22   |
+| **Restore** a snapshot-backed heap | `--snapshot-blob`, or `--bundle` with role snapshot blobs | >= 24   |
 
 ::: warning Restoring requires Node.js >= 24
 A snapshot can be **built** on Node.js >= 22, but **restoring** a non-trivial Egg
@@ -221,10 +222,14 @@ is already loaded and the app is booted up to `configWillLoad`, restore only
 pays for `didReady` and connecting/listening.
 Measured on [cnpmcore](https://github.com/cnpm/cnpmcore):
 
-| Boot mode          | Restore → listening  |
-| ------------------ | -------------------- |
-| Normal bundle boot | ~942 ms              |
-| Snapshot restore   | ~233 ms (~4x faster) |
+| Process model  | Boot mode          | Restore → listening  |
+| -------------- | ------------------ | -------------------- |
+| Single process | Normal bundle boot | ~942 ms              |
+| Single process | Snapshot restore   | ~233 ms (~4x faster) |
+
+Cluster readiness includes master, agent, and app-worker coordination and was
+not measured in this sample, so these single-process numbers should not be used
+as cluster-mode timings.
 
 The win grows with the size of the module graph (plugins, tegg modules, routers),
 which is exactly the cost a snapshot front-loads into build time.
@@ -235,8 +240,9 @@ which is exactly the cost a snapshot front-loads into build time.
 - **Cluster snapshot blobs require process mode**: ordinary cluster bundles
   support `worker_threads`, but Node cannot restore a custom V8 startup blob
   inside a worker thread.
-- **Bundled cluster bootstrap modules are unsupported**: a cluster launch that
-  uses `options.require` fails before workers are spawned.
+- **Snapshot and bundled-cluster bootstrap modules are unsupported**: a
+  `--snapshot-blob` launch or bundled cluster launch that uses `options.require`
+  fails before workers are spawned.
 - **Native addons are external** and must be present in the deploy target.
 - **Third-party dependencies are constrained**: any dependency that opens live
   resources or captures non-serializable state at module-evaluation time (open

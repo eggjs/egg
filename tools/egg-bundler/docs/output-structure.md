@@ -1,8 +1,8 @@
 # Bundle output structure
 
 `@eggjs/egg-bundler` produces a runnable CJS bundle under the configured
-`outputDir`. Everything except declared externals is inlined into the generated
-worker file by default.
+`outputDir`. Everything except configured or auto-detected externals is inlined
+into the generated worker file by default.
 
 ## Layout
 

@@ -192,7 +192,8 @@ Pushing a suspect package **out** of the bundle is both a diagnostic and a fix.
 The external package's own implementation is not evaluated at build time; the
 snapshot prelude gives bundled importers a member-proxy stub and loads the real
 package on restore. If `--force-external <pkg>` makes the build succeed, that
-package's implementation was capturing unserializable state at import:
+package or one of its import-time dependencies was capturing unserializable
+state:
 
 ```bash
 $ egg-bin snapshot build --force-external some-native-client

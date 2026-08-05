@@ -5,6 +5,9 @@ summary: Bundles Egg applications for Node startup snapshots and tegg standalone
 source_files:
   - packages/core/src/lifecycle.ts
   - packages/egg/src/lib/egg.ts
+  - packages/cluster/src/worker_protocol/worker-thread.ts
+  - packages/cluster/src/utils/mode/impl/worker_threads/agent.ts
+  - packages/cluster/src/utils/mode/impl/worker_threads/app.ts
   - plugins/watcher/src/lib/boot.ts
   - tools/egg-bundler/src/index.ts
   - tools/egg-bundler/src/lib/Bundler.ts
@@ -29,7 +32,7 @@ source_files:
   - tegg/standalone/standalone/src/EggModuleLoader.ts
   - tools/egg-bundler/docs/output-structure.md
   - examples/helloworld-service-worker
-updated_at: 2026-08-04
+updated_at: 2026-08-05
 status: active
 ---
 
@@ -108,7 +111,9 @@ constraint is why worker output always needs a thin ESM wrapper.
   independently with `--app-snapshot-blob` and `--agent-snapshot-blob`; the
   existing `--blob` flag remains exclusive to single-process builds. The role
   comes from the entry filename/code, so snapshot construction does not use
-  `EGG_SNAPSHOT_ROLE`.
+  `EGG_SNAPSHOT_ROLE`. The command rejects identical role blob paths and removes
+  each existing target immediately before building (except in dry-run mode), so
+  a stale blob cannot satisfy the post-build existence check.
 - A `snapshot: true` output remains a normal runnable bundle; generating it does
   not dedicate the JavaScript file to blob restore. The prelude and generated
   entry use `v8.startupSnapshot.isBuildingSnapshot()` to detect a real
@@ -126,11 +131,11 @@ constraint is why worker output always needs a thin ESM wrapper.
   determine the other's. Bundle path and role options are ignored unless
   `--bundle` is present. The existing `--snapshot-blob` remains the single-process
   launcher and takes precedence when it is supplied together with `--bundle`.
-- Bundled cluster workers reject non-empty `options.require` before startup in
-  both ordinary and snapshot modes. A runtime bootstrap module cannot preserve
-  the source worker's before-framework ordering once the bundle graph has been
-  statically evaluated; silently ignoring it would disable instrumentation or
-  patches without failing the deployment.
+- Snapshot-backed single-process launches and bundled cluster workers reject
+  non-empty `options.require` before startup. A runtime bootstrap module cannot
+  preserve the source worker's before-framework ordering once the bundle graph
+  has been statically evaluated; silently ignoring it would disable
+  instrumentation or patches without failing the deployment.
 - Explicit `externals.force` entries are external, and `ExternalsResolver`
   auto-detects root `peerDependencies`, root `optionalDependencies`, root
   dependency packages with native addons, root dependency packages whose optional
@@ -205,7 +210,9 @@ would otherwise be inlined.
   `class HttpClient extends urllib.HttpClient` (and urllib's own
   `class BaseAgent extends undici.Agent`) keep
   working: the `extends` is evaluated against the build stub, then `super(...)` /
-  inherited methods resolve to the real base class after deserialization.
+  inherited methods resolve to the real base class after deserialization. The
+  first successful replay is memoized, so an instance returned by a recorded call
+  or constructor keeps its identity and subsequent writes are observable.
 - Proxy reads and writes preserve the inherited receiver at restore. Static or
   prototype accessors on the real base therefore observe the application subclass
   or instance as `this`, while direct proxy access still uses the real exported

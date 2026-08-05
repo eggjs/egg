@@ -8,6 +8,12 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
 - note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
 
+## [2026-08-05] fix | harden cluster worker and snapshot output contracts
+
+- sources touched: `packages/cluster/src/{worker_protocol,utils/mode}`, `tools/egg-bin/src/commands/snapshot.ts`, `tools/scripts/src/commands/start.ts`, `tools/egg-bundler/src/lib/prelude.ts`, related tests and user docs
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Blank worker paths normalize before launch. Snapshot builds reject colliding role blob paths, remove stale outputs before validating the current build, and reject bootstrap modules that would otherwise be silently ignored. Lazy-external call-result proxies now memoize their first resolved object so mutations persist after restore.
+
 ## [2026-08-03] fix | preserve authoritative manifest discovery in Tegg loaders
 
 - sources touched: `packages/loader-fs/src/{index.ts,manifest_loader_fs.ts}`, `tegg/core/loader/src/impl/ModuleLoader.ts`, related tests and package docs

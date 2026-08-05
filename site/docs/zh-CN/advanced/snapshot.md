@@ -17,10 +17,11 @@ Egg 可以把一个完全加载好的应用固化成 [V8 启动快照](https://n
 
 ## Node.js 版本要求
 
-| 阶段             | 命令                                              | Node.js |
-| ---------------- | ------------------------------------------------- | ------- |
-| **构建**快照     | `egg-bin snapshot build`                          | >= 22   |
-| **恢复**（运行） | `egg-scripts start --snapshot-blob` 或 `--bundle` | >= 24   |
+| 阶段                    | 命令                                             | Node.js |
+| ----------------------- | ------------------------------------------------ | ------- |
+| **构建**快照            | `egg-bin snapshot build`                         | >= 22   |
+| 启动普通 cluster bundle | 不提供角色 blob 的 `egg-scripts start --bundle`  | >= 22   |
+| **恢复**快照堆          | `--snapshot-blob`，或提供角色 blob 的 `--bundle` | >= 24   |
 
 ::: warning 恢复必须使用 Node.js >= 24
 快照可以在 Node.js >= 22 上**构建**，但在 Node.js 22 上**恢复**一个非平凡的 Egg 堆时，
@@ -196,10 +197,13 @@ module.exports = AppBootHook;
 下面的数据来自单进程路径。由于模块图已经加载、应用也已启动到 `configWillLoad`，恢复阶段只需要付出 `didReady` 与
 连接/监听的成本。在 [cnpmcore](https://github.com/cnpm/cnpmcore) 上实测：
 
-| 启动方式         | 恢复 → 监听          |
-| ---------------- | -------------------- |
-| 普通 bundle 启动 | ~942 ms              |
-| 快照恢复         | ~233 ms（快约 4 倍） |
+| 进程模型 | 启动方式         | 恢复 → 监听          |
+| -------- | ---------------- | -------------------- |
+| 单进程   | 普通 bundle 启动 | ~942 ms              |
+| 单进程   | 快照恢复         | ~233 ms（快约 4 倍） |
+
+Cluster 就绪时间还包含 master、agent 和 app worker 的协同，本次样本没有单独测量，
+因此不能把这里的单进程数据直接当作 cluster 模式数据。
 
 模块图越大（插件、tegg 模块、Router 越多），收益越明显——这正是快照在构建期提前承担的
 开销。
@@ -209,8 +213,8 @@ module.exports = AppBootHook;
 - **恢复需要 Node.js >= 24**（见上文）。
 - **Cluster snapshot blob 仅支持 process 模式**：普通 cluster bundle 支持
   `worker_threads`，但 Node 无法在 worker thread 内恢复自定义 V8 启动 blob。
-- **不支持 bundle cluster 启动模块**：使用 `options.require` 的 cluster bundle 会在创建
-  worker 前直接报错。
+- **不支持 snapshot 与 bundle cluster 启动模块**：使用 `options.require` 的
+  `--snapshot-blob` 或 cluster bundle 会在创建 worker 前直接报错。
 - **原生 addon 为 external**，必须在部署目标上存在。
 - **第三方依赖受限**：任何在模块求值阶段就打开活跃资源或捕获不可序列化状态的依赖
   （打开的 socket、原生 HTTP/2 绑定、后台 timer、文件句柄）都必须要么保持 external

@@ -172,8 +172,8 @@ $ egg-bin snapshot build --output ./dist-bundle --skip-bundle
 
 把嫌疑包推**出** bundle 既是诊断手段也是修复手段。external 包自身的实现不会在构建期
 被求值；快照 prelude 会给 bundle 内的调用方提供成员代理桩，并在恢复时真实加载该包。
-所以如果 `--force-external <pkg>` 让构建成功了，说明该包自身的实现会在 import 时捕获
-不可序列化状态：
+所以如果 `--force-external <pkg>` 让构建成功了，说明该包或它在 import 时加载的某个依赖
+会捕获不可序列化状态：
 
 ```bash
 $ egg-bin snapshot build --force-external some-native-client
