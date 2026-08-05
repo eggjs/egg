@@ -10,6 +10,8 @@ source_files:
   - packages/cluster/src/utils/mode/impl/worker_threads/app.ts
   - plugins/watcher/src/lib/boot.ts
   - tools/egg-bundler/src/index.ts
+  - tools/egg-bundler/src/compat/leoric/index.ts
+  - tools/egg-bundler/src/compat/leoric/runtime-require-loader.cjs
   - tools/egg-bundler/src/lib/Bundler.ts
   - tools/egg-bundler/src/lib/EntryGenerator.ts
   - tools/egg-bundler/src/lib/ExternalsResolver.ts
@@ -220,6 +222,42 @@ would otherwise be inlined.
   or instance as `this`, while direct proxy access still uses the real exported
   object. This is required by symbol-backed model state such as Leoric's
   `Bone.synchronized` accessor.
+
+#### Leoric compatibility boundary
+
+Snapshot mode intentionally forces the Leoric core into the bundle. Keeping the
+whole package external was rejected because application/TEGG model modules are
+evaluated while constructing the snapshot: subclasses, prototype chains, and ORM
+metadata would then be created against a lazy external proxy. Restore can forward
+member access to the real package, but it cannot replace prototype and metadata
+identity that is already frozen into the heap. Deferring every model module to
+runtime would avoid that proxy boundary, but would also move the ORM model graph
+out of the snapshot and require Leoric/TEGG-specific lazy-loading behavior.
+
+Unmodified Leoric cannot be safely inlined either. Its driver, realm, and migration
+paths contain expression-based CommonJS `require(...)` calls that `@utoo/pack`
+cannot statically enumerate. A single-file build would otherwise fail on the
+dynamic expression or retain runtime loads for optional drivers and filesystem
+modules that are not represented by the bundle graph.
+
+The compatibility layer is therefore a scoped compromise:
+
+- `resolveLeoricSnapshotCompatibility()` removes `leoric` from auto-detected
+  externals and rejects attempts to force it external or add it to snapshot lazy
+  modules.
+- A module rule applies only to the known Leoric source files and rewrites their
+  runtime-selected requires to `globalThis.__RUNTIME_REQUIRE(...)`. Leoric core and
+  model semantics stay bundled, while database clients remain runtime dependencies.
+- The loader fails the build if an unrecognized expression-based require remains,
+  rather than silently emitting a partial artifact. Migration files used at runtime
+  still need the documented runtime-asset copy configuration.
+
+Inference: this is deliberately package- and version-sensitive. A Leoric release
+that moves these files or changes the require expressions can invalidate the path
+condition or rewrite patterns, so upgrades require the unit and real-build coverage
+to pass. The shim should be removed when Leoric no longer needs expression-based
+runtime loading, or when `@utoo/pack` provides an equivalent supported runtime
+dynamic-require contract without modifying Turbopack.
 
 #### When does a new dependency need adding?
 

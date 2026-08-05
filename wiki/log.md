@@ -8,6 +8,12 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
 - note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
 
+## [2026-08-05] docs | record the Leoric snapshot compatibility boundary
+
+- sources touched: `tools/egg-bundler/src/compat/leoric/{index.ts,runtime-require-loader.cjs}`, `tools/egg-bundler/src/lib/Bundler.ts`, related tests
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Documented why snapshot builds can neither externalize all of Leoric nor inline its expression-based runtime requires unchanged, how the scoped loader keeps Leoric core bundled while deferring drivers and filesystem modules, and why the version-coupled shim must fail closed and eventually be removed in favor of an upstream dynamic-require contract.
+
 ## [2026-08-05] docs | replace snapshot startup benchmark with a reproducible baseline
 
 - sources touched: `site/docs/{zh-CN/,}advanced/snapshot.md`
