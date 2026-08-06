@@ -408,3 +408,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `tools/scripts/src/commands/start.ts`, `tools/egg-bin/src/baseCommand.ts`, `tools/create-egg/src/index.ts`
 - pages updated: `wiki/log.md`, `wiki/workflows/local-ci.md`
 - note: A child killed by a signal reports `code=null` on its exit event; three CLIs mishandled that (egg-scripts foreground start exited 0, egg-bin forkNode reported "exit with code null" and flattened every child failure to exit 1, create-egg's latent custom-command path ran `process.exit(status ?? 0)`). All three now map signal deaths to the shell convention `128 + signal number`, and egg-bin propagates the child's exit code through `ForkError.oclif.exit`. Durable finding recorded in local-ci.md: egg-bin's coffee tests run the compiled `dist/commands` CLI, so its suite needs `ut run build -- --workspace ./tools/egg-bin` first (the dedicated `test-egg-bin` CI job does exactly this), unlike the rest of the repo which tests unbuilt sources.
+
+## [2026-08-06] workflow | use package-name --workspace filters in CI
+
+- sources touched: `.github/workflows/ci.yml`, `AGENTS.md`, `tegg/plugin/eventbus/test/eventbus.test.ts`
+- pages updated: `wiki/log.md`, `wiki/workflows/local-ci.md`
+- note: The `ut run build -- --workspace ./tools/egg-bin` path-form filter does not match any workspace on Windows, so the test-egg-bin Windows job ran without a dist and failed every coffee test with "command dev not found" (broken on next since at least #6022's run). CI now builds in a dedicated step with the name form (`--workspace @eggjs/bin`), which works on every platform. Also, vitest glob projects do not inherit the root config's hookTimeout: the eventbus plugin's app-boot beforeAll ran under the default 10s and flaked on slow Windows runners; it now passes an explicit 30s hook timeout.

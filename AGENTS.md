@@ -26,7 +26,7 @@ The repository runs on [utoo](https://github.com/utooland/utoo) (`ut`); the work
 - `ut run test` runs the main test suite.
 - `ut run lint` runs linting.
 - `ut run typecheck` runs TypeScript checking.
-- use filtered commands for focused work, for example `ut run test --workspace @eggjs/bin` or `ut run build -- --workspace ./tools/egg-bin`.
+- use filtered commands for focused work, for example `ut run test --workspace @eggjs/bin` or `ut run build --workspace @eggjs/bin`; prefer the package-name form of `--workspace`, the `./tools/...` path form does not match on Windows.
 
 ### Local CI
 

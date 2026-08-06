@@ -11,7 +11,7 @@ source_files:
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/core/metadata/src/model/graph/GlobalGraph.ts
   - tegg/plugin/controller/test/fixtures/apps
-updated_at: 2026-08-03
+updated_at: 2026-08-06
 status: active
 ---
 
@@ -24,8 +24,11 @@ matrix. It does not build packages before running tests.
 ## Exception: egg-bin tests need a built dist
 
 The dedicated `test-egg-bin` CI job runs
-`ut run build -- --workspace ./tools/egg-bin` before
-`ut run test --workspace @eggjs/bin`. The oclif CLI under test loads commands
+`ut run build --workspace @eggjs/bin` before
+`ut run test --workspace @eggjs/bin`. Use the package-name form of
+`--workspace`: the `./tools/egg-bin` path form does not match on Windows, and
+a failed build surfaces later as dozens of `command dev not found` test
+failures. The oclif CLI under test loads commands
 from `tools/egg-bin/dist/commands` (`oclif.commands` in its package.json), and
 oclif's tsconfig fallback cannot map that path back to `src/` (no
 `rootDir`/`baseUrl` in the package tsconfig), so an unbuilt checkout fails every

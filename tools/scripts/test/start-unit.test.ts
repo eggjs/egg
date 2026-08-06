@@ -127,7 +127,9 @@ describe('test/start-unit.test.ts', () => {
       if (!onError) throw new Error('child not spawned yet');
     });
     // e.g. a nonexistent --node executable: 'error' fires and 'exit' never does
-    onError!(new Error('spawn ENOENT'));
-    await expect(run).rejects.toThrow('spawn ENOENT');
+    const spawnError = new Error('spawn ENOENT');
+    onError!(spawnError);
+    // the raw child error is rethrown as-is, not wrapped
+    await expect(run).rejects.toBe(spawnError);
   });
 });

@@ -384,17 +384,18 @@ jobs:
           UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
         run: ut install --from pnpm
 
+      # own step for clear failure attribution; name-based filter matches on
+      # every platform (the ./tools/... path form does not match on Windows)
+      - name: Build egg-scripts
+        run: ut run build --workspace @eggjs/scripts
+
       - name: Run tests (with coverage)
         if: ${{ matrix.coverage }}
-        run: |
-          ut run build -- --workspace ./tools/scripts
-          ut run ci --workspace tools/scripts
+        run: ut run ci --workspace @eggjs/scripts
 
       - name: Run tests
         if: ${{ !matrix.coverage }}
-        run: |
-          ut run build -- --workspace ./tools/scripts
-          ut run test --workspace tools/scripts
+        run: ut run test --workspace @eggjs/scripts
 
       - name: Code Coverage
         if: ${{ matrix.coverage }}
