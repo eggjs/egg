@@ -428,6 +428,11 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     graceful(proc);
 
     return new Promise<void>((resolve, reject) => {
+      // a spawn failure emits 'error' and may never emit 'exit'
+      proc.once('error', (err) => {
+        children.delete(proc);
+        reject(err);
+      });
       proc.once('exit', (code, signal) => {
         debug('fork pid: %o exit code %o, signal %o', proc.pid, code, signal);
         children.delete(proc);
