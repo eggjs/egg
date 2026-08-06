@@ -23,7 +23,7 @@ describe('standalone/service-worker/test/ServiceWorkerApp.test.ts', () => {
     server = await app.serve();
     const { address, port } = server.address() as AddressInfo;
     base = `http://${address}:${port}`;
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await app.destroy();

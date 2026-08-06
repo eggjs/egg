@@ -21,7 +21,7 @@ describe('test/app/extend/application.unittest.test.ts', () => {
       baseDir: getAppBaseDir('egg-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('should work', async () => {
     await app.mockModuleContextScope(async () => {

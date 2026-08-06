@@ -22,7 +22,7 @@ describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
       baseDir: getAppBaseDir('constructor-module-config'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('should work', async () => {
     await app

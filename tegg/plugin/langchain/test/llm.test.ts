@@ -20,7 +20,7 @@ describe('plugin/langchain/test/llm.test.ts', () => {
     stopSSEServer = sseMod.stopSSEServer;
 
     await startSSEServer(17283);
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await app.close();

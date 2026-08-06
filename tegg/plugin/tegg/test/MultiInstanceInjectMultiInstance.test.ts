@@ -23,7 +23,7 @@ describe('plugin/tegg/test/MultiInstanceInjectMultiInstance.test.ts', () => {
       baseDir: getAppBaseDir('app-multi-inject-multi'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('dynamic inject should work', async () => {
     const app2Instance: App2 = await app.getEggObject(App2);

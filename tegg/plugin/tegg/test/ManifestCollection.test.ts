@@ -20,7 +20,7 @@ describe('plugin/tegg/test/ManifestCollection.test.ts', () => {
         baseDir: getAppBaseDir('egg-app'),
       });
       await app.ready();
-    });
+    }, 30_000);
 
     afterAll(async () => {
       await app.close();

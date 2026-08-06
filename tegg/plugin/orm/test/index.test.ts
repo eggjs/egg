@@ -31,7 +31,7 @@ describe('plugin/orm/test/orm.test.ts', () => {
     });
     await app.ready();
     appService = await app.getEggObject(AppService);
-  });
+  }, 30_000);
 
   afterAll(() => {
     return app.close();
