@@ -182,8 +182,9 @@ describe('standalone/standalone/test/index.test.ts', () => {
       const msg: string = await main(fixture);
       assert.equal(msg, 'hello!hello from ctx');
       await sleep(500);
-      // app module + the three built-in framework modules (teggAop/teggDal/teggConfig)
-      assert.equal((ModuleDescriptorDumper.dump as any).called, 4);
+      // app module + the four built-in framework modules
+      // (teggAop/teggDal/teggConfig/teggDyniamicInjectRuntime)
+      assert.equal((ModuleDescriptorDumper.dump as any).called, 5);
     });
 
     it('should not dump', async () => {
@@ -441,19 +442,16 @@ describe('standalone/standalone/test/index.test.ts', () => {
     });
   });
 
-  // EggPrototypeNotFound: [tegg/standalone] bootstrap tegg failed: Object eggObjectFactory not found in LOAD_UNIT:dynamicInjectModule
-  describe.skip('dynamic inject', () => {
+  describe('dynamic inject', () => {
     const fixturePath = path.join(__dirname, './fixtures/dynamic-inject-module');
 
     it('should work', async () => {
-      const msgs = await main(fixturePath, {
-        dependencies: [
-          {
-            baseDir: path.join(__dirname, '..'),
-            extraFilePattern: ['!**/test'],
-          },
-        ],
-      });
+      const dynamicInjectReference = StandaloneApp.getModuleReferences(fixturePath).find(
+        (reference) => reference.name === 'teggDyniamicInjectRuntime',
+      );
+      assert.equal(dynamicInjectReference?.package, '@eggjs/dynamic-inject-runtime');
+
+      const msgs = await main(fixturePath);
       assert.deepEqual(msgs, [
         'hello, foo(context:0)',
         'hello, bar(context:0)',
@@ -621,8 +619,9 @@ describe('standalone/standalone/test/index.test.ts', () => {
         'preDestroy',
         'destroy',
       ]);
-      // app module + the three built-in framework modules (teggAop/teggDal/teggConfig)
-      assert.equal((ModuleDescriptorDumper.dump as any).called, 4);
+      // app module + the four built-in framework modules
+      // (teggAop/teggDal/teggConfig/teggDyniamicInjectRuntime)
+      assert.equal((ModuleDescriptorDumper.dump as any).called, 5);
     });
   });
 });

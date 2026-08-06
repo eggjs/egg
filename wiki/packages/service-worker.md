@@ -6,13 +6,15 @@ source_files:
   - tegg/standalone/service-worker-runtime/src
   - tegg/standalone/service-worker/src
   - tegg/standalone/service-worker-controller/src
+  - tegg/standalone/standalone/package.json
+  - tegg/standalone/standalone/src/StandaloneApp.ts
   - tegg/core/controller-runtime/src
   - tegg/core/controller-decorator/src
   - tegg/core/types/src/controller-decorator
   - tegg/plugin/controller/src
   - examples/helloworld-service-worker
   - tools/egg-bundler/src/lib/StandaloneWorkerBundler.ts
-updated_at: 2026-07-21
+updated_at: 2026-08-06
 status: active
 ---
 
@@ -157,16 +159,16 @@ Key mechanics and constraints:
 - **frameworkDeps scan excludes `test/**`\*\*: the framework packages are
   themselves modules; without the exclusion their test fixtures load as
   business modules (duplicate controller names) in workspace layouts.
-- **`StandaloneEggObjectFactory` pins `name: 'eggObjectFactory'`** (why module
-  discovery order stopped mattering): it extends the base `EggObjectFactory`, so
-  its derived proto name would be `standaloneEggObjectFactory` and would NOT
-  satisfy `ServiceWorkerRunner`'s `@Inject() eggObjectFactory` locally — the
-  inject would fall back to the global PUBLIC `eggObjectFactory` in
-  `@eggjs/dynamic-inject-runtime`, whose availability depends on module scan
-  order (runtime had to be scanned before controller). Pinning the name keeps
-  resolution local to `serviceWorkerRuntime` and order-independent, which is what
-  lets ServiceWorkerApp use a single own-package-root frameworkDep instead of a
-  hand-ordered runtime/controller list.
+- **The runner and business modules share the PUBLIC `eggObjectFactory`**:
+  `@eggjs/standalone` directly depends on `@eggjs/dynamic-inject-runtime`, whose
+  module provides the canonical PUBLIC factory. `StandaloneApp` always scans its
+  own package root as an independent built-in root before host `frameworkDeps`,
+  so this does not rely on recursively scanning framework dependency trees.
+  `ServiceWorkerRunner` injects that public factory to dispatch
+  `AbstractEventHandler` by event type; the service-worker runtime does not
+  provide a second PRIVATE factory. `@eggjs/ajv-plugin` remains opt-in and is
+  discovered only when an application or selected framework root brings it into
+  the standalone module references.
 - Per-app mutable state is owned by the app's TeggScope bag, either through its
   inner objects or explicit scope slots such as the manifest loader view and MCP
   transport registry. Two concurrent `ServiceWorkerApp`s are isolated

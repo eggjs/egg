@@ -1,5 +1,5 @@
-import type { EggObjectFactory } from '@eggjs/dynamic-inject-runtime';
 import { Inject, SingletonProto } from '@eggjs/tegg';
+import type { EggObjectFactory } from '@eggjs/tegg-types';
 import { AbstractEventHandler, type MainRunner, Runner, type StandaloneEvent } from '@eggjs/tegg/standalone';
 
 /** Dispatches the current event to its qualified handler. */
