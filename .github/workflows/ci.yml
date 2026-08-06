@@ -384,10 +384,11 @@ jobs:
           UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
         run: ut install --from pnpm
 
-      # own step for clear failure attribution; name-based filter matches on
-      # every platform (the ./tools/... path form does not match on Windows)
+      # own step for clear failure attribution; @eggjs/scripts has no build
+      # script of its own, so build it through the root tsdown workspace
+      # filter (path form is fine here, this job only runs on ubuntu)
       - name: Build egg-scripts
-        run: ut run build --workspace @eggjs/scripts
+        run: ut run build -- --workspace ./tools/scripts
 
       - name: Run tests (with coverage)
         if: ${{ matrix.coverage }}

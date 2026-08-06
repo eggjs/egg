@@ -31,6 +31,8 @@ describe('plugin/langchain/test/llm.test.ts', () => {
     mm.restore();
   });
 
+  // app boot exceeds vitest's default 10s hook timeout on slow Windows CI
+  // runners (glob projects do not inherit the root config's hookTimeout)
   beforeAll(async () => {
     mm(process.env, 'EGG_TYPESCRIPT', true);
     mm(process, 'cwd', () => {
@@ -41,7 +43,7 @@ describe('plugin/langchain/test/llm.test.ts', () => {
       framework: path.dirname(require.resolve('egg/package.json')),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterAll(() => {
     return app.close();
