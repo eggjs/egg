@@ -23,12 +23,12 @@ matrix. It does not build packages before running tests.
 
 ## Exception: egg-bin tests need a built dist
 
-The dedicated `test-egg-bin` CI job runs
-`ut run build --workspace @eggjs/bin` before
-`ut run test --workspace @eggjs/bin`. Use the package-name form of
-`--workspace`: the `./tools/egg-bin` path form does not match on Windows, and
-a failed build surfaces later as dozens of `command dev not found` test
-failures. The oclif CLI under test loads commands
+The dedicated `test-egg-bin` CI job builds egg-bin in its own step
+(`ut run build` with `working-directory: tools/egg-bin`) before
+`ut run test --workspace @eggjs/bin`. When filtering with `--workspace`,
+prefer the package-name form: the `./tools/egg-bin` path form does not match
+on Windows, and a failed build surfaces later as dozens of
+`command dev not found` test failures. The oclif CLI under test loads commands
 from `tools/egg-bin/dist/commands` (`oclif.commands` in its package.json), and
 oclif's tsconfig fallback cannot map that path back to `src/` (no
 `rootDir`/`baseUrl` in the package tsconfig), so an unbuilt checkout fails every
