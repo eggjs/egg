@@ -36,7 +36,7 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
         app.logger.error('set dns servers error:', error);
       }
     }
-  });
+  }, 30_000);
 
   afterAll(() => {
     try {

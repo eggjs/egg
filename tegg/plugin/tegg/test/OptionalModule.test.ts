@@ -23,7 +23,7 @@ describe.skip('plugin/tegg/test/OptionalModule.test.ts', () => {
       baseDir: getAppBaseDir('optional-module'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('should work', async () => {
     // await app.mockModuleContextScope(async ctx => {

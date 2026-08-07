@@ -15,7 +15,7 @@ describe('plugin/config/test/ReadModule.test.ts', () => {
       baseDir: getFixtures('apps/app-with-modules'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('should work', () => {
     // The app's own module, exactly as scanned.

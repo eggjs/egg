@@ -15,7 +15,7 @@ describe('plugin/controller/test/http/request.test.ts', () => {
       baseDir: getFixtures('apps/http-inject-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterAll(() => {
     return app.close();

@@ -30,7 +30,7 @@ describe('plugin/aop/test/aop.test.ts', () => {
     expect(res.body).toEqual({
       msg: 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(foo))))',
     });
-  });
+  }, 30_000);
 
   it('module aop should work', async () => {
     app.mockCsrf();

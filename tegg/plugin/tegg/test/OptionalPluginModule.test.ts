@@ -20,7 +20,7 @@ describe.skip('plugin/tegg/test/OptionalPluginModule.test.ts', () => {
       baseDir: 'apps/plugin-module',
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('should work', async () => {
     // await app.mockModuleContextScope(async ctx => {

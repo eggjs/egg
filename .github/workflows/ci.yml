@@ -167,7 +167,18 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         shell: pwsh
         run: |
-          choco install -y mysql
+          # retry up to 3 times to handle Chocolatey feed flakiness
+          for ($i = 1; $i -le 3; $i++) {
+            choco install -y mysql
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($i -lt 3) {
+              Write-Host "choco install failed (attempt $i/3), retrying in 15s..."
+              Start-Sleep -Seconds 15
+            } else {
+              Write-Error "choco install failed after 3 attempts"
+              exit 1
+            }
+          }
           refreshenv
           # MySQL default root has no password, set a password and create database/user
           # & mysqladmin -u root password root
@@ -384,17 +395,19 @@ jobs:
           UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
         run: ut install --from pnpm
 
+      # own step for clear failure attribution; @eggjs/scripts has no build
+      # script of its own, so build it through the root tsdown workspace
+      # filter (path form is fine here, this job only runs on ubuntu)
+      - name: Build egg-scripts
+        run: ut run build -- --workspace ./tools/scripts
+
       - name: Run tests (with coverage)
         if: ${{ matrix.coverage }}
-        run: |
-          ut run build -- --workspace ./tools/scripts
-          ut run ci --workspace tools/scripts
+        run: ut run ci --workspace @eggjs/scripts
 
       - name: Run tests
         if: ${{ !matrix.coverage }}
-        run: |
-          ut run build -- --workspace ./tools/scripts
-          ut run test --workspace tools/scripts
+        run: ut run test --workspace @eggjs/scripts
 
       - name: Code Coverage
         if: ${{ matrix.coverage }}

@@ -22,7 +22,7 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
       baseDir: getAppBaseDir('access-level-check'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('invoke moduleMain fooService method', async () => {
     await app

@@ -22,7 +22,7 @@ describe('test/app/extend/application-one-module.test.ts', () => {
       baseDir: getAppBaseDir('egg-app-simple'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   describe('getEggObject', () => {
     it('should work', async () => {

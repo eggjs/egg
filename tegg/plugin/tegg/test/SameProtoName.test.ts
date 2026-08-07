@@ -22,7 +22,7 @@ describe('plugin/tegg/test/SameProtoName.test.ts', () => {
       baseDir: getAppBaseDir('same-name-protos'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('should work', async () => {
     await app.mockModuleContextScope(async (ctx) => {

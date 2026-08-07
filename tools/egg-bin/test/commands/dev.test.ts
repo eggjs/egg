@@ -260,4 +260,18 @@ describe('test/commands/dev.test.ts', () => {
       );
     });
   });
+
+  // signals don't carry exit-status semantics on Windows
+  it.runIf(process.platform !== 'win32')('should exit 128 + signal number on signal death', () => {
+    return (
+      coffee
+        .fork(eggBin, ['dev'], { cwd: getFixtures('demo-app-kill-self') })
+        // .debug()
+        .expect('stdout', /startCluster kill self with SIGTERM/)
+        .expect('stderr', /was killed by signal SIGTERM/)
+        // 128 + SIGTERM(15)
+        .expect('code', 143)
+        .end()
+    );
+  });
 });

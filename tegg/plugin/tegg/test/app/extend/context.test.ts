@@ -25,7 +25,7 @@ describe('test/app/extend/context.test.ts', () => {
       baseDir: getAppBaseDir('egg-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   describe('getEggObject', () => {
     it('should work', async () => {

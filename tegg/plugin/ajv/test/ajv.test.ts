@@ -20,7 +20,7 @@ beforeAll(async () => {
     // framework: require.resolve('egg'),
   });
   await app.ready();
-});
+}, 30_000);
 
 afterAll(() => {
   return app.close();

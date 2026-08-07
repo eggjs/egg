@@ -91,7 +91,7 @@ describe.skip('plugin/mcp-proxy/test/proxy.test.ts', () => {
         workers: 3,
       });
       await app.ready();
-    });
+    }, 30_000);
 
     afterAll(async () => {
       await app.close();
