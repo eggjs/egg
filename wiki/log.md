@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-08-06] fix | restore standalone public dynamic injection
+
+- sources touched: `tegg/standalone/{standalone,service-worker-runtime}`
+- pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
+
 ## [2026-07-21] refactor+docs | make controller extension hooks declarative
 
 - sources touched: `tegg/core/controller-runtime/src/lib/MiddlewareGraphHook.ts`, `tegg/plugin/controller`, `tegg/plugin/mcp-proxy`, `tegg/standalone/service-worker-controller`

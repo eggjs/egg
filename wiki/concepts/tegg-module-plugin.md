@@ -32,9 +32,11 @@ source_files:
   - tegg/plugin/controller/src/lib/impl/http/EggHTTPControllerRegistrar.ts
   - tegg/plugin/controller/src/lib/impl/mcp/EggMCPRegisterProvider.ts
   - tegg/core/controller-runtime/src/lib/MiddlewareGraphHook.ts
+  - tegg/core/dynamic-inject-runtime/src
+  - tegg/standalone/standalone/package.json
   - tegg/plugin/mcp-proxy/src/index.ts
   - tegg/standalone/service-worker-controller/src/http/FetchEventHandler.ts
-updated_at: 2026-07-21
+updated_at: 2026-08-06
 status: active
 ---
 
@@ -239,9 +241,13 @@ objects from business modules.
   when scoped object resolution is required.
 - `runtimeConfig.name` and `runtimeConfig.env` normalize omitted values to
   empty strings because the `RuntimeConfig` contract requires strings.
-- Standalone discovery includes the AOP, DAL, and config framework modules by
-  design. Manifest consumption reuses the captured references and avoids a
-  second scan; there is no feature gate for these core module plugins.
+- Standalone discovery includes the AOP, DAL, config, and dynamic-inject runtime
+  modules by design. The dynamic-inject runtime supplies the canonical PUBLIC
+  `eggObjectFactory`; it is found by scanning `@eggjs/standalone`'s own package
+  root, not by recursively traversing a host framework's dependency tree.
+  Manifest consumption reuses the captured references and avoids a second scan.
+  AJV is not a built-in standalone/service-worker module; applications that need
+  it include `@eggjs/ajv-plugin` explicitly in their selected module roots.
 - DAL managers are inner objects. `app.mysqlDataSourceManager` and the DAL
   `./app` export are removed; inject `MysqlDataSourceManager` or resolve it
   through `getEggObjectFromName()` within the owning app scope.

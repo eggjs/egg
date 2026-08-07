@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "@eggjs/background-task": "workspace:*",
-    "@eggjs/dynamic-inject-runtime": "workspace:*",
     "@eggjs/lifecycle": "workspace:*",
     "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg": "workspace:*",
