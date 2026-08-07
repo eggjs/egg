@@ -1,6 +1,8 @@
+import { once } from 'node:events';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { Worker as ThreadWorker, type WorkerOptions } from 'node:worker_threads';
 
+import { WORKER_THREAD_GRACEFUL_EXIT } from '../../../../worker_protocol/worker-thread.ts';
 import type { MessageBody } from '../../../messenger.ts';
 import { BaseAppWorker, BaseAppUtils } from '../../base/app.ts';
 
@@ -48,15 +50,15 @@ export class AppThreadWorker extends BaseAppWorker<ThreadWorker> {
 }
 
 export class AppThreadUtils extends BaseAppUtils {
-  #workers: ThreadWorker[] = [];
+  #workers: AppThreadWorker[] = [];
 
   #forkSingle(appPath: string, options: WorkerOptions, id: number): void {
     // start app worker
     const worker = new ThreadWorker(appPath, options);
-    this.#workers.push(worker);
 
     // wrap app worker
     const appWorker = new AppThreadWorker(worker, id);
+    this.#workers.push(appWorker);
     this.emit('worker_forked', appWorker);
     appWorker.disableRefork = true;
     worker.on('message', (msg: MessageBody) => {
@@ -139,12 +141,25 @@ export class AppThreadUtils extends BaseAppUtils {
     return this;
   }
 
-  async kill(): Promise<void> {
-    for (const worker of this.#workers) {
-      const id = Reflect.get(worker, 'id');
-      this.log(`[master] kill app worker#${id} (worker_threads) by worker.terminate()`);
-      worker.removeAllListeners();
-      worker.terminate();
-    }
+  async kill(timeout: number): Promise<void> {
+    await Promise.all(
+      this.#workers.map(async (appWorker) => {
+        const { id, instance: worker } = appWorker;
+        this.log(`[master] gracefully close app worker#${id} (worker_threads)`);
+        worker.removeAllListeners();
+        const exited = once(worker, 'exit').then(
+          () => true,
+          (err) => {
+            this.logger.error('[master] app worker#%s error during graceful shutdown: ', id, err);
+            return false;
+          },
+        );
+        worker.postMessage(WORKER_THREAD_GRACEFUL_EXIT);
+        if (!(await Promise.race([exited, sleep(timeout).then(() => false)]))) {
+          this.log(`[master] terminate app worker#${id} after ${timeout}ms timeout`);
+          await worker.terminate();
+        }
+      }),
+    );
   }
 }

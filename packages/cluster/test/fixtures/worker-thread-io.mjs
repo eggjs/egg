@@ -8,4 +8,11 @@ io.on('message', (message) => {
   }
 });
 
+io.gracefulExit({
+  async beforeExit() {
+    await Promise.resolve();
+    io.send({ action: 'closed' });
+  },
+});
+
 io.send({ action: 'ready' });

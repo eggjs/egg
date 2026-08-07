@@ -1,6 +1,9 @@
+import { once } from 'node:events';
+import { setTimeout as sleep } from 'node:timers/promises';
 import workerThreads, { type Worker } from 'node:worker_threads';
 
 import { ClusterAgentWorkerError } from '../../../../error/ClusterAgentWorkerError.ts';
+import { WORKER_THREAD_GRACEFUL_EXIT } from '../../../../worker_protocol/worker-thread.ts';
 import type { MessageBody } from '../../../messenger.ts';
 import { BaseAgentUtils, BaseAgentWorker } from '../../base/agent.ts';
 
@@ -69,11 +72,22 @@ export class AgentThreadUtils extends BaseAgentUtils {
     this.#worker.removeAllListeners();
   }
 
-  async kill(): Promise<void> {
+  async kill(timeout: number): Promise<void> {
     if (this.#worker) {
-      this.log(`[master] kill agent worker#${this.#id} (worker_threads) by worker.terminate()`);
+      this.log(`[master] gracefully close agent worker#${this.#id} (worker_threads)`);
       this.clean();
-      await this.#worker.terminate();
+      const exited = once(this.#worker, 'exit').then(
+        () => true,
+        (err) => {
+          this.logger.error('[master] agent worker#%s error during graceful shutdown: ', this.#id, err);
+          return false;
+        },
+      );
+      this.#worker.postMessage(WORKER_THREAD_GRACEFUL_EXIT);
+      if (!(await Promise.race([exited, sleep(timeout).then(() => false)]))) {
+        this.log(`[master] terminate agent worker#${this.#id} after ${timeout}ms timeout`);
+        await this.#worker.terminate();
+      }
     }
   }
 }
