@@ -444,6 +444,12 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
   describe('dynamic inject', () => {
     const fixturePath = path.join(__dirname, './fixtures/dynamic-inject-module');
+    const expectedMessages = [
+      'hello, foo(context:0)',
+      'hello, bar(context:0)',
+      'hello, foo(singleton:0)',
+      'hello, bar(singleton:0)',
+    ];
 
     it('should work', async () => {
       const dynamicInjectReference = StandaloneApp.getModuleReferences(fixturePath).find(
@@ -451,13 +457,18 @@ describe('standalone/standalone/test/index.test.ts', () => {
       );
       assert.equal(dynamicInjectReference?.package, '@eggjs/dynamic-inject-runtime');
 
-      const msgs = await main(fixturePath);
-      assert.deepEqual(msgs, [
-        'hello, foo(context:0)',
-        'hello, bar(context:0)',
-        'hello, foo(singleton:0)',
-        'hello, bar(singleton:0)',
+      const msgs = await main<string[]>(fixturePath);
+      assert.deepEqual(msgs, expectedMessages);
+    });
+
+    it('should isolate concurrent apps', async () => {
+      const [firstMessages, secondMessages] = await Promise.all([
+        main<string[]>(fixturePath, { dump: false }),
+        main<string[]>(fixturePath, { dump: false }),
       ]);
+
+      assert.deepEqual(firstMessages, expectedMessages);
+      assert.deepEqual(secondMessages, expectedMessages);
     });
   });
 

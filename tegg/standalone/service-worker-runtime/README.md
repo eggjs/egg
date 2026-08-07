@@ -9,9 +9,12 @@ This package provides:
 - `ServiceWorkerRunner`, which dispatches each event by its `type`;
 - `ContextProtoLoadUnitHook` and `ContextProtoProperty`, which make the current
   event injectable in request-scoped objects;
-- `StandaloneEggObjectFactory`, which resolves the matching event handler;
 - `BackgroundTaskHelper`, which drains request-scoped background work during
   context destruction.
+
+`ServiceWorkerRunner` expects the standalone host's module set to provide the
+canonical PUBLIC `eggObjectFactory` from `@eggjs/dynamic-inject-runtime`; this
+package does not provide a second private factory.
 
 Protocol adapters register an `AbstractEventHandler` implementation with
 `@EventHandlerProto('<type>')` and provide any required inner objects or
