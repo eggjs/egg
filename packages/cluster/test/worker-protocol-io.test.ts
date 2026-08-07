@@ -125,14 +125,15 @@ describe('test/worker-protocol-io.test.ts', () => {
   it('exits a worker thread with code 1 when graceful cleanup fails', async () => {
     const exit = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
     const logger = { error: vi.fn() };
+    const closeError = new Error('close failed');
     const io = createWorkerThreadIO();
-    io.gracefulExit({ beforeExit: () => Promise.reject(new Error('close failed')), logger } as any);
+    io.gracefulExit({ beforeExit: () => Promise.reject(closeError), logger } as any);
     const gracefulListener = mocks.parentPort!.on.mock.calls[0][1] as (message: unknown) => Promise<void>;
 
     await gracefulListener(WORKER_THREAD_GRACEFUL_EXIT);
 
     assert.deepEqual(exit.mock.calls, [[1]]);
-    assert.equal(logger.error.mock.calls.length, 1);
+    assert.deepEqual(logger.error.mock.calls, [['[worker_thread] graceful exit failed:', closeError]]);
   });
 
   it('rejects worker-thread IO outside a worker', () => {

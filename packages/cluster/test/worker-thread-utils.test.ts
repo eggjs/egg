@@ -105,6 +105,13 @@ describe('test/worker-thread-utils.test.ts', () => {
       assert.deepEqual(worker.postMessage.mock.calls, [[WORKER_THREAD_GRACEFUL_EXIT]]);
       assert.equal(worker.terminate.mock.calls.length, 0);
     }
+    const shutdownLogs = dependencies.log.mock.calls
+      .map(([message]) => message)
+      .filter((message) => String(message).includes('gracefully close app worker'));
+    assert.deepEqual(shutdownLogs, [
+      '[master] gracefully close app worker#1 (worker_threads)',
+      '[master] gracefully close app worker#2 (worker_threads)',
+    ]);
   });
 
   it('terminates every app worker after the graceful-exit timeout', async () => {

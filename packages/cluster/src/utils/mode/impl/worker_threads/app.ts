@@ -50,15 +50,15 @@ export class AppThreadWorker extends BaseAppWorker<ThreadWorker> {
 }
 
 export class AppThreadUtils extends BaseAppUtils {
-  #workers: ThreadWorker[] = [];
+  #workers: AppThreadWorker[] = [];
 
   #forkSingle(appPath: string, options: WorkerOptions, id: number): void {
     // start app worker
     const worker = new ThreadWorker(appPath, options);
-    this.#workers.push(worker);
 
     // wrap app worker
     const appWorker = new AppThreadWorker(worker, id);
+    this.#workers.push(appWorker);
     this.emit('worker_forked', appWorker);
     appWorker.disableRefork = true;
     worker.on('message', (msg: MessageBody) => {
@@ -143,8 +143,8 @@ export class AppThreadUtils extends BaseAppUtils {
 
   async kill(timeout: number): Promise<void> {
     await Promise.all(
-      this.#workers.map(async (worker) => {
-        const id = Reflect.get(worker, 'id');
+      this.#workers.map(async (appWorker) => {
+        const { id, instance: worker } = appWorker;
         this.log(`[master] gracefully close app worker#${id} (worker_threads)`);
         worker.removeAllListeners();
         const exited = once(worker, 'exit').then(

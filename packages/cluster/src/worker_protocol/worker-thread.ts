@@ -42,7 +42,7 @@ export function createWorkerThreadIO(): AppWorkerIO {
           }
           process.exit(0);
         } catch (err) {
-          options.logger?.error('[worker_thread] graceful exit failed: %s', err);
+          options.logger?.error('[worker_thread] graceful exit failed:', err);
           process.exit(1);
         }
       });
