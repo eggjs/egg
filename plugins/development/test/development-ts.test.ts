@@ -5,7 +5,7 @@ import { scheduler } from 'node:timers/promises';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { beforeEach, afterEach, it, describe, expect } from 'vitest';
 
-import { escape, getFilepath, DELAY } from './utils.ts';
+import { escape, getFilepath, DELAY, waitFor } from './utils.ts';
 
 describe('test/development-ts.test.ts', () => {
   let app: MockApplication;
@@ -48,7 +48,7 @@ describe('test/development-ts.test.ts', () => {
     await fs.writeFile(filepath, 'let a = 2;');
     await scheduler.wait(1000);
     await fs.rm(filepath, { force: true });
-    await scheduler.wait(5000);
+    await waitFor(() => new RegExp(escape(`reload worker because ${filepath}`)).test(app.stdout));
     app.expect('stdout', new RegExp(escape(`reload worker because ${filepath}`)));
   });
 
