@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/path-matching",
-  "version": "3.0.2-beta.25",
+  "version": "3.0.2-beta.26",
   "description": "match or ignore url path",
   "keywords": [
     "ignore",

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/loader-fs",
-  "version": "1.0.0-beta.25",
+  "version": "1.0.0-beta.26",
   "description": "Loader-facing filesystem abstraction for Egg",
   "keywords": [
     "egg",

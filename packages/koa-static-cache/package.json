@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/koa-static-cache",
-  "version": "7.0.2-beta.25",
+  "version": "7.0.2-beta.26",
   "description": "Static cache middleware for koa",
   "keywords": [
     "cache",

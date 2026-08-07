@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/dns-cache-plugin",
-  "version": "4.0.2-beta.25",
+  "version": "4.0.2-beta.26",
   "description": "tegg dns cache plugin",
   "keywords": [
     "cache",

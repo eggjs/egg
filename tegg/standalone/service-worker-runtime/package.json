@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/service-worker-runtime",
-  "version": "4.0.2-beta.19",
+  "version": "4.0.2-beta.20",
   "description": "protocol-agnostic tegg service worker runtime: @Runner event dispatch, context event injection and background task wiring",
   "keywords": [
     "egg",

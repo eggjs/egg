@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/service-worker",
-  "version": "4.0.2-beta.19",
+  "version": "4.0.2-beta.20",
   "description": "tegg standalone service worker runtime: fetch event model, HTTP controller support and a node:http serve() bridge",
   "keywords": [
     "egg",

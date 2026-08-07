@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/service-worker-controller",
-  "version": "4.0.2-beta.19",
+  "version": "4.0.2-beta.20",
   "description": "tegg standalone service worker fetch controller transport: fetch HTTP/MCP controller support for the service worker runtime",
   "keywords": [
     "controller",
