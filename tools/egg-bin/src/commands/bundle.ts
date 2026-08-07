@@ -13,11 +13,12 @@ const debug = debuglog('egg/bin/commands/bundle');
 
 export default class Bundle extends BaseCommand<typeof Bundle> {
   static override description =
-    'Bundle an egg app (default) or a standalone tegg app (--target standalone) into a deployable artifact';
+    'Bundle an egg app (single-process by default, cluster with --cluster) or a standalone tegg app into a deployable artifact';
 
   static override examples = [
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> --output ./dist-bundle',
+    '<%= config.bin %> <%= command.id %> --cluster --output ./dist-bundle',
     '<%= config.bin %> <%= command.id %> --framework egg --output ./out',
     '<%= config.bin %> <%= command.id %> --framework @eggjs/service-worker --entry worker.ts',
     '<%= config.bin %> <%= command.id %> --target standalone --framework @eggjs/service-worker --entry worker.ts --format service-worker',
@@ -56,8 +57,12 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
       default: [],
     }),
     target: Flags.string({
-      description: 'bundle target; auto-detected from --framework when omitted',
+      description: 'bundle target; standalone is inferred from --entry when omitted',
       options: ['app', 'standalone'],
+    }),
+    cluster: Flags.boolean({
+      description: 'app: emit separate app_worker.js and agent_worker.js entries for egg-scripts start --bundle',
+      default: false,
     }),
     entry: Flags.string({
       description: 'standalone: path to the worker entry (e.g. worker.ts), relative to --base',
@@ -86,6 +91,10 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
     const baseDir = flags.base;
 
     const isStandalone = flags.target === 'standalone' || (!flags.target && !!flags.entry);
+
+    if (flags.cluster && isStandalone) {
+      this.error('--cluster cannot be combined with --target standalone or --entry');
+    }
 
     if (isStandalone) {
       await this.#runStandalone(baseDir);
@@ -124,6 +133,7 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
         force: flags['force-external'],
         inline: flags['inline-external'],
       },
+      ...(flags.cluster ? { target: 'cluster' as const } : {}),
       ...(packAlias ? { pack: { resolve: { alias: packAlias } } } : {}),
     });
 

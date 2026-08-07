@@ -100,6 +100,175 @@ describe('test/snapshot-start.test.ts', () => {
     expect(options.env.NODE_ENV).toBe('production');
   });
 
+  it('launches the cluster master with explicit app and agent snapshot options', async () => {
+    await Start.run([
+      '--bundle',
+      '--app-snapshot-blob',
+      './dist-bundle/app.snapshot.blob',
+      '--agent-snapshot-blob',
+      './dist-bundle/agent.snapshot.blob',
+      '--workers',
+      '2',
+      baseDir,
+    ]);
+
+    const { command, args, options } = spawnArgs();
+    expect(command).toBe('node');
+    expect(args.join(' ')).toContain('start-cluster');
+    expect(args).not.toContain('--snapshot-blob');
+    const clusterOptions = JSON.parse(args.find((arg) => arg.startsWith('{'))!);
+    expect(clusterOptions).toMatchObject({
+      workers: 2,
+      appWorkerFile: path.join(baseDir, 'dist-bundle', 'app_worker.js'),
+      agentWorkerFile: path.join(baseDir, 'dist-bundle', 'agent_worker.js'),
+      appSnapshotBlob: path.join(baseDir, 'dist-bundle', 'app.snapshot.blob'),
+      agentSnapshotBlob: path.join(baseDir, 'dist-bundle', 'agent.snapshot.blob'),
+    });
+    expect(options.env.NODE_ENV).toBe('production');
+  });
+
+  it('allows cluster snapshot worker files to be overridden independently', async () => {
+    await Start.run([
+      '--bundle',
+      '--app-snapshot-blob',
+      './snapshots/app.blob',
+      '--agent-snapshot-blob',
+      './snapshots/agent.blob',
+      '--app-worker-file',
+      './bundle/custom-app.js',
+      '--agent-worker-file',
+      './bundle/custom-agent.js',
+      baseDir,
+    ]);
+
+    const { args } = spawnArgs();
+    const clusterOptions = JSON.parse(args.find((arg) => arg.startsWith('{'))!);
+    expect(clusterOptions.appWorkerFile).toBe(path.join(baseDir, 'bundle', 'custom-app.js'));
+    expect(clusterOptions.agentWorkerFile).toBe(path.join(baseDir, 'bundle', 'custom-agent.js'));
+  });
+
+  it('uses bundle-dir for default worker files without deriving them from snapshot paths', async () => {
+    await Start.run(['--bundle', '--bundle-dir', './output', '--app-snapshot-blob', './snapshots/app.blob', baseDir]);
+
+    const { args } = spawnArgs();
+    const clusterOptions = JSON.parse(args.find((arg) => arg.startsWith('{'))!);
+    expect(clusterOptions).toMatchObject({
+      appWorkerFile: path.join(baseDir, 'output', 'app_worker.js'),
+      agentWorkerFile: path.join(baseDir, 'output', 'agent_worker.js'),
+      appSnapshotBlob: path.join(baseDir, 'snapshots', 'app.blob'),
+    });
+    expect(clusterOptions.agentSnapshotBlob).toBeUndefined();
+  });
+
+  it('allows only app workers to restore while the agent boots from its bundle entry', async () => {
+    await Start.run(['--bundle', '--app-snapshot-blob', './dist-bundle/app.snapshot.blob', baseDir]);
+
+    const { args } = spawnArgs();
+    const clusterOptions = JSON.parse(args.find((arg) => arg.startsWith('{'))!);
+    expect(clusterOptions).toMatchObject({
+      appWorkerFile: path.join(baseDir, 'dist-bundle', 'app_worker.js'),
+      agentWorkerFile: path.join(baseDir, 'dist-bundle', 'agent_worker.js'),
+      appSnapshotBlob: path.join(baseDir, 'dist-bundle', 'app.snapshot.blob'),
+    });
+    expect(clusterOptions.agentSnapshotBlob).toBeUndefined();
+  });
+
+  it('allows only the agent to restore while app workers boot from their bundle entry', async () => {
+    await Start.run(['--bundle', '--agent-snapshot-blob', './dist-bundle/agent.snapshot.blob', baseDir]);
+
+    const { args } = spawnArgs();
+    const clusterOptions = JSON.parse(args.find((arg) => arg.startsWith('{'))!);
+    expect(clusterOptions).toMatchObject({
+      appWorkerFile: path.join(baseDir, 'dist-bundle', 'app_worker.js'),
+      agentWorkerFile: path.join(baseDir, 'dist-bundle', 'agent_worker.js'),
+      agentSnapshotBlob: path.join(baseDir, 'dist-bundle', 'agent.snapshot.blob'),
+    });
+    expect(clusterOptions.appSnapshotBlob).toBeUndefined();
+  });
+
+  it('starts an ordinary multi-process bundle from the default bundle directory', async () => {
+    pinNodeVersion('22.22.3');
+    await Start.run(['--bundle', baseDir]);
+
+    const { args } = spawnArgs();
+    const clusterOptions = JSON.parse(args.find((arg) => arg.startsWith('{'))!);
+    expect(clusterOptions.appWorkerFile).toBe(path.join(baseDir, 'dist-bundle', 'app_worker.js'));
+    expect(clusterOptions.agentWorkerFile).toBe(path.join(baseDir, 'dist-bundle', 'agent_worker.js'));
+    expect(clusterOptions.appSnapshotBlob).toBeUndefined();
+    expect(clusterOptions.agentSnapshotBlob).toBeUndefined();
+    expect(clusterOptions.bundle).toBeUndefined();
+    expect(clusterOptions['bundle-dir']).toBeUndefined();
+  });
+
+  it('rejects options.require for an ordinary multi-process bundle before spawning', async () => {
+    await expect(Start.run(['--bundle', '--require', './bootstrap.js', baseDir])).rejects.toThrow(
+      /options\.require is not supported with bundled cluster workers/,
+    );
+    expect(spawnMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects options.require for cluster snapshot restore before spawning', async () => {
+    await expect(
+      Start.run([
+        '--bundle',
+        '--app-snapshot-blob',
+        './dist-bundle/app.snapshot.blob',
+        '--require',
+        './bootstrap.js',
+        baseDir,
+      ]),
+    ).rejects.toThrow(/options\.require is not supported with bundled cluster workers/);
+    expect(spawnMock).not.toHaveBeenCalled();
+  });
+
+  it('rejects options.require for single-process snapshot restore before spawning', async () => {
+    await expect(
+      Start.run(['--snapshot-blob', './snapshot.blob', '--require', './bootstrap.js', baseDir]),
+    ).rejects.toThrow(/options\.require is not supported with snapshot restore/);
+    expect(spawnMock).not.toHaveBeenCalled();
+  });
+
+  it('silently ignores bundle path and role options without --bundle', async () => {
+    pinNodeVersion('22.22.3');
+    await Start.run([
+      '--bundle-dir',
+      './output',
+      '--app-worker-file',
+      './bundle/custom-app.js',
+      '--agent-worker-file',
+      './bundle/custom-agent.js',
+      '--app-snapshot-blob',
+      './snapshots/app.blob',
+      '--agent-snapshot-blob',
+      './snapshots/agent.blob',
+      baseDir,
+    ]);
+
+    const { args } = spawnArgs();
+    expect(args.join(' ')).toContain('start-cluster');
+    const clusterOptions = JSON.parse(args.find((arg) => arg.startsWith('{'))!);
+    expect(clusterOptions.appWorkerFile).toBeUndefined();
+    expect(clusterOptions.agentWorkerFile).toBeUndefined();
+    expect(clusterOptions.appSnapshotBlob).toBeUndefined();
+    expect(clusterOptions.agentSnapshotBlob).toBeUndefined();
+  });
+
+  it('prefers single-process snapshot when bundle options are also provided', async () => {
+    await Start.run([
+      '--snapshot-blob',
+      './snapshot.blob',
+      '--bundle',
+      '--app-snapshot-blob',
+      './app.snapshot.blob',
+      baseDir,
+    ]);
+
+    const { args } = spawnArgs();
+    expect(args.join(' ')).not.toContain('start-cluster');
+    expect(args).toContain('--snapshot-blob');
+    expect(args).toContain(path.join(baseDir, 'snapshot.blob'));
+  });
+
   it('passes --port through as PORT env for the snapshot entry to read', async () => {
     await Start.run(['--snapshot-blob', '/abs/app.blob', '--port', '8080', baseDir]);
 
@@ -126,6 +295,14 @@ describe('test/snapshot-start.test.ts', () => {
     pinNodeVersion('22.22.3');
     await expect(Start.run(['--snapshot-blob', './snapshot.blob', baseDir])).rejects.toThrow(/Node\.js >= 24/);
     // Gated before spawning the doomed `node --snapshot-blob` child.
+    expect(spawnMock).not.toHaveBeenCalled();
+  });
+
+  it('also refuses cluster snapshot restore on Node.js < 24', async () => {
+    pinNodeVersion('22.22.3');
+    await expect(Start.run(['--bundle', '--app-snapshot-blob', './app.snapshot.blob', baseDir])).rejects.toThrow(
+      /Node\.js >= 24/,
+    );
     expect(spawnMock).not.toHaveBeenCalled();
   });
 

@@ -38,18 +38,43 @@ describe('core/loader/test/ModuleLoaderLoaderFS.test.ts', () => {
   });
 
   it('should use the manifest view instead of its fallback glob', async () => {
+    const originalTsEnable = process.env.EGG_TS_ENABLE;
+    process.env.EGG_TS_ENABLE = 'false';
+    const fallback = new StubLoaderFS(['UserRepo.ts']);
+    try {
+      const loaderFS = new ManifestLoaderFS(
+        {
+          baseDir: repoModulePath,
+          data: { fileDiscovery: { '': ['AppRepo.ts'] }, resolveCache: {} },
+        },
+        fallback,
+      );
+      const loader = new ModuleLoader(repoModulePath, { loaderFS });
+      const prototypes = await loader.load();
+
+      assert.deepStrictEqual(prototypes.map((prototype) => prototype.name).sort(), ['AppRepo', 'AppRepo2']);
+      assert.equal(fallback.globCalls.length, 0);
+    } finally {
+      if (originalTsEnable === undefined) {
+        delete process.env.EGG_TS_ENABLE;
+      } else {
+        process.env.EGG_TS_ENABLE = originalTsEnable;
+      }
+    }
+  });
+
+  it('should preserve an authoritative empty manifest directory', async () => {
     const fallback = new StubLoaderFS(['UserRepo.ts']);
     const loaderFS = new ManifestLoaderFS(
       {
         baseDir: repoModulePath,
-        data: { fileDiscovery: { '': ['AppRepo.ts'] }, resolveCache: {} },
+        data: { fileDiscovery: { '': [] }, resolveCache: {} },
       },
       fallback,
     );
     const loader = new ModuleLoader(repoModulePath, { loaderFS });
-    const prototypes = await loader.load();
 
-    assert.equal(prototypes.length, 2);
+    assert.deepStrictEqual(await loader.load(), []);
     assert.equal(fallback.globCalls.length, 0);
   });
 
@@ -72,5 +97,37 @@ describe('core/loader/test/ModuleLoaderLoaderFS.test.ts', () => {
     assert.equal(prototypes.length, 1);
     assert(prototypes.find((t) => t.name === 'SprintRepo'));
     assert.equal(loaderFS.globCalls.length, 1);
+  });
+
+  it('should isolate manifest file views between concurrent app scopes', async () => {
+    const fallbackA = new StubLoaderFS(['UserRepo.ts']);
+    const fallbackB = new StubLoaderFS(['AppRepo.ts']);
+    const loaderFSA = new ManifestLoaderFS(
+      {
+        baseDir: repoModulePath,
+        data: { fileDiscovery: { '': ['AppRepo.ts'] }, resolveCache: {} },
+      },
+      fallbackA,
+    );
+    const loaderFSB = new ManifestLoaderFS(
+      {
+        baseDir: repoModulePath,
+        data: { fileDiscovery: { '': ['UserRepo.ts'] }, resolveCache: {} },
+      },
+      fallbackB,
+    );
+
+    const [prototypesA, prototypesB] = await Promise.all([
+      TeggScope.run(TeggScope.createBag(), () => ModuleLoader.createModuleLoader(repoModulePath, loaderFSA).load()),
+      TeggScope.run(TeggScope.createBag(), () => ModuleLoader.createModuleLoader(repoModulePath, loaderFSB).load()),
+    ]);
+
+    assert.deepStrictEqual(prototypesA.map((prototype) => prototype.name).sort(), ['AppRepo', 'AppRepo2']);
+    assert.deepStrictEqual(
+      prototypesB.map((prototype) => prototype.name),
+      ['UserRepo'],
+    );
+    assert.equal(fallbackA.globCalls.length, 0);
+    assert.equal(fallbackB.globCalls.length, 0);
   });
 });

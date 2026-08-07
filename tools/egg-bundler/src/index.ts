@@ -1,5 +1,11 @@
 export { Bundler } from './lib/Bundler.ts';
-export { EntryGenerator, type EntryGeneratorOptions, type GeneratedEntries } from './lib/EntryGenerator.ts';
+export {
+  EntryGenerator,
+  type BundleTarget,
+  type EntryGeneratorOptions,
+  type GeneratedEntries,
+  type GeneratedEntry,
+} from './lib/EntryGenerator.ts';
 export { ExternalsResolver, type ExternalsConfig, type ExternalsResolverOptions } from './lib/ExternalsResolver.ts';
 export { ManifestLoader, type ManifestLoaderOptions } from './lib/ManifestLoader.ts';
 export {
@@ -15,6 +21,9 @@ export {
   PackRunner,
   type BuildFunc,
   type PackEntry,
+  type PackRunnerLoaderItem,
+  type PackRunnerModuleConfig,
+  type PackRunnerModuleRule,
   type PackRunnerOptions,
   type PackRunnerResult,
   type PackRunnerResolveConfig,
@@ -27,6 +36,7 @@ export {
 export { patchImportMetaInContent } from './lib/importMetaPatch.ts';
 
 import { Bundler } from './lib/Bundler.ts';
+import type { BundleTarget } from './lib/EntryGenerator.ts';
 import type { BuildFunc, PackRunnerResolveConfig } from './lib/PackRunner.ts';
 
 export interface BundlerExternalsConfig {
@@ -44,11 +54,11 @@ export interface BundlerPackConfig {
   /** @utoo/pack resolve tuning supplied by the application. */
   readonly resolve?: PackRunnerResolveConfig;
   /**
-   * Emit a single self-contained worker.js (all modules inlined, zero sibling-chunk
-   * require). This is the default (`true`) and is required for V8 startup snapshots,
-   * which forbid user-land require of sibling chunks. Set to `false` to fall back to
-   * the legacy multi-chunk standalone output. Enabling {@link BundlerConfig.snapshot}
-   * forces this on regardless of an explicit `false`.
+   * Emit one self-contained file for every generated entry (all modules inlined,
+   * zero sibling-chunk require). This is the default (`true`) and is required for
+   * V8 startup snapshots, which forbid user-land require of sibling chunks. Set to
+   * `false` to fall back to the legacy multi-chunk standalone output. Enabling
+   * {@link BundlerConfig.snapshot} forces this on regardless of an explicit `false`.
    */
   readonly singleFile?: boolean;
 }
@@ -71,6 +81,8 @@ export interface BundlerConfig {
   readonly framework?: string;
   /** Build mode. Defaults to `'production'`. */
   readonly mode?: 'production' | 'development';
+  /** Runtime shape. `cluster` emits separate app_worker.js and agent_worker.js entries. Defaults to `single`. */
+  readonly target?: BundleTarget;
   /** External package overrides. */
   readonly externals?: BundlerExternalsConfig;
   /** @utoo/pack tuning. */
@@ -79,11 +91,11 @@ export interface BundlerConfig {
   readonly runtimeAssets?: BundlerRuntimeAssetsConfig;
   /**
    * Build a V8 startup snapshot-ready artifact. When `true` the bundler emits a
-   * single self-contained worker.js (implies {@link BundlerPackConfig.singleFile})
-   * and prepends a runtime prelude before the bundle IIFE so it runs before any
-   * module loads. The generated entry additionally honours the `EGG_BUNDLE_SNAPSHOT`
-   * env var at runtime to switch between normal start, snapshot build, and snapshot
-   * restore. Defaults to `false`.
+   * self-contained file for every generated entry (implies
+   * {@link BundlerPackConfig.singleFile}) and prepends a runtime prelude before each
+   * bundle IIFE so it runs before any module loads. Every generated entry uses
+   * Node's `v8.startupSnapshot.isBuildingSnapshot()` runtime state to switch
+   * between normal start, snapshot build, and snapshot restore. Defaults to `false`.
    */
   readonly snapshot?: boolean;
 }

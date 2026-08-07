@@ -27,6 +27,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
     "./app": "./src/app.ts",
     "./app/extend/application": "./src/app/extend/application.ts",
     "./app/extend/application.unittest": "./src/app/extend/application.unittest.ts",
@@ -55,6 +56,7 @@
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
       "./app": "./dist/app.js",
       "./app/extend/application": "./dist/app/extend/application.js",
       "./app/extend/application.unittest": "./dist/app/extend/application.unittest.js",

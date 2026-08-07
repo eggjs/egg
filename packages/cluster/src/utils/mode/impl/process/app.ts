@@ -1,15 +1,11 @@
 import cluster, { type Worker as ClusterProcessWorker } from 'node:cluster';
-import { debuglog } from 'node:util';
 
 import { cfork } from 'cfork';
-import { graceful as gracefulExit, type Options as gracefulExitOptions } from 'graceful-process';
 import { sendmessage } from 'sendmessage';
 
 import type { MessageBody } from '../../../messenger.ts';
 import { terminate } from '../../../terminate.ts';
 import { BaseAppWorker, BaseAppUtils } from '../../base/app.ts';
-
-const debug = debuglog('egg/cluster/utils/mode/impl/process/app');
 
 export class AppProcessWorker extends BaseAppWorker<ClusterProcessWorker> {
   get id(): number {
@@ -35,37 +31,6 @@ export class AppProcessWorker extends BaseAppWorker<ClusterProcessWorker> {
   clean(): void {
     this.instance.removeAllListeners();
   }
-
-  // static methods use on src/app_worker.ts
-
-  static get workerId(): number {
-    return process.pid;
-  }
-
-  static on(event: string, listener: (...args: any[]) => void): void {
-    process.on(event, listener);
-  }
-
-  static send(message: MessageBody): void {
-    message.senderWorkerId = String(process.pid);
-    // cluster won't get `listening` event when reusePort is true,
-    // use cluster `message` event instead
-    if (message.action === 'app-start' && message.reusePort) {
-      debug('send app-start message with reusePort, use cluster.worker.send()');
-      cluster.worker!.send(message);
-      return;
-    }
-    process.send!(message);
-  }
-
-  static kill(): void {
-    process.exitCode = 1;
-    process.kill(process.pid);
-  }
-
-  static gracefulExit(options: gracefulExitOptions): void {
-    gracefulExit(options);
-  }
 }
 
 export class AppProcessUtils extends BaseAppUtils {
@@ -75,8 +40,12 @@ export class AppProcessUtils extends BaseAppUtils {
 
     const args = [JSON.stringify(this.options)];
     this.log('[master] start appWorker with args %j (process)', args);
+    const execArgv = this.options.appSnapshotBlob
+      ? [...process.execArgv, '--snapshot-blob', this.options.appSnapshotBlob]
+      : undefined;
     cfork({
-      exec: this.getAppWorkerFile(),
+      exec: this.options.appWorkerFile || this.getAppWorkerFile(),
+      ...(execArgv ? { execArgv } : {}),
       args,
       silent: false,
       count: this.options.workers,

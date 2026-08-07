@@ -14,16 +14,28 @@ import { BaseCommand } from '../baseCommand.ts';
 const debug = debuglog('egg/scripts/commands/start');
 
 const execFile = promisify(_execFile);
+const DEFAULT_BUNDLE_DIR = 'dist-bundle';
 
 export interface FrameworkOptions {
   baseDir: string;
   framework?: string;
 }
 
+interface BundleWorkerOptions {
+  appWorkerFile: string;
+  agentWorkerFile: string;
+  appSnapshotBlob?: string;
+  agentSnapshotBlob?: string;
+}
+
 export default class Start<T extends typeof Start> extends BaseCommand<T> {
   static override description = 'Start server at prod mode';
 
-  static override examples = ['<%= config.bin %> <%= command.id %>'];
+  static override examples = [
+    '<%= config.bin %> <%= command.id %>',
+    '<%= config.bin %> <%= command.id %> --bundle',
+    '<%= config.bin %> <%= command.id %> --bundle --app-snapshot-blob ./dist-bundle/app.snapshot.blob --agent-snapshot-blob ./dist-bundle/agent.snapshot.blob',
+  ];
 
   static override args = {
     baseDir: Args.string({
@@ -74,8 +86,26 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     }),
     'snapshot-blob': Flags.string({
       description:
-        'boot from a V8 startup snapshot blob (built by `egg-bin snapshot build`) via `node --snapshot-blob`, ' +
-        'instead of launching the egg cluster',
+        'boot one self-contained process from a V8 startup snapshot blob (built by `egg-bin snapshot build`)',
+    }),
+    bundle: Flags.boolean({
+      description: 'boot the cluster from app and agent bundle entries',
+      default: false,
+    }),
+    'bundle-dir': Flags.string({
+      description: `bundle artifact directory (defaults to ./${DEFAULT_BUNDLE_DIR})`,
+    }),
+    'app-worker-file': Flags.string({
+      description: 'app worker bundle entry (defaults to <bundle-dir>/app_worker.js)',
+    }),
+    'agent-worker-file': Flags.string({
+      description: 'agent worker bundle entry (defaults to <bundle-dir>/agent_worker.js)',
+    }),
+    'app-snapshot-blob': Flags.string({
+      description: 'optional V8 startup snapshot blob for app workers in bundle mode',
+    }),
+    'agent-snapshot-blob': Flags.string({
+      description: 'optional V8 startup snapshot blob for the agent worker in bundle mode',
     }),
     require: Flags.string({
       summary: 'require the given module',
@@ -139,6 +169,37 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     }
   }
 
+  #resolveFromBaseDir(filepath: string, baseDir: string): string {
+    return path.isAbsolute(filepath) ? filepath : path.join(baseDir, filepath);
+  }
+
+  #resolveOptionalFromBaseDir(filepath: string | undefined, baseDir: string): string | undefined {
+    return filepath ? this.#resolveFromBaseDir(filepath, baseDir) : undefined;
+  }
+
+  #resolveBundleWorkerOptions(baseDir: string): BundleWorkerOptions {
+    const bundleDir = this.#resolveFromBaseDir(this.flags['bundle-dir'] ?? DEFAULT_BUNDLE_DIR, baseDir);
+    const appWorkerFile =
+      this.#resolveOptionalFromBaseDir(this.flags['app-worker-file'], baseDir) ?? path.join(bundleDir, 'app_worker.js');
+    const agentWorkerFile =
+      this.#resolveOptionalFromBaseDir(this.flags['agent-worker-file'], baseDir) ??
+      path.join(bundleDir, 'agent_worker.js');
+    const appSnapshotBlob = this.#resolveOptionalFromBaseDir(this.flags['app-snapshot-blob'], baseDir);
+    const agentSnapshotBlob = this.#resolveOptionalFromBaseDir(this.flags['agent-snapshot-blob'], baseDir);
+
+    const options: BundleWorkerOptions = {
+      appWorkerFile,
+      agentWorkerFile,
+    };
+    if (appSnapshotBlob !== undefined) {
+      options.appSnapshotBlob = appSnapshotBlob;
+    }
+    if (agentSnapshotBlob !== undefined) {
+      options.agentSnapshotBlob = agentSnapshotBlob;
+    }
+    return options;
+  }
+
   public async run(): Promise<void> {
     const { args, flags } = this;
     // context.execArgvObj = context.execArgvObj || {};
@@ -156,10 +217,8 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     }
     await this.initBaseInfo(baseDir);
 
-    // The shared startup option/env pipeline below runs for BOTH the cluster and
-    // the snapshot (`--snapshot-blob`) launch paths; only the final argv differs,
-    // so snapshot boots honor the same runtime contract (eggScriptsConfig.require,
-    // node-options--*, sourcemap, PATH, EGG_TS_ENABLE, …) as a normal start.
+    // The shared startup option/env pipeline below runs for cluster, single
+    // snapshot, and cluster snapshot launches; only the final argv/options differ.
     flags.title = flags.title || `egg-server-${this.pkg?.name ?? 'snapshot'}`;
 
     flags.stdout = flags.stdout || path.join(logDir, 'master-stdout.log');
@@ -269,34 +328,53 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       cwd: baseDir,
     };
 
-    // The final argv is the only thing that differs between the two launch modes.
+    // The final argv/options distinguish the original cluster, explicit bundle,
+    // and single-process snapshot launch paths.
     let eggArgs: string[];
     let displayName: string;
-    if (flags['snapshot-blob']) {
+    const clusterSnapshotRequested =
+      flags.bundle && Boolean(flags['app-snapshot-blob'] || flags['agent-snapshot-blob']);
+    const snapshotRequested = Boolean(flags['snapshot-blob'] || clusterSnapshotRequested);
+
+    if (flags['snapshot-blob'] && flags.require?.length) {
+      this.error(
+        'options.require is not supported with snapshot restore; remove --require and eggScriptsConfig.require',
+        {
+          exit: 1,
+        },
+      );
+    }
+
+    if (flags.bundle && !flags['snapshot-blob'] && flags.require?.length) {
+      this.error(
+        'options.require is not supported with bundled cluster workers; remove --require and eggScriptsConfig.require',
+        { exit: 1 },
+      );
+    }
+
+    if (snapshotRequested) {
       // Restoring a V8 startup snapshot requires Node.js >= 24. A snapshot can be
-      // *built* on Node.js >= 22, but restoring a non-trivial egg heap on Node.js
-      // 22 aborts the process during deserialization (V8 bug:
-      // `Check failed: current == end_slot_index`). Refuse early with a clear
-      // message here instead of letting the spawned `node --snapshot-blob` child
-      // die with a cryptic native fatal error. Check the version of the node binary
-      // that will actually run the snapshot (`command`/`--node`), not just the
-      // egg-scripts runtime, so a custom `--node` is gated against the real target.
+      // built on Node.js >= 22, but restoring a non-trivial egg heap on Node.js 22
+      // aborts during deserialization. Check the binary that will actually launch
+      // either the restored process or the cluster master before spawning it.
       const nodeMajor = await this.#resolveSnapshotNodeMajor(command);
       if (nodeMajor !== undefined && nodeMajor < 24) {
         this.error(
-          `egg-scripts start --snapshot-blob requires Node.js >= 24 to restore a V8 snapshot, ` +
+          `egg-scripts start from a V8 snapshot requires Node.js >= 24, ` +
             `but ${command} is Node.js ${nodeMajor}.x. ` +
             `Building a snapshot (egg-bin snapshot build) works on Node.js >= 22, ` +
             `but restoring it must run on Node.js >= 24. Please upgrade Node.js to 24 or later.`,
           { exit: 1 },
         );
       }
+    }
+
+    if (flags['snapshot-blob']) {
       // Snapshot boot: a single self-contained `node --snapshot-blob <blob>`
       // process (no egg-cluster, no framework resolution). The snapshot entry
       // reads the listen port from PORT env, and `--title` is appended only so
       // `egg-scripts stop` can grep the process (the snapshot main ignores it).
-      const blobFlag = flags['snapshot-blob'];
-      const blob = path.isAbsolute(blobFlag) ? blobFlag : path.join(baseDir, blobFlag);
+      const blob = this.#resolveFromBaseDir(flags['snapshot-blob'], baseDir);
       if (flags.port !== undefined) {
         this.env.PORT = String(flags.port);
       }
@@ -306,10 +384,36 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     } else {
       flags.framework = await this.getFrameworkPath({ framework: flags.framework, baseDir });
       const frameworkName = await this.getFrameworkName(flags.framework);
-      this.log('Starting %s application at %s', frameworkName, baseDir);
+      const clusterWorkerOptions = flags.bundle ? this.#resolveBundleWorkerOptions(baseDir) : {};
+      if (flags.bundle) {
+        this.log('Starting %s application with bundled cluster workers', frameworkName);
+        if ('appSnapshotBlob' in clusterWorkerOptions) {
+          this.log('App workers restore from snapshot at %s', clusterWorkerOptions.appSnapshotBlob);
+        }
+        if ('agentSnapshotBlob' in clusterWorkerOptions) {
+          this.log('Agent worker restores from snapshot at %s', clusterWorkerOptions.agentSnapshotBlob);
+        }
+      } else {
+        this.log('Starting %s application at %s', frameworkName, baseDir);
+      }
       // remove unused properties from stringify, alias had been remove by `removeAlias`
-      const ignoreKeys = ['env', 'daemon', 'stdout', 'stderr', 'timeout', 'ignore-stderr', 'node', 'snapshot-blob'];
-      const clusterOptions = stringify({ ...flags, baseDir }, ignoreKeys);
+      const ignoreKeys = [
+        'env',
+        'daemon',
+        'stdout',
+        'stderr',
+        'timeout',
+        'ignore-stderr',
+        'node',
+        'snapshot-blob',
+        'bundle',
+        'bundle-dir',
+        'app-worker-file',
+        'agent-worker-file',
+        'app-snapshot-blob',
+        'agent-snapshot-blob',
+      ];
+      const clusterOptions = stringify({ ...flags, baseDir, ...clusterWorkerOptions }, ignoreKeys);
       // Note: `spawn` is not like `fork`, had to pass `execArgv` yourself
       const serverBin = await this.getServerBin();
       eggArgs = [...execArgv, serverBin, clusterOptions, `--title=${flags.title}`];

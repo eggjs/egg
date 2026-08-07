@@ -11,6 +11,7 @@ import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook.ts';
 import { EggContextHandler } from './lib/EggContextHandler.ts';
 import { EggModuleLoader } from './lib/EggModuleLoader.ts';
 import { EggQualifierProtoHook } from './lib/EggQualifierProtoHook.ts';
+import { installTeggLoaderFS } from './lib/install-tegg-loader-fs.ts';
 import { ModuleHandler } from './lib/ModuleHandler.ts';
 import { hijackRunInBackground } from './lib/run_in_background.ts';
 
@@ -37,6 +38,7 @@ export default class TeggAppBoot implements ILifecycleBoot {
   }
 
   configDidLoad(): void {
+    installTeggLoaderFS(this.app);
     this.eggContextHandler = new EggContextHandler(this.app);
     this.app.eggContextHandler = this.eggContextHandler;
     // register() installs the per-app context callbacks into this app's scope.

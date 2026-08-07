@@ -7,7 +7,10 @@ export class Boot implements ILifecycleBoot {
 
   constructor(appOrAgent: EggApplicationCore) {
     this.#app = appOrAgent;
-    this.#app.watcher = this.#app.clusterWrapper(Watcher, {}).delegate('watch', 'subscribe').create(appOrAgent.config);
+  }
+
+  configDidLoad(): void {
+    this.#app.watcher = this.#app.clusterWrapper(Watcher, {}).delegate('watch', 'subscribe').create(this.#app.config);
     this.#app.watcher
       .on('info', (msg: string, ...args: any[]) => this.#app.coreLogger.info(msg, ...args))
       .on('warn', (msg: string, ...args: any[]) => this.#app.coreLogger.warn(msg, ...args))

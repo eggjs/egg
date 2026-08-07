@@ -56,6 +56,19 @@ Then re-run tests.
   handlers, module-level lifecycle-util statics) must run inside
   `TeggScope.run(app._teggScopeBag, ...)`. See the "Multi-App Isolation
   (TeggScope)" section in `tegg/CLAUDE.md` for the full rules.
+- **V8 startup snapshot lifecycle**: a snapshot build runs through
+  `configWillLoad` and resumes from `configDidLoad` only after restore. Plugin
+  constructors and `configWillLoad` must therefore keep only serializable
+  configuration and metadata; create cluster clients, sockets, servers, file
+  watchers, timers, native clients, and other runtime resources in
+  `configDidLoad` or a later hook. If one plugin consumes another plugin's
+  runtime instance, declare that plugin dependency so their `configDidLoad`
+  ordering is deterministic. Do not hide an early initialization violation
+  behind a placeholder/deferred proxy or recorded-call replay; fail fast and
+  move the initialization to the correct lifecycle phase. Use
+  `snapshotWillSerialize`/`snapshotDidDeserialize` only for framework-owned
+  resources that must exist before the cutoff and have an explicit symmetric
+  release/restore implementation.
 - **V8 startup snapshot dependencies**: the egg-bundler can build a V8 startup
   snapshot (`snapshot: true`), where the app boots only to `configWillLoad` at
   BUILD time. Any module loaded or instantiated during that boot that creates a

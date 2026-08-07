@@ -80,6 +80,27 @@ describe('test/snapshot.test.ts', () => {
       }
     });
 
+    it('should reject cluster clients during build and allow them after restore', async () => {
+      app = new Application({
+        baseDir: demoApp,
+        mode: 'single',
+        snapshot: true,
+      });
+
+      class SnapshotClient {}
+
+      assert.throws(
+        () => app!.clusterWrapper(SnapshotClient),
+        /clusterWrapper\(\) cannot create runtime clients while building a startup snapshot.*configDidLoad\(\)/,
+      );
+
+      await app.ready();
+      await app.triggerSnapshotWillSerialize();
+      await app.triggerSnapshotDidDeserialize();
+
+      assert.doesNotThrow(() => app!.clusterWrapper(SnapshotClient));
+    });
+
     it('should close messenger on snapshotWillSerialize', async () => {
       app = new Application({
         baseDir: demoApp,

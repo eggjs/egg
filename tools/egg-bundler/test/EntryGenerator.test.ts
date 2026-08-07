@@ -6,11 +6,17 @@ import type { StartupManifest } from '@eggjs/core';
 import { execaNode } from 'execa';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { EntryGenerator } from '../src/lib/EntryGenerator.ts';
+import { EntryGenerator, type GeneratedEntries, type GeneratedEntry } from '../src/lib/EntryGenerator.ts';
 import type { ManifestLoader } from '../src/lib/ManifestLoader.ts';
 
 function createFakeLoader(manifest: StartupManifest): ManifestLoader {
   return { load: async () => manifest } as unknown as ManifestLoader;
+}
+
+function getEntry(result: GeneratedEntries, name: GeneratedEntry['name'] = 'worker'): string {
+  const entry = result.entries.find((candidate) => candidate.name === name);
+  if (!entry) throw new Error(`generated entry ${name} not found`);
+  return entry.filepath;
 }
 
 const FROZEN_INVALIDATION = {
@@ -86,9 +92,54 @@ describe('EntryGenerator', () => {
     const result = await gen.generate();
 
     expect(result.entryDir).toBe(path.join(tmpDir, '.egg-bundle', 'entries'));
-    expect(result.workerEntry).toBe(path.join(result.entryDir, 'worker.entry.ts'));
-    await expect(fs.stat(result.workerEntry)).resolves.toBeTruthy();
-    await expect(fs.stat(path.join(result.entryDir, 'agent.entry.ts'))).rejects.toMatchObject({ code: 'ENOENT' });
+    expect(result.entries).toEqual([{ name: 'worker', filepath: path.join(result.entryDir, 'worker.entry.ts') }]);
+    await expect(fs.stat(getEntry(result))).resolves.toBeTruthy();
+    await expect(fs.stat(path.join(result.entryDir, 'app_worker.entry.ts'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(fs.stat(path.join(result.entryDir, 'agent_worker.entry.ts'))).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  });
+
+  it('writes two self-contained role entries for the cluster target', async () => {
+    const gen = new EntryGenerator({
+      baseDir: tmpDir,
+      manifestLoader: createFakeLoader(makeManifest({ fileDiscovery: { app: ['router.ts'] } })),
+      target: 'cluster',
+    });
+
+    const result = await gen.generate();
+
+    expect(result.entries).toEqual([
+      { name: 'app_worker', filepath: path.join(result.entryDir, 'app_worker.entry.ts') },
+      { name: 'agent_worker', filepath: path.join(result.entryDir, 'agent_worker.entry.ts') },
+    ]);
+    const appWorker = await fs.readFile(getEntry(result, 'app_worker'), 'utf8');
+    const agentWorker = await fs.readFile(getEntry(result, 'agent_worker'), 'utf8');
+
+    expect(appWorker).toContain('new (__frameworkModule as any).Application');
+    expect(appWorker).toContain('startAppWorker as __startWorkerProtocol');
+    expect(appWorker).not.toContain('startAgentWorker as __startWorkerProtocol');
+    expect(agentWorker).toContain('new (__frameworkModule as any).Agent');
+    expect(agentWorker).toContain('startAgentWorker as __startWorkerProtocol');
+    expect(agentWorker).not.toContain('startAppWorker as __startWorkerProtocol');
+
+    for (const worker of [appWorker, agentWorker]) {
+      expect(worker).toContain('import * as __m0 from "../../app/router.ts"');
+      expect(worker).toContain('ManifestStore.setBundleStore');
+      expect(worker).toContain('if (v8.startupSnapshot.isBuildingSnapshot())');
+      expect(worker).toContain('const __snapshotBuildCwd = path.resolve(process.cwd())');
+      expect(worker).toContain('if (!__assertSnapshotBuildCwd()) return');
+      expect(worker).not.toContain('EGG_BUNDLE_SNAPSHOT');
+      expect(worker).not.toContain('EGG_PROCESS_TYPE');
+      expect(worker).not.toContain('EGG_SNAPSHOT_ROLE');
+      expect(worker).toContain('createWorkerThreadIO');
+      expect(worker).toContain("masterOptions.startMode === 'worker_threads'");
+      expect(worker).toContain('const __assertNoRequire =');
+      expect(worker).toContain('__assertNoRequire(masterOptions)');
+      expect(worker).not.toContain('__warnIgnoredRequire');
+    }
+    await expect(fs.stat(path.join(result.entryDir, 'runtime.ts'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(fs.stat(path.join(result.entryDir, 'worker.entry.ts'))).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
   it('collects fileDiscovery + resolveCache + tegg decoratedFiles and sorts imports by relKey', async () => {
@@ -114,7 +165,7 @@ describe('EntryGenerator', () => {
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     const imports = extractImports(worker);
     expect(imports.map((i) => i.specifier)).toEqual([
@@ -143,7 +194,7 @@ describe('EntryGenerator', () => {
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     expect(extractImports(worker).map((i) => i.specifier)).toEqual([
       '../../app/Service.ts',
@@ -174,7 +225,7 @@ describe('EntryGenerator', () => {
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     expect(extractImports(worker).map((i) => i.specifier)).toEqual([
       '../../app/port/controller/HomeController.ts',
@@ -212,7 +263,7 @@ describe('EntryGenerator', () => {
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     // Controller + repository decorated files are collected as imports.
     expect(extractImports(worker).map((i) => i.specifier)).toEqual([
@@ -241,7 +292,7 @@ describe('EntryGenerator', () => {
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     const imports = extractImports(worker);
     expect(imports.length).toBe(1);
@@ -257,7 +308,7 @@ describe('EntryGenerator', () => {
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     expect(extractImports(worker).length).toBe(1);
   });
@@ -269,7 +320,7 @@ describe('EntryGenerator', () => {
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     expect(worker).toContain("import { ManifestLoaderFS, ManifestStore } from '@eggjs/core'");
     expect(worker).toContain('import { startEgg } from "egg"');
@@ -285,10 +336,14 @@ describe('EntryGenerator', () => {
     expect(worker).toContain('startEgg(__startOptions)');
     // 3-mode snapshot dispatch (normal / snapshot-build / restore-main)
     expect(worker).toContain("import v8 from 'node:v8'");
-    expect(worker).toContain("if (process.env.EGG_BUNDLE_SNAPSHOT === 'build')");
+    expect(worker).toContain('if (v8.startupSnapshot.isBuildingSnapshot())');
+    expect(worker).not.toContain('EGG_BUNDLE_SNAPSHOT');
     expect(worker).toContain('startEgg({ ...__startOptions, snapshot: true })');
     expect(worker).toContain('app.triggerSnapshotWillSerialize()');
     expect(worker).toContain('v8.startupSnapshot.setDeserializeMainFunction(() =>');
+    expect(worker).toContain('const __snapshotBuildCwd = path.resolve(process.cwd())');
+    expect(worker).toContain('snapshot working directory mismatch');
+    expect(worker).toContain('if (!__assertSnapshotBuildCwd()) return');
     // restore main must defer (ESM loader not ready) and route imports via require()
     expect(worker).toContain('setImmediate(() =>');
     expect(worker).toContain("process.getBuiltinModule('node:module')");
@@ -311,7 +366,7 @@ describe('EntryGenerator', () => {
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     expect(worker).toContain('__BUNDLE_MAP_REL');
     expect(worker).toContain('["app/controller.ts"]: __m0');
@@ -341,7 +396,7 @@ describe('EntryGenerator', () => {
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     expect(worker).toContain(JSON.stringify(toPosixPath(path.join(realPackageDir, 'app.ts'))));
     expect(worker).toContain(JSON.stringify(toPosixPath(path.join(tmpDir, 'node_modules/fake-plugin/app.ts'))));
@@ -415,7 +470,7 @@ export async function startEgg(options) {
     });
     const result = await gen.generate();
 
-    await execaNode(result.workerEntry, [], {
+    await execaNode(getEntry(result), [], {
       cwd: tmpDir,
       env: {
         ...process.env,
@@ -468,7 +523,7 @@ export async function startEgg(options) {
       manifestLoader: createFakeLoader(manifest),
     });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     expect(extractImports(worker)).toEqual([{ index: 0, specifier: '../../app/controller.ts' }]);
     expect(worker).not.toContain('import * as __m1 from "../../node_modules/fake-external');
@@ -486,7 +541,7 @@ export async function startEgg(options) {
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     expect(worker).toContain('const MANIFEST_DATA =');
     expect(worker).toContain('"generatedAt": "2026-01-01T00:00:00.000Z"');
@@ -500,7 +555,7 @@ export async function startEgg(options) {
       manifestLoader: createFakeLoader(makeManifest()),
     });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     expect(extractImports(worker).length).toBe(0);
     expect(worker).toContain(
@@ -511,14 +566,17 @@ export async function startEgg(options) {
     expect(worker).toContain('ManifestStore.setBundleStore');
   });
 
-  it('does not generate an agent entry in single mode', async () => {
+  it('does not generate cluster entries in single mode', async () => {
     const gen = new EntryGenerator({
       baseDir: tmpDir,
       manifestLoader: createFakeLoader(makeManifest()),
     });
     const result = await gen.generate();
 
-    await expect(fs.stat(path.join(result.entryDir, 'agent.entry.ts'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(fs.stat(path.join(result.entryDir, 'app_worker.entry.ts'))).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(fs.stat(path.join(result.entryDir, 'agent_worker.entry.ts'))).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
   });
 
   it('honors a custom outputDir option', async () => {
@@ -531,7 +589,7 @@ export async function startEgg(options) {
 
     const result = await gen.generate();
     expect(result.entryDir).toBe(customOut);
-    expect(path.dirname(result.workerEntry)).toBe(customOut);
+    expect(path.dirname(getEntry(result))).toBe(customOut);
   });
 
   it('honors a custom framework specifier', async () => {
@@ -541,7 +599,7 @@ export async function startEgg(options) {
       manifestLoader: createFakeLoader(makeManifest()),
     });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     expect(worker).toContain('import { startEgg } from "@my-org/framework"');
     expect(worker).toContain('import * as __frameworkModule from "@my-org/framework"');
@@ -582,7 +640,7 @@ export async function startEgg(options) {
       baseDir: tmpDir,
       manifestLoader: createFakeLoader(manifest),
     }).generate();
-    const firstWorker = await fs.readFile(first.workerEntry, 'utf8');
+    const firstWorker = await fs.readFile(getEntry(first), 'utf8');
 
     const tmpDir2 = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-entry-gen-'));
     createdDirs.push(tmpDir2);
@@ -590,7 +648,7 @@ export async function startEgg(options) {
       baseDir: tmpDir2,
       manifestLoader: createFakeLoader(manifest),
     }).generate();
-    const secondWorker = await fs.readFile(second.workerEntry, 'utf8');
+    const secondWorker = await fs.readFile(getEntry(second), 'utf8');
 
     expect(normalizeAppBaseDir(firstWorker, tmpDir)).toBe(normalizeAppBaseDir(secondWorker, tmpDir2));
   });
@@ -619,7 +677,7 @@ export async function startEgg(options) {
 
     const gen = new EntryGenerator({ baseDir: tmpDir, manifestLoader: createFakeLoader(manifest) });
     const result = await gen.generate();
-    const worker = await fs.readFile(result.workerEntry, 'utf8');
+    const worker = await fs.readFile(getEntry(result), 'utf8');
 
     const stableWorker = normalizeAppBaseDir(worker, tmpDir);
     await expect(stableWorker).toMatchFileSnapshot('./__snapshots__/EntryGenerator.worker.canonical.snap');

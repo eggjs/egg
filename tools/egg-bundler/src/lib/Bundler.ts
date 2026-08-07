@@ -4,6 +4,7 @@ import { debuglog } from 'node:util';
 
 import { load as yamlLoad } from 'js-yaml';
 
+import { resolveLeoricSnapshotCompatibility } from '../compat/leoric/index.ts';
 import type { BundlerConfig, BundleResult } from '../index.ts';
 import { EntryGenerator } from './EntryGenerator.ts';
 import { ExternalsResolver } from './ExternalsResolver.ts';
@@ -65,6 +66,7 @@ interface BundleManifest {
   readonly version: number;
   readonly generatedAt: string;
   readonly mode: 'production' | 'development';
+  readonly target: 'single' | 'cluster';
   readonly baseDir: string;
   readonly framework: string;
   readonly entries: readonly { readonly name: string; readonly source: string }[];
@@ -329,6 +331,7 @@ export class Bundler {
       manifestPath,
       framework = 'egg',
       mode = 'production',
+      target = 'single',
       externals,
       pack,
       runtimeAssets,
@@ -338,16 +341,23 @@ export class Bundler {
     const absBaseDir = path.resolve(baseDir);
     const absOutputDir = path.resolve(absBaseDir, rawOutputDir);
     assertFrameworkPackageSpecifier(framework);
-    debug('bundle start: baseDir=%s outputDir=%s framework=%s mode=%s', absBaseDir, absOutputDir, framework, mode);
+    debug(
+      'bundle start: baseDir=%s outputDir=%s framework=%s mode=%s target=%s',
+      absBaseDir,
+      absOutputDir,
+      framework,
+      mode,
+      target,
+    );
     const moduleConfig = await wrapStep('module.yml bundle config load', () => loadModuleBundleConfig(absBaseDir));
     const mergedPack = mergePackConfig(moduleConfig?.pack, pack);
     const mergedRuntimeAssets = mergeRuntimeAssetsConfig(moduleConfig?.runtimeAssets, runtimeAssets);
 
-    // Single-file output is the PackRunner default. Snapshot artifacts must be a
-    // single self-contained worker.js (a V8 startup snapshot forbids user-land
-    // require of sibling chunks), so snapshot mode forces it on even when the app
-    // explicitly opted out via pack.singleFile === false. Otherwise honour the
-    // app's pack.singleFile (undefined keeps PackRunner's default).
+    // Single-file output is the PackRunner default. Every snapshot entry must be
+    // self-contained (a V8 startup snapshot forbids user-land require of sibling
+    // chunks), so snapshot mode forces it on even when the app explicitly opted
+    // out via pack.singleFile === false. Otherwise honour the app's pack.singleFile
+    // (undefined keeps PackRunner's default).
     const singleFile = snapshot ? true : mergedPack?.singleFile;
     debug('snapshot=%s singleFile=%o', snapshot, singleFile);
 
@@ -357,6 +367,13 @@ export class Bundler {
     const snapshotLazyModules = snapshot
       ? await wrapStep('resolve snapshot lazy modules', () => resolveSnapshotLazyModules(absBaseDir))
       : [];
+    const leoricSnapshotCompat = snapshot
+      ? resolveLeoricSnapshotCompatibility({
+          baseDir: absBaseDir,
+          lazyModules: snapshotLazyModules,
+          forcedExternals: externals?.force,
+        })
+      : undefined;
 
     const manifestLoader = new ManifestLoader({
       baseDir: absBaseDir,
@@ -372,13 +389,19 @@ export class Bundler {
       inline: externals?.inline,
     });
     const resolvedExternals = await wrapStep('externals resolve', () => externalsResolver.resolve());
+    for (const packageName of leoricSnapshotCompat?.inlinePackages ?? []) {
+      delete resolvedExternals[packageName];
+    }
     debug('externals resolved: %d packages', Object.keys(resolvedExternals).length);
 
     // Keep the lazy network-stack ids external so @utoo/pack does not inline them
     // (an inlined http/tls/dns would load — and fail to serialize — at snapshot
     // build time). A builtin id maps to itself for the runtime require().
     const externalsMap: Record<string, string> = snapshot
-      ? { ...resolvedExternals, ...Object.fromEntries(snapshotLazyModules.map((id) => [id, id])) }
+      ? {
+          ...resolvedExternals,
+          ...Object.fromEntries(snapshotLazyModules.map((id) => [id, id])),
+        }
       : resolvedExternals;
 
     const entryGen = new EntryGenerator({
@@ -386,12 +409,13 @@ export class Bundler {
       manifestLoader,
       framework,
       externals: new Set(Object.keys(externalsMap)),
+      target,
     });
     const entries = await wrapStep('entry generation', () => entryGen.generate());
-    debug('generated worker entry: %s', entries.workerEntry);
+    debug('generated worker entries: %o', entries.entries);
 
     const packRunner = new PackRunner({
-      entries: [{ name: 'worker', filepath: entries.workerEntry }],
+      entries: entries.entries,
       outputDir: absOutputDir,
       externals: externalsMap,
       // Use the generated entry dir as the project root so PackRunner's
@@ -407,6 +431,7 @@ export class Bundler {
       mode,
       buildFunc: mergedPack?.buildFunc,
       resolve: mergedPack?.resolve,
+      module: leoricSnapshotCompat?.module,
       singleFile,
     });
     const packResult = await wrapStep('pack build', () => packRunner.run());
@@ -422,7 +447,7 @@ export class Bundler {
     );
 
     // In snapshot mode inject the lazy-external dispatch into @utoo/pack's
-    // externalRequire and prepend the prelude to each entry's worker.js so it runs
+    // externalRequire and prepend the prelude to every entry file so it runs
     // before the bundle IIFE (and therefore before any bundled module loads).
     if (snapshot) {
       // Read each external's export names from the bundler process so the prelude's
@@ -433,7 +458,7 @@ export class Bundler {
       const applied = await wrapStep('apply snapshot prelude', () =>
         this.#applySnapshotPrelude(
           absOutputDir,
-          ['worker'],
+          entries.entries.map((entry) => entry.name),
           snapshotLazyModules,
           patchResult.outputFiles,
           externalExports,
@@ -456,9 +481,10 @@ export class Bundler {
       version: BUNDLE_MANIFEST_VERSION,
       generatedAt: new Date().toISOString(),
       mode,
+      target,
       baseDir: absBaseDir,
       framework,
-      entries: [{ name: 'worker', source: entries.workerEntry }],
+      entries: entries.entries.map((entry) => ({ name: entry.name, source: entry.filepath })),
       externals: Object.keys(externalsMap).sort((a, b) => a.localeCompare(b)),
       chunks: Array.from(new Set([...patchResult.outputFiles, ...copiedRuntimeAssets])).sort((a, b) =>
         a.localeCompare(b),
@@ -487,8 +513,8 @@ export class Bundler {
    * 1. Inject the lazy dispatch at the start of every `externalRequire` body (in any
    *    emitted .js) so a require of a lazy module id routes to the prelude's
    *    `__makeLazyExt` instead of loading the real (non-serializable) module.
-   * 2. Prepend the prelude (carrying the resolved lazy id set) to each entry's
-   *    worker.js so it runs before the bundle IIFE.
+   * 2. Prepend the prelude (carrying the resolved lazy id set) to each entry file
+   *    so it runs before the bundle IIFE.
    */
   async #applySnapshotPrelude(
     outputDir: string,
@@ -505,9 +531,9 @@ export class Bundler {
     let sawInjectedLazyHook = false;
 
     // Single pass over the emitted .js files: inject the lazy hook into every file
-    // carrying externalRequire (single-file mode keeps it in worker.js; the loop
-    // stays robust if it ever moves) and, in the same read/write, prepend the
-    // prelude to entry files so worker.js is only touched once.
+    // carrying externalRequire (single-file mode keeps it in an entry file; the
+    // loop stays robust if it ever moves) and, in the same read/write, prepend the
+    // prelude so each entry file is only touched once.
     for (const rawRel of outputFiles) {
       const rel = this.#sanitizeOutputRelativePath(rawRel);
       if (!rel.endsWith('.js')) continue;
@@ -537,7 +563,7 @@ export class Bundler {
       }
     }
 
-    // The entry file is required output; a missing worker.js (absent from the pack
+    // Every entry file is required output; a missing entry (absent from the pack
     // output enumeration) means the build did not emit what we expect. Fail fast
     // with a clear error instead of silently skipping the prelude (which would
     // surface later as an obscure snapshot-build failure).

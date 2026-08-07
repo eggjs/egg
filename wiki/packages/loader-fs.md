@@ -10,7 +10,7 @@ source_files:
   - tegg/core/types/src/scope/TeggScope.ts
   - tegg/plugin/dal/src/lib/DataSource.ts
   - packages/loader-fs/package.json
-updated_at: 2026-07-21
+updated_at: 2026-08-03
 status: active
 ---
 
@@ -22,7 +22,10 @@ exports `LoaderFS`, `LoaderFSGlobOptions`, `RealLoaderFS`, and
 
 `LoaderFS` intentionally covers only loader-facing operations: `exists`, `stat`,
 `realpath`, `readJSON`, `glob`, and `loadFile`. It is not a Node.js `fs`
-polyfill.
+polyfill. A source may additionally implement `getKnownFiles(directory)` when
+it has an authoritative, precomputed view. `undefined` means the source has no
+such view and discovery should fall back to `glob`; an empty array is an
+authoritative empty directory.
 
 `RealLoaderFS` is the default implementation for normal non-bundled runtime. It
 delegates file checks to Node `fs`, JSON reads to `utility.readJSONSync`, glob
@@ -35,11 +38,22 @@ interface. Its input contains only `baseDir`, `fileDiscovery`, and
 Egg can pass `ManifestStore` structurally, while standalone uses
 `createTeggManifestLoaderFS()` to adapt
 `TeggManifest.moduleDescriptors[].decoratedFiles` into the same file index.
+Manifest directories expose their exact indexed files through `getKnownFiles`,
+including TypeScript-origin source keys and authoritative empty lists. Unknown
+directories delegate to the fallback source.
 
 `@eggjs/core` depends on this package and re-exports its public API so existing
 core consumers can still import the loader filesystem boundary from core while
 tegg and later bundled runtime packages can depend on the smaller package
 directly.
+
+`ModuleLoader` first asks its `LoaderFS` for an authoritative file list. This
+lets a manifest source control discovery without leaking bundle state into the
+generic loader. Sources without such a list keep the normal behavior:
+`LoaderUtil.filePattern()` selects supported runtime extensions and
+`LoaderFS.glob()` scans the directory. Consequently `EGG_TS_ENABLE=false`
+continues to exclude real TypeScript files, but it does not discard `.ts` keys
+that a manifest resolves from an in-memory bundle module map.
 
 `LoaderFS` intentionally does not resolve a tegg module name. The host resolves
 identity onto `ModuleDescriptor`, `GlobalGraph.moduleConfigList` carries it, and

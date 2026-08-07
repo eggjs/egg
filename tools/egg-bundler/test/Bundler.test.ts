@@ -6,9 +6,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   manifestLoaderOptions: [] as unknown[],
+  entryGeneratorOptions: [] as unknown[],
   manifestLoad: vi.fn(async () => undefined),
   externalsResolve: vi.fn(async () => ({})),
-  entryGenerate: vi.fn(async () => ({ workerEntry: '/tmp/worker.entry.ts', entryDir: '/tmp' })),
+  entryGenerate: vi.fn(async () => ({
+    entries: [{ name: 'worker', filepath: '/tmp/worker.entry.ts' }],
+    entryDir: '/tmp',
+  })),
 }));
 
 vi.mock('../src/lib/ManifestLoader.ts', () => ({
@@ -50,7 +54,8 @@ vi.mock('../src/lib/ExternalsResolver.ts', () => ({
 }));
 
 vi.mock('../src/lib/EntryGenerator.ts', () => ({
-  EntryGenerator: vi.fn().mockImplementation(function () {
+  EntryGenerator: vi.fn().mockImplementation(function (options: unknown) {
+    mocks.entryGeneratorOptions.push(options);
     return {
       generate: mocks.entryGenerate,
     };
@@ -66,6 +71,7 @@ describe('Bundler', () => {
 
   beforeEach(async () => {
     mocks.manifestLoaderOptions.length = 0;
+    mocks.entryGeneratorOptions.length = 0;
     mocks.manifestLoad.mockClear();
     mocks.externalsResolve.mockClear();
     mocks.entryGenerate.mockClear();
@@ -77,7 +83,7 @@ describe('Bundler', () => {
     // so it must be a real, writable directory under the app temp dir.
     const entryDir = path.join(tmpApp, '.egg-bundle', 'entries');
     mocks.entryGenerate.mockResolvedValue({
-      workerEntry: path.join(entryDir, 'worker.entry.ts'),
+      entries: [{ name: 'worker', filepath: path.join(entryDir, 'worker.entry.ts') }],
       entryDir,
     });
   });
@@ -128,6 +134,45 @@ describe('Bundler', () => {
     const worker = await fs.readFile(path.join(tmpOutput, 'worker.js'), 'utf8');
     expect(worker).toContain(SNAPSHOT_PRELUDE_MARKER);
     expect(worker.indexOf(SNAPSHOT_PRELUDE_MARKER)).toBeLessThan(worker.indexOf('__UTOOPACK__'));
+  });
+
+  it('packs and prepends snapshot preludes to both cluster worker entries', async () => {
+    const entryDir = path.join(tmpApp, '.egg-bundle', 'entries');
+    mocks.entryGenerate.mockResolvedValue({
+      entries: [
+        { name: 'app_worker', filepath: path.join(entryDir, 'app_worker.entry.ts') },
+        { name: 'agent_worker', filepath: path.join(entryDir, 'agent_worker.entry.ts') },
+      ],
+      entryDir,
+    });
+    let packEntries: unknown[] | undefined;
+
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      target: 'cluster',
+      snapshot: true,
+      pack: {
+        buildFunc: async (wrapped) => {
+          packEntries = (wrapped.config as { entry?: unknown[] }).entry;
+          await Promise.all([
+            fs.writeFile(path.join(tmpOutput, 'app_worker.js'), '((__UTOOPACK__)=>{})([]);\n'),
+            fs.writeFile(path.join(tmpOutput, 'agent_worker.js'), '((__UTOOPACK__)=>{})([]);\n'),
+          ]);
+        },
+      },
+    });
+
+    expect(packEntries).toEqual([
+      expect.objectContaining({ name: 'app_worker', import: path.join(entryDir, 'app_worker.entry.ts') }),
+      expect.objectContaining({ name: 'agent_worker', import: path.join(entryDir, 'agent_worker.entry.ts') }),
+    ]);
+    for (const filename of ['app_worker.js', 'agent_worker.js']) {
+      const worker = await fs.readFile(path.join(tmpOutput, filename), 'utf8');
+      expect(worker).toContain(SNAPSHOT_PRELUDE_MARKER);
+    }
+    expect(mocks.entryGeneratorOptions).toHaveLength(1);
+    expect(mocks.entryGeneratorOptions[0]).toMatchObject({ target: 'cluster' });
   });
 
   it('skips the prelude when snapshot is disabled (single-file default unchanged)', async () => {

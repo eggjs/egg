@@ -8,6 +8,72 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 - pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
 - note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
 
+## [2026-08-05] docs | record the Leoric snapshot compatibility boundary
+
+- sources touched: `tools/egg-bundler/src/compat/leoric/{index.ts,runtime-require-loader.cjs}`, `tools/egg-bundler/src/lib/Bundler.ts`, related tests
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Documented why snapshot builds can neither externalize all of Leoric nor inline its expression-based runtime requires unchanged, how the scoped loader keeps Leoric core bundled while deferring drivers and filesystem modules, and why the version-coupled shim must fail closed and eventually be removed in favor of an upstream dynamic-require contract.
+
+## [2026-08-05] docs | replace snapshot startup benchmark with a reproducible baseline
+
+- sources touched: `site/docs/{zh-CN/,}advanced/snapshot.md`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced startup numbers whose original timing boundary and artifact parity could not be established. The cnpmcore benchmark now holds snapshot-ready JavaScript constant between plain execution and blob restore and interleaves one warm-up plus ten measured runs per mode. Single process measures direct Node spawn to listening; cluster uses the master's internal orchestration-to-ready timer to exclude launcher and master-bootstrap overhead.
+
+## [2026-08-05] fix | harden cluster worker and snapshot output contracts
+
+- sources touched: `packages/cluster/src/{worker_protocol,utils/mode}`, `tools/egg-bin/src/commands/snapshot.ts`, `tools/scripts/src/commands/start.ts`, `tools/egg-bundler/src/lib/prelude.ts`, related tests and user docs
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Blank worker paths normalize before launch. Snapshot builds reject colliding role blob paths, remove stale outputs before validating the current build, and reject bootstrap modules that would otherwise be silently ignored. Lazy-external call-result proxies now memoize their first resolved object so mutations persist after restore.
+
+## [2026-08-03] fix | preserve authoritative manifest discovery in Tegg loaders
+
+- sources touched: `packages/loader-fs/src/{index.ts,manifest_loader_fs.ts}`, `tegg/core/loader/src/impl/ModuleLoader.ts`, related tests and package docs
+- pages updated: `wiki/log.md`, `wiki/packages/{loader-fs,egg-bundler}.md`
+- note: Added an optional authoritative directory-file view to `LoaderFS`. `ModuleLoader` consumes exact manifest lists, including TypeScript-origin keys and authoritative empty directories, before falling back to runtime extension patterns and glob discovery. This prevents `egg-scripts start` with `EGG_TS_ENABLE=false` from dropping bundled Tegg controllers/services, without coupling `LoaderUtil` to bundle globals or changing real-filesystem TypeScript behavior.
+
+## [2026-08-03] fix | keep snapshot-ready bundles directly runnable
+
+- sources touched: `tools/egg-bundler/src/{index.ts,lib/EntryGenerator.ts,lib/prelude.ts}`, `tools/egg-bin/src/commands/snapshot.ts`, `site/docs/{zh-CN/,}advanced/snapshot-troubleshooting.md`, related tests
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced the `EGG_BUNDLE_SNAPSHOT` build convention with Node's `v8.startupSnapshot.isBuildingSnapshot()` state. A snapshot-ready JavaScript artifact now installs its real runtime require hook and follows the ordinary bundle path when executed without a blob; only a real snapshot build stubs lazy externals and web globals. Added a real `@utoo/pack` regression covering plain execution, `--build-snapshot`, and blob restore with the same artifact.
+
+## [2026-08-03] fix | load cluster builtins after snapshot restore
+
+- sources touched: `tools/egg-bundler/src/lib/prelude.ts`, `tools/egg-bundler/test/{snapshot-lazy-external,snapshot-lazy-bundler}.test.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added `cluster` and `node:cluster` to the framework snapshot lazy-external defaults. Node chooses the primary or worker cluster implementation at first module evaluation; deferring both specifiers prevents snapshot construction from freezing the primary implementation into restored app workers. Added coverage for default resolution and bundle-manifest externalization.
+
+## [2026-07-22] fix | preserve lazy-external accessor receivers after restore
+
+- sources touched: `tools/egg-bundler/src/lib/prelude.ts`, `tools/egg-bundler/test/snapshot-lazy-external.test.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Lazy-external member and prototype proxies now use receiver-aware `Reflect.get`/`Reflect.set`. Accessors inherited through a snapshot-frozen proxy run with the application subclass or instance as `this`, so symbol-backed state such as Leoric's `Bone.synchronized` is not read from or written to the shared real base class.
+
+## [2026-07-22] feature | launch cluster workers from separate snapshot blobs
+
+- sources touched: `tools/scripts/src/commands/start.ts`, `tools/scripts/test/snapshot-start.test.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added explicit `egg-scripts start --bundle` mode. `--bundle-dir` defaults worker entries to `app_worker.js` and `agent_worker.js`, while independent `--app-snapshot-blob` and `--agent-snapshot-blob` options enable restore only for the supplied roles. Blob paths never infer worker locations; `--snapshot-blob` remains single-process-only.
+
+## [2026-07-22] feature | build separate app and agent snapshot blobs
+
+- sources touched: `tools/egg-bin/src/commands/snapshot.ts`, `tools/egg-bin/test/commands/snapshot.test.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added `egg-bin snapshot build --cluster`, which selects the bundler's explicit cluster target and builds independently configurable `app.snapshot.blob` from `app_worker.js` plus `agent.snapshot.blob` from `agent_worker.js`. `--app-snapshot-blob` and `--agent-snapshot-blob` configure cluster outputs; the existing `--blob` remains single-process-only. Each entry owns its role, so the build no longer uses an environment variable to switch one bundle between app and agent.
+
+## [2026-07-21] architecture | generate explicit app and agent bundle entries
+
+- sources touched: `tools/egg-bundler/src/lib/EntryGenerator.ts`, `tools/egg-bundler/src/lib/Bundler.ts`, `tools/egg-bundler/src/index.ts`
+- pages updated: `tools/egg-bundler/README.md`, `tools/egg-bundler/docs/output-structure.md`, `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added a `cluster` bundle target that emits role-specific `app_worker.js` and `agent_worker.js` files. Runtime role selection is removed from the generated workers; snapshot mode independently inlines the full graph into both outputs instead of producing a shared chunk.
+
+## [2026-07-21] architecture | enforce the startup-snapshot runtime boundary
+
+- sources touched: `AGENTS.md`, `packages/core/src/lifecycle.ts`, `packages/egg/src/lib/egg.ts`, `plugins/watcher/src/lib/boot.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Made `configDidLoad` or later the required initialization phase for plugin runtime resources, documented explicit plugin dependencies for runtime consumers, made `clusterWrapper()` fail fast during snapshot construction, and moved watcher creation out of its boot constructor. Deferred placeholder/replay wrappers are explicitly rejected as a lifecycle workaround.
+
 ## [2026-07-21] refactor+docs | make controller extension hooks declarative
 
 - sources touched: `tegg/core/controller-runtime/src/lib/MiddlewareGraphHook.ts`, `tegg/plugin/controller`, `tegg/plugin/mcp-proxy`, `tegg/standalone/service-worker-controller`
@@ -312,3 +378,27 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `packages/loader-fs`, `tegg/core/{types,loader}`, `tegg/plugin/tegg`, `tegg/standalone/standalone`, `tools/egg-bundler`
 - pages updated: `wiki/log.md`, `wiki/packages/{loader-fs,egg-bundler}.md`
 - note: Promoted the host-neutral `TeggManifest` contract, moved `ManifestLoaderFS` to the shared loader-fs package, and made Egg and standalone use the same manifest-backed file view through module scanning, load units, preload, and dynamic DAL discovery. `ModuleLoader.createModuleLoader()` installs its initialized filesystem into the current `TeggScope`; explicit host views replace earlier defaults, so later module loaders reuse the per-app view without expanding multi-instance callback context. Generic `LoaderFS` construction remains host-neutral and side-effect free. Module identity travels separately through `ModuleDescriptor -> GlobalGraph -> LoadUnit`.
+
+## [2026-08-04] behavior | support cluster bundles in worker threads
+
+- sources touched: `packages/cluster/src/worker_protocol`, `packages/cluster/src/{app_worker,agent_worker}.ts`, `tools/egg-bundler/src/lib/EntryGenerator.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added a shared `parentPort` worker transport and made generated app/agent bundle entries select it when the cluster master supplies `startMode: worker_threads`. Plain bundle workers now support both process and thread modes; custom V8 snapshot blobs remain process-only.
+
+## [2026-08-04] behavior | reject unsupported bundle bootstrap modules
+
+- sources touched: `tools/scripts/src/commands/start.ts`, `tools/egg-bundler/src/lib/EntryGenerator.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced the bundled cluster worker's warning-and-ignore behavior for `options.require` with explicit startup errors in both ordinary bundle and snapshot restore modes. The scripts CLI rejects the supported `--bundle` path before spawning; generated workers retain a defense-in-depth assertion for direct/programmatic launches.
+
+## [2026-08-04] api | expose ordinary cluster bundle production
+
+- sources touched: `tools/egg-bin/src/commands/bundle.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added `egg-bin bundle --cluster` as the non-snapshot producer for `app_worker.js` and `agent_worker.js`, completing the CLI path to `egg-scripts start --bundle`. The app-only flag is rejected when standalone mode is selected through `--target standalone` or `--entry`.
+
+## [2026-08-04] docs | document cluster bundle and snapshot workflows
+
+- sources touched: `site/docs/{core/bundle,advanced/snapshot,advanced/snapshot-troubleshooting}.md`, `site/docs/zh-CN/{core/bundle,advanced/snapshot,advanced/snapshot-troubleshooting}.md`, `tools/egg-bundler/{README,docs/output-structure}.md`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced stale single-process-only guidance with the supported `egg-bin bundle --cluster`, role-specific snapshot build, and `egg-scripts start --bundle` workflows. Corrected the default single-file artifact layout, external dependency deployment guidance, lazy-module defaults, restored web-global behavior, and runtime-asset examples.

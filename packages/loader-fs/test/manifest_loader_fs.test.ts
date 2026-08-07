@@ -35,8 +35,30 @@ describe('test/manifest_loader_fs.test.ts', () => {
     };
 
     assert.deepStrictEqual(loaderFS.glob('**/*.ts', { cwd: '/virtual/app/module' }), ['Service.ts']);
+    assert.deepStrictEqual(loaderFS.getKnownFiles('/virtual/app/module'), ['Service.ts']);
+    assert.deepStrictEqual(loaderFS.getKnownFiles('/virtual/app/empty'), undefined);
     assert.equal(loaderFS.exists('/virtual/app/module/Service.ts'), true);
     assert.equal(loaderFS.stat('/virtual/app/module').isDirectory(), true);
     assert.deepStrictEqual(await loaderFS.loadFile('/virtual/app/config/plugin'), { source: 'manifest' });
+  });
+
+  it('should preserve an authoritative empty directory and delegate unknown directories', () => {
+    class KnownFilesFallback extends RealLoaderFS {
+      getKnownFiles(directory: string): readonly string[] | undefined {
+        return directory === '/virtual/fallback' || directory === '/virtual/app' ? ['fallback.js'] : undefined;
+      }
+    }
+
+    const loaderFS = new ManifestLoaderFS(
+      {
+        baseDir: '/virtual/app',
+        data: { fileDiscovery: { empty: [] }, resolveCache: {} },
+      },
+      new KnownFilesFallback(),
+    );
+
+    assert.deepStrictEqual(loaderFS.getKnownFiles('/virtual/app/empty'), []);
+    assert.deepStrictEqual(loaderFS.getKnownFiles('/virtual/fallback'), ['fallback.js']);
+    assert.deepStrictEqual(loaderFS.getKnownFiles('/virtual/app'), ['fallback.js']);
   });
 });

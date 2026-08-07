@@ -37,11 +37,11 @@ request time.
 
 ::: tip What Egg already handles for you
 The bundler keeps the Node network stack external and lazy by default
-(`http`, `https`, `http2`, `tls`, `dns`, `inspector`, plus their `node:` forms),
-and replaces the undici-backed web globals with build-time stubs. You only need
-this page when a **third-party dependency** or a **builtin not on that list**
-trips the constraint. See [How it works](./snapshot.md#how-it-works) for the
-mechanism.
+(`http`, `https`, `http2`, `tls`, `dns`, `inspector`, and `cluster`, plus their
+`node:` forms), keeps `undici` and `urllib` external and lazy, and replaces the
+undici-backed web globals with build-time stubs. You only need this page when a
+**third-party dependency** or a **builtin not on that list** trips the
+constraint. See [How it works](./snapshot.md#how-it-works) for the mechanism.
 :::
 
 ## Step 1 — Identify the failure surface
@@ -99,10 +99,10 @@ the heap. Common signatures:
 | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Native fatal `Check failed: current == end_slot_index` mid-deserialization         | Restoring on **Node.js < 24**. Always restore on Node.js >= 24. `egg-scripts` refuses to launch when it can determine the target is < 24; a custom `--node` whose version it cannot read falls through to the in-snapshot guard below. |
 | `[egg-bundler] V8 snapshot restore requires Node.js >= 24, but this process is vX` | The snapshot's own guard fired (you bypassed `egg-scripts`, or its version probe failed open).                                                                                                                                         |
-| `Error: Cannot find module '<pkg>'`                                                | An **external** dependency is missing. Externals are `require()`'d live on restore, resolved from `worker.js`'s own directory — keep `worker.js` next to a `node_modules` that contains them.                                          |
+| `Error: Cannot find module '<pkg>'`                                                | An **external** dependency is missing. Externals are `require()`'d live on restore, resolved from the worker directory through Node's normal parent lookup — install them in a reachable `node_modules`.                               |
 | `Aop Advice(X) not found in loadUnits`                                             | A tegg decorated class kept the wrong source path in the bundle (see [tegg decorators](#tegg-aop-advice)).                                                                                                                             |
 | A `TypeError` deep inside a library that "worked before bundling"                  | The library mishandled a build-time member-proxy stub (see [lazy-external edge cases](#lazy-external-edge-cases)).                                                                                                                     |
-| `globalThis.fetch(...)` silently does nothing                                      | Web globals stay no-op stubs after restore (see [Known limitations](./snapshot.md#known-limitations)).                                                                                                                                 |
+| A captured `fetch`/`Request` reference still behaves like a stub after restore     | The reference was captured at module evaluation. Web globals themselves are reinstalled; read them at call time (see [Known limitations](./snapshot.md#known-limitations)).                                                            |
 | `[egg-bundler] failed to restore snapshot: <err>`                                  | Any other error thrown while finishing the deferred lifecycle (`snapshotDidDeserialize` → `didReady` → `listen`).                                                                                                                      |
 
 ## Step 2 — Find the offending module (build failures)
@@ -153,8 +153,7 @@ hand from the output directory — this is exactly what `egg-bin` runs:
 
 ```bash
 $ cd ./dist-bundle
-$ EGG_BUNDLE_SNAPSHOT=build \
-    node --snapshot-blob ./snapshot.blob --build-snapshot ./worker.js
+$ node --snapshot-blob ./snapshot.blob --build-snapshot ./worker.js
 ```
 
 When the serializer aborts it usually names the object type it could not encode
@@ -168,10 +167,12 @@ spawning it.
 
 ### Bisect with `--skip-bundle`
 
-`--skip-bundle` re-runs **only** the snapshot step over an existing
-`worker.js`, skipping the (slow) bundling. Because the bundle is a single
-self-contained file, you can comment an `import`/`require` out of `worker.js` and
-re-run the snapshot step in seconds:
+`--skip-bundle` re-runs **only** the snapshot step over snapshot-ready worker
+entries produced by an earlier `egg-bin snapshot build`, skipping the (slow)
+bundling. It is not a way to turn an arbitrary ordinary bundle into snapshot
+output. Because each role bundle is a single self-contained file, you can
+comment an `import`/`require` out of `worker.js` and re-run the snapshot step in
+seconds:
 
 ```bash
 # 1. bundle once
@@ -182,14 +183,17 @@ $ egg-bin snapshot build --output ./dist-bundle --skip-bundle
 ```
 
 If removing a module's evaluation makes the blob build, that module is the
-culprit.
+culprit. With `--cluster`, the same flag reuses both `app_worker.js` and
+`agent_worker.js` and rebuilds their role blobs.
 
 ### Confirm with `--force-external`
 
 Pushing a suspect package **out** of the bundle is both a diagnostic and a fix.
-An external is never evaluated at build time — it is `require()`'d live on
-restore — so if `--force-external <pkg>` makes the build succeed, that package
-was capturing unserializable state at import:
+The external package's own implementation is not evaluated at build time; the
+snapshot prelude gives bundled importers a member-proxy stub and loads the real
+package on restore. If `--force-external <pkg>` makes the build succeed, that
+package or one of its import-time dependencies was capturing unserializable
+state:
 
 ```bash
 $ egg-bin snapshot build --force-external some-native-client
@@ -232,8 +236,9 @@ the defaults, stubbed at build, and loaded for real on restore:
 }
 ```
 
-The built-in defaults already cover `http`, `https`, `http2`, `tls`, `dns`, and
-`inspector` (with their `node:` forms) — you do not need to list those.
+The built-in defaults already cover `http`, `https`, `http2`, `tls`, `dns`,
+`inspector`, and `cluster` (with their `node:` forms), plus the `undici` and
+`urllib` packages — you do not need to list those.
 
 ### 3. Implement the snapshot lifecycle hooks
 
@@ -266,7 +271,9 @@ See [Snapshot lifecycle hooks](./snapshot.md#snapshot-lifecycle-hooks) for the
 full contract. In single-process snapshot mode an `agent.js` boot class's hooks
 run too — the agent's `snapshotWillSerialize`/`snapshotDidDeserialize` fire
 **before** the app's — so resources owned by `agent.js` need the same treatment,
-and a `failed to restore snapshot` error can originate from an agent hook.
+and a `failed to restore snapshot` error can originate from an agent hook. In
+cluster mode, app and agent have separate bundles and blobs, so each role runs
+its own hooks around its own heap.
 
 ### 4. Defer the work out of module scope
 
@@ -287,20 +294,20 @@ function getClient() {
 }
 ```
 
-### 5. Avoid the web globals
+### 5. Reference web globals at call time
 
-`globalThis.fetch` and the other undici-backed globals remain **no-op stubs**
-after restore (Node's lazy getter cannot be re-installed into a restored heap).
-Use a lazily-loaded HTTP client instead — `urllib` or `undici` kept external and
-required for real on restore:
+Egg reinstalls `globalThis.fetch` and the other undici-backed globals after
+restore. However, a reference captured during module evaluation still points to
+the build-time stub embedded in the blob. Read the global where it is used, or
+use a lazily-loaded HTTP client such as external `urllib` or `undici`:
 
 ```js
-// ✗ no-op after restore
-await fetch(url);
-
-// ✓ real client, loaded live on restore
-const { request } = require('urllib');
+// ✗ captures the build-time stub
+const request = globalThis.fetch;
 await request(url);
+
+// ✓ resolves the restored global at call time
+await globalThis.fetch(url);
 ```
 
 ## Failure modes in detail
@@ -334,16 +341,18 @@ the stub and throw a confusing `TypeError`. If you see an error like
 `String.prototype.toString requires that 'this' be a String` originating inside a
 dependency during restore, the dependency received a member-proxy where it
 expected a concrete value. Keeping that dependency `--force-external` (so it is
-never proxied) is the reliable fix.
+not evaluated against the build-time proxy) is the reliable fix. Bundled callers
+still receive a member proxy for the external package until restore.
 
 ### Missing files at request time (runtime assets) {#runtime-assets}
 
 A snapshot that restores cleanly can still `ENOENT` later when a handler reads a
-file. Only **non-source files under `app/`** (plus the force-copy dirs
-`app/public`, `app/assets`, `app/static`) are copied next to `worker.js`.
-Source-extension files (`.ts`/`.js`/`.json`/…), assets outside `app/`, and
-symlinked assets are **not** copied. And because the bundle rewrites `__dirname`
-and `import.meta.url` to the output directory, a module doing
+file. Under `app/`, manifest-known module files and source-like code files
+(`.ts`, `.js`, `.mjs`, `.cjs`, and variants) are excluded, while other assets
+are copied. The force-copy dirs `app/public`, `app/assets`, and `app/static` are
+copied verbatim. Assets outside the configured roots and symlinked assets are
+not copied. And because the bundle rewrites `__dirname` and `import.meta.url` to
+the output directory, a module doing
 `fs.readFileSync(path.join(__dirname, 'tpl.html'))` or
 `new URL('./x', import.meta.url)` resolves against the bundle output dir — if the
 file was never copied there, it fails at request time, not at build or restore.
@@ -354,7 +363,7 @@ Declare the extra assets in `module.yml` so they are copied into the bundle:
 bundle:
   runtimeAssets:
     roots: ['app', 'resources']
-    forceCopyDirs: ['app/public', 'resources/templates']
+    forceCopyDirs: ['app/public', 'app/assets', 'app/static', 'resources/templates']
 ```
 
 ### Build succeeds, blob is missing
@@ -375,7 +384,7 @@ error.
 | `egg.snapshot.lazyModules`                             | app `package.json`                         | Add a builtin/builtin-like id to the lazy-external set (merged onto the defaults).                                          |
 | `snapshotWillSerialize()` / `snapshotDidDeserialize()` | `app.js` / `agent.js` boot class           | Release & recreate resources your own code owns.                                                                            |
 | `--pack-alias <spec>=<target>`                         | `egg-bin snapshot build` flag (repeatable) | Redirect a module specifier during bundling.                                                                                |
-| `--skip-bundle`                                        | `egg-bin snapshot build` flag              | Re-run only the snapshot step over an existing `worker.js`.                                                                 |
+| `--skip-bundle`                                        | `egg-bin snapshot build` flag              | Re-run only the snapshot step over existing snapshot-ready worker entries.                                                  |
 | `--dry-run`                                            | `egg-bin snapshot build` flag              | Print the `node --build-snapshot` command without spawning it.                                                              |
 | `bundle.runtimeAssets.roots` / `forceCopyDirs`         | app `module.yml`                           | Copy extra non-source files into the bundle so they exist at request time.                                                  |
 | `--no-sourcemap`                                       | `egg-scripts start` flag                   | Drop the auto-injected `--import source-map-support/register` from the restore launch (TypeScript apps) when it interferes. |

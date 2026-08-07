@@ -14,6 +14,22 @@ export interface PackRunnerResolveConfig {
   readonly [key: string]: unknown;
 }
 
+export interface PackRunnerLoaderItem {
+  readonly loader: string;
+  readonly options?: Readonly<Record<string, unknown>>;
+}
+
+export interface PackRunnerModuleRule {
+  readonly loaders: readonly PackRunnerLoaderItem[];
+  readonly condition?: {
+    readonly path?: string | RegExp;
+  };
+}
+
+export interface PackRunnerModuleConfig {
+  readonly rules: Readonly<Record<string, PackRunnerModuleRule>>;
+}
+
 export interface PackRunnerOptions {
   readonly entries: readonly PackEntry[];
   readonly outputDir: string;
@@ -23,6 +39,8 @@ export interface PackRunnerOptions {
   readonly mode?: 'production' | 'development';
   readonly buildFunc?: BuildFunc;
   readonly resolve?: PackRunnerResolveConfig;
+  /** Internal source transforms passed to @utoo/pack module.rules. */
+  readonly module?: PackRunnerModuleConfig;
   /** Emit one self-contained file per entry. Defaults to true. */
   readonly singleFile?: boolean;
   /**
@@ -84,6 +102,7 @@ export class PackRunner {
       mode = 'production',
       buildFunc = DEFAULT_BUILD_FUNC,
       resolve,
+      module,
       singleFile = true,
       useDefineForClassFields = false,
     } = this.#options;
@@ -131,6 +150,7 @@ export class PackRunner {
       },
       externals: externalsConfig,
       ...(resolveConfig ? { resolve: resolveConfig } : {}),
+      ...(module ? { module } : {}),
       optimization: {
         treeShaking: false,
         minify: false,

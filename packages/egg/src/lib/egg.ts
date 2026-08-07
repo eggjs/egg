@@ -132,6 +132,7 @@ export class EggApplicationCore extends EggCore {
   #loggers?: EggLoggers;
   #startTimeoutTimer?: ReturnType<typeof setTimeout>;
   #clusterClients: any[] = [];
+  #snapshotDeserialized = false;
   #loadFinishedResolve!: () => void;
   #loadFinishedReject!: (err: unknown) => void;
 
@@ -313,6 +314,12 @@ export class EggApplicationCore extends EggCore {
    * @return {ClientWrapper} wrapper
    */
   clusterWrapper(clientClass: unknown, options?: object): any {
+    if (this.options.snapshot && !this.#snapshotDeserialized) {
+      throw new Error(
+        '[egg] clusterWrapper() cannot create runtime clients while building a startup snapshot; ' +
+          'move the initialization to configDidLoad() or a later lifecycle hook',
+      );
+    }
     const clientClassOptions = {
       ...this.config.clusterClient,
       ...options,
@@ -554,6 +561,7 @@ export class EggApplicationCore extends EggCore {
    * unhandledRejection listener.
    */
   protected snapshotDidDeserialize(): void {
+    this.#snapshotDeserialized = true;
     (this as { messenger: IMessenger }).messenger = createMessenger(this);
     this.messenger.once('egg-ready', () => {
       this.lifecycle.triggerServerDidReady();

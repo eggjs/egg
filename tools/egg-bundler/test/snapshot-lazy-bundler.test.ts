@@ -9,7 +9,10 @@ import { SNAPSHOT_PRELUDE_MARKER } from '../src/lib/prelude.ts';
 const mocks = vi.hoisted(() => ({
   manifestLoad: vi.fn(async () => undefined),
   externalsResolve: vi.fn(async () => ({}) as Record<string, string>),
-  entryGenerate: vi.fn(async () => ({ workerEntry: '', entryDir: '' })),
+  entryGenerate: vi.fn(async () => ({
+    entries: [] as Array<{ name: 'worker' | 'app_worker' | 'agent_worker'; filepath: string }>,
+    entryDir: '',
+  })),
 }));
 
 const MANIFEST = {
@@ -82,7 +85,7 @@ describe('Bundler snapshot lazy-external wiring', () => {
     tmpOutput = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-snaplazy-out-'));
     const entryDir = path.join(tmpApp, '.egg-bundle', 'entries');
     mocks.entryGenerate.mockResolvedValue({
-      workerEntry: path.join(entryDir, 'worker.entry.ts'),
+      entries: [{ name: 'worker', filepath: path.join(entryDir, 'worker.entry.ts') }],
       entryDir,
     });
   });
@@ -148,7 +151,7 @@ describe('Bundler snapshot lazy-external wiring', () => {
     ).resolves.toBeDefined();
   });
 
-  it('keeps the default network-stack ids external in the bundle manifest', async () => {
+  it('keeps the default runtime-sensitive builtins external in the bundle manifest', async () => {
     await writePkg();
     await bundle({
       baseDir: tmpApp,
@@ -158,7 +161,7 @@ describe('Bundler snapshot lazy-external wiring', () => {
     });
 
     const manifest = JSON.parse(await fs.readFile(path.join(tmpOutput, 'bundle-manifest.json'), 'utf8'));
-    for (const id of ['http', 'https', 'http2', 'node:http', 'node:tls', 'node:dns']) {
+    for (const id of ['http', 'https', 'http2', 'node:http', 'node:tls', 'node:dns', 'cluster', 'node:cluster']) {
       expect(manifest.externals).toContain(id);
     }
   });
@@ -179,6 +182,70 @@ describe('Bundler snapshot lazy-external wiring', () => {
     const manifest = JSON.parse(await fs.readFile(path.join(tmpOutput, 'bundle-manifest.json'), 'utf8'));
     expect(manifest.externals).toContain('leoric');
     expect(manifest.externals).toContain('@elastic/elasticsearch');
+  });
+
+  it('bundles resolvable Leoric and installs its runtime-require source transform in snapshot mode', async () => {
+    await writePkg();
+    const leoricDir = path.join(tmpApp, 'node_modules', 'leoric');
+    await fs.mkdir(leoricDir, { recursive: true });
+    await fs.writeFile(path.join(leoricDir, 'package.json'), JSON.stringify({ name: 'leoric', main: 'index.js' }));
+    await fs.writeFile(path.join(leoricDir, 'index.js'), 'module.exports = class Realm {};\n');
+    mocks.externalsResolve.mockResolvedValue({ leoric: 'leoric', other: 'other' });
+
+    let packConfig: Record<string, any> | undefined;
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      snapshot: true,
+      pack: {
+        buildFunc: async (wrapped) => {
+          packConfig = (wrapped as { config: Record<string, any> }).config;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), SYNTHETIC_WORKER);
+        },
+      },
+    });
+
+    expect(packConfig?.externals.leoric).toBeUndefined();
+    for (const id of ['mysql', 'mysql2', 'sqlite3', 'pg', 'pg-types', 'sql.js']) {
+      expect(packConfig?.externals[id]).toBeUndefined();
+    }
+    const rule = packConfig?.module.rules['*.js'];
+    expect(rule.condition.path).toBeInstanceOf(RegExp);
+    expect(rule.loaders[0].loader).toMatch(/compat[\\/]leoric[\\/]runtime-require-loader\.cjs$/);
+
+    const manifest = JSON.parse(await fs.readFile(path.join(tmpOutput, 'bundle-manifest.json'), 'utf8'));
+    expect(manifest.externals).not.toContain('leoric');
+    for (const id of ['mysql', 'mysql2', 'sqlite3', 'pg', 'pg-types', 'sql.js']) {
+      expect(manifest.externals).not.toContain(id);
+    }
+  });
+
+  it('rejects legacy explicit Leoric external configuration in snapshot mode', async () => {
+    await writePkg({ egg: { snapshot: { lazyModules: ['leoric'] } } });
+    const leoricDir = path.join(tmpApp, 'node_modules', 'leoric');
+    await fs.mkdir(leoricDir, { recursive: true });
+    await fs.writeFile(path.join(leoricDir, 'package.json'), JSON.stringify({ name: 'leoric', main: 'index.js' }));
+    await fs.writeFile(path.join(leoricDir, 'index.js'), 'module.exports = class Realm {};\n');
+
+    await expect(
+      bundle({
+        baseDir: tmpApp,
+        outputDir: tmpOutput,
+        snapshot: true,
+        pack: { buildFunc: buildFuncWriting(SYNTHETIC_WORKER) },
+      }),
+    ).rejects.toThrow(/remove it from egg\.snapshot\.lazyModules/);
+
+    await writePkg();
+    await expect(
+      bundle({
+        baseDir: tmpApp,
+        outputDir: tmpOutput,
+        snapshot: true,
+        externals: { force: ['leoric'] },
+        pack: { buildFunc: buildFuncWriting(SYNTHETIC_WORKER) },
+      }),
+    ).rejects.toThrow(/remove it from externals\.force/);
   });
 
   it('does not lazy-externalize or inject when snapshot mode is off', async () => {

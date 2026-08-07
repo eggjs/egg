@@ -13,9 +13,10 @@ const debug = debuglog('egg/bin/commands/snapshot');
 /**
  * Build a V8 startup snapshot of a bundled egg app.
  *
- * `snapshot build` bundles the app in snapshot mode (single self-contained
- * worker.js plus prelude) and then wraps
- * `node --snapshot-blob <blob> --build-snapshot worker.js` to produce the blob.
+ * `snapshot build` bundles the app in snapshot mode and then wraps Node's
+ * `--build-snapshot` command. The default target builds one self-contained
+ * worker.js and blob; `--cluster` builds independent app and agent entries and
+ * blobs.
  *
  * Booting from the blob is a production-runtime concern and lives in
  * `@eggjs/scripts`: `egg-scripts start --snapshot-blob <blob>`.
@@ -26,6 +27,7 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
   static override examples = [
     '<%= config.bin %> <%= command.id %> build',
     '<%= config.bin %> <%= command.id %> build --output ./dist-bundle --blob ./dist-bundle/snapshot.blob',
+    '<%= config.bin %> <%= command.id %> build --cluster --app-snapshot-blob ./dist-bundle/app.snapshot.blob --agent-snapshot-blob ./dist-bundle/agent.snapshot.blob',
     '<%= config.bin %> <%= command.id %> build --skip-bundle',
   ];
 
@@ -40,11 +42,20 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
   static override flags = {
     output: Flags.string({
       char: 'o',
-      description: 'bundle output directory (also where worker.js lives)',
+      description: 'bundle output directory (also where generated worker files live)',
       default: './dist-bundle',
     }),
     blob: Flags.string({
-      description: 'snapshot blob path (defaults to <output>/snapshot.blob)',
+      description: 'single-process snapshot blob path (defaults to <output>/snapshot.blob)',
+      exclusive: ['cluster'],
+    }),
+    'app-snapshot-blob': Flags.string({
+      description: 'app worker snapshot blob path in cluster mode (defaults to <output>/app.snapshot.blob)',
+      dependsOn: ['cluster'],
+    }),
+    'agent-snapshot-blob': Flags.string({
+      description: 'agent worker snapshot blob path in cluster mode (defaults to <output>/agent.snapshot.blob)',
+      dependsOn: ['cluster'],
     }),
     framework: Flags.string({
       char: 'f',
@@ -71,7 +82,12 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
       default: [],
     }),
     'skip-bundle': Flags.boolean({
-      description: 'skip bundling and build the snapshot from an existing worker.js (build only)',
+      description: 'skip bundling and reuse snapshot-ready worker entries from an earlier snapshot build',
+      default: false,
+    }),
+    cluster: Flags.boolean({
+      description:
+        'build independent app and agent worker snapshots (defaults to app.snapshot.blob and agent.snapshot.blob)',
       default: false,
     }),
   };
@@ -96,11 +112,42 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
     return path.isAbsolute(flags.blob) ? flags.blob : path.join(flags.base, flags.blob);
   }
 
+  #resolveClusterBlobPath(role: 'app' | 'agent', outputDir: string): string {
+    const value = this.flags[`${role}-snapshot-blob`];
+    if (!value) return path.join(outputDir, `${role}.snapshot.blob`);
+    return path.isAbsolute(value) ? value : path.join(this.flags.base, value);
+  }
+
   private async runBuild(): Promise<void> {
     const { flags } = this;
+    if (!flags.cluster && (flags['app-snapshot-blob'] || flags['agent-snapshot-blob'])) {
+      throw new Error('--app-snapshot-blob and --agent-snapshot-blob require --cluster');
+    }
     const outputDir = this.#resolveOutputDir();
-    const blobPath = this.#resolveBlobPath(outputDir);
-    const workerPath = path.join(outputDir, 'worker.js');
+    const snapshotEntries = flags.cluster
+      ? [
+          {
+            role: 'app',
+            workerPath: path.join(outputDir, 'app_worker.js'),
+            blobPath: this.#resolveClusterBlobPath('app', outputDir),
+          },
+          {
+            role: 'agent',
+            workerPath: path.join(outputDir, 'agent_worker.js'),
+            blobPath: this.#resolveClusterBlobPath('agent', outputDir),
+          },
+        ]
+      : [
+          {
+            role: 'single',
+            workerPath: path.join(outputDir, 'worker.js'),
+            blobPath: this.#resolveBlobPath(outputDir),
+          },
+        ];
+
+    if (flags.cluster && snapshotEntries[0].blobPath === snapshotEntries[1].blobPath) {
+      throw new Error('app and agent snapshot blob paths must be different');
+    }
 
     if (!flags['skip-bundle']) {
       const { bundle } = await import('@eggjs/egg-bundler');
@@ -111,6 +158,7 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
         outputDir,
         framework: await getBundleFrameworkSpecifier(flags.base, flags.framework),
         mode: getBundleMode(flags.mode),
+        target: flags.cluster ? 'cluster' : 'single',
         snapshot: true,
         externals: {
           force: flags['force-external'],
@@ -121,13 +169,15 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
       this.log(`bundled (snapshot mode) to ${result.outputDir} (${result.files.length} files)`);
     }
 
-    // Wrap: node --snapshot-blob <blob> --build-snapshot worker.js
-    // EGG_BUNDLE_SNAPSHOT=build switches the generated entry into snapshot-build
-    // mode (load metadata, run snapshotWillSerialize hooks, register the
-    // deserialize main function).
-    await this.#spawnNode(['--snapshot-blob', blobPath, '--build-snapshot', workerPath], {
-      EGG_BUNDLE_SNAPSHOT: 'build',
-    });
+    // Each cluster role has its own generated entry and heap. Node's startup
+    // snapshot runtime API tells the entry that this process is building a
+    // snapshot, so no environment convention is needed.
+    for (const entry of snapshotEntries) {
+      if (!flags['dry-run']) {
+        await fs.rm(entry.blobPath, { force: true });
+      }
+      await this.#spawnNode(['--snapshot-blob', entry.blobPath, '--build-snapshot', entry.workerPath]);
+    }
 
     // In dry-run nothing was spawned, so do not claim a blob was produced.
     if (flags['dry-run']) return;
@@ -136,25 +186,29 @@ export default class Snapshot<T extends typeof Snapshot> extends BaseCommand<T> 
     // entry threw after the will-serialize hooks and never reached
     // setDeserializeMainFunction). Verify the blob exists so a missing blob fails
     // loudly here rather than as a confusing error in a later `snapshot start`.
-    try {
-      await fs.access(blobPath);
-    } catch {
-      throw new Error(`snapshot build finished but no blob was written at ${blobPath}`);
+    for (const entry of snapshotEntries) {
+      try {
+        await fs.access(entry.blobPath);
+      } catch {
+        const role = entry.role === 'single' ? '' : ` ${entry.role}`;
+        throw new Error(`snapshot build finished but no${role} blob was written at ${entry.blobPath}`);
+      }
+      const role = entry.role === 'single' ? '' : `${entry.role} `;
+      this.log(`${role}snapshot blob written to ${entry.blobPath}`);
     }
-    this.log(`snapshot blob written to ${blobPath}`);
     // Building works on Node.js >= 22, but restoring the blob requires Node.js
     // >= 24 (Node.js 22 aborts while deserializing a non-trivial egg heap).
     // Surface that here so the requirement is visible at build time.
     this.log('note: restoring this snapshot requires Node.js >= 24 (e.g. `egg-scripts start --snapshot-blob`)');
   }
 
-  async #spawnNode(nodeArgs: readonly string[], extraEnv: NodeJS.ProcessEnv = {}): Promise<void> {
+  async #spawnNode(nodeArgs: readonly string[]): Promise<void> {
     // Run the self-contained bundle with a clean env: start from process.env, NOT
     // this.env. BaseCommand.#afterInit injects NODE_OPTIONS=--import @oxc-node/core/register
     // (plus tsconfig-paths) into this.env for TypeScript apps;
     // applying that to `node --build-snapshot worker.js` would pull a non-bundled
     // loader into the snapshot build. process.env never carries that injection.
-    const env = { ...process.env, ...extraEnv };
+    const env = { ...process.env };
     const args = [...this.globalExecArgv, ...nodeArgs];
     const fullCommand = `${process.execPath} ${args.join(' ')}`;
     if (this.flags['dry-run']) {

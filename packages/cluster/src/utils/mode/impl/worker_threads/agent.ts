@@ -1,7 +1,5 @@
 import workerThreads, { type Worker } from 'node:worker_threads';
 
-import { type Options as gracefulExitOptions } from 'graceful-process';
-
 import { ClusterAgentWorkerError } from '../../../../error/ClusterAgentWorkerError.ts';
 import type { MessageBody } from '../../../messenger.ts';
 import { BaseAgentUtils, BaseAgentWorker } from '../../base/agent.ts';
@@ -13,27 +11,6 @@ export class AgentThreadWorker extends BaseAgentWorker<Worker> {
 
   send(message: MessageBody): void {
     this.instance.postMessage(message);
-  }
-
-  static send(message: MessageBody): void {
-    message.senderWorkerId = String(workerThreads.threadId);
-    workerThreads.parentPort!.postMessage(message);
-  }
-
-  static kill(): void {
-    // in worker_threads, process.exit
-    // does not stop the whole program, just the single thread
-    process.exit(1);
-  }
-
-  static gracefulExit(options: gracefulExitOptions): void {
-    const { beforeExit } = options;
-    process.on('exit', async (code) => {
-      if (typeof beforeExit === 'function') {
-        await beforeExit();
-      }
-      process.exit(code);
-    });
   }
 }
 
@@ -47,7 +24,7 @@ export class AgentThreadUtils extends BaseAgentUtils {
 
     // start agent worker
     const argv = [JSON.stringify(this.options)];
-    const agentPath = this.getAgentWorkerFile();
+    const agentPath = this.options.agentWorkerFile || this.getAgentWorkerFile();
     const worker = (this.#worker = new workerThreads.Worker(agentPath, {
       argv,
     }));

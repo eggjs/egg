@@ -89,6 +89,35 @@ describe('test/commands/bundle.test.ts', () => {
     });
   });
 
+  it('should build separate app and agent worker entries with --cluster', async () => {
+    await Bundle.run(['--base', baseDir, '--cluster']);
+
+    expect(bundleMock).toHaveBeenCalledTimes(1);
+    expect(bundleMock).toHaveBeenCalledWith({
+      baseDir,
+      outputDir: path.join(baseDir, 'dist-bundle'),
+      manifestPath: undefined,
+      framework: 'aliyun-egg',
+      mode: 'production',
+      externals: {
+        force: [],
+        inline: [],
+      },
+      target: 'cluster',
+    });
+  });
+
+  it.each([
+    ['--target standalone', ['--target', 'standalone', '--framework', 'fake-framework', '--entry', 'worker.ts']],
+    ['--entry', ['--framework', 'fake-framework', '--entry', 'worker.ts']],
+  ])('should reject --cluster with %s', async (_label, args) => {
+    await expect(Bundle.run(['--base', baseDir, '--cluster', ...args])).rejects.toThrow(
+      /--cluster cannot be combined with --target standalone or --entry/,
+    );
+    expect(bundleMock).not.toHaveBeenCalled();
+    expect(standaloneRunMock).not.toHaveBeenCalled();
+  });
+
   it('should pass pack aliases to egg-bundler with dot-relative targets resolved from baseDir', async () => {
     await Bundle.run([
       '--base',

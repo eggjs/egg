@@ -29,6 +29,7 @@
     ".": "./src/index.ts",
     "./agent_worker": "./src/agent_worker.ts",
     "./app_worker": "./src/app_worker.ts",
+    "./worker_protocol": "./src/worker_protocol/index.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -37,6 +38,7 @@
       ".": "./dist/index.js",
       "./agent_worker": "./dist/agent_worker.js",
       "./app_worker": "./dist/app_worker.js",
+      "./worker_protocol": "./dist/worker_protocol.js",
       "./package.json": "./package.json"
     }
   },

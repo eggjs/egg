@@ -49,9 +49,16 @@ export class ModuleLoader implements Loader {
   private async loadOnce(): Promise<EggProtoImplClass[]> {
     const protoClassList: EggProtoImplClass[] = [];
 
-    const filePattern = LoaderUtil.filePattern();
-    const files = this.loaderFS.glob(filePattern, { cwd: this.moduleDir });
-    debug('load files: %o, filePattern: %o, moduleDir: %o', files, filePattern, this.moduleDir);
+    const knownFiles = this.loaderFS.getKnownFiles?.(this.moduleDir);
+    let files: readonly string[];
+    if (knownFiles !== undefined) {
+      files = knownFiles;
+      debug('load known files: %o, moduleDir: %o', files, this.moduleDir);
+    } else {
+      const filePattern = LoaderUtil.filePattern();
+      files = this.loaderFS.glob(filePattern, { cwd: this.moduleDir });
+      debug('load files: %o, filePattern: %o, moduleDir: %o', files, filePattern, this.moduleDir);
+    }
     for (const file of files) {
       const realPath = path.join(this.moduleDir, file);
       const fileClazzList = await LoaderUtil.loadFile(realPath);
