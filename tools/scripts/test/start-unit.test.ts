@@ -20,7 +20,7 @@ class TestStart extends (Start as any) {
     return '/fake/framework';
   }
   async getServerBin() {
-    return '/fake/scripts/start-cluster.cjs';
+    return `/fake/scripts/start-cluster.${this.isESM ? 'mjs' : 'cjs'}`;
   }
 }
 
@@ -67,6 +67,34 @@ describe('test/start-unit.test.ts', () => {
     // not a snapshot boot
     expect(args).not.toContain('--snapshot-blob');
     expect(options.env.NODE_ENV).toBe('production');
+  });
+
+  it('preloads source-map-support with a file URL for ESM apps', async () => {
+    const esmBaseDir = path.join(homeDir, 'esm-typescript-app');
+    await fs.mkdir(esmBaseDir);
+    await fs.writeFile(
+      path.join(esmBaseDir, 'package.json'),
+      JSON.stringify({ name: 'esm-typescript-app', type: 'module', egg: { typescript: true } }),
+    );
+    spawnMock.mockImplementation(() => ({
+      once: vi.fn().mockReturnThis(),
+      on: vi.fn().mockReturnThis(),
+      unref: vi.fn(),
+      disconnect: vi.fn(),
+      kill: vi.fn(),
+      pid: 1112,
+    }));
+
+    await TestStart.run(['--workers=1', esmBaseDir]);
+
+    expect(spawnMock).toHaveBeenCalledTimes(1);
+    const [, args] = spawnMock.mock.calls[0] as [string, string[]];
+    expect(args).toContain('/fake/scripts/start-cluster.mjs');
+    const importIndex = args.indexOf('--import');
+    expect(importIndex).toBeGreaterThan(-1);
+    // A Windows drive path such as D:\app\register.js is parsed as the
+    // unsupported `d:` URL scheme by Node's ESM loader unless it is a file URL.
+    expect(args[importIndex + 1]).toMatch(/^file:/);
   });
 
   it('daemon mode backgrounds once the child reports egg-ready over IPC', async () => {

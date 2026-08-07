@@ -2,6 +2,7 @@ import { spawn, type SpawnOptions, type ChildProcess, execFile as _execFile } fr
 import { mkdir, rename, stat, open } from 'node:fs/promises';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
+import { pathToFileURL } from 'node:url';
 import { debuglog, promisify } from 'node:util';
 
 import { getFrameworkPath, importResolve } from '@eggjs/utils';
@@ -308,7 +309,7 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       });
       const sourceMapSupport = path.join(path.dirname(sourceMapSupportPkgPath), 'register.js');
       if (this.isESM) {
-        execArgv.push('--import', sourceMapSupport);
+        execArgv.push('--import', pathToFileURL(sourceMapSupport).href);
       } else {
         execArgv.push('--require', sourceMapSupport);
       }
