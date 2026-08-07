@@ -303,17 +303,17 @@ jobs:
           UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
         run: ut install --from pnpm
 
+      - name: Build egg-bin
+        working-directory: tools/egg-bin
+        run: ut run build
+
       - name: Run tests (with coverage)
         if: ${{ matrix.coverage }}
-        run: |
-          ut run build -- --workspace ./tools/egg-bin
-          ut run ci --workspace @eggjs/bin
+        run: ut run ci --workspace @eggjs/bin
 
       - name: Run tests
         if: ${{ !matrix.coverage }}
-        run: |
-          ut run build -- --workspace ./tools/egg-bin
-          ut run test --workspace @eggjs/bin
+        run: ut run test --workspace @eggjs/bin
 
       - name: Code Coverage
         if: ${{ matrix.coverage }}
