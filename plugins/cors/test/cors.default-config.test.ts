@@ -33,14 +33,14 @@ describe('test/cors.default-config.test.ts', () => {
   });
 
   it('should not set `Access-Control-Allow-Origin` to request origin header', () => {
-    app
+    return app
       .httpRequest()
       .get('/')
       .set('Origin', 'http://eggjs.org')
-      .expect('Access-Control-Allow-Credentials', 'true')
       .expect({ foo: 'bar' })
       .expect((res: any) => {
         assert.equal(res.headers['access-control-allow-origin'], undefined);
+        assert.equal(res.headers['access-control-allow-credentials'], undefined);
       })
       .expect(200);
   });

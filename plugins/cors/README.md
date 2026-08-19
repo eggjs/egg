@@ -23,21 +23,25 @@ $ npm i @eggjs/cors --save
 
 ## Usage
 
-```js
+```ts
 // {app_root}/config/plugin.ts
-exports.cors = {
-  enable: true,
-  package: '@eggjs/cors',
+import corsPlugin from '@eggjs/cors';
+
+export default {
+  ...corsPlugin(),
 };
 ```
 
-`egg-cors` works internally with [egg-security](https://github.com/eggjs/egg-security). By defining the property of `domainWhiteList` on object `security`, you have successfully informed the framework to whitelist the passed domains.
+`@eggjs/cors` works internally with [@eggjs/security](https://github.com/eggjs/egg/tree/next/plugins/security). By defining the property of `domainWhiteList` on object `security`, you have successfully informed the framework to whitelist the passed domains.
 
 When you make a request from client side, **egg** should return an `Access-Control-Allow-Origin` response header with the domain that you passed in along with the payload and status code _200_.
 
-```js
-exports.security = {
-  domainWhiteList: ['http://localhost:4200'],
+```ts
+// {app_root}/config/config.default.ts
+export default {
+  security: {
+    domainWhiteList: ['http://localhost:4200'],
+  },
 };
 ```
 
@@ -45,11 +49,13 @@ exports.security = {
 
 Support all configurations in [@koa/cors](https://github.com/koajs/cors).
 
-```js
-// {app_root}/config/config.default.js
-exports.cors = {
-  // {string|Function} origin: '*',
-  // {string|Array} allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH'
+```ts
+// {app_root}/config/config.default.ts
+export default {
+  cors: {
+    // {string|Function} origin: '*',
+    // {string|Array} allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH'
+  },
 };
 ```
 
