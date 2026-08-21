@@ -7,7 +7,7 @@ export interface CorsConfig {
    * When the `security` plugin is enabled and no custom `origin` is provided,
    * only safe domains are allowed.
    */
-  origin?: string | ((ctx: Context) => string) | ((ctx: Context) => PromiseLike<string>);
+  origin?: string | ((ctx: Context) => string | PromiseLike<string>);
   /**
    * `Access-Control-Allow-Methods`
    */
@@ -27,7 +27,7 @@ export interface CorsConfig {
   /**
    * `Access-Control-Allow-Credentials`
    */
-  credentials?: boolean | ((ctx: Context) => boolean) | ((ctx: Context) => PromiseLike<boolean>);
+  credentials?: boolean | ((ctx: Context) => boolean | PromiseLike<boolean>);
   /**
    * Add CORS headers to error responses as well
    */

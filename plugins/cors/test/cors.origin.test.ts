@@ -23,7 +23,7 @@ describe('test/cors.origin.test.ts', () => {
       .get('/')
       .expect({ foo: 'bar' })
       .expect((res: any) => {
-        assert.equal(res.headers['access-control-allow-origin'], 'eggjs.org');
+        assert.equal(res.headers['access-control-allow-origin'], 'http://eggjs.org');
       })
       .expect(200);
   });
@@ -33,7 +33,7 @@ describe('test/cors.origin.test.ts', () => {
       .httpRequest()
       .get('/')
       .set('Origin', 'http://eggjs.org')
-      .expect('Access-Control-Allow-Origin', 'eggjs.org')
+      .expect('Access-Control-Allow-Origin', 'http://eggjs.org')
       .expect('Access-Control-Allow-Credentials', 'true')
       .expect({ foo: 'bar' })
       .expect(200);
@@ -45,7 +45,7 @@ describe('test/cors.origin.test.ts', () => {
       .httpRequest()
       .post('/')
       .set('Origin', 'http://eggjs.org')
-      .expect('Access-Control-Allow-Origin', 'eggjs.org')
+      .expect('Access-Control-Allow-Origin', 'http://eggjs.org')
       .expect('Access-Control-Allow-Credentials', 'true')
       .expect(200);
   });

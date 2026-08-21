@@ -1,7 +1,7 @@
 exports.keys = 'foo';
 
 exports.cors = {
-  origin: 'eggjs.org',
+  origin: 'http://eggjs.org',
   credentials: true,
 };
 

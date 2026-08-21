@@ -3,7 +3,7 @@ exports.keys = 'foo';
 exports.cors = {
   async origin(ctx) {
     if (!ctx.get('origin')) return '';
-    return 'eggjs.org';
+    return 'http://eggjs.org';
   },
   credentials: true,
 };
