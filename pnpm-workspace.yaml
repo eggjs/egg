@@ -17,6 +17,7 @@ catalog:
   '@eggjs/redis': ^3.0.0
   '@eggjs/scripts': ^4.0.0
   '@fengmk2/ps-tree': ^2.0.1
+  '@koa/cors': ^5.0.0
   '@oclif/core': ^4.2.0
   '@oxc-node/core': ^0.1.0
   '@swc-node/register': ^1.11.1
@@ -41,6 +42,7 @@ catalog:
   '@types/ini': ^4.1.1
   '@types/js-beautify': ^1.14.3
   '@types/js-yaml': ^4.0.9
+  '@types/koa__cors': ^5.0.1
   '@types/koa-bodyparser': ^4.3.12
   '@types/koa-compose': ^3.2.8
   '@types/koa-range': ^0.3.5
