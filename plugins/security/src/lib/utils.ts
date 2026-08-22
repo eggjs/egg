@@ -59,6 +59,8 @@ export function checkIfIgnore(opts: { enable: boolean; matching?: PathMatchingFu
 }
 
 const IP_RE = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+// IPv4-mapped IPv6 address, e.g. `::ffff:127.0.0.1`
+const IPV4_MAPPED_RE = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/i;
 const topDomains: Record<string, number> = {};
 ['.net.cn', '.gov.cn', '.org.cn', '.com.cn'].forEach((item) => {
   topDomains[item] = 2 - item.split('.').length;
@@ -145,22 +147,28 @@ export function preprocessConfig(config: SecurityConfig): void {
         if (typeof ipAddress === 'string') {
           address = ipAddress;
         } else {
-          // FIXME: should support ipv6
-          if (ipAddress.family === 6) {
-            continue;
-          }
           address = ipAddress.address;
         }
-        // check white list first
-        for (const exception of exceptionList) {
-          if (exception(address)) {
-            return true;
-          }
+        // An IPv4-mapped IPv6 address (e.g. `::ffff:127.0.0.1`) actually targets
+        // an IPv4 host, so also match it against IPv4 rules to avoid an SSRF
+        // bypass when the blacklist only contains IPv4 entries.
+        const candidates = [address];
+        const mapped = IPV4_MAPPED_RE.exec(address);
+        if (mapped) {
+          candidates.push(mapped[1]);
         }
-        // check black list
-        for (const contains of blackList) {
-          if (contains(address)) {
-            return false;
+        for (const candidate of candidates) {
+          // check white list first
+          for (const exception of exceptionList) {
+            if (exception(candidate)) {
+              return true;
+            }
+          }
+          // check black list
+          for (const contains of blackList) {
+            if (contains(candidate)) {
+              return false;
+            }
           }
         }
       }
@@ -204,9 +212,52 @@ export function getFromUrl(url: string, prop: string): string | null {
   }
 }
 
-function getContains(ip: string): (address: string) => boolean {
-  if (IP.isV4Format(ip) || IP.isV6Format(ip)) {
-    return (address: string) => address === ip;
+function getContains(rule: string): (address: string) => boolean {
+  // Single IPv4/IPv6 address: compare normalized buffers so equivalent textual
+  // forms of the same address still match (e.g. `::1` and `0:0:0:0:0:0:0:1`).
+  if (IP.isV4Format(rule) || IP.isV6Format(rule)) {
+    const ruleBuffer = IP.toBuffer(rule);
+    return (address: string) => {
+      const addressBuffer = toBufferOrNull(address);
+      return addressBuffer !== null && ruleBuffer.equals(addressBuffer);
+    };
   }
-  return IP.cidrSubnet(ip).contains;
+  // CIDR range: bitwise prefix comparison that works for both IPv4 and IPv6.
+  // `@eggjs/ip`'s `cidrSubnet().contains()` is IPv4-only (it relies on 32-bit
+  // `toLong`), so an IPv6 CIDR rule would otherwise match every address.
+  const [base, prefix] = rule.split('/');
+  const prefixLength = Number.parseInt(prefix, 10);
+  if (!base || Number.isNaN(prefixLength)) {
+    throw new Error(`invalid CIDR subnet: ${rule}`);
+  }
+  const baseBuffer = IP.toBuffer(base);
+  return (address: string) => {
+    const addressBuffer = toBufferOrNull(address);
+    return addressBuffer !== null && isInSubnet(addressBuffer, baseBuffer, prefixLength);
+  };
+}
+
+function toBufferOrNull(address: string): Buffer | null {
+  try {
+    return IP.toBuffer(address);
+  } catch {
+    return null;
+  }
+}
+
+function isInSubnet(address: Buffer, base: Buffer, prefixLength: number): boolean {
+  // Different families (4 vs 16 bytes) can never be in the same subnet.
+  if (address.length !== base.length) {
+    return false;
+  }
+  let remaining = prefixLength;
+  for (let i = 0; i < base.length && remaining > 0; i++) {
+    const take = Math.min(8, remaining);
+    const mask = (0xff << (8 - take)) & 0xff;
+    if ((address[i] & mask) !== (base[i] & mask)) {
+      return false;
+    }
+    remaining -= take;
+  }
+  return true;
 }
