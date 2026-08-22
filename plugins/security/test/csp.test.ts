@@ -94,6 +94,26 @@ describe.skipIf(process.platform === 'win32')('test/csp.test.ts', () => {
       const nonce = res.text;
       expect(res.headers['x-csp-nonce']).toBe(nonce);
     });
+
+    it('should generate unpredictable nonce even when Math.random is fixed', async () => {
+      // The CSP nonce must come from a cryptographically secure RNG.
+      // `nanoid/non-secure` derives every char from `Math.random()`, so pinning
+      // `Math.random` to a constant would make the nonce fully predictable.
+      // A CSPRNG-backed nonce stays random regardless of `Math.random`.
+      mm(Math, 'random', () => 0);
+      try {
+        const res1 = await app.httpRequest().get('/testcsp').expect(200);
+        const res2 = await app.httpRequest().get('/testcsp').expect(200);
+        expect(res1.text.length).toBe(16);
+        expect(res2.text.length).toBe(16);
+        // not constant across requests
+        expect(res1.text).not.toBe(res2.text);
+        // not the predictable value Math.random()===0 would produce
+        expect(res1.text).not.toBe('u'.repeat(16));
+      } finally {
+        mm.restore();
+      }
+    });
   });
 
   it('should ignore path', async () => {
