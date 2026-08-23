@@ -25,6 +25,9 @@ egg developer tool, base on [oclif](https://oclif.io/).
 npm i @eggjs/bin --save-dev
 ```
 
+`@eggjs/bin` does not define dependency install scripts. You do not need to add
+it to an install-script allowlist.
+
 ## Usage
 
 Add `egg-bin` to `package.json` scripts:

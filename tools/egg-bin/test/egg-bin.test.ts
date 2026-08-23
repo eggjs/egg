@@ -1,3 +1,4 @@
+import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { describe, it } from 'vitest';
@@ -8,6 +9,13 @@ import { getRootDirname, getFixtures } from './helper.js';
 describe('test/egg-bin.test.ts', () => {
   const eggBin = path.join(getRootDirname(), 'bin/run.js');
   const cwd = getFixtures('test-files-egg-bin');
+
+  it('should not define dependency install scripts', async () => {
+    const pkg = JSON.parse(await fs.readFile(path.join(getRootDirname(), 'package.json'), 'utf8'));
+    for (const name of ['preinstall', 'install', 'postinstall']) {
+      expect(pkg.scripts).not.toHaveProperty(name);
+    }
+  });
 
   describe('global options', () => {
     it('should show version', () => {
