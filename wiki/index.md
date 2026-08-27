@@ -25,6 +25,7 @@ Read this file before exploring raw sources.
 ## Packages
 
 - [Core Package](./packages/core.md) - Loader, lifecycle, and application core primitives used by Egg runtime packages.
+- [CORS Plugin](./packages/cors.md) - Applies @koa/cors with optional Security domain checks.
 - [Egg Bundler](./packages/egg-bundler.md) - Bundles Egg applications for Node startup snapshots and tegg standalone service workers.
 - [Loader FS Package](./packages/loader-fs.md) - Shared loader-facing filesystem boundary for Egg loaders and future bundled runtimes.
 - [Onerror Plugin](./packages/onerror.md) - Default Egg error-handling plugin and configurable response negotiation layer.

@@ -66,6 +66,9 @@
       "path": "./plugins/jsonp"
     },
     {
+      "path": "./plugins/cors"
+    },
+    {
       "path": "./plugins/watcher"
     },
     {

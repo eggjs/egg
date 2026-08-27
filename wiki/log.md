@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-08-27] package | migrate egg-cors into the monorepo
+
+- sources touched: `plugins/cors`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/cors.md`
+- note: Added the scoped `@eggjs/cors` plugin with the existing Security whitelist fallback, typed @koa/cors configuration, modern plugin metadata, and Vitest coverage.
+
 ## [2026-08-06] fix | restore standalone public dynamic injection
 
 - sources touched: `tegg/standalone/{standalone,service-worker-runtime}`

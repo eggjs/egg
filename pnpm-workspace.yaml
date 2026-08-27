@@ -9,6 +9,7 @@ packages:
   - tegg/standalone/*
 
 catalog:
+  '@koa/cors': ^5.0.0
   '@clack/prompts': ^0.11.0
   '@eggjs/compressible': ^3.0.0
   '@eggjs/cookies': ^3.1.0
@@ -42,6 +43,7 @@ catalog:
   '@types/js-beautify': ^1.14.3
   '@types/js-yaml': ^4.0.9
   '@types/koa-bodyparser': ^4.3.12
+  '@types/koa__cors': ^5.0.1
   '@types/koa-compose': ^3.2.8
   '@types/koa-range': ^0.3.5
   '@types/lodash': ^4.17.20
