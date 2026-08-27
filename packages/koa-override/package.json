@@ -1,0 +1,55 @@
+{
+  "name": "@eggjs/koa-override",
+  "version": "4.0.0-beta.26",
+  "description": "Method override middleware for Koa",
+  "keywords": [
+    "koa",
+    "method-override",
+    "middleware",
+    "override",
+    "rewrite"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/koa-override",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "packages/koa-override"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsgo --noEmit"
+  },
+  "devDependencies": {
+    "@eggjs/koa": "workspace:*",
+    "@eggjs/supertest": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/koa-bodyparser": "catalog:",
+    "koa-bodyparser": "catalog:",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

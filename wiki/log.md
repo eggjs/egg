@@ -2,6 +2,12 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
+## [2026-08-27] package | migrate koa-override into the monorepo
+
+- sources touched: `packages/koa-override`, `packages/egg/src/app/middleware/override_method.ts`, `packages/egg/package.json`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/koa-override.md`
+- note: Added the scoped `@eggjs/koa-override` package with the original method-override behavior, TypeScript declarations, Vitest coverage, and Egg workspace consumption.
+
 ## [2026-08-06] fix | restore standalone public dynamic injection
 
 - sources touched: `tegg/standalone/{standalone,service-worker-runtime}`

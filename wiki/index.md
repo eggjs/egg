@@ -27,6 +27,7 @@ Read this file before exploring raw sources.
 - [Core Package](./packages/core.md) - Loader, lifecycle, and application core primitives used by Egg runtime packages.
 - [Egg Bundler](./packages/egg-bundler.md) - Bundles Egg applications for Node startup snapshots and tegg standalone service workers.
 - [Loader FS Package](./packages/loader-fs.md) - Shared loader-facing filesystem boundary for Egg loaders and future bundled runtimes.
+- [Koa Override Package](./packages/koa-override.md) - Method-override middleware used by Egg's default middleware stack.
 - [Onerror Plugin](./packages/onerror.md) - Default Egg error-handling plugin and configurable response negotiation layer.
 - [Standalone Service Worker](./packages/service-worker.md) - Fetch-semantics standalone runtime serving HTTP controllers and MCP tools from a tegg module without an egg application.
 - [Typings Package](./packages/typings.md) - Shared TypeScript type surface for cross-package Egg typings.
