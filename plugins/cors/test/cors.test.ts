@@ -2,7 +2,10 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
+import type { Application } from 'egg';
 import { afterAll, afterEach, beforeAll, describe, it } from 'vitest';
+
+import AppBoot from '../src/app.ts';
 
 function createApp(name: string): MockApplication {
   return mm.app({
@@ -56,6 +59,22 @@ describe('@eggjs/cors', () => {
         assert.equal(res.headers['access-control-allow-credentials'], undefined);
       })
       .expect(200);
+  });
+});
+
+describe('@eggjs/cors middleware registration', () => {
+  it('moves an existing cors middleware to the front without duplicating it', () => {
+    const coreMiddleware = ['bodyParser', 'cors', 'overrideMethod', 'cors'];
+    const app = {
+      config: {
+        coreMiddleware,
+        cors: {},
+      },
+    } as unknown as Application;
+
+    new AppBoot(app).configWillLoad();
+
+    assert.deepEqual(coreMiddleware, ['cors', 'bodyParser', 'overrideMethod']);
   });
 });
 

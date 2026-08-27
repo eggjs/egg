@@ -10,7 +10,11 @@ export default class AppBoot implements ILifecycleBoot {
 
   configWillLoad(): void {
     const { config } = this.#app;
-    config.coreMiddleware.unshift('cors');
+    const coreMiddleware = config.coreMiddleware;
+    for (let index = coreMiddleware.lastIndexOf('cors'); index >= 0; index = coreMiddleware.lastIndexOf('cors')) {
+      coreMiddleware.splice(index, 1);
+    }
+    coreMiddleware.unshift('cors');
 
     config.cors.hasCustomOriginHandler = Boolean(config.cors.origin);
     config.cors.origin ??= function corsOrigin(ctx: KoaContext): string {

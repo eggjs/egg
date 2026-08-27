@@ -48,12 +48,12 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@koa/cors": "catalog:"
+    "@koa/cors": "catalog:",
+    "@types/koa__cors": "catalog:"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
-    "@types/koa__cors": "catalog:",
     "@types/node": "catalog:",
     "egg": "workspace:*",
     "typescript": "catalog:"
