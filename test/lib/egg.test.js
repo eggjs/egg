@@ -481,6 +481,22 @@ describe('test/lib/egg.test.js', () => {
       ctx = app.agent.createAnonymousContext();
       assert(ctx);
     });
+
+    it('should apply mocked querystring and query', () => {
+      let ctx = app.createAnonymousContext({ querystring: 'page=1&size=10' });
+      assert(ctx.url === '/?page=1&size=10');
+      assert.deepEqual(ctx.query, { page: '1', size: '10' });
+
+      ctx = app.createAnonymousContext({ query: { page: 1 } });
+      assert(ctx.url === '/?page=1');
+      assert.deepEqual(ctx.query, { page: '1' });
+    });
+
+    it('should keep an explicitly supplied URL', () => {
+      const ctx = app.createAnonymousContext({ url: '/users?from=url', query: { page: 1 } });
+      assert(ctx.url === '/users?from=url');
+      assert.deepEqual(ctx.query, { from: 'url' });
+    });
   });
 });
 
