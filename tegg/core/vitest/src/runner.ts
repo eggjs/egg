@@ -1,5 +1,5 @@
 import type { RunnerTestSuite as Suite, RunnerTask as Task, RunnerTestFile as File } from 'vitest';
-import { VitestTestRunner } from 'vitest/runners';
+import { TestRunner } from 'vitest';
 
 import { debugLog, defaultGetApp, restoreEggMocksIfNeeded } from './shared.ts';
 import type { EggMockApp } from './shared.ts';
@@ -78,14 +78,14 @@ function getTaskFilepath(task: Task): string | undefined {
   return (task as any).file?.filepath;
 }
 
-export default class TeggVitestRunner extends VitestTestRunner {
+export default class TeggVitestRunner extends TestRunner {
   private sharedMode: boolean;
   private fileScopeMap = new Map<string, FileScopeState>();
   private taskScopeMap = new Map<string, TaskScopeState>();
   private fileAppMap = new Map<string, FileAppState>();
   private warned = false;
 
-  constructor(config: ConstructorParameters<typeof VitestTestRunner>[0]) {
+  constructor(config: ConstructorParameters<typeof TestRunner>[0]) {
     super(config);
     // When isolate: false, all test files share the same worker and module cache.
     // The app must not be closed between files — only after all files finish.
@@ -96,18 +96,18 @@ export default class TeggVitestRunner extends VitestTestRunner {
     }
   }
 
-  override onAfterRunFiles(): void {
+  override onAfterRunFiles(...args: Parameters<TestRunner['onAfterRunFiles']>): void {
     // NOTE: vitest calls onAfterRunFiles() after each batch of files, not once
     // after all files globally. In shared mode (isolate: false), we must NOT
     // close the app here — the worker thread termination handles cleanup.
-    super.onAfterRunFiles();
+    super.onAfterRunFiles(...args);
   }
 
   /**
    * Override importFile to capture per-file config set by configureTeggRunner()
    * and await app.ready() during collection phase.
    */
-  async importFile(filepath: string, source: Parameters<VitestTestRunner['importFile']>[1]): Promise<unknown> {
+  async importFile(filepath: string, source: Parameters<TestRunner['importFile']>[1]): Promise<unknown> {
     // Clear stale state for this file before re-collection in watch mode
     if (source === 'collect') {
       this.fileAppMap.delete(filepath);
@@ -205,17 +205,13 @@ export default class TeggVitestRunner extends VitestTestRunner {
     await super.onAfterRunSuite(suite);
   }
 
-  async onBeforeTryTask(test: Task): Promise<void> {
+  async onBeforeTryTask(...args: Parameters<TestRunner['onBeforeTryTask']>): Promise<void> {
+    const [test] = args;
     const filepath = getTaskFilepath(test);
     if (filepath) {
       const fileState = this.fileScopeMap.get(filepath);
       if (fileState) {
-        // Release previous scope on retry to avoid leaks
         const existing = this.taskScopeMap.get(test.id);
-        if (existing) {
-          await releaseHeldScope(existing.testScope);
-        }
-
         debugLog(`onBeforeTryTask: ${test.name}`);
 
         const testCtx = fileState.app.mockContext!(undefined, {
@@ -223,7 +219,13 @@ export default class TeggVitestRunner extends VitestTestRunner {
           reuseCtxStorage: false,
         });
 
+        // Enter synchronously so Vitest's continuation inherits the new context,
+        // including retries that must await cleanup of the previous scope.
         fileState.app.ctxStorage!.enterWith(testCtx);
+
+        if (existing) {
+          await releaseHeldScope(existing.testScope);
+        }
 
         let testScope: HeldScope | null = null;
         if (typeof testCtx.beginModuleScope === 'function') {
@@ -235,7 +237,7 @@ export default class TeggVitestRunner extends VitestTestRunner {
       }
     }
 
-    await super.onBeforeTryTask(test);
+    super.onBeforeTryTask(...args);
   }
 
   async onAfterRunTask(test: Task): Promise<void> {
@@ -255,6 +257,6 @@ export default class TeggVitestRunner extends VitestTestRunner {
       }
     }
 
-    await super.onAfterRunTask(test);
+    super.onAfterRunTask(test);
   }
 }
