@@ -426,3 +426,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `tools/egg-bundler/src/compat/leoric/{index.ts,runtime-require-loader.cjs}`, `tools/egg-bundler/src/lib/Bundler.ts`, `.github/workflows/e2e-test.yml`
 - pages updated: `wiki/packages/egg-bundler.md`, `wiki/log.md`
 - note: Leoric 2.16 adds a separate ESM entry and compiles runtime imports to Promise callbacks in CommonJS. Snapshot builds now select the CommonJS entry and rewrite those callbacks through the existing runtime require hook. Leoric model identity remains in the snapshot, and optional database clients load after restore.
+
+## [2026-09-19] workflow | tolerate small coverage changes
+
+- sources touched: `codecov.yml`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: Codecov project coverage now permits a one percentage-point decrease from the base commit. Patch coverage uses a fixed 75% minimum instead of the base project's coverage ratio. Both checks remain enabled.
