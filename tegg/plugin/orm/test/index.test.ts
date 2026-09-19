@@ -164,7 +164,7 @@ describe('plugin/orm/test/orm.test.ts', () => {
         realm.driver.logger = new Realm.Logger({
           // eslint-disable-next-line no-loop-func
           logQuery(_sql, _duration, options) {
-            if (options && 'Model' in options) {
+            if (options && 'Model' in options && options.Model) {
               ctx = Reflect.get(options.Model, 'ctx');
             }
           },

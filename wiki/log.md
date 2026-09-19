@@ -432,3 +432,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `codecov.yml`
 - pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
 - note: Codecov project coverage now permits a one percentage-point decrease from the base commit. Patch coverage uses a fixed 75% minimum instead of the base project's coverage ratio. Both checks remain enabled.
+
+## [2026-09-19] test | check Vitest compatibility and concurrent app retries
+
+- sources touched: `.github/workflows/ci.yml`, `tegg/core/vitest/test/runner-multi-app.test.ts`, `tegg/plugin/orm/test/index.test.ts`
+- pages updated: `wiki/packages/tegg-vitest.md`, `wiki/log.md`
+- note: Dedicated CI jobs now typecheck and test the adapter with the minimum supported Vitest 4.1.0 and the latest Vitest 5, using isolated and shared workers. A concurrent-app regression checks retry contexts, service identity, lifecycle argument forwarding, and scope cleanup. The ORM test logger now skips an undefined optional Model.

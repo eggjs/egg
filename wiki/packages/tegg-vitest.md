@@ -3,11 +3,13 @@ title: Tegg Vitest Adapter
 type: package
 summary: Custom Vitest runner for Egg request contexts and tegg module scopes, compatible with Vitest 4.1 and 5.
 source_files:
+  - .github/workflows/ci.yml
   - tegg/core/vitest/package.json
   - tegg/core/vitest/src/runner.ts
   - tegg/core/vitest/src/index.ts
   - tegg/core/vitest/src/setup.ts
   - tegg/core/vitest/test/fixture_app.test.ts
+  - tegg/core/vitest/test/runner-multi-app.test.ts
   - plugins/mock/package.json
   - tools/egg-bin/src/commands/test.ts
   - https://vitest.dev/guide/migration/#removed-deprecated-entrypoints
@@ -26,6 +28,11 @@ forward all arguments. This accommodates the file list passed to
 `onAfterRunFiles` and the retry options passed to `onBeforeTryTask` in Vitest 5.
 The monorepo's default Vitest catalog remains on version 4.
 
+The `test-tegg-vitest` CI job installs Vitest `4.1.0` and `^5.0.0` in separate
+matrix jobs. Each job selects matching `@vitest/coverage-v8` and `@vitest/ui`
+versions, typechecks the adapter, and runs its tests with isolated workers and
+with one shared thread worker (`--pool threads --no-isolate --maxWorkers 1`).
+
 ## Context lifecycle
 
 `egg-bin` automatically selects the adapter's `runner` and `setup` entry points.
@@ -41,5 +48,8 @@ scope starts. After the test, the runner releases the test scope and restores
 the file's context.
 
 The fixture application tests cover injected service identity and scope cleanup
-across retries. Run the adapter suite from the repository root with
+across retries. The concurrent-app regression drives the runner hooks for two
+apps that share a service class. It checks separate request contexts and service
+instances, retry argument forwarding, and independent scope cleanup.
+Run the adapter suite from the repository root with
 `vitest run --root tegg/core/vitest --config vitest.config.ts`.
