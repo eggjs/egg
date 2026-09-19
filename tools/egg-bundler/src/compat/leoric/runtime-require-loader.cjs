@@ -58,6 +58,13 @@ module.exports = function leoricRuntimeRequireLoader(source) {
     output = output.replace(pattern, replacement);
   }
 
+  // Leoric 2.16 compiles dynamic imports to a Promise callback in its CJS
+  // entry. Preserve the Promise and namespace conversion around the require.
+  output = output.replace(
+    /\bthen\(s => (\w+\.)?__importStar\(require\(s\)\)\)/g,
+    `then(s => $1__importStar(${RUNTIME_REQUIRE}(s)))`,
+  );
+
   if (DYNAMIC_REQUIRE.test(output)) {
     throw new Error(
       `[@eggjs/egg-bundler] unsupported Leoric dynamic require remains in ${resourcePath}; ` +

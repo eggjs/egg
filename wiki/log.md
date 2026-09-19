@@ -420,3 +420,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `tegg/core/vitest/{package.json,src/runner.ts,test/fixture_app.test.ts}`, `plugins/mock/package.json`
 - pages updated: `wiki/index.md`, `wiki/packages/tegg-vitest.md`, `wiki/log.md`
 - note: The adapter now uses `TestRunner` from `vitest`, supports Vitest 4.1 and 5, and forwards version-specific lifecycle arguments. Retry coverage exposed a context propagation bug: entering the new async-local context after awaiting the previous scope's cleanup left the test continuation in the old context. The runner now enters the context synchronously before cleanup.
+
+## [2026-09-19] compatibility | preserve Leoric snapshot loading after dependency updates
+
+- sources touched: `tools/egg-bundler/src/compat/leoric/{index.ts,runtime-require-loader.cjs}`, `tools/egg-bundler/src/lib/Bundler.ts`, `.github/workflows/e2e-test.yml`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/log.md`
+- note: Leoric 2.16 adds a separate ESM entry and compiles runtime imports to Promise callbacks in CommonJS. Snapshot builds now select the CommonJS entry and rewrite those callbacks through the existing runtime require hook. Leoric model identity remains in the snapshot, and optional database clients load after restore.

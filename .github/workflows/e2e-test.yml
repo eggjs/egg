@@ -125,7 +125,7 @@ jobs:
               bash ./prepare-database-mysql.sh
 
               # Build the V8 startup snapshot. Building works on Node.js >= 22 (CI runs
-              # on 24 here). leoric is auto-externalized (native optional DB drivers);
+              # on 24 here). Leoric stays bundled; its optional DB drivers load at runtime.
               # @cnpmjs/packument / koa-onerror / undici / urllib are kept external. The
               # network stack stays lazy-external (no manual stubs) so the blob is
               # restorable on Node.js >= 24.

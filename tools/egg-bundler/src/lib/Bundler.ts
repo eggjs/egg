@@ -430,7 +430,12 @@ export class Bundler {
       rootPath: mergedPack?.rootPath ? path.resolve(absBaseDir, mergedPack.rootPath) : absBaseDir,
       mode,
       buildFunc: mergedPack?.buildFunc,
-      resolve: mergedPack?.resolve,
+      resolve: leoricSnapshotCompat
+        ? {
+            ...mergedPack?.resolve,
+            alias: { ...mergedPack?.resolve?.alias, ...leoricSnapshotCompat.resolve.alias },
+          }
+        : mergedPack?.resolve,
       module: leoricSnapshotCompat?.module,
       singleFile,
     });
