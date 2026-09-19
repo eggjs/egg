@@ -7,7 +7,7 @@ import type { Orm } from './lib/SingletonORM.ts';
 import type { DataType } from './lib/types.ts';
 
 declare module '@eggjs/orm-decorator' {
-  // @ts-expect-error: DataType is not defined in tegg-orm-decorator
+  // @ts-expect-error: extend the string-based decorator with Leoric data types
   export function Attribute(
     dataType: DataType,
     options?: AttributeOptions,
