@@ -414,3 +414,27 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `.github/workflows/ci.yml`, `AGENTS.md`, `tegg/plugin/eventbus/test/eventbus.test.ts`
 - pages updated: `wiki/log.md`, `wiki/workflows/local-ci.md`
 - note: The `ut run build -- --workspace ./tools/egg-bin` path-form filter does not match any workspace on Windows, so the test-egg-bin Windows job ran without a dist and failed every coffee test with "command dev not found" (broken on next since at least #6022's run). CI now builds in a dedicated step with the name form (`--workspace @eggjs/bin`), which works on every platform; the name form only works for packages with their own script, so @eggjs/scripts (no build script, ubuntu-only job) keeps the root tsdown path filter `ut run build -- --workspace ./tools/scripts`. Also, vitest glob projects do not inherit the root config's hookTimeout: tegg plugin app-boot beforeAll hooks ran under the default 10s and flaked on slow Windows runners (observed in eventbus, langchain, then mcp-client across consecutive runs). Every async beforeAll in `tegg/plugin/*/test` and `tegg/standalone/*/test` now passes an explicit 30s hook timeout (54 hooks). Making glob projects inherit the root config's hookTimeout remains a cleaner follow-up. Two more flake classes surfaced during rerun validation: plugins/development boots mm.cluster in beforeAll and needed the 60s hook budget plugins/schedule already uses, and packages/cluster after-start.test.ts asserted on stdout after fixed 5s sleeps, now replaced with bounded polling (waitFor pattern from tools/scripts/test/utils.ts).
+
+## [2026-09-19] compatibility | support Vitest 5 in the tegg runner
+
+- sources touched: `tegg/core/vitest/{package.json,src/runner.ts,test/fixture_app.test.ts}`, `plugins/mock/package.json`
+- pages updated: `wiki/index.md`, `wiki/packages/tegg-vitest.md`, `wiki/log.md`
+- note: The adapter now uses `TestRunner` from `vitest`, supports Vitest 4.1 and 5, and forwards version-specific lifecycle arguments. Retry coverage exposed a context propagation bug: entering the new async-local context after awaiting the previous scope's cleanup left the test continuation in the old context. The runner now enters the context synchronously before cleanup.
+
+## [2026-09-19] compatibility | preserve Leoric snapshot loading after dependency updates
+
+- sources touched: `tools/egg-bundler/src/compat/leoric/{index.ts,runtime-require-loader.cjs}`, `tools/egg-bundler/src/lib/Bundler.ts`, `.github/workflows/e2e-test.yml`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/log.md`
+- note: Leoric 2.16 adds a separate ESM entry and compiles runtime imports to Promise callbacks in CommonJS. Snapshot builds now select the CommonJS entry and rewrite those callbacks through the existing runtime require hook. Leoric model identity remains in the snapshot, and optional database clients load after restore.
+
+## [2026-09-19] workflow | tolerate small coverage changes
+
+- sources touched: `codecov.yml`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: Codecov project coverage now permits a one percentage-point decrease from the base commit. Patch coverage uses a fixed 75% minimum instead of the base project's coverage ratio. Both checks remain enabled.
+
+## [2026-09-19] test | check Vitest compatibility and concurrent app retries
+
+- sources touched: `.github/workflows/ci.yml`, `tegg/core/vitest/test/runner-multi-app.test.ts`, `tegg/plugin/orm/test/index.test.ts`
+- pages updated: `wiki/packages/tegg-vitest.md`, `wiki/log.md`
+- note: Dedicated CI jobs now typecheck and test the adapter with the minimum supported Vitest 4.1.0 and the latest Vitest 5, using isolated and shared workers. A concurrent-app regression checks retry contexts, service identity, lifecycle argument forwarding, and scope cleanup. The ORM test logger now skips an undefined optional Model.

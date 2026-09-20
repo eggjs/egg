@@ -5,13 +5,14 @@ summary: Local validation should run tests from clean sources and avoid stale bu
 source_files:
   - AGENTS.md
   - .github/workflows/ci.yml
+  - codecov.yml
   - package.json
   - tools/egg-bin/package.json
   - tools/egg-bin/tsconfig.json
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/core/metadata/src/model/graph/GlobalGraph.ts
   - tegg/plugin/controller/test/fixtures/apps
-updated_at: 2026-08-06
+updated_at: 2026-09-19
 status: active
 ---
 
@@ -20,6 +21,13 @@ status: active
 The repository's GitHub CI test job installs dependencies with
 `ut install --from pnpm` and runs tests with `ut run ci` for the main test
 matrix. It does not build packages before running tests.
+
+## Coverage checks
+
+`codecov.yml` keeps project and patch coverage checks enabled. Project coverage
+uses the base commit as its target and permits a decrease of up to one percentage
+point. Patch coverage has a fixed 75% minimum, so small changes do not have to
+match the whole repository's coverage ratio.
 
 ## Exception: egg-bin tests need a built dist
 

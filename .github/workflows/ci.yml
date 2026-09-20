@@ -415,12 +415,61 @@ jobs:
         with:
           use_oidc: true
 
+  test-tegg-vitest:
+    name: Test tegg-vitest (Vitest ${{ matrix.vitest }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        vitest: ['4.1.0', '^5.0.0']
+
+    concurrency:
+      group: test-tegg-vitest-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.vitest }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Setup utoo
+        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+        with:
+          node-version: '24'
+
+      - name: Install selected Vitest version
+        env:
+          VITEST_VERSION: ${{ matrix.vitest }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const file = 'pnpm-workspace.yaml';
+          const workspace = fs.readFileSync(file, 'utf8').replace(
+            /^(  (?:vitest|'@vitest\/(?:coverage-v8|ui)')):.*$/gm,
+            `$1: ${JSON.stringify(process.env.VITEST_VERSION)}`,
+          );
+          fs.writeFileSync(file, workspace);
+          NODE
+          ut install --from pnpm
+
+      - name: Typecheck adapter
+        run: ut run typecheck --workspace @eggjs/tegg-vitest
+
+      - name: Test isolated workers
+        run: node node_modules/vitest/vitest.mjs run --root tegg/core/vitest --config vitest.config.ts
+
+      - name: Test shared worker
+        run: node node_modules/vitest/vitest.mjs run --root tegg/core/vitest --config vitest.config.ts --pool threads --no-isolate --maxWorkers 1
+
   done:
     runs-on: ubuntu-latest
     needs:
       - test
       - test-egg-bin
       - test-egg-scripts
+      - test-tegg-vitest
       - typecheck
     steps:
       - run: exit 1
