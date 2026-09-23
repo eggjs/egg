@@ -345,7 +345,6 @@ function sidebarCommunity(): DefaultTheme.SidebarItem[] {
       text: 'Community',
       items: [
         { text: 'Contributing', link: 'contributing' },
-        { text: 'PR Preview Packages', link: 'pr-preview-packages' },
         { text: 'Frequently Asked Questions', link: 'faq' },
       ],
     },
@@ -465,7 +464,6 @@ function sidebarCommunityZhCN(): DefaultTheme.SidebarItem[] {
       items: [
         // { text: '文章', link: 'articles' },
         { text: '参与贡献', link: 'contributing' },
-        { text: 'PR 预览包', link: 'pr-preview-packages' },
         { text: '常见问题', link: 'faq' },
       ],
     },

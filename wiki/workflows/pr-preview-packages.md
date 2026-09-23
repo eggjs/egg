@@ -44,7 +44,7 @@ keep related direct dependencies on the same preview, update lockfiles, and rest
 - [English instructions](../../site/docs/community/pr-preview-packages.md)
 - [Chinese instructions](../../site/docs/zh-CN/community/pr-preview-packages.md)
 
-Both guides appear in the version navigation menu and the Community sidebar and landing page.
+Both guides appear in the version navigation menu and the Community landing page.
 The root contribution guides link to these pages and retain the maintainer publishing instructions.
 
 The bot comment uses PR-number URLs by default. The `Publish previews` logs include commit-SHA URLs.
