@@ -34,9 +34,9 @@ and the retry options passed to `onBeforeTryTask`.
 The monorepo catalog uses `^5.0.1` for Vitest, its V8 coverage provider, and its
 UI. The TypeScript and tegg application templates also use Vitest `^5.0.1`.
 
-The `test-tegg-vitest` CI job installs the catalog versions, typechecks the
-adapter, and runs its tests with isolated workers and with one shared thread
-worker (`--pool threads --no-isolate --maxWorkers 1`).
+The `test-tegg-vitest` CI job installs the catalog versions on Node.js 24 and
+26, typechecks the adapter, and runs its tests with isolated workers and with
+one shared thread worker (`--pool threads --no-isolate --maxWorkers 1`).
 
 `egg-bin` uses the Vitest 5 `startVitest` API with `config: false` to prevent
 parent config discovery. Coverage exclusions are relative to the application

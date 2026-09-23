@@ -444,3 +444,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `pnpm-workspace.yaml`, `vitest.config.ts`, `plugins/mock/package.json`, `tegg/core/vitest/{package.json,src/runner.ts,test/runner-multi-app.test.ts}`, `tools/create-egg/src/templates/{simple-ts,tegg}/package.json`, `tools/egg-bin/src/commands/{test,cov}.ts`, `tools/egg-bin/test/commands/{test,cov}.test.ts`, `.github/workflows/ci.yml`
 - pages updated: `wiki/index.md`, `wiki/packages/tegg-vitest.md`, `wiki/workflows/ci-parallel-test-metrics.md`, `wiki/log.md`
 - note: The catalog and application templates now use Vitest 5.0.1 or later in the same major. The mock and tegg adapter peers no longer accept Vitest 4. The adapter CI job uses the catalog and retains both isolated and shared worker tests. Suites that used the removed `describe.sequential` API now use `concurrent: false`. The root config uses the stable `test.fsModuleCache` option. The CLI uses the current startup API and relative coverage exclusions; its JSON reporter now writes `.vitest/json/output.json`. Verified that the Vitest 5 JSON reporter still derives file intervals from test timings, so the parallelism caveat remains applicable.
+
+## [2026-09-23] test | add Node.js 26 to CI
+
+- sources touched: `.github/workflows/ci.yml`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/packages/tegg-vitest.md`, `wiki/log.md`
+- note: Node.js 26 now runs the main suite on Linux, macOS, and Windows, the egg-bin suite on Linux and Windows, and the egg-scripts and tegg adapter suites on Linux. The adapter matrix includes both isolated and shared workers, with separate concurrency groups for each Node.js version. Coverage reports remain on the Linux Node.js 24 jobs.

@@ -12,15 +12,21 @@ source_files:
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/core/metadata/src/model/graph/GlobalGraph.ts
   - tegg/plugin/controller/test/fixtures/apps
-updated_at: 2026-09-19
+updated_at: 2026-09-23
 status: active
 ---
 
 # Local CI
 
 The repository's GitHub CI test job installs dependencies with
-`ut install --from pnpm` and runs tests with `ut run ci` for the main test
-matrix. It does not build packages before running tests.
+`ut install --from pnpm`. The main test matrix runs Node.js 22, 24, and 26 on
+Linux, macOS, and Windows. It uses `ut run test`, or `ut run ci` for the
+coverage job, without building packages before tests.
+
+The egg-bin matrix runs Node.js 24 and 26 on Linux and Windows. The egg-scripts
+matrix runs Node.js 22, 24, and 26 on Linux. The tegg Vitest adapter runs both
+isolated and shared workers on Node.js 24 and 26 on Linux. Coverage reports
+come from the Linux Node.js 24 jobs.
 
 ## Coverage checks
 
