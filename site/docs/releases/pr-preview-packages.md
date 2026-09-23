@@ -8,6 +8,16 @@ description: Install and test Egg packages from a pull request before an npm rel
 Preview packages let you test a fix or feature from an Egg pull request before its npm release.
 You install them from `pkg.pr.new` URLs with your application's package manager.
 
+::: warning Preview packages expire
+According to [StackBlitz's retention policy](https://blog.stackblitz.com/posts/cloudflare-backing-pkg-pr-new-data-infrastructure/), published on June 4, 2025, a package is automatically removed when either condition applies:
+
+- It has no downloads for more than one month.
+- It is more than six months old, regardless of download activity.
+
+A commit-SHA URL or lockfile does not prevent removal. Use previews for temporary testing and npm releases for lasting dependencies.
+If a preview expires, ask a maintainer to publish a new preview, then update the URL and lockfile.
+:::
+
 ## Find a Preview
 
 1. Open the pull request that contains the change you want to test.

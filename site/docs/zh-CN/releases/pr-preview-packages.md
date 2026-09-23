@@ -8,6 +8,16 @@ description: 在 npm 正式发布前，安装和测试 Egg Pull Request 中的�
 预览包可以让你在 npm 正式发布前，测试 Egg Pull Request 中的修复或新功能。
 使用应用当前的包管理器，通过 `pkg.pr.new` URL 即可安装。
 
+::: warning 预览包会过期
+根据 StackBlitz 于 2025 年 6 月 4 日公布的[保留策略](https://blog.stackblitz.com/posts/cloudflare-backing-pkg-pr-new-data-infrastructure/)，满足以下任一条件的包会被自动删除：
+
+- 超过一个月没有下载。
+- 包的存放时间超过六个月，无论期间是否有人下载。
+
+固定 commit SHA URL 或锁文件不能阻止删除。预览包适合临时测试，长期依赖应使用 npm 发布版本。
+如果预览包已过期，请维护者重新发布预览包，再更新 URL 和锁文件。
+:::
+
 ## 获取预览包
 
 1. 打开包含待测试改动的 Pull Request。

@@ -16,6 +16,7 @@ source_files:
   - package.json
   - tsdown.config.ts
   - https://github.com/stackblitz-labs/pkg.pr.new
+  - https://blog.stackblitz.com/posts/cloudflare-backing-pkg-pr-new-data-infrastructure/
 updated_at: 2026-09-23
 status: active
 ---
@@ -50,6 +51,16 @@ The root contribution guides link to these pages and retain the maintainer publi
 
 The bot comment uses PR-number URLs by default. The `Publish previews` logs include commit-SHA URLs.
 The current script keeps the source package versions, so consumers must use the URL and SHA to identify a preview.
+
+## Retention
+
+[StackBlitz's June 4, 2025 announcement](https://blog.stackblitz.com/posts/cloudflare-backing-pkg-pr-new-data-infrastructure/)
+documents automatic removal after more than one month without downloads, or when a package is more than six months old.
+The age limit applies regardless of downloads. This is the published upstream policy checked on September 23, 2026;
+Egg does not control the retention period. Both site guides show this policy in a warning before the installation instructions.
+
+Inference: a commit-SHA URL or lockfile cannot preserve a deleted server artifact. Consumers need a new preview or an npm release
+when the referenced preview expires.
 
 ## Package contents
 
