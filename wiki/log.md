@@ -474,3 +474,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `.github/workflows/e2e-test.yml`
 - pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
 - note: cnpmcore's updated WebAuthn dependency emits experimental Web Crypto warnings on Node.js 24. Its daemon smoke test now permits startup stderr and continues to gate success on the existing HTTP health check.
+
+## [2026-09-23] workflow | publish PR preview packages by label
+
+- sources touched: `.github/workflows/pkg-pr-new.yml`, `scripts/publish-preview.js`, `scripts/utils.js`, `CONTRIBUTING.md`, `CONTRIBUTING.zh-CN.md`, `site/docs/{community/index,releases/pr-preview-packages}.md`, `site/docs/zh-CN/{community/index,releases/pr-preview-packages}.md`, `site/.vitepress/config.mts`, `https://github.com/stackblitz-labs/pkg.pr.new`, `https://blog.stackblitz.com/posts/cloudflare-backing-pkg-pr-new-data-infrastructure/`
+- pages updated: `wiki/workflows/pr-preview-packages.md`, `wiki/index.md`, `wiki/log.md`
+- note: The `pkg.pr.new` label enables public workspace previews, including stacked PRs; new commits and reopened PRs publish while labeled. The utoo build and shared release helpers feed `pkg-pr-new@latest`, preserve internal preview links, and restore manifests afterward. Publication uses read-only workflow permissions and the pkg.pr.new GitHub App. English and Chinese `/releases/` guides cover installation, rollback, and upstream retention: more than one month without downloads or more than six months old. The version menu, Community landing pages, and contribution guides link to them; only the version menu is active.
