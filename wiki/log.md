@@ -456,3 +456,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `plugins/mock/src/lib/mock_agent.ts`, `plugins/mock/test/mock-agent.test.ts`, `tools/scripts/src/commands/start.ts`, `tools/scripts/test/start-unit.test.ts`, `pnpm-workspace.yaml`, `ecosystem-ci/patch-project.ts`
 - pages updated: `wiki/concepts/vitest-isolate-false-state-leaks.md`, `wiki/workflows/local-ci.md`, `wiki/log.md`
 - note: HTTP mocks now preserve default clients' global dispatcher behavior and restore each session's original dispatcher. Custom clients can join an existing mock session. The daemon launcher closes its log handles after spawning the child, including on startup errors. The catalog uses tsx 4.23.15 for Node.js 26 loader compatibility. Ecosystem applications receive the catalog's Vitest packages alongside workspace tarballs, so an external Vitest 4 dependency cannot conflict with the local Vitest 5 CLI.
+
+## [2026-09-23] test | use cnpmcore's upstream Vitest 5 migration
+
+- sources touched: `ecosystem-ci/repo.json`, `ecosystem-ci/patch-project.ts`, `https://github.com/cnpm/cnpmcore/commit/9dbac59b086a94765a24a072ab8c22603fc58807`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: Both cnpmcore jobs now pin upstream commit 9dbac59b, which declares Vitest 5.0.1 and its matching coverage provider. The temporary ecosystem Vitest overrides are removed; workspace tarball substitution remains unchanged.

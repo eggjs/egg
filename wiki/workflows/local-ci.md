@@ -6,6 +6,7 @@ source_files:
   - AGENTS.md
   - .github/workflows/ci.yml
   - ecosystem-ci/patch-project.ts
+  - ecosystem-ci/repo.json
   - pnpm-workspace.yaml
   - codecov.yml
   - package.json
@@ -31,10 +32,10 @@ matrix runs Node.js 22, 24, and 26 on Linux. The tegg Vitest adapter runs both
 isolated and shared workers on Node.js 24 and 26 on Linux. Coverage reports
 come from the Linux Node.js 24 jobs.
 
-Ecosystem CI patches external applications with workspace tarballs and the
-catalog versions of `vitest`, `@vitest/coverage-v8`, and `@vitest/ui`. This keeps
-their test runner compatible with the local CLI and tegg adapter, which require
-Vitest 5.
+Ecosystem CI patches external applications with workspace tarballs. Both cnpmcore
+jobs use the upstream commit pinned in `ecosystem-ci/repo.json`, which declares
+Vitest 5.0.1 and its matching coverage provider. This keeps their test runner
+compatible with the local CLI and tegg adapter without extra Vitest overrides.
 
 Node.js 26 treats garbage collection of an unclosed `FileHandle` as an error.
 The scripts daemon launcher keeps both log handles until `spawn()` returns and
