@@ -462,3 +462,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `ecosystem-ci/repo.json`, `ecosystem-ci/patch-project.ts`, `https://github.com/cnpm/cnpmcore/commit/9dbac59b086a94765a24a072ab8c22603fc58807`
 - pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
 - note: Both cnpmcore jobs now pin upstream commit 9dbac59b, which declares Vitest 5.0.1 and its matching coverage provider. The temporary ecosystem Vitest overrides are removed; workspace tarball substitution remains unchanged.
+
+## [2026-09-23] compatibility | preserve HTTP interceptors on Node.js 26
+
+- sources touched: `packages/egg/src/lib/core/httpclient.ts`, `packages/egg/test/lib/core/httpclient_interceptor.test.ts`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: Configured HTTP interceptors now remove Undici 7's top-level dispatcher routing option before calling the original instance dispatcher. This preserves header injection with Node.js 26's built-in dispatcher, which rejects that option on instance methods.

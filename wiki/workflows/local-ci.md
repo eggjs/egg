@@ -13,6 +13,7 @@ source_files:
   - tools/egg-bin/package.json
   - tools/egg-bin/tsconfig.json
   - tools/scripts/src/commands/start.ts
+  - packages/egg/src/lib/core/httpclient.ts
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/core/metadata/src/model/graph/GlobalGraph.ts
   - tegg/plugin/controller/test/fixtures/apps
@@ -41,6 +42,10 @@ Node.js 26 treats garbage collection of an unclosed `FileHandle` as an error.
 The scripts daemon launcher keeps both log handles until `spawn()` returns and
 then closes the parent's handles, including on startup errors. The child keeps
 its inherited descriptors.
+
+The HTTP client removes Undici 7's `dispatcher` routing option before a configured
+interceptor chain reaches the original dispatcher. Node.js 26 rejects that option
+on instance dispatch calls.
 
 ## Coverage checks
 
