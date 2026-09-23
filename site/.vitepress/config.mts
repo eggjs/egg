@@ -149,7 +149,6 @@ function nav(): DefaultTheme.NavItem[] {
       activeMatch: '/community/',
       items: [
         { text: 'Community', link: '/community/' },
-        { text: 'PR Preview Packages', link: '/community/pr-preview-packages' },
         {
           text: 'Contributing',
           link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.md',
@@ -163,6 +162,7 @@ function nav(): DefaultTheme.NavItem[] {
     {
       text: `v${version}`,
       items: [
+        { text: 'PR Preview Packages', link: '/community/pr-preview-packages' },
         {
           text: 'v3.x',
           link: 'https://v3.eggjs.org',
@@ -209,7 +209,6 @@ function navZhCN(): DefaultTheme.NavItem[] {
       activeMatch: '/zh-CN/community/',
       items: [
         { text: '社区', link: '/zh-CN/community/' },
-        { text: 'PR 预览包', link: '/zh-CN/community/pr-preview-packages' },
         {
           text: '参与贡献',
           link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.zh-CN.md',
@@ -223,6 +222,7 @@ function navZhCN(): DefaultTheme.NavItem[] {
     {
       text: `v${version}`,
       items: [
+        { text: 'PR 预览包', link: '/zh-CN/community/pr-preview-packages' },
         {
           text: 'v3.x',
           link: 'https://v3.eggjs.org',
