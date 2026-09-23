@@ -1,5 +1,5 @@
 import { spawn, type SpawnOptions, type ChildProcess, execFile as _execFile } from 'node:child_process';
-import { mkdir, rename, stat, open } from 'node:fs/promises';
+import { mkdir, rename, stat, open, type FileHandle } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
@@ -444,20 +444,27 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     // whether run in the background.
     if (flags.daemon) {
       this.log(`Save log file to ${logDir}`);
-      const [stdout, stderr] = await Promise.all([getRotateLog(flags.stdout!), getRotateLog(flags.stderr!)]);
-      options.stdio = ['ignore', stdout, stderr, 'ipc'];
-      options.detached = true;
-      const child = (this.#child = spawn(command, eggArgs, options));
-      this.isReady = false;
-      child.on('message', (msg: any) => {
-        // https://github.com/eggjs/cluster/blob/master/src/master.ts#L119
-        if (msg && msg.action === 'egg-ready') {
-          this.isReady = true;
-          this.log('%s started on %s', displayName, msg.data.address);
-          child.unref();
-          child.disconnect();
-        }
-      });
+      const stdout = await getRotateLog(flags.stdout!);
+      let stderr: FileHandle | undefined;
+      try {
+        stderr = await getRotateLog(flags.stderr!);
+        options.stdio = ['ignore', stdout.fd, stderr.fd, 'ipc'];
+        options.detached = true;
+        const child = (this.#child = spawn(command, eggArgs, options));
+        this.isReady = false;
+        child.on('message', (msg: any) => {
+          // https://github.com/eggjs/cluster/blob/master/src/master.ts#L119
+          if (msg && msg.action === 'egg-ready') {
+            this.isReady = true;
+            this.log('%s started on %s', displayName, msg.data.address);
+            child.unref();
+            child.disconnect();
+          }
+        });
+      } finally {
+        // The child owns copies of these descriptors after spawn.
+        await Promise.all([stdout.close(), stderr?.close()]);
+      }
 
       // check start status
       await this.checkStatus();
@@ -570,5 +577,5 @@ async function getRotateLog(logFile: string) {
     await rename(logFile, logFile + timestamp);
   }
 
-  return (await open(logFile, 'a')).fd;
+  return await open(logFile, 'a');
 }

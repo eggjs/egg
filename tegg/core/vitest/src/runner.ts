@@ -1,4 +1,4 @@
-import type { RunnerTestSuite as Suite, RunnerTask as Task, RunnerTestFile as File } from 'vitest';
+import type { RunnerTestSuite as Suite, RunnerTask as Task, RunnerTestFile as File, TestTryOptions } from 'vitest';
 import { TestRunner } from 'vitest';
 
 import { debugLog, defaultGetApp, restoreEggMocksIfNeeded } from './shared.ts';
@@ -96,11 +96,11 @@ export default class TeggVitestRunner extends TestRunner {
     }
   }
 
-  override onAfterRunFiles(...args: Parameters<TestRunner['onAfterRunFiles']>): void {
+  override onAfterRunFiles(files: File[]): void {
     // NOTE: vitest calls onAfterRunFiles() after each batch of files, not once
     // after all files globally. In shared mode (isolate: false), we must NOT
     // close the app here — the worker thread termination handles cleanup.
-    super.onAfterRunFiles(...args);
+    super.onAfterRunFiles(files);
   }
 
   /**
@@ -205,8 +205,7 @@ export default class TeggVitestRunner extends TestRunner {
     await super.onAfterRunSuite(suite);
   }
 
-  async onBeforeTryTask(...args: Parameters<TestRunner['onBeforeTryTask']>): Promise<void> {
-    const [test] = args;
+  async onBeforeTryTask(test: Task, options: TestTryOptions): Promise<void> {
     const filepath = getTaskFilepath(test);
     if (filepath) {
       const fileState = this.fileScopeMap.get(filepath);
@@ -237,7 +236,7 @@ export default class TeggVitestRunner extends TestRunner {
       }
     }
 
-    super.onBeforeTryTask(...args);
+    super.onBeforeTryTask(test, options);
   }
 
   async onAfterRunTask(test: Task): Promise<void> {

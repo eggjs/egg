@@ -438,3 +438,39 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `.github/workflows/ci.yml`, `tegg/core/vitest/test/runner-multi-app.test.ts`, `tegg/plugin/orm/test/index.test.ts`
 - pages updated: `wiki/packages/tegg-vitest.md`, `wiki/log.md`
 - note: Dedicated CI jobs now typecheck and test the adapter with the minimum supported Vitest 4.1.0 and the latest Vitest 5, using isolated and shared workers. A concurrent-app regression checks retry contexts, service identity, lifecycle argument forwarding, and scope cleanup. The ORM test logger now skips an undefined optional Model.
+
+## [2026-09-23] compatibility | require Vitest 5
+
+- sources touched: `pnpm-workspace.yaml`, `vitest.config.ts`, `plugins/mock/package.json`, `tegg/core/vitest/{package.json,src/runner.ts,test/runner-multi-app.test.ts}`, `tools/create-egg/src/templates/{simple-ts,tegg}/package.json`, `tools/egg-bin/src/commands/{test,cov}.ts`, `tools/egg-bin/test/commands/{test,cov}.test.ts`, `.github/workflows/ci.yml`
+- pages updated: `wiki/index.md`, `wiki/packages/tegg-vitest.md`, `wiki/workflows/ci-parallel-test-metrics.md`, `wiki/log.md`
+- note: The catalog and application templates now use Vitest 5.0.1 or later in the same major. The mock and tegg adapter peers no longer accept Vitest 4. The adapter CI job uses the catalog and retains both isolated and shared worker tests. Suites that used the removed `describe.sequential` API now use `concurrent: false`. The root config uses the stable `test.fsModuleCache` option. The CLI uses the current startup API and relative coverage exclusions; its JSON reporter now writes `.vitest/json/output.json`. Verified that the Vitest 5 JSON reporter still derives file intervals from test timings, so the parallelism caveat remains applicable.
+
+## [2026-09-23] test | add Node.js 26 to CI
+
+- sources touched: `.github/workflows/ci.yml`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/packages/tegg-vitest.md`, `wiki/log.md`
+- note: Node.js 26 now runs the main suite on Linux, macOS, and Windows, the egg-bin suite on Linux and Windows, and the egg-scripts and tegg adapter suites on Linux. The adapter matrix includes both isolated and shared workers, with separate concurrency groups for each Node.js version. Coverage reports remain on the Linux Node.js 24 jobs.
+
+## [2026-09-23] compatibility | fix Node.js 26 and ecosystem test failures
+
+- sources touched: `plugins/mock/src/lib/mock_agent.ts`, `plugins/mock/test/mock-agent.test.ts`, `tools/scripts/src/commands/start.ts`, `tools/scripts/test/start-unit.test.ts`, `pnpm-workspace.yaml`, `ecosystem-ci/patch-project.ts`
+- pages updated: `wiki/concepts/vitest-isolate-false-state-leaks.md`, `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: HTTP mocks now preserve default clients' global dispatcher behavior and restore each session's original dispatcher. Custom clients can join an existing mock session. The daemon launcher closes its log handles after spawning the child, including on startup errors. The catalog uses tsx 4.23.15 for Node.js 26 loader compatibility. Ecosystem applications receive the catalog's Vitest packages alongside workspace tarballs, so an external Vitest 4 dependency cannot conflict with the local Vitest 5 CLI.
+
+## [2026-09-23] test | use cnpmcore's upstream Vitest 5 migration
+
+- sources touched: `ecosystem-ci/repo.json`, `ecosystem-ci/patch-project.ts`, `https://github.com/cnpm/cnpmcore/commit/9dbac59b086a94765a24a072ab8c22603fc58807`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: Both cnpmcore jobs now pin upstream commit 9dbac59b, which declares Vitest 5.0.1 and its matching coverage provider. The temporary ecosystem Vitest overrides are removed; workspace tarball substitution remains unchanged.
+
+## [2026-09-23] compatibility | preserve HTTP interceptors on Node.js 26
+
+- sources touched: `packages/egg/src/lib/core/httpclient.ts`, `packages/egg/test/lib/core/httpclient_interceptor.test.ts`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: Configured HTTP interceptors now remove Undici 7's top-level dispatcher routing option before calling the original instance dispatcher. This preserves header injection with Node.js 26's built-in dispatcher, which rejects that option on instance methods.
+
+## [2026-09-23] test | accept cnpmcore startup warnings in the deployment smoke test
+
+- sources touched: `.github/workflows/e2e-test.yml`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: cnpmcore's updated WebAuthn dependency emits experimental Web Crypto warnings on Node.js 24. Its daemon smoke test now permits startup stderr and continues to gate success on the existing HTTP health check.

@@ -10,7 +10,7 @@ source_files:
   - scripts/ci-test-benchmark/report.js
   - scripts/ci-test-benchmark/cli.js
   - benchmark/ci-test/README.md
-updated_at: 2026-06-27
+updated_at: 2026-09-23
 status: active
 ---
 
@@ -55,7 +55,7 @@ from each file's Vitest interval (`startTime`/`endTime`):
   `vitest.config.ts`: Windows CI caps workers, otherwise `os.availableParallelism()`).
 - **Critical path** = longest single-file span (wall-clock floor).
 
-**Honesty caveat (verified against Vitest 4 source):** the JSON reporter derives a
+**Honesty caveat (verified against Vitest 5 source):** the JSON reporter derives a
 file's `startTime`/`endTime` from **test-level timings only** (`min test start ..
 max test end`). So the span covers test bodies + per-test `beforeEach`/`afterEach`
 but **excludes suite-level `beforeAll`/`afterAll` (where egg boots its apps — the

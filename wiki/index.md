@@ -29,7 +29,7 @@ Read this file before exploring raw sources.
 - [Loader FS Package](./packages/loader-fs.md) - Shared loader-facing filesystem boundary for Egg loaders and future bundled runtimes.
 - [Onerror Plugin](./packages/onerror.md) - Default Egg error-handling plugin and configurable response negotiation layer.
 - [Standalone Service Worker](./packages/service-worker.md) - Fetch-semantics standalone runtime serving HTTP controllers and MCP tools from a tegg module without an egg application.
-- [Tegg Vitest Adapter](./packages/tegg-vitest.md) - Vitest 4.1 and 5 compatibility, request context injection, and module scope cleanup across retries.
+- [Tegg Vitest Adapter](./packages/tegg-vitest.md) - Vitest 5 requirements, request context injection, and module scope cleanup across retries.
 - [Typings Package](./packages/typings.md) - Shared TypeScript type surface for cross-package Egg typings.
 - [Utils Package](./packages/utils.md) - Shared utility package for module loading and bundled module-loader integration.
 

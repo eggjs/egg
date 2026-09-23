@@ -1,9 +1,10 @@
 ---
 title: Tegg Vitest Adapter
 type: package
-summary: Custom Vitest runner for Egg request contexts and tegg module scopes, compatible with Vitest 4.1 and 5.
+summary: Vitest 5 runner for Egg request contexts and tegg module scopes.
 source_files:
   - .github/workflows/ci.yml
+  - pnpm-workspace.yaml
   - tegg/core/vitest/package.json
   - tegg/core/vitest/src/runner.ts
   - tegg/core/vitest/src/index.ts
@@ -12,26 +13,36 @@ source_files:
   - tegg/core/vitest/test/runner-multi-app.test.ts
   - plugins/mock/package.json
   - tools/egg-bin/src/commands/test.ts
-  - https://vitest.dev/guide/migration/#removed-deprecated-entrypoints
-updated_at: 2026-09-19
+  - tools/egg-bin/src/commands/cov.ts
+  - tools/egg-bin/test/commands/test.test.ts
+  - tools/egg-bin/test/commands/cov.test.ts
+  - tools/create-egg/src/templates/simple-ts/package.json
+  - tools/create-egg/src/templates/tegg/package.json
+updated_at: 2026-09-23
 status: active
 ---
 
 ## Compatibility
 
-`@eggjs/tegg-vitest` supports `vitest@^4.1.0 || ^5.0.0`. The runner extends
-`TestRunner` from `vitest`; the old `vitest/runners` entry point was removed
-in Vitest 5. `@eggjs/mock` also accepts Vitest 5 as its optional peer dependency.
+`@eggjs/tegg-vitest` requires `vitest@^5.0.1`. The runner extends `TestRunner`
+from `vitest`. `@eggjs/mock` has the same range for its optional Vitest peer.
+Vitest 4 is no longer supported.
 
-Lifecycle overrides derive their argument tuples from the base runner and
-forward all arguments. This accommodates the file list passed to
-`onAfterRunFiles` and the retry options passed to `onBeforeTryTask` in Vitest 5.
-The monorepo's default Vitest catalog remains on version 4.
+Lifecycle overrides use Vitest 5 argument types and
+forward all arguments, including the file list passed to `onAfterRunFiles`
+and the retry options passed to `onBeforeTryTask`.
+The monorepo catalog uses `^5.0.1` for Vitest, its V8 coverage provider, and its
+UI. The TypeScript and tegg application templates also use Vitest `^5.0.1`.
 
-The `test-tegg-vitest` CI job installs Vitest `4.1.0` and `^5.0.0` in separate
-matrix jobs. Each job selects matching `@vitest/coverage-v8` and `@vitest/ui`
-versions, typechecks the adapter, and runs its tests with isolated workers and
-with one shared thread worker (`--pool threads --no-isolate --maxWorkers 1`).
+The `test-tegg-vitest` CI job installs the catalog versions on Node.js 24 and
+26, typechecks the adapter, and runs its tests with isolated workers and with
+one shared thread worker (`--pool threads --no-isolate --maxWorkers 1`).
+
+`egg-bin` uses the Vitest 5 `startVitest` API with `config: false` to prevent
+parent config discovery. Coverage exclusions are relative to the application
+root; absolute user patterns are converted to relative patterns before Vitest
+matches them. `TEST_REPORTER=json` uses Vitest 5's default output file,
+`.vitest/json/output.json` under the application root.
 
 ## Context lifecycle
 
