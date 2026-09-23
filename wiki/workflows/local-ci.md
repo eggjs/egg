@@ -5,10 +5,13 @@ summary: Local validation should run tests from clean sources and avoid stale bu
 source_files:
   - AGENTS.md
   - .github/workflows/ci.yml
+  - ecosystem-ci/patch-project.ts
+  - pnpm-workspace.yaml
   - codecov.yml
   - package.json
   - tools/egg-bin/package.json
   - tools/egg-bin/tsconfig.json
+  - tools/scripts/src/commands/start.ts
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/core/metadata/src/model/graph/GlobalGraph.ts
   - tegg/plugin/controller/test/fixtures/apps
@@ -27,6 +30,16 @@ The egg-bin matrix runs Node.js 24 and 26 on Linux and Windows. The egg-scripts
 matrix runs Node.js 22, 24, and 26 on Linux. The tegg Vitest adapter runs both
 isolated and shared workers on Node.js 24 and 26 on Linux. Coverage reports
 come from the Linux Node.js 24 jobs.
+
+Ecosystem CI patches external applications with workspace tarballs and the
+catalog versions of `vitest`, `@vitest/coverage-v8`, and `@vitest/ui`. This keeps
+their test runner compatible with the local CLI and tegg adapter, which require
+Vitest 5.
+
+Node.js 26 treats garbage collection of an unclosed `FileHandle` as an error.
+The scripts daemon launcher keeps both log handles until `spawn()` returns and
+then closes the parent's handles, including on startup errors. The child keeps
+its inherited descriptors.
 
 ## Coverage checks
 

@@ -450,3 +450,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `.github/workflows/ci.yml`
 - pages updated: `wiki/workflows/local-ci.md`, `wiki/packages/tegg-vitest.md`, `wiki/log.md`
 - note: Node.js 26 now runs the main suite on Linux, macOS, and Windows, the egg-bin suite on Linux and Windows, and the egg-scripts and tegg adapter suites on Linux. The adapter matrix includes both isolated and shared workers, with separate concurrency groups for each Node.js version. Coverage reports remain on the Linux Node.js 24 jobs.
+
+## [2026-09-23] compatibility | fix Node.js 26 and ecosystem test failures
+
+- sources touched: `plugins/mock/src/lib/mock_agent.ts`, `plugins/mock/test/mock-agent.test.ts`, `tools/scripts/src/commands/start.ts`, `tools/scripts/test/start-unit.test.ts`, `pnpm-workspace.yaml`, `ecosystem-ci/patch-project.ts`
+- pages updated: `wiki/concepts/vitest-isolate-false-state-leaks.md`, `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: HTTP mocks now preserve default clients' global dispatcher behavior and restore each session's original dispatcher. Custom clients can join an existing mock session. The daemon launcher closes its log handles after spawning the child, including on startup errors. The catalog uses tsx 4.23.15 for Node.js 26 loader compatibility. Ecosystem applications receive the catalog's Vitest packages alongside workspace tarballs, so an external Vitest 4 dependency cannot conflict with the local Vitest 5 CLI.

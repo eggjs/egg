@@ -22,6 +22,7 @@ if (!projects.includes(project)) {
 // Read pnpm-workspace.yaml to get workspace patterns
 const workspaceConfig = yaml.load(fs.readFileSync(join(rootDir, 'pnpm-workspace.yaml'), 'utf8')) as {
   packages: string[];
+  catalog: Record<string, string>;
 };
 
 // Use glob to find all package directories dynamically
@@ -54,7 +55,12 @@ async function discoverPackages(): Promise<[string, string][]> {
 
 async function buildOverrides(): Promise<Record<string, string>> {
   const packages = await discoverPackages();
-  const overrides: Record<string, string> = {};
+  // External projects must use the same Vitest major as the local test tools.
+  const overrides: Record<string, string> = {
+    vitest: workspaceConfig.catalog.vitest,
+    '@vitest/coverage-v8': workspaceConfig.catalog['@vitest/coverage-v8'],
+    '@vitest/ui': workspaceConfig.catalog['@vitest/ui'],
+  };
 
   for (const [name, path] of packages) {
     const version = JSON.parse(fs.readFileSync(join(tgzPath, path, 'package.json'), 'utf8')).version;
@@ -67,7 +73,7 @@ async function buildOverrides(): Promise<Record<string, string>> {
 
 async function patchPackageJSON(filePath: string, overrides: Record<string, string>): Promise<void> {
   const packageJson = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  // Add overrides with tgz files
+  // Apply workspace tarballs and matching test dependencies.
   packageJson.overrides = {
     ...packageJson.overrides,
     ...overrides,

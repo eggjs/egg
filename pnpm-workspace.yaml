@@ -205,7 +205,7 @@ catalog:
   ts-node: ^10.9.2
   tsconfig-paths: ^4.2.0
   tsdown: ^0.18.2
-  tsx: 4.20.6
+  tsx: 4.23.15
   type-fest: ^5.0.1
   type-is: ^2.0.0
   typebox: ^1.0.65
