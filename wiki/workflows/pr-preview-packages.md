@@ -39,15 +39,12 @@ Each run checks out the PR head commit. A newer publishing job cancels an older 
 
 ## Consumer instructions
 
-The documentation site explains how to install previews with npm or pnpm, choose a PR-number or commit-SHA URL,
-keep related direct dependencies on the same preview, update lockfiles, and restore regular dependencies:
-
-- [English instructions](../../site/docs/releases/pr-preview-packages.md)
-- [Chinese instructions](../../site/docs/zh-CN/releases/pr-preview-packages.md)
+The [English](../../site/docs/releases/pr-preview-packages.md) and [Chinese](../../site/docs/zh-CN/releases/pr-preview-packages.md)
+guides cover installation, PR and commit URLs, related dependencies, lockfiles, expiry, and restoring regular dependencies.
 
 Both guides appear in the version navigation menu and the Community landing page.
 Their `/releases/` and `/zh-CN/releases/` routes activate the version menu without activating Community navigation or its sidebar.
-The root contribution guides link to these pages and retain the maintainer publishing instructions.
+The contribution guides link to them and describe how maintainers publish previews.
 
 The bot comment uses PR-number URLs by default. The `Publish previews` logs include commit-SHA URLs.
 The current script keeps the source package versions, so consumers must use the URL and SHA to identify a preview.
@@ -64,20 +61,20 @@ when the referenced preview expires.
 
 ## Package contents
 
-The workflow builds with Node.js 24 and utoo. It discovers public packages through the same helper as regular releases.
-These packages are under `packages/*`, `plugins/*`, `tools/*`, `tegg/core/*`, `tegg/plugin/*`, and `tegg/standalone/*`.
-Private packages, including the examples and documentation site, are excluded.
+After the Node.js 24 and utoo build, `scripts/publish-preview.js`:
 
-`pkg-pr-new` receives package directories, so it replaces internal dependency references with preview URLs.
-`scripts/publish-preview.js` resolves `workspace:` and `catalog:` protocols and applies `publishConfig`, including compiled exports,
-with the existing release helpers. It restores the original manifests after the CLI exits, including on failure.
-Prebuilt tarballs are unsuitable here: the CLI uploads them without replacing internal dependency references.
+1. Discovers public packages with the regular release helper. Private examples, the documentation site, and other private packages are excluded.
+2. Resolves `workspace:` and `catalog:` dependencies and applies `publishConfig`, including compiled exports, with the shared release helpers.
+3. Passes package directories to `pkg-pr-new@latest` so internal dependencies use matching preview URLs.
 
-The script uses `pkg-pr-new@latest` to follow the latest CLI release and uses its default npm packer.
-`pnpm pack` requires package-local workspace links that utoo's hoisted installation does not provide.
-`--no-compact` uses repository-qualified URLs, including for packages without matching npm repository metadata.
-`--no-template` omits browser templates for these server packages. The app updates one PR comment with installation links.
-Preview packages are hosted on `pkg.pr.new`; this workflow does not publish versions to the npm registry.
+The public packages are under `packages/*`, `plugins/*`, `tools/*`, `tegg/core/*`, `tegg/plugin/*`, and `tegg/standalone/*`.
+Original manifests are restored on success or failure.
+
+The CLI uses npm pack. `pnpm pack` needs package-local workspace links absent from utoo's hoisted installation;
+prebuilt tarballs would skip preview dependency rewriting.
+`--no-compact` provides repository-qualified URLs without relying on npm repository metadata.
+`--no-template` omits browser templates. The app updates one PR comment with installation links.
+Packages are hosted on `pkg.pr.new`; no versions are published to npm.
 
 ## Workflow permissions
 

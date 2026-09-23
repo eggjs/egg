@@ -13,32 +13,31 @@ import {
 } from './utils.js';
 
 const baseDir = path.join(import.meta.dirname, '..');
-const packages = getPublishablePackages(baseDir);
+const packageDirs = getPublishablePackages(baseDir).map(function ({ directory, folder }) {
+  return path.join(baseDir, directory, folder);
+});
 const versionMap = getWorkspaceVersionMap(baseDir);
 const catalogs = getCatalogs(baseDir);
-const packageDirs = packages.map((pkg) => path.join(baseDir, pkg.directory, pkg.folder));
-const originals = new Map();
+const originalManifests = new Map();
 
 try {
-  // Use the same manifest conversion as npm releases. pnpm pack expects a
-  // pnpm installation layout when resolving workspace peers; utoo hoists them.
+  // npm pack needs concrete dependency ranges and published exports.
   for (const packageDir of packageDirs) {
     const manifestPath = path.join(packageDir, 'package.json');
-    const original = fs.readFileSync(manifestPath, 'utf8');
-    originals.set(manifestPath, original);
-    const resolved = resolveWorkspaceProtocols(JSON.parse(original), { versionMap, catalogs });
-    const manifest = applyPublishConfigOverrides(resolved);
+    const originalManifest = fs.readFileSync(manifestPath, 'utf8');
+    originalManifests.set(manifestPath, originalManifest);
+    const resolvedManifest = resolveWorkspaceProtocols(JSON.parse(originalManifest), { versionMap, catalogs });
+    const manifest = applyPublishConfigOverrides(resolvedManifest);
     fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
   }
 
-  // Directory inputs let pkg.pr.new replace internal dependencies with preview
-  // URLs. Prebuilt tarballs would retain references to npm releases.
+  // Pass directories so pkg.pr.new rewrites internal dependencies to preview URLs.
   execFileSync('npx', ['--yes', 'pkg-pr-new@latest', 'publish', '--no-compact', '--no-template', ...packageDirs], {
     cwd: baseDir,
     stdio: 'inherit',
   });
 } finally {
-  for (const [manifestPath, original] of originals) {
-    fs.writeFileSync(manifestPath, original);
+  for (const [manifestPath, originalManifest] of originalManifests) {
+    fs.writeFileSync(manifestPath, originalManifest);
   }
 }
