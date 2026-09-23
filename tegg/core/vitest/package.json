@@ -35,14 +35,14 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./runner": "./dist/runner.js",
       "./setup": "./dist/setup.js",
       "./shared": "./dist/shared.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

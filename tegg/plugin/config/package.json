@@ -37,7 +37,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./agent": "./dist/agent.js",
@@ -47,7 +46,8 @@
       "./lib/ModuleScanner": "./dist/lib/ModuleScanner.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

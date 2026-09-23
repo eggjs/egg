@@ -33,14 +33,14 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./agent_worker": "./dist/agent_worker.js",
       "./app_worker": "./dist/app_worker.js",
       "./worker_protocol": "./dist/worker_protocol.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "lint": "oxlint",

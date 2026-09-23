@@ -44,7 +44,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
@@ -60,7 +59,8 @@
       "./lib/types": "./dist/lib/types.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit --project tsconfig.typecheck.json",

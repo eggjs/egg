@@ -40,7 +40,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./baseCommand": "./dist/baseCommand.js",
@@ -54,7 +53,8 @@
       "./types": "./dist/types.js",
       "./utils": "./dist/utils.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown -c tsdown.config.ts",
