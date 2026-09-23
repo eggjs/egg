@@ -2,7 +2,7 @@
 
 ## Test a Pull Request
 
-Use [PR preview packages](./pr-preview-packages.md) to try a fix or feature before its npm release.
+Use [PR preview packages](../releases/pr-preview-packages.md) to try a fix or feature before its npm release.
 
 ## Resources
 

@@ -209,7 +209,7 @@ egg 基于 [semver] 语义化版本号进行发布。
 
 #### 在应用中使用预览包
 
-请阅读 [PR 预览包使用指南](site/docs/zh-CN/community/pr-preview-packages.md)，了解 npm、pnpm 安装示例、
+请阅读 [PR 预览包使用指南](site/docs/zh-CN/releases/pr-preview-packages.md)，了解 npm、pnpm 安装示例、
 PR 编号与 commit SHA URL 的选择、锁文件更新和恢复常规依赖的方法。
 
 ### 分支策略

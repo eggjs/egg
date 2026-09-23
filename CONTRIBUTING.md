@@ -207,7 +207,7 @@ See the [preview publishing workflow](wiki/workflows/pr-preview-packages.md) for
 
 #### Use a Preview in an Application
 
-See [PR Preview Packages](site/docs/community/pr-preview-packages.md) for npm and pnpm installation examples,
+See [PR Preview Packages](site/docs/releases/pr-preview-packages.md) for npm and pnpm installation examples,
 PR-number and commit-SHA URLs, lockfile updates, and instructions for restoring regular dependencies.
 
 ### Branch Strategy

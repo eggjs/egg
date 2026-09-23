@@ -2,7 +2,7 @@
 
 ## 测试 Pull Request
 
-使用 [PR 预览包](./pr-preview-packages.md)，在 npm 正式发布前测试修复或新功能。
+使用 [PR 预览包](../releases/pr-preview-packages.md)，在 npm 正式发布前测试修复或新功能。
 
 ## 交流群
 
