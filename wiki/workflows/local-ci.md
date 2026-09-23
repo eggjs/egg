@@ -5,6 +5,7 @@ summary: Local validation should run tests from clean sources and avoid stale bu
 source_files:
   - AGENTS.md
   - .github/workflows/ci.yml
+  - .github/workflows/e2e-test.yml
   - ecosystem-ci/patch-project.ts
   - ecosystem-ci/repo.json
   - pnpm-workspace.yaml
@@ -37,6 +38,9 @@ Ecosystem CI patches external applications with workspace tarballs. Both cnpmcor
 jobs use the upstream commit pinned in `ecosystem-ci/repo.json`, which declares
 Vitest 5.0.1 and its matching coverage provider. This keeps their test runner
 compatible with the local CLI and tegg adapter without extra Vitest overrides.
+The cnpmcore deployment smoke test uses `--ignore-stderr` because its WebAuthn
+dependency emits experimental Web Crypto warnings on Node.js 24. The subsequent
+HTTP health check still requires a successful response before the job passes.
 
 Node.js 26 treats garbage collection of an unclosed `FileHandle` as an error.
 The scripts daemon launcher keeps both log handles until `spawn()` returns and

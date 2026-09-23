@@ -468,3 +468,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `packages/egg/src/lib/core/httpclient.ts`, `packages/egg/test/lib/core/httpclient_interceptor.test.ts`
 - pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
 - note: Configured HTTP interceptors now remove Undici 7's top-level dispatcher routing option before calling the original instance dispatcher. This preserves header injection with Node.js 26's built-in dispatcher, which rejects that option on instance methods.
+
+## [2026-09-23] test | accept cnpmcore startup warnings in the deployment smoke test
+
+- sources touched: `.github/workflows/e2e-test.yml`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: cnpmcore's updated WebAuthn dependency emits experimental Web Crypto warnings on Node.js 24. Its daemon smoke test now permits startup stderr and continues to gate success on the existing HTTP health check.
