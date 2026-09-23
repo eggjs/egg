@@ -10,7 +10,7 @@ import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest
 
 import { createApp, cluster, getFilepath, type MockApplication } from './utils.ts';
 
-describe.sequential('test/egg.test.ts', () => {
+describe('test/egg.test.ts', { concurrent: false }, () => {
   afterEach(mm.restore);
 
   describe.skip('dumpConfig()', () => {

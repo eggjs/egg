@@ -74,11 +74,12 @@ it('isolates concurrent application scopes across retries', { timeout: 30_000 },
           const services: HelloService[] = [];
           try {
             for (const retryCount of [0, 1]) {
-              const options = { retryCount, repeatCount: 0 };
-              // Vitest 5 adds the retry options argument; Vitest 4 ignores it.
-              const args = [task, options] as unknown as Parameters<TestRunner['onBeforeTryTask']>;
-              await runner.onBeforeTryTask(...args);
-              assert.deepEqual(beforeTryTask.mock.calls.filter(([candidate]) => candidate === task).at(-1), args);
+              const options = { retry: retryCount, repeats: 0 };
+              await runner.onBeforeTryTask(task, options);
+              assert.deepEqual(beforeTryTask.mock.calls.filter(([candidate]) => candidate === task).at(-1), [
+                task,
+                options,
+              ]);
               const ctx = app.ctxStorage.getStore()!;
               contexts.push(ctx);
               services.push(await ctx.getEggObject(HelloService));

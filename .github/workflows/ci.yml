@@ -416,15 +416,11 @@ jobs:
           use_oidc: true
 
   test-tegg-vitest:
-    name: Test tegg-vitest (Vitest ${{ matrix.vitest }})
+    name: Test tegg-vitest
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        vitest: ['4.1.0', '^5.0.0']
 
     concurrency:
-      group: test-tegg-vitest-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.vitest }}
+      group: test-tegg-vitest-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
       cancel-in-progress: true
 
     steps:
@@ -439,20 +435,8 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Install selected Vitest version
-        env:
-          VITEST_VERSION: ${{ matrix.vitest }}
-        run: |
-          node --input-type=module <<'NODE'
-          import fs from 'node:fs';
-          const file = 'pnpm-workspace.yaml';
-          const workspace = fs.readFileSync(file, 'utf8').replace(
-            /^(  (?:vitest|'@vitest\/(?:coverage-v8|ui)')):.*$/gm,
-            `$1: ${JSON.stringify(process.env.VITEST_VERSION)}`,
-          );
-          fs.writeFileSync(file, workspace);
-          NODE
-          ut install --from pnpm
+      - name: Install dependencies
+        run: ut install --from pnpm
 
       - name: Typecheck adapter
         run: ut run typecheck --workspace @eggjs/tegg-vitest

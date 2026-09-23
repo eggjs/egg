@@ -438,3 +438,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `.github/workflows/ci.yml`, `tegg/core/vitest/test/runner-multi-app.test.ts`, `tegg/plugin/orm/test/index.test.ts`
 - pages updated: `wiki/packages/tegg-vitest.md`, `wiki/log.md`
 - note: Dedicated CI jobs now typecheck and test the adapter with the minimum supported Vitest 4.1.0 and the latest Vitest 5, using isolated and shared workers. A concurrent-app regression checks retry contexts, service identity, lifecycle argument forwarding, and scope cleanup. The ORM test logger now skips an undefined optional Model.
+
+## [2026-09-23] compatibility | require Vitest 5
+
+- sources touched: `pnpm-workspace.yaml`, `vitest.config.ts`, `plugins/mock/package.json`, `tegg/core/vitest/{package.json,src/runner.ts,test/runner-multi-app.test.ts}`, `tools/create-egg/src/templates/{simple-ts,tegg}/package.json`, `tools/egg-bin/src/commands/{test,cov}.ts`, `tools/egg-bin/test/commands/{test,cov}.test.ts`, `.github/workflows/ci.yml`
+- pages updated: `wiki/index.md`, `wiki/packages/tegg-vitest.md`, `wiki/workflows/ci-parallel-test-metrics.md`, `wiki/log.md`
+- note: The catalog and application templates now use Vitest 5.0.1 or later in the same major. The mock and tegg adapter peers no longer accept Vitest 4. The adapter CI job uses the catalog and retains both isolated and shared worker tests. Suites that used the removed `describe.sequential` API now use `concurrent: false`. The root config uses the stable `test.fsModuleCache` option. The CLI uses the current startup API and relative coverage exclusions; its JSON reporter now writes `.vitest/json/output.json`. Verified that the Vitest 5 JSON reporter still derives file intervals from test timings, so the parallelism caveat remains applicable.

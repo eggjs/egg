@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { describe, it } from 'vitest';
@@ -208,19 +210,27 @@ describe('test/commands/test.test.ts', () => {
     });
 
     it('should use process.env.TEST_REPORTER', async () => {
-      await coffee
-        .fork(eggBin, ['test'], {
-          cwd,
-          env: {
-            TESTS: 'test/a.test.js,test/b/b.test.js,test/ignore.test.js',
-            TEST_REPORTER: 'json',
-          },
-        })
-        // .debug()
-        .expect('stdout', /"numTotalTestSuites":/)
-        .expect('stdout', /"testResults":/)
-        .expect('code', 0)
-        .end();
+      const reportDir = path.join(cwd, '.vitest/json');
+      await fs.rm(reportDir, { recursive: true, force: true });
+      try {
+        await coffee
+          .fork(eggBin, ['test'], {
+            cwd,
+            env: {
+              TESTS: 'test/a.test.js,test/b/b.test.js,test/ignore.test.js',
+              TEST_REPORTER: 'json',
+            },
+          })
+          .expect('stdout', /JSON report written to/)
+          .expect('code', 0)
+          .end();
+        const report = JSON.parse(await fs.readFile(path.join(reportDir, 'output.json'), 'utf8'));
+        assert.equal(report.success, true);
+        assert.equal(report.testResults.length, 3);
+        assert.equal(report.numPassedTests, 4);
+      } finally {
+        await fs.rm(reportDir, { recursive: true, force: true });
+      }
     });
 
     it('should use process.env.TEST_TIMEOUT', async () => {

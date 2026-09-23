@@ -36,7 +36,7 @@ Tests run with `isolate: false` (full parallelism; the tegg `TeggScope` per-app 
 - **Parallel efficiency** — `avg concurrency ÷ worker ceiling` (the ceiling mirrors `vitest.config.ts`: Windows CI caps workers, otherwise the machine's available parallelism).
 - **Critical path** — the longest single-file span (the wall-clock floor with unlimited workers).
 
-> **Interval caveat:** the Vitest 4 JSON reporter derives a file's `startTime`/`endTime` from test-level timings only, so the span covers test bodies and per-test `beforeEach`/`afterEach` but **excludes suite-level `beforeAll`/`afterAll` (where egg boots its apps — often the dominant per-file cost) and module transform/import**. That excluded time still occupies the worker threads, so **avg concurrency and parallel efficiency are lower bounds** on real worker utilization; for `beforeAll`-heavy suites avg can read below 1 while peak is high. Use **peak concurrency** as the primary signal. Fully-skipped files (no test timings) are dropped from the calculation.
+> **Interval caveat:** the Vitest 5 JSON reporter derives a file's `startTime`/`endTime` from test-level timings only, so the span covers test bodies and per-test `beforeEach`/`afterEach` but **excludes suite-level `beforeAll`/`afterAll` (where egg boots its apps — often the dominant per-file cost) and module transform/import**. That excluded time still occupies the worker threads, so **avg concurrency and parallel efficiency are lower bounds** on real worker utilization; for `beforeAll`-heavy suites avg can read below 1 while peak is high. Use **peak concurrency** as the primary signal. Fully-skipped files (no test timings) are dropped from the calculation.
 
 ## CI integration
 
