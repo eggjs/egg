@@ -1,8 +1,10 @@
 ---
 title: PR preview packages
 type: workflow
-summary: Publish public workspace packages to pkg.pr.new when a maintainer labels a pull request.
+summary: Publish public workspace packages through a pull request label and install previews in consumer applications.
 source_files:
+  - CONTRIBUTING.md
+  - CONTRIBUTING.zh-CN.md
   - .github/workflows/pkg-pr-new.yml
   - scripts/publish-preview.js
   - scripts/publish.js
@@ -30,6 +32,17 @@ To retry the same commit, rerun the failed job or remove and add the label again
 
 The workflow has no base branch filter, so it also supports stacked PRs.
 Each run checks out the PR head commit. A newer publishing job cancels an older job for the same PR.
+
+## Consumer instructions
+
+The contribution guides explain how to install previews with npm or pnpm, choose a PR-number or commit-SHA URL,
+keep related direct dependencies on the same preview, update lockfiles, and restore regular dependencies:
+
+- [English instructions](../../CONTRIBUTING.md#use-a-preview-in-an-application)
+- [Chinese instructions](../../CONTRIBUTING.zh-CN.md#在应用中使用预览包)
+
+The bot comment uses PR-number URLs by default. The `Publish previews` logs include commit-SHA URLs.
+The current script keeps the source package versions, so consumers must use the URL and SHA to identify a preview.
 
 ## Package contents
 
