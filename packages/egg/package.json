@@ -80,7 +80,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./agent": "./dist/agent.js",
@@ -134,6 +133,7 @@
       "./urllib": "./dist/urllib.js",
       "./package.json": "./package.json"
     },
+    "access": "public",
     "tag": "beta"
   },
   "scripts": {

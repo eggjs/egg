@@ -39,7 +39,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./AgentRuntime": "./dist/AgentRuntime.js",
@@ -51,7 +50,8 @@
       "./RunBuilder": "./dist/RunBuilder.js",
       "./SSEWriter": "./dist/SSEWriter.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit",

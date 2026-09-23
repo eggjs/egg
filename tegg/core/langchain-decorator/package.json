@@ -55,7 +55,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./builder/BoundModelMetaBuilder": "./dist/builder/BoundModelMetaBuilder.js",
@@ -83,7 +82,8 @@
       "./util/GraphNodeInfoUtil": "./dist/util/GraphNodeInfoUtil.js",
       "./util/GraphToolInfoUtil": "./dist/util/GraphToolInfoUtil.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

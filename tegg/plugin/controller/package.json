@@ -47,7 +47,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
@@ -68,7 +67,8 @@
       "./lib/runtimeProtos": "./dist/lib/runtimeProtos.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

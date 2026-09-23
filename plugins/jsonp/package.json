@@ -37,7 +37,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app/extend/application": "./dist/app/extend/application.js",
@@ -47,7 +46,8 @@
       "./lib/private_key": "./dist/lib/private_key.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

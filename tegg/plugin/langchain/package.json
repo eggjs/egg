@@ -44,7 +44,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
@@ -61,7 +60,8 @@
       "./lib/tracing/LangGraphTracer": "./dist/lib/tracing/LangGraphTracer.js",
       "./lib/util": "./dist/lib/util.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

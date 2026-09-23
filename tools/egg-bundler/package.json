@@ -51,7 +51,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
@@ -78,7 +77,8 @@
         "import": "./dist/lib/PackRunner.js"
       },
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "test": "vitest run",

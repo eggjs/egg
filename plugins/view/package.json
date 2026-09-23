@@ -38,7 +38,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app/extend/application": "./dist/app/extend/application.js",
@@ -50,7 +49,8 @@
       "./lib/view_manager": "./dist/lib/view_manager.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"
