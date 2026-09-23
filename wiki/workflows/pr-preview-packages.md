@@ -42,7 +42,7 @@ Private packages, including the examples and documentation site, are excluded.
 with the existing release helpers. It restores the original manifests after the CLI exits, including on failure.
 Prebuilt tarballs are unsuitable here: the CLI uploads them without replacing internal dependency references.
 
-The script pins the CLI version and uses its default npm packer.
+The script uses `pkg-pr-new@latest` to follow the latest CLI release and uses its default npm packer.
 `pnpm pack` requires package-local workspace links that utoo's hoisted installation does not provide.
 `--no-compact` uses repository-qualified URLs, including for packages without matching npm repository metadata.
 `--no-template` omits browser templates for these server packages. The app updates one PR comment with installation links.

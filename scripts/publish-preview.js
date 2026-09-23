@@ -33,7 +33,7 @@ try {
 
   // Directory inputs let pkg.pr.new replace internal dependencies with preview
   // URLs. Prebuilt tarballs would retain references to npm releases.
-  execFileSync('npx', ['--yes', 'pkg-pr-new@0.0.88', 'publish', '--no-compact', '--no-template', ...packageDirs], {
+  execFileSync('npx', ['--yes', 'pkg-pr-new@latest', 'publish', '--no-compact', '--no-template', ...packageDirs], {
     cwd: baseDir,
     stdio: 'inherit',
   });
