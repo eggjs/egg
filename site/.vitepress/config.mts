@@ -149,6 +149,7 @@ function nav(): DefaultTheme.NavItem[] {
       activeMatch: '/community/',
       items: [
         { text: 'Community', link: '/community/' },
+        { text: 'PR Preview Packages', link: '/community/pr-preview-packages' },
         {
           text: 'Contributing',
           link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.md',
@@ -208,6 +209,7 @@ function navZhCN(): DefaultTheme.NavItem[] {
       activeMatch: '/zh-CN/community/',
       items: [
         { text: '社区', link: '/zh-CN/community/' },
+        { text: 'PR 预览包', link: '/zh-CN/community/pr-preview-packages' },
         {
           text: '参与贡献',
           link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.zh-CN.md',
@@ -343,6 +345,7 @@ function sidebarCommunity(): DefaultTheme.SidebarItem[] {
       text: 'Community',
       items: [
         { text: 'Contributing', link: 'contributing' },
+        { text: 'PR Preview Packages', link: 'pr-preview-packages' },
         { text: 'Frequently Asked Questions', link: 'faq' },
       ],
     },
@@ -462,6 +465,7 @@ function sidebarCommunityZhCN(): DefaultTheme.SidebarItem[] {
       items: [
         // { text: '文章', link: 'articles' },
         { text: '参与贡献', link: 'contributing' },
+        { text: 'PR 预览包', link: 'pr-preview-packages' },
         { text: '常见问题', link: 'faq' },
       ],
     },

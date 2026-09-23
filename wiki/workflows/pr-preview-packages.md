@@ -5,6 +5,9 @@ summary: Publish public workspace packages through a pull request label and inst
 source_files:
   - CONTRIBUTING.md
   - CONTRIBUTING.zh-CN.md
+  - site/docs/community/pr-preview-packages.md
+  - site/docs/zh-CN/community/pr-preview-packages.md
+  - site/.vitepress/config.mts
   - .github/workflows/pkg-pr-new.yml
   - scripts/publish-preview.js
   - scripts/publish.js
@@ -35,11 +38,14 @@ Each run checks out the PR head commit. A newer publishing job cancels an older 
 
 ## Consumer instructions
 
-The contribution guides explain how to install previews with npm or pnpm, choose a PR-number or commit-SHA URL,
+The documentation site explains how to install previews with npm or pnpm, choose a PR-number or commit-SHA URL,
 keep related direct dependencies on the same preview, update lockfiles, and restore regular dependencies:
 
-- [English instructions](../../CONTRIBUTING.md#use-a-preview-in-an-application)
-- [Chinese instructions](../../CONTRIBUTING.zh-CN.md#在应用中使用预览包)
+- [English instructions](../../site/docs/community/pr-preview-packages.md)
+- [Chinese instructions](../../site/docs/zh-CN/community/pr-preview-packages.md)
+
+Both guides appear in the Community navigation menu, sidebar, and landing page.
+The root contribution guides link to these pages and retain the maintainer publishing instructions.
 
 The bot comment uses PR-number URLs by default. The `Publish previews` logs include commit-SHA URLs.
 The current script keeps the source package versions, so consumers must use the URL and SHA to identify a preview.
