@@ -195,6 +195,16 @@ $ npm run site:dev
 
 egg 基于 [semver] 语义化版本号进行发布。
 
+### PR 预览包
+
+维护者可以给 Pull Request 添加 `pkg.pr.new` 标签来发布预览包。
+保留标签期间，推送新提交或重新打开 Pull Request 会再次发布。
+`pkg.pr.new` 机器人会在 Pull Request 中提供安装链接。
+移除标签可停止后续预览发布。
+
+仓库需要启用 [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new)。
+设置方式和发布范围见[预览发布工作流](wiki/workflows/pr-preview-packages.md)。
+
 ### 分支策略
 
 `master` 分支为当前稳定发布的版本，`next` 分支为下一个开发中的大版本。

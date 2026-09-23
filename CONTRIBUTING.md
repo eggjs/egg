@@ -193,6 +193,16 @@ If you just want to build the documents, use `site:build` instead.
 
 Egg uses semantic versioning in release process based on [semver].
 
+### PR Preview Packages
+
+Maintainers can add the `pkg.pr.new` label to a pull request to publish preview packages.
+New commits and reopened pull requests publish again while the label remains attached.
+The `pkg.pr.new` bot adds installation links to the pull request.
+Remove the label to stop future preview releases.
+
+The repository must enable the [pkg.pr.new GitHub App](https://github.com/apps/pkg-pr-new).
+See the [preview publishing workflow](wiki/workflows/pr-preview-packages.md) for setup and package details.
+
 ### Branch Strategy
 
 `master` branch is the latest stable version. `next` branch is the next stable version working in progress.

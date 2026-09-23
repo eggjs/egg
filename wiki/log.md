@@ -474,3 +474,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `.github/workflows/e2e-test.yml`
 - pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
 - note: cnpmcore's updated WebAuthn dependency emits experimental Web Crypto warnings on Node.js 24. Its daemon smoke test now permits startup stderr and continues to gate success on the existing HTTP health check.
+
+## [2026-09-23] workflow | publish PR preview packages by label
+
+- sources touched: `.github/workflows/pkg-pr-new.yml`, `scripts/publish-preview.js`, `scripts/utils.js`, `CONTRIBUTING.md`, `CONTRIBUTING.zh-CN.md`, `https://github.com/stackblitz-labs/pkg.pr.new`
+- pages updated: `wiki/workflows/pr-preview-packages.md`, `wiki/index.md`, `wiki/log.md`
+- note: The `pkg.pr.new` label enables preview publication for public workspace packages. Later commits and reopened PRs publish while the label remains attached. The workflow accepts stacked PRs and builds with utoo. The preview script reuses the npm release helpers to resolve catalogs and published exports, then restores each manifest. Directory inputs preserve internal preview dependency links. Publication uses a read-only workflow token and the pkg.pr.new GitHub App.
