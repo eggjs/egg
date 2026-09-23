@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/supertest",
-  "version": "9.0.2-beta.26",
+  "version": "9.0.2-beta.27",
   "description": "SuperAgent driven library for testing HTTP servers",
   "keywords": [
     "bdd",
@@ -31,11 +31,11 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

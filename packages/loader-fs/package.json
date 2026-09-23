@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/loader-fs",
-  "version": "1.0.0-beta.26",
+  "version": "1.0.0-beta.27",
   "description": "Loader-facing filesystem abstraction for Egg",
   "keywords": [
     "egg",
@@ -30,11 +30,11 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit",

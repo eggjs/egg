@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/path-matching",
-  "version": "3.0.2-beta.26",
+  "version": "3.0.2-beta.27",
   "description": "match or ignore url path",
   "keywords": [
     "ignore",
@@ -34,11 +34,11 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

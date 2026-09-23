@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/logger",
-  "version": "4.0.2-beta.26",
+  "version": "4.0.2-beta.27",
   "description": "egg logger",
   "keywords": [
     "egg",
@@ -41,7 +41,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./egg/console_logger": "./dist/egg/console_logger.js",
@@ -57,7 +56,8 @@
       "./transports/transport": "./dist/transports/transport.js",
       "./utils": "./dist/utils.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "build": "tsdown",

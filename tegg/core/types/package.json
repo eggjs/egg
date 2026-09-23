@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-types",
-  "version": "4.0.2-beta.26",
+  "version": "4.0.2-beta.27",
   "description": "tegg types",
   "keywords": [
     "egg",
@@ -135,7 +135,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./agent-runtime": "./dist/agent-runtime/index.js",
@@ -243,7 +242,8 @@
       "./standalone": "./dist/standalone/index.js",
       "./transaction": "./dist/transaction.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mcp-proxy-plugin",
-  "version": "4.0.2-beta.26",
+  "version": "4.0.2-beta.27",
   "description": "tegg mcp proxy plugin",
   "keywords": [
     "egg",
@@ -36,7 +36,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./agent": "./dist/agent.js",
@@ -46,7 +45,8 @@
       "./config/config.default": "./dist/config/config.default.js",
       "./lib/MCPProxyDataClient": "./dist/lib/MCPProxyDataClient.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

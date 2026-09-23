@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/koa-static-cache",
-  "version": "7.0.2-beta.26",
+  "version": "7.0.2-beta.27",
   "description": "Static cache middleware for koa",
   "keywords": [
     "cache",
@@ -33,11 +33,11 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

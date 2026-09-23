@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/cluster",
-  "version": "4.0.2-beta.26",
+  "version": "4.0.2-beta.27",
   "description": "cluster manager for egg",
   "keywords": [
     "cluster",
@@ -33,14 +33,14 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./agent_worker": "./dist/agent_worker.js",
       "./app_worker": "./dist/app_worker.js",
       "./worker_protocol": "./dist/worker_protocol.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "lint": "oxlint",

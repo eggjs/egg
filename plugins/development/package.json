@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/development",
-  "version": "5.0.2-beta.26",
+  "version": "5.0.2-beta.27",
   "description": "development tool for egg",
   "keywords": [
     "egg",
@@ -35,7 +35,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./agent": "./dist/agent.js",
@@ -45,7 +44,8 @@
       "./types": "./dist/types.js",
       "./utils": "./dist/utils.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

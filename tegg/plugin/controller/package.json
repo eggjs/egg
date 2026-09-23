@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/controller-plugin",
-  "version": "4.0.2-beta.26",
+  "version": "4.0.2-beta.27",
   "description": "controller decorator plugin for egg",
   "keywords": [
     "egg",
@@ -47,7 +47,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
@@ -68,7 +67,8 @@
       "./lib/runtimeProtos": "./dist/lib/runtimeProtos.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

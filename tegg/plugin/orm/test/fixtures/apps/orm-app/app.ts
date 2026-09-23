@@ -1,7 +1,6 @@
 import { Application } from 'egg';
 import Realm from 'leoric';
 
-// @ts-expect-error: the library definition is wrong
 const Logger = Realm.Logger;
 
 export default class OrmAppHook {

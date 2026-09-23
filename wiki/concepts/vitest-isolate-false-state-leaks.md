@@ -8,11 +8,14 @@ source_files:
   - packages/utils/test/snapshot-import.test.ts
   - plugins/mock/src/app/extend/application.ts
   - plugins/mock/src/lib/mock_agent.ts
+  - plugins/mock/test/mock-agent.test.ts
+  - pnpm-workspace.yaml
+  - .github/workflows/ci.yml
   - plugins/multipart/test/file-mode.test.ts
   - packages/core/src/lifecycle.ts
   - packages/egg/src/lib/egg.ts
   - tegg/plugin/tegg/test/MultiAppParallel.test.ts
-updated_at: 2026-06-27
+updated_at: 2026-09-23
 status: active
 ---
 
@@ -32,8 +35,8 @@ signature of this class of bug, not flaky tests per se.
 
 ## How to reproduce / triage (CI-faithful)
 
-- Use Node 22 or 24 (CI matrix). Node 26 introduces unrelated undici/deprecation
-  failures that are NOT isolate bugs — do not diagnose on Node 26.
+- Use Node 22, 24, or 26 to match the CI matrix. The catalog uses `tsx` 4.23.15
+  to avoid the deprecated loader registration API on Node 26.
 - Install with utoo (`ut install --from pnpm`), not a bare `pnpm install`. utoo
   hoists workspace packages (e.g. `egg`) to the root `node_modules`; tests like
   `cluster/options` and `mock/format_options` resolve the framework via
@@ -69,11 +72,14 @@ signature of this class of bug, not flaky tests per se.
    helper read app1's whitelist) and `security/csrf` 401s.
    **Fix:** only reuse when `this.currentContext.app === this`.
 
-3. **Potential undici global dispatcher carry-over in `@eggjs/mock`
-   `mock_agent.ts`.** Dispatcher state is stored on `globalThis`
-   (`__globalDispatcher`, `__mockAgent`) and `__globalDispatcher` is captured
-   once and never cleared. Mitigated in practice by the global
-   `afterEach(mock.restore)` in `setup_vitest.ts`; noted as a latent risk.
+3. **Undici dispatcher restoration in `@eggjs/mock` `mock_agent.ts`.**
+   Pinning a default client's global dispatcher through `setDispatcher()` during
+   restore caused requests to fail with Node 26's built-in dispatcher. It also
+   stopped the client from following later global dispatcher changes.
+   **Fix:** only replace and restore custom client dispatchers. Default clients
+   follow the global mock automatically. Capture the current global dispatcher
+   for each mock session and clear the saved reference after restore. Custom
+   clients added after the global mock already exists also use that mock.
 
 4. **Teardown / in-flight-load race surfacing as a cross-file unhandled
    rejection** (the Windows-flaky `@eggjs/session` failure). `mm.app()` loads an

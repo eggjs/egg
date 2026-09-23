@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/orm-plugin",
-  "version": "4.0.2-beta.26",
+  "version": "4.0.2-beta.27",
   "description": "orm decorator for egg",
   "keywords": [
     "egg",
@@ -44,7 +44,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
@@ -60,7 +59,8 @@
       "./lib/types": "./dist/lib/types.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit --project tsconfig.typecheck.json",

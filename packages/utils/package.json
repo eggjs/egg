@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/utils",
-  "version": "5.0.2-beta.26",
+  "version": "5.0.2-beta.27",
   "description": "Utils for all egg projects",
   "keywords": [
     "egg",
@@ -26,11 +26,11 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

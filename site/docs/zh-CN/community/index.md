@@ -1,5 +1,9 @@
 # 社区
 
+## 测试 Pull Request
+
+使用 [PR 预览包](../releases/pr-preview-packages.md)，在 npm 正式发布前测试修复或新功能。
+
 ## 交流群
 
 - 钉钉群号：21751340，群名：Egg 社区互助交流群

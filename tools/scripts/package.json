@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/scripts",
-  "version": "5.0.2-beta.26",
+  "version": "5.0.2-beta.27",
   "description": "deploy tool for egg project",
   "homepage": "https://github.com/eggjs/egg/tree/next/tools/scripts",
   "bugs": {
@@ -36,7 +36,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./baseCommand": "./dist/baseCommand.js",
@@ -45,7 +44,8 @@
       "./helper": "./dist/helper.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit",

@@ -224,18 +224,18 @@ await this.loadExtend('application', app);
 
 ### LoaderOptions
 
-| Param       | Type              | Description                                                                                                                                                        |
+| Param | Type | Description |
 | ----------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| directory   | `String/Array`    | directories to be loaded                                                                                                                                           |
-| target      | `Object`          | attach the target object from loaded files                                                                                                                         |
-| match       | `String/Array`    | match the files when load, default to `**/*.js`(if process.env.EGG\*TYPESCRIPT was true, default to `[ '\*\*/\_.(js                                                | ts)', '!\*_/_.d.ts' ]`) |
-| ignore      | `String/Array`    | ignore the files when load                                                                                                                                         |
-| initializer | `Function`        | custom file exports, receive two parameters, first is the inject object(if not js file, will be content buffer), second is an `options` object that contain `path` |
-| caseStyle   | `String/Function` | set property's case when converting a filepath to property list.                                                                                                   |
-| override    | `Boolean`         | determine whether override the property when get the same name                                                                                                     |
-| call        | `Boolean`         | determine whether invoke when exports is function                                                                                                                  |
-| inject      | `Object`          | an object that be the argument when invoke the function                                                                                                            |
-| filter      | `Function`        | a function that filter the exports which can be loaded                                                                                                             |
+| directory | `String/Array` | directories to be loaded |
+| target | `Object` | attach the target object from loaded files |
+| match | `String/Array` | match the files when load, default to `**/*.js`(if process.env.EGG\*TYPESCRIPT was true, default to `[ '\*\*/\_.(js                                                | ts)', '!\*_/_.d.ts' ]`) |
+| ignore | `String/Array` | ignore the files when load |
+| initializer | `Function` | custom file exports, receive two parameters, first is the inject object(if not js file, will be content buffer), second is an `options` object that contain `path` |
+| caseStyle | `String/Function` | set property's case when converting a filepath to property list. |
+| override | `Boolean` | determine whether override the property when get the same name |
+| call | `Boolean` | determine whether invoke when exports is function |
+| inject | `Object` | an object that be the argument when invoke the function |
+| filter | `Function` | a function that filter the exports which can be loaded |
 
 ## Timing
 

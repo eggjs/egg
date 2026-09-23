@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/watcher",
-  "version": "5.0.2-beta.26",
+  "version": "5.0.2-beta.27",
   "description": "file watcher plugin for egg",
   "keywords": [
     "egg",
@@ -40,7 +40,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./agent": "./dist/agent.js",
@@ -57,7 +56,8 @@
       "./lib/watcher": "./dist/lib/watcher.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

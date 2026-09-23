@@ -36,7 +36,7 @@ source_files:
   - site/docs/advanced/snapshot.md
   - site/docs/zh-CN/advanced/snapshot.md
   - examples/helloworld-service-worker
-updated_at: 2026-08-05
+updated_at: 2026-09-19
 status: active
 ---
 
@@ -245,9 +245,15 @@ The compatibility layer is therefore a scoped compromise:
 - `resolveLeoricSnapshotCompatibility()` removes `leoric` from auto-detected
   externals and rejects attempts to force it external or add it to snapshot lazy
   modules.
+- Snapshot builds resolve both imports and requires to Leoric's CommonJS entry.
+  Leoric 2.16 also exports an ESM entry under `dist/`; selecting it would bypass
+  the compatibility rule for `lib/` and expose optional database imports to the
+  bundler.
 - A module rule applies only to the known Leoric source files and rewrites their
   runtime-selected requires to `globalThis.__RUNTIME_REQUIRE(...)`. Leoric core and
   model semantics stay bundled, while database clients remain runtime dependencies.
+  The rule also handles TypeScript's compiled dynamic-import callback while
+  preserving its Promise and module namespace conversion.
 - The loader fails the build if an unrecognized expression-based require remains,
   rather than silently emitting a partial artifact. Migration files used at runtime
   still need the documented runtime-asset copy configuration.

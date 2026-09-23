@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-vitest",
-  "version": "4.0.2-beta.26",
+  "version": "4.0.2-beta.27",
   "description": "Vitest adapter for tegg context injection",
   "keywords": [
     "adapter",
@@ -35,14 +35,14 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./runner": "./dist/runner.js",
       "./setup": "./dist/setup.js",
       "./shared": "./dist/shared.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"
@@ -59,7 +59,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "vitest": "^4.0.15"
+    "vitest": "^5.0.1"
   },
   "engines": {
     "node": ">=22.18.0"

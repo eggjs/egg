@@ -1,3 +1,4 @@
+import { fstatSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -102,6 +103,23 @@ describe('test/start-unit.test.ts', () => {
     // egg-ready handler unref/disconnects the daemonized child
     expect(unref).toHaveBeenCalledTimes(1);
     expect(disconnect).toHaveBeenCalledTimes(1);
+    const { stdio } = spawnMock.mock.calls[0][2];
+    for (const fd of stdio.slice(1, 3)) {
+      expect(() => fstatSync(fd)).toThrow(expect.objectContaining({ code: 'EBADF' }));
+    }
+  });
+
+  it('closes daemon log handles when spawning throws', async () => {
+    const spawnError = new Error('spawn failed');
+    spawnMock.mockImplementation(() => {
+      throw spawnError;
+    });
+    await expect(TestStart.run(['--daemon', '--workers=1', baseDir])).rejects.toBe(spawnError);
+
+    const { stdio } = spawnMock.mock.calls[0][2];
+    for (const fd of stdio.slice(1, 3)) {
+      expect(() => fstatSync(fd)).toThrow(expect.objectContaining({ code: 'EBADF' }));
+    }
   });
 
   it('foreground mode mirrors the child exit code and maps signal deaths to 128+n', async () => {

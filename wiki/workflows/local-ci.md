@@ -5,21 +5,58 @@ summary: Local validation should run tests from clean sources and avoid stale bu
 source_files:
   - AGENTS.md
   - .github/workflows/ci.yml
+  - .github/workflows/e2e-test.yml
+  - ecosystem-ci/patch-project.ts
+  - ecosystem-ci/repo.json
+  - pnpm-workspace.yaml
+  - codecov.yml
   - package.json
   - tools/egg-bin/package.json
   - tools/egg-bin/tsconfig.json
+  - tools/scripts/src/commands/start.ts
+  - packages/egg/src/lib/core/httpclient.ts
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/core/metadata/src/model/graph/GlobalGraph.ts
   - tegg/plugin/controller/test/fixtures/apps
-updated_at: 2026-08-06
+updated_at: 2026-09-23
 status: active
 ---
 
 # Local CI
 
 The repository's GitHub CI test job installs dependencies with
-`ut install --from pnpm` and runs tests with `ut run ci` for the main test
-matrix. It does not build packages before running tests.
+`ut install --from pnpm`. The main test matrix runs Node.js 22, 24, and 26 on
+Linux, macOS, and Windows. It uses `ut run test`, or `ut run ci` for the
+coverage job, without building packages before tests.
+
+The egg-bin matrix runs Node.js 24 and 26 on Linux and Windows. The egg-scripts
+matrix runs Node.js 22, 24, and 26 on Linux. The tegg Vitest adapter runs both
+isolated and shared workers on Node.js 24 and 26 on Linux. Coverage reports
+come from the Linux Node.js 24 jobs.
+
+Ecosystem CI patches external applications with workspace tarballs. Both cnpmcore
+jobs use the upstream commit pinned in `ecosystem-ci/repo.json`, which declares
+Vitest 5.0.1 and its matching coverage provider. This keeps their test runner
+compatible with the local CLI and tegg adapter without extra Vitest overrides.
+The cnpmcore deployment smoke test uses `--ignore-stderr` because its WebAuthn
+dependency emits experimental Web Crypto warnings on Node.js 24. The subsequent
+HTTP health check still requires a successful response before the job passes.
+
+Node.js 26 treats garbage collection of an unclosed `FileHandle` as an error.
+The scripts daemon launcher keeps both log handles until `spawn()` returns and
+then closes the parent's handles, including on startup errors. The child keeps
+its inherited descriptors.
+
+The HTTP client removes Undici 7's `dispatcher` routing option before a configured
+interceptor chain reaches the original dispatcher. Node.js 26 rejects that option
+on instance dispatch calls.
+
+## Coverage checks
+
+`codecov.yml` keeps project and patch coverage checks enabled. Project coverage
+uses the base commit as its target and permits a decrease of up to one percentage
+point. Patch coverage has a fixed 75% minimum, so small changes do not have to
+match the whole repository's coverage ratio.
 
 ## Exception: egg-bin tests need a built dist
 

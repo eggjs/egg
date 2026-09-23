@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mock",
-  "version": "7.0.2-beta.26",
+  "version": "7.0.2-beta.27",
   "description": "mock server plugin for egg",
   "keywords": [
     "egg",
@@ -59,7 +59,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
@@ -93,7 +92,8 @@
       "./register": "./dist/register.js",
       "./setup_vitest": "./dist/setup_vitest.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"
@@ -122,7 +122,7 @@
   },
   "peerDependencies": {
     "egg": "workspace:*",
-    "vitest": "catalog:"
+    "vitest": "^5.0.1"
   },
   "peerDependenciesMeta": {
     "vitest": {

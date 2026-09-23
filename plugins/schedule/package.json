@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/schedule",
-  "version": "6.0.2-beta.26",
+  "version": "6.0.2-beta.27",
   "description": "schedule plugin for egg, support corn job.",
   "keywords": [
     "cron",
@@ -47,7 +47,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./agent": "./dist/agent.js",
@@ -66,7 +65,8 @@
       "./lib/types": "./dist/lib/types.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"
