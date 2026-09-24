@@ -1,25 +1,33 @@
 ---
 title: CI parallel test metrics
 type: workflow
-summary: How the CI test gate surfaces single-run parallelism efficiency metrics (avg/peak concurrency, efficiency, critical path) for the isolate:false suite, and how to read or reproduce them.
+summary: How CI reports test concurrency, resolved worker settings, retries, and shard inventories.
 source_files:
   - vitest.config.ts
   - .github/workflows/ci.yml
+  - scripts/ci-reporter.ts
+  - scripts/ci-test-benchmark/environment.js
   - scripts/ci-test-benchmark/index.js
   - scripts/ci-test-benchmark/vitest-summary.js
   - scripts/ci-test-benchmark/report.js
   - scripts/ci-test-benchmark/cli.js
   - benchmark/ci-test/README.md
-updated_at: 2026-09-23
+updated_at: 2026-09-24
 status: active
 ---
 
 ## Why
 
-The whole monorepo runs vitest with `pool: 'threads'` + `isolate: false` for full
-parallelism (the tegg `TeggScope` per-app isolation makes concurrent multi-app
-boots safe; see [[vitest-isolate-false-state-leaks]]). This workflow makes the
-_effect_ of that parallelism visible in CI without changing the gate.
+The root configuration declares `pool: 'threads'` and `isolate: false`, but a
+September 24 inspection of Vitest 5.0.1's resolved projects showed isolated
+`forks`. File-based projects do not inherit these root options. The historical
+shared-worker findings remain relevant when that mode is explicitly selected.
+
+CI now uploads `execution.json` alongside the existing reports. Its public
+Vitest module diagnostics include imports and suite hooks, retry counts, the
+full test inventory, shard identity, and resolved project settings. The
+benchmark helper uses its worker ceiling when available instead of estimating
+it from root configuration text.
 
 ## How it is wired (test gating job only)
 
@@ -37,8 +45,9 @@ _effect_ of that parallelism visible in CI without changing the gate.
    `GITHUB_STEP_SUMMARY` is set, **appends the report to the job summary** so the
    metrics show on the run page, per OS/Node matrix entry.
 
-Gating is unchanged: pass/fail comes solely from `ut run ci`. The metrics step is
-informational and exits `0` even when the JSON is missing.
+The metrics summary is informational and exits `0` when its JSON is missing.
+Test execution, artifact upload, coverage inventory checks, and coverage merging
+are required checks. Rerunning a test job replaces only its own artifact.
 
 ## The metrics (and how to read them honestly)
 
@@ -51,8 +60,9 @@ from each file's Vitest interval (`startTime`/`endTime`):
 - **Peak concurrency** = max overlapping intervals (sweep line; ends processed
   before starts at equal timestamps, so a hand-off is not counted as overlap). The
   robust headline signal.
-- **Parallel efficiency** = avg ÷ worker ceiling (the ceiling mirrors
-  `vitest.config.ts`: Windows CI caps workers, otherwise `os.availableParallelism()`).
+- **Parallel efficiency** = avg ÷ worker ceiling. CI uses the resolved project
+  settings from `execution.json`; local runs without this report retain the
+  older estimate from root configuration text.
 - **Critical path** = longest single-file span (wall-clock floor).
 
 **Honesty caveat (verified against Vitest 5 source):** the JSON reporter derives a

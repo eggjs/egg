@@ -127,7 +127,7 @@ describe('test/commands/dev.test.ts', () => {
   it('should startCluster with execArgv --inspect', () => {
     return (
       coffee
-        .fork(eggBin, ['dev', '--inspect'], { cwd })
+        .fork(eggBin, ['dev', '--inspect'], { cwd, env: { NODE_OPTIONS: '--inspect-port=0' } })
         // .debug()
         .expect('stderr', /Debugger listening on ws:\/\/127.0.0.1:\d+/)
         .expect('code', 0)

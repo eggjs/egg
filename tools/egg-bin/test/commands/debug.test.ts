@@ -12,7 +12,7 @@ describe('test/commands/debug.test.ts', () => {
   it('should startCluster success', () => {
     return (
       coffee
-        .fork(eggBin, ['dev', '--inspect'], { cwd })
+        .fork(eggBin, ['dev', '--inspect'], { cwd, env: { NODE_OPTIONS: '--inspect-port=0' } })
         // .debug()
         .expect('stdout', /"workers":1/)
         .expect('stdout', /"baseDir":".*?demo-app-debug"/)

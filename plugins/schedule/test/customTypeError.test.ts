@@ -1,7 +1,5 @@
-import { setTimeout as sleep } from 'node:timers/promises';
-
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, beforeAll, expect } from 'vitest';
+import { describe, it, afterAll, beforeAll, expect, vi } from 'vitest';
 
 import { getFixtures, getLogContent, contains } from './utils.ts';
 
@@ -16,9 +14,11 @@ describe.skipIf(process.platform === 'win32')('test/customTypeError.test.ts', ()
   afterAll(() => app.close());
 
   it('should work', async () => {
-    await sleep(process.env.CI ? 10000 : 5000);
-    const log = getLogContent('customTypeError');
-    // console.log(log);
-    expect(contains(log, 'cluster_log')).toBeGreaterThanOrEqual(1);
+    await vi.waitFor(
+      () => {
+        expect(contains(getLogContent('customTypeError'), 'cluster_log')).toBeGreaterThanOrEqual(1);
+      },
+      { timeout: 10000, interval: 100 },
+    );
   });
 });
