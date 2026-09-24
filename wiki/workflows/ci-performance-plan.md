@@ -1,7 +1,7 @@
 ---
 title: GitHub Actions performance plan
 type: workflow
-summary: Proposed rollout to reduce test runtime and runner demand while retaining full compatibility checks before merge.
+summary: PR test sharding, full pre-merge compatibility, and measurements for reducing CI runtime and runner demand.
 source_files:
   - .github/workflows/ci.yml
   - .github/workflows/e2e-test.yml
@@ -17,9 +17,14 @@ source_files:
   - tegg/plugin/orm/test/fixtures/prepare.js
   - scripts/ci-test-benchmark/environment.js
   - scripts/ci-test-benchmark/vitest-summary.js
+  - scripts/ci-plan.js
+  - scripts/ci-coverage.js
+  - scripts/ci-reporter.ts
   - codecov.yml
   - https://github.com/eggjs/egg/actions/runs/35879900054
   - https://github.com/eggjs/egg/actions/runs/35861608073
+  - https://github.com/eggjs/egg/actions/runs/35947286821
+  - https://github.com/eggjs/egg/pull/6056
   - https://vitest.dev/guide/improving-performance
   - https://docs.github.com/en/actions/reference/limits
   - https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching
@@ -30,7 +35,7 @@ status: active
 
 ## Recommendation and scope
 
-Implementation is in progress on `codex/ci-performance`. The workflow now uses
+Implemented in [draft PR #6056](https://github.com/eggjs/egg/pull/6056). The workflow uses
 this PR/full matrix, merges verified coverage shards, uploads timing artifacts,
 and requires all planned checks in `done`. Documentation-only PRs keep static
 checks. The `ci:full` label selects the full profile on the next PR run; manual
@@ -38,12 +43,21 @@ runs and merge groups always use the full profile.
 
 Schedule readiness checks now poll the asserted conditions. Inspector tests use
 an OS-assigned port, and CLI option matching distinguishes `--inspect-port` from
-`--inspect`. Hosted-run measurements are pending.
+`--inspect`.
+
+The first hosted run passed all platform tests and E2E. Its coverage guard
+correctly rejected a version mismatch: two Linux runners resolved `node-version: 24`
+to `24.21.0` and `24.20.0` from their local caches. The planner now resolves one
+exact Node.js 24 version and supplies it to both coverage shards and their merge
+job. The failed attempt is diagnostic evidence, not a successful speed benchmark;
+the PR checks provide the subsequent verification runs.
 
 A resolved-configuration inspection found that Vitest 5 file-based projects do
 not inherit root `pool`, `isolate`, or `fsModuleCache` settings. The new reporter
-records actual project settings and worker ceilings. A shared-worker change
-requires its own state-isolation validation.
+records actual project settings and worker ceilings. A local explicit
+shared-worker trial failed a mock cluster test and stalled on synchronous RPC
+requests. The implementation preserves isolated workers; changing worker mode
+requires separate state-isolation work.
 
 Prioritize reliable test execution, fewer repeated platform combinations on PR
 updates, and two-way sharding of the remaining long jobs. Keep the full Node.js
@@ -94,18 +108,18 @@ Keep every eligible test file in each selected OS/Node combination. Do not use
 import-graph-based affected testing in the first rollout: Egg loads plugins,
 fixtures, and configuration dynamically.
 
-| Main-suite combination        | Ordinary code PR, proposed shards | Full compatibility profile, initial shards |
-| ----------------------------- | --------------------------------: | -----------------------------------------: |
-| Linux / Node 22               |                                 2 |                                          1 |
-| Linux / Node 24 with coverage |                                 2 |                                          1 |
-| Linux / Node 26               |                                 1 |                                          1 |
-| macOS / Node 24               |                                 2 |                                          1 |
-| Windows / Node 24             |                                 2 |                                          1 |
-| macOS / Node 22 and 26        |             defer to full profile |                                     1 each |
-| Windows / Node 22 and 26      |             defer to full profile |                                     1 each |
+| Main-suite combination        | Ordinary code PR, shards | Full compatibility profile, initial shards |
+| ----------------------------- | -----------------------: | -----------------------------------------: |
+| Linux / Node 22               |                        2 |                                          1 |
+| Linux / Node 24 with coverage |                        2 |                                          1 |
+| Linux / Node 26               |                        1 |                                          1 |
+| macOS / Node 24               |                        2 |                                          1 |
+| Windows / Node 24             |                        2 |                                          1 |
+| macOS / Node 22 and 26        |    defer to full profile |                                     1 each |
+| Windows / Node 22 and 26      |    defer to full profile |                                     1 each |
 
 The ordinary PR profile executes five copies of the suite across nine jobs;
-today it executes nine copies across nine jobs. This cuts the repeated main-suite
+the previous workflow executed nine copies across nine jobs. This cuts the repeated main-suite
 combinations by 44%, but does not imply a 44% reduction in all CI time. The PR
 profile uses two macOS jobs instead of three, which also reduces platform demand.
 
@@ -122,6 +136,8 @@ Use the full profile for `merge_group`, `push` to `next`, and an explicit full
 validation/manual mode. Keep the full profile unsharded initially to avoid
 doubling runner demand. Reconsider its long jobs after the PR rollout and test
 improvements have produced capacity measurements.
+
+The active default-branch ruleset requires the merge queue and the `done` check.
 
 Tradeoff: a defect specific to Node 22 or 26 on macOS/Windows may first appear in
 the merge queue. This is acceptable only if full checks are enforced before
@@ -199,14 +215,14 @@ more workers can increase child-process contention.
 
 ## 5. Secondary experiments
 
-| Experiment                                  | Rationale and acceptance condition                                                                                                                                                                                                                                                                  |
-| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Persist Vitest's filesystem transform cache | `fsModuleCache: true` is already enabled, but its directory is not among the workflow's explicit caches. Trial a cache scoped by OS, architecture, exact Node/Vitest/tool versions and relevant inputs. Keep it only if cold/warm runs show a net benefit after transfers and correct invalidation. |
-| Tighten Node compile-cache restore keys     | A sampled Node 24 job restored a Node 26 cache via the OS-only fallback. Remove cross-version fallback and measure net benefit. Keep coverage correctness independent of compile-cache reuse.                                                                                                       |
-| Reduce redundant cache writes               | Measure restore/install/save as a unit. Coordinate writers for a shared key while retaining useful PR-local caches. Dependencies install quickly already, so a new cache is not automatically beneficial.                                                                                           |
-| Optimize Windows service setup              | MySQL setup cost about 95–102 seconds in the latest run. Consider pinned/preinstalled binaries only after checking runner-image stability. Do not assume Linux service containers work on Windows runners.                                                                                          |
-| Build and pack E2E tarballs once            | Three E2E jobs each build and pack the workspace. A producer artifact could reduce aggregate work, but its new dependency and transfer time can increase feedback latency. Benchmark before adoption; keep fresh per-consumer installs and current snapshot checks.                                 |
-| Larger hosted runners                       | Compare test duration, start delay, flake rate, and actual cost on the slow jobs. Consider only if measured capacity or CPU limits justify them.                                                                                                                                                    |
+| Experiment                                  | Rationale and acceptance condition                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Persist Vitest's filesystem transform cache | Root `fsModuleCache: true` does not reach the file-based projects. First validate an explicit per-project setting, then trial a cache scoped by OS, architecture, exact Node/Vitest/tool versions and relevant inputs. Keep it only if cold/warm runs show a net benefit after transfers and correct invalidation. |
+| Tighten Node compile-cache restore keys     | A sampled Node 24 job restored a Node 26 cache via the OS-only fallback. Remove cross-version fallback and measure net benefit. Keep coverage correctness independent of compile-cache reuse.                                                                                                                      |
+| Reduce redundant cache writes               | Measure restore/install/save as a unit. Coordinate writers for a shared key while retaining useful PR-local caches. Dependencies install quickly already, so a new cache is not automatically beneficial.                                                                                                          |
+| Optimize Windows service setup              | MySQL setup cost about 95–102 seconds in the latest run. Consider pinned/preinstalled binaries only after checking runner-image stability. Do not assume Linux service containers work on Windows runners.                                                                                                         |
+| Build and pack E2E tarballs once            | Three E2E jobs each build and pack the workspace. A producer artifact could reduce aggregate work, but its new dependency and transfer time can increase feedback latency. Benchmark before adoption; keep fresh per-consumer installs and current snapshot checks.                                                |
+| Larger hosted runners                       | Compare test duration, start delay, flake rate, and actual cost on the slow jobs. Consider only if measured capacity or CPU limits justify them.                                                                                                                                                                   |
 
 The repository ignores lockfiles, so do not introduce a cache key that hashes
 only an absent tracked lockfile. Use the current catalogs/manifests and record

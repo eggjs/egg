@@ -9,7 +9,7 @@ export function createPlan(eventName, event, files = []) {
       ? 'pr'
       : 'full';
   const docsOnly =
-    eventName === 'pull_request' &&
+    profile === 'pr' &&
     files.length > 0 &&
     files.length < 3000 &&
     files.every((file) => file.endsWith('.md') || file.startsWith('site/docs/') || file.startsWith('site/public/'));
@@ -36,7 +36,7 @@ export function checkResults(needs) {
   }
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   if (process.argv[2] === 'check') {
     checkResults(JSON.parse(process.env.CI_NEEDS));
   } else {
@@ -50,13 +50,14 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
         [
           'api',
           '--paginate',
+          '--slurp',
           `repos/${process.env.GITHUB_REPOSITORY}/pulls/${event.number}/files?per_page=100`,
-          '--jq',
-          '.[].filename',
         ],
         { encoding: 'utf8' },
       );
-      files = output.trim().split('\n').filter(Boolean);
+      files = JSON.parse(output)
+        .flat()
+        .flatMap((file) => (file.previous_filename ? [file.filename, file.previous_filename] : [file.filename]));
     }
     const plan = createPlan(process.env.GITHUB_EVENT_NAME, event, files);
     for (const [key, value] of Object.entries(plan)) {

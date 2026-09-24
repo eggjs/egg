@@ -29,7 +29,7 @@ export function validateShards(reports) {
   assert.deepEqual([...files].sort(), first.expected, 'Coverage shards must run every discovered test file');
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const [source, destination] = process.argv.slice(2);
   const directories = readdirSync(source).map((entry) => path.join(source, entry));
   const reports = directories.map((directory) =>

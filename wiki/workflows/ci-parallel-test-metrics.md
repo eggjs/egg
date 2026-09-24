@@ -1,7 +1,7 @@
 ---
 title: CI parallel test metrics
 type: workflow
-summary: How the CI test gate surfaces single-run parallelism efficiency metrics (avg/peak concurrency, efficiency, critical path) for the isolate:false suite, and how to read or reproduce them.
+summary: How CI reports test concurrency, resolved worker settings, retries, and shard inventories.
 source_files:
   - vitest.config.ts
   - .github/workflows/ci.yml

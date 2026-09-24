@@ -492,3 +492,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `.github/workflows/ci.yml`, `scripts/ci-{plan,coverage,reporter}.*`, `scripts/test/ci.test.js`, `vitest.config.ts`, schedule tests, egg-bin inspector tests and option matching
 - pages updated: CI performance plan, local CI, parallel test metrics, shared-worker state-leak context, index and log
 - note: PRs use five platform/version combinations across nine jobs; merge groups retain all nine combinations. Coverage aggregation rejects missing or overlapping shards. The final gate rejects unexpected skips. Resolved Vitest 5 settings exposed a conflict with prior wiki claims: file-based projects currently use isolated forks. Hosted-run performance verification is pending.
+
+## [2026-09-24] workflow | resolve one Node version for coverage shards
+
+- sources inspected: [first draft-PR CI run](https://github.com/eggjs/egg/actions/runs/35947286821), `.github/workflows/ci.yml`, `scripts/ci-plan.js`, `scripts/ci-coverage.js`
+- pages updated: CI performance plan, parallel test metrics, index and log
+- note: All platform tests passed, but coverage shards resolved Node.js 24 to different cached patch releases. The coverage guard rejected the mismatch. The planner now supplies one exact version to all coverage producers and the merge job. Full-profile overrides also apply to documentation-only changes, and change detection retains previous paths for renamed files. A separate shared-worker experiment failed; isolated workers remain in use.

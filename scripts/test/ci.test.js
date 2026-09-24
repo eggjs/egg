@@ -34,6 +34,16 @@ await test('merge queue, branch pushes, manual runs and full PRs retain the comp
 
 await test('only known documentation changes can skip tests', () => {
   assert.equal(createPlan('pull_request', pr, ['README.md', 'site/docs/index.md']).tests, false);
+  assert.equal(
+    createPlan(
+      'pull_request',
+      {
+        pull_request: { labels: [{ name: 'ci:full' }] },
+      },
+      ['README.md'],
+    ).tests,
+    true,
+  );
   for (const files of [
     [],
     ['site/package.json'],
