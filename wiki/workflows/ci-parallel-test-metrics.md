@@ -45,8 +45,9 @@ it from root configuration text.
    `GITHUB_STEP_SUMMARY` is set, **appends the report to the job summary** so the
    metrics show on the run page, per OS/Node matrix entry.
 
-Gating is unchanged: pass/fail comes solely from `ut run ci`. The metrics step is
-informational and exits `0` even when the JSON is missing.
+The metrics summary is informational and exits `0` when its JSON is missing.
+Test execution, artifact upload, coverage inventory checks, and coverage merging
+are required checks. Rerunning a test job replaces only its own artifact.
 
 ## The metrics (and how to read them honestly)
 
@@ -59,8 +60,9 @@ from each file's Vitest interval (`startTime`/`endTime`):
 - **Peak concurrency** = max overlapping intervals (sweep line; ends processed
   before starts at equal timestamps, so a hand-off is not counted as overlap). The
   robust headline signal.
-- **Parallel efficiency** = avg ÷ worker ceiling (the ceiling mirrors
-  `vitest.config.ts`: Windows CI caps workers, otherwise `os.availableParallelism()`).
+- **Parallel efficiency** = avg ÷ worker ceiling. CI uses the resolved project
+  settings from `execution.json`; local runs without this report retain the
+  older estimate from root configuration text.
 - **Critical path** = longest single-file span (wall-clock floor).
 
 **Honesty caveat (verified against Vitest 5 source):** the JSON reporter derives a

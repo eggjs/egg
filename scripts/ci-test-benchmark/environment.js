@@ -14,10 +14,8 @@ export async function collectEnvironment(command) {
   ]);
   const cpus = os.cpus();
   const availableParallelism = typeof os.availableParallelism === 'function' ? os.availableParallelism() : cpus.length;
-  // Effective concurrency ceiling for the threads pool. vitest.config.ts caps
-  // maxWorkers on Windows CI; everywhere else the pool defaults to the machine's
-  // available parallelism. Mirror that condition so efficiency divides by the number
-  // of workers vitest could actually use, not the raw core count.
+  // Prefer resolved project settings from the gating run. Retain the historical
+  // root-config estimate for local benchmark runs without an execution report.
   const isWindowsCI = Boolean(process.env.CI) && os.platform() === 'win32';
   const workerCeiling =
     execution?.workerCeiling ??

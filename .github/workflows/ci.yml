@@ -255,6 +255,7 @@ jobs:
         with:
           name: ci-results-${{ matrix.os }}-node${{ matrix.node }}-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
           path: benchmark/ci-test/ci-run/
+          overwrite: true
           if-no-files-found: error
           retention-days: 7
 
