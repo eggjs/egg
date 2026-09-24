@@ -202,6 +202,11 @@ export async function parseOptions(options?: ClusterOptions): Promise<ParsedClus
     assert(fs.existsSync(options[optionName]), `options.${optionName} file should exist: ${options[optionName]}`);
     assert(options.startMode !== 'worker_threads', `options.${optionName} only supports startMode "process"`);
   }
+  assert(
+    !(options.sticky && options.startMode === 'worker_threads'),
+    'options.sticky only supports startMode "process"',
+  );
+
   // don't print deprecated message in production env.
   // it will print to stderr.
   if (process.env.NODE_ENV === 'production') {

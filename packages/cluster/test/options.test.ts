@@ -209,6 +209,13 @@ describe('test/options.test.ts', () => {
         assert.equal(options[optionName], undefined);
       });
     }
+
+    it('should reject sticky mode with worker_threads', async () => {
+      await assert.rejects(
+        parseOptions({ baseDir, sticky: true, startMode: 'worker_threads' }),
+        /options\.sticky only supports startMode "process"/,
+      );
+    });
   });
 
   // TODO: flaky test on windows, Hook timed out in 20000ms

@@ -102,7 +102,11 @@ constraint is why worker output always needs a thin ESM wrapper.
   self-contained, so no common runtime chunk is emitted between the two files.
   Custom V8 snapshot blobs remain process-only because Node does not expose a
   per-Worker snapshot-blob API; option parsing rejects that combination before
-  creating a worker thread.
+  creating a worker thread. Sticky-session mode is also process-only because its
+  socket handoff uses process IPC. Worker-thread shutdown is an explicit protocol:
+  the master requests graceful exit, the worker awaits `app.close()` or
+  `agent.close()`, and the master falls back to `Worker.terminate()` after the
+  configured close timeout.
 - `egg-bin bundle --cluster` is the ordinary cluster-bundle producer. It selects
   the bundler's `cluster` target and writes `app_worker.js`, `agent_worker.js`,
   and the bundle manifest without constructing snapshot blobs. Its output can

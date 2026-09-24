@@ -77,6 +77,10 @@ export function startAppWorker(
       ...clusterConfig.https,
       ...options.https,
     };
+    // A master-level port of 0 means that the application listen config still
+    // decides the worker port. This is required by reusePort workers, which
+    // must all bind the same configured port rather than separate ephemeral
+    // ports.
     const port = (app.options.port = options.port || listenConfig.port);
     const debugPort = options.debugPort;
     const protocol = httpsOptions.key && httpsOptions.cert ? 'https' : 'http';

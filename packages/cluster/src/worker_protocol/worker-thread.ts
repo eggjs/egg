@@ -5,6 +5,8 @@ import type { Options as GracefulExitOptions } from 'graceful-process';
 import type { MessageBody } from '../utils/messenger.ts';
 import type { AppWorkerIO } from './app.ts';
 
+export const WORKER_THREAD_GRACEFUL_EXIT = '@eggjs/cluster:graceful-exit';
+
 /**
  * Worker-thread-backed transport shared by the standard worker entries and
  * generated bundle entries.
@@ -30,11 +32,19 @@ export function createWorkerThreadIO(): AppWorkerIO {
     },
     gracefulExit(options: GracefulExitOptions): void {
       const { beforeExit } = options;
-      process.on('exit', async (code) => {
-        if (typeof beforeExit === 'function') {
-          await beforeExit();
+      let closing = false;
+      port.on('message', async (message: unknown) => {
+        if (message !== WORKER_THREAD_GRACEFUL_EXIT || closing) return;
+        closing = true;
+        try {
+          if (typeof beforeExit === 'function') {
+            await beforeExit();
+          }
+          process.exit(0);
+        } catch (err) {
+          options.logger?.error('[worker_thread] graceful exit failed:', err);
+          process.exit(1);
         }
-        process.exit(code);
       });
     },
   };

@@ -24,7 +24,7 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 
 - sources touched: `packages/cluster/src/{worker_protocol,utils/mode}`, `tools/egg-bin/src/commands/snapshot.ts`, `tools/scripts/src/commands/start.ts`, `tools/egg-bundler/src/lib/prelude.ts`, related tests and user docs
 - pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
-- note: Blank worker paths normalize before launch. Snapshot builds reject colliding role blob paths, remove stale outputs before validating the current build, and reject bootstrap modules that would otherwise be silently ignored. Lazy-external call-result proxies now memoize their first resolved object so mutations persist after restore.
+- note: Worker-thread shutdown now uses an explicit master-to-worker close message and awaits app/agent cleanup before falling back to termination. Invalid sticky/thread combinations and blank worker paths fail or normalize before launch. Snapshot builds reject colliding role blob paths, remove stale outputs before validating the current build, and reject bootstrap modules that would otherwise be silently ignored. Lazy-external call-result proxies now memoize their first resolved object so mutations persist after restore.
 
 ## [2026-08-03] fix | preserve authoritative manifest discovery in Tegg loaders
 
