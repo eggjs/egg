@@ -498,3 +498,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources inspected: [first draft-PR CI run](https://github.com/eggjs/egg/actions/runs/35947286821), `.github/workflows/ci.yml`, `scripts/ci-plan.js`, `scripts/ci-coverage.js`
 - pages updated: CI performance plan, parallel test metrics, index and log
 - note: All platform tests passed, but coverage shards resolved Node.js 24 to different cached patch releases. The coverage guard rejected the mismatch. The planner now supplies one exact version to all coverage producers and the merge job. Full-profile overrides also apply to documentation-only changes, and change detection retains previous paths for renamed files. A separate shared-worker experiment failed; isolated workers remain in use.
+
+## [2026-09-24] workflow | restore Codecov signature-key retrieval
+
+- sources inspected: [second hosted attempt](https://github.com/eggjs/egg/actions/runs/35948525958), [Codecov v5.5.5](https://github.com/codecov/codecov-action/releases/tag/v5.5.5), `.github/workflows/ci.yml`
+- pages updated: CI performance plan and log
+- note: All tests and the coverage inventory/merge passed in 14m 52s with 89.35 runner-minutes. The required upload exposed the old Codecov action's obsolete Keybase endpoint. CI now pins the upstream patch release that updates that endpoint, while retaining signature verification and upload failure propagation. Failed-run timings remain separate from successful performance evidence.

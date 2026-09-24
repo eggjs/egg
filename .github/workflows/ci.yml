@@ -283,7 +283,7 @@ jobs:
       - name: Merge coverage
         run: node node_modules/vitest/vitest.mjs --merge-reports=benchmark/ci-test/blobs --coverage
       - name: Code Coverage
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
+        uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac # v5.5.5
         with:
           use_oidc: true
           fail_ci_if_error: true
@@ -366,7 +366,7 @@ jobs:
 
       - name: Code Coverage
         if: ${{ matrix.coverage }}
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
+        uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac # v5.5.5
         with:
           use_oidc: true
 
@@ -450,7 +450,7 @@ jobs:
 
       - name: Code Coverage
         if: ${{ matrix.coverage }}
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
+        uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac # v5.5.5
         with:
           use_oidc: true
 

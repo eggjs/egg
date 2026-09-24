@@ -24,6 +24,8 @@ source_files:
   - https://github.com/eggjs/egg/actions/runs/35879900054
   - https://github.com/eggjs/egg/actions/runs/35861608073
   - https://github.com/eggjs/egg/actions/runs/35947286821
+  - https://github.com/eggjs/egg/actions/runs/35948525958
+  - https://github.com/codecov/codecov-action/releases/tag/v5.5.5
   - https://github.com/eggjs/egg/pull/6056
   - https://vitest.dev/guide/improving-performance
   - https://docs.github.com/en/actions/reference/limits
@@ -51,6 +53,15 @@ to `24.21.0` and `24.20.0` from their local caches. The planner now resolves one
 exact Node.js 24 version and supplies it to both coverage shards and their merge
 job. The failed attempt is diagnostic evidence, not a successful speed benchmark;
 the PR checks provide the subsequent verification runs.
+
+The next attempt passed all tests, the complete 584-file inventory check, and
+native coverage merging. It finished in 14m 52s with 89.35 unweighted
+runner-minutes, but failed the required upload because the existing Codecov
+action used an obsolete signing-key endpoint. All three CI upload steps now pin
+`codecov/codecov-action@v5.5.5`, which contains the upstream endpoint correction.
+Signature verification and the required main-suite upload remain enabled.
+These failed-attempt timings are diagnostic; use a successful run before claiming
+an end-to-end improvement.
 
 A resolved-configuration inspection found that Vitest 5 file-based projects do
 not inherit root `pool`, `isolate`, or `fsModuleCache` settings. The new reporter
