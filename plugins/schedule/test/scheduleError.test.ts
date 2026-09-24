@@ -1,7 +1,5 @@
-import { setTimeout as sleep } from 'node:timers/promises';
-
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, beforeAll } from 'vitest';
+import { describe, it, afterAll, beforeAll, expect, vi } from 'vitest';
 
 import { getFixtures } from './utils.ts';
 
@@ -16,7 +14,11 @@ describe.skipIf(process.platform === 'win32')('test/scheduleError.test.ts', () =
   afterAll(() => app.close());
 
   it('should thrown', async () => {
-    await sleep(5000);
-    app.expect('stderr', /`schedule\.interval` or `schedule\.cron` or `schedule\.immediate` must be present/);
+    await vi.waitFor(
+      () => {
+        expect(app.stderr).toMatch(/`schedule\.interval` or `schedule\.cron` or `schedule\.immediate` must be present/);
+      },
+      { timeout: 5000, interval: 100 },
+    );
   });
 });

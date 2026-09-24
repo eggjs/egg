@@ -480,3 +480,15 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `.github/workflows/pkg-pr-new.yml`, `scripts/publish-preview.js`, `scripts/utils.js`, `CONTRIBUTING.md`, `CONTRIBUTING.zh-CN.md`, `site/docs/{community/index,releases/pr-preview-packages}.md`, `site/docs/zh-CN/{community/index,releases/pr-preview-packages}.md`, `site/.vitepress/config.mts`, `https://github.com/stackblitz-labs/pkg.pr.new`, `https://blog.stackblitz.com/posts/cloudflare-backing-pkg-pr-new-data-infrastructure/`
 - pages updated: `wiki/workflows/pr-preview-packages.md`, `wiki/index.md`, `wiki/log.md`
 - note: The `pkg.pr.new` label enables public workspace previews, including stacked PRs; new commits and reopened PRs publish while labeled. The utoo build and shared release helpers feed `pkg-pr-new@latest`, preserve internal preview links, and restore manifests afterward. Publication uses read-only workflow permissions and the pkg.pr.new GitHub App. English and Chinese `/releases/` guides cover installation, rollback, and upstream retention: more than one month without downloads or more than six months old. The version menu, Community landing pages, and contribution guides link to them; only the version menu is active.
+
+## [2026-09-24] analysis | measure CI latency and propose a performance rollout
+
+- sources inspected: `.github/workflows/{ci,e2e-test}.yml`, `vitest.config.ts`, benchmark scripts, schedule and inspector tests, ten GitHub CI runs and three E2E runs from September 23
+- pages added: `wiki/sources/ci-performance-baseline.md`, `wiki/workflows/ci-performance-plan.md`; index and log updated
+- note: Main-suite execution and delayed runner starts dominate latency; dependency installation has a 4-second median in the inspected sample. The proposal combines a smaller PR matrix with full pre-merge compatibility, conservative sharding, complete coverage aggregation, and targeted test fixes. The latest CLI failure exposed an inspector-port collision candidate; the final `done` job was skipped after failure. The plan is not implemented, and its targets remain unmeasured.
+
+## [2026-09-24] workflow | implement PR shards and reliable CI aggregation
+
+- sources touched: `.github/workflows/ci.yml`, `scripts/ci-{plan,coverage,reporter}.*`, `scripts/test/ci.test.js`, `vitest.config.ts`, schedule tests, egg-bin inspector tests and option matching
+- pages updated: CI performance plan, local CI, parallel test metrics, shared-worker state-leak context, index and log
+- note: PRs use five platform/version combinations across nine jobs; merge groups retain all nine combinations. Coverage aggregation rejects missing or overlapping shards. The final gate rejects unexpected skips. Resolved Vitest 5 settings exposed a conflict with prior wiki claims: file-based projects currently use isolated forks. Hosted-run performance verification is pending.

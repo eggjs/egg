@@ -377,7 +377,10 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   protected addNodeOptions(options: string) {
     if (this.env.NODE_OPTIONS) {
-      if (!this.env.NODE_OPTIONS.includes(options)) {
+      // Match an option boundary: --inspect-port must not suppress --inspect.
+      // An existing value, such as --inspect=127.0.0.1:0, already enables the flag.
+      const escaped = options.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      if (!new RegExp(`(?:^|\\s)${escaped}(?=$|\\s|=)`).test(this.env.NODE_OPTIONS)) {
         this.env.NODE_OPTIONS = `${this.env.NODE_OPTIONS} ${options}`;
       }
     } else {

@@ -3,21 +3,40 @@ name: CI
 
 on:
   push:
-    paths-ignore:
-      - '**/*.md'
     branches: [next]
   pull_request:
-    types: [opened, synchronize]
-    paths-ignore:
-      - '**/*.md'
+    types: [opened, synchronize, reopened]
     branches: [next]
   merge_group:
+  workflow_dispatch:
 
 permissions:
+  contents: read
+  pull-requests: read
   id-token: write
   actions: write
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      tests: ${{ steps.plan.outputs.tests }}
+      profile: ${{ steps.plan.outputs.profile }}
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - name: Check CI planning and coverage guards
+        run: node --test scripts/test/ci.test.js
+      - name: Plan tests
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/ci-plan.js
+
   typecheck:
     runs-on: ubuntu-latest
 
@@ -65,29 +84,20 @@ jobs:
         run: ut run site:build
 
   test:
+    needs: plan
+    if: needs.plan.outputs.tests == 'true'
     strategy:
       fail-fast: false
-      matrix:
-        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
-        node: ['22', '24', '26']
-        coverage: [false]
-        # Replace (not duplicate) the ubuntu/24 leg with a coverage-enabled one.
-        # `include` cannot overwrite an existing matrix dimension, so the base
-        # coverage:false combo must be excluded first or ubuntu/24 would run twice.
-        exclude:
-          - os: 'ubuntu-latest'
-            node: '24'
-            coverage: false
-        include:
-          - os: 'ubuntu-latest'
-            node: '24'
-            coverage: true
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
 
-    name: Test (${{ matrix.os }}, ${{ matrix.node }})
+    name: Test (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
     runs-on: ${{ matrix.os }}
+    env:
+      CI_TEST_REPORT: '1'
+      CI_COVERAGE_REPORT: ${{ matrix.coverage && '1' || '0' }}
 
     concurrency:
-      group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
+      group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.os }}-${{ matrix.node }}-${{ matrix.shardIndex }}
       cancel-in-progress: true
 
     steps:
@@ -199,7 +209,6 @@ jobs:
           key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('pnpm-workspace.yaml', '**/package.json') }}
           restore-keys: |
             node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
-            node-compile-cache-${{ runner.os }}-
 
       - name: Enable Node compile cache
         # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
@@ -222,36 +231,59 @@ jobs:
 
       - name: Run tests (with coverage)
         if: ${{ matrix.coverage }}
-        run: ut run ci
+        run: ut run ci -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
       - name: Run tests
         if: ${{ !matrix.coverage }}
-        run: ut run test
+        run: ut run test -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
-      # Summarize how parallel the full-isolate-off suite actually ran. The gating
-      # test run above (`ut run ci` on the coverage leg, `ut run test` on the rest)
-      # emits Vitest JSON (vitest.config.ts, CI only); this step turns it into
-      # avg/peak concurrency + efficiency metrics in the job summary. It is
-      # informational only (always() so failures still surface metrics) and never
-      # changes the gate — the test run above already set the job's pass/fail.
       - name: Report parallelism metrics
         if: always()
         # Call node directly: `ut run <script> -- ...` re-serializes forwarded args into
         # a shell string without re-quoting, so the parentheses in --name break it.
-        run: node scripts/ci-test-benchmark.js --report-only --vitest-json benchmark/ci-test/ci-run/vitest-results.json --output-dir benchmark/ci-test/ci-run --name "Parallel test metrics (${{ matrix.os }}, Node ${{ matrix.node }}, isolate=off)"
+        run: node scripts/ci-test-benchmark.js --report-only --vitest-json benchmark/ci-test/ci-run/vitest-results.json --output-dir benchmark/ci-test/ci-run --name "Parallel test metrics (${{ matrix.os }}, Node ${{ matrix.node }}, shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})"
+
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ci-results-${{ matrix.os }}-node${{ matrix.node }}-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
+          path: benchmark/ci-test/ci-run/
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Run example tests
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          ut run example:test:all
+        if: ${{ matrix.os != 'windows-latest' && matrix.shardIndex == 1 }}
+        run: ut run example:test:all
 
+  coverage:
+    needs: [plan, test]
+    if: needs.plan.outputs.tests == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+        with:
+          node-version: '24'
+      - run: ut install --from pnpm
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: ci-results-ubuntu-latest-node24-*
+          path: benchmark/ci-test/shards
+      - name: Check coverage inventory
+        run: node scripts/ci-coverage.js benchmark/ci-test/shards benchmark/ci-test/blobs
+      - name: Merge coverage
+        run: node node_modules/vitest/vitest.mjs --merge-reports=benchmark/ci-test/blobs --coverage
       - name: Code Coverage
-        if: ${{ matrix.coverage }}
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           use_oidc: true
+          fail_ci_if_error: true
 
   test-egg-bin:
+    needs: plan
+    if: needs.plan.outputs.tests == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -293,7 +325,6 @@ jobs:
           key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('pnpm-workspace.yaml', '**/package.json') }}
           restore-keys: |
             node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
-            node-compile-cache-${{ runner.os }}-
 
       - name: Enable Node compile cache
         # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
@@ -333,6 +364,8 @@ jobs:
           use_oidc: true
 
   test-egg-scripts:
+    needs: plan
+    if: needs.plan.outputs.tests == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -374,7 +407,6 @@ jobs:
           key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('pnpm-workspace.yaml', '**/package.json') }}
           restore-keys: |
             node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
-            node-compile-cache-${{ runner.os }}-
 
       - name: Enable Node compile cache
         # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
@@ -416,6 +448,8 @@ jobs:
           use_oidc: true
 
   test-tegg-vitest:
+    needs: plan
+    if: needs.plan.outputs.tests == 'true'
     name: Test tegg-vitest (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
     strategy:
@@ -452,13 +486,19 @@ jobs:
         run: node node_modules/vitest/vitest.mjs run --root tegg/core/vitest --config vitest.config.ts --pool threads --no-isolate --maxWorkers 1
 
   done:
+    if: always()
     runs-on: ubuntu-latest
     needs:
+      - plan
+      - coverage
       - test
       - test-egg-bin
       - test-egg-scripts
       - test-tegg-vitest
       - typecheck
     steps:
-      - run: exit 1
-        if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) }}
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - name: Require all planned checks
+        env:
+          CI_NEEDS: ${{ toJSON(needs) }}
+        run: node scripts/ci-plan.js check

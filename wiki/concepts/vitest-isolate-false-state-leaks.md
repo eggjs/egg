@@ -15,14 +15,19 @@ source_files:
   - packages/core/src/lifecycle.ts
   - packages/egg/src/lib/egg.ts
   - tegg/plugin/tegg/test/MultiAppParallel.test.ts
-updated_at: 2026-09-23
+updated_at: 2026-09-24
 status: active
 ---
 
 ## Context
 
-The root `vitest.config.ts` runs the whole monorepo with `pool: 'threads'` and
-`isolate: false`. Under this mode every test **file** in a worker shares one
+The root `vitest.config.ts` declares `pool: 'threads'` and `isolate: false`.
+A September 24 inspection found that Vitest 5.0.1 file-based projects resolve
+to isolated `forks` because they do not inherit those root options. The findings
+below describe explicitly selected shared-worker runs, not the current default
+resolved project mode.
+
+Under shared-worker mode every test **file** in a worker shares one
 Node realm: the module registry, `globalThis`, module-level `let` bindings, the
 undici global dispatcher, `process` env/listeners and timers are all shared
 across files (and across `projects`, since projects share the worker pool).
@@ -161,6 +166,5 @@ pre-existing load flake independent of isolation.
 
 ## Related
 
-Now that the suite runs `isolate:false` safely, CI surfaces _how parallel it
-actually ran_ (avg/peak concurrency, parallel efficiency, critical path) in the
+CI surfaces _how parallel the selected configuration actually ran_ (avg/peak concurrency, parallel efficiency, critical path) in the
 test job summary — see [CI parallel test metrics](../workflows/ci-parallel-test-metrics.md).

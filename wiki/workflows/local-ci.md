@@ -18,21 +18,26 @@ source_files:
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/core/metadata/src/model/graph/GlobalGraph.ts
   - tegg/plugin/controller/test/fixtures/apps
-updated_at: 2026-09-23
+updated_at: 2026-09-24
 status: active
 ---
 
 # Local CI
 
 The repository's GitHub CI test job installs dependencies with
-`ut install --from pnpm`. The main test matrix runs Node.js 22, 24, and 26 on
-Linux, macOS, and Windows. It uses `ut run test`, or `ut run ci` for the
+`ut install --from pnpm`. Ordinary PRs run Node.js 22, 24, and 26 on Linux, plus Node.js 24 on macOS
+and Windows. Four slower combinations use two shards; Linux Node.js 26 uses one.
+Merge groups, `next` pushes, manual runs, and PR runs with the `ci:full` label use
+the complete Node.js 22/24/26 × Linux/macOS/Windows matrix without sharding. It uses `ut run test`, or `ut run ci` for the
 coverage job, without building packages before tests.
 
 The egg-bin matrix runs Node.js 24 and 26 on Linux and Windows. The egg-scripts
 matrix runs Node.js 22, 24, and 26 on Linux. The tegg Vitest adapter runs both
 isolated and shared workers on Node.js 24 and 26 on Linux. Coverage reports
-come from the Linux Node.js 24 jobs.
+come from the Linux Node.js 24 jobs. The main-suite coverage job checks the
+complete, disjoint shard inventory before merging Vitest blob coverage reports.
+The final `done` check fails if required jobs fail, are cancelled, or are skipped
+unexpectedly.
 
 Ecosystem CI patches external applications with workspace tarballs. Both cnpmcore
 jobs use the upstream commit pinned in `ecosystem-ci/repo.json`, which declares

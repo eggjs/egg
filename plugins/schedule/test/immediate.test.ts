@@ -1,7 +1,7 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, beforeAll, expect } from 'vitest';
+import { describe, it, afterAll, beforeAll, expect, vi } from 'vitest';
 
 import { contains, getFixtures, getLogContent } from './utils.ts';
 
@@ -16,12 +16,14 @@ describe.skipIf(process.platform === 'win32')('cluster - immediate', () => {
   afterAll(() => app.close());
 
   it('should work', async () => {
-    await sleep(5000);
-
-    const log = getLogContent('immediate');
-    // console.log(log);
-    expect(contains(log, 'immediate-interval')).toBeGreaterThanOrEqual(2);
-    expect(contains(log, 'immediate-cron')).toBeGreaterThanOrEqual(2);
+    await vi.waitFor(
+      () => {
+        const log = getLogContent('immediate');
+        expect(contains(log, 'immediate-interval')).toBeGreaterThanOrEqual(2);
+        expect(contains(log, 'immediate-cron')).toBeGreaterThanOrEqual(2);
+      },
+      { timeout: 5000, interval: 100 },
+    );
   });
 });
 

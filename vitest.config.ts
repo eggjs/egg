@@ -4,8 +4,9 @@ const isCI = Boolean(process.env.CI);
 const isWindowsCI = isCI && process.platform === 'win32';
 
 // In CI, emit a Vitest JSON report next to the benchmark harness so the
-// "Report parallelism metrics" step can summarize the real gating run (isolate is
-// off, so tests run fully in parallel). Keep this path in sync with the metrics step
+// "Report parallelism metrics" step can summarize the real gating run.
+// execution.json records effective project options: file-based projects do not
+// inherit the root pool/isolate options. Keep this path in sync with the metrics step
 // in .github/workflows/ci.yml. Locally we keep the default reporter only.
 const CI_VITEST_JSON = 'benchmark/ci-test/ci-run/vitest-results.json';
 
@@ -13,7 +14,14 @@ const config: UserWorkspaceConfig = defineConfig({
   test: {
     pool: 'threads',
     isolate: false,
-    reporters: isCI ? ['default', ['json', { outputFile: CI_VITEST_JSON }]] : ['default'],
+    reporters: [
+      'default',
+      ...(isCI ? [['json', { outputFile: CI_VITEST_JSON }] as ['json', { outputFile: string }]] : []),
+      ...(process.env.CI_TEST_REPORT === '1' ? ['./scripts/ci-reporter.ts'] : []),
+      ...(process.env.CI_COVERAGE_REPORT === '1'
+        ? [['blob', { outputFile: 'benchmark/ci-test/ci-run/blob.json' }] as ['blob', { outputFile: string }]]
+        : []),
+    ],
     // Windows CI is more contention-sensitive than posix, so we cap the thread
     // pool. Use the full standard `windows-latest` runner (4 vCPU) instead of the
     // previous hard cap of 2; the suite already retries flaky tests (--retry 2).

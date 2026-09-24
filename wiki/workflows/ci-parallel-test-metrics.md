@@ -5,21 +5,29 @@ summary: How the CI test gate surfaces single-run parallelism efficiency metrics
 source_files:
   - vitest.config.ts
   - .github/workflows/ci.yml
+  - scripts/ci-reporter.ts
+  - scripts/ci-test-benchmark/environment.js
   - scripts/ci-test-benchmark/index.js
   - scripts/ci-test-benchmark/vitest-summary.js
   - scripts/ci-test-benchmark/report.js
   - scripts/ci-test-benchmark/cli.js
   - benchmark/ci-test/README.md
-updated_at: 2026-09-23
+updated_at: 2026-09-24
 status: active
 ---
 
 ## Why
 
-The whole monorepo runs vitest with `pool: 'threads'` + `isolate: false` for full
-parallelism (the tegg `TeggScope` per-app isolation makes concurrent multi-app
-boots safe; see [[vitest-isolate-false-state-leaks]]). This workflow makes the
-_effect_ of that parallelism visible in CI without changing the gate.
+The root configuration declares `pool: 'threads'` and `isolate: false`, but a
+September 24 inspection of Vitest 5.0.1's resolved projects showed isolated
+`forks`. File-based projects do not inherit these root options. The historical
+shared-worker findings remain relevant when that mode is explicitly selected.
+
+CI now uploads `execution.json` alongside the existing reports. Its public
+Vitest module diagnostics include imports and suite hooks, retry counts, the
+full test inventory, shard identity, and resolved project settings. The
+benchmark helper uses its worker ceiling when available instead of estimating
+it from root configuration text.
 
 ## How it is wired (test gating job only)
 

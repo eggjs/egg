@@ -5,9 +5,12 @@ import { extractCommandParameters } from './command.js';
 import { readJsonIfExists, readTextIfExists } from './fs.js';
 
 export async function collectEnvironment(command) {
-  const [packageJson, vitestConfig] = await Promise.all([
+  const [packageJson, vitestConfig, execution] = await Promise.all([
     readJsonIfExists(path.resolve(process.cwd(), 'package.json')),
     readVitestConfigDefaults(path.resolve(process.cwd(), 'vitest.config.ts')),
+    process.env.CI_TEST_REPORT === '1'
+      ? readJsonIfExists(path.resolve(process.cwd(), 'benchmark/ci-test/ci-run/execution.json'))
+      : null,
   ]);
   const cpus = os.cpus();
   const availableParallelism = typeof os.availableParallelism === 'function' ? os.availableParallelism() : cpus.length;
@@ -17,7 +20,8 @@ export async function collectEnvironment(command) {
   // of workers vitest could actually use, not the raw core count.
   const isWindowsCI = Boolean(process.env.CI) && os.platform() === 'win32';
   const workerCeiling =
-    isWindowsCI && typeof vitestConfig?.maxWorkers === 'number' ? vitestConfig.maxWorkers : availableParallelism;
+    execution?.workerCeiling ??
+    (isWindowsCI && typeof vitestConfig?.maxWorkers === 'number' ? vitestConfig.maxWorkers : availableParallelism);
 
   return {
     arch: os.arch(),
@@ -47,6 +51,7 @@ export async function collectEnvironment(command) {
     node: process.version,
     packageManager: packageJson?.packageManager ?? null,
     platform: os.platform(),
+    resolvedProjects: execution?.projects ?? null,
     release: os.release(),
     totalMemoryBytes: os.totalmem(),
     vitestConfig,

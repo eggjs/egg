@@ -13,6 +13,7 @@ Read this file before exploring raw sources.
 
 ## Workflows
 
+- [GitHub Actions performance plan](./workflows/ci-performance-plan.md) - PR/full matrix, sharding, test-runtime improvements, and acceptance criteria based on measured CI bottlenecks.
 - [CI parallel test metrics](./workflows/ci-parallel-test-metrics.md) - How the CI test gate surfaces avg/peak concurrency + parallel-efficiency metrics for the isolate:false suite, and how to read or reproduce them.
 - [Docs and API Updates](./workflows/docs-and-api-updates.md) - How to handle changes that affect user-facing docs or durable project understanding.
 - [Local CI](./workflows/local-ci.md) - Local validation should run tests from clean sources and avoid stale artifacts (`dist/` duplicate-proto; fixture `.egg` scan-manifest caches) before tegg tests.
@@ -36,4 +37,4 @@ Read this file before exploring raw sources.
 
 ## Sources
 
-- No standalone source summary pages seeded yet.
+- [CI performance baseline, September 2026](./sources/ci-performance-baseline.md) - Job and step timings from ten CI runs and three E2E runs, including runner delays and an inspector-port failure.
