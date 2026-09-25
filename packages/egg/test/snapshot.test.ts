@@ -1,3 +1,12 @@
+// These tests exercise the snapshotWillSerialize / snapshotDidDeserialize
+// lifecycle hooks under a normal Node.js process — NOT under
+// `node --build-snapshot`. The facade that would invoke these hooks from a
+// real V8 snapshot build (`buildSnapshot`/`restoreSnapshot`) was removed
+// because it could not work under Node's mksnapshot constraints: userland
+// `require()` is blocked (MODULE_NOT_FOUND), and egg's async-heavy loader
+// corrupts the async_hooks stack before `SpinEventLoopInternal` can finish.
+// The hooks remain as a general-purpose resource-cleanup abstraction that
+// a future non-mksnapshot serialization mechanism could drive.
 import { strict as assert } from 'node:assert';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -6,7 +15,6 @@ import { describe, it, afterEach } from 'vitest';
 
 import { Agent } from '../src/lib/agent.ts';
 import { Application } from '../src/lib/application.ts';
-import { restoreSnapshot } from '../src/lib/snapshot.ts';
 import { startEgg } from '../src/lib/start.ts';
 
 const fixtures = path.join(import.meta.dirname, 'fixtures');
@@ -305,15 +313,6 @@ describe('test/snapshot.test.ts', () => {
 
       await app.close();
       await app.agent.close();
-    });
-  });
-
-  describe('restoreSnapshot', () => {
-    it('should throw when no snapshot app exists', async () => {
-      // Ensure no global snapshot app
-      globalThis.__egg_snapshot_app = undefined;
-
-      await assert.rejects(() => restoreSnapshot(), /No egg application found in snapshot/);
     });
   });
 });
