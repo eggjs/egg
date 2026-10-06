@@ -197,7 +197,7 @@ jobs:
         if: ${{ !cancelled() && github.event.inputs.dry_run != 'true' && env.NEW_TAG != '' }}
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
-          github-token: ${{ secrets.GIT_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const tag = process.env.NEW_TAG;
             const versionType = '${{ github.event.inputs.version_type }}';
