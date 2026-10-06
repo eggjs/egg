@@ -10,7 +10,7 @@ import { expect, it } from 'vitest';
 import Stop from '../src/commands/stop.ts';
 import { findNodeProcess } from '../src/helper.ts';
 
-it.skipIf(Number(process.versions.node.split('.')[0]) < 24 || process.platform === 'win32')(
+it.skipIf(Number(process.versions.node.split('.')[0]) < 24)(
   'discovers and stops a real restored snapshot and closes its HTTP port',
   async () => {
     const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-snapshot-process-'));
