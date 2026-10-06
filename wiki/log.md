@@ -597,3 +597,8 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - Refreshed [Local CI](./workflows/local-ci.md) to describe the targeted Windows job and scripts-only build prerequisite.
 
 - Windows source-level regression tests skip the Linux CLI build step: utoo interprets its tsdown path filter as a workspace selection on Windows, while these tests do not require `dist`.
+
+## 2026-10-06 — Release main branch transition
+
+- Changed the manual release branch choice and guard from master to main, retaining next and its default during migration. Added regression cases for main, rejection of master and same-named tags, and mismatched branch refs.
+- Updated the release workflow guide to explain the release environment gate and distinguish the allowlist change from branch renaming or default-branch changes.

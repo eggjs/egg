@@ -23,9 +23,12 @@ test('release guard requires an allowed branch and its full branch ref', () => {
   assert.equal(guard.env.DISPATCH_REF, '${{ github.ref }}');
   for (const [branch, ref, succeeds] of [
     ['next', 'refs/heads/next', true],
-    ['master', 'refs/heads/master', true],
+    ['main', 'refs/heads/main', true],
+    ['master', 'refs/heads/master', false],
+    ['main', 'refs/tags/main', false],
+    ['main', 'refs/heads/next', false],
     ['next', 'refs/tags/next', false],
-    ['next', 'refs/heads/master', false],
+    ['next', 'refs/heads/main', false],
     ['feature', 'refs/heads/feature', false],
     ['next; echo injected', 'refs/heads/next', false],
   ]) {
