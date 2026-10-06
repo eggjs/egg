@@ -12,7 +12,7 @@ import { BaseStrategy } from './base.ts';
 
 export abstract class TimerStrategy extends BaseStrategy {
   protected cronInstance?: CronExpression;
-  #timers = new Set<ReturnType<typeof setTimeout> | safeTimers.Timeout>();
+  #timers = new Set<() => void>();
   #immediates = new Set<ReturnType<typeof setImmediate>>();
 
   constructor(scheduleConfig: EggScheduleConfig, agent: Agent, key: string) {
@@ -112,12 +112,8 @@ export abstract class TimerStrategy extends BaseStrategy {
 
   async close(): Promise<void> {
     await super.close();
-    for (const timer of this.#timers) {
-      if (timer instanceof safeTimers.Timeout) {
-        safeTimers.clearTimeout(timer);
-      } else {
-        clearTimeout(timer);
-      }
+    for (const cancel of this.#timers) {
+      cancel();
     }
     this.#timers.clear();
     for (const immediate of this.#immediates) {
@@ -131,12 +127,20 @@ export abstract class TimerStrategy extends BaseStrategy {
     delay: number,
     ...args: any[]
   ): ReturnType<typeof setTimeout> | safeTimers.Timeout {
-    const fn = delay < safeTimers.maxInterval ? setTimeout : safeTimers.setTimeout;
-    const timer = fn(() => {
-      this.#timers.delete(timer);
+    let cancel: () => void;
+    const callback = () => {
+      this.#timers.delete(cancel);
       if (!this.closed && !this.agent.schedule.closed) handler(...args);
-    }, delay);
-    this.#timers.add(timer);
+    };
+    if (delay < safeTimers.maxInterval) {
+      const timer = setTimeout(callback, delay);
+      cancel = () => clearTimeout(timer);
+      this.#timers.add(cancel);
+      return timer;
+    }
+    const timer = safeTimers.setTimeout(callback, delay);
+    cancel = () => safeTimers.clearTimeout(timer);
+    this.#timers.add(cancel);
     return timer;
   }
 }
