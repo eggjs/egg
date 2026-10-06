@@ -55,7 +55,7 @@ Then re-run tests.
   extra wrap; detached/escape-point access (timers, emitter listeners, proxy
   handlers, module-level lifecycle-util statics) must run inside
   `TeggScope.run(app._teggScopeBag, ...)`. See the "Multi-App Isolation
-  (TeggScope)" section in `tegg/CLAUDE.md` for the full rules.
+  (TeggScope)" section in `tegg/AGENTS.md` for the full rules.
 - **V8 startup snapshot lifecycle**: a snapshot build runs through
   `configWillLoad` and resumes from `configDidLoad` only after restore. Plugin
   constructors and `configWillLoad` must therefore keep only serializable

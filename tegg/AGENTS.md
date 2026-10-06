@@ -1,6 +1,7 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Follow the shared repository guidance in [the root AGENTS.md](../AGENTS.md).
+This file adds guidance for working in `tegg/`.
 
 ## Overview
 
