@@ -47,6 +47,7 @@ jobs:
   release:
     name: Manual Release
     runs-on: ubuntu-latest
+    environment: release
 
     concurrency:
       group: release-${{ github.event.inputs.branch }}
@@ -54,7 +55,6 @@ jobs:
 
     permissions:
       contents: write
-      packages: write
       id-token: write
 
     steps:

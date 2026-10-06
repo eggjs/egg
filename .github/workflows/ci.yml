@@ -395,6 +395,9 @@ jobs:
             node: '24'
             coverage: false
         include:
+          - os: 'windows-latest'
+            node: '24'
+            coverage: false
           - os: 'ubuntu-latest'
             node: '24'
             coverage: true
@@ -449,8 +452,9 @@ jobs:
 
       # own step for clear failure attribution; @eggjs/scripts has no build
       # script of its own, so build it through the root tsdown workspace
-      # filter (path form is fine here, this job only runs on ubuntu)
+      # filter. Windows runs only source-level regression tests and needs no build.
       - name: Build egg-scripts
+        if: ${{ matrix.os != 'windows-latest' }}
         run: ut run build -- --workspace ./tools/scripts
 
       - name: Run tests (with coverage)
@@ -458,8 +462,12 @@ jobs:
         run: ut run ci --workspace @eggjs/scripts
 
       - name: Run tests
-        if: ${{ !matrix.coverage }}
+        if: ${{ !matrix.coverage && matrix.os != 'windows-latest' }}
         run: ut run test --workspace @eggjs/scripts
+
+      - name: Run Windows preload and foreground exit regression tests
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: ut run test --workspace @eggjs/scripts -- test/start-unit.test.ts
 
       - name: Code Coverage
         if: ${{ matrix.coverage }}

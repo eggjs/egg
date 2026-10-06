@@ -575,3 +575,10 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - Deleted legacy pnpm-workspace.yaml. Default TypeScript catalog is now TS7; only root and egg-bin compatibility tests select the named compiler-api TS5 catalog.
 - Added an installed-toolchain guard that checks the actual tsc version from every workspace bin path; all checks select TS7. All workspace typechecks passed after fresh utoo resolution.
 - Full build/declarations and public tarball validation passed; 17 tooling guards and four CLI compiler initialization tests passed after this catalog separation.
+
+## 2026-10-06 — Scripts Windows sourcemap regression coverage
+
+- Added Windows Node.js 24 coverage for ESM file URL preloads, special-character paths, CJS preloads, and foreground child exit handling in `.github/workflows/ci.yml` and `tools/scripts/test/start-unit.test.ts`.
+- Refreshed [Local CI](./workflows/local-ci.md) to describe the targeted Windows job and scripts-only build prerequisite.
+
+- Windows source-level regression tests skip the Linux CLI build step: utoo interprets its tsdown path filter as a workspace selection on Windows, while these tests do not require `dist`.
