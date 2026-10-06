@@ -532,3 +532,10 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Removed the exact packageManager pin, restored the utoo catalog range to ^1, and switched CI/bootstrap instructions to latest at the user’s request. Native workspace/catalog configuration remains authoritative.
 - Removed the E2E-only utoo@1.1.1 temporary installation; packing now reuses the latest CLI from setup-utoo and the tracked native configuration.
+
+## 2026-10-06 — Scripts Windows sourcemap regression coverage
+
+- Added Windows Node.js 24 coverage for ESM file URL preloads, special-character paths, CJS preloads, and foreground child exit handling in `.github/workflows/ci.yml` and `tools/scripts/test/start-unit.test.ts`.
+- Refreshed [Local CI](./workflows/local-ci.md) to describe the targeted Windows job and scripts-only build prerequisite.
+
+- Windows source-level regression tests skip the Linux CLI build step: utoo interprets its tsdown path filter as a workspace selection on Windows, while these tests do not require `dist`.
