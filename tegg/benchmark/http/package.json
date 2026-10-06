@@ -17,6 +17,6 @@
   "devDependencies": {
     "@eggjs/bin": "beta",
     "@eggjs/scripts": "beta",
-    "typescript": "5"
+    "typescript": "^7.0.2"
   }
 }

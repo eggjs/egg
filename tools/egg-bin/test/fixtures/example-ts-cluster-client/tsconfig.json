@@ -8,9 +8,5 @@
     "noImplicitAny": false,
     "skipLibCheck": true,
     "strict": false
-  },
-  "ts-node": {
-    "esm": true,
-    "transpileOnly": true
   }
 }

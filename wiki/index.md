@@ -17,9 +17,11 @@ Read this file before exploring raw sources.
 - [GitHub Actions performance plan](./workflows/ci-performance-plan.md) - PR/full matrix, sharding, test-runtime improvements, and acceptance criteria based on measured CI bottlenecks.
 - [CI parallel test metrics](./workflows/ci-parallel-test-metrics.md) - Test concurrency, resolved worker settings, retries, and shard inventories in CI artifacts.
 - [Docs and API Updates](./workflows/docs-and-api-updates.md) - How to handle changes that affect user-facing docs or durable project understanding.
-- [Local CI](./workflows/local-ci.md) - Local validation should run tests from clean sources and avoid stale artifacts (`dist/` duplicate-proto; fixture `.egg` scan-manifest caches) before tegg tests.
+- [Local CI](./workflows/local-ci.md) - Local validation and scripts Windows preload coverage; run main tests from clean sources and avoid stale artifacts (`dist/` duplicate-proto; fixture `.egg` scan-manifest caches) before tegg tests.
 - [PR preview packages](./workflows/pr-preview-packages.md) - Publish workspace previews through a pull request label and install them in consumer applications, including from stacked PRs.
 - [Egg-bin Windows shell probe hotspot](./workflows/egg-bin-windows-shell-probe.md) - How PR #6014 diagnosed hosted-Windows egg-bin startup slowness and why the final fix only presets SHELL.
+
+- [TypeScript 7 migration](./workflows/typescript-7.md) - TS7 compiler commands, isolated legacy API catalog, and local verification limits.
 
 ## Decisions
 

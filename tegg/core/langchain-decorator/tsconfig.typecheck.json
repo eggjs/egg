@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Runtime graph fixtures use inference and are not declaration entrypoints.
+    "isolatedDeclarations": false
+  }
+}

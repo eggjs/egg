@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --loader ts-node/esm --disable-warning=ExperimentalWarning --no-deprecation
+#!/usr/bin/env -S node --import @oxc-node/core/register --no-deprecation
 
 import { execute } from '@oclif/core';
 

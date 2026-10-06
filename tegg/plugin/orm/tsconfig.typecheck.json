@@ -1,6 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "ES2022"
+    "target": "ES2022",
+    // Runtime fixtures are typechecked but never emitted as declarations.
+    "isolatedDeclarations": false
   }
 }

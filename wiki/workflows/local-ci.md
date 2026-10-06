@@ -14,6 +14,7 @@ source_files:
   - tools/create-egg/package.json
   - tools/egg-bin/package.json
   - tools/egg-bin/tsconfig.json
+  - tools/scripts/test/start-unit.test.ts
   - tools/scripts/src/commands/start.ts
   - packages/egg/src/lib/core/httpclient.ts
   - tegg/core/loader/src/impl/ModuleLoader.ts
@@ -37,7 +38,13 @@ the complete Node.js 22/24/26 × Linux/macOS/Windows matrix without sharding. It
 coverage job, without building packages before tests.
 
 The egg-bin matrix runs Node.js 24 and 26 on Linux and Windows. The egg-scripts
-matrix runs Node.js 22, 24, and 26 on Linux. The tegg Vitest adapter runs both
+matrix runs Node.js 22, 24, and 26 on Linux, plus targeted preload and foreground
+exit regression tests on Windows Node.js 24. The Windows tests load
+source-map-support through real Node subprocesses from paths containing spaces
+and `#`, covering ESM file URLs and unchanged CJS `--require` paths. The
+Linux egg-scripts jobs build only that CLI before their tests because its bin discovers
+commands from `dist`; the targeted Windows job imports sources and skips that
+build. This differs from the main suite. The tegg Vitest adapter runs both
 isolated and shared workers on Node.js 24 and 26 on Linux. Coverage reports
 come from the Linux Node.js 24 jobs. The main-suite coverage job checks the
 complete, disjoint shard inventory before merging Vitest blob coverage reports.
@@ -131,3 +138,35 @@ sorts and returns **every** scanned inner-object proto (the graph is only used
 for ordering, cycle detection, and missing-dependency errors). So "a scanned
 inner object was not instantiated" points at the scan input (a stale `.egg`
 manifest), not at graph pruning.
+
+## macOS proxy and process-test boundaries
+
+Local observation (2026-10-06): with Surge Enhanced Mode enabled, both DNS-cache
+lookup suites received SocketError instead of the expected ENOTFOUND for their
+nonexistent domain. Removing HTTP_PROXY/HTTPS_PROXY/ALL_PROXY (including lowercase
+variants) alone did not fix it. Temporarily disabling Enhanced Mode through the
+installed official Surge CLI, clearing proxy variables for the test subprocess,
+and restoring the original mode in a finally block made the ENOTFOUND assertions
+pass. No repository DNS behavior or assertion was changed.
+
+The same standalone suites default to a five-second test timeout; the address
+rotation cases try 127.0.0.2/127.0.0.3 and can take over ten seconds on macOS before
+the connection failure is caught. Both complete suites passed with the original
+assertions and a 40-second standalone timeout. The main CI command already sets
+its own 20-second timeout. Sources: tegg/plugin/dns-cache/test/dns_cache_lookup.test.ts,
+tegg/plugin/dns-cache/test/dns_cache_lookup_http_next.test.ts and test/utils.ts;
+Surge's installed command-reference.md documents feature set enhanced-mode.
+
+Run egg-bin and egg-scripts process suites serially on one local host. During a
+parallel run, egg-scripts' stop-all test found and killed egg-bin's egg.require
+fixture master, causing exit 143 in egg-bin and a two-PID assertion failure in
+scripts. Both suites passed when run separately. GitHub Actions already runs
+these jobs on separate runners. Sources: tools/scripts/test/stop.test.ts,
+tools/scripts/src/commands/stop.ts and tools/egg-bin/test/commands/dev.test.ts.
+
+For ORM validation, prepare its test/apple/banana databases before running the
+suite. The fixture preparation script resets those databases, so use a dedicated
+test service when sharing a host with other tasks. The 2026-10-06 retry used a
+temporary exact-source-restored port override into a separate local container.
+Sources: tegg/plugin/orm/test/fixtures/prepare.js and
+tegg/plugin/orm/test/fixtures/apps/orm-app/config/config.default.ts.

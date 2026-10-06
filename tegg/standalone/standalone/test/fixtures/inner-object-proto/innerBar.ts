@@ -10,7 +10,7 @@ export class InnerBar {
   @Inject()
   innerFoo: InnerFoo;
 
-  message() {
+  message(): string {
     return 'with inner bar and ' + this.innerFoo.message;
   }
 }

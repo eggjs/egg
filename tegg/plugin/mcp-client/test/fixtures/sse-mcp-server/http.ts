@@ -35,7 +35,7 @@ const transports: Record<string, any> = {};
 export const headers: Record<string, any> = {};
 
 export let httpServer: http.Server;
-export async function startSSEServer(port = 17233) {
+export async function startSSEServer(port = 17233): Promise<void> {
   const httpServer = http.createServer(async (req, res) => {
     const url = new URL(`http://127.0.0.1:${port}${req.url!}`);
     const headerKey = `${req.method}${url.pathname}`;
@@ -61,6 +61,6 @@ export async function startSSEServer(port = 17233) {
   });
 }
 
-export async function stopSSEServer() {
+export async function stopSSEServer(): Promise<void> {
   server.close();
 }

@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // HTTP controller fixtures are not published as declarations.
+    "isolatedDeclarations": false
+  }
+}

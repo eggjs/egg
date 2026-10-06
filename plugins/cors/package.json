@@ -46,7 +46,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@koa/cors": "catalog:"
