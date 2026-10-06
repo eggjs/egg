@@ -63,7 +63,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "node ../../../scripts/tsc.js --noEmit --project tsconfig.typecheck.json",
+    "typecheck": "tsc --noEmit --project tsconfig.typecheck.json",
     "pretest": "node ./test/fixtures/prepare.js"
   },
   "dependencies": {

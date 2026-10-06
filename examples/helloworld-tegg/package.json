@@ -44,7 +44,7 @@
     "prepublishOnly": "pnpm run build",
     "start": "egg-scripts start --daemon",
     "stop": "egg-scripts stop",
-    "typecheck": "node ../../scripts/tsc.js --noEmit",
+    "typecheck": "tsc --noEmit",
     "build": "tsdown"
   },
   "dependencies": {

@@ -5,7 +5,7 @@
     "start": "eggctl start --workers 4",
     "stop": "eggctl stop",
     "dev": "egg-bin dev",
-    "build": "node node_modules/@typescript/native/bin/tsc",
+    "build": "tsc",
     "prebench": "npm run build",
     "bench": "sh run.sh"
   },
@@ -17,7 +17,6 @@
   "devDependencies": {
     "@eggjs/bin": "beta",
     "@eggjs/scripts": "beta",
-    "@typescript/native": "npm:typescript@^7.0.2",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }

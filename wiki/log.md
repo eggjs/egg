@@ -564,3 +564,8 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
   isolated retries pass. Deployment and snapshot health checks pass. Full consumer
   stability and the unrun remote matrix remain explicit limits.
 - Added local-ci guidance for scoped Surge bypass and serial CLI process suites.
+
+### 07 compiler command cleanup
+
+- Replaced workspace compiler path wrappers with `tsc --noEmit`; deleted scripts/tsc.js. Fresh utoo resolution selects TS7.0.2 and all workspace typechecks passed.
+- Egg 4 templates and the HTTP benchmark now declare typescript ^7.0.2 directly. TS5.9 remains in the monorepo for SWC compiler API compatibility; TS7 replacement reproduces an API error in @swc-node/register 1.12.1. Four CLI compiler initialization tests passed.

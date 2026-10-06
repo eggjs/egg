@@ -5,7 +5,6 @@ summary: Native TypeScript 7 checks with an explicit entrypoint and an intention
 source_files:
   - .utoo.toml
   - package.json
-  - scripts/tsc.js
   - scripts/check-package.mjs
   - scripts/test/check-package.test.js
   - tsdown.config.ts
@@ -28,16 +27,16 @@ status: active
 Task 07 started from clean detached commit `a11a6d50`. npm's `latest` tag was
 verified as 7.0.2 on 2026-10-06 (next was 7.1.0-dev.20261005.1).
 `@typescript/native` aliases `typescript@^7.0.2`; it replaces native-preview.
-The workspace `typecheck` scripts call `scripts/tsc.js`, which resolves the native
-package explicitly. During installation, utoo hoisted an old compiler executable
-into `.bin/tsc`; a bare `tsc` therefore cannot establish that TS 7 ran.
-New Egg 4 templates and the standalone HTTP benchmark use the explicit native
-entrypoint. Egg 3 templates remain unchanged.
+Workspace typecheck scripts use `tsc --noEmit`. A fresh native utoo dependency
+resolution was verified to link `.bin/tsc` to TS7.0.2. The former explicit-path
+wrapper has been deleted. Egg 4 templates and the standalone HTTP benchmark use
+`typescript@^7.0.2` directly and plain `tsc`; Egg 3 templates remain unchanged.
 
-Microsoft documents that TS 7.0 has no stable compiler API and recommends parallel
-installation for API consumers. This repository deliberately retains
-`typescript@^5.9.3` as the API compatibility layer. This is not the compiler used
-for the workspace typecheck scripts. No dependency overrides were added.
+The monorepo retains `typescript@^5.9.3` for SWC's compiler API. The current
+`@swc-node/register@1.12.1` declares `typescript >=4.3 <7` and reads
+`ts.ScriptTarget.ES2018`; replacing its API dependency with TS7 reproduces a
+TypeError. This compatibility dependency is separate from the TS7 checker.
+Templates using the default Oxc loader do not need the old API dependency.
 
 ## Toolchain audit
 

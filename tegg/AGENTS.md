@@ -381,7 +381,7 @@ plus a method call, with no per-access trap or bound-function allocation.
 1. Add to `tegg/core/` directory within the main monorepo
 2. Include `tsconfig.json` extending `@eggjs/tsconfig`
 3. Add standard scripts to `package.json`:
-   - `"typecheck": "node ../../../scripts/tsc.js --noEmit"`
+   - `"typecheck": "tsc --noEmit"`
 4. Export public API through `src/index.ts`
 5. Use `workspace:*` for internal dependencies and `catalog:` for external dependencies
 

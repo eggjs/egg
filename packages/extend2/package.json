@@ -34,7 +34,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "node ../../scripts/tsc.js --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@eggjs/tsconfig": "workspace:*",

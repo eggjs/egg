@@ -137,7 +137,7 @@
     "tag": "beta"
   },
   "scripts": {
-    "typecheck": "node ../../scripts/tsc.js --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@eggjs/ajv-plugin": "workspace:*",

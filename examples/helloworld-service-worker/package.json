@@ -8,7 +8,7 @@
     "start": "node --import=@oxc-node/core/register main.ts",
     "bundle:cf": "egg-bin bundle --framework @eggjs/service-worker --entry worker.ts -o .worker-cf --root ../..",
     "test": "vitest run",
-    "typecheck": "node ../../scripts/tsc.js --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@eggjs/service-worker": "workspace:*",

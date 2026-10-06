@@ -58,7 +58,7 @@
   },
   "scripts": {
     "build": "tsdown -c tsdown.config.ts",
-    "typecheck": "node ../../scripts/tsc.js --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "cov": "vitest run --coverage",
     "ci": "npm run cov"

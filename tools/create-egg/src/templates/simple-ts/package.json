@@ -24,9 +24,9 @@
     "ci": "vitest run --coverage",
     "postci": "npm run prepublishOnly && npm start && sleep 10 && npm stop && npm run clean",
     "lint": "oxlint --type-aware",
-    "typecheck": "node node_modules/@typescript/native/bin/tsc --noEmit",
-    "tsc": "node node_modules/@typescript/native/bin/tsc",
-    "clean": "node node_modules/@typescript/native/bin/tsc -b --clean",
+    "typecheck": "tsc --noEmit",
+    "tsc": "tsc",
+    "clean": "tsc -b --clean",
     "prepublishOnly": "npm run clean && npm run tsc"
   },
   "dependencies": {
@@ -38,10 +38,9 @@
     "@eggjs/mock": "beta",
     "@eggjs/tsconfig": "beta",
     "@types/node": "24",
-    "@typescript/native": "npm:typescript@^7.0.2",
     "oxlint": "1",
     "oxlint-tsgolint": "^7.0.2003",
-    "typescript": "^5.9.3",
+    "typescript": "^7.0.2",
     "vitest": "^5.0.1"
   },
   "engines": {

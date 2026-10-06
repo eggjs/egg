@@ -82,7 +82,7 @@
   },
   "scripts": {
     "test": "vitest run",
-    "typecheck": "node ../../scripts/tsc.js --noEmit",
+    "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",
     "build": "tsdown",

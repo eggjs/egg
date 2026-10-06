@@ -48,7 +48,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "node ../../scripts/tsc.js --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run --bail 1 --no-file-parallelism",
     "cov": "ut run test -- --coverage",
     "ci": "ut run cov"
