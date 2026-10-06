@@ -547,6 +547,7 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Preserve nonzero graceful-exit codes and worker errors through thread utilities and master shutdown, while attempting cleanup of all app workers and the agent. Process mode and timeout fallback retain their previous behavior.
 - Real master regressions verify app and agent beforeClose rejection produces exit code 1 rather than a successful shutdown. Sources: `packages/cluster/src/master.ts`, worker-thread utility implementations, and `packages/cluster/test/master/worker-thread-close.test.ts`; runtime semantics are recorded in [Egg Bundler](./packages/egg-bundler.md).
+
 ## 2026-10-06 — TypeScript 7 task 07
 
 - Verified npm stable 7.0.2 and Microsoft migration guidance; recorded explicit native invocation, API compatibility dependencies, source adjustments, verification and performance sample in workflows/typescript-7.md.
