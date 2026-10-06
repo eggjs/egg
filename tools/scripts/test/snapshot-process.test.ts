@@ -68,6 +68,7 @@ it.skipIf(Number(process.versions.node.split('.')[0]) < 24)(
       ]);
       expect(port).toBeGreaterThan(0);
       expect((await fetch(`http://127.0.0.1:${port}`)).status).toBe(200);
+      expect((await findNodeProcess()).some((item) => item.pid === child!.pid)).toBe(true);
       const processes = await findNodeProcess((item) => item.pid === child!.pid);
       expect(processes).toHaveLength(1);
       expect(processes[0].cmd).toContain('--snapshot-blob');

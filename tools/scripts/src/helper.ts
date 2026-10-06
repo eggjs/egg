@@ -34,7 +34,7 @@ export async function findNodeProcess(filterFn?: FilterFunction): Promise<NodePr
     return processes.flatMap(({ ProcessId, CommandLine }) => {
       if (!CommandLine) return [];
       const item = { pid: ProcessId, cmd: CommandLine };
-      return filterFn?.(item) ? [item] : [];
+      return !filterFn || filterFn(item) ? [item] : [];
     });
   }
   // command, cmd are aliases of args, not POSIX standard, so we use args.
@@ -48,7 +48,7 @@ export async function findNodeProcess(filterFn?: FilterFunction): Promise<NodePr
         const m = line.match(REGEX);
         if (m) {
           const item: NodeProcess = { pid: parseInt(m[1]), cmd: m[2] };
-          if (filterFn?.(item)) {
+          if (!filterFn || filterFn(item)) {
             arr.push(item);
           }
         }

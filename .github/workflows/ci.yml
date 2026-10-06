@@ -467,7 +467,7 @@ jobs:
 
       - name: Run Windows startup and snapshot process regression tests
         if: ${{ matrix.os == 'windows-latest' }}
-        run: ut run test --workspace @eggjs/scripts -- test/start-unit.test.ts test/snapshot-start.test.ts test/snapshot-stop.test.ts test/snapshot-process.test.ts
+        run: ut run test --workspace @eggjs/scripts -- test/helper.test.ts test/start-unit.test.ts test/snapshot-start.test.ts test/snapshot-stop.test.ts test/snapshot-process.test.ts
 
       - name: Code Coverage
         if: ${{ matrix.coverage }}
