@@ -14,7 +14,7 @@ on:
         type: choice
         options:
           - next
-          - master
+          - main
       version_type:
         description: 'Version bump type'
         required: true
@@ -67,8 +67,8 @@ jobs:
         run: |
           set -euo pipefail
           case "$INPUT_BRANCH" in
-            next|master) ;;
-            *) echo "::error::Disallowed release branch '$INPUT_BRANCH' (allowed: next, master)"; exit 1 ;;
+            next|main) ;;
+            *) echo "::error::Disallowed release branch '$INPUT_BRANCH' (allowed: next, main)"; exit 1 ;;
           esac
           if [ "$DISPATCH_REF" != "refs/heads/$INPUT_BRANCH" ]; then
             echo "::error::Dispatched from '$DISPATCH_REF' but branch input is '$INPUT_BRANCH'. Re-run 'Use workflow from' set to '$INPUT_BRANCH'."
