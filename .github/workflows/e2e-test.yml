@@ -3,11 +3,13 @@ name: E2E Test
 on:
   push:
     branches:
+      - main
       - next
     paths-ignore:
       - '**/*.md'
   pull_request:
     branches:
+      - main
       - next
     paths-ignore:
       - '**/*.md'
