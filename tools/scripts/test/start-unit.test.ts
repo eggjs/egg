@@ -63,18 +63,12 @@ describe('test/start-unit.test.ts', () => {
     signal: NodeJS.Signals | null,
     appDir = baseDir,
   ): Promise<void> {
-    let onExit: ((code: number | null, signal: NodeJS.Signals | null) => void) | undefined;
     spawnMock.mockImplementation(() => ({
       once: vi.fn((event: string, cb: (code: number | null, signal: NodeJS.Signals | null) => void) => {
-        if (event === 'exit') onExit = cb;
+        if (event === 'exit') queueMicrotask(() => cb(code, signal));
       }),
     }));
-    const run = TestStart.run(['--workers=1', appDir]);
-    await vi.waitFor(() => {
-      if (!onExit) throw new Error('child not spawned yet');
-    });
-    onExit!(code, signal);
-    return run;
+    return TestStart.run(['--workers=1', appDir]);
   }
 
   it('cluster mode spawns the start-cluster server bin with cluster options', async () => {
@@ -190,20 +184,14 @@ describe('test/start-unit.test.ts', () => {
   });
 
   it('foreground mode rejects when the child fails to spawn', async () => {
-    let onError: ((err: Error) => void) | undefined;
+    // A nonexistent --node executable emits 'error' and may never emit 'exit'.
+    const spawnError = new Error('spawn ENOENT');
     spawnMock.mockImplementation(() => ({
       once: vi.fn((event: string, cb: (err: Error) => void) => {
-        if (event === 'error') onError = cb;
+        if (event === 'error') queueMicrotask(() => cb(spawnError));
       }),
     }));
-    const run = TestStart.run(['--workers=1', baseDir]);
-    await vi.waitFor(() => {
-      if (!onError) throw new Error('child not spawned yet');
-    });
-    // e.g. a nonexistent --node executable: 'error' fires and 'exit' never does
-    const spawnError = new Error('spawn ENOENT');
-    onError!(spawnError);
-    // the raw child error is rethrown as-is, not wrapped
-    await expect(run).rejects.toBe(spawnError);
+    // The raw child error is rethrown as-is, not wrapped.
+    await expect(TestStart.run(['--workers=1', baseDir])).rejects.toBe(spawnError);
   });
 });
