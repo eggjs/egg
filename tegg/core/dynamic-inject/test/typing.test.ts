@@ -3,11 +3,10 @@ import path from 'node:path';
 import coffee from 'coffee';
 import { it } from 'vitest';
 
+import { resolveTypeScriptCompiler } from '../../../../scripts/test/resolve-typescript.mjs';
+
 it('should check enum value', async () => {
-  const tsc = path.resolve(
-    path.dirname(require.resolve('typescript/package.json')),
-    require('typescript/package.json').bin.tsc,
-  );
+  const tsc = resolveTypeScriptCompiler(import.meta.url);
   await coffee
     .fork(tsc, ['--noEmit', '-p', './tsconfig.json'], {
       cwd: path.join(__dirname, 'fixtures/modules/wrong-enum-module'),
@@ -19,10 +18,7 @@ it('should check enum value', async () => {
 });
 
 it('should check extends', async () => {
-  const tsc = path.resolve(
-    path.dirname(require.resolve('typescript/package.json')),
-    require('typescript/package.json').bin.tsc,
-  );
+  const tsc = resolveTypeScriptCompiler(import.meta.url);
   await coffee
     .fork(tsc, ['--noEmit', '-p', './tsconfig.json'], {
       cwd: path.join(__dirname, 'fixtures/modules/wrong-extends-module'),

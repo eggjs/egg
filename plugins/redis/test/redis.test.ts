@@ -1,17 +1,14 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { createRequire } from 'node:module';
 import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { detectPort } from 'detect-port';
 import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 
-const require = createRequire(import.meta.url);
-const compilerPath = path.resolve(
-  path.dirname(require.resolve('typescript/package.json')),
-  require('typescript/package.json').bin.tsc,
-);
+import { resolveTypeScriptCompiler } from '../../../scripts/test/resolve-typescript.mjs';
+
+const compilerPath = resolveTypeScriptCompiler(import.meta.url);
 
 function getFixtures(name: string) {
   return path.resolve(import.meta.dirname, 'fixtures', name);
