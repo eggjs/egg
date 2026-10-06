@@ -24,7 +24,7 @@ Dates use the workspace-local Asia/Shanghai calendar date.
 
 - sources touched: `packages/cluster/src/{worker_protocol,utils/mode}`, `tools/egg-bin/src/commands/snapshot.ts`, `tools/scripts/src/commands/start.ts`, `tools/egg-bundler/src/lib/prelude.ts`, related tests and user docs
 - pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
-- note: Blank worker paths normalize before launch. Snapshot builds reject colliding role blob paths, remove stale outputs before validating the current build, and reject bootstrap modules that would otherwise be silently ignored. Lazy-external call-result proxies now memoize their first resolved object so mutations persist after restore.
+- note: Worker-thread shutdown now uses an explicit master-to-worker close message and awaits app/agent cleanup before falling back to termination. Invalid sticky/thread combinations and blank worker paths fail or normalize before launch. Snapshot builds reject colliding role blob paths, remove stale outputs before validating the current build, and reject bootstrap modules that would otherwise be silently ignored. Lazy-external call-result proxies now memoize their first resolved object so mutations persist after restore.
 
 ## [2026-08-03] fix | preserve authoritative manifest discovery in Tegg loaders
 
@@ -532,6 +532,21 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Removed the exact packageManager pin, restored the utoo catalog range to ^1, and switched CI/bootstrap instructions to latest at the user’s request. Native workspace/catalog configuration remains authoritative.
 - Removed the E2E-only utoo@1.1.1 temporary installation; packing now reuses the latest CLI from setup-utoo and the tracked native configuration.
+
+## 2026-10-06 — Worker-thread shutdown timeout cleanup
+
+- Cancel app/agent graceful-shutdown timeout timers after the exit race finishes; real utility subprocess tests verify natural event-loop drain instead of relying on master process.exit().
+- Clarified the error-triggered immediate termination fallback in [Egg Bundler](./packages/egg-bundler.md) and refreshed its metadata. Sources: `packages/cluster/src/utils/mode/impl/worker_threads/{agent,app}.ts` and `packages/cluster/test/{worker-thread-shutdown.test.ts,fixtures/thread-shutdown-drain.mjs}`.
+
+## 2026-10-06 — Worker-thread reusePort port-zero forwarding
+
+- Allow an explicit master `port: 0` through the worker-thread reusePort fork guard so workers inherit `config.cluster.listen.port`; retain the guard for an omitted master port.
+- Added fork/argv and protocol regressions plus real HTTP startup coverage; Linux additionally verifies two workers sharing the configured port. Sources: `packages/cluster/src/utils/mode/impl/worker_threads/app.ts`, `packages/cluster/src/worker_protocol/app.ts`, and their cluster tests; [Egg Bundler](./packages/egg-bundler.md) records the runtime boundary.
+
+## 2026-10-06 — Worker-thread cleanup failure propagation
+
+- Preserve nonzero graceful-exit codes and worker errors through thread utilities and master shutdown, while attempting cleanup of all app workers and the agent. Process mode and timeout fallback retain their previous behavior.
+- Real master regressions verify app and agent beforeClose rejection produces exit code 1 rather than a successful shutdown. Sources: `packages/cluster/src/master.ts`, worker-thread utility implementations, and `packages/cluster/test/master/worker-thread-close.test.ts`; runtime semantics are recorded in [Egg Bundler](./packages/egg-bundler.md).
 
 ## 2026-10-06 — TypeScript 7 task 07
 
