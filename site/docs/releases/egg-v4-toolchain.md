@@ -27,10 +27,10 @@ The shared build also shapes debugging. Workspace development can import neighbo
 
 ## Workspace commands for contributors
 
-The main CI uses [utoo's ut command](https://github.com/eggjs/egg/blob/a11a6d5046c445307767086cd437f4456af04224/README.md#L45-L64) for installation and tasks. pnpm-workspace.yaml still defines workspaces and the catalog; internal packages use workspace:*. The root packageManager field also retains pnpm version information. Once utoo is available, run:
+The main CI uses [utoo's ut command](https://github.com/eggjs/egg/blob/f390cc011ce1c70d7460227459ec3825ca3d09f1/README.md) for installation and tasks. package.json defines workspace patterns and overrides, and .utoo.toml defines the catalog; internal packages use workspace:*. CI installs the latest utoo, and the old pnpm configuration remains a migration reference. Once utoo is available, run:
 
 ```bash
-ut install --from pnpm
+ut install
 ut run test
 ut run typecheck
 ut run build

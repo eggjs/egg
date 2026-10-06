@@ -11,6 +11,8 @@ source_files:
   - site/docs/releases/egg-v4-tegg.md
   - site/docs/releases/egg-v4-bundle-snapshot.md
   - site/docs/zh-CN/releases/
+  - package.json
+  - .utoo.toml
   - site/.vitepress/config.mts
   - site/docs/community/index.md
   - site/docs/zh-CN/community/index.md
@@ -27,3 +29,5 @@ The overview links to all six topics. Topic articles retain technical examples a
 Performance claims have distinct scopes. The 38.98 s to 28.56 s result compares the existing Vitest toolchain before and after rolldown-vite. The cnpmcore 947 ms to 379 ms single-process and 1356 ms to 591 ms cluster medians compare the same generated bundle with and without snapshot restoration. The cluster and single-process timing boundaries differ; these figures do not measure Egg 3-to-4 gains or request throughput.
 
 For maintenance, build the documentation with VitePress's dead-link checks enabled, check all seven routes per locale, inspect release sidebars and version menus, and exercise both directions of language switching. The source Markdown and VitePress configuration remain authoritative.
+
+The monorepo and toolchain articles use native utoo workspace patterns/overrides in `package.json`, catalogs in `.utoo.toml`, and `ut install`, aligned with the October 2026 migration. The legacy pnpm file is retained as a migration reference.

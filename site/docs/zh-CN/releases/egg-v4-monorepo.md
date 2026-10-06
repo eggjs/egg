@@ -5,7 +5,7 @@ description: 'Egg 4 的研发体验与生态维护实践：Monorepo 协作'
 
 # Monorepo 协作
 
-Egg 的一次框架修复，往往会穿过多个包。Loader 改变加载规则，插件要验证目录约定，Mock 要能复现启动过程，开发工具还要把同一套规则交给应用。包分散在不同仓库时，贡献者除了修改代码，还要协调依赖版本、临时链接和发布顺序。Egg 4 的 Monorepo，把这些相互依赖的工作放进同一[工作区](https://github.com/eggjs/egg/blob/a11a6d5046c445307767086cd437f4456af04224/pnpm-workspace.yaml#L1-L10)，让跨包修改可以作为一次完整变更接受检查。
+Egg 的一次框架修复，往往会穿过多个包。Loader 改变加载规则，插件要验证目录约定，Mock 要能复现启动过程，开发工具还要把同一套规则交给应用。包分散在不同仓库时，贡献者除了修改代码，还要协调依赖版本、临时链接和发布顺序。Egg 4 的 Monorepo，把这些相互依赖的工作放进同一[工作区](https://github.com/eggjs/egg/blob/f390cc011ce1c70d7460227459ec3825ca3d09f1/package.json#L95-L104)，让跨包修改可以作为一次完整变更接受检查。
 
 应用开发者、插件作者和框架贡献者可以在这套工作区中联调源码、验证跨包改动，并在真实应用中试用修复。
 
@@ -25,21 +25,24 @@ Monorepo 将相关实现、测试夹具和文档放到同一个提交中。评�
 
 应用升级时，按实际依赖选择包名。例如 packages/logger 已经提供 @eggjs/logger，但 egg、core 等包仍依赖 egg-logger。维护者可以在同一仓库推进新包，并保留调用方的过渡安排；应用开发者则应以实际依赖与发布说明为准，避免看到目录迁入就批量替换包名。下面是工作区的真实目录声明。
 
-```typescript
-packages:
-  - packages/*
-  - plugins/*
-  - examples/*
-  - tools/*
-  - site
-  - tegg/core/*
-  - tegg/plugin/*
-  - tegg/standalone/*
+```json
+{
+  "workspaces": [
+    "packages/*",
+    "plugins/*",
+    "examples/*",
+    "tools/*",
+    "site",
+    "tegg/core/*",
+    "tegg/plugin/*",
+    "tegg/standalone/*"
+  ]
+}
 ```
 
 ## 用 workspace 和 catalog 表达依赖关系
 
-工作区内部依赖与共用外部依赖，解决的是两类问题。workspace:\* 让一个包明确使用同仓中的另一个包；catalog: 则把外部依赖版本集中到 pnpm-workspace.yaml 的 catalog 中。修改公共外部依赖时，维护者可以在集中声明处调整范围，再通过各消费包的测试确认兼容性，而不用在多个 manifest 中逐一同步同一版本。
+工作区内部依赖与共用外部依赖，解决的是两类问题。workspace:\* 让一个包明确使用同仓中的另一个包；catalog: 则把外部依赖版本集中到 [.utoo.toml](https://github.com/eggjs/egg/blob/f390cc011ce1c70d7460227459ec3825ca3d09f1/.utoo.toml) 的 catalog 中。修改公共外部依赖时，维护者可以在集中声明处调整范围，再通过各消费包的测试确认兼容性，而不用在多个 manifest 中逐一同步同一版本。
 
 [@eggjs/core](https://github.com/eggjs/egg/blob/a11a6d5046c445307767086cd437f4456af04224/packages/core/package.json) 的依赖就是一个实际例子：@eggjs/router、@eggjs/utils 等使用 workspace:\*，egg-logger、globby 等使用 catalog:。这一声明既保留了包之间的方向，也让跨包联调无需先向 npm 发布中间版本。需要注意，共用版本目录只统一声明来源，兼容性仍要靠测试验证；若公共升级影响广泛，评审和回归范围也会相应扩大。
 
@@ -64,16 +67,16 @@ core 的 package.json 中，开发态 exports 指向 src/index.ts，而 publishC
 
 ## 贡献流程围绕受影响的包展开
 
-开始贡献时，准备 Node.js 22.18.0 或更高版本。使用 utoo 的 ut 命令安装依赖和调度任务，工作区与共用依赖版本由 pnpm-workspace.yaml 和 catalog 定义。
+开始贡献时，准备 Node.js 22.18.0 或更高版本。使用 utoo 的 ut 命令安装依赖和调度任务，工作区匹配规则与 overrides 由 package.json 定义，共用依赖版本放在 .utoo.toml 的 catalog 中。旧 pnpm 配置保留为迁移参考。
 
 日常修改宜先找到最小可复现场景，在目标包附近补充测试，再扩展到真正受影响的消费者。以 Redis 插件为例，其 README 给出了直接运行该插件测试文件的命令；涉及真实 Redis 的夹具还需要本地服务。仓库提供 MySQL 8 与 Redis 7 的[开发服务脚本](https://github.com/eggjs/egg/blob/a11a6d5046c445307767086cd437f4456af04224/README.md)，但是否需要启动，应由本次测试范围决定。统一仓库使依赖容易获得，也让一次不加区分的全量测试可能启动比预期更多的工作。
 
 测试之前不应先做一次全仓构建。测试使用源码，遗留 dist 可能使 Tegg 的文件发现同时加载源码和产物，引发重复元数据问题；根 pretest 会清理构建产物。先完成源码回归与类型检查，再验证构建产物，符合仓库现行流程。以下命令依次安装依赖、验证源码与类型，再检查发布构建。
 
-```typescript
+```bash
 # 安装工作区依赖
-corepack enable utoo
-ut install --from pnpm
+npm install --global utoo@latest
+ut install
 
 # 先验证源码与类型
 ut run test

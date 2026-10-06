@@ -27,10 +27,10 @@ Egg 把 Vitest、[VitePress](https://github.com/eggjs/egg/blob/a11a6d5046c445307
 
 ## 贡献者如何使用新的工作区命令
 
-仓库主 CI 已采用 [utoo 的 ut 命令](https://github.com/eggjs/egg/blob/a11a6d5046c445307767086cd437f4456af04224/README.md#L45-L64)安装和执行任务。现有 pnpm-workspace.yaml 继续定义工作区与 catalog，内部包通过 workspace:\* 关联；根 packageManager 字段也仍保留 pnpm 版本信息。准备好 utoo 后，可执行以下命令：
+仓库主 CI 已采用 [utoo 的 ut 命令](https://github.com/eggjs/egg/blob/f390cc011ce1c70d7460227459ec3825ca3d09f1/README.md)安装和执行任务。package.json 定义工作区匹配规则与 overrides，.utoo.toml 定义 catalog，内部包通过 workspace:\* 关联；CI 使用最新 utoo，旧 pnpm 配置保留为迁移参考。准备好 utoo 后，可执行以下命令：
 
 ```bash
-ut install --from pnpm
+ut install
 ut run test
 ut run typecheck
 ut run build

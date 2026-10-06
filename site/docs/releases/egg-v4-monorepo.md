@@ -5,7 +5,7 @@ description: 'How the Egg 4 workspace reduces maintenance across packages'
 
 # Monorepo Collaboration
 
-A framework fix in Egg often crosses package boundaries. A loader change needs plugins to verify directory conventions, Mock to reproduce startup, and development tools to expose the same rules to applications. With separate repositories, contributors also have to coordinate dependency versions, temporary links, and release order. Egg 4's monorepo brings this interdependent work into one [workspace](https://github.com/eggjs/egg/blob/a11a6d5046c445307767086cd437f4456af04224/pnpm-workspace.yaml#L1-L10), so a change across packages can be checked as a whole.
+A framework fix in Egg often crosses package boundaries. A loader change needs plugins to verify directory conventions, Mock to reproduce startup, and development tools to expose the same rules to applications. With separate repositories, contributors also have to coordinate dependency versions, temporary links, and release order. Egg 4's monorepo brings this interdependent work into one [workspace](https://github.com/eggjs/egg/blob/f390cc011ce1c70d7460227459ec3825ca3d09f1/package.json#L95-L104), so a change across packages can be checked as a whole.
 
 This consolidation began in August 2025, after Egg 4.0's initial release in January 2025. Its purpose is to reduce the cost of maintaining Egg itself. Application developers, plugin authors, and framework contributors can use the workspace to test source changes together and try fixes in real applications.
 
@@ -25,21 +25,24 @@ The shared repository retains npm package boundaries. The root @eggjs/monorepo p
 
 When upgrading an application, select package names from its actual dependencies. For example, packages/logger provides @eggjs/logger, while egg and core still depend on egg-logger. Maintainers can develop a new package and retain transitional dependencies in the same repository. Applications should follow dependency manifests and release notes before renaming packages. The workspace declares these directories:
 
-```yaml
-packages:
-  - packages/*
-  - plugins/*
-  - examples/*
-  - tools/*
-  - site
-  - tegg/core/*
-  - tegg/plugin/*
-  - tegg/standalone/*
+```json
+{
+  "workspaces": [
+    "packages/*",
+    "plugins/*",
+    "examples/*",
+    "tools/*",
+    "site",
+    "tegg/core/*",
+    "tegg/plugin/*",
+    "tegg/standalone/*"
+  ]
+}
 ```
 
 ## Expressing dependencies with workspaces and catalogs
 
-Internal dependencies and shared external dependencies solve different problems. workspace:* explicitly selects another package in the same repository. catalog: centralizes external dependency versions in pnpm-workspace.yaml. Maintainers can change a shared version range once and run consumer tests to check compatibility, without synchronizing the same declaration across many manifests.
+Internal dependencies and shared external dependencies solve different problems. workspace:* explicitly selects another package in the same repository. catalog: centralizes external dependency versions in [.utoo.toml](https://github.com/eggjs/egg/blob/f390cc011ce1c70d7460227459ec3825ca3d09f1/.utoo.toml). Maintainers can change a shared version range once and run consumer tests to check compatibility, without synchronizing the same declaration across many manifests.
 
 [@eggjs/core](https://github.com/eggjs/egg/blob/a11a6d5046c445307767086cd437f4456af04224/packages/core/package.json) is an example: @eggjs/router and @eggjs/utils use workspace:*, while egg-logger and globby use catalog:. These declarations preserve dependency direction and allow integration without publishing intermediate versions to npm. A shared catalog centralizes declarations; tests still establish compatibility. Broad dependency upgrades require a correspondingly broad review and regression scope.
 
@@ -64,7 +67,7 @@ Contributors need both source tests and artifact checks. Source tests establish 
 
 ## Work around the affected packages
 
-Prepare Node.js 22.18.0 or later. Use utoo's ut command to install dependencies and run tasks; pnpm-workspace.yaml defines workspaces and the shared dependency catalog.
+Prepare Node.js 22.18.0 or later. Use utoo's ut command to install dependencies and run tasks; package.json defines workspace patterns and overrides, and .utoo.toml defines the shared dependency catalog. The old pnpm configuration is retained as a migration reference.
 
 Start with the smallest reproduction, add a test near the affected package, then expand to consumers that actually depend on the change. The Redis plugin README, for example, shows how to run its test files directly; fixtures using real Redis also need a local service. The repository has [development service scripts](https://github.com/eggjs/egg/blob/a11a6d5046c445307767086cd437f4456af04224/README.md) for MySQL 8 and Redis 7. Start them when required by the test scope. A shared repository makes dependencies accessible, but a full test run can also involve more services than expected.
 
@@ -72,8 +75,8 @@ Run source tests before building the whole repository. Stale dist directories ca
 
 ```bash
 # Install workspace dependencies
-corepack enable utoo
-ut install --from pnpm
+npm install --global utoo@latest
+ut install
 
 # Check source behavior and types first
 ut run test
