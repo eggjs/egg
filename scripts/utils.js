@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import yaml from 'js-yaml';
 import semver from 'semver';
+import { parse } from 'smol-toml';
 
 // Dependency fields whose `workspace:` / `catalog:` specifiers must be resolved
 // before publishing with npm.
@@ -57,21 +57,9 @@ export function assertValidNpmPackageName(name) {
   }
 }
 
-function readWorkspaceConfig(baseDir) {
-  const workspaceFile = path.join(baseDir, 'pnpm-workspace.yaml');
-
-  if (!fs.existsSync(workspaceFile)) {
-    throw new Error('pnpm-workspace.yaml not found');
-  }
-
-  return yaml.load(fs.readFileSync(workspaceFile, 'utf8')) || {};
-}
-
-// Walk every workspace package declared in pnpm-workspace.yaml
-// (utoo consumes the same workspace manifest) and yield a lightweight record
-// for each one, regardless of whether it is private.
+// Workspace patterns are owned by the root manifest.
 function collectWorkspacePackages(baseDir) {
-  const { packages = [] } = readWorkspaceConfig(baseDir);
+  const { workspaces: packages = [] } = JSON.parse(fs.readFileSync(path.join(baseDir, 'package.json'), 'utf8'));
   const collected = [];
 
   const pushPackage = (directory, folder, packageJsonPath) => {
@@ -134,10 +122,10 @@ export function getWorkspaceVersionMap(baseDir) {
   return versions;
 }
 
-// Read the pnpm/utoo catalogs: the default `catalog` table and any named
+// Read the native utoo catalogs: the default `catalog` table and any named
 // `catalogs.<name>` tables.
 export function getCatalogs(baseDir) {
-  const config = readWorkspaceConfig(baseDir);
+  const config = parse(fs.readFileSync(path.join(baseDir, '.utoo.toml'), 'utf8'));
   return {
     default: config.catalog || {},
     named: config.catalogs || {},

@@ -516,3 +516,19 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Rewrote the PR 6017 decision page as [Package release workflow](./workflows/release.md), organized around release inputs, local validation, execution and recovery. Removed the decision page and updated the index.
 - Moved one-time validation evidence into the PR description; the workflow page retains repeatable procedures and their limits. Historical log entries above refer to the former decision path.
+
+## 2026-10-06 — Node.js minimum alignment
+
+- Aligned create-egg with the workspace Node.js `>=22.18.0` minimum and refreshed current installation/deployment instructions.
+- Preserved open-ended engines for future majors; documented the production recommendation to use supported LTS patches in [Local CI](./workflows/local-ci.md). Historical records remain unchanged.
+
+## 2026-10-06 — Native utoo workspace migration
+
+- Tracked native .utoo.toml catalogs and package.json workspace patterns/overrides; pinned utoo 1.1.10. Current CI and install/update guidance now use native configuration.
+- Release and E2E tooling read native files without generating catalogs or injecting workspace metadata. Retained the old pnpm configuration as a legacy reference and made the old generator read-only.
+- pnpm-only catalogMode, onlyBuiltDependencies and minimumReleaseAge settings remain in the legacy file; the previous utoo migration ignored them, so this change does not claim they are enforced.
+
+## 2026-10-06 — Follow latest utoo
+
+- Removed the exact packageManager pin, restored the utoo catalog range to ^1, and switched CI/bootstrap instructions to latest at the user’s request. Native workspace/catalog configuration remains authoritative.
+- Removed the E2E-only utoo@1.1.1 temporary installation; packing now reuses the latest CLI from setup-utoo and the tracked native configuration.

@@ -15,7 +15,7 @@ status: active
 
 # Package release workflow
 
-Use the **Manual Release** workflow in `.github/workflows/release.yml` to release the publishable packages declared in `pnpm-workspace.yaml`. Versions are bumped independently from each package's current version; the root manifest and git tag use the resulting `egg` version. Private packages are excluded from the release set.
+Use the **Manual Release** workflow in `.github/workflows/release.yml` to release the publishable packages declared in the root `package.json` workspaces. Versions are bumped independently from each package's current version; the root manifest and git tag use the resulting `egg` version. Private packages are excluded from the release set.
 
 ## Choose the release inputs
 
@@ -30,7 +30,7 @@ For a workflow preview, explicitly set `dry_run=true`; the input defaults to `fa
 Work in a clean checkout or a separate source copy. Run targeted tests before building, following [Local CI](./local-ci.md); generated `dist/` directories can affect tegg tests.
 
 ```bash
-ut install --from pnpm
+ut install
 node --test scripts/test/release.test.js scripts/test/ci.test.js
 node scripts/version.js patch --dry-run
 ut run build

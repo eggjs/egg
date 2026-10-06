@@ -4,7 +4,7 @@ type: package
 summary: Vitest 5 runner for Egg request contexts and tegg module scopes.
 source_files:
   - .github/workflows/ci.yml
-  - pnpm-workspace.yaml
+  - .utoo.toml
   - tegg/core/vitest/package.json
   - tegg/core/vitest/src/runner.ts
   - tegg/core/vitest/src/index.ts
@@ -18,7 +18,7 @@ source_files:
   - tools/egg-bin/test/commands/cov.test.ts
   - tools/create-egg/src/templates/simple-ts/package.json
   - tools/create-egg/src/templates/tegg/package.json
-updated_at: 2026-09-23
+updated_at: 2026-10-06
 status: active
 ---
 

@@ -20,6 +20,8 @@ independent app and agent bundles, each with its own blob and V8 heap.
 
 ## Node.js version requirements
 
+Egg v4 requires Node.js >=22.18.0. Use a release that has not reached EOL; the snapshot restore minimum below is a separate technical requirement.
+
 | Phase                              | Command                                                   | Node.js |
 | ---------------------------------- | --------------------------------------------------------- | ------- |
 | **Build** a snapshot               | `egg-bin snapshot build`                                  | >= 22   |

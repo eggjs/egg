@@ -7,7 +7,7 @@ MCP tool in the same tegg module.
 
 ```bash
 # From the monorepo root
-ut install --from pnpm
+ut install
 cd examples/helloworld-service-worker
 npm run start
 ```

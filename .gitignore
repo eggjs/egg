@@ -123,5 +123,4 @@ ecosystem-ci/cnpmcore
 ecosystem-ci/cnpmcore-snapshot
 ecosystem-ci/examples
 pnpm-lock.yaml
-.utoo.toml
 .claude/

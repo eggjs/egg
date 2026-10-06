@@ -12,12 +12,12 @@ source_files:
   - scripts/publish-preview.js
   - scripts/publish.js
   - scripts/utils.js
-  - pnpm-workspace.yaml
+  - .utoo.toml
   - package.json
   - tsdown.config.ts
   - https://github.com/stackblitz-labs/pkg.pr.new
   - https://blog.stackblitz.com/posts/cloudflare-backing-pkg-pr-new-data-infrastructure/
-updated_at: 2026-09-23
+updated_at: 2026-10-06
 status: active
 ---
 
