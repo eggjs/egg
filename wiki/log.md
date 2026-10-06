@@ -532,3 +532,8 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Removed the exact packageManager pin, restored the utoo catalog range to ^1, and switched CI/bootstrap instructions to latest at the user’s request. Native workspace/catalog configuration remains authoritative.
 - Removed the E2E-only utoo@1.1.1 temporary installation; packing now reuses the latest CLI from setup-utoo and the tracked native configuration.
+
+## 2026-10-06 — Worker-thread shutdown timeout cleanup
+
+- Cancel app/agent graceful-shutdown timeout timers after the exit race finishes; real utility subprocess tests verify natural event-loop drain instead of relying on master process.exit().
+- Clarified the error-triggered immediate termination fallback in [Egg Bundler](./packages/egg-bundler.md) and refreshed its metadata. Sources: `packages/cluster/src/utils/mode/impl/worker_threads/{agent,app}.ts` and `packages/cluster/test/{worker-thread-shutdown.test.ts,fixtures/thread-shutdown-drain.mjs}`.

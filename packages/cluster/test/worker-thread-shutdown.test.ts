@@ -1,6 +1,8 @@
 import { strict as assert } from 'node:assert';
+import { execFile } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
 import { describe, it } from 'vitest';
 
@@ -19,6 +21,12 @@ const workerFile = fileURLToPath(new URL('./fixtures/thread-shutdown.mjs', impor
 
 describe('real worker thread shutdown', () => {
   for (const kind of ['agent', 'app'] as const) {
+    it(`${kind} releases its shutdown timeout so the process can exit naturally`, async () => {
+      const fixture = fileURLToPath(new URL('./fixtures/thread-shutdown-drain.mjs', import.meta.url));
+      const { stdout } = await promisify(execFile)(process.execPath, [fixture, kind], { timeout: 15000 });
+      assert(Number(stdout.match(/shutdown-drain-ms (\d+)/)![1]) < 1000, stdout);
+    });
+
     it(`${kind} awaits asynchronous cleanup`, async () => {
       const ready = deferred();
       const deps = {

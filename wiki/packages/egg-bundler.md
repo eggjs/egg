@@ -36,7 +36,7 @@ source_files:
   - site/docs/advanced/snapshot.md
   - site/docs/zh-CN/advanced/snapshot.md
   - examples/helloworld-service-worker
-updated_at: 2026-09-19
+updated_at: 2026-10-06
 status: active
 ---
 
@@ -105,8 +105,9 @@ constraint is why worker output always needs a thin ESM wrapper.
   creating a worker thread. Sticky-session mode is also process-only because its
   socket handoff uses process IPC. Worker-thread shutdown is an explicit protocol:
   the master requests graceful exit, the worker awaits `app.close()` or
-  `agent.close()`, and the master falls back to `Worker.terminate()` after the
-  configured close timeout.
+  `agent.close()`, and the master falls back to `Worker.terminate()` immediately
+  if the worker emits an error or after the configured close timeout. Successful
+  shutdown cancels its timeout timer so it does not keep the event loop alive.
 - `egg-bin bundle --cluster` is the ordinary cluster-bundle producer. It selects
   the bundler's `cluster` target and writes `app_worker.js`, `agent_worker.js`,
   and the bundle manifest without constructing snapshot blobs. Its output can

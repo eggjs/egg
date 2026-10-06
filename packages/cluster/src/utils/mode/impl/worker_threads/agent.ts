@@ -88,9 +88,14 @@ export class AgentThreadUtils extends BaseAgentUtils {
         },
       );
       worker.postMessage(WORKER_THREAD_GRACEFUL_EXIT);
-      if (!(await Promise.race([exited, sleep(timeout).then(() => false)]))) {
-        this.log(`[master] terminate agent worker#${this.#id} after ${timeout}ms timeout`);
-        await worker.terminate();
+      const timeoutController = new AbortController();
+      try {
+        if (!(await Promise.race([exited, sleep(timeout, false, { signal: timeoutController.signal })]))) {
+          this.log(`[master] terminate agent worker#${this.#id} after ${timeout}ms timeout`);
+          await worker.terminate();
+        }
+      } finally {
+        timeoutController.abort();
       }
     }
   }
