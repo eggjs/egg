@@ -13,6 +13,7 @@ Read this file before exploring raw sources.
 
 ## Workflows
 
+- [Package release workflow](./workflows/release.md) - Choose release inputs, preview versions and tarballs, and diagnose partial releases.
 - [GitHub Actions performance plan](./workflows/ci-performance-plan.md) - PR/full matrix, sharding, test-runtime improvements, and acceptance criteria based on measured CI bottlenecks.
 - [CI parallel test metrics](./workflows/ci-parallel-test-metrics.md) - Test concurrency, resolved worker settings, retries, and shard inventories in CI artifacts.
 - [Docs and API Updates](./workflows/docs-and-api-updates.md) - How to handle changes that affect user-facing docs or durable project understanding.

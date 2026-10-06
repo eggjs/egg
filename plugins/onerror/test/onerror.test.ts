@@ -589,13 +589,14 @@ describe('test/onerror.test.ts', () => {
   it('should not read koa-onerror package templates when importing the plugin app boot hook', async () => {
     const originalReadFileSync = fs.readFileSync;
     const blockedReads: string[] = [];
-    mm(fs, 'readFileSync', ((file: fs.PathOrFileDescriptor, ...args: any[]) => {
+    mm(fs, 'readFileSync', ((...args: Parameters<typeof fs.readFileSync>) => {
+      const [file] = args;
       const filename = file instanceof URL ? file.href : String(file);
       if (filename.includes('koa-onerror') && filename.includes('templates')) {
         blockedReads.push(filename);
         throw new Error(`unexpected koa-onerror template read: ${filename}`);
       }
-      return originalReadFileSync.call(fs, file as any, ...args);
+      return originalReadFileSync(...args);
     }) as typeof fs.readFileSync);
 
     const appBootHookUrl = pathToFileURL(path.join(__dirname, '../src/app.ts')).href;

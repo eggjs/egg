@@ -504,3 +504,15 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources inspected: [second hosted attempt](https://github.com/eggjs/egg/actions/runs/35948525958), [Codecov v5.5.5](https://github.com/codecov/codecov-action/releases/tag/v5.5.5), `.github/workflows/ci.yml`
 - pages updated: CI performance plan and log
 - note: All tests and the coverage inventory/merge passed in 14m 52s with 89.35 runner-minutes. The required upload exposed the old Codecov action's obsolete Keybase endpoint. CI now pins the upstream patch release that updates that endpoint, while retaining signature verification and upload failure propagation. Failed-run timings remain separate from successful performance evidence.
+
+## 2026-10-06 — Local PR 6017 repair
+
+- Integrated release hardening against current next without copying outdated PR index/log contents. Added full branch-ref validation and dry-run-only projected versions so RC-to-stable patch packing passes the prerelease guard.
+- Added release regression tests for git argv, illegal refs, prerelease-to-latest refusal, projected workspace dependencies and manifest restoration. See [Secure release pipeline](./decisions/secure-release-pipeline.md). No push, dispatch or publication performed.
+
+- Follow-up local verification: full build, 85 offline npm publish dry-runs and inspection of all 85 real tarballs passed; all 1099 temporary manifests restored. Targeted tests passed on Node 22 and 26. Registry/OIDC and the workflow Node 24 environment remain outside this local verification.
+
+## 2026-10-06 — Release workflow documentation
+
+- Rewrote the PR 6017 decision page as [Package release workflow](./workflows/release.md), organized around release inputs, local validation, execution and recovery. Removed the decision page and updated the index.
+- Moved one-time validation evidence into the PR description; the workflow page retains repeatable procedures and their limits. Historical log entries above refer to the former decision path.
