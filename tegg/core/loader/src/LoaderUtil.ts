@@ -64,6 +64,10 @@ export class LoaderUtil {
     return LoaderUtil.supportExtensions().includes('.ts') ? '.ts' : '.js';
   }
 
+  static isWindowsPlatform(): boolean {
+    return process.platform === 'win32';
+  }
+
   static filePattern(): string[] {
     const extensions = LoaderUtil.supportExtensions();
     const extensionPattern = extensions
@@ -116,7 +120,7 @@ export class LoaderUtil {
       }
     }
     if (exports == null) {
-      if (process.platform === 'win32') {
+      if (LoaderUtil.isWindowsPlatform()) {
         // convert to file:// url
         // avoid windows path issue: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
         filePath = pathToFileURL(filePath).toString();
@@ -124,7 +128,7 @@ export class LoaderUtil {
       try {
         exports = await import(filePath);
       } catch (e: unknown) {
-        throw createLoadError(filePath, e);
+        throw createLoadError(originalFilePath, e);
       }
     }
     const clazzList: EggProtoImplClass[] = [];

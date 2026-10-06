@@ -4,7 +4,7 @@ import path from 'node:path';
 import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { EggLoadUnitType } from '@eggjs/metadata';
 import type {} from '@eggjs/typings/global';
-import { afterEach, describe, it } from 'vitest';
+import { afterEach, describe, it, vi } from 'vitest';
 
 import { LoaderFactory, LoaderUtil } from '../src/index.ts';
 
@@ -100,6 +100,33 @@ describe('core/loader/test/Loader.test.ts', () => {
           return true;
         },
       );
+    });
+
+    it('should keep the caller path when wrapping dynamic import errors on win32', async () => {
+      const missingFile = path.join(__dirname, './fixtures/modules/module-for-loader/MissingService.ts');
+      const bundleLoader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
+      const moduleImporter = globalThis.__EGG_MODULE_IMPORTER__;
+      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = undefined;
+      globalThis.__EGG_MODULE_IMPORTER__ = undefined;
+
+      const isWindowsPlatform = vi.spyOn(LoaderUtil, 'isWindowsPlatform').mockReturnValue(true);
+      try {
+        await assert.rejects(
+          async () => {
+            await LoaderUtil.loadFile(missingFile);
+          },
+          (err: Error & { cause?: unknown }) => {
+            assert(err.message.startsWith(`[tegg/loader] load ${missingFile} failed:`));
+            assert(err.cause instanceof Error);
+            return true;
+          },
+        );
+        assert.equal(isWindowsPlatform.mock.calls.length, 1);
+      } finally {
+        isWindowsPlatform.mockRestore();
+        globalThis.__EGG_BUNDLE_MODULE_LOADER__ = bundleLoader;
+        globalThis.__EGG_MODULE_IMPORTER__ = moduleImporter;
+      }
     });
 
     it('should load through the async module importer when set', async () => {
