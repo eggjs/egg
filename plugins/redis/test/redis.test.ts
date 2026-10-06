@@ -1,10 +1,17 @@
 import assert from 'node:assert/strict';
-import compile from 'node:child_process';
+import { execFileSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { detectPort } from 'detect-port';
 import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
+
+const require = createRequire(import.meta.url);
+const compilerPath = path.resolve(
+  path.dirname(require.resolve('typescript/package.json')),
+  require('typescript/package.json').bin.tsc,
+);
 
 function getFixtures(name: string) {
   return path.resolve(import.meta.dirname, 'fixtures', name);
@@ -100,11 +107,10 @@ describe.skipIf(skip)('test/redis.test.ts', () => {
   describe('single client for ts', () => {
     let app: MockApplication;
     const destPath = getFixtures('apps/ts/redisapp-ts');
-    const compilerPath = path.resolve('./node_modules/typescript/bin/tsc');
 
     beforeAll(async () => {
       // Add new dynamic compiler to compile from ts to js
-      compile.execSync(`node ${compilerPath} -p ${destPath}`, {
+      execFileSync(process.execPath, [compilerPath, '-p', destPath], {
         cwd: destPath,
         stdio: 'inherit',
       });
@@ -115,7 +121,7 @@ describe.skipIf(skip)('test/redis.test.ts', () => {
     });
     afterAll(async () => {
       // cleanup
-      compile.execSync(`node ${compilerPath} --build --clean`);
+      execFileSync(process.execPath, [compilerPath, '--build', destPath, '--clean']);
       await app?.close();
     });
 
@@ -127,10 +133,9 @@ describe.skipIf(skip)('test/redis.test.ts', () => {
   describe('multi client for ts', () => {
     let app: MockApplication;
     const destPath = getFixtures('apps/ts-multi');
-    const compilerPath = path.resolve('./node_modules/typescript/bin/tsc');
     beforeAll(async () => {
       // Add new dynamic compiler to compile from ts to js
-      compile.execSync(`node ${compilerPath} -p ${destPath}`);
+      execFileSync(process.execPath, [compilerPath, '-p', destPath]);
       app = mm.app({
         baseDir: getFixtures('apps/ts-multi/redisapp-ts'),
       });
@@ -138,7 +143,7 @@ describe.skipIf(skip)('test/redis.test.ts', () => {
     });
     afterAll(async () => {
       // cleanup
-      compile.execSync(`node ${compilerPath} --build --clean`);
+      execFileSync(process.execPath, [compilerPath, '--build', destPath, '--clean']);
       await app?.close();
     });
 

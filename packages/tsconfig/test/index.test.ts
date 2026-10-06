@@ -8,7 +8,10 @@ import { test, expect } from 'vitest';
 const require = createRequire(import.meta.url);
 
 test('should tsc build work', async () => {
-  const tsc = require.resolve('typescript/bin/tsc');
+  const tsc = path.resolve(
+    path.dirname(require.resolve('typescript/package.json')),
+    require('typescript/package.json').bin.tsc,
+  );
   const fixturePath = path.join(import.meta.dirname, 'fixtures/apps/ts-proj');
   const tsconfigPath = path.join(fixturePath, 'tsconfig.json');
   console.log('%s -p %s, cwd: %s', tsc, tsconfigPath, fixturePath);

@@ -4,7 +4,10 @@ import coffee from 'coffee';
 import { it } from 'vitest';
 
 it('should check enum value', async () => {
-  const tsc = require.resolve('typescript/bin/tsc');
+  const tsc = path.resolve(
+    path.dirname(require.resolve('typescript/package.json')),
+    require('typescript/package.json').bin.tsc,
+  );
   await coffee
     .fork(tsc, ['--noEmit', '-p', './tsconfig.json'], {
       cwd: path.join(__dirname, 'fixtures/modules/wrong-enum-module'),
@@ -16,7 +19,10 @@ it('should check enum value', async () => {
 });
 
 it('should check extends', async () => {
-  const tsc = require.resolve('typescript/bin/tsc');
+  const tsc = path.resolve(
+    path.dirname(require.resolve('typescript/package.json')),
+    require('typescript/package.json').bin.tsc,
+  );
   await coffee
     .fork(tsc, ['--noEmit', '-p', './tsconfig.json'], {
       cwd: path.join(__dirname, 'fixtures/modules/wrong-extends-module'),
