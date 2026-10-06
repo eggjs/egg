@@ -374,13 +374,14 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     if (flags['snapshot-blob']) {
       // Snapshot boot: a single self-contained `node --snapshot-blob <blob>`
       // process (no egg-cluster, no framework resolution). The snapshot entry
-      // reads the listen port from PORT env, and `--title` is appended only so
-      // `egg-scripts stop` can grep the process (the snapshot main ignores it).
+      // reads the listen port from PORT env. Put the stop discovery token after
+      // `--` so Node treats it as application argv, rather than changing the
+      // process title and hiding the snapshot command line on macOS.
       const blob = this.#resolveFromBaseDir(flags['snapshot-blob'], baseDir);
       if (flags.port !== undefined) {
         this.env.PORT = String(flags.port);
       }
-      eggArgs = [...execArgv, '--snapshot-blob', blob, `--title=${flags.title}`];
+      eggArgs = [...execArgv, '--snapshot-blob', blob, '--', `--title=${flags.title}`];
       displayName = 'snapshot';
       this.log('Starting egg snapshot at %s', blob);
     } else {

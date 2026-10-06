@@ -1,8 +1,12 @@
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+
 import { runScript } from 'runscript';
 
 export const isWindows = process.platform === 'win32';
 
-const REGEX = isWindows ? /^(.*)\s+(\d+)\s*$/ : /^\s*(\d+)\s+(.*)/;
+const REGEX = /^\s*(\d+)\s+(.*)/;
+const execFileAsync = promisify(execFile);
 
 export interface NodeProcess {
   pid: number;
@@ -12,10 +16,29 @@ export interface NodeProcess {
 export type FilterFunction = (item: NodeProcess) => boolean;
 
 export async function findNodeProcess(filterFn?: FilterFunction): Promise<NodeProcess[]> {
-  const command = isWindows
-    ? 'wmic Path win32_process Where "Name = \'node.exe\'" Get CommandLine,ProcessId'
-    : // command, cmd are alias of args, not POSIX standard, so we use args
-      'ps --help 2>&1 | grep -q BusyBox && ps -o "pid,args" || ps -wweo "pid,args"';
+  if (isWindows) {
+    // WMIC is absent on current Windows installations. CIM provides the same
+    // command line and PID without depending on the optional WMIC executable.
+    const { stdout } = await execFileAsync('powershell.exe', [
+      '-NoProfile',
+      '-NonInteractive',
+      '-Command',
+      '$ErrorActionPreference = "Stop"; [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new(); ' +
+        'Get-CimInstance Win32_Process -Filter "Name = \'node.exe\'" | ' +
+        'Select-Object ProcessId, CommandLine | ConvertTo-Json -Compress',
+    ]);
+    const result:
+      | { ProcessId: number; CommandLine: string | null }[]
+      | { ProcessId: number; CommandLine: string | null } = JSON.parse(stdout.trim() || '[]');
+    const processes = Array.isArray(result) ? result : [result];
+    return processes.flatMap(({ ProcessId, CommandLine }) => {
+      if (!CommandLine) return [];
+      const item = { pid: ProcessId, cmd: CommandLine };
+      return !filterFn || filterFn(item) ? [item] : [];
+    });
+  }
+  // command, cmd are aliases of args, not POSIX standard, so we use args.
+  const command = 'ps --help 2>&1 | grep -q BusyBox && ps -o "pid,args" || ps -wweo "pid,args"';
   const stdio = await runScript(command, { stdio: 'pipe' });
   const processList = stdio
     .stdout!.toString()
@@ -24,8 +47,8 @@ export async function findNodeProcess(filterFn?: FilterFunction): Promise<NodePr
       if (!!line && !line.includes('/bin/sh') && line.includes('node')) {
         const m = line.match(REGEX);
         if (m) {
-          const item: NodeProcess = isWindows ? { pid: parseInt(m[2]), cmd: m[1] } : { pid: parseInt(m[1]), cmd: m[2] };
-          if (filterFn?.(item)) {
+          const item: NodeProcess = { pid: parseInt(m[1]), cmd: m[2] };
+          if (!filterFn || filterFn(item)) {
             arr.push(item);
           }
         }
