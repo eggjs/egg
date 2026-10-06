@@ -80,10 +80,15 @@ export class AgentThreadUtils extends BaseAgentUtils {
     if (worker && worker.threadId !== -1) {
       this.log(`[master] gracefully close agent worker#${this.#id} (worker_threads)`);
       this.clean();
+      let shutdownError: unknown;
       const exited = once(worker, 'exit').then(
-        () => true,
+        ([code]) => {
+          if (code !== 0) throw new Error(`agent worker#${this.#id} exited with code:${code} during graceful shutdown`);
+          return true;
+        },
         (err) => {
           this.logger.error('[master] agent worker#%s error during graceful shutdown: ', this.#id, err);
+          shutdownError = err;
           return false;
         },
       );
@@ -93,6 +98,7 @@ export class AgentThreadUtils extends BaseAgentUtils {
         if (!(await Promise.race([exited, sleep(timeout, false, { signal: timeoutController.signal })]))) {
           this.log(`[master] terminate agent worker#${this.#id} after ${timeout}ms timeout`);
           await worker.terminate();
+          if (shutdownError) throw shutdownError;
         }
       } finally {
         timeoutController.abort();

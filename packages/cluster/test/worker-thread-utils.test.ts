@@ -88,7 +88,7 @@ describe('test/worker-thread-utils.test.ts', () => {
     const utils = new AgentThreadUtils({ agentWorkerFile: 'agent.js' } as any, dependencies as any);
     utils.fork();
 
-    await utils.kill(10);
+    await assert.rejects(utils.kill(10), /graceful shutdown failed/);
 
     assert.equal(mocks.workers[0].terminate.mock.calls.length, 1);
     assert.equal(dependencies.logger.error.mock.calls.length, 1);
@@ -159,7 +159,7 @@ describe('test/worker-thread-utils.test.ts', () => {
     );
     utils.fork();
 
-    await utils.kill(10);
+    await assert.rejects(utils.kill(10), /app workers failed during graceful shutdown/);
 
     assert.equal(dependencies.logger.error.mock.calls.length, 2);
     for (const worker of mocks.workers) {

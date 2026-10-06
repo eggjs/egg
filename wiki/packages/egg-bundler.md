@@ -108,6 +108,10 @@ constraint is why worker output always needs a thin ESM wrapper.
   `agent.close()`, and the master falls back to `Worker.terminate()` immediately
   if the worker emits an error or after the configured close timeout. Successful
   shutdown cancels its timeout timer so it does not keep the event loop alive.
+  A nonzero graceful-exit code or worker error is propagated after all app
+  workers and the agent have been given their cleanup attempt; the master exits
+  with code `1`. Timeout termination retains its existing successful master-exit
+  behavior, and process-mode shutdown behavior is unchanged.
   With worker-thread `reusePort`, an explicit master port of `0` defers to the
   application's configured shared listen port rather than being rejected before
   the worker protocol runs.

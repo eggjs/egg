@@ -25,6 +25,22 @@ describe('master with real worker threads', () => {
     assert.doesNotMatch(stdout, /never called after timeout/);
     assert.match(stdout, /close done, exiting with code:0/);
   });
+  it.each(['app', 'agent'])('reports %s cleanup failure after attempting both workers', async (role) => {
+    await assert.rejects(
+      run(process.execPath, [fixture, 'graceful'], {
+        timeout: 20000,
+        env: { ...process.env, WORKER_CLOSE_FAIL: role },
+      }),
+      (error: any) => {
+        assert.equal(error.code, 1);
+        assert.match(error.stdout, /app closing/);
+        assert.match(error.stdout, /agent closing/);
+        assert.match(error.stderr, /cleanup failed/);
+        assert.doesNotMatch(error.stdout, /close done, exiting with code:0/);
+        return true;
+      },
+    );
+  });
   it('does not refork an agent when shutdown begins before its delayed restart', async () => {
     const { stdout } = await run(process.execPath, [fixture, 'race'], { timeout: 20000 });
     assert.match(stdout, /try to start a new agent_worker after 1s/);

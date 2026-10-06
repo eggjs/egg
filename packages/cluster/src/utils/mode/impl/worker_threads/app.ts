@@ -146,16 +146,21 @@ export class AppThreadUtils extends BaseAppUtils {
 
   async kill(timeout: number): Promise<void> {
     this.#closing = true;
-    await Promise.all(
+    const results = await Promise.allSettled(
       this.#workers.map(async (appWorker) => {
         const { id, instance: worker } = appWorker;
         if (appWorker.state === 'dead' || worker.threadId === -1) return;
         this.log(`[master] gracefully close app worker#${id} (worker_threads)`);
         worker.removeAllListeners();
+        let shutdownError: unknown;
         const exited = once(worker, 'exit').then(
-          () => true,
+          ([code]) => {
+            if (code !== 0) throw new Error(`app worker#${id} exited with code:${code} during graceful shutdown`);
+            return true;
+          },
           (err) => {
             this.logger.error('[master] app worker#%s error during graceful shutdown: ', id, err);
+            shutdownError = err;
             return false;
           },
         );
@@ -165,11 +170,14 @@ export class AppThreadUtils extends BaseAppUtils {
           if (!(await Promise.race([exited, sleep(timeout, false, { signal: timeoutController.signal })]))) {
             this.log(`[master] terminate app worker#${id} after ${timeout}ms timeout`);
             await worker.terminate();
+            if (shutdownError) throw shutdownError;
           }
         } finally {
           timeoutController.abort();
         }
       }),
     );
+    const errors = results.filter((result) => result.status === 'rejected').map((result) => result.reason);
+    if (errors.length) throw new AggregateError(errors, 'app workers failed during graceful shutdown');
   }
 }

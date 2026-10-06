@@ -542,3 +542,8 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Allow an explicit master `port: 0` through the worker-thread reusePort fork guard so workers inherit `config.cluster.listen.port`; retain the guard for an omitted master port.
 - Added fork/argv and protocol regressions plus real HTTP startup coverage; Linux additionally verifies two workers sharing the configured port. Sources: `packages/cluster/src/utils/mode/impl/worker_threads/app.ts`, `packages/cluster/src/worker_protocol/app.ts`, and their cluster tests; [Egg Bundler](./packages/egg-bundler.md) records the runtime boundary.
+
+## 2026-10-06 — Worker-thread cleanup failure propagation
+
+- Preserve nonzero graceful-exit codes and worker errors through thread utilities and master shutdown, while attempting cleanup of all app workers and the agent. Process mode and timeout fallback retain their previous behavior.
+- Real master regressions verify app and agent beforeClose rejection produces exit code 1 rather than a successful shutdown. Sources: `packages/cluster/src/master.ts`, worker-thread utility implementations, and `packages/cluster/test/master/worker-thread-close.test.ts`; runtime semantics are recorded in [Egg Bundler](./packages/egg-bundler.md).
