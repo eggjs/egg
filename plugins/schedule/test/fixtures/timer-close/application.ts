@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { createServer, get } from 'node:http';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { fileURLToPath } from 'node:url';
 
 import { start } from 'egg';
 
-const app = await start({ baseDir: new URL('./app/', import.meta.url).pathname, ignoreWarning: true });
+const app = await start({ baseDir: fileURLToPath(new URL('./app/', import.meta.url)), ignoreWarning: true });
 try {
   if (process.argv[2] === 'http') {
     const server = createServer(app.callback());
@@ -23,7 +24,7 @@ try {
       await new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
     }
   } else {
-    // Give the asynchronous serverDidReady hook time to start cron timers.
+    // Give the asynchronous serverDidReady hook time to start the interval timer.
     await sleep(100);
   }
 } finally {
