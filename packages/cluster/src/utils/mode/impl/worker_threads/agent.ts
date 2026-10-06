@@ -20,9 +20,11 @@ export class AgentThreadWorker extends BaseAgentWorker<Worker> {
 export class AgentThreadUtils extends BaseAgentUtils {
   #worker: Worker;
   #id = 0;
+  #closing = false;
   instance: AgentThreadWorker;
 
   fork(): void {
+    if (this.#closing) return;
     this.startTime = Date.now();
 
     // start agent worker
@@ -73,20 +75,22 @@ export class AgentThreadUtils extends BaseAgentUtils {
   }
 
   async kill(timeout: number): Promise<void> {
-    if (this.#worker) {
+    this.#closing = true;
+    const worker = this.#worker;
+    if (worker && worker.threadId !== -1) {
       this.log(`[master] gracefully close agent worker#${this.#id} (worker_threads)`);
       this.clean();
-      const exited = once(this.#worker, 'exit').then(
+      const exited = once(worker, 'exit').then(
         () => true,
         (err) => {
           this.logger.error('[master] agent worker#%s error during graceful shutdown: ', this.#id, err);
           return false;
         },
       );
-      this.#worker.postMessage(WORKER_THREAD_GRACEFUL_EXIT);
+      worker.postMessage(WORKER_THREAD_GRACEFUL_EXIT);
       if (!(await Promise.race([exited, sleep(timeout).then(() => false)]))) {
         this.log(`[master] terminate agent worker#${this.#id} after ${timeout}ms timeout`);
-        await this.#worker.terminate();
+        await worker.terminate();
       }
     }
   }

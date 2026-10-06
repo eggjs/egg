@@ -381,6 +381,7 @@ export class Master extends ReadyEventEmitter {
     if (this.isStarted) {
       this.log('[master] try to start a new agent_worker after 1s ...');
       setTimeout(() => {
+        if (this.closed) return;
         this.logger.info('[master] new agent_worker starting...');
         this.forkAgentWorker();
       }, 1000);
