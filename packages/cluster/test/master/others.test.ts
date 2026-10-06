@@ -450,7 +450,7 @@ describe.skip('--require', () => {
   describe('array', () => {
     beforeAll(() => {
       app = cluster('apps/options-require', {
-        require: [getFilepath('apps/options-require/inject.js'), 'ts-node/register'],
+        require: [getFilepath('apps/options-require/inject.js'), getFilepath('apps/options-require/check.js')],
       } as any);
       // app.debug();
       return app.ready();
@@ -460,8 +460,8 @@ describe.skip('--require', () => {
     it('should inject', () => {
       app.expect('stdout', /### inject application/);
       app.expect('stdout', /### inject agent/);
-      app.expect('stdout', /### inject ts-node\/register at app/);
-      app.expect('stdout', /### inject ts-node\/register at agent/);
+      app.expect('stdout', /### inject additional require hook at app/);
+      app.expect('stdout', /### inject additional require hook at agent/);
     });
   });
 });

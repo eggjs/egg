@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import { glob } from 'node:fs/promises';
 import os from 'node:os';
@@ -66,5 +67,31 @@ test('release helpers resolve native default/named catalogs and discover private
     );
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
+  }
+});
+
+test('workspace tsc commands resolve to TypeScript 7, including local bin directories', async () => {
+  const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+  const directories = [root];
+  for (const pattern of manifest.workspaces) {
+    for await (const file of glob(`${pattern}/package.json`, { cwd: root })) {
+      const pkg = JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
+      if (pkg.scripts?.typecheck?.startsWith('tsc ')) directories.push(path.dirname(path.join(root, file)));
+    }
+  }
+  for (const cwd of directories) {
+    const bins = [];
+    for (let dir = cwd; ; dir = path.dirname(dir)) {
+      bins.push(path.join(dir, 'node_modules/.bin'));
+      if (dir === root) break;
+    }
+    const result = spawnSync('tsc', ['--version'], {
+      cwd,
+      env: { ...process.env, PATH: [...bins, process.env.PATH].join(path.delimiter) },
+      encoding: 'utf8',
+      shell: process.platform === 'win32',
+    });
+    assert.equal(result.status, 0, `${cwd}: ${result.error ?? result.stderr}`);
+    assert.match(result.stdout.trim(), /^Version 7\./, `${cwd}: ${result.stdout}`);
   }
 });

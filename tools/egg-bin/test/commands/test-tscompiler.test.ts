@@ -34,4 +34,39 @@ describe('test/commands/test-tscompiler.test.ts', () => {
     // --dry-run prints the resolved vitest config and returns before running.
     expect(logs.join('\n')).toContain('vitest config');
   });
+
+  it.each(['javascript', 'oxc', 'swc'])('initializes ESM with %s without ts-node', async (compiler) => {
+    const typescript = compiler !== 'javascript';
+    const envSnapshot = { ...process.env };
+    const options: string[] = [];
+    class InspectTest extends Test<typeof Test> {
+      protected override addNodeOptions(option: string) {
+        options.push(option);
+        super.addNodeOptions(option);
+      }
+    }
+    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    try {
+      await InspectTest.run([
+        '--base',
+        getFixtures('test-demo-app-esm'),
+        typescript ? '--typescript' : '--no-typescript',
+        ...(compiler === 'swc' ? ['--tscompiler', '@swc-node/register'] : []),
+        '--dry-run',
+      ]);
+      expect(options.join(' ')).not.toContain('ts-node');
+      if (typescript) {
+        expect(options.filter((option) => option.includes('@oxc-node'))).toHaveLength(1);
+        expect(options.join(' ')).toContain('register.mjs');
+      } else {
+        expect(options).toHaveLength(0);
+      }
+    } finally {
+      spy.mockRestore();
+      for (const key of Object.keys(process.env)) {
+        if (!(key in envSnapshot)) delete process.env[key];
+      }
+      Object.assign(process.env, envSnapshot);
+    }
+  });
 });

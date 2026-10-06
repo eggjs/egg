@@ -21,6 +21,8 @@ Read this file before exploring raw sources.
 - [PR preview packages](./workflows/pr-preview-packages.md) - Publish workspace previews through a pull request label and install them in consumer applications, including from stacked PRs.
 - [Egg-bin Windows shell probe hotspot](./workflows/egg-bin-windows-shell-probe.md) - How PR #6014 diagnosed hosted-Windows egg-bin startup slowness and why the final fix only presets SHELL.
 
+- [TypeScript 7 migration](./workflows/typescript-7.md) - TS7 compiler commands, isolated legacy API catalog, and local verification limits.
+
 ## Decisions
 
 - No decision pages yet.

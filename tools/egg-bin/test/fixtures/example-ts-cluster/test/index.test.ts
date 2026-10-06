@@ -8,7 +8,7 @@ describe('example-ts-cluster/test/index.test.ts', () => {
   before(async () => {
     app = mm.cluster({
       opt: {
-        execArgv: ['--require', 'ts-node/register'],
+        execArgv: ['--import', '@oxc-node/core/register'],
       },
     } as MockOption);
     app.debug();

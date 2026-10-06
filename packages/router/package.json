@@ -38,7 +38,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit",
+    "typecheck": "tsc --noEmit",
     "bench": "cd bench && make"
   },
   "dependencies": {
