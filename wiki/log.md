@@ -532,9 +532,3 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Removed the exact packageManager pin, restored the utoo catalog range to ^1, and switched CI/bootstrap instructions to latest at the user’s request. Native workspace/catalog configuration remains authoritative.
 - Removed the E2E-only utoo@1.1.1 temporary installation; packing now reuses the latest CLI from setup-utoo and the tracked native configuration.
-
-## 2026-10-07
-
-- Added the English counterparts of the seven Egg 4 release articles, with release navigation and a community article link. Recorded bilingual routes and the toolchain/startup benchmark scopes in `wiki/sources/egg-v4-articles.md`.
-
-- Rebased the announcement PR onto the native utoo workspace migration. Preserved both sides of the wiki log conflict and aligned English/Chinese monorepo and toolchain configuration paths and commands with `package.json`, `.utoo.toml`, and `ut install`.

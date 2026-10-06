@@ -39,5 +39,3 @@ Read this file before exploring raw sources.
 ## Sources
 
 - [CI performance baseline, September 2026](./sources/ci-performance-baseline.md) - Job and step timings from ten CI runs and three E2E runs, including runner delays and an inspector-port failure.
-
-- [Egg 4 release article series](./sources/egg-v4-articles.md) - Bilingual overview and six topics, navigation, and performance measurement boundaries.
