@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/cors",
-  "version": "4.0.2-rc.1",
+  "version": "4.0.2",
   "description": "cors support for egg",
   "keywords": [
     "cors",
