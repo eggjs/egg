@@ -4,11 +4,32 @@ import { once } from 'node:events';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { createInterface } from 'node:readline';
+import { PassThrough, type Readable } from 'node:stream';
 
 import { expect, it } from 'vitest';
 
 import Stop from '../src/commands/stop.ts';
 import { findNodeProcess } from '../src/helper.ts';
+
+async function readPort(stdout: Readable): Promise<number> {
+  const lines = createInterface({ input: stdout });
+  try {
+    const [line] = await once(lines, 'line');
+    return Number(line.trim());
+  } finally {
+    lines.close();
+  }
+}
+
+it('reads a complete port line across chunks and ignores subsequent output', async () => {
+  const stdout = new PassThrough();
+  const port = readPort(stdout);
+  stdout.write('17');
+  stdout.write('324\r');
+  stdout.end('\nextra output\n');
+  expect(await port).toBe(17324);
+});
 
 it.skipIf(Number(process.versions.node.split('.')[0]) < 24)(
   'discovers and stops a real restored snapshot and closes its HTTP port',
@@ -39,13 +60,12 @@ it.skipIf(Number(process.versions.node.split('.')[0]) < 24)(
       child.stderr!.on('data', (data) => {
         stderr += data.toString();
       });
-      const [data] = await Promise.race([
-        once(child.stdout!, 'data'),
+      const port = await Promise.race([
+        readPort(child.stdout!),
         exited.then(() => {
           throw new Error(`Snapshot exited before listening: ${stderr}`);
         }),
       ]);
-      const port = Number(data.toString().trim());
       expect(port).toBeGreaterThan(0);
       expect((await fetch(`http://127.0.0.1:${port}`)).status).toBe(200);
       const processes = await findNodeProcess((item) => item.pid === child!.pid);
