@@ -537,3 +537,5 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Added Windows Node.js 24 coverage for ESM file URL preloads, special-character paths, CJS preloads, and foreground child exit handling in `.github/workflows/ci.yml` and `tools/scripts/test/start-unit.test.ts`.
 - Refreshed [Local CI](./workflows/local-ci.md) to describe the targeted Windows job and scripts-only build prerequisite.
+
+- Windows source-level regression tests skip the Linux CLI build step: utoo interprets its tsdown path filter as a workspace selection on Windows, while these tests do not require `dist`.

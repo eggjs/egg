@@ -452,8 +452,9 @@ jobs:
 
       # own step for clear failure attribution; @eggjs/scripts has no build
       # script of its own, so build it through the root tsdown workspace
-      # filter (tsdown accepts the path form on every OS)
+      # filter. Windows runs only source-level regression tests and needs no build.
       - name: Build egg-scripts
+        if: ${{ matrix.os != 'windows-latest' }}
         run: ut run build -- --workspace ./tools/scripts
 
       - name: Run tests (with coverage)

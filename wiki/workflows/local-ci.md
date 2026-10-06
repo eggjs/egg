@@ -42,8 +42,9 @@ matrix runs Node.js 22, 24, and 26 on Linux, plus targeted preload and foregroun
 exit regression tests on Windows Node.js 24. The Windows tests load
 source-map-support through real Node subprocesses from paths containing spaces
 and `#`, covering ESM file URLs and unchanged CJS `--require` paths. The
-egg-scripts job builds only that CLI before its tests because its bin discovers
-commands from `dist`; this differs from the main suite. The tegg Vitest adapter runs both
+Linux egg-scripts jobs build only that CLI before their tests because its bin discovers
+commands from `dist`; the targeted Windows job imports sources and skips that
+build. This differs from the main suite. The tegg Vitest adapter runs both
 isolated and shared workers on Node.js 24 and 26 on Linux. Coverage reports
 come from the Linux Node.js 24 jobs. The main-suite coverage job checks the
 complete, disjoint shard inventory before merging Vitest blob coverage reports.
