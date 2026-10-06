@@ -6,9 +6,20 @@ import Bundle from '../../src/commands/bundle.ts';
 import { getFixtures } from '../helper.ts';
 
 const bundleMock = vi.hoisted(() => vi.fn());
+const standaloneOptionsMock = vi.hoisted(() => vi.fn());
+const standaloneRunMock = vi.hoisted(() => vi.fn());
 
 vi.mock('@eggjs/egg-bundler', () => ({
   bundle: bundleMock,
+  StandaloneWorkerBundler: class {
+    constructor(options: unknown) {
+      standaloneOptionsMock(options);
+    }
+
+    run() {
+      return standaloneRunMock();
+    }
+  },
 }));
 
 describe('test/commands/bundle.test.ts', () => {
@@ -20,6 +31,12 @@ describe('test/commands/bundle.test.ts', () => {
       outputDir: path.join(baseDir, 'dist-bundle'),
       manifestPath: path.join(baseDir, '.egg/manifest.json'),
       files: ['server.js'],
+    });
+    standaloneOptionsMock.mockReset();
+    standaloneRunMock.mockReset();
+    standaloneRunMock.mockResolvedValue({
+      outputDir: path.join(baseDir, 'dist-worker'),
+      entry: 'index.mjs',
     });
   });
 
@@ -33,7 +50,6 @@ describe('test/commands/bundle.test.ts', () => {
       manifestPath: undefined,
       framework: 'aliyun-egg',
       mode: 'production',
-      tegg: true,
       externals: {
         force: [],
         inline: [],
@@ -51,7 +67,6 @@ describe('test/commands/bundle.test.ts', () => {
       '.egg/custom-manifest.json',
       '--mode',
       'development',
-      '--no-tegg',
       '--force-external',
       '@scope/foo',
       '--force-external',
@@ -67,12 +82,40 @@ describe('test/commands/bundle.test.ts', () => {
       manifestPath: path.join(baseDir, '.egg/custom-manifest.json'),
       framework: 'aliyun-egg',
       mode: 'development',
-      tegg: false,
       externals: {
         force: ['@scope/foo', 'bar'],
         inline: ['baz'],
       },
     });
+  });
+
+  it('should build separate app and agent worker entries with --cluster', async () => {
+    await Bundle.run(['--base', baseDir, '--cluster']);
+
+    expect(bundleMock).toHaveBeenCalledTimes(1);
+    expect(bundleMock).toHaveBeenCalledWith({
+      baseDir,
+      outputDir: path.join(baseDir, 'dist-bundle'),
+      manifestPath: undefined,
+      framework: 'aliyun-egg',
+      mode: 'production',
+      externals: {
+        force: [],
+        inline: [],
+      },
+      target: 'cluster',
+    });
+  });
+
+  it.each([
+    ['--target standalone', ['--target', 'standalone', '--framework', 'fake-framework', '--entry', 'worker.ts']],
+    ['--entry', ['--framework', 'fake-framework', '--entry', 'worker.ts']],
+  ])('should reject --cluster with %s', async (_label, args) => {
+    await expect(Bundle.run(['--base', baseDir, '--cluster', ...args])).rejects.toThrow(
+      /--cluster cannot be combined with --target standalone or --entry/,
+    );
+    expect(bundleMock).not.toHaveBeenCalled();
+    expect(standaloneRunMock).not.toHaveBeenCalled();
   });
 
   it('should pass pack aliases to egg-bundler with dot-relative targets resolved from baseDir', async () => {
@@ -92,7 +135,6 @@ describe('test/commands/bundle.test.ts', () => {
       manifestPath: undefined,
       framework: 'aliyun-egg',
       mode: 'production',
-      tegg: true,
       externals: {
         force: [],
         inline: [],
@@ -118,11 +160,50 @@ describe('test/commands/bundle.test.ts', () => {
       manifestPath: undefined,
       framework: '@my-org/framework',
       mode: 'production',
-      tegg: true,
       externals: {
         force: [],
         inline: [],
       },
     });
+  });
+
+  it('should scan standalone TypeScript metadata in a loader-enabled child process', async () => {
+    const standaloneBaseDir = getFixtures('standalone-bundle-ts');
+    const originalNodeOptions = process.env.NODE_OPTIONS;
+    delete process.env.NODE_OPTIONS;
+
+    try {
+      await Bundle.run([
+        '--base',
+        standaloneBaseDir,
+        '--framework',
+        path.join(standaloneBaseDir, 'framework.ts'),
+        '--entry',
+        'worker.ts',
+      ]);
+    } finally {
+      if (originalNodeOptions === undefined) {
+        delete process.env.NODE_OPTIONS;
+      } else {
+        process.env.NODE_OPTIONS = originalNodeOptions;
+      }
+    }
+
+    expect(standaloneOptionsMock).toHaveBeenCalledTimes(1);
+    expect(standaloneOptionsMock).toHaveBeenCalledWith({
+      baseDir: path.join(standaloneBaseDir, 'app'),
+      entry: path.join(standaloneBaseDir, 'worker.ts'),
+      format: 'module',
+      outputDir: path.join(standaloneBaseDir, 'dist-worker'),
+      manifest: {
+        appDir: path.join(standaloneBaseDir, 'app'),
+        decoratedFramework: 'DecoratedFramework',
+        scannerPid: expect.any(Number),
+      },
+      excludeModules: [],
+      rootPath: standaloneBaseDir,
+      mode: 'production',
+    });
+    expect(standaloneOptionsMock.mock.calls[0][0].manifest.scannerPid).not.toBe(process.pid);
   });
 });

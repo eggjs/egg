@@ -54,21 +54,57 @@ describe('test/ModuleConfig.test.ts', () => {
     // });
   });
 
+  describe('resolve module config tolerant', () => {
+    it('should read existing module config', () => {
+      const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-module-json');
+      const modulePath = path.join(fixturesPath, 'app/module-a');
+      const resolved = ModuleConfigUtil.resolveModuleConfigTolerant({
+        path: modulePath,
+        name: 'moduleA',
+      });
+
+      assert.deepStrictEqual(resolved, {
+        name: 'moduleA',
+        path: modulePath,
+        config: {},
+      });
+    });
+
+    it('should use reference name and empty config when module dir does not exist', () => {
+      const baseDir = path.join(__dirname, './fixtures/apps/app-with-module-json');
+      const resolved = ModuleConfigUtil.resolveModuleConfigTolerant(
+        {
+          path: 'external/module-a',
+          name: 'externalModule',
+        },
+        baseDir,
+      );
+
+      assert.deepStrictEqual(resolved, {
+        name: 'externalModule',
+        path: path.resolve(baseDir, 'external/module-a'),
+        config: {},
+      });
+    });
+  });
+
   describe('load module reference', () => {
     describe('module.json not exits', () => {
       it('should work', () => {
         const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-no-module-json');
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
         assert.deepStrictEqual(ref, [
-          { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' },
-          { path: path.join(fixturesPath, 'app/module-b'), name: 'moduleB' },
+          { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA', package: 'module-a' },
+          { path: path.join(fixturesPath, 'app/module-b'), name: 'moduleB', package: 'module-b' },
           {
             path: path.join(fixturesPath, 'app/module-b/test/fixtures/module-e'),
             name: 'moduleE',
+            package: 'module-e',
           },
           {
             path: path.join(fixturesPath, 'node_modules/module-c'),
             name: 'moduleC',
+            package: 'module-c',
           },
         ]);
       });
@@ -88,7 +124,9 @@ describe('test/ModuleConfig.test.ts', () => {
         it('should work', () => {
           const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-symlink');
           const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
-          assert.deepStrictEqual(ref, [{ path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' }]);
+          assert.deepStrictEqual(ref, [
+            { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA', package: 'module-a' },
+          ]);
         });
       });
     });
@@ -98,8 +136,8 @@ describe('test/ModuleConfig.test.ts', () => {
         const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-module-json');
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
         assert.deepStrictEqual(ref, [
-          { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' },
-          { path: path.join(fixturesPath, 'app/module-b'), name: 'moduleB' },
+          { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA', package: 'module-a' },
+          { path: path.join(fixturesPath, 'app/module-b'), name: 'moduleB', package: 'module-b', optional: true },
         ]);
       });
     });
@@ -114,6 +152,8 @@ describe('test/ModuleConfig.test.ts', () => {
           {
             path: path.join(fixturesPath, 'node_modules/module-a'),
             name: 'moduleA',
+            package: 'module-a',
+            optional: true,
           },
         ]);
       });
@@ -127,7 +167,9 @@ describe('test/ModuleConfig.test.ts', () => {
           extraFilePattern: ['!**/dist'],
         };
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath, readModuleOptions);
-        assert.deepStrictEqual(ref, [{ path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' }]);
+        assert.deepStrictEqual(ref, [
+          { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA', package: 'module-a' },
+        ]);
       });
     });
   });
@@ -146,10 +188,12 @@ describe('test/ModuleConfig.test.ts', () => {
         {
           path: path.resolve(__dirname, './fixtures/monorepo/packages/d/node_modules/e'),
           name: 'e',
+          package: 'e',
         },
         {
           path: path.resolve(__dirname, './fixtures/monorepo/packages/d/node_modules/f'),
           name: 'f',
+          package: 'f',
         },
       ]);
     });
@@ -161,6 +205,7 @@ describe('test/ModuleConfig.test.ts', () => {
         {
           path: path.resolve(__dirname, './fixtures/monorepo/packages/a/node_modules/c'),
           name: 'c',
+          package: 'c',
         },
       ]);
     });
@@ -172,6 +217,7 @@ describe('test/ModuleConfig.test.ts', () => {
         {
           path: path.resolve(__dirname, './fixtures/monorepo/packages/a'),
           name: 'a',
+          package: 'b',
         },
       ]);
     });

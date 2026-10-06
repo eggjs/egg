@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { ManifestStore } from '@eggjs/core';
+import { ManifestStore, type LoaderFS } from '@eggjs/core';
 import { importModule } from '@eggjs/utils';
 import { readJSON } from 'utility';
 
@@ -20,6 +20,8 @@ export interface StartEggOptions {
   plugins?: EggPlugin;
   /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
   metadataOnly?: boolean;
+  /** Loader-facing filesystem abstraction */
+  loaderFS?: LoaderFS;
   /**
    * When true, load application metadata for V8 startup snapshot construction.
    * The lifecycle stops after configWillLoad (no servers, timers, or connections)

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/jsonp",
-  "version": "4.0.2-beta.9",
+  "version": "4.0.2-rc.0",
   "description": "jsonp support for egg",
   "keywords": [
     "egg",
@@ -37,7 +37,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app/extend/application": "./dist/app/extend/application.js",
@@ -47,10 +46,11 @@
       "./lib/private_key": "./dist/lib/private_key.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "jsonp-body": "catalog:"

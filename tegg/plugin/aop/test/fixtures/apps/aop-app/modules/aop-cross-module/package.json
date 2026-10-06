@@ -1,0 +1,7 @@
+{
+  "name": "aop-cross-module",
+  "type": "module",
+  "eggModule": {
+    "name": "aopCrossModule"
+  }
+}

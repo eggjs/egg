@@ -1,4 +1,5 @@
 import { LoadUnitFactory } from '@eggjs/metadata';
+import { TeggScope } from '@eggjs/tegg-types';
 import type {
   CreateObjectMethod,
   EggObject,
@@ -17,8 +18,17 @@ interface EggObjectPair {
   ctx: EggObjectLifeCycleContext;
 }
 
+const EGG_OBJECT_MAP_SLOT = Symbol('tegg:runtime:eggObjectMap');
+
 export class EggObjectFactory {
-  static eggObjectMap: Map<string, EggObjectPair> = new Map();
+  // The live egg-object registry (singletons + context objects) collides across
+  // apps (proto.id), so it is per-app, resolved from the active TeggScope bag.
+  static get eggObjectMap(): Map<string, EggObjectPair> {
+    return TeggScope.resolve(EGG_OBJECT_MAP_SLOT, () => new Map(), 'EggObjectFactory.eggObjectMap');
+  }
+
+  // proto class -> create method is class-keyed and registered at import time
+  // (app-agnostic), so it is safe to keep process-global (shared).
   static eggObjectCreateMap: Map<EggPrototypeClass, CreateObjectMethod> = new Map();
 
   public static registerEggObjectCreateMethod(protoClass: EggPrototypeClass, method: CreateObjectMethod): void {

@@ -1,8 +1,8 @@
+import { once } from 'node:events';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { Worker as ThreadWorker, threadId, parentPort, type WorkerOptions } from 'node:worker_threads';
+import { Worker as ThreadWorker, type WorkerOptions } from 'node:worker_threads';
 
-import type { Options as gracefulExitOptions } from 'graceful-process';
-
+import { WORKER_THREAD_GRACEFUL_EXIT } from '../../../../worker_protocol/worker-thread.ts';
 import type { MessageBody } from '../../../messenger.ts';
 import { BaseAppWorker, BaseAppUtils } from '../../base/app.ts';
 
@@ -47,46 +47,20 @@ export class AppThreadWorker extends BaseAppWorker<ThreadWorker> {
   clean(): void {
     this.instance.removeAllListeners();
   }
-
-  // static methods use on src/app_worker.ts
-
-  static get workerId(): number {
-    return threadId;
-  }
-
-  static on(event: string, listener: (...args: any[]) => void): void {
-    parentPort!.on(event, listener);
-  }
-
-  static send(message: MessageBody): void {
-    message.senderWorkerId = String(threadId);
-    parentPort!.postMessage(message);
-  }
-
-  static kill(): void {
-    process.exit(1);
-  }
-
-  static gracefulExit(options: gracefulExitOptions): void {
-    process.on('exit', async (code) => {
-      if (typeof options.beforeExit === 'function') {
-        await options.beforeExit();
-      }
-      process.exit(code);
-    });
-  }
 }
 
 export class AppThreadUtils extends BaseAppUtils {
-  #workers: ThreadWorker[] = [];
+  #workers: AppThreadWorker[] = [];
+  #closing = false;
 
   #forkSingle(appPath: string, options: WorkerOptions, id: number): void {
+    if (this.#closing) return;
     // start app worker
     const worker = new ThreadWorker(appPath, options);
-    this.#workers.push(worker);
 
     // wrap app worker
     const appWorker = new AppThreadWorker(worker, id);
+    this.#workers.push(appWorker);
     this.emit('worker_forked', appWorker);
     appWorker.disableRefork = true;
     worker.on('message', (msg: MessageBody) => {
@@ -139,16 +113,18 @@ export class AppThreadUtils extends BaseAppUtils {
   fork(): this {
     this.startTime = Date.now();
     this.startSuccessCount = 0;
+    const appWorkerFile = this.options.appWorkerFile || this.getAppWorkerFile();
 
     if (this.options.reusePort) {
       // When reusePort is enabled, all workers share the same port
       // and each worker has its own socket
-      if (!this.options.port) {
+      // Port 0 defers to the application's shared listen port.
+      if (!this.options.port && this.options.port !== 0) {
         throw new Error('options.port must be specified when reusePort is enabled');
       }
       for (let i = 0; i < this.options.workers; i++) {
         const argv = [JSON.stringify(this.options)];
-        this.#forkSingle(this.getAppWorkerFile(), { argv }, i + 1);
+        this.#forkSingle(appWorkerFile, { argv }, i + 1);
       }
     } else {
       // Normal mode: each worker can have a different port
@@ -161,19 +137,47 @@ export class AppThreadUtils extends BaseAppUtils {
       do {
         const options = Object.assign({}, this.options, { port: ports[i] });
         const argv = [JSON.stringify(options)];
-        this.#forkSingle(this.getAppWorkerFile(), { argv }, ++i);
+        this.#forkSingle(appWorkerFile, { argv }, ++i);
       } while (i < ports.length);
     }
 
     return this;
   }
 
-  async kill(): Promise<void> {
-    for (const worker of this.#workers) {
-      const id = Reflect.get(worker, 'id');
-      this.log(`[master] kill app worker#${id} (worker_threads) by worker.terminate()`);
-      worker.removeAllListeners();
-      worker.terminate();
-    }
+  async kill(timeout: number): Promise<void> {
+    this.#closing = true;
+    const results = await Promise.allSettled(
+      this.#workers.map(async (appWorker) => {
+        const { id, instance: worker } = appWorker;
+        if (appWorker.state === 'dead' || worker.threadId === -1) return;
+        this.log(`[master] gracefully close app worker#${id} (worker_threads)`);
+        worker.removeAllListeners();
+        let shutdownError: unknown;
+        const exited = once(worker, 'exit').then(
+          ([code]) => {
+            if (code !== 0) throw new Error(`app worker#${id} exited with code:${code} during graceful shutdown`);
+            return true;
+          },
+          (err) => {
+            this.logger.error('[master] app worker#%s error during graceful shutdown: ', id, err);
+            shutdownError = err;
+            return false;
+          },
+        );
+        worker.postMessage(WORKER_THREAD_GRACEFUL_EXIT);
+        const timeoutController = new AbortController();
+        try {
+          if (!(await Promise.race([exited, sleep(timeout, false, { signal: timeoutController.signal })]))) {
+            this.log(`[master] terminate app worker#${id} after ${timeout}ms timeout`);
+            await worker.terminate();
+            if (shutdownError) throw shutdownError;
+          }
+        } finally {
+          timeoutController.abort();
+        }
+      }),
+    );
+    const errors = results.filter((result) => result.status === 'rejected').map((result) => result.reason);
+    if (errors.length) throw new AggregateError(errors, 'app workers failed during graceful shutdown');
   }
 }

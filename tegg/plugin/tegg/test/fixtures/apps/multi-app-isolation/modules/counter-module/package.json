@@ -1,0 +1,7 @@
+{
+  "name": "counter-module",
+  "type": "module",
+  "eggModule": {
+    "name": "counterModule"
+  }
+}

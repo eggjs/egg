@@ -4,8 +4,10 @@ import {
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
   EggPrototypeLifecycleUtil,
+  eggPrototypeLifecycleUtilFromBag,
   LoadUnitFactory,
   LoadUnitLifecycleUtil,
+  loadUnitLifecycleUtilFromBag,
 } from '@eggjs/metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import {
@@ -14,10 +16,14 @@ import {
   EggObjectFactory,
   LoadUnitInstanceFactory,
   EggContextLifecycleUtil,
+  eggContextLifecycleUtilFromBag,
   EggObjectLifecycleUtil,
+  eggObjectLifecycleUtilFromBag,
   LoadUnitInstanceLifecycleUtil,
+  loadUnitInstanceLifecycleUtilFromBag,
 } from '@eggjs/tegg-runtime';
 import type { RuntimeConfig } from '@eggjs/tegg-types';
+import { TeggScope } from '@eggjs/tegg-types';
 import type { Application } from 'egg';
 
 export default class TEggPluginApplication {
@@ -34,7 +40,7 @@ export default class TEggPluginApplication {
   }
 
   get loadUnitLifecycleUtil(): typeof LoadUnitLifecycleUtil {
-    return LoadUnitLifecycleUtil;
+    return loadUnitLifecycleUtilFromBag((this as unknown as Application)._teggScopeBag);
   }
 
   get loadUnitFactory(): typeof LoadUnitFactory {
@@ -50,7 +56,7 @@ export default class TEggPluginApplication {
   }
 
   get loadUnitInstanceLifecycleUtil(): typeof LoadUnitInstanceLifecycleUtil {
-    return LoadUnitInstanceLifecycleUtil;
+    return loadUnitInstanceLifecycleUtilFromBag((this as unknown as Application)._teggScopeBag);
   }
 
   get eggContainerFactory(): typeof EggContainerFactory {
@@ -62,15 +68,15 @@ export default class TEggPluginApplication {
   }
 
   get eggPrototypeLifecycleUtil(): typeof EggPrototypeLifecycleUtil {
-    return EggPrototypeLifecycleUtil;
+    return eggPrototypeLifecycleUtilFromBag((this as unknown as Application)._teggScopeBag);
   }
 
   get eggContextLifecycleUtil(): typeof EggContextLifecycleUtil {
-    return EggContextLifecycleUtil;
+    return eggContextLifecycleUtilFromBag((this as unknown as Application)._teggScopeBag);
   }
 
   get eggObjectLifecycleUtil(): typeof EggObjectLifecycleUtil {
-    return EggObjectLifecycleUtil;
+    return eggObjectLifecycleUtilFromBag((this as unknown as Application)._teggScopeBag);
   }
 
   get abstractEggContext(): typeof AbstractEggContext {
@@ -98,19 +104,27 @@ export default class TEggPluginApplication {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [qualifiers];
     }
-    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(
-      clazz as EggProtoImplClass,
-      name,
-      qualifiers as QualifierInfo[],
-    );
-    return eggObject.obj as T;
+    const bag = (this as unknown as Application)._teggScopeBag;
+    const doWork = async (): Promise<T> => {
+      const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(
+        clazz as EggProtoImplClass,
+        name,
+        qualifiers as QualifierInfo[],
+      );
+      return eggObject.obj as T;
+    };
+    return TeggScope.runMaybe(bag, doWork);
   }
 
   async getEggObjectFromName<T extends object>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T> {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [qualifiers];
     }
-    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
-    return eggObject.obj as T;
+    const bag = (this as unknown as Application)._teggScopeBag;
+    const doWork = async (): Promise<T> => {
+      const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
+      return eggObject.obj as T;
+    };
+    return TeggScope.runMaybe(bag, doWork);
   }
 }

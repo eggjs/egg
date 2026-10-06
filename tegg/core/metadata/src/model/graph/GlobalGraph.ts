@@ -1,24 +1,19 @@
 import { debuglog } from 'node:util';
 
-import { QualifierUtil } from '@eggjs/core-decorator';
 import { FrameworkErrorFormatter } from '@eggjs/errors';
 import { Graph, GraphNode, type ModuleReference } from '@eggjs/tegg-common-util';
-import {
-  InitTypeQualifierAttribute,
-  type InjectObjectDescriptor,
-  LoadUnitNameQualifierAttribute,
-  ObjectInitType,
-  type ProtoDescriptor,
-  type QualifierInfo,
-} from '@eggjs/tegg-types';
+import { type InjectObjectDescriptor, type ProtoDescriptor, TeggScope, type TeggScopeBag } from '@eggjs/tegg-types';
 
-import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors.ts';
+import { EggPrototypeNotFound } from '../../errors.ts';
 import type { ModuleDescriptor } from '../ModuleDescriptor.ts';
 import { ModuleDependencyMeta, GlobalModuleNode } from './GlobalModuleNode.ts';
 import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder.ts';
+import { ProtoGraphUtils, type ProtoNameIndex } from './ProtoGraphUtils.ts';
 import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.ts';
 
 const debug = debuglog('tegg/core/metadata/model/graph/GlobalGraph');
+
+const GLOBAL_GRAPH_SLOT = Symbol('tegg:metadata:globalGraph');
 
 export interface GlobalGraphOptions {
   // TODO next major version refactor to force strict
@@ -65,11 +60,31 @@ export class GlobalGraph {
   moduleProtoDescriptorMap: Map<string, ProtoDescriptor[]>;
   strict: boolean;
   private buildHooks: GlobalGraphBuildHook[];
+  #buildState: 'created' | 'building' | 'built' = 'created';
+  /** Lazily built proto-name index for dependency resolution; invalidated on vertex changes. */
+  #protoNameIndex: ProtoNameIndex | null = null;
 
   /**
-   * The global instance used in ModuleLoadUnit
+   * The per-app graph instance used in ModuleLoadUnit, backed by TeggScope: the
+   * active app's bag (or, with no scope, the sole-app / process-default bag) is
+   * the single source of truth — undefined until the loader assigns it during
+   * boot. Call sites stay unchanged.
    */
-  static instance?: GlobalGraph;
+  static get instance(): GlobalGraph | undefined {
+    return TeggScope.getOr<GlobalGraph>(GLOBAL_GRAPH_SLOT, () => undefined, 'GlobalGraph.instance');
+  }
+
+  static set instance(value: GlobalGraph | undefined) {
+    TeggScope.set(GLOBAL_GRAPH_SLOT, value);
+  }
+
+  /**
+   * Resolve a specific app's graph directly from its bag (no active scope needed).
+   * Used by plugins to register build hooks onto the owning app's graph.
+   */
+  static instanceFor(bag: TeggScopeBag): GlobalGraph | undefined {
+    return bag.get(GLOBAL_GRAPH_SLOT) as GlobalGraph | undefined;
+  }
 
   constructor(options?: GlobalGraphOptions) {
     this.moduleGraph = new Graph<GlobalModuleNode, ModuleDependencyMeta>();
@@ -80,6 +95,9 @@ export class GlobalGraph {
   }
 
   registerBuildHook(hook: GlobalGraphBuildHook): void {
+    if (this.#buildState !== 'created') {
+      throw new Error(`cannot register global graph build hook after build has started (state: ${this.#buildState})`);
+    }
     this.buildHooks.push(hook);
   }
 
@@ -87,6 +105,7 @@ export class GlobalGraph {
     if (!this.moduleGraph.addVertex(new GraphNode<GlobalModuleNode, ModuleDependencyMeta>(moduleNode))) {
       throw new Error(`duplicate module: ${moduleNode}`);
     }
+    this.#protoNameIndex = null;
     for (const protoNode of moduleNode.protos) {
       if (!this.protoGraph.addVertex(protoNode)) {
         throw new Error(`duplicate proto: ${protoNode.val}`);
@@ -95,15 +114,23 @@ export class GlobalGraph {
   }
 
   build(): void {
-    for (const moduleNode of this.moduleGraph.nodes.values()) {
-      for (const protoNode of moduleNode.val.protos) {
-        for (const injectObj of protoNode.val.proto.injectObjects) {
-          this.buildInjectEdge(moduleNode, protoNode, injectObj);
+    if (this.#buildState !== 'created') {
+      throw new Error(`global graph can only be built once (state: ${this.#buildState})`);
+    }
+    this.#buildState = 'building';
+    try {
+      for (const moduleNode of this.moduleGraph.nodes.values()) {
+        for (const protoNode of moduleNode.val.protos) {
+          for (const injectObj of protoNode.val.proto.injectObjects) {
+            this.buildInjectEdge(moduleNode, protoNode, injectObj);
+          }
         }
       }
-    }
-    for (const buildHook of this.buildHooks) {
-      buildHook(this);
+      for (const buildHook of this.buildHooks) {
+        buildHook(this);
+      }
+    } finally {
+      this.#buildState = 'built';
     }
   }
 
@@ -159,75 +186,12 @@ export class GlobalGraph {
     return edge?.val.proto;
   }
 
-  #findDependencyProtoWithDefaultQualifiers(
-    proto: ProtoDescriptor,
-    injectObject: InjectObjectDescriptor,
-    qualifiers: QualifierInfo[],
-  ): GraphNode<ProtoNode, ProtoDependencyMeta>[] {
-    // TODO perf O(n(proto count)*m(inject count)*n)
-    const result: GraphNode<ProtoNode, ProtoDependencyMeta>[] = [];
-    for (const node of this.protoGraph.nodes.values()) {
-      if (
-        node.val.selectProto({
-          name: injectObject.objName,
-          qualifiers: QualifierUtil.mergeQualifiers(injectObject.qualifiers, qualifiers),
-          moduleName: proto.instanceModuleName,
-        })
-      ) {
-        result.push(node);
-      }
-    }
-    return result;
-  }
-
   findDependencyProtoNode(
     proto: ProtoDescriptor,
     injectObject: InjectObjectDescriptor,
   ): GraphNode<ProtoNode, ProtoDependencyMeta> | undefined {
-    // 1. find proto with request
-    // 2. try to add Context qualifier to find
-    // 3. try to add self init type qualifier to find
-    const protos = this.#findDependencyProtoWithDefaultQualifiers(proto, injectObject, []);
-    if (protos.length === 0) {
-      return;
-      // throw FrameworkErrorFormater.formatError(new EggPrototypeNotFound(injectObject.objName, proto.instanceModuleName));
-    }
-    if (protos.length === 1) {
-      return protos[0];
-    }
-
-    const protoWithContext = this.#findDependencyProtoWithDefaultQualifiers(proto, injectObject, [
-      {
-        attribute: InitTypeQualifierAttribute,
-        value: ObjectInitType.CONTEXT,
-      },
-    ]);
-    if (protoWithContext.length === 1) {
-      return protoWithContext[0];
-    }
-
-    const protoWithSelfInitType = this.#findDependencyProtoWithDefaultQualifiers(proto, injectObject, [
-      {
-        attribute: InitTypeQualifierAttribute,
-        value: proto.initType,
-      },
-    ]);
-    if (protoWithSelfInitType.length === 1) {
-      return protoWithSelfInitType[0];
-    }
-    const loadUnitQualifier = injectObject.qualifiers.find((t) => t.attribute === LoadUnitNameQualifierAttribute);
-    if (!loadUnitQualifier) {
-      return this.findDependencyProtoNode(proto, {
-        ...injectObject,
-        qualifiers: QualifierUtil.mergeQualifiers(injectObject.qualifiers, [
-          {
-            attribute: LoadUnitNameQualifierAttribute,
-            value: proto.instanceModuleName,
-          },
-        ]),
-      });
-    }
-    throw FrameworkErrorFormatter.formatError(new MultiPrototypeFound(injectObject.objName, injectObject.qualifiers));
+    this.#protoNameIndex ??= ProtoGraphUtils.buildProtoNameIndex(this.protoGraph);
+    return ProtoGraphUtils.findDependencyProtoNode(this.protoGraph, proto, injectObject, this.#protoNameIndex);
   }
 
   findModuleNode(moduleName: string): GraphNode<GlobalModuleNode, ModuleDependencyMeta> | undefined {

@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { HTTPParamType } from '@eggjs/tegg-types';
-import type { HTTPMethodEnum, MethodMeta, MiddlewareFunc } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, HTTPMethodEnum, IAdvice, MethodMeta, MiddlewareFunc } from '@eggjs/tegg-types';
 import pathToRegexp, { type Key as PathToRegexpKey } from 'path-to-regexp';
 
 export abstract class ParamMeta {
@@ -93,6 +93,7 @@ export class HTTPMethodMeta implements MethodMeta {
   public readonly path: string;
   public readonly method: HTTPMethodEnum;
   public readonly middlewares: readonly MiddlewareFunc[];
+  public readonly advices: readonly EggProtoImplClass<IAdvice>[];
   public readonly contextParamIndex: number | undefined;
   public readonly paramMap: Map<number, ParamMeta>;
   public readonly priority: number;
@@ -113,11 +114,13 @@ export class HTTPMethodMeta implements MethodMeta {
     aclCode: string | undefined,
     hosts: string[] | undefined,
     timeout: number | undefined,
+    advices: EggProtoImplClass<IAdvice>[] = [],
   ) {
     this.name = name;
     this.path = path;
     this.method = method;
     this.middlewares = middlewares;
+    this.advices = advices;
     this.contextParamIndex = contextParamIndex;
     this.paramMap = paramTypeMap;
     this.priority = priority;

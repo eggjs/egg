@@ -36,6 +36,12 @@ export class HttpSSEWriter implements SSEWriter {
     this.res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
   }
 
+  writeComment(text: string): void {
+    if (this._closed) return;
+    this.ensureHeaders();
+    this.res.write(`: ${text}\n\n`);
+  }
+
   get closed(): boolean {
     return this._closed;
   }

@@ -11,10 +11,19 @@ import { LoaderFactory, LoaderUtil } from '../src/index.ts';
 describe('core/loader/test/Loader.test.ts', () => {
   afterEach(() => {
     globalThis.__EGG_BUNDLE_MODULE_LOADER__ = undefined;
+    globalThis.__EGG_MODULE_IMPORTER__ = undefined;
     LoaderUtil.setConfig({});
   });
 
   describe('module loader', () => {
+    it('should exclude declarations and test runner configuration', () => {
+      const patterns = LoaderUtil.filePattern();
+      assert(patterns.includes('!**/*.d.ts'));
+      assert(patterns.includes('!**/*.d.mts'));
+      assert(patterns.includes('!**/*.d.cts'));
+      assert(patterns.includes('!**/vitest.config.*'));
+    });
+
     it('should load module', async () => {
       const repoModulePath = path.join(__dirname, './fixtures/modules/module-for-loader');
       const loader = LoaderFactory.createLoader(repoModulePath, EggLoadUnitType.MODULE);
@@ -95,7 +104,10 @@ describe('core/loader/test/Loader.test.ts', () => {
 
     it('should keep the caller path when wrapping dynamic import errors on win32', async () => {
       const missingFile = path.join(__dirname, './fixtures/modules/module-for-loader/MissingService.ts');
-      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = () => undefined;
+      const bundleLoader = globalThis.__EGG_BUNDLE_MODULE_LOADER__;
+      const moduleImporter = globalThis.__EGG_MODULE_IMPORTER__;
+      globalThis.__EGG_BUNDLE_MODULE_LOADER__ = undefined;
+      globalThis.__EGG_MODULE_IMPORTER__ = undefined;
 
       const isWindowsPlatform = vi.spyOn(LoaderUtil, 'isWindowsPlatform').mockReturnValue(true);
       try {
@@ -103,14 +115,68 @@ describe('core/loader/test/Loader.test.ts', () => {
           async () => {
             await LoaderUtil.loadFile(missingFile);
           },
-          (err: Error) => {
+          (err: Error & { cause?: unknown }) => {
             assert(err.message.startsWith(`[tegg/loader] load ${missingFile} failed:`));
+            assert(err.cause instanceof Error);
             return true;
           },
         );
+        assert.equal(isWindowsPlatform.mock.calls.length, 1);
       } finally {
         isWindowsPlatform.mockRestore();
+        globalThis.__EGG_BUNDLE_MODULE_LOADER__ = bundleLoader;
+        globalThis.__EGG_MODULE_IMPORTER__ = moduleImporter;
       }
+    });
+
+    it('should load through the async module importer when set', async () => {
+      class ImportedService {}
+      SingletonProto()(ImportedService);
+      const importedFile = '/imported/app/manager/ImportedService.ts';
+      let importerArg: string | undefined;
+      globalThis.__EGG_MODULE_IMPORTER__ = async (filePath: string) => {
+        importerArg = filePath;
+        return { ImportedService };
+      };
+
+      const prototypes = await LoaderUtil.loadFile(importedFile);
+
+      assert.equal(importerArg, importedFile);
+      assert.deepEqual(
+        prototypes.map((proto) => proto.name),
+        ['ImportedService'],
+      );
+      assert.equal(PrototypeUtil.getFilePath(ImportedService), importedFile);
+    });
+
+    it('should fall back to dynamic import when the module importer returns null', async () => {
+      const appRepoFile = path.join(__dirname, './fixtures/modules/module-for-loader/AppRepo.ts');
+      globalThis.__EGG_MODULE_IMPORTER__ = async () => null;
+
+      const prototypes = await LoaderUtil.loadFile(appRepoFile);
+
+      assert.deepEqual(
+        prototypes.map((proto) => proto.name),
+        ['AppRepo', 'AppRepo2'],
+      );
+    });
+
+    it('should wrap module importer errors', async () => {
+      const importedFile = '/imported/app/service.ts';
+      globalThis.__EGG_MODULE_IMPORTER__ = async () => {
+        throw 'importer failed';
+      };
+
+      await assert.rejects(
+        async () => {
+          await LoaderUtil.loadFile(importedFile);
+        },
+        (err: Error & { cause?: unknown }) => {
+          assert.equal(err.message, '[tegg/loader] load /imported/app/service.ts failed: importer failed');
+          assert.equal(err.cause, 'importer failed');
+          return true;
+        },
+      );
     });
   });
 

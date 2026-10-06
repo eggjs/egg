@@ -1,12 +1,11 @@
 import assert from 'node:assert/strict';
 
 import { request } from '@eggjs/supertest';
-import coffee from 'coffee';
 import { mm } from 'mm';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { utils } from '../src/index.ts';
-import { createApp, getFilepath, type Application } from './helper.ts';
+import { createApp, type Application } from './helper.ts';
 
 describe('test/egg-ts.test.ts', () => {
   let app: Application | undefined;
@@ -127,6 +126,28 @@ describe('test/egg-ts.test.ts', () => {
     assert(app.serviceClasses.test);
   });
 
+  it('should load mjs/cjs and prefer the ts source over its compiled mjs/cjs', async () => {
+    mm(process.env, 'EGG_TYPESCRIPT', 'true');
+    app = createApp('egg-ts-js');
+
+    // loadService must not throw "can't overwrite property" even though
+    // `dual.ts`+`dual.mjs` and `dualc.ts`+`dualc.cjs` coexist in the directory.
+    await app.loader.loadService();
+
+    // standalone `.mjs` / `.cjs` are scanned and loaded as first-class files
+    assert(app.serviceClasses.pureMjs);
+    assert.equal(app.serviceClasses.pureMjs.loadedFrom, 'mjs');
+    assert(app.serviceClasses.pureCjs);
+    assert.equal(app.serviceClasses.pureCjs.loadedFrom, 'cjs');
+
+    // priority: when a `.ts` source and its compiled `.mjs`/`.cjs` coexist,
+    // the `.ts` source wins and the compiled sibling is ignored.
+    assert(app.serviceClasses.dual);
+    assert.equal(app.serviceClasses.dual.loadedFrom, 'ts');
+    assert(app.serviceClasses.dualc);
+    assert.equal(app.serviceClasses.dualc.loadedFrom, 'ts');
+  });
+
   it('should auto require tsconfig-paths', async () => {
     mm(process.env, 'EGG_TYPESCRIPT', 'true');
     app = createApp('egg-ts-js-tsconfig-paths');
@@ -153,46 +174,5 @@ describe('test/egg-ts.test.ts', () => {
     await app.loader.loadService();
     assert(app.serviceClasses.lord);
     assert(!app.serviceClasses.test);
-  });
-
-  it.skip('should compile app-ts without error', async () => {
-    await coffee
-      .spawn('node', ['--require', 'ts-node/register/type-check', getFilepath('app-ts/app.ts')], {
-        env: {
-          ...process.env,
-          TS_NODE_PROJECT: getFilepath('app-ts/tsconfig.json'),
-        },
-      })
-      .debug()
-      .expect('code', 0)
-      .end();
-  });
-
-  it.skip('should compile error with app-ts/error', async () => {
-    await coffee
-      .spawn('node', ['--require', 'ts-node/register/type-check', getFilepath('app-ts/app-error.ts')], {
-        env: {
-          ...process.env,
-          TS_NODE_PROJECT: getFilepath('app-ts/tsconfig.json'),
-        },
-      })
-      .debug()
-      .expect('stderr', /Property 'abb' does not exist on type 'EggCore<{ env: string; }>'/)
-      .expect('stderr', /Property 'abc' does not exist on type 'typeof BaseContextClass'/)
-      .expect('stderr', /'loadPlugin' is protected/)
-      .expect('stderr', /'loadConfig' is protected/)
-      .expect('stderr', /'loadApplicationExtend' is protected/)
-      .expect('stderr', /'loadAgentExtend' is protected/)
-      .expect('stderr', /'loadRequestExtend' is protected/)
-      .expect('stderr', /'loadResponseExtend' is protected/)
-      .expect('stderr', /'loadContextExtend' is protected/)
-      .expect('stderr', /'loadHelperExtend' is protected/)
-      .expect('stderr', /'loadCustomAgent' is protected/)
-      .expect('stderr', /'loadService' is protected/)
-      .expect('stderr', /'loadController' is protected/)
-      .expect('stderr', /Property 'checkEnvType' does not exist on type 'string'/)
-      .expect('stderr', /'ctx' is protected/)
-      .expect('code', 1)
-      .end();
   });
 });

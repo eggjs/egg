@@ -4,9 +4,11 @@ import querystring from 'node:querystring';
 import { Readable } from 'node:stream';
 import url from 'node:url';
 
-import { MCPControllerRegister } from '@eggjs/controller-plugin/lib/impl/mcp/MCPControllerRegister';
-import type { MCPControllerHook } from '@eggjs/controller-plugin/lib/impl/mcp/MCPControllerRegister';
-import { MCPProtocols } from '@eggjs/tegg-types';
+import { EggMcpRouter } from '@eggjs/controller-plugin/lib/impl/mcp/EggMcpRouter';
+import type { MCPControllerHook } from '@eggjs/controller-plugin/lib/impl/mcp/EggMcpRouter';
+import { EggQualifier, EggType, Inject, InnerObjectProto } from '@eggjs/core-decorator';
+import { LifecyclePostInject } from '@eggjs/lifecycle';
+import { MCPProtocols, TeggScope, type TeggScopeBag } from '@eggjs/tegg-types';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 // @ts-expect-error await-event is not typed
@@ -60,11 +62,16 @@ export const MCPProxyHook: MCPControllerHook = {
     (self.app as any).mcpProxy.setProxyHandler(MCPProtocols.SSE, async (req: any, res: any) => {
       const sessionId = querystring.parse(url.parse(req.url!).query ?? '').sessionId as string;
       const ctx = self.app.createContext(req, res) as unknown as Context;
-      if (MCPControllerRegister.hooks.length > 0) {
-        for (const hook of MCPControllerRegister.hooks) {
-          await hook.preProxy?.(ctx, req, res);
+      // This proxy handler runs detached from the request, so re-enter the
+      // owning app's scope before invoking extension hooks.
+      const bag = (self.app as { _teggScopeBag?: TeggScopeBag })._teggScopeBag;
+      await TeggScope.runMaybe(bag, async () => {
+        if (self.hooks.length > 0) {
+          for (const hook of self.hooks) {
+            await hook.preProxy?.(ctx, req, res);
+          }
         }
-      }
+      });
       let transport: SSEServerTransport;
       const existingTransport = self.transports[sessionId];
       if (existingTransport instanceof SSEServerTransport) {
@@ -135,11 +142,16 @@ export const MCPProxyHook: MCPControllerHook = {
           mw = compose([mw, self.globalMiddlewares]);
         }
         const ctx = self.app.createContext(req, res) as unknown as Context;
-        if (MCPControllerRegister.hooks.length > 0) {
-          for (const hook of MCPControllerRegister.hooks) {
-            await hook.preProxy?.(ctx, req, res);
+        // Detached proxy handler — re-enter the owning app's scope before
+        // invoking extension hooks.
+        const bag = (self.app as { _teggScopeBag?: TeggScopeBag })._teggScopeBag;
+        await TeggScope.runMaybe(bag, async () => {
+          if (self.hooks.length > 0) {
+            for (const hook of self.hooks) {
+              await hook.preProxy?.(ctx, req, res);
+            }
           }
-        }
+        });
         const sessionId = req.headers['mcp-session-id'] as string | undefined;
         if (!sessionId) {
           res.writeHead(500, { 'content-type': 'application/json' });
@@ -219,8 +231,24 @@ export const MCPProxyHook: MCPControllerHook = {
   },
 };
 
+@InnerObjectProto()
+export class MCPProxyHookRegistrar {
+  @Inject()
+  @EggQualifier(EggType.APP)
+  private readonly mcpRouter: EggMcpRouter;
+
+  @LifecyclePostInject()
+  protected registerHook(): void {
+    this.mcpRouter.addHook(MCPProxyHook);
+  }
+}
+
 export class MCPProxyApiClient extends APIClientBase {
-  private _client: any;
+  // `declare`: APIClientBase's constructor assigns `this._client`. Without
+  // `declare`, this field declaration emits `this._client = undefined` after
+  // super() under useDefineForClassFields (target ES2022), masking the base
+  // value, so registerClient()/getClient() hit `undefined`.
+  declare private _client: any;
   private logger: EggLogger;
   private proxyHandlerMap: { [P in ProxyAction]?: StreamableHTTPServerTransport['handleRequest'] } = {};
   private port: number;

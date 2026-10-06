@@ -6,9 +6,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   manifestLoaderOptions: [] as unknown[],
+  entryGeneratorOptions: [] as unknown[],
   manifestLoad: vi.fn(async () => undefined),
   externalsResolve: vi.fn(async () => ({})),
-  entryGenerate: vi.fn(async () => ({ workerEntry: '/tmp/worker.entry.ts' })),
+  entryGenerate: vi.fn(async () => ({
+    entries: [{ name: 'worker', filepath: '/tmp/worker.entry.ts' }],
+    entryDir: '/tmp',
+  })),
 }));
 
 vi.mock('../src/lib/ManifestLoader.ts', () => ({
@@ -50,7 +54,8 @@ vi.mock('../src/lib/ExternalsResolver.ts', () => ({
 }));
 
 vi.mock('../src/lib/EntryGenerator.ts', () => ({
-  EntryGenerator: vi.fn().mockImplementation(function () {
+  EntryGenerator: vi.fn().mockImplementation(function (options: unknown) {
+    mocks.entryGeneratorOptions.push(options);
     return {
       generate: mocks.entryGenerate,
     };
@@ -58,6 +63,7 @@ vi.mock('../src/lib/EntryGenerator.ts', () => ({
 }));
 
 import { bundle } from '../src/index.ts';
+import { SNAPSHOT_PRELUDE_MARKER } from '../src/lib/prelude.ts';
 
 describe('Bundler', () => {
   let tmpApp: string;
@@ -65,6 +71,7 @@ describe('Bundler', () => {
 
   beforeEach(async () => {
     mocks.manifestLoaderOptions.length = 0;
+    mocks.entryGeneratorOptions.length = 0;
     mocks.manifestLoad.mockClear();
     mocks.externalsResolve.mockClear();
     mocks.entryGenerate.mockClear();
@@ -72,6 +79,13 @@ describe('Bundler', () => {
     tmpApp = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-unit-app-'));
     tmpOutput = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bundler-unit-out-'));
     await fs.writeFile(path.join(tmpApp, 'package.json'), JSON.stringify({ name: 'unit-app' }));
+    // PackRunner writes the compiler tsconfig into the entry dir (= projectPath),
+    // so it must be a real, writable directory under the app temp dir.
+    const entryDir = path.join(tmpApp, '.egg-bundle', 'entries');
+    mocks.entryGenerate.mockResolvedValue({
+      entries: [{ name: 'worker', filepath: path.join(entryDir, 'worker.entry.ts') }],
+      entryDir,
+    });
   });
 
   afterEach(async () => {
@@ -96,6 +110,142 @@ describe('Bundler', () => {
       framework: 'egg',
       autoGenerate: true,
     });
+  });
+
+  it('emits single-file output and prepends the snapshot prelude in snapshot mode', async () => {
+    let packConfig: { output?: { type?: string }; entry?: unknown[] } | undefined;
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      snapshot: true,
+      pack: {
+        buildFunc: async (wrapped) => {
+          packConfig = wrapped.config as typeof packConfig;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), '((__UTOOPACK__)=>{})([]);\n');
+        },
+      },
+    });
+
+    // snapshot implies single-file: `export` output + per-entry library.
+    expect(packConfig?.output?.type).toBe('export');
+    expect(packConfig?.entry).toContainEqual(expect.objectContaining({ library: { name: 'app' } }));
+
+    // prelude prepended before the bundle IIFE.
+    const worker = await fs.readFile(path.join(tmpOutput, 'worker.js'), 'utf8');
+    expect(worker).toContain(SNAPSHOT_PRELUDE_MARKER);
+    expect(worker.indexOf(SNAPSHOT_PRELUDE_MARKER)).toBeLessThan(worker.indexOf('__UTOOPACK__'));
+  });
+
+  it('packs and prepends snapshot preludes to both cluster worker entries', async () => {
+    const entryDir = path.join(tmpApp, '.egg-bundle', 'entries');
+    mocks.entryGenerate.mockResolvedValue({
+      entries: [
+        { name: 'app_worker', filepath: path.join(entryDir, 'app_worker.entry.ts') },
+        { name: 'agent_worker', filepath: path.join(entryDir, 'agent_worker.entry.ts') },
+      ],
+      entryDir,
+    });
+    let packEntries: unknown[] | undefined;
+
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      target: 'cluster',
+      snapshot: true,
+      pack: {
+        buildFunc: async (wrapped) => {
+          packEntries = (wrapped.config as { entry?: unknown[] }).entry;
+          await Promise.all([
+            fs.writeFile(path.join(tmpOutput, 'app_worker.js'), '((__UTOOPACK__)=>{})([]);\n'),
+            fs.writeFile(path.join(tmpOutput, 'agent_worker.js'), '((__UTOOPACK__)=>{})([]);\n'),
+          ]);
+        },
+      },
+    });
+
+    expect(packEntries).toEqual([
+      expect.objectContaining({ name: 'app_worker', import: path.join(entryDir, 'app_worker.entry.ts') }),
+      expect.objectContaining({ name: 'agent_worker', import: path.join(entryDir, 'agent_worker.entry.ts') }),
+    ]);
+    for (const filename of ['app_worker.js', 'agent_worker.js']) {
+      const worker = await fs.readFile(path.join(tmpOutput, filename), 'utf8');
+      expect(worker).toContain(SNAPSHOT_PRELUDE_MARKER);
+    }
+    expect(mocks.entryGeneratorOptions).toHaveLength(1);
+    expect(mocks.entryGeneratorOptions[0]).toMatchObject({ target: 'cluster' });
+  });
+
+  it('skips the prelude when snapshot is disabled (single-file default unchanged)', async () => {
+    let outputType: string | undefined;
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: {
+        buildFunc: async (wrapped) => {
+          outputType = (wrapped.config as { output?: { type?: string } }).output?.type;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), '((__UTOOPACK__)=>{})([]);\n');
+        },
+      },
+    });
+
+    // single-file is the upstream default, so output stays `export` without snapshot.
+    expect(outputType).toBe('export');
+    const worker = await fs.readFile(path.join(tmpOutput, 'worker.js'), 'utf8');
+    expect(worker).not.toContain(SNAPSHOT_PRELUDE_MARKER);
+  });
+
+  it('honours pack.singleFile=false without snapshot (standalone, no prelude)', async () => {
+    let outputType: string | undefined;
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      pack: {
+        singleFile: false,
+        buildFunc: async (wrapped) => {
+          outputType = (wrapped.config as { output?: { type?: string } }).output?.type;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), '// standalone\n');
+        },
+      },
+    });
+
+    expect(outputType).toBe('standalone');
+    const worker = await fs.readFile(path.join(tmpOutput, 'worker.js'), 'utf8');
+    expect(worker).not.toContain(SNAPSHOT_PRELUDE_MARKER);
+  });
+
+  it('fails fast in snapshot mode when the pack build produced no worker.js', async () => {
+    await expect(
+      bundle({
+        baseDir: tmpApp,
+        outputDir: tmpOutput,
+        snapshot: true,
+        pack: {
+          // buildFunc intentionally writes nothing, simulating a broken pack output.
+          buildFunc: async () => {},
+        },
+      }),
+    ).rejects.toThrow(/expected bundle entry "worker\.js" was not found/);
+  });
+
+  it('forces single-file output in snapshot mode even when pack.singleFile=false', async () => {
+    let outputType: string | undefined;
+    await bundle({
+      baseDir: tmpApp,
+      outputDir: tmpOutput,
+      snapshot: true,
+      pack: {
+        singleFile: false,
+        buildFunc: async (wrapped) => {
+          outputType = (wrapped.config as { output?: { type?: string } }).output?.type;
+          await fs.writeFile(path.join(tmpOutput, 'worker.js'), '((__UTOOPACK__)=>{})([]);\n');
+        },
+      },
+    });
+
+    // snapshot must override an explicit opt-out: V8 snapshots require single-file.
+    expect(outputType).toBe('export');
+    const worker = await fs.readFile(path.join(tmpOutput, 'worker.js'), 'utf8');
+    expect(worker).toContain(SNAPSHOT_PRELUDE_MARKER);
   });
 
   it.each([

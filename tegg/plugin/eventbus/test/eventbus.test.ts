@@ -15,12 +15,14 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
     return mm.restore();
   });
 
+  // app boot exceeds vitest's default 10s hook timeout on slow Windows CI
+  // runners (glob projects do not inherit the root config's hookTimeout)
   beforeAll(async () => {
     app = mm.app({
       baseDir: getFixtures('apps/event-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterAll(() => {
     return app.close();

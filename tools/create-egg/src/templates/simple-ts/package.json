@@ -24,7 +24,7 @@
     "ci": "vitest run --coverage",
     "postci": "npm run prepublishOnly && npm start && sleep 10 && npm stop && npm run clean",
     "lint": "oxlint --type-aware",
-    "typecheck": "tsgo --noEmit",
+    "typecheck": "tsc --noEmit",
     "tsc": "tsc",
     "clean": "tsc -b --clean",
     "prepublishOnly": "npm run clean && npm run tsc"
@@ -39,9 +39,9 @@
     "@eggjs/tsconfig": "beta",
     "@types/node": "24",
     "oxlint": "1",
-    "oxlint-tsgolint": "^0.11.0",
-    "typescript": "5",
-    "vitest": "beta"
+    "oxlint-tsgolint": "^7.0.2003",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
   },
   "engines": {
     "node": ">=22.18.0"

@@ -328,7 +328,8 @@ export class Request {
     if (len === '') {
       return;
     }
-    return Number.parseInt(len);
+    const parsed = Number.parseInt(len, 10);
+    return Number.isNaN(parsed) ? undefined : parsed;
   }
 
   /**

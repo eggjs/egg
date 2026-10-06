@@ -125,6 +125,8 @@ export interface EggPrototype extends LifecycleObject<EggPrototypeLifecycleConte
   readonly initType: ObjectInitTypeLike;
   readonly accessLevel: AccessLevel;
   readonly loadUnitId: string;
+  readonly defineModuleName?: string;
+  readonly defineUnitPath?: string;
   readonly injectObjects: Array<InjectObjectProto | InjectConstructorProto>;
   readonly injectType?: InjectType;
   readonly className?: string;

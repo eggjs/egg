@@ -8,6 +8,28 @@ import { isWindows, findNodeProcess, type NodeProcess, kill } from '../helper.ts
 
 const debug = debuglog('egg/scripts/commands/stop');
 
+function escapeRegExp(source: string): string {
+  return source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Match a snapshot-started server process (`egg-scripts start --snapshot-blob`).
+ *
+ * - must carry `--snapshot-blob` but NOT `--build-snapshot` (so an in-progress
+ *   `egg-bin snapshot build` is never killed);
+ * - must carry a `--title=` token (egg-scripts start always appends one), so a bare
+ *   `node --snapshot-blob` is not matched when no title is given;
+ * - when a title is given, match it at argv boundaries (so `egg-server-foo` does not
+ *   match `egg-server-foo-bar`).
+ */
+function isSnapshotServer(cmd: string, title?: string): boolean {
+  if (!cmd.includes('--snapshot-blob') || cmd.includes('--build-snapshot')) return false;
+  if (title) {
+    return new RegExp(`(?:^|\\s)--title=${escapeRegExp(title)}(?:\\s|$)`).test(cmd);
+  }
+  return /(?:^|\s)--title=\S/.test(cmd);
+}
+
 const osRelated = {
   titleTemplate: isWindows ? '\\"title\\":\\"%s\\"' : '"title":"%s"',
   // node_modules/@eggjs/cluster/dist/app_worker.js
@@ -46,9 +68,15 @@ export default class Stop<T extends typeof Stop> extends BaseCommand<T> {
     // node ~/eggjs/scripts/scripts/start-cluster.cjs {"title":"egg-server","workers":4,"port":7001,"baseDir":"~/eggjs/test/showcase","framework":"~/eggjs/test/showcase/node_modules/egg"}
     let processList = await this.findNodeProcesses((item) => {
       const cmd = item.cmd;
-      const matched = flags.title
+      // A snapshot boot (`egg-scripts start --snapshot-blob`) is a single
+      // self-contained `node --snapshot-blob <blob> --title=<title>` process,
+      // matched precisely by isSnapshotServer (excludes `--build-snapshot` builds
+      // and matches the title at argv boundaries).
+      const clusterMatched = flags.title
         ? cmd.includes('start-cluster') && cmd.includes(format(osRelated.titleTemplate, flags.title))
         : cmd.includes('start-cluster');
+      const snapshotMatched = isSnapshotServer(cmd, flags.title);
+      const matched = clusterMatched || snapshotMatched;
       if (matched) {
         debug('find master process: %o', item);
       }

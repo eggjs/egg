@@ -1,8 +1,8 @@
+import { AccessLevel, InnerObjectProto } from '@eggjs/core-decorator';
 import type { TableSqlMap } from '@eggjs/dal-runtime';
 
+@InnerObjectProto({ name: 'sqlMapManager', accessLevel: AccessLevel.PUBLIC })
 export class SqlMapManager {
-  static instance: SqlMapManager = new SqlMapManager();
-
   private sqlMaps: Map</* moduleName */ string, Map<string, TableSqlMap>>;
 
   constructor() {

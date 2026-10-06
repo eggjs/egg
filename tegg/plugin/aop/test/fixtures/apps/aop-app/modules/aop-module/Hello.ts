@@ -1,4 +1,4 @@
-import { AccessLevel, ContextProto, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, ContextProto, Inject, ObjectInitType, SingletonProto } from '@eggjs/tegg';
 import { Advice, type AdviceContext, Crosscut, type IAdvice, Pointcut, PointcutType } from '@eggjs/tegg/aop';
 import type { EggLogger } from 'egg';
 
@@ -28,6 +28,11 @@ export class Hello {
   async helloEggObjectAop(): Promise<void> {
     this.logger.info('foo');
   }
+
+  // Crosscut from another module (aop-cross-module) to exercise cross-loadUnit weaving.
+  async helloCross(name: string): Promise<string> {
+    return `helloCross ${name}`;
+  }
 }
 
 @Crosscut({
@@ -44,7 +49,7 @@ export class CrosscutAdvice implements IAdvice<Hello> {
   }
 }
 
-@Advice()
+@Advice({ initType: ObjectInitType.CONTEXT })
 export class ContextPointcutAdvice implements IAdvice<SingletonHello> {
   async around(ctx: AdviceContext<Hello>, next: () => Promise<any>): Promise<any> {
     ctx.args[0] = `withContextPointAroundParam(${ctx.args[0]})`;
@@ -69,5 +74,11 @@ export class SingletonHello {
 
   async helloEggObjectAop(): Promise<void> {
     this.logger.info('foo');
+  }
+
+  // Keep SingletonHello structurally compatible with Hello (the controller assigns
+  // singletonHello to a `Hello`-typed variable).
+  async helloCross(name: string): Promise<string> {
+    return `helloCross ${name}`;
   }
 }

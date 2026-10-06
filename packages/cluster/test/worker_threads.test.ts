@@ -9,8 +9,7 @@ describe('test/worker_threads.test.ts', () => {
   describe('Fork Agent', () => {
     afterEach(() => app && app.close());
 
-    // FIXME: nodejs.SyntaxError: Invalid or unexpected token, --import=tsx/esm is not supported on worker_threads mode
-    it.skip('support config agent debug port', async () => {
+    it('support config agent debug port', async () => {
       app = cluster('apps/agent-worker-threads', {
         startMode: 'worker_threads',
       });

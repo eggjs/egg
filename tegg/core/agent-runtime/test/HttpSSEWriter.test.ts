@@ -36,7 +36,6 @@ describe('test/HttpSSEWriter.test.ts', () => {
   });
 
   it('should delay headers until first writeEvent', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const writer = new HttpSSEWriter(res as any);
 
     // Headers not sent yet after construction
@@ -51,18 +50,16 @@ describe('test/HttpSSEWriter.test.ts', () => {
   });
 
   it('should use lowercase header keys', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const writer = new HttpSSEWriter(res as any);
     writer.writeEvent('ping', {});
 
     assert.ok(res.writtenHead);
     assert.equal(res.writtenHead.headers['content-type'], 'text/event-stream');
     assert.equal(res.writtenHead.headers['cache-control'], 'no-cache');
-    assert.equal(res.writtenHead.headers['connection'], 'keep-alive');
+    assert.equal(res.writtenHead.headers.connection, 'keep-alive');
   });
 
   it('should format SSE events correctly', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const writer = new HttpSSEWriter(res as any);
     writer.writeEvent('message', { text: 'hello' });
 
@@ -71,7 +68,6 @@ describe('test/HttpSSEWriter.test.ts', () => {
   });
 
   it('should not write after connection closes', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const writer = new HttpSSEWriter(res as any);
 
     // Simulate client disconnect
@@ -86,7 +82,6 @@ describe('test/HttpSSEWriter.test.ts', () => {
   });
 
   it('should trigger onClose callbacks when connection closes', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const writer = new HttpSSEWriter(res as any);
     const calls: number[] = [];
 
@@ -99,7 +94,6 @@ describe('test/HttpSSEWriter.test.ts', () => {
   });
 
   it('should handle end() idempotently', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const writer = new HttpSSEWriter(res as any);
 
     assert.equal(writer.closed, false);
@@ -115,7 +109,6 @@ describe('test/HttpSSEWriter.test.ts', () => {
   });
 
   it('should write multiple events sequentially', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const writer = new HttpSSEWriter(res as any);
 
     writer.writeEvent('event1', { n: 1 });
@@ -132,8 +125,35 @@ describe('test/HttpSSEWriter.test.ts', () => {
   });
 
   it('should start with closed=false', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const writer = new HttpSSEWriter(res as any);
     assert.equal(writer.closed, false);
+  });
+
+  it('should format SSE comments correctly', () => {
+    const writer = new HttpSSEWriter(res as any);
+    writer.writeComment('keepalive');
+
+    assert.equal(res.chunks.length, 1);
+    assert.equal(res.chunks[0], ': keepalive\n\n');
+  });
+
+  it('should not write comment after connection closes', () => {
+    const writer = new HttpSSEWriter(res as any);
+    res.emit('close');
+
+    writer.writeComment('keepalive');
+
+    assert.equal(res.chunks.length, 0);
+  });
+
+  it('should send headers on first writeComment', () => {
+    const writer = new HttpSSEWriter(res as any);
+
+    assert.equal(res.writtenHead, null);
+    writer.writeComment('ping');
+
+    assert.ok(res.writtenHead);
+    assert.equal(res.writtenHead.statusCode, 200);
+    assert.equal(res.writtenHead.headers['content-type'], 'text/event-stream');
   });
 });

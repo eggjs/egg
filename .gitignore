@@ -13,6 +13,9 @@ run
 .egg
 .husky/_
 
+# CI test benchmark run outputs (keep benchmark/ci-test/README.md)
+benchmark/ci-test/*/
+
 *-lock.json
 *-lock.yaml
 yarn.lock
@@ -66,6 +69,7 @@ site/.dumi/
 # egg-bin
 tools/egg-bin/test/fixtures/**/node_modules/
 !tools/egg-bin/test/fixtures/demo-app/node_modules/
+!tools/egg-bin/test/fixtures/demo-app-kill-self/node_modules/
 !tools/egg-bin/test/fixtures/demo-app-debug/node_modules/
 !tools/egg-bin/test/fixtures/demo-app-commonjs/node_modules/
 !tools/egg-bin/test/fixtures/demo-app-detect-port/node_modules/
@@ -116,7 +120,7 @@ tegg/plugin/tegg/test/fixtures/apps/**/*.js
 *.tgz
 
 ecosystem-ci/cnpmcore
+ecosystem-ci/cnpmcore-snapshot
 ecosystem-ci/examples
 pnpm-lock.yaml
-.utoo.toml
 .claude/

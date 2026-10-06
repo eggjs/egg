@@ -1,4 +1,4 @@
-import type { CreateRunInput, AgentStreamMessage } from '@eggjs/tegg-types/agent-runtime';
+import type { CreateRunInput, AgentMessage } from '@eggjs/tegg-types/agent-runtime';
 
 import { AgentController } from '../../src/decorator/agent/AgentController.ts';
 import type { AgentHandler } from '../../src/decorator/agent/AgentHandler.ts';
@@ -10,7 +10,7 @@ export class AgentFooController implements AgentHandler {
     return new Map();
   }
 
-  async *execRun(input: CreateRunInput): AsyncGenerator<AgentStreamMessage> {
+  async *execRun(input: CreateRunInput): AsyncGenerator<AgentMessage> {
     const messages = input.input.messages;
     yield {
       type: 'assistant',

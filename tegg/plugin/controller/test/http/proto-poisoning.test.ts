@@ -15,7 +15,7 @@ describe('plugin/controller/test/http/proto-poisoning.test.ts', () => {
       baseDir: getFixtures('apps/proto-poisoning'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterAll(() => {
     return app.close();

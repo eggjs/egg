@@ -1,10 +1,10 @@
 import crypto from 'node:crypto';
 
+import { AccessLevel, InnerObjectProto } from '@eggjs/core-decorator';
 import { type DataSourceOptions, MysqlDataSource } from '@eggjs/dal-runtime';
 
+@InnerObjectProto({ name: 'mysqlDataSourceManager', accessLevel: AccessLevel.PUBLIC })
 export class MysqlDataSourceManager {
-  static instance: MysqlDataSourceManager = new MysqlDataSourceManager();
-
   private readonly dataSourceIndices: Map<
     string /* moduleName */,
     Map<string /* dataSourceName */, string /* dataSourceIndex */>
@@ -46,6 +46,10 @@ export class MysqlDataSourceManager {
   }
 
   clear(): void {
+    // Release this app's datasource references on teardown. (Both maps are
+    // per-app; dropping them lets the MysqlDataSource objects be collected
+    // instead of lingering after the owning app closes.)
+    this.dataSources.clear();
     this.dataSourceIndices.clear();
   }
 

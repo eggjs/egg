@@ -5,7 +5,7 @@ import path from 'node:path';
 import coffee from 'coffee';
 import { afterEach, describe, it } from 'vitest';
 
-import { importModule, setBundleModuleLoader } from '../src/import.ts';
+import { importModule, importResolve, setBundleModuleLoader } from '../src/import.ts';
 import { getFilepath } from './helper.ts';
 
 describe('test/bundle-import.test.ts', () => {
@@ -134,5 +134,41 @@ describe('test/bundle-import.test.ts', () => {
 
     const result = await importModule(filepath);
     assert.deepEqual(result, fakeModule);
+  });
+
+  it('importResolve returns the path as canonical key for bundle-only modules', () => {
+    const seen: string[] = [];
+    setBundleModuleLoader((p) => {
+      seen.push(p);
+      return p === 'virtual/not-on-disk' ? { virtual: true } : undefined;
+    });
+
+    // The module is inlined into the bundle and has no source on disk, but the
+    // loader recognizes it, so importResolve hands it back unchanged.
+    assert.equal(importResolve('virtual/not-on-disk'), 'virtual/not-on-disk');
+    assert.ok(seen.includes('virtual/not-on-disk'));
+  });
+
+  it('importResolve normalizes Windows-style paths before the bundle lookup', () => {
+    setBundleModuleLoader((p) => (p === 'virtual/win/mod' ? { windows: true } : undefined));
+
+    const filepath = 'virtual/win/mod'.split(path.posix.sep).join(path.win32.sep);
+    assert.equal(importResolve(filepath), filepath);
+  });
+
+  it('importResolve does not consult the loader once on-disk resolution succeeds', () => {
+    let called = false;
+    setBundleModuleLoader(() => {
+      called = true;
+      return { hit: true };
+    });
+
+    const resolved = importResolve(getFilepath('esm'));
+    assert.match(resolved, /[\\/]fixtures[\\/]esm[\\/]index\.js$/);
+    assert.equal(called, false);
+  });
+
+  it('importResolve still throws for missing modules when no loader is registered', () => {
+    assert.throws(() => importResolve('virtual/not-on-disk'));
   });
 });

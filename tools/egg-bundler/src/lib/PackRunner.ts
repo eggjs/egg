@@ -14,6 +14,22 @@ export interface PackRunnerResolveConfig {
   readonly [key: string]: unknown;
 }
 
+export interface PackRunnerLoaderItem {
+  readonly loader: string;
+  readonly options?: Readonly<Record<string, unknown>>;
+}
+
+export interface PackRunnerModuleRule {
+  readonly loaders: readonly PackRunnerLoaderItem[];
+  readonly condition?: {
+    readonly path?: string | RegExp;
+  };
+}
+
+export interface PackRunnerModuleConfig {
+  readonly rules: Readonly<Record<string, PackRunnerModuleRule>>;
+}
+
 export interface PackRunnerOptions {
   readonly entries: readonly PackEntry[];
   readonly outputDir: string;
@@ -23,6 +39,15 @@ export interface PackRunnerOptions {
   readonly mode?: 'production' | 'development';
   readonly buildFunc?: BuildFunc;
   readonly resolve?: PackRunnerResolveConfig;
+  /** Internal source transforms passed to @utoo/pack module.rules. */
+  readonly module?: PackRunnerModuleConfig;
+  /** Emit one self-contained file per entry. Defaults to true. */
+  readonly singleFile?: boolean;
+  /**
+   * Compiler class-field semantics. Egg apps use false for ORM compatibility;
+   * standalone workers use true to preserve private field declarations.
+   */
+  readonly useDefineForClassFields?: boolean;
 }
 
 export interface PackRunnerResult {
@@ -30,24 +55,29 @@ export interface PackRunnerResult {
   readonly files: readonly string[];
 }
 
-// SWC decorator compilation picks up tsconfig from the OUTPUT dir, not the
-// project. Without this, tegg decorator metadata silently drops. (T0 blocker.)
-const OUTPUT_TSCONFIG = {
+// @utoo/pack reads compiler options from projectPath/tsconfig.json. Decorator
+// metadata is required by tegg; Egg's default class-field mode avoids shadowing
+// ORM accessors with declared-but-uninitialized fields.
+const compilerTsconfig = (useDefineForClassFields: boolean) => ({
   compilerOptions: {
     experimentalDecorators: true,
     emitDecoratorMetadata: true,
     target: 'es2022',
+    useDefineForClassFields,
   },
-};
+});
 
-// @utoo/pack emits CJS files; a nested `type: commonjs` package.json
-// prevents the parent ESM package from forcing these into ESM parse mode.
+// Keep @utoo/pack's CommonJS output independent of a parent ESM package.
 const OUTPUT_PACKAGE_JSON = { type: 'commonjs' };
+
+// Only .egg-bundle directories are unconditionally writable build state.
+function isBuildManaged(dir: string): boolean {
+  return dir.split(path.sep).includes('.egg-bundle');
+}
 
 const require = createRequire(import.meta.url);
 
-// Use CJS entry explicitly: under pnpm workspace links the ESM build's
-// extensionless relative imports fail to resolve.
+// The CJS entry resolves correctly through pnpm workspace links.
 const DEFAULT_BUILD_FUNC: BuildFunc = async (wrapped, projectPath, rootPath) => {
   const mod = require('@utoo/pack/cjs/commands/build.js') as {
     build: (options: unknown, projectPath?: string, rootPath?: string) => Promise<void>;
@@ -72,34 +102,55 @@ export class PackRunner {
       mode = 'production',
       buildFunc = DEFAULT_BUILD_FUNC,
       resolve,
+      module,
+      singleFile = true,
+      useDefineForClassFields = false,
     } = this.#options;
 
     await fs.mkdir(outputDir, { recursive: true });
-    await fs.writeFile(path.join(outputDir, 'tsconfig.json'), JSON.stringify(OUTPUT_TSCONFIG, null, 2));
     await fs.writeFile(path.join(outputDir, 'package.json'), JSON.stringify(OUTPUT_PACKAGE_JSON, null, 2));
 
-    // UMD-form externals ({ commonjs, root }) make @utoo/pack's standalone
-    // output emit a `require(name)` branch under `typeof exports === 'object'`,
-    // which is what node picks. Plain string externals only emit the
-    // `globalThis[name]` branch, unusable for direct node execution.
-    const umdExternals: Record<string, { commonjs: string; root: string }> = {};
+    // Never overwrite a user-owned tsconfig when projectPath is misconfigured.
+    const projectTsconfigPath = path.join(projectPath, 'tsconfig.json');
+    const desiredTsconfig = JSON.stringify(compilerTsconfig(useDefineForClassFields), null, 2);
+    if (!isBuildManaged(projectPath)) {
+      const existing = await fs.readFile(projectTsconfigPath, 'utf8').catch(() => undefined);
+      if (existing !== undefined && existing !== desiredTsconfig) {
+        throw new Error(
+          `PackRunner: refusing to overwrite an existing tsconfig.json at ${projectPath}. ` +
+            'projectPath must be a build-managed directory (e.g. the generated .egg-bundle/entries dir).',
+        );
+      }
+    }
+    await fs.mkdir(projectPath, { recursive: true });
+    await fs.writeFile(projectTsconfigPath, desiredTsconfig);
+
+    // Single-file output has no CommonJS exports scope, so externals must emit
+    // direct require() calls. Multi-file standalone output uses its UMD form.
+    const externalsConfig: Record<string, { commonjs: string; root: string } | { root: string; type: 'commonjs' }> = {};
     for (const [k, v] of Object.entries(externals)) {
-      umdExternals[k] = { commonjs: v, root: v };
+      externalsConfig[k] = singleFile ? { root: v, type: 'commonjs' } : { commonjs: v, root: v };
     }
 
     const resolveConfig = this.#buildResolveConfig(resolve);
 
+    // `export` inlines one entry; `standalone` emits a loader and sibling chunks.
     const config = {
-      entry: entries.map((e) => ({ name: e.name, import: e.filepath })),
+      entry: entries.map((e) => ({
+        name: e.name,
+        import: e.filepath,
+        ...(singleFile ? { library: { name: 'app' } } : {}),
+      })),
       target: 'node 22',
       platform: 'node',
       mode,
       output: {
         path: outputDir,
-        type: 'standalone',
+        type: singleFile ? 'export' : 'standalone',
       },
-      externals: umdExternals,
+      externals: externalsConfig,
       ...(resolveConfig ? { resolve: resolveConfig } : {}),
+      ...(module ? { module } : {}),
       optimization: {
         treeShaking: false,
         minify: false,

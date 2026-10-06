@@ -3,7 +3,7 @@ title: Repository Map
 type: concept
 summary: High-level map of the main Egg.js repository areas and their roles.
 source_files:
-  - CLAUDE.md
+  - AGENTS.md
   - packages/
   - plugins/
   - tools/
@@ -15,7 +15,7 @@ status: active
 
 # Repository Map
 
-This repo is a pnpm monorepo centered on the Egg.js framework and related packages.
+This repo is a utoo monorepo centered on the Egg.js framework and related packages.
 
 ## Main Areas
 

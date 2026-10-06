@@ -1,5 +1,8 @@
 [
   {
     "path": "../modules/aop-module"
+  },
+  {
+    "path": "../modules/aop-cross-module"
   }
 ]

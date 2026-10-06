@@ -3,21 +3,46 @@ name: CI
 
 on:
   push:
-    paths-ignore:
-      - '**/*.md'
     branches: [next]
   pull_request:
-    types: [opened, synchronize]
-    paths-ignore:
-      - '**/*.md'
+    types: [opened, synchronize, reopened]
     branches: [next]
   merge_group:
+  workflow_dispatch:
 
 permissions:
+  contents: read
+  pull-requests: read
   id-token: write
   actions: write
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      tests: ${{ steps.plan.outputs.tests }}
+      profile: ${{ steps.plan.outputs.profile }}
+      coverage-node: ${{ steps.node.outputs.node-version }}
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+        id: node
+        with:
+          node-version: '24'
+          check-latest: true
+      - name: Check CI planning and coverage guards
+        run: node --test scripts/test/ci.test.js
+      - name: Plan tests
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/ci-plan.js
+
   typecheck:
     runs-on: ubuntu-latest
 
@@ -29,15 +54,30 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
       - name: Setup utoo
-        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
+        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+        with:
+          utoo-version: 'latest'
 
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
           node-version: '24'
 
+      - name: Cache utoo package store
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/utoo-store
+          key: pkgstore-${{ runner.os }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
+          restore-keys: |
+            pkgstore-${{ runner.os }}-
+
       - name: Install dependencies
-        run: ut install --from pnpm
+        env:
+          UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
+        run: ut install
+
+      - name: Check workspace and release tooling
+        run: node --test scripts/test/workspace.test.js scripts/test/release.test.js
 
       - name: Run lint
         run: ut run lint
@@ -55,17 +95,20 @@ jobs:
         run: ut run site:build
 
   test:
+    needs: plan
+    if: needs.plan.outputs.tests == 'true'
     strategy:
       fail-fast: false
-      matrix:
-        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
-        node: ['22', '24']
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
 
-    name: Test (${{ matrix.os }}, ${{ matrix.node }})
+    name: Test (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
     runs-on: ${{ matrix.os }}
+    env:
+      CI_TEST_REPORT: '1'
+      CI_COVERAGE_REPORT: ${{ matrix.coverage && '1' || '0' }}
 
     concurrency:
-      group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
+      group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.os }}-${{ matrix.node }}-${{ matrix.shardIndex }}
       cancel-in-progress: true
 
     steps:
@@ -145,44 +188,132 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         shell: pwsh
         run: |
-          choco install -y mysql
+          # retry up to 3 times to handle Chocolatey feed flakiness
+          for ($i = 1; $i -le 3; $i++) {
+            choco install -y mysql
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($i -lt 3) {
+              Write-Host "choco install failed (attempt $i/3), retrying in 15s..."
+              Start-Sleep -Seconds 15
+            } else {
+              Write-Error "choco install failed after 3 attempts"
+              exit 1
+            }
+          }
           refreshenv
           # MySQL default root has no password, set a password and create database/user
           # & mysqladmin -u root password root
           & mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
 
       - name: Setup utoo
-        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
+        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+        with:
+          utoo-version: 'latest'
 
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${{ matrix.coverage && needs.plan.outputs.coverage-node || matrix.node }}
+
+      - name: Cache Node compile cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/node-compile-cache
+          key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
+          restore-keys: |
+            node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+
+      - name: Enable Node compile cache
+        # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
+        # here (bash on every OS) — every later step and forked child inherits it.
+        shell: bash
+        run: echo "NODE_COMPILE_CACHE=${{ runner.temp }}/node-compile-cache" >> "$GITHUB_ENV"
+
+      - name: Cache utoo package store
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/utoo-store
+          key: pkgstore-${{ runner.os }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
+          restore-keys: |
+            pkgstore-${{ runner.os }}-
 
       - name: Install dependencies
-        run: ut install --from pnpm
+        env:
+          UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
+        run: ut install
+
+      - name: Run tests (with coverage)
+        if: ${{ matrix.coverage }}
+        run: ut run ci -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
       - name: Run tests
-        run: ut run ci
+        if: ${{ !matrix.coverage }}
+        run: ut run test -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+      - name: Report parallelism metrics
+        if: always()
+        # Call node directly: `ut run <script> -- ...` re-serializes forwarded args into
+        # a shell string without re-quoting, so the parentheses in --name break it.
+        run: node scripts/ci-test-benchmark.js --report-only --vitest-json benchmark/ci-test/ci-run/vitest-results.json --output-dir benchmark/ci-test/ci-run --name "Parallel test metrics (${{ matrix.os }}, Node ${{ matrix.node }}, shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})"
+
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ci-results-${{ matrix.os }}-node${{ matrix.node }}-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
+          path: benchmark/ci-test/ci-run/
+          overwrite: true
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Run example tests
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: |
-          ut run example:test:all
+        if: ${{ matrix.os != 'windows-latest' && matrix.shardIndex == 1 }}
+        run: ut run example:test:all
 
+  coverage:
+    needs: [plan, test]
+    if: needs.plan.outputs.tests == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+        with:
+          utoo-version: 'latest'
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+        with:
+          node-version: ${{ needs.plan.outputs.coverage-node }}
+      - run: ut install
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: ci-results-ubuntu-latest-node24-*
+          path: benchmark/ci-test/shards
+      - name: Check coverage inventory
+        run: node scripts/ci-coverage.js benchmark/ci-test/shards benchmark/ci-test/blobs
+      - name: Merge coverage
+        run: node node_modules/vitest/vitest.mjs --merge-reports=benchmark/ci-test/blobs --coverage
       - name: Code Coverage
-        # skip on windows, it will hangup on codecov
-        if: ${{ matrix.os != 'windows-latest' }}
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
+        uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac # v5.5.5
         with:
           use_oidc: true
+          fail_ci_if_error: true
 
   test-egg-bin:
+    needs: plan
+    if: needs.plan.outputs.tests == 'true'
     strategy:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
-        node: ['24']
+        node: ['24', '26']
+        coverage: [false]
+        exclude:
+          - os: 'ubuntu-latest'
+            node: '24'
+            coverage: false
+        include:
+          - os: 'ubuntu-latest'
+            node: '24'
+            coverage: true
 
     name: Test bin (${{ matrix.os }}, ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
@@ -196,34 +327,80 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
       - name: Setup utoo
-        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
+        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+        with:
+          utoo-version: 'latest'
 
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
           node-version: ${{ matrix.node }}
 
+      - name: Cache Node compile cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/node-compile-cache
+          key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
+          restore-keys: |
+            node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+
+      - name: Enable Node compile cache
+        # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
+        # here (bash on every OS) — every later step and forked child inherits it.
+        shell: bash
+        run: echo "NODE_COMPILE_CACHE=${{ runner.temp }}/node-compile-cache" >> "$GITHUB_ENV"
+
+      - name: Cache utoo package store
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/utoo-store
+          key: pkgstore-${{ runner.os }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
+          restore-keys: |
+            pkgstore-${{ runner.os }}-
+
       - name: Install dependencies
-        run: ut install --from pnpm
+        env:
+          UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
+        run: ut install
+
+      - name: Build egg-bin
+        working-directory: tools/egg-bin
+        run: ut run build
+
+      - name: Run tests (with coverage)
+        if: ${{ matrix.coverage }}
+        run: ut run ci --workspace @eggjs/bin
 
       - name: Run tests
-        run: |
-          ut run build -- --workspace ./tools/egg-bin
-          ut run ci --workspace @eggjs/bin
+        if: ${{ !matrix.coverage }}
+        run: ut run test --workspace @eggjs/bin
 
       - name: Code Coverage
-        # skip on windows, it will hangup on codecov https://github.com/codecov/codecov-action/issues/1787
-        if: ${{ matrix.os != 'windows-latest' }}
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
+        if: ${{ matrix.coverage }}
+        uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac # v5.5.5
         with:
           use_oidc: true
 
   test-egg-scripts:
+    needs: plan
+    if: needs.plan.outputs.tests == 'true'
     strategy:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest']
-        node: ['22', '24']
+        node: ['22', '24', '26']
+        coverage: [false]
+        exclude:
+          - os: 'ubuntu-latest'
+            node: '24'
+            coverage: false
+        include:
+          - os: 'windows-latest'
+            node: '24'
+            coverage: false
+          - os: 'ubuntu-latest'
+            node: '24'
+            coverage: true
 
     name: Test scripts (${{ matrix.os }}, ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
@@ -237,7 +414,89 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
       - name: Setup utoo
-        uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
+        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+        with:
+          utoo-version: 'latest'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Cache Node compile cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/node-compile-cache
+          key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
+          restore-keys: |
+            node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+
+      - name: Enable Node compile cache
+        # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
+        # here (bash on every OS) — every later step and forked child inherits it.
+        shell: bash
+        run: echo "NODE_COMPILE_CACHE=${{ runner.temp }}/node-compile-cache" >> "$GITHUB_ENV"
+
+      - name: Cache utoo package store
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/utoo-store
+          key: pkgstore-${{ runner.os }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
+          restore-keys: |
+            pkgstore-${{ runner.os }}-
+
+      - name: Install dependencies
+        env:
+          UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
+        run: ut install
+
+      # own step for clear failure attribution; @eggjs/scripts has no build
+      # script of its own, so build it through the root tsdown workspace
+      # filter. Windows runs only source-level regression tests and needs no build.
+      - name: Build egg-scripts
+        if: ${{ matrix.os != 'windows-latest' }}
+        run: ut run build -- --workspace ./tools/scripts
+
+      - name: Run tests (with coverage)
+        if: ${{ matrix.coverage }}
+        run: ut run ci --workspace @eggjs/scripts
+
+      - name: Run tests
+        if: ${{ !matrix.coverage && matrix.os != 'windows-latest' }}
+        run: ut run test --workspace @eggjs/scripts
+
+      - name: Run Windows preload and foreground exit regression tests
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: ut run test --workspace @eggjs/scripts -- test/start-unit.test.ts
+
+      - name: Code Coverage
+        if: ${{ matrix.coverage }}
+        uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac # v5.5.5
+        with:
+          use_oidc: true
+
+  test-tegg-vitest:
+    needs: plan
+    if: needs.plan.outputs.tests == 'true'
+    name: Test tegg-vitest (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['24', '26']
+
+    concurrency:
+      group: test-tegg-vitest-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.node }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Setup utoo
+        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+        with:
+          utoo-version: 'latest'
 
       - name: Set up Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
@@ -245,26 +504,31 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        run: ut install --from pnpm
+        run: ut install
 
-      - name: Run tests
-        run: |
-          ut run build -- --workspace ./tools/scripts
-          ut run ci --workspace tools/scripts
+      - name: Typecheck adapter
+        run: ut run typecheck --workspace @eggjs/tegg-vitest
 
-      - name: Code Coverage
-        if: ${{ matrix.os != 'windows-latest' }}
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
-        with:
-          use_oidc: true
+      - name: Test isolated workers
+        run: node node_modules/vitest/vitest.mjs run --root tegg/core/vitest --config vitest.config.ts
+
+      - name: Test shared worker
+        run: node node_modules/vitest/vitest.mjs run --root tegg/core/vitest --config vitest.config.ts --pool threads --no-isolate --maxWorkers 1
 
   done:
+    if: always()
     runs-on: ubuntu-latest
     needs:
+      - plan
+      - coverage
       - test
       - test-egg-bin
       - test-egg-scripts
+      - test-tegg-vitest
       - typecheck
     steps:
-      - run: exit 1
-        if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) }}
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - name: Require all planned checks
+        env:
+          CI_NEEDS: ${{ toJSON(needs) }}
+        run: node scripts/ci-plan.js check

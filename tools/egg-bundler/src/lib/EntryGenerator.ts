@@ -5,6 +5,7 @@ import { pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
 import type { StartupManifest } from '@eggjs/core';
+import type { TeggManifest } from '@eggjs/tegg-types';
 
 import { assertFrameworkPackageSpecifier } from './frameworkSpecifier.ts';
 import type { ManifestLoader } from './ManifestLoader.ts';
@@ -17,10 +18,18 @@ export interface EntryGeneratorOptions {
   outputDir?: string;
   framework?: string;
   externals?: ReadonlySet<string>;
+  target?: BundleTarget;
+}
+
+export type BundleTarget = 'single' | 'cluster';
+
+export interface GeneratedEntry {
+  name: 'worker' | 'app_worker' | 'agent_worker';
+  filepath: string;
 }
 
 export interface GeneratedEntries {
-  workerEntry: string;
+  entries: readonly GeneratedEntry[];
   entryDir: string;
 }
 
@@ -35,21 +44,14 @@ interface BundleEntry {
   bareSpecifier?: string;
 }
 
-interface TeggModuleDescriptor {
-  unitPath: string;
-  decoratedFiles?: string[];
-}
-
-interface TeggManifestExtension {
-  moduleDescriptors?: TeggModuleDescriptor[];
-}
-
+type ClusterWorkerRole = 'app' | 'agent';
 export class EntryGenerator {
   readonly #baseDir: string;
   readonly #loader: ManifestLoader;
   readonly #outputDir: string;
   readonly #framework: string;
   readonly #externals: ReadonlySet<string>;
+  readonly #target: BundleTarget;
 
   constructor(options: EntryGeneratorOptions) {
     this.#baseDir = options.baseDir;
@@ -58,6 +60,7 @@ export class EntryGenerator {
     this.#framework = options.framework ?? 'egg';
     assertFrameworkPackageSpecifier(this.#framework);
     this.#externals = options.externals ?? new Set();
+    this.#target = options.target ?? 'single';
   }
 
   async generate(): Promise<GeneratedEntries> {
@@ -67,12 +70,26 @@ export class EntryGenerator {
 
     await fs.mkdir(this.#outputDir, { recursive: true });
 
-    const workerEntry = path.join(this.#outputDir, 'worker.entry.ts');
-
-    await fs.writeFile(workerEntry, this.#renderWorkerEntry(entries, manifest));
+    let generatedEntries: GeneratedEntry[];
+    if (this.#target === 'cluster') {
+      const appWorkerEntry = path.join(this.#outputDir, 'app_worker.entry.ts');
+      const agentWorkerEntry = path.join(this.#outputDir, 'agent_worker.entry.ts');
+      await Promise.all([
+        fs.writeFile(appWorkerEntry, this.#renderClusterWorkerEntry(entries, manifest, 'app')),
+        fs.writeFile(agentWorkerEntry, this.#renderClusterWorkerEntry(entries, manifest, 'agent')),
+      ]);
+      generatedEntries = [
+        { name: 'app_worker', filepath: appWorkerEntry },
+        { name: 'agent_worker', filepath: agentWorkerEntry },
+      ];
+    } else {
+      const workerEntry = path.join(this.#outputDir, 'worker.entry.ts');
+      await fs.writeFile(workerEntry, this.#renderWorkerEntry(entries, manifest));
+      generatedEntries = [{ name: 'worker', filepath: workerEntry }];
+    }
 
     return {
-      workerEntry,
+      entries: generatedEntries,
       entryDir: this.#outputDir,
     };
   }
@@ -93,7 +110,7 @@ export class EntryGenerator {
     }
 
     // 3. Tegg decorated files (unitPath is either absolute or node_modules-normalized)
-    const tegg = manifest.extensions?.tegg as TeggManifestExtension | undefined;
+    const tegg = manifest.extensions?.tegg as Partial<TeggManifest> | undefined;
     if (tegg?.moduleDescriptors) {
       for (const desc of tegg.moduleDescriptors) {
         for (const rel of desc.decoratedFiles ?? []) {
@@ -178,6 +195,28 @@ export class EntryGenerator {
       .replaceAll(/\/+/g, '/');
   }
 
+  /**
+   * The baseDir-relative keys of every tegg decorated file, used at runtime to
+   * re-stamp the correct `filePath` on decorated classes (whose decorator-captured
+   * path is unreliable in a bundle — see the worker entry comment).
+   */
+  #collectDecoratedFileKeys(manifest: StartupManifest): string[] {
+    const tegg = manifest.extensions?.tegg as Partial<TeggManifest> | undefined;
+    const keys: string[] = [];
+    const seen = new Set<string>();
+    for (const desc of tegg?.moduleDescriptors ?? []) {
+      for (const rel of desc.decoratedFiles ?? []) {
+        const relKey = this.#teggRelKey(desc.unitPath, rel);
+        const normalized = relKey?.replaceAll(path.sep, '/');
+        if (normalized && !seen.has(normalized)) {
+          seen.add(normalized);
+          keys.push(normalized);
+        }
+      }
+    }
+    return keys;
+  }
+
   #collectResolveCacheAliases(manifest: StartupManifest): Array<[string, string]> {
     const aliases: Array<[string, string]> = [];
     for (const [requestRel, targetRel] of Object.entries(manifest.resolveCache)) {
@@ -214,7 +253,12 @@ export class EntryGenerator {
     return unique;
   }
 
-  #renderWorkerEntry(entries: BundleEntry[], manifest: StartupManifest): string {
+  #renderBundleRuntime(
+    entries: BundleEntry[],
+    manifest: StartupManifest,
+    nodeImports: string,
+    packageImports: string,
+  ): string {
     const importLines: string[] = [];
     const mapLines: string[] = [];
     const externalSpecs: Array<[string, string]> = [];
@@ -238,6 +282,7 @@ export class EntryGenerator {
       ),
     );
     const appResolveCacheAliases = JSON.stringify(this.#collectResolveCacheAliases(manifest));
+    const decoratedFileKeys = JSON.stringify(this.#collectDecoratedFileKeys(manifest));
     const frameworkSpec = JSON.stringify(this.#framework);
 
     const externalBlock =
@@ -257,10 +302,11 @@ for (const [key, spec] of __EXTERNAL_SPECS) {
     return `// ⚠️ auto-generated by @eggjs/egg-bundler — do not edit
 /* eslint-disable */
 import path from 'node:path';
+${nodeImports}
 
-import { ManifestStore } from '@eggjs/core';
+import { ManifestLoaderFS, ManifestStore } from '@eggjs/core';
 import type {} from '@eggjs/typings/global';
-import { startEgg } from ${frameworkSpec};
+${packageImports}
 import * as __frameworkModule from ${frameworkSpec};
 
 ${importLines.join('\n')}
@@ -270,6 +316,25 @@ ${importLines.join('\n')}
 // path of the INPUT file, not the OUTPUT directory.
 const __outputDir = path.dirname(path.resolve(process.argv[1] || '.'));
 const __framework = ${frameworkSpec};
+const __snapshotBuildCwd = path.resolve(process.cwd());
+
+const __assertSnapshotBuildCwd = (): boolean => {
+  const runtimeCwd = path.resolve(process.cwd());
+  const normalizeForComparison = (value: string) =>
+    process.platform === 'win32' ? value.toLowerCase() : value;
+  if (normalizeForComparison(__snapshotBuildCwd) === normalizeForComparison(runtimeCwd)) {
+    return true;
+  }
+  // eslint-disable-next-line no-console
+  console.error(
+    '[egg-bundler] snapshot working directory mismatch: the blob was built from %s but is being restored from %s. ' +
+      'Startup snapshot blobs are bound to their build-time absolute working directory; build the blob at its final deployment path.',
+    __snapshotBuildCwd,
+    runtimeCwd,
+  );
+  process.exit(1);
+  return false;
+};
 
 const MANIFEST_DATA = ${manifestJson} as const;
 const __APP_ABSOLUTE_ALIASES: Array<[string, string]> = ${appAbsoluteAliases};
@@ -315,22 +380,411 @@ for (const [appAbsRequest, targetRel] of __APP_RESOLVE_CACHE_ALIASES) {
   }
 }
 
-ManifestStore.setBundleStore(ManifestStore.fromBundle(MANIFEST_DATA as any, __outputDir));
+// ── decorator file-path correction ──────────────────────────────────────────
+// tegg decorators (@SingletonProto/@HTTPController/@Advice/…) capture a class's
+// source path from the CALL STACK at module evaluation, via
+// StackUtil.getCalleeFromStack(depth) with a hardcoded frame index. In a bundle
+// every user frame collapses onto worker.js plus turbopack module wrappers, so a
+// decorator that uses a deeper index than the norm — notably @Advice's depth-5 vs
+// @SingletonProto's depth-4 — captures the runtime frame ("…/worker.js") instead
+// of its own source file. tegg then cannot match that proto to its load unit and
+// fails at restore with "Aop Advice(X) not found in loadUnits".
+//
+// The bundle DOES know each decorated file's real path (the manifest's tegg
+// decoratedFiles, surfaced here as __DECORATED_FILE_KEYS). Re-stamp the correct
+// path (outputDir + relKey, matching the format the well-behaved decorators get)
+// on every decorated export, overriding whatever the decorator captured. This runs
+// at build, so the corrected paths are baked into the snapshot the restore reads.
+const __DECORATED_FILE_KEYS: string[] = ${decoratedFileKeys};
+{
+  const __FILE_PATH_META = Symbol.for('EggPrototype.filePath');
+  const __reflect = Reflect as unknown as {
+    hasOwnMetadata?: (key: symbol, target: unknown) => boolean;
+    defineMetadata?: (key: symbol, value: unknown, target: unknown) => void;
+  };
+  if (typeof __reflect.hasOwnMetadata === 'function' && typeof __reflect.defineMetadata === 'function') {
+    for (const __rel of __DECORATED_FILE_KEYS) {
+      const __mod = __getBundleMap(__rel) as Record<string, unknown> | undefined;
+      if (!__mod || (typeof __mod !== 'object' && typeof __mod !== 'function')) continue;
+      const __abs = path.resolve(__outputDir, __rel);
+      for (const __k of Object.keys(__mod)) {
+        const __exported = __mod[__k];
+        if (
+          __exported &&
+          (typeof __exported === 'function' || typeof __exported === 'object') &&
+          __reflect.hasOwnMetadata(__FILE_PATH_META, __exported)
+        ) {
+          __reflect.defineMetadata(__FILE_PATH_META, __abs, __exported);
+        }
+      }
+    }
+  }
+}
+
+// Tegg module reference / descriptor paths are stored relative to baseDir in the
+// manifest. Resolve them to absolute paths under the runtime output dir so every
+// tegg loader consumer (ModuleConfigUtil, EggAppLoader, and the manifest LoaderFS
+// adapter) sees the same absolute-path contract as a non-bundle run. The bundler
+// copies each module's package.json under __outputDir, so these resolve correctly.
+const __teggExt: any = (MANIFEST_DATA as any).extensions?.tegg;
+if (__teggExt) {
+  const __toAbs = (p: unknown) =>
+    typeof p === 'string' ? (path.isAbsolute(p) ? p : path.resolve(__outputDir, p)) : p;
+  if (Array.isArray(__teggExt.moduleReferences)) {
+    for (const __ref of __teggExt.moduleReferences) {
+      if (__ref) __ref.path = __toAbs(__ref.path);
+    }
+  }
+  if (Array.isArray(__teggExt.moduleDescriptors)) {
+    for (const __desc of __teggExt.moduleDescriptors) {
+      if (__desc) __desc.unitPath = __toAbs(__desc.unitPath);
+    }
+  }
+}
+
+const __bundleManifestStore = ManifestStore.fromBundle(MANIFEST_DATA as any, __outputDir);
+const __loaderFS = new ManifestLoaderFS(__bundleManifestStore);
+ManifestStore.setBundleStore(__bundleManifestStore);
 globalThis.__EGG_BUNDLE_MODULE_LOADER__ = (filepath) => {
   return __getBundleMap(filepath);
 };
 
-startEgg({ baseDir: __outputDir, framework: __framework, mode: 'single' }).then((app) => {
-  const port = process.env.PORT || app.config.cluster?.listen?.port || 7001;
-  app.listen(port, () => {
+`;
+  }
+
+  #renderWorkerEntry(entries: BundleEntry[], manifest: StartupManifest): string {
+    const frameworkSpec = JSON.stringify(this.#framework);
+    const bundleRuntime = this.#renderBundleRuntime(
+      entries,
+      manifest,
+      `import v8 from 'node:v8';`,
+      `import { startEgg } from ${frameworkSpec};`,
+    );
+    return `${bundleRuntime}${this.#renderSingleWorkerRuntime()}`;
+  }
+
+  #renderSingleWorkerRuntime(): string {
+    return `const __startOptions = { baseDir: __outputDir, framework: __framework, mode: 'single' as const, loaderFS: __loaderFS };
+// Resolve the listen port. Treat an explicit numeric port of 0 (bind a random
+// free port) as a real value, so only an unset PORT / config falls through to
+// the default — a plain \`||\` chain would wrongly map 0 to 7001.
+const __resolvePort = (app: any) => {
+  const envPort = process.env.PORT;
+  if (envPort !== undefined && envPort !== '') return envPort;
+  return app.config.cluster?.listen?.port ?? 7001;
+};
+
+if (v8.startupSnapshot.isBuildingSnapshot()) {
+  // ── snapshot build mode ─────────────────────────────────────────────────
+  // Runs under \`node --snapshot-blob <blob> --build-snapshot worker.js\`.
+  // Load all metadata with snapshot:true (the lifecycle stops at configWillLoad,
+  // no servers/timers/connections), run the snapshotWillSerialize hooks to release
+  // non-serializable resources, then register the deserialize main function that
+  // V8 invokes when restoring from the blob.
+  //
+  // Install the egg loader module importer for the BUILD phase too: the loader
+  // loads config/app files, and under --build-snapshot Node dynamic import() is
+  // unavailable, so route through the bundle map / require() instead. Do NOT set
+  // __RUNTIME_REQUIRE here — that would make externals load for real and defeat
+  // the lazy snapshot stubs; __EGG_MODULE_IMPORTER__ only feeds app/config files.
+  {
+    // getBuiltinModule needs Node >= 22.3; fall back to an eval'd require for
+    // 22.0–22.2 (same opaque-specifier trick the restore branch uses below).
+    const { createRequire: __cr } =
+      typeof process.getBuiltinModule === 'function'
+        ? process.getBuiltinModule('node:module')
+        : (0, eval)('require')('node:module');
+    const __buildReq = __cr(__outputDir + '/');
+    globalThis.__EGG_MODULE_IMPORTER__ = async (fp: string) => {
+      const bundled = __getBundleMap(fp);
+      if (bundled !== undefined) return bundled;
+      // Only skip when fp ITSELF cannot be resolved (a manifest-miss config unit the
+      // loader tolerates). Resolving first separates that from a nested MODULE_NOT_FOUND
+      // raised while loading a resolved file, which is a genuine missing dependency that
+      // must surface rather than be silently swallowed.
+      let resolved: string;
+      try {
+        resolved = __buildReq.resolve(fp);
+      } catch {
+        return undefined;
+      }
+      try {
+        return __buildReq(resolved);
+      } catch (err) {
+        // A resolved ESM file cannot be require()'d under --build-snapshot (no ESM
+        // loader); skip it. Any other error — including a nested MODULE_NOT_FOUND from
+        // a real missing dependency — is genuine and propagates.
+        if ((err as { code?: string } | undefined)?.code === 'ERR_INTERNAL_ASSERTION') return undefined;
+        throw err;
+      }
+    };
+  }
+  startEgg({ ...__startOptions, snapshot: true }).then(async (app) => {
+    if (app.agent) {
+      await app.agent.triggerSnapshotWillSerialize();
+    }
+    await app.triggerSnapshotWillSerialize();
+
+    v8.startupSnapshot.setDeserializeMainFunction(() => {
+      // ── snapshot restore main ──────────────────────────────────────────
+      // V8 runs this callback synchronously right after deserialization, before
+      // the Node ESM loader is ready, so all real work is deferred to the next
+      // tick via setImmediate.
+      //
+      // Restoring a V8 snapshot requires Node.js >= 24: Node.js 22 aborts while
+      // deserializing a non-trivial egg heap (V8 bug). The supported launcher
+      // (egg-scripts start --snapshot-blob) already gates this before spawning,
+      // so this is a defense-in-depth guard for a direct \`node --snapshot-blob\`
+      // launch that managed to deserialize on an unsupported runtime.
+      const __nodeMajor = parseInt(process.versions.node, 10);
+      if (__nodeMajor < 24) {
+        // eslint-disable-next-line no-console
+        console.error('[egg-bundler] V8 snapshot restore requires Node.js >= 24, but this process is ' + process.version + '. Build works on Node.js >= 22; restore must run on Node.js >= 24.');
+        process.exit(1);
+      }
+      if (!__assertSnapshotBuildCwd()) return;
+      setImmediate(() => {
+        // A restored snapshot process has no dynamic import() callback
+        // (ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING). Route every egg loader import
+        // through require() instead — Node 22+ supports synchronous require() of
+        // ESM. __EGG_MODULE_IMPORTER__ is the egg loader hook that takes
+        // precedence over import(), so the loader never reaches the missing
+        // dynamic import() callback.
+        //
+        // Use process.getBuiltinModule (Node >= 22.3) rather than a static
+        // \`require('node:module')\`/\`import\`: a bare require is traced/rewritten by
+        // @utoo/pack inside the single-file bundle, and a build-time import binding
+        // is frozen into the snapshot — getBuiltinModule fetches a fresh, working
+        // builtin at deserialize time without the bundler ever seeing a specifier.
+        // Fall back to an eval'd require for Node < 22.3 (the eval keeps the
+        // specifier opaque to @utoo/pack, same as the static-require concern above).
+        const { createRequire } =
+          typeof process.getBuiltinModule === 'function'
+            ? process.getBuiltinModule('node:module')
+            : (0, eval)('require')('node:module');
+        const __req = createRequire(__outputDir + '/');
+        const __runtimeRequire: any = (id: string) => __req(id);
+        // Expose resolve so the web-globals re-installer can locate undici through the
+        // app dependency tree (e.g. via urllib under pnpm).
+        __runtimeRequire.resolve = (id: string, options?: any) => __req.resolve(id, options);
+        globalThis.__RUNTIME_REQUIRE = __runtimeRequire;
+        globalThis.__EGG_MODULE_IMPORTER__ = async (fp: string) => __req(fp);
+
+        // Re-install the web globals (fetch/Headers/.../Blob/File) the snapshot prelude
+        // replaced with stubs at build time, so an app using globalThis.fetch keeps
+        // working after a restore. They become lazy accessors backed by undici (the
+        // fetch family) and node:buffer (Blob/File), loaded on first use.
+        globalThis.__installWebGlobalsLazy?.();
+
+        (async () => {
+          if (app.agent) {
+            await app.agent.triggerSnapshotDidDeserialize();
+          }
+          await app.triggerSnapshotDidDeserialize();
+          const port = __resolvePort(app);
+          app.listen(port, () => {
+            // eslint-disable-next-line no-console
+            console.log('[egg-bundler] server listening on port %s (restored from snapshot)', port);
+            // When launched by \`egg-scripts start --snapshot-blob\` (daemon mode), the
+            // parent waits for an egg-ready IPC message before backgrounding. There is
+            // no egg-cluster master here, so the snapshot process reports readiness
+            // itself over the IPC channel when one is present.
+            if (process.connected && typeof process.send === 'function') {
+              process.send({ action: 'egg-ready', data: { address: String(port) } });
+            }
+          });
+        })().catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('[egg-bundler] failed to restore snapshot:', err);
+          process.exit(1);
+        });
+      });
+    });
+  }).catch((err) => {
     // eslint-disable-next-line no-console
-    console.log('[egg-bundler] server listening on port %s', port);
+    console.error('[egg-bundler] failed to build snapshot:', err);
+    process.exit(1);
   });
-}).catch((err) => {
-  // eslint-disable-next-line no-console
-  console.error('[egg-bundler] failed to start bundled app:', err);
-  process.exit(1);
-});
+} else {
+  // ── normal mode ─────────────────────────────────────────────────────────
+  startEgg(__startOptions).then((app) => {
+    const port = __resolvePort(app);
+    app.listen(port, () => {
+      // eslint-disable-next-line no-console
+      console.log('[egg-bundler] server listening on port %s', port);
+    });
+  }).catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error('[egg-bundler] failed to start bundled app:', err);
+    process.exit(1);
+  });
+}
+`;
+  }
+
+  #renderClusterWorkerEntry(entries: BundleEntry[], manifest: StartupManifest, role: ClusterWorkerRole): string {
+    const protocolFunction = role === 'app' ? 'startAppWorker' : 'startAgentWorker';
+    const bundleRuntime = this.#renderBundleRuntime(
+      entries,
+      manifest,
+      `import v8 from 'node:v8';`,
+      `import { createProcessWorkerIO, createWorkerThreadIO, ${protocolFunction} as __startWorkerProtocol } from '@eggjs/cluster/worker_protocol';`,
+    );
+    return `${bundleRuntime}${this.#renderClusterWorkerRuntime(role)}`;
+  }
+
+  #renderClusterWorkerRuntime(role: ClusterWorkerRole): string {
+    const workerClass = role === 'app' ? 'Application' : 'Agent';
+    const createWorkerIO =
+      "masterOptions.startMode === 'worker_threads' ? createWorkerThreadIO() : createProcessWorkerIO()";
+    const startProtocol =
+      role === 'app'
+        ? `__startWorkerProtocol(worker, masterOptions, ${createWorkerIO});`
+        : `__startWorkerProtocol(worker, ${createWorkerIO});`;
+    const roleLabel = role === 'app' ? 'app worker' : 'agent worker';
+
+    return `// This entry's role is baked in at bundle time. It never inspects the
+// runtime environment to choose between app and agent behavior.
+const __getBuiltin = (id: string): any =>
+  typeof process.getBuiltinModule === 'function' ? process.getBuiltinModule(id) : (0, eval)('require')(id);
+
+const __installBuildModuleImporter = () => {
+  const { createRequire } = __getBuiltin('node:module');
+  const buildRequire = createRequire(__outputDir + '/');
+  globalThis.__EGG_MODULE_IMPORTER__ = async (filepath: string) => {
+    const bundled = __getBundleMap(filepath);
+    if (bundled !== undefined) return bundled;
+    let resolved: string;
+    try {
+      resolved = buildRequire.resolve(filepath);
+    } catch {
+      return undefined;
+    }
+    try {
+      return buildRequire(resolved);
+    } catch (err) {
+      if ((err as { code?: string } | undefined)?.code === 'ERR_INTERNAL_ASSERTION') return undefined;
+      throw err;
+    }
+  };
+};
+
+const __installRestoreRuntime = () => {
+  const { createRequire } = __getBuiltin('node:module');
+  const runtimeRequire = createRequire(__outputDir + '/');
+  const requireWithResolve: any = (id: string) => runtimeRequire(id);
+  requireWithResolve.resolve = (id: string, options?: any) => runtimeRequire.resolve(id, options);
+  globalThis.__RUNTIME_REQUIRE = requireWithResolve;
+  globalThis.__EGG_MODULE_IMPORTER__ = async (filepath: string) => {
+    const bundled = __getBundleMap(filepath);
+    return bundled === undefined ? runtimeRequire(filepath) : bundled;
+  };
+  globalThis.__installWebGlobalsLazy?.();
+};
+
+const __assertRestoreNodeVersion = () => {
+  const nodeMajor = parseInt(process.versions.node, 10);
+  if (nodeMajor < 24) {
+    // eslint-disable-next-line no-console
+    console.error('[egg-bundler] V8 snapshot restore requires Node.js >= 24, but this process is ' + process.version + '.');
+    process.exit(1);
+  }
+};
+
+const __readMasterOptions = (): any => {
+  try {
+    const raw = process.argv[2];
+    if (!raw) return undefined;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const __requireMasterOptions = (): any => {
+  const options = __readMasterOptions();
+  if (!options) {
+    throw new Error('[egg-bundler] bundled ${roleLabel} must be forked by the egg cluster master (missing options argv)');
+  }
+  return options;
+};
+
+const __assertNoRequire = (masterOptions: any) => {
+  const requiredModules = Array.isArray(masterOptions.require)
+    ? masterOptions.require
+    : masterOptions.require
+      ? [masterOptions.require]
+      : [];
+  if (requiredModules.length > 0) {
+    throw new Error('[egg-bundler] options.require is not supported in bundled cluster workers');
+  }
+};
+
+const __newWorker = (masterOptions?: any, snapshot = false): any =>
+  new (__frameworkModule as any).${workerClass}({
+    ...(masterOptions ?? {}),
+    baseDir: __outputDir,
+    framework: __framework,
+    loaderFS: __loaderFS,
+    ...(snapshot ? { snapshot: true } : {}),
+  });
+
+const __mergeMasterOptions = (worker: any, masterOptions: any) => {
+  const { baseDir: _baseDir, framework: _framework, plugins: _plugins, require: _require, env: _env, ...runtime } =
+    masterOptions;
+  Object.assign(worker.options, runtime);
+};
+
+const __startWorker = (worker: any, masterOptions: any) => {
+  ${startProtocol}
+};
+
+if (v8.startupSnapshot.isBuildingSnapshot()) {
+  // Build one role-specific heap. configDidLoad and later hooks resume only in
+  // the forked runtime process after the master options have been rebound.
+  __installBuildModuleImporter();
+  const worker = __newWorker(undefined, true);
+  (async () => {
+    await worker.ready();
+    await worker.triggerSnapshotWillSerialize();
+    v8.startupSnapshot.setDeserializeMainFunction(() => {
+      __assertRestoreNodeVersion();
+      if (!__assertSnapshotBuildCwd()) return;
+      setImmediate(() => {
+        (async () => {
+          const masterOptions = __requireMasterOptions();
+          __assertNoRequire(masterOptions);
+          __installRestoreRuntime();
+          __mergeMasterOptions(worker, masterOptions);
+          await worker.triggerSnapshotDidDeserialize();
+          __startWorker(worker, masterOptions);
+        })().catch((err) => {
+          // eslint-disable-next-line no-console
+          console.error('[egg-bundler] failed to restore ${roleLabel} snapshot:', err);
+          process.exit(1);
+        });
+      });
+    });
+  })().catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error('[egg-bundler] failed to build ${roleLabel} snapshot:', err);
+    process.exit(1);
+  });
+} else {
+  // Normal bundle cluster boot uses the same role-specific entry without a
+  // snapshot blob. The master options follow the standard worker argv contract.
+  try {
+    const masterOptions = __requireMasterOptions();
+    __assertNoRequire(masterOptions);
+    const worker = __newWorker(masterOptions);
+    __startWorker(worker, masterOptions);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('[egg-bundler] failed to start bundled ${roleLabel}:', err);
+    process.exit(1);
+  }
+}
 `;
   }
 

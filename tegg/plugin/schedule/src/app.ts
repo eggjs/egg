@@ -21,6 +21,7 @@ export default class ScheduleAppBootHook implements ILifecycleBoot {
   }
 
   configWillLoad(): void {
+    // app.*LifecycleUtil getters are pinned to this app's scope bag — no run wrap needed.
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.scheduleWorkerLoadUnitHook);
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.schedulePrototypeHook);
   }

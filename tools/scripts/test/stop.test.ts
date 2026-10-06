@@ -8,7 +8,7 @@ import { mm, restore } from 'mm';
 import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vitest';
 
 import { isWindows } from '../src/helper.ts';
-import { cleanup, replaceWeakRefMessage, type Coffee } from './utils.ts';
+import { cleanup, replaceWeakRefMessage, waitFor, type Coffee } from './utils.ts';
 
 const __dirname = import.meta.dirname;
 
@@ -45,7 +45,9 @@ describe('test/stop.test.ts', () => {
       ]) as Coffee;
       app.debug();
       app.expect('code', 0);
-      await scheduler.wait(waitTime);
+      // Poll until the app reports it has started instead of a fixed delay: a 2-worker
+      // egg app can take well over a second to boot on a loaded CI runner.
+      await waitFor(() => app.stdout, /custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
 
       expect(replaceWeakRefMessage(app.stderr)).toBe('');
       expect(app.stdout).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
@@ -155,7 +157,8 @@ describe('test/stop.test.ts', () => {
       ]) as Coffee;
       // app.debug();
       app.expect('code', 0);
-      await scheduler.wait(waitTime);
+      // Poll until the app reports it has started (see note above).
+      await waitFor(() => app.stdout, /custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
 
       expect(replaceWeakRefMessage(app.stderr)).toBe('');
       expect(app.stdout).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
@@ -314,7 +317,8 @@ describe('test/stop.test.ts', () => {
       app.debug();
       app.expect('code', 0);
 
-      await scheduler.wait(waitTime);
+      // Poll until the app reports it has started (see note above).
+      await waitFor(() => app.stdout, /http:\/\/127\.0\.0\.1:\d+/);
 
       // assert.equal(replaceWeakRefMessage(app.stderr), '');
       expect(app.stdout).toMatch(/http:\/\/127\.0\.0\.1:\d+/);
@@ -332,7 +336,13 @@ describe('test/stop.test.ts', () => {
       killer.debug();
       killer.expect('code', 0);
       await killer.end();
-      await scheduler.wait(waitTime);
+      // Poll until the app logs its shutdown instead of a fixed delay. On Windows the
+      // SIGTERM signal is not handled (no shutdown log), so keep a fixed settle there.
+      if (isWindows) {
+        await scheduler.wait(waitTime);
+      } else {
+        await waitFor(() => app.stdout, /\[master] master is killed by signal SIGTERM, closing/);
+      }
 
       // make sure is kill not auto exist
       expect(app.stdout).not.toMatch(/exist by env/);
@@ -356,7 +366,13 @@ describe('test/stop.test.ts', () => {
       killer.expect('code', 0);
 
       // await killer.end();
-      await scheduler.wait(waitTime);
+      // Poll until the app has fully exited (master exits last, after workers/agent),
+      // instead of a fixed delay. On Windows the signal is not handled, so settle fixed.
+      if (isWindows) {
+        await scheduler.wait(waitTime);
+      } else {
+        await waitFor(() => app.stdout, /\[master] exit with code:0/);
+      }
 
       // make sure is kill not auto exist
       expect(app.stdout).not.toMatch(/exist by env/);

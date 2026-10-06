@@ -9,6 +9,7 @@ import {
   type MiddlewareFunc as KoaMiddlewareFunc,
   type Next,
 } from '@eggjs/koa';
+import type { LoaderFS } from '@eggjs/loader-fs';
 import { EggRouter as Router, type RegisterOptions, type ResourcesController } from '@eggjs/router';
 import { EggConsoleLogger, type Logger } from 'egg-logger';
 import type { ReadyFunctionArg } from 'get-ready';
@@ -33,6 +34,8 @@ export interface EggCoreOptions {
   env?: string;
   /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
   metadataOnly?: boolean;
+  /** Loader-facing filesystem abstraction */
+  loaderFS?: LoaderFS;
   /**
    * When true, lifecycle stops after the `configWillLoad` phase.
    * `configDidLoad`, `didLoad`, `willReady`, `didReady`, and `serverDidReady`
@@ -230,6 +233,7 @@ export class EggCore extends KoaApplication {
       env: options.env ?? '',
       EggCoreClass: EggCore,
       metadataOnly: options.metadataOnly,
+      loaderFS: options.loaderFS,
     });
   }
 

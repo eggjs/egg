@@ -3,9 +3,9 @@ import { debuglog } from 'node:util';
 import { importModule } from '@eggjs/utils';
 import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
 
-import { BaseAgentWorker } from './utils/mode/base/agent.ts';
-import { AgentProcessWorker } from './utils/mode/impl/process/agent.ts';
-import { AgentThreadWorker } from './utils/mode/impl/worker_threads/agent.ts';
+import { startAgentWorker, type AgentWorkerIO } from './worker_protocol/agent.ts';
+import { createProcessWorkerIO } from './worker_protocol/process.ts';
+import { createWorkerThreadIO } from './worker_protocol/worker-thread.ts';
 
 const debug = debuglog('egg/cluster/agent_worker');
 
@@ -33,12 +33,8 @@ async function main() {
     }
   }
 
-  let AgentWorker: typeof BaseAgentWorker;
-  if (options.startMode === 'worker_threads') {
-    AgentWorker = AgentThreadWorker as any;
-  } else {
-    AgentWorker = AgentProcessWorker as any;
-  }
+  const workerIO: AgentWorkerIO =
+    options.startMode === 'worker_threads' ? createWorkerThreadIO() : createProcessWorkerIO();
 
   const consoleLogger = new ConsoleLogger({
     level: process.env.EGG_AGENT_WORKER_LOGGER_LEVEL,
@@ -55,30 +51,7 @@ async function main() {
     throw err;
   }
 
-  function startErrorHandler(err: Error) {
-    consoleLogger.error(err);
-    consoleLogger.error('[agent_worker] start error, exiting with code:1');
-    AgentWorker.kill();
-  }
-
-  agent.ready((err?: Error) => {
-    // don't send started message to master when start error
-    if (err) {
-      return;
-    }
-
-    agent.removeListener('error', startErrorHandler);
-    AgentWorker.send({ action: 'agent-start', to: 'master' });
-  });
-
-  // exit if agent start error
-  agent.once('error', startErrorHandler);
-
-  AgentWorker.gracefulExit({
-    logger: consoleLogger,
-    label: 'agent_worker',
-    beforeExit: () => agent.close(),
-  });
+  startAgentWorker(agent, workerIO, consoleLogger);
 }
 
 main();

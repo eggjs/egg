@@ -9,7 +9,7 @@ import coffee from 'coffee';
 import { mm } from 'mm';
 import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 
-import { EggCore } from '../src/index.js';
+import { EggCore, ManifestLoaderFS, RealLoaderFS } from '../src/index.js';
 import { createApp, getFilepath, type Application } from './helper.js';
 
 describe('test/egg.test.ts', () => {
@@ -52,6 +52,18 @@ describe('test/egg.test.ts', () => {
     it('should use options.serverScope', () => {
       app = new EggCore({ serverScope: 'scope' });
       assert.equal(app.loader.serverScope, 'scope');
+    });
+
+    it('should pass options.loaderFS to EggLoader', () => {
+      const loaderFS = new RealLoaderFS();
+      app = new EggCore({ loaderFS });
+      assert.equal(app.loader.loaderFS, loaderFS);
+    });
+
+    it('should use RealLoaderFS by default for non-bundled runtime', () => {
+      app = new EggCore();
+      assert.equal(app.loader.loaderFS instanceof RealLoaderFS, true);
+      assert.equal(app.loader.loaderFS instanceof ManifestLoaderFS, false);
     });
 
     it('should not set value expect for application and agent', () => {

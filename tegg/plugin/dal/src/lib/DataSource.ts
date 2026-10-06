@@ -27,6 +27,10 @@ import { TransactionalAOP } from './TransactionalAOP.ts';
   async getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
     const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath) as any | undefined;
     const dataSources = Object.keys(config?.dataSource || {});
+    // Modules without dataSource configuration contribute no instances.
+    if (dataSources.length === 0) {
+      return [];
+    }
     const result: ObjectInfo[] = [];
     const loader = LoaderFactory.createLoader(ctx.unitPath, EggLoadUnitType.MODULE);
     const clazzList = await loader.load();
@@ -61,6 +65,9 @@ export class DataSourceDelegate<T> extends DataSource<T> {
   objInfo: ObjectInfo;
 
   constructor(
+    @Inject() mysqlDataSourceManager: MysqlDataSourceManager,
+    @Inject() sqlMapManager: SqlMapManager,
+    @Inject() tableModelManager: TableModelManager,
     @Inject({ name: 'transactionalAOP' }) transactionalAOP: TransactionalAOP,
     @MultiInstanceInfo([DataSourceQualifierAttribute, LoadUnitNameQualifierAttribute])
     objInfo: ObjectInfo,
@@ -70,11 +77,11 @@ export class DataSourceDelegate<T> extends DataSource<T> {
     )?.value;
     assert(dataSourceQualifierValue);
     const [moduleName, dataSource, clazzName] = (dataSourceQualifierValue as string).split('.');
-    const tableModel = TableModelManager.instance.get(moduleName, clazzName);
+    const tableModel = tableModelManager.get(moduleName, clazzName);
     assert(tableModel, `not found table ${dataSourceQualifierValue}`);
-    const mysqlDataSource = MysqlDataSourceManager.instance.get(moduleName, dataSource);
+    const mysqlDataSource = mysqlDataSourceManager.get(moduleName, dataSource);
     assert(mysqlDataSource, `not found dataSource ${dataSource} in module ${moduleName}`);
-    const sqlMap = SqlMapManager.instance.get(moduleName, clazzName);
+    const sqlMap = sqlMapManager.get(moduleName, clazzName);
     assert(sqlMap, `not found SqlMap ${clazzName} in module ${moduleName}`);
 
     super(tableModel as TableModel<T>, mysqlDataSource, sqlMap);

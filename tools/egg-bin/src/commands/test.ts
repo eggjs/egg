@@ -161,10 +161,10 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     }
 
     // Propagate NODE_OPTIONS from this.env to process.env so vitest fork
-    // workers inherit them (e.g. ts-node/esm loader for TypeScript support).
-    // Also disable Node.js native type stripping when TypeScript loader is active,
-    // because native type stripping can't handle decorators and runs before
-    // custom ESM loaders like ts-node/esm.
+    // workers inherit them (e.g. the @oxc-node/core/register loader for
+    // TypeScript support). Also disable Node.js native type stripping when a
+    // TypeScript loader is active, because native type stripping can't handle
+    // decorators and runs before custom module hooks like @oxc-node/core.
     if (this.env.NODE_OPTIONS) {
       let nodeOptions = this.env.NODE_OPTIONS;
       if (flags.typescript && !nodeOptions.includes('--no-experimental-strip-types')) {
@@ -173,9 +173,9 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       process.env.NODE_OPTIONS = nodeOptions;
     }
 
-    // pass configFile:false as vite override to prevent vitest from walking up
+    // Disable config discovery to prevent vitest from walking up
     // the directory tree and picking up a parent vitest.config.ts
-    const vitest = await startVitest('test', [], config, { configFile: false } as Record<string, unknown>);
+    const vitest = await startVitest([], { ...config, config: false });
     if (!vitest) {
       throw new ForkError('vitest failed to start', 1);
     }
@@ -252,6 +252,12 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     }
     if (!runner) {
       debug('skip @eggjs/tegg-vitest/runner: self-test fixture or not resolvable');
+    } else {
+      const teggSetup = importResolve('@eggjs/tegg-vitest/setup', {
+        paths: [flags.base, import.meta.dirname],
+      });
+      setupFiles.unshift(teggSetup);
+      debug('auto add @eggjs/tegg-vitest/setup: %o', teggSetup);
     }
 
     return {
@@ -268,7 +274,6 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       pool: flags.pool as 'forks' | 'threads',
       isolate: process.env.EGG_VITEST_ISOLATE !== 'false',
       fileParallelism: process.env.EGG_FILE_PARALLELISM === 'true',
-      // vitest 4 moved poolOptions to top-level
       execArgv: [...this.globalExecArgv],
       watch: flags.watch,
       // inject vitest globals (describe, it, expect, beforeAll, etc.) so plain JS test files work without imports

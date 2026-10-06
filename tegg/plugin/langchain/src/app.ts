@@ -18,13 +18,17 @@ export default class ModuleLangChainHook implements IBoot {
   constructor(app: Application) {
     this.#app = app;
     this.#graphObjectHook = new GraphObjectHook();
-    this.#graphLoadUnitHook = new GraphLoadUnitHook(this.#app.eggPrototypeFactory as any);
+    this.#graphLoadUnitHook = new GraphLoadUnitHook();
     this.#boundModelObjectHook = new BoundModelObjectHook();
     this.#graphPrototypeHook = new GraphPrototypeHook();
-    this.#app.loadUnitLifecycleUtil.registerLifecycle(this.#graphLoadUnitHook);
+    // NOTE: graphLoadUnitHook registration moved to configWillLoad — the per-app
+    // TeggScope bag does not exist yet in the boot constructor.
   }
 
   configWillLoad(): void {
+    // app.*LifecycleUtil getters are pinned to this app's scope bag, and
+    // registerEggObjectCreateMethod is a shared static registry — no run wrap needed.
+    this.#app.loadUnitLifecycleUtil.registerLifecycle(this.#graphLoadUnitHook);
     this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#graphObjectHook);
     this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#boundModelObjectHook);
     this.#app.eggObjectFactory.registerEggObjectCreateMethod(

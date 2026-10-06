@@ -21,6 +21,7 @@ export class MCPControllerPromptMetaBuilder {
       return undefined;
     }
     const middlewares = MethodInfoUtil.getMethodMiddlewares(this.clazz, this.methodName);
+    const advices = MethodInfoUtil.getMethodAopMiddlewares(this.clazz, this.methodName);
     const needAcl = MethodInfoUtil.hasMethodAcl(this.clazz, this.methodName);
     const aclCode = MethodInfoUtil.getMethodAcl(this.clazz, this.methodName);
     const params = MCPInfoUtil.getMCPPromptParams(this.clazz, this.methodName);
@@ -30,6 +31,7 @@ export class MCPControllerPromptMetaBuilder {
     return new MCPPromptMeta({
       name: this.methodName,
       middlewares,
+      advices,
       needAcl,
       aclCode,
       detail,

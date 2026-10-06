@@ -15,7 +15,7 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       baseDir: getFixtures('apps/controller-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterAll(() => {
     return app.close();

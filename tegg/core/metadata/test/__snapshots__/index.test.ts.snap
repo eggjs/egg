@@ -7,6 +7,7 @@ exports[`should export stable 1`] = `
   "ClassProtoDescriptor": [Function],
   "ClassUtil": [Function],
   "ClazzMap": [Function],
+  "EggInnerObjectPrototypeImpl": [Function],
   "EggLoadUnitType": {
     "APP": "APP",
     "MODULE": "MODULE",
@@ -16,9 +17,18 @@ exports[`should export stable 1`] = `
   "EggPrototypeCreatorFactory": [Function],
   "EggPrototypeFactory": [Function],
   "EggPrototypeImpl": [Function],
-  "EggPrototypeLifecycleUtil": LifecycleUtil {
-    "lifecycleSet": Set {},
-    "objLifecycleSet": Map {},
+  "EggPrototypeLifecycleUtil": {
+    "clearObjectLifecycle": [Function],
+    "deleteLifecycle": [Function],
+    "deleteObjectLifecycle": [Function],
+    "getLifecycleHook": [Function],
+    "getLifecycleList": [Function],
+    "getObjectLifecycleList": [Function],
+    "objectPostCreate": [Function],
+    "objectPreCreate": [Function],
+    "objectPreDestroy": [Function],
+    "registerLifecycle": [Function],
+    "registerObjectLifecycle": [Function],
   },
   "EggPrototypeNotFound": [Function],
   "ErrorCodes": {
@@ -30,10 +40,20 @@ exports[`should export stable 1`] = `
   "GlobalModuleNode": [Function],
   "GlobalModuleNodeBuilder": [Function],
   "IncompatibleProtoInject": [Function],
+  "InjectObjectPrototypeFinder": [Function],
   "LoadUnitFactory": [Function],
-  "LoadUnitLifecycleUtil": LifecycleUtil {
-    "lifecycleSet": Set {},
-    "objLifecycleSet": Map {},
+  "LoadUnitLifecycleUtil": {
+    "clearObjectLifecycle": [Function],
+    "deleteLifecycle": [Function],
+    "deleteObjectLifecycle": [Function],
+    "getLifecycleHook": [Function],
+    "getLifecycleList": [Function],
+    "getObjectLifecycleList": [Function],
+    "objectPostCreate": [Function],
+    "objectPreCreate": [Function],
+    "objectPreDestroy": [Function],
+    "registerLifecycle": [Function],
+    "registerObjectLifecycle": [Function],
   },
   "LoadUnitMultiInstanceProtoHook": [Function],
   "ModuleDependencyMeta": [Function],
@@ -47,7 +67,10 @@ exports[`should export stable 1`] = `
   "ProtoDescriptorType": {
     "CLASS": "CLASS",
   },
+  "ProtoGraphUtils": [Function],
   "ProtoNode": [Function],
   "TeggError": [Function],
+  "eggPrototypeLifecycleUtilFromBag": [Function],
+  "loadUnitLifecycleUtilFromBag": [Function],
 }
 `;

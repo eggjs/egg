@@ -102,6 +102,7 @@ export class HTTPControllerMethodMetaBuilder {
     const httpPath = HTTPInfoUtil.getHTTPMethodPath(this.clazz, this.methodName)!;
     const contextIndex = MethodInfoUtil.getMethodContextIndex(this.clazz, this.methodName);
     const middlewares = MethodInfoUtil.getMethodMiddlewares(this.clazz, this.methodName);
+    const advices = MethodInfoUtil.getMethodAopMiddlewares(this.clazz, this.methodName);
     const needAcl = MethodInfoUtil.hasMethodAcl(this.clazz, this.methodName);
     const aclCode = MethodInfoUtil.getMethodAcl(this.clazz, this.methodName);
     const hosts = MethodInfoUtil.getMethodHosts(this.clazz, this.methodName);
@@ -121,6 +122,7 @@ export class HTTPControllerMethodMetaBuilder {
       aclCode,
       hosts,
       timeout,
+      advices,
     );
   }
 }

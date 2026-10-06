@@ -6,6 +6,7 @@ Usage:
   ut run benchmark:ci-test
   ut run benchmark:ci-test -- --coverage
   ut run benchmark:ci-test -- --output-dir .tmp/bench -- ut execute vitest run --maxWorkers=4
+  ut run benchmark:ci-test -- --report-only --vitest-json benchmark/ci-test/ci-run/vitest-results.json
 
 Options:
   --output-dir <dir>                 Directory for report.md, report.json, and raw Vitest JSON.
@@ -13,8 +14,12 @@ Options:
   --top <n>                          Number of long-tail files/projects to include. Default: ${DEFAULT_TOP_LIMIT}.
   --coverage                         Append --coverage to the default Vitest command.
   --no-append-vitest-json-reporter   Do not append --reporter=json/--outputFile to the command.
+  --report-only                      Build the report from an existing Vitest JSON without running tests.
+  --vitest-json <path>               Existing Vitest JSON to summarize (implies --report-only).
   --dry-run                          Generate reports without executing the test command.
   --help                             Show this help.
+
+When GITHUB_STEP_SUMMARY is set, the Markdown report is also appended to the GitHub Actions job summary.
 
 Custom command:
   Arguments after -- replace the default command. The script appends Vitest JSON reporter args by default.
@@ -30,7 +35,9 @@ export function parseArgs(argv) {
     dryRun: false,
     name: 'CI test benchmark',
     outputDir: '',
+    reportOnly: false,
     top: DEFAULT_TOP_LIMIT,
+    vitestJson: '',
   };
   const command = [];
 
@@ -54,6 +61,20 @@ export function parseArgs(argv) {
     }
     if (arg === '--no-append-vitest-json-reporter') {
       options.appendVitestJsonReporter = false;
+      continue;
+    }
+    if (arg === '--report-only') {
+      options.reportOnly = true;
+      continue;
+    }
+    if (arg === '--vitest-json') {
+      options.vitestJson = readOptionValue(argv, ++index, arg);
+      options.reportOnly = true;
+      continue;
+    }
+    if (arg.startsWith('--vitest-json=')) {
+      options.vitestJson = arg.slice('--vitest-json='.length);
+      options.reportOnly = true;
       continue;
     }
     if (arg === '--output-dir') {

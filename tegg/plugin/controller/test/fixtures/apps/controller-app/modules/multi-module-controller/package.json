@@ -1,0 +1,7 @@
+{
+  "name": "multi-module-controller",
+  "type": "module",
+  "eggModule": {
+    "name": "multi-module-controller"
+  }
+}

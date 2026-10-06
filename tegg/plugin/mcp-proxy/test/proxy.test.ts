@@ -7,9 +7,9 @@ import mm from '@eggjs/mock';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import {
-  CallToolRequest,
+  type CallToolRequest,
   CallToolResultSchema,
-  ListToolsRequest,
+  type ListToolsRequest,
   ListToolsResultSchema,
   LoggingMessageNotificationSchema,
 } from '@modelcontextprotocol/sdk/types.js';
@@ -91,7 +91,7 @@ describe.skip('plugin/mcp-proxy/test/proxy.test.ts', () => {
         workers: 3,
       });
       await app.ready();
-    });
+    }, 30_000);
 
     afterAll(async () => {
       await app.close();

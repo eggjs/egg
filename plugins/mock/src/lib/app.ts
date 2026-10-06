@@ -102,6 +102,13 @@ class MockApplicationWorker extends Base {
     debug('http server instantiate');
     createServer(app);
     await app.ready();
+    // emit `server` after ready: egg core registers its `once('server', ...)`
+    // listener inside `Application.load()` (during `app.ready()` above), and
+    // `onServer` reads loaded config, so the event must be emitted now rather
+    // than at createServer() time. Mirrors @eggjs/cluster's post-ready emit.
+    if (app.server) {
+      app.emit('server', app.server);
+    }
     // work for config ready
     setCustomLoader(app);
 

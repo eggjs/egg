@@ -1,0 +1,6 @@
+{
+  "name": "helloworld-service-worker",
+  "main": ".worker-cf/index.mjs",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+}

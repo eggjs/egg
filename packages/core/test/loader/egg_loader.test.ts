@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -6,7 +7,14 @@ import { getPlugins } from '@eggjs/utils';
 import { mm } from 'mm';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
-import { EggLoader } from '../../src/index.js';
+import {
+  ContextLoader,
+  EggLoader,
+  FileLoader,
+  RealLoaderFS,
+  type EggLoaderOptions,
+  type LoaderFS,
+} from '../../src/index.js';
 import { createApp, getFilepath, type Application } from '../helper.js';
 
 describe('test/loader/egg_loader.test.ts', () => {
@@ -79,6 +87,80 @@ describe('test/loader/egg_loader.test.ts', () => {
       assert.equal(ret[0], 1);
       assert.equal(ret[1], 2);
     });
+
+    it('should read app package metadata through loaderFS', async () => {
+      const baseDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-loader-package-fs-'));
+      const packagePath = path.join(baseDir, 'package.json');
+      const loaderFS = new PackageMetadataLoaderFS(packagePath, {
+        name: 'manifest-app',
+        egg: { outDir: 'bundle-dist' },
+      });
+
+      try {
+        const loader = new EggLoader({
+          env: 'unittest',
+          baseDir,
+          app: {} as EggLoaderOptions['app'],
+          logger: app.logger,
+          loaderFS,
+        });
+
+        assert.equal(loader.getAppname(), 'manifest-app');
+        assert.equal(loader.outDir, 'bundle-dist');
+        assert.deepEqual(loaderFS.readJSONCalls, [packagePath]);
+        await assert.rejects(fs.access(packagePath), { code: 'ENOENT' });
+      } finally {
+        await fs.rm(baseDir, { recursive: true, force: true });
+      }
+    });
+
+    it('should load plugin package metadata through loaderFS loadFile', async () => {
+      const baseDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-loader-plugin-package-fs-'));
+      const appPackagePath = path.join(baseDir, 'package.json');
+      const pluginPath = path.join(baseDir, 'plugins/manifest-plugin');
+      const pluginPackagePath = path.join(pluginPath, 'package.json');
+      const loaderFS = new PackageMetadataLoaderFS(
+        appPackagePath,
+        { name: 'manifest-app' },
+        {
+          [pluginPackagePath]: {
+            name: 'manifest-plugin',
+            version: '1.2.3',
+            eggPlugin: { name: 'manifestPlugin' },
+          },
+        },
+      );
+
+      try {
+        await fs.mkdir(pluginPath, { recursive: true });
+        const loader = new EggLoader({
+          env: 'unittest',
+          baseDir,
+          app: {} as EggLoaderOptions['app'],
+          logger: app.logger,
+          loaderFS,
+          plugins: {
+            manifestPlugin: {
+              name: 'manifestPlugin',
+              enable: true,
+              dependencies: [],
+              optionalDependencies: [],
+              env: [],
+              from: '<egg_loader.test.ts>',
+              path: pluginPath,
+            },
+          },
+        });
+
+        await loader.loadPlugin();
+
+        assert.equal(loader.plugins.manifestPlugin.version, '1.2.3');
+        assert.deepEqual(loaderFS.loadFileCalls, [pluginPackagePath]);
+        await assert.rejects(fs.access(pluginPackagePath), { code: 'ENOENT' });
+      } finally {
+        await fs.rm(baseDir, { recursive: true, force: true });
+      }
+    });
   });
 
   it('should be loaded by loadToApp, support symbol property', async () => {
@@ -107,6 +189,41 @@ describe('test/loader/egg_loader.test.ts', () => {
     } as any);
     await loader.loadToContext(directory, prop);
     assert(Reflect.get(app.context, prop).user);
+  });
+
+  it('should pass the current loaderFS to loadToApp and loadToContext', async () => {
+    const baseDir = getFilepath('load_to_app');
+    const initialLoaderFS = new RealLoaderFS();
+    const runtimeLoaderFS = new RealLoaderFS();
+    const loaderApp = { context: {} } as EggLoaderOptions['app'];
+    const loader = new EggLoader({
+      env: 'unittest',
+      baseDir,
+      app: loaderApp,
+      logger: app.logger,
+      loaderFS: initialLoaderFS,
+    });
+    loader.loaderFS = runtimeLoaderFS;
+    const passedLoaderFS: LoaderFS[] = [];
+
+    mm(FileLoader.prototype, 'load', async function (this: FileLoader) {
+      passedLoaderFS.push(this.options.loaderFS);
+      return {};
+    });
+    mm(ContextLoader.prototype, 'load', async function (this: ContextLoader) {
+      passedLoaderFS.push(this.options.loaderFS);
+      return {};
+    });
+
+    try {
+      await loader.loadToApp(path.join(baseDir, 'app/model'), 'model');
+      await loader.loadToContext(path.join(baseDir, 'app/service'), 'service');
+
+      assert.equal(loader.loaderFS, runtimeLoaderFS);
+      assert.deepEqual(passedLoaderFS, [runtimeLoaderFS, runtimeLoaderFS]);
+    } finally {
+      mm.restore();
+    }
   });
 
   describe('resolveModule with outDir', () => {
@@ -190,3 +307,43 @@ describe('test/loader/egg_loader.test.ts', () => {
     });
   });
 });
+
+class PackageMetadataLoaderFS extends RealLoaderFS {
+  readonly readJSONCalls: string[] = [];
+  readonly loadFileCalls: string[] = [];
+  readonly #packageMetadataByPath: Map<string, Record<string, unknown>>;
+
+  constructor(
+    packagePath: string,
+    packageMetadata: Record<string, unknown>,
+    extraPackageMetadata: Record<string, Record<string, unknown>> = {},
+  ) {
+    super();
+    this.#packageMetadataByPath = new Map([[packagePath, packageMetadata], ...Object.entries(extraPackageMetadata)]);
+  }
+
+  exists(filepath: string): boolean {
+    if (this.#packageMetadataByPath.has(filepath)) {
+      return true;
+    }
+    return super.exists(filepath);
+  }
+
+  readJSON<T = unknown>(filepath: string): T {
+    this.readJSONCalls.push(filepath);
+    const metadata = this.#packageMetadataByPath.get(filepath);
+    if (metadata) {
+      return metadata as T;
+    }
+    return super.readJSON<T>(filepath);
+  }
+
+  async loadFile(filepath: string): Promise<unknown> {
+    this.loadFileCalls.push(filepath);
+    const metadata = this.#packageMetadataByPath.get(filepath);
+    if (metadata) {
+      return metadata;
+    }
+    return super.loadFile(filepath);
+  }
+}

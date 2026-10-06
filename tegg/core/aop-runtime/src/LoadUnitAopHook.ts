@@ -1,6 +1,6 @@
 import { AspectInfoUtil, AspectMetaBuilder, CrosscutAdviceFactory } from '@eggjs/aop-decorator';
-import { PrototypeUtil } from '@eggjs/core-decorator';
-import { TeggError } from '@eggjs/metadata';
+import { Inject, LoadUnitLifecycleProto } from '@eggjs/core-decorator';
+import { EggPrototypeFactory, TeggError } from '@eggjs/metadata';
 import type {
   EggPrototype,
   EggPrototypeWithClazz,
@@ -9,12 +9,15 @@ import type {
   LoadUnitLifecycleContext,
 } from '@eggjs/tegg-types';
 
+import { AopContextAdviceRegistry } from './AopContextAdviceRegistry.js';
+
+@LoadUnitLifecycleProto()
 export class LoadUnitAopHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
+  @Inject()
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
 
-  constructor(crosscutAdviceFactory: CrosscutAdviceFactory) {
-    this.crosscutAdviceFactory = crosscutAdviceFactory;
-  }
+  @Inject()
+  private readonly aopContextAdviceRegistry: AopContextAdviceRegistry;
 
   async postCreate(_: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
     for (const proto of loadUnit.iterateEggPrototype()) {
@@ -29,7 +32,7 @@ export class LoadUnitAopHook implements LifecycleHook<LoadUnitLifecycleContext, 
       AspectInfoUtil.setAspectList(aspectList, clazz);
       for (const aspect of aspectList) {
         for (const advice of aspect.adviceList) {
-          const adviceProto = PrototypeUtil.getClazzProto(advice.clazz);
+          const adviceProto = EggPrototypeFactory.instance.getPrototypeByClazzOrGlobal(advice.clazz);
           if (!adviceProto) {
             throw TeggError.create(`Aop Advice(${advice.clazz.name}) not found in loadUnits`, 'advice_not_found');
           }
@@ -40,6 +43,7 @@ export class LoadUnitAopHook implements LifecycleHook<LoadUnitLifecycleContext, 
             qualifiers: [],
             proto: adviceProto as EggPrototype,
           });
+          this.aopContextAdviceRegistry.addAdvice(advice.name, adviceProto as EggPrototype);
         }
       }
     }

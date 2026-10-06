@@ -131,7 +131,7 @@ async function assertPortAvailable(service, port, containerPort, running) {
     throw new Error(
       [
         `${service} is already running for this compose project on ${current}, but this run requested 127.0.0.1:${port}.`,
-        'Re-run with the same EGG_DEV_SERVICES_* port override, or use `utoo run dev:services:reset` before changing ports.',
+        'Re-run with the same EGG_DEV_SERVICES_* port override, or use `ut run dev:services:reset` before changing ports.',
       ].join('\n'),
     );
   }
@@ -195,7 +195,7 @@ async function start() {
       [
         message,
         'The compose stack is still running so Docker health status and logs can be inspected.',
-        'After fixing the issue, run `utoo run dev:services:reset` to clean up before starting again.',
+        'After fixing the issue, run `ut run dev:services:reset` to clean up before starting again.',
       ].join('\n'),
       { cause: err },
     );

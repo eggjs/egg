@@ -3,7 +3,7 @@ import path from 'node:path';
 import { mock } from 'node:test';
 
 import { EggPrototypeFactory } from '@eggjs/metadata';
-import { LoaderUtil } from '@eggjs/module-test-util';
+import { CoreTestHelper, LoaderUtil } from '@eggjs/module-test-util';
 import { type LoadUnitInstance } from '@eggjs/tegg-types';
 import { describe, beforeEach, afterEach, beforeAll, afterAll, it } from 'vitest';
 
@@ -169,23 +169,23 @@ describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
     let commonInstance: LoadUnitInstance;
     let repoInstance: LoadUnitInstance;
     let serviceInstance: LoadUnitInstance;
+    let innerInstance: LoadUnitInstance;
 
     beforeAll(async () => {
       EggContextStorage.register();
-      await LoaderUtil.buildGlobalGraph([
+      const builtGraph = await LoaderUtil.buildGlobalGraph([
         path.join(__dirname, 'fixtures/modules/multi-module/multi-module-common'),
         path.join(__dirname, 'fixtures/modules/multi-module/multi-module-repo'),
         path.join(__dirname, 'fixtures/modules/multi-module/multi-module-service'),
       ]);
+      innerInstance = builtGraph.innerObjectLoadUnitInstance;
       commonInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-common', false);
       repoInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-repo', false);
       serviceInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-service', false);
     });
 
     afterAll(async () => {
-      await TestUtil.destroyLoadUnitInstance(commonInstance);
-      await TestUtil.destroyLoadUnitInstance(repoInstance);
-      await TestUtil.destroyLoadUnitInstance(serviceInstance);
+      await CoreTestHelper.destroyModules([commonInstance, repoInstance, serviceInstance, innerInstance]);
     });
 
     it('should get appService', async () => {

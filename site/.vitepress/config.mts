@@ -162,6 +162,7 @@ function nav(): DefaultTheme.NavItem[] {
     {
       text: `v${version}`,
       items: [
+        { text: 'PR Preview Packages', link: '/releases/pr-preview-packages' },
         {
           text: 'v3.x',
           link: 'https://v3.eggjs.org',
@@ -221,6 +222,7 @@ function navZhCN(): DefaultTheme.NavItem[] {
     {
       text: `v${version}`,
       items: [
+        { text: 'PR 预览包', link: '/zh-CN/releases/pr-preview-packages' },
         {
           text: 'v3.x',
           link: 'https://v3.eggjs.org',
@@ -291,6 +293,8 @@ function sidebarAdvanced(): DefaultTheme.SidebarItem[] {
         { text: 'Loader', link: 'loader' },
         { text: 'Plugin Development', link: 'plugin' },
         { text: 'Framework Development', link: 'framework' },
+        { text: 'V8 Startup Snapshot', link: 'snapshot' },
+        { text: 'Snapshot Troubleshooting', link: 'snapshot-troubleshooting' },
       ],
     },
   ];
@@ -313,6 +317,7 @@ function sidebarCore(): DefaultTheme.SidebarItem[] {
         { text: 'View Template', link: 'view' },
         { text: 'Security', link: 'security' },
         { text: 'Startup Manifest', link: 'manifest' },
+        { text: 'Bundle Deployment', link: 'bundle' },
       ],
     },
   ];
@@ -403,6 +408,8 @@ function sidebarAdvancedZhCN(): DefaultTheme.SidebarItem[] {
         { text: 'View 插件开发', link: 'view-plugin' },
         { text: '升级你的生命周期事件函数', link: 'loader-update' },
         { text: '对象生命周期', link: 'lifecycle' },
+        { text: 'V8 启动快照', link: 'snapshot' },
+        { text: '快照故障排查', link: 'snapshot-troubleshooting' },
       ],
     },
   ];
@@ -424,6 +431,7 @@ function sidebarCoreZhCN(): DefaultTheme.SidebarItem[] {
         { text: '模板渲染', link: 'view' },
         { text: '安全', link: 'security' },
         { text: '启动清单', link: 'manifest' },
+        { text: '打包部署', link: 'bundle' },
       ],
     },
   ];

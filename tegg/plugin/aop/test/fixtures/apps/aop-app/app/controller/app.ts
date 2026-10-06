@@ -16,4 +16,11 @@ export default class App extends Controller {
     this.ctx.status = 200;
     this.ctx.body = { msg };
   }
+
+  async crossModuleAop(): Promise<void> {
+    const hello: Hello = await this.ctx.module.aopModule.hello;
+    const msg = await hello.helloCross('foo');
+    this.ctx.status = 200;
+    this.ctx.body = { msg };
+  }
 }

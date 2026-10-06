@@ -26,7 +26,8 @@ const FIXTURE_SOURCE = path.join(__dirname, 'fixtures/apps/minimal-app');
 //   * Bundler sorts externals and chunks in the bundle-manifest.
 //   * Bundler writes bundle-manifest.json with JSON.stringify(_, null, 2) —
 //     stable key order because the object is constructed as a literal.
-//   * PackRunner pre-writes tsconfig.json and package.json with stable content.
+//   * PackRunner pre-writes package.json (output dir) and the compiler
+//     tsconfig.json (project/entry dir) with stable content.
 //   * The outputDir absolute path must NOT leak into any artifact (two tmpdirs
 //     with different names would cause drift if it did).
 //

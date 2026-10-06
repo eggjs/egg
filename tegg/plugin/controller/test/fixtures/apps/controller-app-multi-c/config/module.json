@@ -1,0 +1,8 @@
+[
+  {
+    "path": "../../controller-app/modules/multi-module-common"
+  },
+  {
+    "path": "../../controller-app/modules/multi-module-controller"
+  }
+]

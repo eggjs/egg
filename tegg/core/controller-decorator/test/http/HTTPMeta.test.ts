@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import { PointcutAdviceInfoUtil } from '@eggjs/aop-decorator';
+import type { ControllerMetadata, ControllerTypeLike } from '@eggjs/tegg-types';
 import { ControllerType, HTTPMethodEnum } from '@eggjs/tegg-types';
 import { describe, it, beforeEach } from 'vitest';
 
@@ -164,37 +164,57 @@ describe('core/controller-decorator/test/http/HTTPMeta.test.ts', () => {
     });
   });
 
-  it('aop middleware should work', () => {
-    ControllerMetaBuilderFactory.build(AopMiddlewareController, ControllerType.HTTP);
-    const helloAdvices = PointcutAdviceInfoUtil.getPointcutAdviceInfoList(AopMiddlewareController, 'hello');
-    const byeAdvices = PointcutAdviceInfoUtil.getPointcutAdviceInfoList(AopMiddlewareController, 'bye');
+  it('should build extension controller types without an execution policy', () => {
+    const extensionType = 'CHAIR_EXTENSION_TEST' as ControllerTypeLike;
+    class ExtensionController {
+      hello(): void {
+        // ...
+      }
+    }
+    ControllerMetaBuilderFactory.registerControllerMetaBuilder(extensionType, () => ({
+      build: () =>
+        ({
+          type: extensionType,
+          className: ExtensionController.name,
+          protoName: 'extensionController',
+          controllerName: ExtensionController.name,
+          middlewares: [],
+          methods: [{ name: 'hello', middlewares: [], contextParamIndex: undefined }],
+        }) as ControllerMetadata,
+    }));
 
-    assert.deepStrictEqual(helloAdvices, [
-      {
-        clazz: FooMethodAdvice,
-        order: 1000,
-        adviceParams: undefined,
-      },
-      {
-        clazz: BarMethodAdvice,
-        order: 1000,
-        adviceParams: undefined,
-      },
-      {
-        clazz: FooAdvice,
-        order: 1000,
-        adviceParams: undefined,
-      },
-      {
-        clazz: BarAdvice,
-        order: 1000,
-        adviceParams: undefined,
-      },
-    ]);
+    const metadata = ControllerMetaBuilderFactory.build(ExtensionController, extensionType);
 
-    assert.deepStrictEqual(byeAdvices, [
-      { clazz: FooAdvice, order: 1000, adviceParams: undefined },
-      { clazz: BarAdvice, order: 1000, adviceParams: undefined },
-    ]);
+    assert.equal(metadata?.type, extensionType);
+  });
+
+  it('should materialize Advice middleware in controller metadata', () => {
+    const metadata = ControllerMetaBuilderFactory.build(
+      AopMiddlewareController,
+      ControllerType.HTTP,
+    ) as HTTPControllerMeta;
+    const hello = metadata.methods.find((method) => method.name === 'hello')!;
+    const bye = metadata.methods.find((method) => method.name === 'bye')!;
+
+    assert.deepEqual(metadata.advices, [FooAdvice, BarAdvice]);
+    assert.deepEqual(hello.advices, [FooMethodAdvice, BarMethodAdvice]);
+    const helloAdvices = metadata.getMethodAdvices(hello);
+    assert.deepEqual(
+      helloAdvices.map((advice) => advice.clazz),
+      [FooMethodAdvice, BarMethodAdvice, FooAdvice, BarAdvice],
+    );
+    assert.deepEqual(
+      helloAdvices.map((advice) => advice.objectName),
+      [
+        'controller-advice:AopMiddlewareController#hello#FooMethodAdvice#0',
+        'controller-advice:AopMiddlewareController#hello#BarMethodAdvice#1',
+        'controller-advice:AopMiddlewareController#hello#FooAdvice#2',
+        'controller-advice:AopMiddlewareController#hello#BarAdvice#3',
+      ],
+    );
+    assert.deepEqual(
+      metadata.getMethodAdvices(bye).map((advice) => advice.clazz),
+      [FooAdvice, BarAdvice],
+    );
   });
 });

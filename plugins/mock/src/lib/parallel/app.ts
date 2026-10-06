@@ -56,6 +56,11 @@ export class MockParallelApplication extends Base {
     debug('http server instantiate');
     createServer(app);
     await app.ready();
+    // emit `server` after ready so egg core's onServer listener (registered in
+    // Application.load()) is wired up; createServer no longer emits it.
+    if (app.server) {
+      app.emit('server', app.server);
+    }
 
     const msg = {
       action: 'egg-ready',

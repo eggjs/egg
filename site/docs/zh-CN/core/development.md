@@ -272,7 +272,7 @@ $ egg-bin debug --inspect=9229
 
 #### 使用 [DevTools] 进行调试
 
-最新的 DevTools 只支持 [Inspector Protocol] 协议，因此你需要使用 Node.js 8.x 及以上版本。
+DevTools 使用 [Inspector Protocol] 协议，请使用仍受支持的 Node.js >=22.18.0。
 
 执行 `npm run debug` 启动：
 

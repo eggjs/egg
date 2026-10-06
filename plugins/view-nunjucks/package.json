@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/view-nunjucks",
-  "version": "3.0.2-beta.9",
+  "version": "3.0.2-rc.0",
   "description": "nunjucks view plugin for egg",
   "keywords": [
     "egg",
@@ -42,7 +42,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
@@ -56,10 +55,11 @@
       "./lib/view": "./dist/lib/view.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "nunjucks": "catalog:"

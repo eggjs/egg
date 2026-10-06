@@ -1,4 +1,4 @@
-import type { AbstractDriver, connect } from 'leoric';
+import type { AttributeMeta, connect } from 'leoric';
 
-export type DataType = AbstractDriver['DataType'];
+export type DataType = InstanceType<AttributeMeta['type']>;
 export type RealmType = Awaited<ReturnType<typeof connect>>;

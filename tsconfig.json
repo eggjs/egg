@@ -18,6 +18,9 @@
       "path": "./packages/typings"
     },
     {
+      "path": "./packages/loader-fs"
+    },
+    {
       "path": "./packages/core"
     },
     {

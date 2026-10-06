@@ -1,0 +1,7 @@
+{
+  "name": "module-with-inner-object",
+  "type": "module",
+  "eggModule": {
+    "name": "inner-object-module"
+  }
+}

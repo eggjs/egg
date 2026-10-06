@@ -1,6 +1,6 @@
 # @eggjs/koa
 
-@eggjs/koa is forked from [Koa v2.x](https://github.com/koajs/koa/tree/v2.x) for LTS and drop Node.js < 22.17.1 support.
+@eggjs/koa is forked from [Koa v2.x](https://github.com/koajs/koa/tree/v2.x) for LTS and supports Node.js >=22.18.0.
 
 <img height="240px" src="/docs/logo.png" alt="Koa middleware framework for nodejs"/>
 

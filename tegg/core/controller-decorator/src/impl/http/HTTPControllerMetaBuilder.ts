@@ -37,6 +37,7 @@ export class HTTPControllerMetaBuilder {
     assert.equal(controllerType, ControllerType.HTTP, 'invalidate controller type');
     const httpPath = HTTPInfoUtil.getHTTPPath(this.clazz);
     const httpMiddlewares = ControllerInfoUtil.getControllerMiddlewares(this.clazz);
+    const advices = ControllerInfoUtil.getControllerAopMiddlewares(this.clazz);
     const methods = this.buildMethod();
     const clazzName = this.clazz.name;
     const controllerName = ControllerInfoUtil.getControllerName(this.clazz) || clazzName;
@@ -57,6 +58,7 @@ export class HTTPControllerMetaBuilder {
       aclCode,
       hosts,
       timeout,
+      advices,
     );
     ControllerMetadataUtil.setControllerMetadata(this.clazz, metadata);
     for (const method of metadata.methods) {

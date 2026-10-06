@@ -1,0 +1,58 @@
+{
+  "name": "@eggjs/loader-fs",
+  "version": "1.0.0-rc.0",
+  "description": "Loader-facing filesystem abstraction for Egg",
+  "keywords": [
+    "egg",
+    "fs",
+    "loader"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/loader-fs",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "author": "fengmk2 <fengmk2@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "packages/loader-fs"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@eggjs/utils": "workspace:*",
+    "globby": "catalog:",
+    "multimatch": "catalog:",
+    "utility": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

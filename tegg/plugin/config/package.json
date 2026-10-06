@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-config",
-  "version": "4.0.2-beta.9",
+  "version": "4.0.2-rc.0",
   "description": "module config plugin for egg",
   "keywords": [
     "config",
@@ -31,28 +31,32 @@
     "./agent": "./src/agent.ts",
     "./app": "./src/app.ts",
     "./config/config.default": "./src/config/config.default.ts",
+    "./lib/ConfigSourceLoadUnitHook": "./src/lib/ConfigSourceLoadUnitHook.ts",
     "./lib/ModuleScanner": "./src/lib/ModuleScanner.ts",
     "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./agent": "./dist/agent.js",
       "./app": "./dist/app.js",
       "./config/config.default": "./dist/config/config.default.js",
+      "./lib/ConfigSourceLoadUnitHook": "./dist/lib/ConfigSourceLoadUnitHook.js",
       "./lib/ModuleScanner": "./dist/lib/ModuleScanner.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
     "@eggjs/utils": "workspace:*"
   },
   "devDependencies": {
@@ -66,6 +70,9 @@
   },
   "engines": {
     "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "teggConfig"
   },
   "eggPlugin": {
     "name": "teggConfig"

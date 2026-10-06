@@ -1,1 +1,1 @@
-[{ "package": "module-a" }]
+[{ "package": "module-a", "optional": true }]

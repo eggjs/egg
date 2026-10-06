@@ -65,6 +65,7 @@ export class MCPControllerMetaBuilder {
     const controllerType = ControllerInfoUtil.getControllerType(this.clazz);
     assert(controllerType === ControllerType.MCP, 'invalidate controller type');
     const mcpMiddlewares = ControllerInfoUtil.getControllerMiddlewares(this.clazz);
+    const advices = ControllerInfoUtil.getControllerAopMiddlewares(this.clazz);
     const resources = this.buildResource();
     const prompts = this.buildPrompt();
     const tools = this.buildTool();
@@ -90,6 +91,7 @@ export class MCPControllerMetaBuilder {
       needAcl,
       aclCode,
       meta,
+      advices,
     );
   }
 

@@ -25,7 +25,7 @@ describe('test/ts.test.ts', () => {
     host = 'http://127.0.0.1:' + server.address().port;
   });
   afterAll(() => {
-    return fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
+    return fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true, maxRetries: 3 });
   });
   afterAll(() => app.close());
   afterAll(() => server.close());

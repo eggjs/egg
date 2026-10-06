@@ -27,7 +27,7 @@ describe('plugin/schedule/test/schedule.test.ts', () => {
       baseDir: path.join(import.meta.dirname, 'fixtures', 'schedule-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterAll(() => {
     return app.close();

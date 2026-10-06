@@ -19,7 +19,7 @@ export default class ScheduleAppBootHook implements ILifecycleBoot {
     // if use start tegg in agent, the app will use the same singleton
     // so we should refactor tegg to not use singleton.
     for (const moduleConfig of this.agent.moduleReferences) {
-      const loader = LoaderFactory.createLoader(moduleConfig.path, EggLoadUnitType.MODULE);
+      const loader = LoaderFactory.createLoader(moduleConfig.path, EggLoadUnitType.MODULE, this.agent.loader.loaderFS);
       const clazzList = await loader.load();
       for (const clazz of clazzList) {
         if (ScheduleInfoUtil.isSchedule(clazz)) {

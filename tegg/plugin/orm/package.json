@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/orm-plugin",
-  "version": "4.0.2-beta.9",
+  "version": "4.0.2-rc.0",
   "description": "orm decorator for egg",
   "keywords": [
     "egg",
@@ -44,7 +44,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
@@ -60,10 +59,11 @@
       "./lib/types": "./dist/lib/types.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit --project tsconfig.typecheck.json",
+    "typecheck": "tsc --noEmit --project tsconfig.typecheck.json",
     "pretest": "node ./test/fixtures/prepare.js"
   },
   "dependencies": {
@@ -73,6 +73,7 @@
     "@eggjs/module-common": "workspace:*",
     "@eggjs/orm-decorator": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
     "leoric": "catalog:",
     "sdk-base": "catalog:"
   },

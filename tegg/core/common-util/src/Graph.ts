@@ -120,6 +120,9 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return undefined;
   }
 
+  /**
+   * @deprecated Use loopPath() instead. This method is kept for compatibility.
+   */
   appendVertexToPath(node: GraphNode<T, M>, accessPath: GraphPath<T, M>, meta?: M): boolean {
     if (!accessPath.pushVertex(node, meta)) {
       return false;
@@ -133,37 +136,104 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return true;
   }
 
-  loopPath(): GraphPath<T, M> | undefined {
+  private buildLoopPath(
+    stack: Array<{ node: GraphNode<T, M>; meta?: M }>,
+    node: GraphNode<T, M>,
+    meta?: M,
+  ): GraphPath<T, M> {
     const accessPath = new GraphPath<T, M>();
+    for (const pathNode of stack) {
+      accessPath.pushVertex(pathNode.node, pathNode.meta);
+    }
+    accessPath.pushVertex(node, meta);
+    return accessPath;
+  }
+
+  private findLoopPath(
+    node: GraphNode<T, M>,
+    visiting: Set<string>,
+    visited: Set<string>,
+    stack: Array<{ node: GraphNode<T, M>; meta?: M }>,
+    meta?: M,
+  ): GraphPath<T, M> | undefined {
+    if (visited.has(node.id)) {
+      return;
+    }
+    if (visiting.has(node.id)) {
+      return this.buildLoopPath(stack, node, meta);
+    }
+
+    visiting.add(node.id);
+    stack.push({ node, meta });
+    for (const toNode of node.toNodeMap.values()) {
+      const loopPath = this.findLoopPath(toNode.node, visiting, visited, stack, toNode.meta);
+      if (loopPath) {
+        return loopPath;
+      }
+    }
+    stack.pop();
+    visiting.delete(node.id);
+    visited.add(node.id);
+    return;
+  }
+
+  loopPath(): GraphPath<T, M> | undefined {
+    const visiting = new Set<string>();
+    const visited = new Set<string>();
+    const stack: Array<{ node: GraphNode<T, M>; meta?: M }> = [];
     const nodes = Array.from(this.nodes.values());
     for (const node of nodes) {
-      if (!this.appendVertexToPath(node, accessPath)) {
-        return accessPath;
+      const loopPath = this.findLoopPath(node, visiting, visited, stack);
+      if (loopPath) {
+        return loopPath;
       }
     }
     return;
   }
 
+  private accessNodeWithSet(
+    node: GraphNode<T, M>,
+    accessed: Set<GraphNode<T, M>>,
+    visiting: Set<GraphNode<T, M>>,
+    res: Array<GraphNode<T, M>>,
+  ): void {
+    if (accessed.has(node)) {
+      return;
+    }
+    if (visiting.has(node)) {
+      throw new Error('graph has recursive deps: ' + node);
+    }
+    visiting.add(node);
+    try {
+      for (const toNode of node.toNodeMap.values()) {
+        this.accessNodeWithSet(toNode.node, accessed, visiting, res);
+      }
+    } finally {
+      visiting.delete(node);
+    }
+    accessed.add(node);
+    res.push(node);
+  }
+
+  /**
+   * @deprecated Prefer sort(), which uses Set-based traversal directly.
+   */
   accessNode(
     node: GraphNode<T, M>,
     nodes: Array<GraphNode<T, M>>,
     accessed: boolean[],
     res: Array<GraphNode<T, M>>,
   ): void {
-    const index = nodes.indexOf(node);
-    if (accessed[index]) {
-      return;
+    const accessedSet = new Set<GraphNode<T, M>>();
+    for (let i = 0; i < nodes.length; ++i) {
+      if (accessed[i]) {
+        accessedSet.add(nodes[i]);
+      }
     }
-    if (!node.toNodeMap.size) {
-      accessed[nodes.indexOf(node)] = true;
-      res.push(node);
-      return;
+    this.accessNodeWithSet(node, accessedSet, new Set<GraphNode<T, M>>(), res);
+    for (let i = 0; i < nodes.length; ++i) {
+      accessed[i] = accessedSet.has(nodes[i]);
     }
-    for (const toNode of node.toNodeMap.values()) {
-      this.accessNode(toNode.node, nodes, accessed, res);
-    }
-    accessed[nodes.indexOf(node)] = true;
-    res.push(node);
   }
 
   // sort by direct
@@ -177,13 +247,10 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
   sort(): Array<GraphNode<T, M>> {
     const res: Array<GraphNode<T, M>> = [];
     const nodes = Array.from(this.nodes.values());
-    const accessed: boolean[] = [];
-    for (let i = 0; i < nodes.length; ++i) {
-      accessed.push(false);
-    }
-    for (let i = 0; i < nodes.length; ++i) {
-      const node = nodes[i];
-      this.accessNode(node, nodes, accessed, res);
+    const accessed = new Set<GraphNode<T, M>>();
+    const visiting = new Set<GraphNode<T, M>>();
+    for (const node of nodes) {
+      this.accessNodeWithSet(node, accessed, visiting, res);
     }
     return res;
   }

@@ -1,3 +1,4 @@
+import { EggPrototypeLifecycleProto, Inject } from '@eggjs/core-decorator';
 import { DaoInfoUtil, TableModel } from '@eggjs/dal-decorator';
 import { SqlMapLoader } from '@eggjs/dal-runtime';
 import type { LifecycleHook } from '@eggjs/lifecycle';
@@ -7,12 +8,16 @@ import type { Logger } from '@eggjs/tegg-types';
 import { SqlMapManager } from './SqlMapManager.ts';
 import { TableModelManager } from './TableModelManager.ts';
 
+@EggPrototypeLifecycleProto()
 export class DalTableEggPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
+  @Inject()
   private readonly logger: Logger;
 
-  constructor(logger: Logger) {
-    this.logger = logger;
-  }
+  @Inject()
+  private readonly sqlMapManager: SqlMapManager;
+
+  @Inject()
+  private readonly tableModelManager: TableModelManager;
 
   async preCreate(ctx: EggPrototypeLifecycleContext): Promise<void> {
     if (!DaoInfoUtil.getIsDao(ctx.clazz)) {
@@ -20,9 +25,9 @@ export class DalTableEggPrototypeHook implements LifecycleHook<EggPrototypeLifec
     }
     const tableClazz = ctx.clazz.clazzModel;
     const tableModel: TableModel<object> = TableModel.build(tableClazz);
-    TableModelManager.instance.set(ctx.loadUnit.name, tableModel);
+    this.tableModelManager.set(ctx.loadUnit.name, tableModel);
     const loader = new SqlMapLoader(tableModel, ctx.clazz, this.logger);
     const sqlMap = loader.load();
-    SqlMapManager.instance.set(ctx.loadUnit.name, sqlMap);
+    this.sqlMapManager.set(ctx.loadUnit.name, sqlMap);
   }
 }

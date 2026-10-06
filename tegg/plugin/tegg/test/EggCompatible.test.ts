@@ -23,7 +23,7 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
       baseDir: getAppBaseDir('egg-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('should work', async () => {
     app.mockCsrf();

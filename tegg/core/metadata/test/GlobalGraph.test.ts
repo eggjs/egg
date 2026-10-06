@@ -1,9 +1,16 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
+import {
+  AccessLevel,
+  ObjectInitType,
+  type InjectObjectDescriptor,
+  type ProtoDescriptor,
+  type QualifierInfo,
+} from '@eggjs/tegg-types';
 import { describe, it } from 'vitest';
 
-import { GlobalGraph } from '../src/index.js';
+import { GlobalGraph, GlobalModuleNode } from '../src/index.js';
 import { buildModuleNode } from './fixtures/LoaderUtil.js';
 import { RootProto } from './fixtures/modules/app-graph-modules/root/Root.js';
 import { UnusedProto } from './fixtures/modules/app-graph-modules/unused/Unused.js';
@@ -13,6 +20,35 @@ import { App2 } from './fixtures/modules/app-multi-inject-multi/app/modules/app2
 import { BizManager } from './fixtures/modules/app-multi-inject-multi/app/modules/bar/BizManager.js';
 import { Secret } from './fixtures/modules/app-multi-inject-multi/app/modules/foo/Secret.js';
 import { TestLoader } from './fixtures/TestLoader.js';
+
+function createProtoDescriptor(options: {
+  name: string;
+  moduleName?: string;
+  qualifiers?: QualifierInfo[];
+  injectObjects?: InjectObjectDescriptor[];
+}): ProtoDescriptor {
+  const moduleName = options.moduleName ?? 'app';
+  return {
+    name: options.name,
+    accessLevel: AccessLevel.PUBLIC,
+    initType: ObjectInitType.SINGLETON,
+    qualifiers: options.qualifiers ?? [],
+    injectObjects: options.injectObjects ?? [],
+    protoImplType: 'class',
+    properQualifiers: {},
+    defineModuleName: moduleName,
+    defineUnitPath: `/fixtures/${moduleName}`,
+    instanceModuleName: moduleName,
+    instanceDefineUnitPath: `/fixtures/${moduleName}`,
+    equal(protoDescriptor) {
+      return (
+        this.name === protoDescriptor.name &&
+        this.instanceModuleName === protoDescriptor.instanceModuleName &&
+        this.initType === protoDescriptor.initType
+      );
+    },
+  };
+}
 
 describe('test/LoadUnit/GlobalGraph.test.ts', () => {
   it('optional module dep should work', () => {
@@ -84,6 +120,40 @@ describe('test/LoadUnit/GlobalGraph.test.ts', () => {
     );
   });
 
+  it('should resolve dependencies from proto name candidates only', () => {
+    const graph = new GlobalGraph({ strict: true });
+    const injectObject: InjectObjectDescriptor = {
+      refName: 'target',
+      objName: 'target',
+      qualifiers: [],
+    };
+    const consumer = createProtoDescriptor({
+      name: 'consumer',
+      injectObjects: [injectObject],
+    });
+    const target = createProtoDescriptor({ name: 'target' });
+    const unrelated = createProtoDescriptor({ name: 'unrelated' });
+
+    const moduleNode = new GlobalModuleNode({
+      name: 'app',
+      unitPath: '/fixtures/app',
+      optional: false,
+    });
+    moduleNode.addProto(consumer);
+    moduleNode.addProto(target);
+    moduleNode.addProto(unrelated);
+    graph.addModuleNode(moduleNode);
+
+    const unrelatedNode = Array.from(graph.protoGraph.nodes.values()).find((node) => node.val.proto === unrelated);
+    assert(unrelatedNode);
+    unrelatedNode.val.selectProto = () => {
+      throw new Error('unrelated proto should not be scanned');
+    };
+
+    graph.build();
+    assert.equal(graph.findInjectProto(consumer, injectObject), target);
+  });
+
   it('should sort extends class success', async () => {
     const graph = new GlobalGraph();
     const moduleDir = path.join(__dirname, './fixtures/modules/extends-module');
@@ -112,6 +182,67 @@ describe('test/LoadUnit/GlobalGraph.test.ts', () => {
     assert.deepStrictEqual(
       moduleProtoDescriptors!.map((t) => t.name),
       ['logger', 'bar', 'constructorBase', 'fooConstructor', 'fooConstructorLogger'],
+    );
+  });
+
+  it('should reject late build hooks and repeated builds', () => {
+    const graph = new GlobalGraph();
+    let hookCalls = 0;
+    graph.registerBuildHook(() => hookCalls++);
+
+    graph.build();
+
+    assert.equal(hookCalls, 1);
+    assert.throws(
+      () => graph.registerBuildHook(() => {}),
+      /cannot register global graph build hook after build has started/,
+    );
+    assert.throws(() => graph.build(), /global graph can only be built once/);
+  });
+
+  it('should reject build hook registration while build hooks are running', () => {
+    const graph = new GlobalGraph();
+    let nestedHookCalled = false;
+    graph.registerBuildHook(() => {
+      graph.registerBuildHook(() => {
+        nestedHookCalled = true;
+      });
+    });
+
+    assert.throws(
+      () => graph.build(),
+      /cannot register global graph build hook after build has started \(state: building\)/,
+    );
+    assert.equal(nestedHookCalled, false);
+    assert.throws(() => graph.build(), /global graph can only be built once \(state: built\)/);
+  });
+
+  it('should invalidate the proto name index before a partial add failure', () => {
+    const graph = new GlobalGraph();
+    const consumer = createProtoDescriptor({ name: 'consumer' });
+    const existing = createProtoDescriptor({ name: 'existing' });
+    const initialNode = new GlobalModuleNode({ name: 'initial', unitPath: '/fixtures/initial', optional: false });
+    initialNode.addProto(consumer);
+    initialNode.addProto(existing);
+    graph.addModuleNode(initialNode);
+
+    assert(graph.findDependencyProtoNode(consumer, { refName: 'existing', objName: 'existing', qualifiers: [] }));
+
+    const addedBeforeFailure = createProtoDescriptor({ name: 'addedBeforeFailure', moduleName: 'partial' });
+    const duplicate = createProtoDescriptor({ name: 'existing', moduleName: 'partial' });
+    duplicate.instanceModuleName = existing.instanceModuleName;
+    duplicate.instanceDefineUnitPath = existing.instanceDefineUnitPath;
+    const partialNode = new GlobalModuleNode({ name: 'partial', unitPath: '/fixtures/partial', optional: false });
+    partialNode.addProto(addedBeforeFailure);
+    partialNode.addProto(duplicate);
+
+    assert.throws(() => graph.addModuleNode(partialNode), /duplicate proto/);
+    assert(
+      graph.findDependencyProtoNode(consumer, {
+        refName: 'addedBeforeFailure',
+        objName: 'addedBeforeFailure',
+        qualifiers: [],
+      }),
     );
   });
 });

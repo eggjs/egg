@@ -4,8 +4,8 @@ import { Inject, SingletonProto } from '@eggjs/core-decorator';
 import { type EventBus, type Events, type EventWaiter, type EventName, CORK_ID } from '@eggjs/eventbus-decorator';
 import type { Arguments } from '@eggjs/eventbus-decorator';
 import { ContextHandler } from '@eggjs/tegg-runtime';
-import { AccessLevel } from '@eggjs/tegg-types';
-import type { EggRuntimeContext } from '@eggjs/tegg-types';
+import { AccessLevel, TeggScope } from '@eggjs/tegg-types';
+import type { EggRuntimeContext, TeggScopeBag } from '@eggjs/tegg-types';
 // @ts-expect-error await-event is not typed
 import awaitEvent from 'await-event';
 // @ts-expect-error await-first is not typed
@@ -48,6 +48,12 @@ export class SingletonEventBus implements EventBus, EventWaiter {
   private corkIdSequence = 0;
 
   private readonly corkedEvents = new Map<string /* corkId */, CorkEvents>();
+
+  // The per-app TeggScope bag captured when this (per-app) singleton was created.
+  // emit() is fire-and-forget, so handlers may run on a later tick or be triggered
+  // from a detached context; re-establishing this bag in doEmit keeps event
+  // handlers bound to the owning app's factories regardless of the ambient scope.
+  private readonly teggScopeBag: TeggScopeBag | undefined = TeggScope.current();
 
   /**
    * only use for ensure event will happen
@@ -144,36 +150,39 @@ export class SingletonEventBus implements EventBus, EventWaiter {
   }
 
   private async doEmit(ctx: EggRuntimeContext, event: EventName, args: Array<any>) {
-    await ContextHandler.run(ctx, async () => {
-      const lifecycle = {};
-      if (ctx.init) {
-        await ctx.init(lifecycle);
-      }
-      try {
-        const handlerProtos = this.eventHandlerFactory.getHandlerProtos(event);
-        await Promise.all(
-          handlerProtos.map(async (proto) => {
-            try {
-              await this.eventHandlerFactory.handle(event, proto, args);
-            } catch (e: any) {
-              // should wait all handlers done then destroy ctx
-              e.message = `[EventBus] process event ${String(event)} for handler ${String(proto.name)} failed: ${e.message}`;
-              this.logger.error(e);
-            }
-          }),
-        );
-      } catch (e: any) {
-        e.message = `[EventBus] process event ${String(event)} failed: ${e.message}`;
-        this.logger.error(e);
-      } finally {
-        if (ctx.destroy) {
-          ctx.destroy(lifecycle).catch((e) => {
-            e.message = '[tegg/SingletonEventBus] destroy tegg ctx failed:' + e.message;
-            this.logger.error(e);
-          });
+    const bag = this.teggScopeBag ?? TeggScope.current();
+    const doRun = () =>
+      ContextHandler.run(ctx, async () => {
+        const lifecycle = {};
+        if (ctx.init) {
+          await ctx.init(lifecycle);
         }
-      }
-      this.doOnceEmit(event, args);
-    });
+        try {
+          const handlerProtos = this.eventHandlerFactory.getHandlerProtos(event);
+          await Promise.all(
+            handlerProtos.map(async (proto) => {
+              try {
+                await this.eventHandlerFactory.handle(event, proto, args);
+              } catch (e: any) {
+                // should wait all handlers done then destroy ctx
+                e.message = `[EventBus] process event ${String(event)} for handler ${String(proto.name)} failed: ${e.message}`;
+                this.logger.error(e);
+              }
+            }),
+          );
+        } catch (e: any) {
+          e.message = `[EventBus] process event ${String(event)} failed: ${e.message}`;
+          this.logger.error(e);
+        } finally {
+          if (ctx.destroy) {
+            ctx.destroy(lifecycle).catch((e) => {
+              e.message = '[tegg/SingletonEventBus] destroy tegg ctx failed:' + e.message;
+              this.logger.error(e);
+            });
+          }
+        }
+        this.doOnceEmit(event, args);
+      });
+    await TeggScope.runMaybe(bag, doRun);
   }
 }

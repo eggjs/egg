@@ -100,7 +100,12 @@ export default abstract class ApplicationUnittest extends Application {
     const res = new http.ServerResponse(req);
 
     if (options.reuseCtxStorage !== false) {
-      if (this.currentContext && !this.currentContext[REUSED_CTX]) {
+      // Only reuse the active async-local context when it actually belongs to
+      // this app. The context storage can be shared across app instances (e.g.
+      // multiple `mm.app()` apps in one realm, or vitest `isolate: false` where
+      // a previous app's context still lingers); reusing a foreign app's
+      // context would bind helpers/services to the wrong app config.
+      if (this.currentContext && this.currentContext.app === this && !this.currentContext[REUSED_CTX]) {
         mockRequest(this.currentContext.request.req);
         this.currentContext[REUSED_CTX] = true;
         return this.currentContext as MockContext;

@@ -381,6 +381,7 @@ export class Master extends ReadyEventEmitter {
     if (this.isStarted) {
       this.log('[master] try to start a new agent_worker after 1s ...');
       setTimeout(() => {
+        if (this.closed) return;
         this.logger.info('[master] new agent_worker starting...');
         this.forkAgentWorker();
       }, 1000);
@@ -643,6 +644,7 @@ export class Master extends ReadyEventEmitter {
     // kill app workers
     // kill agent worker
     // exit itself
+    const errors: unknown[] = [];
     const legacyTimeout = process.env.EGG_MASTER_CLOSE_TIMEOUT || '5000';
     const appTimeout = parseInt(process.env.EGG_APP_CLOSE_TIMEOUT || legacyTimeout);
     const agentTimeout = parseInt(process.env.EGG_AGENT_CLOSE_TIMEOUT || legacyTimeout);
@@ -652,6 +654,7 @@ export class Master extends ReadyEventEmitter {
       await this.killAppWorkers(appTimeout);
     } catch (e) {
       this.logger.error('[master] app workers exit error: ', e);
+      errors.push(e);
     }
     this.logger.info('[master] send kill SIGTERM to agent worker, will exit with code:0 after %sms', agentTimeout);
     this.logger.info('[master] wait %sms', agentTimeout);
@@ -659,6 +662,10 @@ export class Master extends ReadyEventEmitter {
       await this.killAgentWorker(agentTimeout);
     } catch (e) {
       this.logger.error('[master] agent worker exit error: ', e);
+      errors.push(e);
+    }
+    if (this.options.startMode === 'worker_threads' && errors.length) {
+      throw new AggregateError(errors, 'worker threads failed during graceful shutdown');
     }
   }
 }

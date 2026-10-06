@@ -6,7 +6,7 @@ If another agent-specific file exists, it should import or defer to this file fo
 
 ## Project Map
 
-Egg is maintained as a pnpm monorepo.
+Egg is maintained as a utoo monorepo.
 
 - `packages/` contains core framework packages and shared internals.
 - `plugins/` contains optional Egg integrations.
@@ -18,12 +18,29 @@ Egg is maintained as a pnpm monorepo.
 
 ## Core Commands
 
-- `pnpm install` hydrates the workspace.
-- `pnpm run build` builds all packages.
-- `pnpm run test` runs the main test suite.
-- `pnpm run lint` runs linting.
-- `pnpm run typecheck` runs TypeScript checking.
-- use filtered commands for focused work, for example `pnpm --filter=egg run test` or `pnpm --filter=site run dev`.
+The repository runs on [utoo](https://github.com/utooland/utoo) (`ut`); workspace patterns and overrides live in `package.json`, and shared catalogs live in the tracked `.utoo.toml`. CI installs the latest utoo release; the old pnpm configuration is retained only as a migration reference.
+
+- `npm install --global utoo@latest` installs the latest utoo release on a clean machine.
+- `ut install` hydrates the workspace.
+- `ut run build` builds all packages.
+- `ut run test` runs the main test suite.
+- `ut run lint` runs linting.
+- `ut run typecheck` runs TypeScript checking.
+- use filtered commands for focused work, for example `ut run test --workspace @eggjs/bin` or `ut run build --workspace @eggjs/bin`; prefer the package-name form of `--workspace` (the `./tools/...` path form does not match on Windows); a package without its own script (for example `build` in @eggjs/scripts) needs the root script plus the tsdown workspace path filter instead: `ut run build -- --workspace ./tools/scripts`.
+
+### Local CI
+
+Run tests **without building first**. The CI workflow (`ut install → ut run ci`) never runs `build` before tests. If `dist/` directories exist from a prior build, tegg plugin tests will fail with `duplicate proto` errors because globby scans both `src/*.ts` and `dist/*.js`, loading the same decorated class twice.
+
+When you see `duplicate proto` failures locally:
+
+```bash
+find tegg packages plugins tools -name dist -type d \
+  -not -path '*/node_modules/*' -not -path '*/test/*' -not -path '*/fixtures/*' \
+  -exec rm -rf {} +
+```
+
+Then re-run tests.
 
 ## Coding Conventions
 
@@ -32,6 +49,46 @@ Egg is maintained as a pnpm monorepo.
 - keep file names lowercase with hyphens
 - keep public API changes deliberate and documented
 - use `oxfmt` and `oxlint --type-aware` conventions already present in the repo
+- **tegg multi-app isolation**: do NOT introduce new process-global mutable
+  runtime state in `tegg/`; per-app state must be backed by a `TeggScope` slot.
+  Hooks registered through the bag-pinned `app.*LifecycleUtil` getters need no
+  extra wrap; detached/escape-point access (timers, emitter listeners, proxy
+  handlers, module-level lifecycle-util statics) must run inside
+  `TeggScope.run(app._teggScopeBag, ...)`. See the "Multi-App Isolation
+  (TeggScope)" section in `tegg/AGENTS.md` for the full rules.
+- **V8 startup snapshot lifecycle**: a snapshot build runs through
+  `configWillLoad` and resumes from `configDidLoad` only after restore. Plugin
+  constructors and `configWillLoad` must therefore keep only serializable
+  configuration and metadata; create cluster clients, sockets, servers, file
+  watchers, timers, native clients, and other runtime resources in
+  `configDidLoad` or a later hook. If one plugin consumes another plugin's
+  runtime instance, declare that plugin dependency so their `configDidLoad`
+  ordering is deterministic. Do not hide an early initialization violation
+  behind a placeholder/deferred proxy or recorded-call replay; fail fast and
+  move the initialization to the correct lifecycle phase. Use
+  `snapshotWillSerialize`/`snapshotDidDeserialize` only for framework-owned
+  resources that must exist before the cutoff and have an explicit symmetric
+  release/restore implementation.
+- **V8 startup snapshot dependencies**: the egg-bundler can build a V8 startup
+  snapshot (`snapshot: true`), where the app boots only to `configWillLoad` at
+  BUILD time. Any module loaded or instantiated during that boot that creates a
+  non-serializable native binding — llhttp `HTTPParser` (http/https/undici),
+  `nghttp2` (http2, and anything built on it), tls `SecureContext`, dns
+  `ChannelWrap`, a `WebAssembly` instance (undici's llhttp; WASM is disabled under
+  `--build-snapshot`), fs watchers, native addons, open sockets — makes the
+  snapshot build FATAL ("global handle not serialized"). Such modules must be kept
+  EXTERNAL (not inlined) so the prelude stubs them at build and forwards to the
+  real module via `globalThis.__RUNTIME_REQUIRE` at restore. The framework default
+  list is `DEFAULT_SNAPSHOT_LAZY_MODULES` in `tools/egg-bundler/src/lib/prelude.ts`
+  (network builtins + `inspector` + `undici` + `urllib`); apps extend it via
+  `egg.snapshot.lazyModules` in `package.json`. **When adding a framework
+  dependency that touches the network/native stack during boot, check whether it
+  must be added to that list.** A package that only reaches the network stack
+  _transitively_ is already covered because those builtins are lazy (e.g.
+  `@modelcontextprotocol/sdk` → `@hono/node-server` → `http2`, `@grpc/grpc-js` →
+  `http2`); only a package that DIRECTLY creates native/WASM state at module-eval
+  or boot-time instantiation (like `undici`) needs adding. See the "Snapshot
+  lazy-external defaults" section in `wiki/packages/egg-bundler.md` for details.
 
 ## TypeScript Global Types
 
@@ -51,7 +108,7 @@ Egg is maintained as a pnpm monorepo.
 
 - review `SECURITY.md` before handling vulnerability-related work
 - do not commit secrets, credentials, or local-only URLs
-- keep local Node.js and pnpm versions aligned with the repository configuration
+- keep local Node.js aligned with `engines.node` and use the latest utoo release
 
 ## Shared Knowledge Workflow
 

@@ -5,6 +5,7 @@ import { debuglog, inspect } from 'node:util';
 
 import { extend } from '@eggjs/extend2';
 import { Request, Response, Application, Context as KoaContext } from '@eggjs/koa';
+import { RealLoaderFS, type LoaderFS } from '@eggjs/loader-fs';
 import { pathMatching, type PathMatchingOptions } from '@eggjs/path-matching';
 import { isESM, isSupportTypeScript } from '@eggjs/utils';
 import type { Logger } from 'egg-logger';
@@ -13,7 +14,7 @@ import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } fr
 import { homedir } from 'node-homedir';
 import { now, diff } from 'performance-ms';
 import { register as tsconfigPathsRegister } from 'tsconfig-paths';
-import { getParamNames, readJSONSync, readJSON, exists } from 'utility';
+import { getParamNames } from 'utility';
 
 import type { BaseContextClass } from '../base_context_class.ts';
 import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
@@ -57,6 +58,8 @@ export interface EggLoaderOptions {
   plugins?: Record<string, EggPluginInfo>;
   /** Skip lifecycle hooks, only trigger loadMetadata for manifest generation */
   metadataOnly?: boolean;
+  /** Loader-facing filesystem abstraction */
+  loaderFS?: LoaderFS;
 }
 
 export type EggDirInfoType = 'app' | 'plugin' | 'framework';
@@ -79,6 +82,7 @@ export class EggLoader {
   dirs?: EggDirInfo[];
   /** Startup manifest — loaded from cache or collecting for generation */
   readonly manifest: ManifestStore;
+  loaderFS: LoaderFS;
 
   /**
    * @class
@@ -91,6 +95,7 @@ export class EggLoader {
    */
   constructor(options: EggLoaderOptions) {
     this.options = options;
+    this.loaderFS = this.options.loaderFS ?? new RealLoaderFS();
     assert(fs.existsSync(this.options.baseDir), `${this.options.baseDir} not exists`);
     assert(this.options.app, 'options.app is required');
     assert(this.options.logger, 'options.logger is required');
@@ -102,7 +107,7 @@ export class EggLoader {
      * @see {@link AppInfo#pkg}
      * @since 1.0.0
      */
-    this.pkg = readJSONSync(path.join(this.options.baseDir, 'package.json'));
+    this.pkg = this.loaderFS.readJSON<Record<string, unknown>>(path.join(this.options.baseDir, 'package.json'));
     this.outDir = this.#resolveOutDir();
 
     // auto require('tsconfig-paths/register') on typescript app
@@ -639,8 +644,8 @@ export class EggLoader {
     let pkg: any;
     let eggPluginConfig: any;
     const pluginPackage = path.join(plugin.path as string, 'package.json');
-    if (await utils.existsPath(pluginPackage)) {
-      pkg = await readJSON(pluginPackage);
+    if (this.loaderFS.exists(pluginPackage)) {
+      pkg = await this.loaderFS.loadFile(pluginPackage);
       eggPluginConfig = pkg.eggPlugin;
       if (pkg.version) {
         plugin.version = pkg.version;
@@ -775,7 +780,7 @@ export class EggLoader {
 
   // Get the real plugin path
   protected getPluginPath(plugin: EggPluginInfo): string {
-    if (plugin.path) {
+    if (plugin.path && !this.#isBundlePluginPathArtifact(plugin.path)) {
       return plugin.path;
     }
 
@@ -785,7 +790,101 @@ export class EggLoader {
         `plugin ${plugin.name} invalid, use 'path' instead of package: "${plugin.package}"`,
       );
     }
+
+    // In bundle mode, a plugin declared via `definePluginFactory({ path: import.meta.dirname })`
+    // has its `path` either rewritten by the bundler to the bundle output dir (= baseDir), or
+    // dropped entirely when the bundler compiles `import.meta.dirname` to `undefined` (e.g.
+    // @utoo/pack emits `__TURBOPACK__import$2e$meta__.dirname`, which is undefined at runtime,
+    // leaving the plugin with no usable `path`). In both cases the plugin's files are served
+    // from the manifest-backed bundle store, so re-resolve the plugin by package name — the
+    // conventional `@eggjs/<name>` for built-in framework plugins — instead of the baked path.
+    if (this.#isBundleModeForThisApp() && (!plugin.path || this.#isBundlePluginPathArtifact(plugin.path))) {
+      return this.#resolveBundlePluginPath(plugin);
+    }
+
     return this.#resolvePluginPath(plugin);
+  }
+
+  /**
+   * In bundle mode a plugin declared via `definePluginFactory({ path: import.meta.dirname })`
+   * carries a `path` rewritten by the bundler to the bundle output directory (= baseDir),
+   * which does not contain the plugin's own files. Detect that case so the plugin is
+   * re-resolved by package name instead.
+   */
+  /**
+   * Whether an active bundle store belongs to THIS app. The store is shared via globalThis
+   * across @eggjs/core copies, so one registered for a different app must not reinterpret this
+   * app's plugin paths — mirror `ManifestStore.load()`'s `bundleStore.baseDir === baseDir` gate.
+   */
+  #isBundleModeForThisApp(): boolean {
+    const bundleStore = ManifestStore.getBundleStore();
+    return !!bundleStore && path.resolve(bundleStore.baseDir) === path.resolve(this.options.baseDir);
+  }
+
+  #isBundlePluginPathArtifact(pluginPath: string): boolean {
+    if (!this.#isBundleModeForThisApp()) {
+      return false;
+    }
+    return path.resolve(pluginPath) === path.resolve(this.options.baseDir);
+  }
+
+  /**
+   * Re-resolve a bundle-artifact plugin path to the directory of the plugin package's entry
+   * module — the same directory `definePluginFactory` captured via `import.meta.dirname` at
+   * build time. Built-in framework plugins only carry a `name` (no `package`), so fall back to
+   * the conventional `@eggjs/<name>` package name in addition to the bare name.
+   */
+  #resolveBundlePluginPath(plugin: EggPluginInfo): string {
+    const candidates = plugin.package
+      ? [plugin.package]
+      : plugin.name.includes('/')
+        ? [plugin.name]
+        : [plugin.name, `@eggjs/${plugin.name}`];
+    let lastErr: unknown;
+    for (const name of candidates) {
+      try {
+        // Resolve the package entry module (not package.json) so the returned directory matches
+        // the plugin package's runtime entry directory (e.g. `<pkg>/dist`) — this mirrors the
+        // `import.meta.dirname` a `definePluginFactory` plugin captured at manifest-build time.
+        // Old-style plugins (e.g. `egg-view-nunjucks`) ship `app.js`/`config/` at the package
+        // root and declare no `main`, so entry resolution throws; fall back to `package.json`,
+        // whose directory is the package root the manifest keyed those files under.
+        let realDir: string;
+        try {
+          realDir = path.dirname(utils.resolvePath(name, { paths: [...this.lookupDirs] }));
+        } catch {
+          realDir = path.dirname(utils.resolvePath(`${name}/package.json`, { paths: [...this.lookupDirs] }));
+        }
+        // Rebase under the bundle output baseDir so the manifest-backed loader fs
+        // (keyed relative to baseDir) resolves the bundled plugin config/extend/app
+        // files, mirroring how the framework eggPaths are rebased. Match the last
+        // `node_modules` by path segment (not a substring) so directories like
+        // `my_node_modules` are not mistaken for the package root marker.
+        const segments = realDir.split(/[/\\]/);
+        const nmIdx = segments.lastIndexOf('node_modules');
+        if (nmIdx !== -1) {
+          const rebased = path.join(this.options.baseDir, ...segments.slice(nmIdx));
+          // In a real bundle the externals are installed under the output baseDir's
+          // `node_modules`, so the rebased dir exists and holds the files the manifest
+          // keyed. When a bundle store is registered over a source checkout — e.g. an
+          // integration test that consumes a normally-collected manifest, or a dev
+          // bundle whose externals still resolve from the workspace — that rebased dir
+          // may not exist; fall back to the real resolved dir so the plugin's
+          // config/extend/app files still load.
+          if (fs.existsSync(rebased)) {
+            return rebased;
+          }
+        }
+        return realDir;
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+    const name = plugin.package || plugin.name;
+    debug('[resolveBundlePluginPath] error: %o, plugin info: %o', lastErr, plugin);
+    throw new Error(`Can not find plugin ${name} in "${[...this.lookupDirs].join(', ')}"`, {
+      cause: lastErr,
+    });
   }
 
   #resolvePluginPath(plugin: EggPluginInfo): string {
@@ -843,7 +942,7 @@ export class EggLoader {
       } else if (exports.require) {
         realPluginPath = path.join(pluginPath, exports.require);
       }
-      if (exports.typescript && isSupportTypeScript() && !(await exists(realPluginPath))) {
+      if (exports.typescript && isSupportTypeScript() && !this.loaderFS.exists(realPluginPath)) {
         // if require/import path not exists, use typescript path for development stage
         realPluginPath = path.join(pluginPath, exports.typescript);
         debug('[formatPluginPathFromPackageJSON] use typescript path %o', realPluginPath);
@@ -1653,6 +1752,7 @@ export class EggLoader {
       target,
       inject: this.app,
       manifest: this.manifest,
+      loaderFS: options?.loaderFS ?? this.loaderFS,
     };
 
     const timingKey = `Load "${String(property)}" to Application`;
@@ -1679,6 +1779,7 @@ export class EggLoader {
       property,
       inject: this.app,
       manifest: this.manifest,
+      loaderFS: options?.loaderFS ?? this.loaderFS,
     };
 
     const timingKey = `Load "${String(property)}" to Context`;
@@ -1788,13 +1889,17 @@ export class EggLoader {
    * generation time.
    */
   #collectConventionalDynamicFiles(manifest: StartupManifest): void {
+    const resolveCacheTargets = new Set(
+      Object.values(manifest.resolveCache).filter((target): target is string => typeof target === 'string'),
+    );
     for (const unit of this.getLoadUnits()) {
+      this.#collectConventionFile(manifest, path.join(unit.path, 'package.json'), resolveCacheTargets);
       for (const load of CONVENTIONAL_MANIFEST_LOADS) {
         const target = path.join(unit.path, ...load.path);
         if (load.type === 'resolve') {
-          this.#collectConventionResolve(manifest, target);
+          this.#collectConventionResolve(manifest, target, resolveCacheTargets);
         } else if ('extensionlessResolve' in load && load.extensionlessResolve) {
-          this.#collectConventionFileResolves(manifest, target);
+          this.#collectConventionFileResolves(manifest, target, resolveCacheTargets);
         } else {
           this.#collectConventionFileDiscovery(manifest, target);
         }
@@ -1802,21 +1907,25 @@ export class EggLoader {
     }
   }
 
-  #collectConventionResolve(manifest: StartupManifest, request: string): void {
+  #collectConventionResolve(manifest: StartupManifest, request: string, resolveCacheTargets: Set<string>): void {
     const requestKey = this.#toManifestRel(request);
     if (Object.hasOwn(manifest.resolveCache, requestKey)) return;
 
     const resolved = this.#doResolveModule(request);
-    manifest.resolveCache[requestKey] = resolved ? this.#toManifestRel(resolved) : null;
+    const resolvedKey = resolved ? this.#toManifestRel(resolved) : null;
+    manifest.resolveCache[requestKey] = resolvedKey;
+    if (resolvedKey !== null) {
+      resolveCacheTargets.add(resolvedKey);
+    }
   }
 
-  #collectConventionFileResolves(manifest: StartupManifest, directory: string): void {
+  #collectConventionFileResolves(manifest: StartupManifest, directory: string, resolveCacheTargets: Set<string>): void {
     const files = this.#collectConventionFileDiscovery(manifest, directory);
     for (const file of files) {
       const ext = path.extname(file);
       if (!ext) continue;
       const request = path.join(directory, file.slice(0, -ext.length));
-      this.#collectConventionResolve(manifest, request);
+      this.#collectConventionResolve(manifest, request, resolveCacheTargets);
     }
   }
 
@@ -1829,6 +1938,19 @@ export class EggLoader {
         ? globby.sync(FileLoader.getDefaultMatch(), { cwd: directory }).sort()
         : [];
     return manifest.fileDiscovery[dirKey];
+  }
+
+  #collectConventionFile(manifest: StartupManifest, filepath: string, resolveCacheTargets: Set<string>): void {
+    const fileKey = this.#toManifestRel(filepath);
+    if (resolveCacheTargets.has(fileKey)) return;
+    if (!fs.existsSync(filepath) || !fs.statSync(filepath).isFile()) return;
+
+    const dirKey = this.#toManifestRel(path.dirname(filepath));
+    const basename = path.basename(filepath);
+    const files = manifest.fileDiscovery[dirKey] ?? [];
+    if (!files.includes(basename)) {
+      manifest.fileDiscovery[dirKey] = [...files, basename].sort();
+    }
   }
 
   #toManifestRel(filepath: string): string {

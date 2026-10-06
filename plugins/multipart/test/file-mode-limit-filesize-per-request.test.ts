@@ -22,7 +22,7 @@ describe('test/file-mode-limit-filesize-per-request.test.ts', () => {
     host = 'http://127.0.0.1:' + server.address().port;
   });
   afterAll(async () => {
-    await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
+    await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true, maxRetries: 3 });
   });
   afterAll(() => app.close());
   afterAll(() => server.close());

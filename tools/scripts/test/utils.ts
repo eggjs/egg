@@ -55,3 +55,19 @@ export function replaceWeakRefMessage(stderr: string) {
   }
   return stderr;
 }
+
+/**
+ * Poll until `getText()` matches `pattern`, up to `timeout` ms (default 10s),
+ * checking every 100ms. Returns as soon as it matches, and resolves anyway on
+ * timeout so the caller's own `expect(...).toMatch(...)` still produces a useful
+ * diff. Use this instead of a fixed `scheduler.wait(n)` before asserting on a
+ * forked process's stdout: a loaded CI runner may not have finished booting (or
+ * shutting down) within `n`, which is the classic source of these flaky timeouts.
+ */
+export async function waitFor(getText: () => string, pattern: RegExp, timeout = 10000): Promise<void> {
+  const deadline = Date.now() + timeout;
+  while (!pattern.test(getText())) {
+    if (Date.now() >= deadline) return;
+    await scheduler.wait(100);
+  }
+}

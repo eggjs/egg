@@ -21,7 +21,7 @@ describe('test/dynamic-option.test.ts', () => {
   });
 
   afterAll(async () => {
-    await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
+    await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true, maxRetries: 3 });
   });
   afterAll(() => app.close());
   afterAll(() => server.close());

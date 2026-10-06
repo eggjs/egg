@@ -1,8 +1,8 @@
+import { AccessLevel, InnerObjectProto } from '@eggjs/core-decorator';
 import type { TableModel } from '@eggjs/dal-decorator';
 
+@InnerObjectProto({ name: 'tableModelManager', accessLevel: AccessLevel.PUBLIC })
 export class TableModelManager {
-  static instance: TableModelManager = new TableModelManager();
-
   private tableModels: Map</* moduleName */ string, Map<string, TableModel>>;
 
   constructor() {

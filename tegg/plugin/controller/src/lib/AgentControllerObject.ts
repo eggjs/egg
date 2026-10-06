@@ -19,11 +19,19 @@ import type { EggLogger } from 'egg';
 import { AgentControllerProto } from './AgentControllerProto.ts';
 
 /** Method names that can be delegated to AgentRuntime. */
-type AgentMethodName = 'createThread' | 'getThread' | 'asyncRun' | 'syncRun' | 'getRun' | 'cancelRun';
+type AgentMethodName =
+  | 'createThread'
+  | 'getThread'
+  | 'getLatestRunId'
+  | 'asyncRun'
+  | 'syncRun'
+  | 'getRun'
+  | 'cancelRun';
 
 const AGENT_METHOD_NAMES: AgentMethodName[] = [
   'createThread',
   'getThread',
+  'getLatestRunId',
   'asyncRun',
   'syncRun',
   'getRun',
@@ -245,6 +253,20 @@ export class AgentControllerObject implements EggObject {
         return runtime.streamRun(input, writer);
       };
     }
+
+    // getRunStream: always delegate to runtime (no user override needed)
+    // lastSeq comes from query string as a string, needs parseInt
+    instance['getRunStream'] = async (runId: string, lastSeq?: string): Promise<void> => {
+      const runtimeCtx = ContextHandler.getContext();
+      if (!runtimeCtx) {
+        throw new Error('getRunStream must be called within a request context');
+      }
+      const eggCtx = runtimeCtx.get(EGG_CONTEXT);
+      eggCtx.respond = false;
+      const writer = new HttpSSEWriter(eggCtx.res);
+      const seq = parseInt(lastSeq as string, 10) || 0;
+      return runtime.getRunStream(runId, writer, seq);
+    };
   }
 
   static async createObject(

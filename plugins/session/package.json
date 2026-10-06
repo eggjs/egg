@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/session",
-  "version": "5.0.2-beta.9",
+  "version": "5.0.2-rc.0",
   "description": "session plugin for egg",
   "keywords": [
     "cookie",
@@ -37,7 +37,6 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
@@ -46,10 +45,11 @@
       "./config/config.default": "./dist/config/config.default.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "koa-session": "catalog:",

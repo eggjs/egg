@@ -5,7 +5,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { debuglog } from 'node:util';
 
-import { Command, Flags, Interfaces } from '@oclif/core';
+import { Command, Errors, Flags, Interfaces } from '@oclif/core';
 
 import { type PackageEgg } from './types.ts';
 import { getSourceDirname, readPackageJSON, hasTsConfig } from './utils.ts';
@@ -40,12 +40,24 @@ function graceful(proc: ChildProcess) {
   }
 }
 
-export class ForkError extends Error {
-  code: number | null;
-  constructor(message: string, code: number | null) {
-    super(message);
-    this.code = code;
+// CLIError carries the exit code through `oclif.exit`, which oclif's error
+// handler applies, so the CLI exits with the child's code instead of 1
+export class ForkError extends Errors.CLIError {
+  // numeric child exit status for consumers; CLIError's own `code` slot is
+  // a string error code rendered by oclif's pretty-printer, so it stays unset
+  readonly exitCode: number;
+  constructor(message: string, code: number) {
+    super(message, { exit: code });
+    this.exitCode = code;
   }
+}
+
+// A child killed by a signal reports code=null on exit; map it to the
+// shell convention of 128 + signal number so it does not read as success.
+function toExitCode(code: number | null, signal: NodeJS.Signals | null): number {
+  if (code !== null) return code;
+  const signalNumber = signal ? os.constants.signals[signal] : undefined;
+  return signalNumber ? 128 + signalNumber : 1;
 }
 
 export interface ForkNodeOptions extends ForkOptions {
@@ -92,7 +104,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     }),
     tscompiler: Flags.string({
       helpGroup: 'GLOBAL',
-      summary: 'TypeScript compiler, like ts-node/register',
+      summary: 'TypeScript compiler, like @oxc-node/core/register',
       aliases: ['tsc'],
     }),
     // flag with no value (--typescript)
@@ -214,49 +226,76 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     // - importResolve's import.meta.resolve is scoped to @eggjs/utils, not here
     // createRequire resolves from the caller's location with CJS semantics,
     // correctly handling extension resolution and flat-hoisted node_modules.
-    const cjsResolve = (specifier: string): string => {
-      for (const p of findPaths) {
+    const cjsResolve = (specifier: string, paths: string[] = findPaths): string => {
+      for (const p of paths) {
         try {
           return createRequire(path.join(p, 'package.json')).resolve(specifier);
         } catch {
           /* try next path */
         }
       }
-      throw new Error(`Cannot resolve '${specifier}' from ${findPaths.join(', ')}`);
+      throw new Error(`Cannot resolve '${specifier}' from ${paths.join(', ')}`);
     };
     this.isESM = pkg.type === 'module';
+    // oxc-node's register entry installs BOTH a CJS require hook (via pirates)
+    // and an ESM `module.register()` hook from a single `--import`, so when it is
+    // the active compiler an ESM app needs no separate `--loader` (see below).
+    let isOxcCompiler = false;
     if (typescript) {
-      flags.tscompiler = flags.tscompiler ?? 'ts-node/register';
-      const tsNodeRegister = cjsResolve(flags.tscompiler);
-      flags.tscompiler = tsNodeRegister;
-      // should require tsNodeRegister on current process, let it can require *.ts files
-      // e.g.: dev command will execute egg loader to find configs and plugins
-      // await importModule(tsNodeRegister);
-      // let child process auto require ts-node too
-      this.addNodeOptions(this.formatImportModule(tsNodeRegister));
+      // Remember whether the compiler was explicitly chosen (flag / env /
+      // package.json) before we apply the oxc default below.
+      const tscompilerSpecified = flags.tscompiler !== undefined;
+      flags.tscompiler = flags.tscompiler ?? '@oxc-node/core/register';
+      // Match the package specifier precisely (exact entry or a `@oxc-node/core/`
+      // subpath) rather than a loose substring, so a similarly named compiler
+      // can't be misdetected as oxc.
+      isOxcCompiler = flags.tscompiler === '@oxc-node/core/register' || flags.tscompiler.startsWith('@oxc-node/core/');
+      if (isOxcCompiler) {
+        // `@oxc-node/core/register` is exported with an `import`-only condition
+        // (no `require`), so it cannot be CJS-resolved nor `--require`d. Resolve
+        // the package root through its main entry, then inject register.mjs as a
+        // single `--import` — this transpiles `.ts` for both CJS and ESM apps.
+        //
+        // For the implicit default, resolve oxc from egg-bin's own install
+        // (rootDir) rather than app-first, so an app pinning an older
+        // @oxc-node/core (below the >=0.1.0 decorator floor) can't shadow the
+        // bundled copy and break startup. An explicit `--tscompiler=@oxc-node/...`
+        // keeps the normal app-first lookup.
+        const oxcPaths = tscompilerSpecified ? findPaths : [rootDir];
+        const oxcRegister = path.join(path.dirname(cjsResolve('@oxc-node/core', oxcPaths)), 'register.mjs');
+        flags.tscompiler = oxcRegister;
+        this.addNodeOptions(`--import "${pathToFileURL(oxcRegister).href}"`);
+      } else {
+        // legacy compilers (ts-node, swc, esbuild) expose a CJS register entry
+        const tsNodeRegister = cjsResolve(flags.tscompiler);
+        flags.tscompiler = tsNodeRegister;
+        // should require tsNodeRegister on current process, let it can require *.ts files
+        // e.g.: dev command will execute egg loader to find configs and plugins
+        // await importModule(tsNodeRegister);
+        // let child process auto require ts-node too
+        this.addNodeOptions(this.formatImportModule(tsNodeRegister));
+      }
       // tell egg loader to load ts file
       // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L443
       this.env.EGG_TYPESCRIPT = 'true';
       // set current process.env.EGG_TYPESCRIPT too
       process.env.EGG_TYPESCRIPT = 'true';
       // load files from tsconfig on startup
-      this.env.TS_NODE_FILES = process.env.TS_NODE_FILES ?? 'true';
-      // keep same logic with egg-core, test cmd load files need it
+      if (flags.tscompiler.includes('ts-node')) {
+        this.env.TS_NODE_FILES = process.env.TS_NODE_FILES ?? 'true';
+      }
+      // keep same logic with egg-core, test cmd load files need it.
+      // oxc-node does not resolve tsconfig `paths`, so tsconfig-paths/register
+      // is still required alongside every compiler.
       // see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L49
       const tsConfigPathsRegister = cjsResolve('tsconfig-paths/register');
       this.addNodeOptions(this.formatImportModule(tsConfigPathsRegister));
     }
-    if (this.isESM) {
-      // use ts-node/esm loader on esm
-      let esmLoader = cjsResolve('ts-node/esm');
-      // ES Module loading with absolute path fails on windows
-      // https://github.com/nodejs/node/issues/31710#issuecomment-583916239
-      // https://nodejs.org/api/url.html#url_url_pathtofileurl_path
-      // Error [ERR_UNSUPPORTED_ESM_URL_SCHEME]: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
-      esmLoader = pathToFileURL(esmLoader).href;
-      // wait for https://github.com/nodejs/node/issues/40940
-      this.addNodeOptions('--no-warnings');
-      this.addNodeOptions(`--loader ${esmLoader}`);
+    if (typescript && this.isESM && !isOxcCompiler) {
+      // Legacy CJS compilers do not install an ESM hook. Use Oxc for the
+      // ESM side of TypeScript applications.
+      const esmRegister = path.join(path.dirname(cjsResolve('@oxc-node/core', [rootDir])), 'register.mjs');
+      this.addNodeOptions(`--import "${pathToFileURL(esmRegister).href}"`);
     }
 
     if (this.pkgEgg.revert) {
@@ -290,7 +329,13 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     debug('enter real command: %o', this.id);
   }
 
-  protected async catch(err: Error & { exitCode?: number }): Promise<any> {
+  protected async catch(err: Error & { exitCode?: number; skipOclifErrorHandling?: boolean }): Promise<any> {
+    if (err.skipOclifErrorHandling) {
+      // this error opted out of oclif's pretty-printer, which hard-wraps
+      // long messages; print the message verbatim instead, and oclif's
+      // handler still exits with `err.oclif.exit`
+      console.error(err.message);
+    }
     // add any custom logic to handle errors from the command
     // or simply return the parent class error handling
     return super.catch(err);
@@ -328,7 +373,10 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   protected addNodeOptions(options: string) {
     if (this.env.NODE_OPTIONS) {
-      if (!this.env.NODE_OPTIONS.includes(options)) {
+      // Match an option boundary: --inspect-port must not suppress --inspect.
+      // An existing value, such as --inspect=127.0.0.1:0, already enables the flag.
+      const escaped = options.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      if (!new RegExp(`(?:^|\\s)${escaped}(?=$|\\s|=)`).test(this.env.NODE_OPTIONS)) {
         this.env.NODE_OPTIONS = `${this.env.NODE_OPTIONS} ${options}`;
       }
     } else {
@@ -379,15 +427,26 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     graceful(proc);
 
     return new Promise<void>((resolve, reject) => {
-      proc.once('exit', (code) => {
-        debug('fork pid: %o exit code %o', proc.pid, code);
+      // a spawn failure emits 'error' and may never emit 'exit'
+      proc.once('error', (err) => {
         children.delete(proc);
-        if (code !== 0) {
-          const err = new ForkError(modulePath + ' ' + forkArgs.join(' ') + ' exit with code ' + code, code);
-          reject(err);
-        } else {
+        reject(err);
+      });
+      proc.once('exit', (code, signal) => {
+        debug('fork pid: %o exit code %o, signal %o', proc.pid, code, signal);
+        children.delete(proc);
+        if (code === 0) {
           resolve();
+          return;
         }
+        const command = modulePath + ' ' + forkArgs.join(' ');
+        const message =
+          code === null ? `${command} was killed by signal ${signal}` : `${command} exit with code ${code}`;
+        const err = new ForkError(message, toExitCode(code, signal));
+        // the message embeds the full fork command line, which oclif's
+        // pretty-printer would hard-wrap; print it verbatim in catch()
+        err.skipOclifErrorHandling = true;
+        reject(err);
       });
     });
   }

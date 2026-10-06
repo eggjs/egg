@@ -311,6 +311,20 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
       await request('http://127.0.0.1:17010').get('/port').expect('17010').expect(200);
     });
 
+    it.each(process.platform === 'linux' ? [1, 2] : [1])(
+      'worker threads use the configured port with %i workers when the master port is zero',
+      async (workers) => {
+        const options = { startMode: 'worker_threads' as const, port: 0, reusePort: true, workers };
+        app = cluster('apps/app-listen-reusePort', options);
+        await app.ready();
+
+        app.expect('code', 0);
+        app.expect('stdout', /egg started on http:\/\/127.0.0.1:17010/);
+        await request('http://127.0.0.1:17010').get('/').expect('done').expect(200);
+        await request('http://127.0.0.1:17010').get('/port').expect('17010').expect(200);
+      },
+    );
+
     it('should set reusePort=true in config (non-Linux will fallback to false)', async () => {
       app = cluster('apps/app-listen-reusePort', { port: 0 });
       // app.debug();

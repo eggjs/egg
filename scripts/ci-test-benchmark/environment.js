@@ -5,14 +5,25 @@ import { extractCommandParameters } from './command.js';
 import { readJsonIfExists, readTextIfExists } from './fs.js';
 
 export async function collectEnvironment(command) {
-  const [packageJson, vitestConfig] = await Promise.all([
+  const [packageJson, vitestConfig, execution] = await Promise.all([
     readJsonIfExists(path.resolve(process.cwd(), 'package.json')),
     readVitestConfigDefaults(path.resolve(process.cwd(), 'vitest.config.ts')),
+    process.env.CI_TEST_REPORT === '1'
+      ? readJsonIfExists(path.resolve(process.cwd(), 'benchmark/ci-test/ci-run/execution.json'))
+      : null,
   ]);
   const cpus = os.cpus();
+  const availableParallelism = typeof os.availableParallelism === 'function' ? os.availableParallelism() : cpus.length;
+  // Prefer resolved project settings from the gating run. Retain the historical
+  // root-config estimate for local benchmark runs without an execution report.
+  const isWindowsCI = Boolean(process.env.CI) && os.platform() === 'win32';
+  const workerCeiling =
+    execution?.workerCeiling ??
+    (isWindowsCI && typeof vitestConfig?.maxWorkers === 'number' ? vitestConfig.maxWorkers : availableParallelism);
 
   return {
     arch: os.arch(),
+    availableParallelism,
     ci: Boolean(process.env.CI),
     commandParameters: extractCommandParameters(command),
     cpuCount: cpus.length,
@@ -38,9 +49,11 @@ export async function collectEnvironment(command) {
     node: process.version,
     packageManager: packageJson?.packageManager ?? null,
     platform: os.platform(),
+    resolvedProjects: execution?.projects ?? null,
     release: os.release(),
     totalMemoryBytes: os.totalmem(),
     vitestConfig,
+    workerCeiling,
   };
 }
 
@@ -62,8 +75,14 @@ async function readVitestConfigDefaults(configPath) {
   return {
     coverageProvider: matchStringProperty(source, 'provider'),
     isolate: matchBooleanProperty(source, 'isolate'),
+    maxWorkers: matchNumberProperty(source, 'maxWorkers'),
     pool: matchStringProperty(source, 'pool'),
   };
+}
+
+function matchNumberProperty(source, property) {
+  const match = new RegExp(`^\\s*(?!//|/\\*)${escapeRegExp(property)}:\\s*(\\d+)`, 'm').exec(source);
+  return match ? Number(match[1]) : null;
 }
 
 function matchStringProperty(source, property) {

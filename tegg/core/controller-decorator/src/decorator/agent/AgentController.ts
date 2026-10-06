@@ -14,22 +14,32 @@ import { ControllerInfoUtil } from '../../util/ControllerInfoUtil.ts';
 import { HTTPInfoUtil } from '../../util/HTTPInfoUtil.ts';
 import { MethodInfoUtil } from '../../util/MethodInfoUtil.ts';
 
+interface AgentRouteParam {
+  index: number;
+  type: 'body' | 'pathParam' | 'query';
+  name?: string;
+}
+
 interface AgentRouteDefinition {
   methodName: string;
   httpMethod: HTTPMethodEnum;
   path: string;
-  paramType?: 'body' | 'pathParam';
-  paramName?: string;
-  hasParam: boolean;
+  params: AgentRouteParam[];
 }
 
 // Default implementations for unimplemented methods.
-// Methods with hasParam=true need function.length === 1 for param validation.
+// function.length must match the param count for framework param validation.
 // Stubs are marked with Symbol.for('AGENT_NOT_IMPLEMENTED') so agent-runtime
 // can distinguish them from user-defined methods at enhancement time.
-function createNotImplemented(methodName: string, hasParam: boolean) {
+function createNotImplemented(methodName: string, paramCount: number) {
   let fn;
-  if (hasParam) {
+  if (paramCount >= 2) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    fn = async function (_a: unknown, _b: unknown) {
+      throw new Error(`${methodName} not implemented`);
+    };
+  } else if (paramCount === 1) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     fn = async function (_arg: unknown) {
       throw new Error(`${methodName} not implemented`);
     };
@@ -47,52 +57,58 @@ const AGENT_ROUTES: AgentRouteDefinition[] = [
     methodName: 'createThread',
     httpMethod: HTTPMethodEnum.POST,
     path: '/threads',
-    hasParam: false,
+    params: [],
   },
   {
     methodName: 'getThread',
     httpMethod: HTTPMethodEnum.GET,
     path: '/threads/:id',
-    paramType: 'pathParam',
-    paramName: 'id',
-    hasParam: true,
+    params: [{ index: 0, type: 'pathParam', name: 'id' }],
+  },
+  {
+    methodName: 'getLatestRunId',
+    httpMethod: HTTPMethodEnum.GET,
+    path: '/threads/:id/latest-run',
+    params: [{ index: 0, type: 'pathParam', name: 'id' }],
   },
   {
     methodName: 'asyncRun',
     httpMethod: HTTPMethodEnum.POST,
     path: '/runs',
-    paramType: 'body',
-    hasParam: true,
+    params: [{ index: 0, type: 'body' }],
   },
   {
     methodName: 'streamRun',
     httpMethod: HTTPMethodEnum.POST,
     path: '/runs/stream',
-    paramType: 'body',
-    hasParam: true,
+    params: [{ index: 0, type: 'body' }],
+  },
+  {
+    methodName: 'getRunStream',
+    httpMethod: HTTPMethodEnum.GET,
+    path: '/runs/:id/stream',
+    params: [
+      { index: 0, type: 'pathParam', name: 'id' },
+      { index: 1, type: 'query', name: 'lastSeq' },
+    ],
   },
   {
     methodName: 'syncRun',
     httpMethod: HTTPMethodEnum.POST,
     path: '/runs/wait',
-    paramType: 'body',
-    hasParam: true,
+    params: [{ index: 0, type: 'body' }],
   },
   {
     methodName: 'getRun',
     httpMethod: HTTPMethodEnum.GET,
     path: '/runs/:id',
-    paramType: 'pathParam',
-    paramName: 'id',
-    hasParam: true,
+    params: [{ index: 0, type: 'pathParam', name: 'id' }],
   },
   {
     methodName: 'cancelRun',
     httpMethod: HTTPMethodEnum.POST,
     path: '/runs/:id/cancel',
-    paramType: 'pathParam',
-    paramName: 'id',
-    hasParam: true,
+    params: [{ index: 0, type: 'pathParam', name: 'id' }],
   },
 ];
 
@@ -119,7 +135,7 @@ export function AgentController(): (constructor: EggProtoImplClass) => void {
     for (const route of AGENT_ROUTES) {
       // Inject default implementation if method not defined
       if (!constructor.prototype[route.methodName]) {
-        constructor.prototype[route.methodName] = createNotImplemented(route.methodName, route.hasParam);
+        constructor.prototype[route.methodName] = createNotImplemented(route.methodName, route.params.length);
       }
 
       // Set method controller type
@@ -132,11 +148,16 @@ export function AgentController(): (constructor: EggProtoImplClass) => void {
       HTTPInfoUtil.setHTTPMethodPath(route.path, constructor, route.methodName);
 
       // Set parameter metadata
-      if (route.paramType === 'body') {
-        HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.BODY, 0, constructor, route.methodName);
-      } else if (route.paramType === 'pathParam') {
-        HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.PARAM, 0, constructor, route.methodName);
-        HTTPInfoUtil.setHTTPMethodParamName(route.paramName!, 0, constructor, route.methodName);
+      for (const param of route.params) {
+        if (param.type === 'body') {
+          HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.BODY, param.index, constructor, route.methodName);
+        } else if (param.type === 'pathParam') {
+          HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.PARAM, param.index, constructor, route.methodName);
+          HTTPInfoUtil.setHTTPMethodParamName(param.name!, param.index, constructor, route.methodName);
+        } else if (param.type === 'query') {
+          HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.QUERY, param.index, constructor, route.methodName);
+          HTTPInfoUtil.setHTTPMethodParamName(param.name!, param.index, constructor, route.methodName);
+        }
       }
     }
 

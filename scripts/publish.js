@@ -3,7 +3,14 @@
 /**
  * Resilient per-package publish script.
  *
- * Unlike `pnpm -r publish`, this script:
+ * Publishes with npm so the release keeps npm trusted publishing / provenance
+ * via OIDC (`ut publish` supports neither `--access` nor `--provenance`).
+ * Because npm does not understand the pnpm/utoo `workspace:` and `catalog:`
+ * protocol specifiers, each package manifest is rewritten to concrete version
+ * ranges right before publishing and restored afterwards — the same rewrite
+ * `pnpm publish` performed for us before the utoo migration.
+ *
+ * On top of that, unlike a bulk publish this script:
  * - Skips packages that are already published on npm (safe for retries)
  * - Publishes each package individually so one failure doesn't block others
  * - Retries failed packages once
@@ -14,9 +21,18 @@
  */
 
 import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
 import path from 'node:path';
 
-import { getPublishablePackages } from './utils.js';
+import {
+  applyPublishConfigOverrides,
+  assertPublishTag,
+  projectPublishVersions,
+  getCatalogs,
+  getPublishablePackages,
+  getWorkspaceVersionMap,
+  resolveWorkspaceProtocols,
+} from './utils.js';
 
 const args = process.argv.slice(2);
 const isDryRun = args.includes('--dry-run');
@@ -29,7 +45,19 @@ if (tagArg) {
 }
 
 const baseDir = path.join(import.meta.dirname, '..');
-const packages = getPublishablePackages(baseDir);
+const { packages, versionMap } = projectPublishVersions(
+  getPublishablePackages(baseDir),
+  getWorkspaceVersionMap(baseDir),
+  {
+    dryRun: isDryRun,
+    versionType: args.find((arg) => arg.startsWith('--version-type='))?.slice('--version-type='.length),
+    prereleaseTag: args.find((arg) => arg.startsWith('--prerelease-tag='))?.slice('--prerelease-tag='.length),
+  },
+);
+const catalogs = getCatalogs(baseDir);
+const npmBin = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+
+assertPublishTag(packages, npmTag);
 
 console.log(
   `📦 Publishing ${packages.length} packages (tag: ${npmTag}${isDryRun ? ', dry-run' : ''}${useProvenance ? ', provenance' : ''})`,
@@ -40,34 +68,66 @@ console.log(
  */
 function isPublished(name, version) {
   try {
-    const result = execFileSync('npm', ['view', `${name}@${version}`, 'version'], {
+    const result = execFileSync(npmBin, ['view', `${name}@${version}`, 'version'], {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
       timeout: 15000,
     }).trim();
     return result === version;
-  } catch {
-    // Could be 404 (not published) or network error.
-    // Either way, we should attempt to publish.
+  } catch (err) {
+    const stderr = String(err?.stderr ?? '');
+    // A genuine 404 means the version is not published yet — expected, stay quiet.
+    // Anything else (network, 5xx, auth) is indeterminate: we cannot confirm, so
+    // warn loudly. We still return false, but npm's version immutability prevents
+    // an accidental overwrite if a publish is then attempted.
+    if (!/E404|404 Not Found/i.test(stderr)) {
+      const detail = stderr.split('\n')[0] || (err instanceof Error ? err.message : String(err));
+      console.warn(`  ⚠️  could not verify ${name}@${version} on npm: ${detail}`);
+    }
     return false;
   }
 }
 
 /**
- * Publish a single package using pnpm --filter (preserves workspace context
- * so that workspace: protocol references are properly resolved).
+ * Publish a single package with npm from the package directory. The manifest is
+ * rewritten in place to resolve `workspace:` / `catalog:` protocol specifiers
+ * (npm understands neither) and to hoist `publishConfig` overrides such as
+ * `exports`, then restored in a `finally` block so a crash mid-publish can never
+ * leave the rewritten manifest on disk. `--access` and `--provenance` are
+ * npm-native flags.
  */
 function publishOne(pkg) {
-  const publishArgs = ['--filter', pkg.name, 'publish', '--no-git-checks', '--access', 'public', '--tag', npmTag];
+  const publishArgs = ['publish', '--access', 'public', '--tag', npmTag];
   if (useProvenance) publishArgs.push('--provenance');
   if (isDryRun) publishArgs.push('--dry-run');
 
-  execFileSync('pnpm', publishArgs, {
-    cwd: baseDir,
-    stdio: 'inherit',
-    env: { ...process.env, NPM_CONFIG_LOGLEVEL: 'verbose' },
-    timeout: 120000,
-  });
+  const packageDir = path.join(baseDir, pkg.directory, pkg.folder);
+  const manifestPath = path.join(packageDir, 'package.json');
+  const originalManifest = fs.readFileSync(manifestPath, 'utf8');
+
+  try {
+    const withVersions = resolveWorkspaceProtocols(
+      { ...JSON.parse(originalManifest), version: pkg.version },
+      {
+        versionMap,
+        catalogs,
+      },
+    );
+    const resolved = applyPublishConfigOverrides(withVersions);
+    fs.writeFileSync(manifestPath, `${JSON.stringify(resolved, null, 2)}\n`);
+
+    execFileSync(npmBin, publishArgs, {
+      cwd: packageDir,
+      stdio: 'inherit',
+      // Verbose logging only on dry-run. On a real publish, force a non-verbose
+      // level so an inherited NPM_CONFIG_LOGLEVEL=verbose can't surface auth
+      // headers in CI logs.
+      env: { ...process.env, NPM_CONFIG_LOGLEVEL: isDryRun ? 'verbose' : 'notice' },
+      timeout: 120000,
+    });
+  } finally {
+    fs.writeFileSync(manifestPath, originalManifest);
+  }
 }
 
 const published = [];
@@ -101,31 +161,40 @@ for (const pkg of packages) {
   }
 }
 
-// Retry failed packages once
+// Retry failed packages once. A dry-run retry would just reproduce the same
+// result, so we skip the retry but still report the failures — otherwise a
+// dry-run would exit 0 even when every package failed to pack, defeating its
+// purpose as a pre-flight check.
 const finalFailed = [];
-if (toRetry.length > 0 && !isDryRun) {
-  console.log(`\n🔄 Retrying ${toRetry.length} failed package(s)...`);
-
-  for (const pkg of toRetry) {
-    const label = `${pkg.name}@${pkg.version}`;
-
-    if (isPublished(pkg.name, pkg.version)) {
-      console.log(`  ⏭️  ${label} now published`);
-      skipped.push(label);
-      continue;
+if (toRetry.length > 0) {
+  if (isDryRun) {
+    for (const pkg of toRetry) {
+      finalFailed.push(`${pkg.name}@${pkg.version}`);
     }
+  } else {
+    console.log(`\n🔄 Retrying ${toRetry.length} failed package(s)...`);
 
-    try {
-      publishOne(pkg);
-      console.log(`  ✅ ${label} (retry)`);
-      published.push(label);
-    } catch {
+    for (const pkg of toRetry) {
+      const label = `${pkg.name}@${pkg.version}`;
+
       if (isPublished(pkg.name, pkg.version)) {
-        console.log(`  ⏭️  ${label} now published (confirmed after retry error)`);
+        console.log(`  ⏭️  ${label} now published`);
         skipped.push(label);
-      } else {
-        console.error(`  ❌ ${label} retry failed`);
-        finalFailed.push(label);
+        continue;
+      }
+
+      try {
+        publishOne(pkg);
+        console.log(`  ✅ ${label} (retry)`);
+        published.push(label);
+      } catch {
+        if (isPublished(pkg.name, pkg.version)) {
+          console.log(`  ⏭️  ${label} now published (confirmed after retry error)`);
+          skipped.push(label);
+        } else {
+          console.error(`  ❌ ${label} retry failed`);
+          finalFailed.push(label);
+        }
       }
     }
   }

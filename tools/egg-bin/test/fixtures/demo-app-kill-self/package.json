@@ -1,0 +1,6 @@
+{
+  "name": "demo-app-kill-self",
+  "egg": {
+    "framework": "aliyun-egg-kill-self"
+  }
+}

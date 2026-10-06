@@ -1,4 +1,4 @@
-import type { MiddlewareFunc } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, IAdvice, MiddlewareFunc } from '@eggjs/tegg-types';
 
 import type { ToolArgsSchemaDetail } from '../util/MCPInfoUtil.ts';
 
@@ -10,11 +10,13 @@ export class MCPToolMeta {
   readonly description?: string;
   readonly detail?: ToolArgsSchemaDetail;
   readonly middlewares: readonly MiddlewareFunc[];
+  readonly advices: readonly EggProtoImplClass<IAdvice>[];
   readonly extra?: number;
 
   constructor(opt: {
     name: string;
     middlewares: MiddlewareFunc[];
+    advices?: EggProtoImplClass<IAdvice>[];
     needAcl?: boolean;
     aclCode?: string;
     description?: string;
@@ -27,6 +29,7 @@ export class MCPToolMeta {
     this.description = opt.description;
     this.mcpName = opt.mcpName;
     this.middlewares = opt.middlewares;
+    this.advices = opt.advices ?? [];
     this.aclCode = opt.aclCode;
     this.detail = opt.detail;
     this.extra = opt.extra;

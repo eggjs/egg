@@ -12,6 +12,8 @@ export interface InjectObjectDescriptor {
   refName: PropertyKey;
   objName: PropertyKey;
   qualifiers: QualifierInfo[];
+  // Spread from InjectObject/InjectConstructor when the descriptor is created.
+  optional?: boolean;
 }
 
 export interface ProtoDescriptor extends EggPrototypeInfo {

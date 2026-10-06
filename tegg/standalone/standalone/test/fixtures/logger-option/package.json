@@ -1,0 +1,7 @@
+{
+  "name": "loggeroption",
+  "type": "module",
+  "eggModule": {
+    "name": "loggeroption"
+  }
+}

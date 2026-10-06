@@ -1,106 +1,112 @@
 import fs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { debuglog } from 'node:util';
 
 import { Flags } from '@oclif/core';
 
 import { BaseCommand } from '../baseCommand.ts';
+import { bundleModes, getBundleFrameworkSpecifier, getBundleMode, parsePackAliases } from '../bundleOptions.ts';
+import { getSourceFilename } from '../utils.ts';
 
 const debug = debuglog('egg/bin/commands/bundle');
-const bundleModes = ['production', 'development'] as const;
-type BundleMode = (typeof bundleModes)[number];
-
-function getBundleMode(mode: string): BundleMode {
-  if (mode === 'production' || mode === 'development') {
-    return mode;
-  }
-  throw new Error(`Unsupported bundle mode: ${mode}`);
-}
-
-function parsePackAliases(values: readonly string[], baseDir: string): Record<string, string> | undefined {
-  if (values.length === 0) return undefined;
-
-  const alias: Record<string, string> = {};
-  for (const value of values) {
-    const separator = value.indexOf('=');
-    if (separator <= 0 || separator === value.length - 1) {
-      throw new Error(`Invalid --pack-alias value: ${value}. Expected <specifier>=<target>.`);
-    }
-
-    const specifier = value.slice(0, separator);
-    const target = value.slice(separator + 1);
-    alias[specifier] = target.startsWith('.') ? path.resolve(baseDir, target) : target;
-  }
-
-  return alias;
-}
-
-async function getBundleFrameworkSpecifier(baseDir: string, framework?: string): Promise<string> {
-  if (framework) return framework;
-
-  const pkgPath = path.join(baseDir, 'package.json');
-  const pkg = JSON.parse(await fs.readFile(pkgPath, 'utf8')) as {
-    egg?: {
-      framework?: unknown;
-    };
-  };
-  return typeof pkg.egg?.framework === 'string' && pkg.egg.framework ? pkg.egg.framework : 'egg';
-}
 
 export default class Bundle extends BaseCommand<typeof Bundle> {
-  static override description = 'Bundle an egg app into a deployable artifact using @eggjs/egg-bundler';
+  static override description =
+    'Bundle an egg app (single-process by default, cluster with --cluster) or a standalone tegg app into a deployable artifact';
 
   static override examples = [
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> --output ./dist-bundle',
-    '<%= config.bin %> <%= command.id %> --mode development',
+    '<%= config.bin %> <%= command.id %> --cluster --output ./dist-bundle',
     '<%= config.bin %> <%= command.id %> --framework egg --output ./out',
-    '<%= config.bin %> <%= command.id %> --pack-alias some-package=./node_modules/some-package/index.js',
+    '<%= config.bin %> <%= command.id %> --framework @eggjs/service-worker --entry worker.ts',
+    '<%= config.bin %> <%= command.id %> --target standalone --framework @eggjs/service-worker --entry worker.ts --format service-worker',
   ];
 
   static override flags = {
     output: Flags.string({
       char: 'o',
-      description: 'output directory for the bundled artifact',
-      default: './dist-bundle',
-    }),
-    manifest: Flags.string({
-      description: 'path to manifest.json (defaults to <baseDir>/.egg/manifest.json)',
+      description: 'output directory (default: ./dist-bundle for an app, ./dist-worker for standalone)',
     }),
     framework: Flags.string({
       char: 'f',
-      description: 'framework package specifier',
+      description: 'framework specifier (app); or the standalone app package that exports loadMetadata',
     }),
     mode: Flags.string({
       description: 'build mode',
       options: [...bundleModes],
       default: 'production',
     }),
-    'no-tegg': Flags.boolean({
-      description: 'disable tegg decoratedFile collection',
-      default: false,
+    manifest: Flags.string({
+      description: 'app: path to manifest.json (defaults to <baseDir>/.egg/manifest.json)',
     }),
     'force-external': Flags.string({
-      description: 'package name to always mark as external (repeatable)',
+      description: 'app: package name to always mark as external (repeatable)',
       multiple: true,
       default: [],
     }),
     'inline-external': Flags.string({
-      description: 'package name to force-inline even if auto-detected as external (repeatable)',
+      description: 'app: package name to force-inline even if auto-detected as external (repeatable)',
       multiple: true,
       default: [],
     }),
     'pack-alias': Flags.string({
-      description: '@utoo/pack resolve alias in <specifier>=<target> form, dot-relative targets resolve from --base',
+      description: 'app: @utoo/pack resolve alias in <specifier>=<target> form',
       multiple: true,
       default: [],
+    }),
+    target: Flags.string({
+      description: 'bundle target; standalone is inferred from --entry when omitted',
+      options: ['app', 'standalone'],
+    }),
+    cluster: Flags.boolean({
+      description: 'app: emit separate app_worker.js and agent_worker.js entries for egg-scripts start --bundle',
+      default: false,
+    }),
+    entry: Flags.string({
+      description: 'standalone: path to the worker entry (e.g. worker.ts), relative to --base',
+    }),
+    format: Flags.string({
+      description: 'standalone: worker host format',
+      options: ['module', 'service-worker'],
+      default: 'module',
+    }),
+    'app-dir': Flags.string({
+      description: 'standalone: the tegg module dir to scan, relative to --base',
+      default: 'app',
+    }),
+    exclude: Flags.string({
+      description: 'standalone: module name to drop from the manifest (repeatable)',
+      multiple: true,
+      default: [],
+    }),
+    root: Flags.string({
+      description: 'standalone: monorepo root for node_modules resolution (defaults to --base)',
     }),
   };
 
   public async run(): Promise<void> {
     const { flags } = this;
     const baseDir = flags.base;
-    const outputDir = path.isAbsolute(flags.output) ? flags.output : path.join(baseDir, flags.output);
+
+    const isStandalone = flags.target === 'standalone' || (!flags.target && !!flags.entry);
+
+    if (flags.cluster && isStandalone) {
+      this.error('--cluster cannot be combined with --target standalone or --entry');
+    }
+
+    if (isStandalone) {
+      await this.#runStandalone(baseDir);
+    } else {
+      await this.#runApp(baseDir);
+    }
+  }
+
+  async #runApp(baseDir: string): Promise<void> {
+    const { flags } = this;
+    const output = flags.output ?? './dist-bundle';
+    const outputDir = path.isAbsolute(output) ? output : path.join(baseDir, output);
     const manifestPath = flags.manifest
       ? path.isAbsolute(flags.manifest)
         ? flags.manifest
@@ -108,12 +114,11 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
       : undefined;
 
     debug(
-      'bundle: baseDir=%s, outputDir=%s, framework=%s, mode=%s, tegg=%s',
+      'bundle app: baseDir=%s, outputDir=%s, framework=%s, mode=%s',
       baseDir,
       outputDir,
       flags.framework,
       flags.mode,
-      !flags['no-tegg'],
     );
 
     const { bundle } = await import('@eggjs/egg-bundler');
@@ -124,15 +129,62 @@ export default class Bundle extends BaseCommand<typeof Bundle> {
       manifestPath,
       framework: await getBundleFrameworkSpecifier(baseDir, flags.framework),
       mode: getBundleMode(flags.mode),
-      tegg: !flags['no-tegg'],
       externals: {
         force: flags['force-external'],
         inline: flags['inline-external'],
       },
+      ...(flags.cluster ? { target: 'cluster' as const } : {}),
       ...(packAlias ? { pack: { resolve: { alias: packAlias } } } : {}),
     });
 
     this.log(`bundled to ${result.outputDir} (${result.files.length} files)`);
     this.log(`manifest: ${result.manifestPath}`);
+  }
+
+  async #runStandalone(baseDir: string): Promise<void> {
+    const { flags } = this;
+    if (!flags.framework) {
+      this.error('--target standalone requires --framework (the app package that exports loadMetadata)');
+    }
+    if (!flags.entry) {
+      this.error('--target standalone requires --entry (the worker entry, e.g. worker.ts)');
+    }
+    const appDir = path.resolve(baseDir, flags['app-dir']);
+    const entry = path.resolve(baseDir, flags.entry);
+    const output = flags.output ?? './dist-worker';
+    const outputDir = path.isAbsolute(output) ? output : path.join(baseDir, output);
+    const rootPath = flags.root ? path.resolve(baseDir, flags.root) : baseDir;
+
+    debug('bundle standalone: appDir=%s, entry=%s, format=%s, outputDir=%s', appDir, entry, flags.format, outputDir);
+
+    const manifest = await this.#loadStandaloneMetadata(baseDir, appDir, flags.framework);
+    const { StandaloneWorkerBundler } = await import('@eggjs/egg-bundler');
+    const result = await new StandaloneWorkerBundler({
+      baseDir: appDir,
+      entry,
+      format: flags.format as 'module' | 'service-worker',
+      outputDir,
+      manifest: manifest as never,
+      excludeModules: flags.exclude,
+      rootPath,
+      mode: getBundleMode(flags.mode) as 'production' | 'development',
+    }).run();
+
+    this.log(`bundled ${flags.format} worker to ${result.outputDir}/${result.entry}`);
+  }
+
+  async #loadStandaloneMetadata(baseDir: string, appDir: string, framework: string): Promise<unknown> {
+    // Run the scan where BaseCommand's TypeScript and import hooks are active.
+    const temporaryDir = await fs.mkdtemp(path.join(os.tmpdir(), 'egg-bin-standalone-metadata-'));
+    const outputFile = path.join(temporaryDir, 'manifest.json');
+    try {
+      const script = getSourceFilename('../scripts/standalone-metadata.mjs');
+      const args = [JSON.stringify({ baseDir, appDir, framework, outputFile })];
+      const execArgv = await this.buildRequiresExecArgv();
+      await this.forkNode(script, args, { execArgv });
+      return JSON.parse(await fs.readFile(outputFile, 'utf8')) as unknown;
+    } finally {
+      await fs.rm(temporaryDir, { recursive: true, force: true });
+    }
   }
 }

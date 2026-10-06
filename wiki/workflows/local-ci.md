@@ -1,0 +1,172 @@
+---
+title: Local CI
+type: workflow
+summary: Local validation should run tests from clean sources and avoid stale build artifacts before tegg tests.
+source_files:
+  - AGENTS.md
+  - .github/workflows/ci.yml
+  - .github/workflows/e2e-test.yml
+  - ecosystem-ci/patch-project.ts
+  - ecosystem-ci/repo.json
+  - .utoo.toml
+  - codecov.yml
+  - package.json
+  - tools/create-egg/package.json
+  - tools/egg-bin/package.json
+  - tools/egg-bin/tsconfig.json
+  - tools/scripts/test/start-unit.test.ts
+  - tools/scripts/src/commands/start.ts
+  - packages/egg/src/lib/core/httpclient.ts
+  - tegg/core/loader/src/impl/ModuleLoader.ts
+  - tegg/core/metadata/src/model/graph/GlobalGraph.ts
+  - tegg/plugin/controller/test/fixtures/apps
+updated_at: 2026-10-06
+status: active
+---
+
+# Local CI
+
+The workspace and create-egg require Node.js `>=22.18.0`. Engines retain an
+open minimum rather than an enumerated major allowlist. For production, use
+the latest patch of a Node.js LTS release that has not reached EOL.
+
+The repository's GitHub CI test job installs dependencies with
+`ut install`. Ordinary PRs run Node.js 22, 24, and 26 on Linux, plus Node.js 24 on macOS
+and Windows. Four slower combinations use two shards; Linux Node.js 26 uses one.
+Merge groups, `next` pushes, manual runs, and PR runs with the `ci:full` label use
+the complete Node.js 22/24/26 × Linux/macOS/Windows matrix without sharding. It uses `ut run test`, or `ut run ci` for the
+coverage job, without building packages before tests.
+
+The egg-bin matrix runs Node.js 24 and 26 on Linux and Windows. The egg-scripts
+matrix runs Node.js 22, 24, and 26 on Linux, plus targeted preload and foreground
+exit regression tests on Windows Node.js 24. The Windows tests load
+source-map-support through real Node subprocesses from paths containing spaces
+and `#`, covering ESM file URLs and unchanged CJS `--require` paths. The
+Linux egg-scripts jobs build only that CLI before their tests because its bin discovers
+commands from `dist`; the targeted Windows job imports sources and skips that
+build. This differs from the main suite. The tegg Vitest adapter runs both
+isolated and shared workers on Node.js 24 and 26 on Linux. Coverage reports
+come from the Linux Node.js 24 jobs. The main-suite coverage job checks the
+complete, disjoint shard inventory before merging Vitest blob coverage reports.
+The final `done` check fails if required jobs fail, are cancelled, or are skipped
+unexpectedly.
+
+Ecosystem CI patches external applications with workspace tarballs. Both cnpmcore
+jobs use the upstream commit pinned in `ecosystem-ci/repo.json`, which declares
+Vitest 5.0.1 and its matching coverage provider. This keeps their test runner
+compatible with the local CLI and tegg adapter without extra Vitest overrides.
+The cnpmcore deployment smoke test uses `--ignore-stderr` because its WebAuthn
+dependency emits experimental Web Crypto warnings on Node.js 24. The subsequent
+HTTP health check still requires a successful response before the job passes.
+
+Node.js 26 treats garbage collection of an unclosed `FileHandle` as an error.
+The scripts daemon launcher keeps both log handles until `spawn()` returns and
+then closes the parent's handles, including on startup errors. The child keeps
+its inherited descriptors.
+
+The HTTP client removes Undici 7's `dispatcher` routing option before a configured
+interceptor chain reaches the original dispatcher. Node.js 26 rejects that option
+on instance dispatch calls.
+
+## Coverage checks
+
+`codecov.yml` keeps project and patch coverage checks enabled. Project coverage
+uses the base commit as its target and permits a decrease of up to one percentage
+point. Patch coverage has a fixed 75% minimum, so small changes do not have to
+match the whole repository's coverage ratio.
+
+## Exception: egg-bin tests need a built dist
+
+The dedicated `test-egg-bin` CI job builds egg-bin in its own step
+(`ut run build` with `working-directory: tools/egg-bin`) before
+`ut run test --workspace @eggjs/bin`. When filtering with `--workspace`,
+prefer the package-name form: the `./tools/egg-bin` path form does not match
+on Windows, and a failed build surfaces later as dozens of
+`command dev not found` test failures. The oclif CLI under test loads commands
+from `tools/egg-bin/dist/commands` (`oclif.commands` in its package.json), and
+oclif's tsconfig fallback cannot map that path back to `src/` (no
+`rootDir`/`baseUrl` in the package tsconfig), so an unbuilt checkout fails every
+coffee-forked test with `Error: command dev not found`.
+
+Locally: build egg-bin before running its test suite, re-build after every
+source change under `tools/egg-bin/src` (tests exercise the compiled output),
+and remove `tools/egg-bin/dist` afterwards so the stale-dist rules below hold
+for tegg runs.
+
+Local validation should follow the same shape for unit tests: run tests from
+clean source files, and build separately when validating generated output,
+package exports, or packaging behavior.
+
+## Stale Build Artifacts
+
+If local tegg tests fail with `duplicate proto` after a previous build, stale
+`dist/` directories are the first thing to check.
+
+Inference: tegg module loading can scan both source and built files when
+TypeScript is supported locally. Loading `src/*.ts` and `dist/*.js` for the same
+decorated class creates duplicate metadata graph entries, which surfaces as a
+`duplicate proto` error.
+
+Use the cleanup command in `AGENTS.md` to remove stale `dist/` directories
+outside `node_modules`, test directories, and fixtures before re-running tests.
+
+## Stale fixture `.egg` caches
+
+Each egg fixture app under `test/fixtures/apps/*` keeps a per-app
+`.egg/compile-cache` directory. This cache holds a **scan manifest** of the
+files the tegg loader picks up, not just compiled output.
+
+Consequence: when you **add a new decorated source file** (a new
+`@InnerObjectProto` / `@XxxLifecycleProto` / controller) to a plugin, a fixture
+app whose `.egg` cache predates that file can keep scanning the old manifest, so
+the new proto is **never scanned or instantiated for that app** — while other
+apps whose caches happen to be fresh work fine. The failure is confusing and
+partial (e.g. one app's routes 404 while another app's identical setup passes),
+and it is easy to misread as a graph / instantiation bug rather than a cache
+artifact. Symmetrically, a **deleted** source file still listed in a stale
+manifest fails at load with `Cannot find module '.../Foo.ts'`.
+
+Fix: clear the fixture caches before re-running, then run from clean sources:
+
+```bash
+find tegg -name .egg -type d -not -path '*/node_modules/*' -exec rm -rf {} +
+```
+
+Note (verified 2026-07-13): inner-object instantiation itself is NOT
+reachability-gated — `InnerObjectLoadUnitBuilder#buildProtoGraph` topologically
+sorts and returns **every** scanned inner-object proto (the graph is only used
+for ordering, cycle detection, and missing-dependency errors). So "a scanned
+inner object was not instantiated" points at the scan input (a stale `.egg`
+manifest), not at graph pruning.
+
+## macOS proxy and process-test boundaries
+
+Local observation (2026-10-06): with Surge Enhanced Mode enabled, both DNS-cache
+lookup suites received SocketError instead of the expected ENOTFOUND for their
+nonexistent domain. Removing HTTP_PROXY/HTTPS_PROXY/ALL_PROXY (including lowercase
+variants) alone did not fix it. Temporarily disabling Enhanced Mode through the
+installed official Surge CLI, clearing proxy variables for the test subprocess,
+and restoring the original mode in a finally block made the ENOTFOUND assertions
+pass. No repository DNS behavior or assertion was changed.
+
+The same standalone suites default to a five-second test timeout; the address
+rotation cases try 127.0.0.2/127.0.0.3 and can take over ten seconds on macOS before
+the connection failure is caught. Both complete suites passed with the original
+assertions and a 40-second standalone timeout. The main CI command already sets
+its own 20-second timeout. Sources: tegg/plugin/dns-cache/test/dns_cache_lookup.test.ts,
+tegg/plugin/dns-cache/test/dns_cache_lookup_http_next.test.ts and test/utils.ts;
+Surge's installed command-reference.md documents feature set enhanced-mode.
+
+Run egg-bin and egg-scripts process suites serially on one local host. During a
+parallel run, egg-scripts' stop-all test found and killed egg-bin's egg.require
+fixture master, causing exit 143 in egg-bin and a two-PID assertion failure in
+scripts. Both suites passed when run separately. GitHub Actions already runs
+these jobs on separate runners. Sources: tools/scripts/test/stop.test.ts,
+tools/scripts/src/commands/stop.ts and tools/egg-bin/test/commands/dev.test.ts.
+
+For ORM validation, prepare its test/apple/banana databases before running the
+suite. The fixture preparation script resets those databases, so use a dedicated
+test service when sharing a host with other tasks. The 2026-10-06 retry used a
+temporary exact-source-restored port override into a separate local container.
+Sources: tegg/plugin/orm/test/fixtures/prepare.js and
+tegg/plugin/orm/test/fixtures/apps/orm-app/config/config.default.ts.
