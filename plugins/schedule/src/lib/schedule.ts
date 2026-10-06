@@ -87,7 +87,7 @@ export class Scheduler {
    */
   async start(): Promise<void> {
     debug('start');
-    this.closed = false;
+    if (this.closed) return;
     for (const instance of this.#strategyInstanceMap.values()) {
       instance.start();
     }

@@ -12,6 +12,8 @@ import { BaseStrategy } from './base.ts';
 
 export abstract class TimerStrategy extends BaseStrategy {
   protected cronInstance?: CronExpression;
+  #timers = new Set<ReturnType<typeof setTimeout> | safeTimers.Timeout>();
+  #immediates = new Set<ReturnType<typeof setImmediate>>();
 
   constructor(scheduleConfig: EggScheduleConfig, agent: Agent, key: string) {
     super(scheduleConfig, agent, key);
@@ -40,11 +42,15 @@ export abstract class TimerStrategy extends BaseStrategy {
 
   async start(): Promise<void> {
     /* istanbul ignore next */
-    if (this.agent.schedule.closed) return;
+    if (this.closed || this.agent.schedule.closed) return;
 
     if (this.scheduleConfig.immediate) {
       this.logger.info(`[Timer] ${this.key} next time will execute immediate`);
-      setImmediate(() => this.handler());
+      const immediate = setImmediate(() => {
+        this.#immediates.delete(immediate);
+        if (!this.closed && !this.agent.schedule.closed) this.handler();
+      });
+      this.#immediates.add(immediate);
     } else {
       this.#scheduleNext();
     }
@@ -52,7 +58,7 @@ export abstract class TimerStrategy extends BaseStrategy {
 
   #scheduleNext(): void {
     /* istanbul ignore next */
-    if (this.agent.schedule.closed) return;
+    if (this.closed || this.agent.schedule.closed) return;
 
     // get next tick
     const nextTick = this.getNextTick();
@@ -104,8 +110,33 @@ export abstract class TimerStrategy extends BaseStrategy {
     // won\'t run here
   }
 
-  protected safeTimeout(handler: () => void, delay: number, ...args: any[]): number | ReturnType<typeof setTimeout> {
+  async close(): Promise<void> {
+    await super.close();
+    for (const timer of this.#timers) {
+      if (timer instanceof safeTimers.Timeout) {
+        safeTimers.clearTimeout(timer);
+      } else {
+        clearTimeout(timer);
+      }
+    }
+    this.#timers.clear();
+    for (const immediate of this.#immediates) {
+      clearImmediate(immediate);
+    }
+    this.#immediates.clear();
+  }
+
+  protected safeTimeout(
+    handler: (...args: any[]) => void,
+    delay: number,
+    ...args: any[]
+  ): ReturnType<typeof setTimeout> | safeTimers.Timeout {
     const fn = delay < safeTimers.maxInterval ? setTimeout : safeTimers.setTimeout;
-    return fn(handler, delay, ...args) as number | ReturnType<typeof setTimeout>;
+    const timer = fn(() => {
+      this.#timers.delete(timer);
+      if (!this.closed && !this.agent.schedule.closed) handler(...args);
+    }, delay);
+    this.#timers.add(timer);
+    return timer;
   }
 }

@@ -6,6 +6,8 @@ Read this file before exploring raw sources.
 
 ## Concepts
 
+- [Schedule shutdown timer cleanup](./concepts/schedule-shutdown-timers.md) - Timer ownership, cancellation, and natural-exit regression coverage.
+
 - [Controller Advice](./concepts/controller-advice.md) - Runs dependency-injected Advice at the bound controller invocation while preserving the existing AbstractControllerAdvice contract.
 - [Repository Map](./concepts/repository-map.md) - High-level map of the main repository areas and where to look first.
 - [Tegg Module Plugin](./concepts/tegg-module-plugin.md) - Declarative framework hooks (@InnerObjectProto/@EggLifecycleProto), the InnerObjectLoadUnit two-phase boot ordering, and host feeding rules.

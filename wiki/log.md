@@ -504,3 +504,7 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources inspected: [second hosted attempt](https://github.com/eggjs/egg/actions/runs/35948525958), [Codecov v5.5.5](https://github.com/codecov/codecov-action/releases/tag/v5.5.5), `.github/workflows/ci.yml`
 - pages updated: CI performance plan and log
 - note: All tests and the coverage inventory/merge passed in 14m 52s with 89.35 runner-minutes. The required upload exposed the old Codecov action's obsolete Keybase endpoint. CI now pins the upstream patch release that updates that endpoint, while retaining signature verification and upload failure propagation. Failed-run timings remain separate from successful performance evidence.
+
+## 2026-10-06
+
+- Fix schedule shutdown cleanup: TimerStrategy owns and cancels pending timers; Scheduler refuses late startup after close. Added child-process natural-exit regression coverage and concepts/schedule-shutdown-timers.md.
