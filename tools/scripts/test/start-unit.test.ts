@@ -1,13 +1,23 @@
+import { execFile } from 'node:child_process';
 import { fstatSync } from 'node:fs';
 import fs from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { promisify } from 'node:util';
 
+import { importResolve } from '@eggjs/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import Start from '../src/commands/start.ts';
 
 const spawnMock = vi.hoisted(() => vi.fn());
+
+vi.mock('@eggjs/utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@eggjs/utils')>();
+  return { ...actual, importResolve: vi.fn(actual.importResolve) };
+});
 
 vi.mock('node:child_process', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:child_process')>();
@@ -48,14 +58,18 @@ describe('test/start-unit.test.ts', () => {
 
   // foreground mode waits for the child inside run(), so tests must report a
   // child exit for the command to settle
-  async function runStartWithChildExit(code: number | null, signal: NodeJS.Signals | null): Promise<void> {
+  async function runStartWithChildExit(
+    code: number | null,
+    signal: NodeJS.Signals | null,
+    appDir = baseDir,
+  ): Promise<void> {
     let onExit: ((code: number | null, signal: NodeJS.Signals | null) => void) | undefined;
     spawnMock.mockImplementation(() => ({
       once: vi.fn((event: string, cb: (code: number | null, signal: NodeJS.Signals | null) => void) => {
         if (event === 'exit') onExit = cb;
       }),
     }));
-    const run = TestStart.run(['--workers=1', baseDir]);
+    const run = TestStart.run(['--workers=1', appDir]);
     await vi.waitFor(() => {
       if (!onExit) throw new Error('child not spawned yet');
     });
@@ -78,32 +92,46 @@ describe('test/start-unit.test.ts', () => {
     expect(options.env.NODE_ENV).toBe('production');
   });
 
-  it('preloads source-map-support with a file URL for ESM apps', async () => {
-    const esmBaseDir = path.join(homeDir, 'esm-typescript-app');
-    await fs.mkdir(esmBaseDir);
+  it.each(['module', 'commonjs'])('preloads source-map-support for %s apps and exits', async (type) => {
+    const appDir = path.join(homeDir, `${type}-typescript-app`);
+    await fs.mkdir(appDir);
     await fs.writeFile(
-      path.join(esmBaseDir, 'package.json'),
-      JSON.stringify({ name: 'esm-typescript-app', type: 'module', egg: { typescript: true } }),
+      path.join(appDir, 'package.json'),
+      JSON.stringify({ name: `${type}-typescript-app`, type, egg: { typescript: true } }),
     );
-    spawnMock.mockImplementation(() => ({
-      once: vi.fn().mockReturnThis(),
-      on: vi.fn().mockReturnThis(),
-      unref: vi.fn(),
-      disconnect: vi.fn(),
-      kill: vi.fn(),
-      pid: 1112,
-    }));
+    const require = createRequire(import.meta.url);
+    const originalPackage = require.resolve('source-map-support/package.json');
+    const supportDir = path.join(homeDir, 'source map # support');
+    await fs.cp(path.dirname(originalPackage), supportDir, { recursive: true });
+    // Resolve the copied package's dependencies through the original installation.
+    await fs.symlink(
+      path.join(path.dirname(originalPackage), '../'),
+      path.join(supportDir, 'node_modules'),
+      'junction',
+    );
+    vi.mocked(importResolve).mockReturnValue(path.join(supportDir, 'package.json'));
 
-    await TestStart.run(['--workers=1', esmBaseDir]);
+    await runStartWithChildExit(0, null, appDir);
 
     expect(spawnMock).toHaveBeenCalledTimes(1);
     const [, args] = spawnMock.mock.calls[0] as [string, string[]];
-    expect(args).toContain('/fake/scripts/start-cluster.mjs');
-    const importIndex = args.indexOf('--import');
-    expect(importIndex).toBeGreaterThan(-1);
-    // A Windows drive path such as D:\app\register.js is parsed as the
-    // unsupported `d:` URL scheme by Node's ESM loader unless it is a file URL.
-    expect(args[importIndex + 1]).toMatch(/^file:/);
+    const esm = type === 'module';
+    expect(args).toContain(`/fake/scripts/start-cluster.${esm ? 'mjs' : 'cjs'}`);
+    const preloadFlag = esm ? '--import' : '--require';
+    const preloadIndex = args.indexOf(preloadFlag);
+    expect(preloadIndex).toBeGreaterThan(-1);
+    const register = path.join(supportDir, 'register.js');
+    expect(args[preloadIndex + 1]).toBe(esm ? pathToFileURL(register).href : register);
+    expect(args).not.toContain(esm ? '--require' : '--import');
+    if (esm) expect(args[preloadIndex + 1]).toContain('source%20map%20%23%20support');
+    const { stdout } = await promisify(execFile)(process.execPath, [
+      preloadFlag,
+      args[preloadIndex + 1],
+      '--input-type=module',
+      '--eval',
+      'console.log(typeof Error.prepareStackTrace)',
+    ]);
+    expect(stdout.trim()).toBe('function');
   });
 
   it('daemon mode backgrounds once the child reports egg-ready over IPC', async () => {
