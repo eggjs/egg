@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { fileURLToPath } from 'node:url';
 
 import { describe, it } from 'vitest';
 
@@ -14,7 +15,7 @@ function deferred() {
   return { promise, resolve };
 }
 
-const workerFile = new URL('./fixtures/thread-shutdown.mjs', import.meta.url).pathname;
+const workerFile = fileURLToPath(new URL('./fixtures/thread-shutdown.mjs', import.meta.url));
 
 describe('real worker thread shutdown', () => {
   for (const kind of ['agent', 'app'] as const) {

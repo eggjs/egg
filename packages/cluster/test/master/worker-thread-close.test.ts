@@ -1,10 +1,11 @@
 import { strict as assert } from 'node:assert';
 import { execFile } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 
 import { describe, it } from 'vitest';
 const run = promisify(execFile);
-const fixture = new URL('../fixtures/master-thread-shutdown.mjs', import.meta.url).pathname;
+const fixture = fileURLToPath(new URL('../fixtures/master-thread-shutdown.mjs', import.meta.url));
 describe('master with real worker threads', () => {
   it('awaits app and agent beforeClose through the standard entry', async () => {
     const { stdout } = await run(process.execPath, [fixture, 'graceful'], { timeout: 20000 });
