@@ -118,7 +118,8 @@ export class AppThreadUtils extends BaseAppUtils {
     if (this.options.reusePort) {
       // When reusePort is enabled, all workers share the same port
       // and each worker has its own socket
-      if (!this.options.port) {
+      // Port 0 defers to the application's shared listen port.
+      if (!this.options.port && this.options.port !== 0) {
         throw new Error('options.port must be specified when reusePort is enabled');
       }
       for (let i = 0; i < this.options.workers; i++) {

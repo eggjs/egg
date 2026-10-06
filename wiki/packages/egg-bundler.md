@@ -108,6 +108,9 @@ constraint is why worker output always needs a thin ESM wrapper.
   `agent.close()`, and the master falls back to `Worker.terminate()` immediately
   if the worker emits an error or after the configured close timeout. Successful
   shutdown cancels its timeout timer so it does not keep the event loop alive.
+  With worker-thread `reusePort`, an explicit master port of `0` defers to the
+  application's configured shared listen port rather than being rejected before
+  the worker protocol runs.
 - `egg-bin bundle --cluster` is the ordinary cluster-bundle producer. It selects
   the bundler's `cluster` target and writes `app_worker.js`, `agent_worker.js`,
   and the bundle manifest without constructing snapshot blobs. Its output can

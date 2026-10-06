@@ -290,7 +290,7 @@ describe('test/worker-protocol.test.ts', () => {
     server.close();
   });
 
-  it('reports reusePort startup to the master', async () => {
+  it.each([undefined, 0])('reports reusePort startup to the master with port %s', async (port) => {
     vi.spyOn(os, 'platform').mockReturnValue('linux');
     const app = new EventEmitter() as any;
     app.config = { cluster: { listen: { port: 7001, hostname: '127.0.0.1', reusePort: true } } };
@@ -306,7 +306,7 @@ describe('test/worker-protocol.test.ts', () => {
     const messages: any[] = [];
     startAppWorker(
       app,
-      {},
+      { port },
       {
         workerId: 1,
         send(message) {
@@ -323,6 +323,7 @@ describe('test/worker-protocol.test.ts', () => {
 
     assert.equal(messages.at(-1).action, 'app-start');
     assert.equal(messages.at(-1).reusePort, true);
+    assert.equal(app.options.port, 7001);
     assert.ok(server);
     server.close();
     vi.restoreAllMocks();

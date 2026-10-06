@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   workers: [] as Array<{
     postMessage: ReturnType<typeof vi.fn>;
     terminate: ReturnType<typeof vi.fn>;
+    options?: { argv?: string[] };
   }>,
 }));
 
@@ -26,8 +27,11 @@ vi.mock('node:worker_threads', async () => {
     });
     terminate = vi.fn().mockResolvedValue(0);
 
-    constructor() {
+    readonly options?: { argv?: string[] };
+
+    constructor(_filename?: string, options?: { argv?: string[] }) {
       super();
+      this.options = options;
       mocks.workers.push(this);
     }
   }
@@ -89,6 +93,22 @@ describe('test/worker-thread-utils.test.ts', () => {
     assert.equal(mocks.workers[0].terminate.mock.calls.length, 1);
     assert.equal(dependencies.logger.error.mock.calls.length, 1);
     assert.match(String(dependencies.logger.error.mock.calls[0].at(-1)), /graceful shutdown failed/);
+  });
+
+  it('passes port zero to reusePort workers so they can use the application listen config', async () => {
+    const utils = new AppThreadUtils(
+      { appWorkerFile: 'app.js', port: 0, reusePort: true, workers: 2 } as any,
+      dependencies as any,
+    );
+    utils.fork();
+
+    assert.equal(mocks.workers.length, 2);
+    for (const worker of mocks.workers) {
+      const options = JSON.parse(worker.options!.argv![0]);
+      assert.equal(options.port, 0);
+      assert.equal(options.reusePort, true);
+    }
+    await utils.kill(10);
   });
 
   it('lets every app worker exit gracefully before the timeout', async () => {

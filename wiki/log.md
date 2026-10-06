@@ -537,3 +537,8 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Cancel app/agent graceful-shutdown timeout timers after the exit race finishes; real utility subprocess tests verify natural event-loop drain instead of relying on master process.exit().
 - Clarified the error-triggered immediate termination fallback in [Egg Bundler](./packages/egg-bundler.md) and refreshed its metadata. Sources: `packages/cluster/src/utils/mode/impl/worker_threads/{agent,app}.ts` and `packages/cluster/test/{worker-thread-shutdown.test.ts,fixtures/thread-shutdown-drain.mjs}`.
+
+## 2026-10-06 — Worker-thread reusePort port-zero forwarding
+
+- Allow an explicit master `port: 0` through the worker-thread reusePort fork guard so workers inherit `config.cluster.listen.port`; retain the guard for an omitted master port.
+- Added fork/argv and protocol regressions plus real HTTP startup coverage; Linux additionally verifies two workers sharing the configured port. Sources: `packages/cluster/src/utils/mode/impl/worker_threads/app.ts`, `packages/cluster/src/worker_protocol/app.ts`, and their cluster tests; [Egg Bundler](./packages/egg-bundler.md) records the runtime boundary.
