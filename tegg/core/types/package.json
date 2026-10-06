@@ -246,7 +246,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "node ../../../scripts/tsc.js --noEmit"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.23.0"

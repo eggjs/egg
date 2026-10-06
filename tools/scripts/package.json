@@ -48,7 +48,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit",
+    "typecheck": "node ../../scripts/tsc.js --noEmit",
     "test": "vitest run --bail 1 --no-file-parallelism",
     "cov": "ut run test -- --coverage",
     "ci": "ut run cov"
@@ -62,6 +62,7 @@
     "utility": "catalog:"
   },
   "devDependencies": {
+    "@oxc-node/core": "catalog:",
     "@types/node": "catalog:",
     "coffee": "catalog:",
     "detect-port": "catalog:",

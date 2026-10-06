@@ -29,7 +29,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "node ../../scripts/tsc.js --noEmit"
   },
   "dependencies": {
     "should-send-same-site-none": "catalog:",

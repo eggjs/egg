@@ -58,7 +58,7 @@
   },
   "scripts": {
     "build": "tsdown -c tsdown.config.ts",
-    "typecheck": "tsgo --noEmit",
+    "typecheck": "node ../../scripts/tsc.js --noEmit",
     "test": "vitest run",
     "cov": "vitest run --coverage",
     "ci": "npm run cov"
@@ -75,7 +75,6 @@
     "detect-port": "catalog:",
     "globby": "catalog:",
     "jest-changed-files": "catalog:",
-    "ts-node": "catalog:",
     "tsconfig-paths": "catalog:",
     "utility": "catalog:",
     "vitest": "catalog:"

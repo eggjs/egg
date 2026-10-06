@@ -39,7 +39,7 @@ server.registerResource(
 export const headers: Record<string, any> = {};
 
 export let httpServer: http.Server;
-export async function startStreamableServer(port = 17243) {
+export async function startStreamableServer(port = 17243): Promise<void> {
   const httpServer = http.createServer(async (req, res) => {
     const { StreamableHTTPServerTransport } = require('@modelcontextprotocol/sdk/server/streamableHttp.js');
     const url = new URL(`http://127.0.0.1:${port}${req.url!}`);
@@ -97,6 +97,6 @@ export async function startStreamableServer(port = 17243) {
   });
 }
 
-export async function stopStreamableServer() {
+export async function stopStreamableServer(): Promise<void> {
   server.close();
 }

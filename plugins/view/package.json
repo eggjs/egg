@@ -53,7 +53,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "node ../../scripts/tsc.js --noEmit"
   },
   "dependencies": {
     "is-type-of": "catalog:",

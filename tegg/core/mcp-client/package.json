@@ -44,7 +44,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "node ../../../scripts/tsc.js --noEmit"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",

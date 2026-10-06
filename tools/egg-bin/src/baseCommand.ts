@@ -281,7 +281,9 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       // set current process.env.EGG_TYPESCRIPT too
       process.env.EGG_TYPESCRIPT = 'true';
       // load files from tsconfig on startup
-      this.env.TS_NODE_FILES = process.env.TS_NODE_FILES ?? 'true';
+      if (flags.tscompiler.includes('ts-node')) {
+        this.env.TS_NODE_FILES = process.env.TS_NODE_FILES ?? 'true';
+      }
       // keep same logic with egg-core, test cmd load files need it.
       // oxc-node does not resolve tsconfig `paths`, so tsconfig-paths/register
       // is still required alongside every compiler.
@@ -289,17 +291,11 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       const tsConfigPathsRegister = cjsResolve('tsconfig-paths/register');
       this.addNodeOptions(this.formatImportModule(tsConfigPathsRegister));
     }
-    if (this.isESM && !isOxcCompiler) {
-      // use ts-node/esm loader on esm
-      let esmLoader = cjsResolve('ts-node/esm');
-      // ES Module loading with absolute path fails on windows
-      // https://github.com/nodejs/node/issues/31710#issuecomment-583916239
-      // https://nodejs.org/api/url.html#url_url_pathtofileurl_path
-      // Error [ERR_UNSUPPORTED_ESM_URL_SCHEME]: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
-      esmLoader = pathToFileURL(esmLoader).href;
-      // wait for https://github.com/nodejs/node/issues/40940
-      this.addNodeOptions('--no-warnings');
-      this.addNodeOptions(`--loader ${esmLoader}`);
+    if (typescript && this.isESM && !isOxcCompiler) {
+      // Legacy CJS compilers do not install an ESM hook. Use Oxc for the
+      // ESM side of TypeScript applications.
+      const esmRegister = path.join(path.dirname(cjsResolve('@oxc-node/core', [rootDir])), 'register.mjs');
+      this.addNodeOptions(`--import "${pathToFileURL(esmRegister).href}"`);
     }
 
     if (this.pkgEgg.revert) {

@@ -1,5 +1,7 @@
 import { defineConfig } from 'tsdown';
 
+import { checkPackage } from './scripts/check-package.mjs';
+
 export default defineConfig({
   // Workspace configuration - builds all library packages from root
   workspace: {
@@ -19,13 +21,15 @@ export default defineConfig({
     devExports: true,
   },
   fixedExtension: false,
-  publint: {
-    level: 'suggestion',
-    strict: true,
-    // Default to npm pack so main CI (utoo env, no pnpm binary) works.
-    // E2E workflow overrides via PUBLINT_PACK=pnpm because running npm pack
-    // against pnpm's symlinked node_modules is ~10x slower per package.
-    pack: (process.env.PUBLINT_PACK as 'npm' | 'pnpm' | 'yarn' | 'bun' | undefined) ?? 'npm',
+  // Use utoo explicitly; tsdown's package-manager detector chooses pnpm
+  // from the legacy workspace file even after the native utoo migration.
+  publint: false,
+  hooks: {
+    'build:done': async ({ options }) => {
+      if (options.pkg && !options.pkg.private) {
+        await checkPackage(options.pkg.packageJsonPath);
+      }
+    },
   },
 
   // Default entry pattern - glob to include all source files

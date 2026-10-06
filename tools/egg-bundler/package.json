@@ -82,7 +82,7 @@
   },
   "scripts": {
     "test": "vitest run",
-    "typecheck": "tsgo --noEmit",
+    "typecheck": "node ../../scripts/tsc.js --noEmit",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",
     "build": "tsdown",
@@ -107,7 +107,7 @@
     "@eggjs/tegg-plugin": "workspace:*",
     "@types/js-yaml": "catalog:",
     "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native": "catalog:",
     "rimraf": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

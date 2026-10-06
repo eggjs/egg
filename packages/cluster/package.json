@@ -44,7 +44,7 @@
   },
   "scripts": {
     "lint": "oxlint",
-    "typecheck": "tsgo --noEmit",
+    "typecheck": "node ../../scripts/tsc.js --noEmit",
     "test": "vitest run"
   },
   "dependencies": {

@@ -83,7 +83,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "node ../../../scripts/tsc.js --noEmit"
   },
   "dependencies": {
     "@eggjs/background-task": "workspace:*",

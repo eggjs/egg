@@ -532,3 +532,35 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Removed the exact packageManager pin, restored the utoo catalog range to ^1, and switched CI/bootstrap instructions to latest at the user’s request. Native workspace/catalog configuration remains authoritative.
 - Removed the E2E-only utoo@1.1.1 temporary installation; packing now reuses the latest CLI from setup-utoo and the tracked native configuration.
+
+## 2026-10-06 — TypeScript 7 task 07
+
+- Verified npm stable 7.0.2 and Microsoft migration guidance; recorded explicit native invocation, API compatibility dependencies, source adjustments, verification and performance sample in workflows/typescript-7.md.
+- Full-suite DAL failure and utoo root dispatch failure remain verification limits; final 02 rehearsal must rerun after integration.
+
+## 2026-10-06 — tsdown retry after 02a
+
+- Retried stable tsdown 0.23.0 using the committed 02a native utoo configuration. Root typecheck passed; tsdown automatic pnpm selection still failed. Explicit utoo packing and strict publint passed for all 85 tarballs. Restored the trial and documented the remaining build integration in workflows/typescript-7.md.
+
+## 2026-10-06 — Persistent tsdown upgrade
+
+- Retained tsdown ^0.23.0 with an explicit utoo tarball/publint build hook, isolated package copies and four CI regression tests. Verified all 85 public packages, filtered builds and examples. Recorded unresolved DNS test failures and 02a native catalog integration requirements in workflows/typescript-7.md.
+
+### 2026-10-06 — Remove framework ts-node dependency
+
+- Replaced remaining CLI development loaders and implicit ESM fallback with Oxc;
+  plain JS ESM apps no longer receive a TS loader. Kept application-owned custom
+  compiler support and its explicit ts-node fixture.
+- Removed catalog dependency and obsolete skipped type-check tests; updated
+  TypeScript migration workflow with compatibility boundaries and validation.
+
+### 2026-10-06 — Expanded 07 CI and cnpmcore verification
+
+- Complete local Node 24 main coverage run passed (3677 tests, 82.86% lines) after
+  isolating ORM databases and bypassing Surge; CLI coverage, adapter workers,
+  examples, site build and 87 typechecks passed.
+- cnpmcore uses the pinned upstream commit and 85 local tarballs without ts-node.
+  Three full runs retained intermittent TeamController/BinarySyncer failures;
+  isolated retries pass. Deployment and snapshot health checks pass. Full consumer
+  stability and the unrun remote matrix remain explicit limits.
+- Added local-ci guidance for scoped Surge bypass and serial CLI process suites.

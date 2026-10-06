@@ -11,9 +11,5 @@
     "paths": {
       "@/module/*": ["./app/module/*"]
     }
-  },
-  "ts-node": {
-    "esm": true,
-    "transpileOnly": true
   }
 }
