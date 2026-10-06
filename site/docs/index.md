@@ -41,7 +41,3 @@ features:
     title: Flexible & High Scalability
     details: Convention over configuration, highly flexible customization, industry-leading plugin systems and upper-layer business-specific framework systems.
 ---
-
-## We're Recruiting!
-
-Egg.js is recruiting talented developers. [Learn more →](https://zhuanlan.zhihu.com/p/598748057)
