@@ -84,6 +84,8 @@ jobs:
 
       - name: Setup utoo
         uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # pinned from main
+        with:
+          utoo-version: 'latest'
 
       - name: Setup Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
@@ -93,8 +95,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          ut install --from pnpm
-          git restore package.json
+          ut install
           git diff --exit-code -- package.json
 
       - name: Configure Git

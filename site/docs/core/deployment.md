@@ -28,7 +28,7 @@ Reusable package brings a few pros in:
 
 ## Deploy
 
-Node.js(`>= 14.20.0`) is required so that you should make sure it is pre-installed in runtime environment.
+Pre-install supported Node.js >=22.18.0 in the runtime environment. Use the latest patch of an active LTS release for production; EOL versions are unsupported.
 
 Egg takes `egg-cluster` to create [Master](https://github.com/eggjs/egg/blob/master/docs/source/en/core/cluster-and-ipc.md#master) process, which you can rely on to secure the application instead of daemon manager like [pm2]. The API is also really convenient for developers to achieve that, just `egg.startCluster`.
 

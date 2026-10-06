@@ -31,7 +31,7 @@ $ ut run dev
 $ open http://localhost:7001
 ```
 
-> Node.js >= 22.18.0 required.
+> Node.js >=22.18.0 required. Use the latest patch of an active LTS release for production.
 
 ## Documentations
 

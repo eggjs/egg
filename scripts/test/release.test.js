@@ -89,8 +89,8 @@ test('publish preview packs projected manifests and dependencies, restores bytes
     fs.symlinkSync(path.join(root, 'node_modules'), path.join(fixture, 'node_modules'), 'dir');
     for (const file of ['publish.js', 'utils.js'])
       fs.copyFileSync(path.join(root, 'scripts', file), path.join(fixture, 'scripts', file));
-    fs.writeFileSync(path.join(fixture, 'package.json'), '{"type":"module"}');
-    fs.writeFileSync(path.join(fixture, 'pnpm-workspace.yaml'), 'packages:\n  - packages/*\n');
+    fs.writeFileSync(path.join(fixture, 'package.json'), '{"type":"module","workspaces":["packages/*"]}');
+    fs.writeFileSync(path.join(fixture, '.utoo.toml'), '[catalog]\n');
     const manifest = '{"name":"egg","version":"4.1.2-rc.0","dependencies":{"egg":"workspace:^"}}\n';
     const manifestPath = path.join(fixture, 'packages/egg/package.json');
     fs.writeFileSync(manifestPath, manifest);
@@ -138,8 +138,11 @@ test('version commit message and tag are passed as git argv', () => {
     fs.symlinkSync(path.join(root, 'node_modules'), path.join(fixture, 'node_modules'), 'dir');
     for (const file of ['version.js', 'utils.js'])
       fs.copyFileSync(path.join(root, 'scripts', file), path.join(fixture, 'scripts', file));
-    fs.writeFileSync(path.join(fixture, 'package.json'), '{"type":"module","version":"4.1.2-rc.0"}');
-    fs.writeFileSync(path.join(fixture, 'pnpm-workspace.yaml'), 'packages:\n  - packages/*\n');
+    fs.writeFileSync(
+      path.join(fixture, 'package.json'),
+      '{"type":"module","version":"4.1.2-rc.0","workspaces":["packages/*"]}',
+    );
+    fs.writeFileSync(path.join(fixture, '.utoo.toml'), '[catalog]\n');
     fs.writeFileSync(path.join(fixture, 'packages/egg/package.json'), '{"name":"egg","version":"4.1.2-rc.0"}');
     fs.writeFileSync(
       path.join(fixture, 'bin/git'),

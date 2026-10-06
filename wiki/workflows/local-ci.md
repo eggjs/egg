@@ -8,9 +8,10 @@ source_files:
   - .github/workflows/e2e-test.yml
   - ecosystem-ci/patch-project.ts
   - ecosystem-ci/repo.json
-  - pnpm-workspace.yaml
+  - .utoo.toml
   - codecov.yml
   - package.json
+  - tools/create-egg/package.json
   - tools/egg-bin/package.json
   - tools/egg-bin/tsconfig.json
   - tools/scripts/src/commands/start.ts
@@ -18,14 +19,18 @@ source_files:
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/core/metadata/src/model/graph/GlobalGraph.ts
   - tegg/plugin/controller/test/fixtures/apps
-updated_at: 2026-09-24
+updated_at: 2026-10-06
 status: active
 ---
 
 # Local CI
 
+The workspace and create-egg require Node.js `>=22.18.0`. Engines retain an
+open minimum rather than an enumerated major allowlist. For production, use
+the latest patch of a Node.js LTS release that has not reached EOL.
+
 The repository's GitHub CI test job installs dependencies with
-`ut install --from pnpm`. Ordinary PRs run Node.js 22, 24, and 26 on Linux, plus Node.js 24 on macOS
+`ut install`. Ordinary PRs run Node.js 22, 24, and 26 on Linux, plus Node.js 24 on macOS
 and Windows. Four slower combinations use two shards; Linux Node.js 26 uses one.
 Merge groups, `next` pushes, manual runs, and PR runs with the `ci:full` label use
 the complete Node.js 22/24/26 × Linux/macOS/Windows matrix without sharding. It uses `ut run test`, or `ut run ci` for the

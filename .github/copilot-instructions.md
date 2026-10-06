@@ -11,7 +11,7 @@ This is a **utoo monorepo** with multiple packages using utoo workspaces and cat
 ## Prerequisites and Environment Setup
 
 - **Node.js >= 22.18.0 required** - This is a hard requirement
-- Enable utoo first: `corepack enable utoo`
+- Enable utoo first: `npm install --global utoo@latest`
 - **NEVER CANCEL** any build or test commands - they can take several minutes to complete
 
 ## Bootstrap and Build Process
@@ -20,10 +20,10 @@ This is a **utoo monorepo** with multiple packages using utoo workspaces and cat
 
 ```bash
 # 1. Enable utoo (required first)
-corepack enable utoo
+npm install --global utoo@latest
 
 # 2. Install all dependencies - takes ~63 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
-ut install --from pnpm
+ut install
 
 # 3. Run lint to check code quality across all packages - takes ~2 seconds
 ut run lint
@@ -33,7 +33,7 @@ ut run build
 ```
 
 Run unit tests from a clean source tree, not immediately after `ut run build`.
-The main CI test job installs dependencies with `ut install --from pnpm` and
+The main CI test job installs dependencies with `ut install` and
 runs tests with `ut run ci`; it does not run `build` before tests.
 
 ## Monorepo Structure
@@ -168,7 +168,7 @@ ut run site:dev
 
 ## utoo Workspace & Catalog Dependencies
 
-- Dependencies defined in `pnpm-workspace.yaml` catalog section
+- Dependencies defined in `.utoo.toml` catalog section
 - Reference catalog entries: `"package-name": "catalog:"`
 - Internal workspace dependencies: `"package-name": "workspace:*"`
 - This ensures consistent versions across all packages
@@ -202,7 +202,7 @@ ut run site:dev
 
 ### Key Configuration Files
 
-- `pnpm-workspace.yaml` - Workspace and catalog configuration
+- `package.json` / `.utoo.toml` - Workspace patterns and catalog configuration
 - `package.json` - Root monorepo scripts and devDependencies
 - `packages/egg/package.json` - Main framework package configuration
 - `packages/egg/tsdown.config.ts` - Build configuration

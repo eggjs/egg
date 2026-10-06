@@ -1,3 +1,6 @@
+# Legacy pnpm configuration retained for reference.
+# Native utoo source of truth: package.json workspaces/overrides and .utoo.toml catalogs.
+# Do not run ut install --from pnpm: it would overwrite the native configuration.
 packages:
   - packages/*
   - plugins/*

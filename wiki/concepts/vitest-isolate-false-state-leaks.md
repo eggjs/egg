@@ -9,13 +9,13 @@ source_files:
   - plugins/mock/src/app/extend/application.ts
   - plugins/mock/src/lib/mock_agent.ts
   - plugins/mock/test/mock-agent.test.ts
-  - pnpm-workspace.yaml
+  - .utoo.toml
   - .github/workflows/ci.yml
   - plugins/multipart/test/file-mode.test.ts
   - packages/core/src/lifecycle.ts
   - packages/egg/src/lib/egg.ts
   - tegg/plugin/tegg/test/MultiAppParallel.test.ts
-updated_at: 2026-09-24
+updated_at: 2026-10-06
 status: active
 ---
 
@@ -42,7 +42,7 @@ signature of this class of bug, not flaky tests per se.
 
 - Use Node 22, 24, or 26 to match the CI matrix. The catalog uses `tsx` 4.23.15
   to avoid the deprecated loader registration API on Node 26.
-- Install with utoo (`ut install --from pnpm`), not a bare `pnpm install`. utoo
+- Install with utoo (`ut install`), not a bare `pnpm install`. utoo
   hoists workspace packages (e.g. `egg`) to the root `node_modules`; tests like
   `cluster/options` and `mock/format_options` resolve the framework via
   `getFrameworkPath('egg')` from a fixture `baseDir` and only pass with that
