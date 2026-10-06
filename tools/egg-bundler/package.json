@@ -107,7 +107,6 @@
     "@eggjs/tegg-plugin": "workspace:*",
     "@types/js-yaml": "catalog:",
     "@types/node": "catalog:",
-    "@typescript/native": "catalog:",
     "rimraf": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

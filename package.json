@@ -75,7 +75,7 @@
     "smol-toml": "catalog:",
     "tsdown": "catalog:",
     "tsx": "catalog:",
-    "typescript": "catalog:",
+    "typescript": "catalog:compiler-api",
     "unplugin-unused": "catalog:",
     "urllib": "catalog:",
     "utoo": "catalog:",

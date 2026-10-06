@@ -569,3 +569,9 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Replaced workspace compiler path wrappers with `tsc --noEmit`; deleted scripts/tsc.js. Fresh utoo resolution selects TS7.0.2 and all workspace typechecks passed.
 - Egg 4 templates and the HTTP benchmark now declare typescript ^7.0.2 directly. TS5.9 remains in the monorepo for SWC compiler API compatibility; TS7 replacement reproduces an API error in @swc-node/register 1.12.1. Four CLI compiler initialization tests passed.
+
+### 07 authoritative catalog and compiler verification
+
+- Deleted legacy pnpm-workspace.yaml. Default TypeScript catalog is now TS7; only root and egg-bin compatibility tests select the named compiler-api TS5 catalog.
+- Added an installed-toolchain guard that checks the actual tsc version from every workspace bin path; all checks select TS7. All workspace typechecks passed after fresh utoo resolution.
+- Full build/declarations and public tarball validation passed; 17 tooling guards and four CLI compiler initialization tests passed after this catalog separation.

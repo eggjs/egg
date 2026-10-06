@@ -96,7 +96,7 @@
     "rimraf": "catalog:",
     "runscript": "catalog:",
     "sdk-base": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:compiler-api"
   },
   "peerDependencies": {
     "@eggjs/mock": "workspace:*"

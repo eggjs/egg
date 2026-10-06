@@ -26,13 +26,16 @@ status: active
 
 Task 07 started from clean detached commit `a11a6d50`. npm's `latest` tag was
 verified as 7.0.2 on 2026-10-06 (next was 7.1.0-dev.20261005.1).
-`@typescript/native` aliases `typescript@^7.0.2`; it replaces native-preview.
+The default `.utoo.toml` TypeScript catalog is `^7.0.2`. Root
+`@typescript/native` aliases the same TS7 package so the root checker can coexist
+with the SWC compiler API dependency.
 Workspace typecheck scripts use `tsc --noEmit`. A fresh native utoo dependency
 resolution was verified to link `.bin/tsc` to TS7.0.2. The former explicit-path
 wrapper has been deleted. Egg 4 templates and the standalone HTTP benchmark use
 `typescript@^7.0.2` directly and plain `tsc`; Egg 3 templates remain unchanged.
 
-The monorepo retains `typescript@^5.9.3` for SWC's compiler API. The current
+Only the root and egg-bin compatibility tests opt into
+`typescript: catalog:compiler-api` (`^5.9.3`) for SWC's compiler API. The current
 `@swc-node/register@1.12.1` declares `typescript >=4.3 <7` and reads
 `ts.ScriptTarget.ES2018`; replacing its API dependency with TS7 reproduces a
 TypeError. This compatibility dependency is separate from the TS7 checker.
@@ -336,3 +339,8 @@ require verification on the final branch.
 
 The package validation regression suite runs through the root prebuild script, so
 CI executes it before tsdown without requiring a workflow change.
+
+The legacy pnpm-workspace.yaml was deleted after native configuration migration.
+The workspace guard executes `tsc --version` using each workspace's local and
+ancestor bin paths and rejects a compiler outside TS7, preventing a same-name
+TS5 executable from silently replacing the native checker.

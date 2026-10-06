@@ -203,7 +203,7 @@
 "type-fest" = "^5.0.1"
 "type-is" = "^2.0.0"
 "typebox" = "^1.0.65"
-"typescript" = "^5.9.3"
+"typescript" = "^7.0.2"
 "unplugin-unused" = "^0.5.4"
 "urijs" = "^1.19.11"
 "urllib" = "^4.8.2"
@@ -219,3 +219,7 @@
 
 [catalogs."path-to-regexp1"]
 "path-to-regexp" = "^1.9.0"
+
+# Legacy compiler API required by the SWC compatibility tests, not the checker.
+[catalogs.compiler-api]
+"typescript" = "^5.9.3"
