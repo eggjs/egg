@@ -98,7 +98,9 @@ describe('test/commands/cov.test.ts', () => {
 
     it('should success with -x to ignore one dirs', async () => {
       await coffee
-        .fork(eggBin, ['cov', '-x', 'ignore/', '--ts=false', 'test/a.test.js,test/b/b.test.js'], { cwd })
+        .fork(eggBin, ['cov', '-x', 'ignore/', '--ts=false', 'test/a.test.js,test/b/b.test.js,test/ignore.test.js'], {
+          cwd,
+        })
         // .debug()
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b[/|\\]b\.test\.js/)
@@ -113,9 +115,19 @@ describe('test/commands/cov.test.ts', () => {
 
     it('should success with -x to ignore multi dirs', async () => {
       await coffee
-        .fork(eggBin, ['cov', '-x', 'ignore2/*', '-x', 'ignore/', '--ts=false', 'test/a.test.js,test/b/b.test.js'], {
-          cwd,
-        })
+        .fork(
+          eggBin,
+          [
+            'cov',
+            '-x',
+            'ignore2/*',
+            '-x',
+            'ignore/',
+            '--ts=false',
+            'test/a.test.js,test/b/b.test.js,test/ignore.test.js',
+          ],
+          { cwd },
+        )
         // .debug()
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b[/|\\]b\.test\.js/)
@@ -124,6 +136,16 @@ describe('test/commands/cov.test.ts', () => {
         .expect('code', 0)
         .end();
       await assertCoverage(cwd);
+      const lcov = await fs.readFile(path.join(cwd, 'coverage/lcov.info'), 'utf8');
+      assert.doesNotMatch(lcov, /ignore[/|\\]a.js/);
+    });
+
+    it.each(['ignore/*', 'ignore/'])('should support absolute coverage exclude %s', async (pattern) => {
+      await coffee
+        .fork(eggBin, ['cov', '-x', path.join(cwd, pattern), '--ts=false', 'test/ignore.test.js'], { cwd })
+        .expect('stdout', /Tests.*passed/)
+        .expect('code', 0)
+        .end();
       const lcov = await fs.readFile(path.join(cwd, 'coverage/lcov.info'), 'utf8');
       assert.doesNotMatch(lcov, /ignore[/|\\]a.js/);
     });

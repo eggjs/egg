@@ -37,31 +37,26 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
       '**/*.test.js',
       '**/__tests__/**',
       '**/node_modules/**',
-      'typings',
+      'typings/**',
       '**/*.d.ts',
     ];
   }
 
   /**
-   * Convert a relative exclude pattern to an absolute path pattern.
-   * This prevents vitest's picomatch (with contains:true) from matching
-   * files in parent directories that happen to share path segments.
-   * e.g. 'test/**' should only exclude the project's own test/ dir,
-   * not files whose absolute path contains 'test/' from parent dirs.
+   * Vitest matches coverage excludes against paths relative to the project root.
+   * Convert absolute patterns, expand directory patterns, and normalize separators.
    */
-  protected toAbsoluteExclude(pat: string, base: string): string {
+  protected toRelativeExclude(pat: string, base: string): string {
     // Handle negated patterns (e.g. '!src/**')
     const isNegated = pat.startsWith('!');
     const rawPattern = isNegated ? pat.slice(1) : pat;
 
-    // Already absolute or starts with ** (position-agnostic) - keep as-is
-    if (path.isAbsolute(rawPattern) || rawPattern.startsWith('**')) {
-      const normalized = rawPattern.replace(/\\/g, '/');
-      return isNegated ? `!${normalized}` : normalized;
+    const relativePattern = path.isAbsolute(rawPattern) ? path.relative(base, rawPattern) : rawPattern;
+    let normalized = relativePattern.replace(/\\/g, '/');
+    if (/[\\/]$/.test(rawPattern)) {
+      normalized = `${normalized.replace(/\/$/, '')}/**`;
     }
-
-    const joined = path.join(base, rawPattern).replace(/\\/g, '/');
-    return isNegated ? `!${joined}` : joined;
+    return isNegated ? `!${normalized}` : normalized;
   }
 
   protected override async buildVitestConfig(files: string[]): Promise<VitestConfig> {
@@ -70,9 +65,9 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
     const base = flags.base.replace(/\\/g, '/');
 
     const coverageExcludes = new Set([
-      ...(process.env.COV_EXCLUDES?.split(',') ?? []).map((p) => this.toAbsoluteExclude(p, base)),
-      ...this.defaultCoverageExcludes.map((p) => this.toAbsoluteExclude(p, base)),
-      ...Array.from(flags.exclude ?? []).map((p) => this.toAbsoluteExclude(p, base)),
+      ...(process.env.COV_EXCLUDES?.split(',') ?? []).map((p) => this.toRelativeExclude(p, base)),
+      ...this.defaultCoverageExcludes.map((p) => this.toRelativeExclude(p, base)),
+      ...Array.from(flags.exclude ?? []).map((p) => this.toRelativeExclude(p, base)),
     ]);
 
     return {

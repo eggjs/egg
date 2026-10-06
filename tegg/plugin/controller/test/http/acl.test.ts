@@ -15,7 +15,7 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
       baseDir: getFixtures('apps/acl-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterAll(() => {
     return app.close();

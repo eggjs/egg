@@ -31,7 +31,7 @@ describe('plugin/orm/test/orm.test.ts', () => {
     });
     await app.ready();
     appService = await app.getEggObject(AppService);
-  });
+  }, 30_000);
 
   afterAll(() => {
     return app.close();
@@ -161,12 +161,11 @@ describe('plugin/orm/test/orm.test.ts', () => {
       let ctx: Context;
       await app.leoricRegister.ready();
       for (const realm of app.leoricRegister.realmMap.values()) {
-        // @ts-expect-error: the library definition is wrong
         realm.driver.logger = new Realm.Logger({
           // eslint-disable-next-line no-loop-func
-          logQuery(_: any, __: any, options: { Model: { ctx: any } }) {
-            if (options.Model) {
-              ctx = options.Model.ctx;
+          logQuery(_sql, _duration, options) {
+            if (options && 'Model' in options && options.Model) {
+              ctx = Reflect.get(options.Model, 'ctx');
             }
           },
         });

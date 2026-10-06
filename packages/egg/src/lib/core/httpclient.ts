@@ -41,7 +41,18 @@ export class HttpClient extends RawHttpClient {
     // This enables tracer injection, custom headers, retry logic, etc.
     if (config.interceptors?.length) {
       const originalDispatcher = this.getDispatcher();
-      this.setDispatcher(originalDispatcher.compose(...config.interceptors));
+      this.setDispatcher(
+        originalDispatcher.compose(
+          (dispatch) => (opts, handler) => {
+            // Undici 7 forwards this routing option after selecting the dispatcher.
+            // Node.js 26's dispatcher rejects it on instance dispatch calls.
+            const { dispatcher: _dispatcher, ...dispatchOptions } = opts as typeof opts &
+              Pick<RequestOptions, 'dispatcher'>;
+            return dispatch(dispatchOptions, handler);
+          },
+          ...config.interceptors,
+        ),
+      );
     }
   }
 

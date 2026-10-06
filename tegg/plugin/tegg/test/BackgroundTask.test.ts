@@ -28,7 +28,7 @@ describe('plugin/tegg/test/BackgroundTask.test.ts', () => {
       baseDir: appDir,
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('background task should work', async () => {
     app.mockCsrf();

@@ -52,7 +52,11 @@ describe('test/snapshot-start.test.ts', () => {
     process.env.MOCK_HOME_DIR = homeDir;
     spawnMock.mockReset();
     spawnMock.mockImplementation(() => ({
-      once: vi.fn().mockReturnThis(),
+      // foreground start awaits the child's exit inside run(), so report a
+      // clean exit as soon as the listener attaches to let Start.run() settle
+      once: vi.fn((event: string, cb: (code: number | null, signal: NodeJS.Signals | null) => void) => {
+        if (event === 'exit') cb(0, null);
+      }),
       on: vi.fn().mockReturnThis(),
       unref: vi.fn(),
       disconnect: vi.fn(),

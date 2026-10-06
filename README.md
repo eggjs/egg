@@ -27,7 +27,7 @@ English | [简体中文](./README.zh-CN.md)
 Follow the commands listed below.
 
 ```bash
-$ corepack enable utoo
+$ npm install --global utoo@latest
 $ mkdir showcase && cd showcase
 $ ut create egg@beta
 $ ut install
@@ -35,7 +35,7 @@ $ ut run dev
 $ open http://localhost:7001
 ```
 
-> Node.js >= 22.18.0 required.
+> Node.js >=22.18.0 required. Use the latest patch of an active LTS release for production.
 
 ## Monorepo Structure
 
@@ -52,7 +52,7 @@ The monorepo uses **utoo catalog mode** for centralized dependency management, e
 
 ```bash
 # Install dependencies for all packages
-ut install --from pnpm
+ut install
 
 # Build all packages
 ut run build

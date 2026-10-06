@@ -6,6 +6,8 @@ import spawn from 'cross-spawn';
 import mri from 'mri';
 import colors from 'picocolors';
 
+import { toExitCode } from './utils.ts';
+
 const { blue, blueBright, green, greenBright, yellow } = colors;
 
 const argv = mri<{
@@ -195,10 +197,10 @@ export async function init(): Promise<void> {
     const [command, ...args] = fullCustomCommand.split(' ');
     // we replace TARGET_DIR here because targetDir may include a space
     const replacedArgs = args.map((arg) => arg.replace('TARGET_DIR', () => targetDir));
-    const { status } = spawn.sync(command, replacedArgs, {
+    const result = spawn.sync(command, replacedArgs, {
       stdio: 'inherit',
     });
-    process.exit(status ?? 0);
+    process.exit(toExitCode(result.status, result.signal));
   }
 
   prompts.log.step(`Scaffolding project with ${blueBright(template)} in ${root}...`);

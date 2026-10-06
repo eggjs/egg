@@ -5,19 +5,86 @@ summary: Local validation should run tests from clean sources and avoid stale bu
 source_files:
   - AGENTS.md
   - .github/workflows/ci.yml
+  - .github/workflows/e2e-test.yml
+  - ecosystem-ci/patch-project.ts
+  - ecosystem-ci/repo.json
+  - .utoo.toml
+  - codecov.yml
   - package.json
+  - tools/create-egg/package.json
+  - tools/egg-bin/package.json
+  - tools/egg-bin/tsconfig.json
+  - tools/scripts/src/commands/start.ts
+  - packages/egg/src/lib/core/httpclient.ts
   - tegg/core/loader/src/impl/ModuleLoader.ts
   - tegg/core/metadata/src/model/graph/GlobalGraph.ts
   - tegg/plugin/controller/test/fixtures/apps
-updated_at: 2026-07-13
+updated_at: 2026-10-06
 status: active
 ---
 
 # Local CI
 
+The workspace and create-egg require Node.js `>=22.18.0`. Engines retain an
+open minimum rather than an enumerated major allowlist. For production, use
+the latest patch of a Node.js LTS release that has not reached EOL.
+
 The repository's GitHub CI test job installs dependencies with
-`ut install --from pnpm` and runs tests with `ut run ci` for the main test
-matrix. It does not build packages before running tests.
+`ut install`. Ordinary PRs run Node.js 22, 24, and 26 on Linux, plus Node.js 24 on macOS
+and Windows. Four slower combinations use two shards; Linux Node.js 26 uses one.
+Merge groups, `next` pushes, manual runs, and PR runs with the `ci:full` label use
+the complete Node.js 22/24/26 × Linux/macOS/Windows matrix without sharding. It uses `ut run test`, or `ut run ci` for the
+coverage job, without building packages before tests.
+
+The egg-bin matrix runs Node.js 24 and 26 on Linux and Windows. The egg-scripts
+matrix runs Node.js 22, 24, and 26 on Linux. The tegg Vitest adapter runs both
+isolated and shared workers on Node.js 24 and 26 on Linux. Coverage reports
+come from the Linux Node.js 24 jobs. The main-suite coverage job checks the
+complete, disjoint shard inventory before merging Vitest blob coverage reports.
+The final `done` check fails if required jobs fail, are cancelled, or are skipped
+unexpectedly.
+
+Ecosystem CI patches external applications with workspace tarballs. Both cnpmcore
+jobs use the upstream commit pinned in `ecosystem-ci/repo.json`, which declares
+Vitest 5.0.1 and its matching coverage provider. This keeps their test runner
+compatible with the local CLI and tegg adapter without extra Vitest overrides.
+The cnpmcore deployment smoke test uses `--ignore-stderr` because its WebAuthn
+dependency emits experimental Web Crypto warnings on Node.js 24. The subsequent
+HTTP health check still requires a successful response before the job passes.
+
+Node.js 26 treats garbage collection of an unclosed `FileHandle` as an error.
+The scripts daemon launcher keeps both log handles until `spawn()` returns and
+then closes the parent's handles, including on startup errors. The child keeps
+its inherited descriptors.
+
+The HTTP client removes Undici 7's `dispatcher` routing option before a configured
+interceptor chain reaches the original dispatcher. Node.js 26 rejects that option
+on instance dispatch calls.
+
+## Coverage checks
+
+`codecov.yml` keeps project and patch coverage checks enabled. Project coverage
+uses the base commit as its target and permits a decrease of up to one percentage
+point. Patch coverage has a fixed 75% minimum, so small changes do not have to
+match the whole repository's coverage ratio.
+
+## Exception: egg-bin tests need a built dist
+
+The dedicated `test-egg-bin` CI job builds egg-bin in its own step
+(`ut run build` with `working-directory: tools/egg-bin`) before
+`ut run test --workspace @eggjs/bin`. When filtering with `--workspace`,
+prefer the package-name form: the `./tools/egg-bin` path form does not match
+on Windows, and a failed build surfaces later as dozens of
+`command dev not found` test failures. The oclif CLI under test loads commands
+from `tools/egg-bin/dist/commands` (`oclif.commands` in its package.json), and
+oclif's tsconfig fallback cannot map that path back to `src/` (no
+`rootDir`/`baseUrl` in the package tsconfig), so an unbuilt checkout fails every
+coffee-forked test with `Error: command dev not found`.
+
+Locally: build egg-bin before running its test suite, re-build after every
+source change under `tools/egg-bin/src` (tests exercise the compiled output),
+and remove `tools/egg-bin/dist` afterwards so the stale-dist rules below hold
+for tegg runs.
 
 Local validation should follow the same shape for unit tests: run tests from
 clean source files, and build separately when validating generated output,

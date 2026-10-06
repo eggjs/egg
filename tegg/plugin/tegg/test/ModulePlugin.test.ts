@@ -20,7 +20,7 @@ describe('plugin/tegg/test/ModulePlugin.test.ts', () => {
       framework: path.join(import.meta.dirname, '../../../../packages/egg'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await app.close();

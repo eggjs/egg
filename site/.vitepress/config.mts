@@ -162,6 +162,7 @@ function nav(): DefaultTheme.NavItem[] {
     {
       text: `v${version}`,
       items: [
+        { text: 'PR Preview Packages', link: '/releases/pr-preview-packages' },
         {
           text: 'v3.x',
           link: 'https://v3.eggjs.org',
@@ -221,6 +222,7 @@ function navZhCN(): DefaultTheme.NavItem[] {
     {
       text: `v${version}`,
       items: [
+        { text: 'PR 预览包', link: '/zh-CN/releases/pr-preview-packages' },
         {
           text: 'v3.x',
           link: 'https://v3.eggjs.org',

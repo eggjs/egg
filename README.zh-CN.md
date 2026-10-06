@@ -21,12 +21,12 @@
 - 深度框架定制
 - 丰富的[插件](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 
-> 支持 Node.js >= 22.18.0 及以上版本。
+> 支持 Node.js >=22.18.0。生产环境建议使用处于支持期的 LTS 最新补丁，避免使用已 EOL 的 Node.js 版本。
 
 ## 快速开始
 
 ```bash
-corepack enable utoo
+npm install --global utoo@latest
 mkdir showcase && cd showcase
 ut create egg@beta
 ut install
