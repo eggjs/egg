@@ -114,7 +114,20 @@ Then re-run tests.
 
 This repository also maintains an LLM-owned wiki for durable project knowledge.
 
-Use this three-layer model:
+### Explicit Wiki Write Trigger
+
+Create, update, reorganize, or log wiki content only when the user explicitly
+requests a wiki build or maintenance task. Reading the wiki for context does
+not authorize writing to it.
+
+Ordinary coding, debugging, testing, reviews, documentation edits, and PR work
+must not produce wiki changes, even when they reveal durable findings or change
+APIs, architecture, contributor workflows, or testing expectations. Do not
+include incidental wiki updates in commits or PRs. Report relevant findings in
+the task response or PR description instead.
+
+The wiki writing rules below apply only within an explicitly requested wiki
+task. Use this three-layer model:
 
 ### Raw Sources
 
@@ -132,7 +145,7 @@ Rules:
 
 - do not treat wiki summaries as authoritative when raw sources disagree
 - do not rewrite raw sources unless the task requires it
-- if you rely on an external source repeatedly, capture it in the wiki
+- during an explicitly requested wiki task, capture repeatedly used external sources in the wiki
 
 ### Wiki
 
@@ -146,7 +159,7 @@ Agent-specific files should stay thin and point back to this file instead of dup
 
 ## Wiki Layout
 
-- `wiki/index.md` is the first wiki file to read
+- when consulting the wiki, read `wiki/index.md` first
 - `wiki/log.md` is the append-only chronological log
 - `wiki/packages/` holds package, plugin, tool, and subsystem pages
 - `wiki/concepts/` holds architectural and cross-cutting pages
@@ -210,6 +223,10 @@ Do not log trivial typo-only edits.
 
 ## Standard Workflows
 
+Ingest and Lint are wiki maintenance workflows and require an explicit user
+request. Query is read-only by default; its write-back steps apply only when
+the user also explicitly requests wiki construction or maintenance.
+
 ### Ingest
 
 1. Read `wiki/index.md`.
@@ -224,8 +241,8 @@ Do not log trivial typo-only edits.
 1. Read `wiki/index.md` and relevant wiki pages first.
 2. Use the wiki as the starting point, not the final authority.
 3. Read raw sources for verification, detail, or freshness.
-4. Write durable new findings back into the wiki.
-5. Update the log when the wiki changes materially.
+4. Only within an explicitly requested wiki task, write durable findings back into the wiki.
+5. Only within that wiki task, update the log when the wiki changes materially.
 
 ### Lint
 
@@ -253,13 +270,7 @@ Prioritize durable wiki coverage for:
 
 ## Change Trigger
 
-Update the wiki when a task materially changes:
-
-- public APIs
-- docs structure or contributor guidance
-- package responsibilities
-- architectural behavior
-- repeated workflows used by contributors
-- testing or release expectations
-
-For code-only tasks, avoid wiki churn unless durable understanding changed.
+Only an explicit user request to build or maintain the wiki triggers wiki
+output. Code or documentation changes and newly discovered findings do not
+trigger it automatically. Leave existing wiki files unchanged during ordinary
+tasks.

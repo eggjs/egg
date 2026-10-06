@@ -1,22 +1,26 @@
-import { setTimeout as sleep } from 'node:timers/promises';
-
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, beforeAll, expect } from 'vitest';
+import { describe, it, afterAll, beforeAll } from 'vitest';
 
-import { getFixtures, getScheduleLogContent } from './utils.ts';
+import { getFixtures } from './utils.ts';
 
-// TODO: flaky test on windows, Hook timed out in 20000ms
-describe.skipIf(process.platform === 'win32')('test/unknown.test.ts', () => {
+describe('test/unknown.test.ts', () => {
   let app: MockApplication;
   beforeAll(async () => {
-    app = mm.cluster({ baseDir: getFixtures('unknown'), workers: 2 });
-    // app.debug();
+    app = mm.app({ baseDir: getFixtures('unknown') });
     await app.ready();
+    app.mockLog('scheduleLogger');
   });
-  afterAll(() => app.close());
+  afterAll(async () => {
+    await app.close();
+    await mm.restore();
+  });
 
-  it('should schedule unknown task', async () => {
-    await sleep(3000);
-    expect(getScheduleLogContent('unknown')).toMatch(/no-exist unknown task/);
+  it('should warn about an unknown task', async () => {
+    // Await the registered async message handler, including its app.ready() wait.
+    // No cluster boot, IPC timer or file flush is needed to test the unknown-task branch.
+    for (const listener of app.messenger.listeners('egg-schedule')) {
+      await listener({ key: 'no-exist' });
+    }
+    app.expectLog(/no-exist unknown task/, 'scheduleLogger');
   });
 });

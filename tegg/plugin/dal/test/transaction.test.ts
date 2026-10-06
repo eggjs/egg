@@ -3,11 +3,24 @@ import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
 
 import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.ts';
+import { Foo } from './fixtures/apps/dal-app/modules/dal/Foo.ts';
 import { FooService } from './fixtures/apps/dal-app/modules/dal/FooService.ts';
 import { getFixtures } from './utils.ts';
 
 describe('plugin/dal/test/transaction.test.ts', () => {
   let app: MockApplication;
+
+  async function cleanTransactionRows(): Promise<void> {
+    const mysqlDataSourceManager = await app.getEggObjectFromName<MysqlDataSourceManager>('mysqlDataSourceManager');
+    const dataSource = mysqlDataSourceManager.get('dal', 'foo')!;
+    // The CRUD suite uses this database concurrently. Only delete rows owned by this suite.
+    await dataSource.query('delete from egg_foo where name in (?, ?, ?, ?)', [
+      'insert_succeed_transaction_1',
+      'insert_succeed_transaction_2',
+      'insert_failed_transaction_1',
+      'insert_failed_transaction_2',
+    ]);
+  }
 
   afterEach(async () => {
     return mm.restore();
@@ -20,14 +33,26 @@ describe('plugin/dal/test/transaction.test.ts', () => {
     await app.ready();
   }, 30_000);
 
-  afterEach(async () => {
-    const mysqlDataSourceManager = await app.getEggObjectFromName<MysqlDataSourceManager>('mysqlDataSourceManager');
-    const dataSource = mysqlDataSourceManager.get('dal', 'foo')!;
-    await dataSource.query('delete from egg_foo;');
-  });
+  afterEach(cleanTransactionRows);
 
   afterAll(() => {
     return app.close();
+  });
+
+  it('should preserve unrelated rows when cleaning transaction fixtures', async () => {
+    await app.mockModuleContextScope(async () => {
+      const fooDao = await app.getEggObject(FooDAO);
+      const foo = Foo.buildObj();
+      foo.name = 'unrelated_transaction_cleanup';
+      const { insertId } = await fooDao.insert(foo);
+      try {
+        await cleanTransactionRows();
+        expect((await fooDao.findByPrimary(insertId))?.id).toBe(insertId);
+        expect((await fooDao.delete(insertId)).affectedRows).toBe(1);
+      } finally {
+        await fooDao.delete(insertId);
+      }
+    });
   });
 
   describe('succeed transaction', () => {
