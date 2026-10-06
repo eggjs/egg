@@ -511,3 +511,8 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - Added release regression tests for git argv, illegal refs, prerelease-to-latest refusal, projected workspace dependencies and manifest restoration. See [Secure release pipeline](./decisions/secure-release-pipeline.md). No push, dispatch or publication performed.
 
 - Follow-up local verification: full build, 85 offline npm publish dry-runs and inspection of all 85 real tarballs passed; all 1099 temporary manifests restored. Targeted tests passed on Node 22 and 26. Registry/OIDC and the workflow Node 24 environment remain outside this local verification.
+
+## 2026-10-06 — Release workflow documentation
+
+- Rewrote the PR 6017 decision page as [Package release workflow](./workflows/release.md), organized around release inputs, local validation, execution and recovery. Removed the decision page and updated the index.
+- Moved one-time validation evidence into the PR description; the workflow page retains repeatable procedures and their limits. Historical log entries above refer to the former decision path.
