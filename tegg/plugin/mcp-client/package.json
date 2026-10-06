@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mcp-client-plugin",
-  "version": "4.0.2-rc.0",
+  "version": "4.0.2-rc.1",
   "description": "mcp client for egg",
   "keywords": [
     "egg",

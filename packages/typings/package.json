@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/typings",
-  "version": "4.1.2-rc.0",
+  "version": "4.1.2-rc.1",
   "description": "Shared typings for egg projects",
   "keywords": [
     "egg",
