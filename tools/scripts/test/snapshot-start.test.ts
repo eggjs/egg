@@ -99,6 +99,9 @@ describe('test/snapshot-start.test.ts', () => {
     // self-contained snapshot boot — no egg-cluster server bin
     expect(args.join(' ')).not.toContain('start-cluster');
     expect(args).toEqual(expect.arrayContaining(['--snapshot-blob', path.join(baseDir, 'snapshot.blob')]));
+    // Keep --title in application argv: Node's title option hides the command
+    // line from stop discovery on macOS.
+    expect(args.slice(-2)).toEqual(['--', '--title=egg-server-example']);
     // --title=... appended for `egg-scripts stop` grep
     expect(args.some((a) => a.startsWith('--title=egg-server-'))).toBe(true);
     expect(options.env.NODE_ENV).toBe('production');
