@@ -63,7 +63,7 @@
     "build": "tsdown",
     "clean": "rimraf dist",
     "lint": "oxlint --type-aware",
-    "typecheck": "tsgo --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {

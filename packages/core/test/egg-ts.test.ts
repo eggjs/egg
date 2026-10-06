@@ -1,12 +1,11 @@
 import assert from 'node:assert/strict';
 
 import { request } from '@eggjs/supertest';
-import coffee from 'coffee';
 import { mm } from 'mm';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { utils } from '../src/index.ts';
-import { createApp, getFilepath, type Application } from './helper.ts';
+import { createApp, type Application } from './helper.ts';
 
 describe('test/egg-ts.test.ts', () => {
   let app: Application | undefined;
@@ -175,46 +174,5 @@ describe('test/egg-ts.test.ts', () => {
     await app.loader.loadService();
     assert(app.serviceClasses.lord);
     assert(!app.serviceClasses.test);
-  });
-
-  it.skip('should compile app-ts without error', async () => {
-    await coffee
-      .spawn('node', ['--require', 'ts-node/register/type-check', getFilepath('app-ts/app.ts')], {
-        env: {
-          ...process.env,
-          TS_NODE_PROJECT: getFilepath('app-ts/tsconfig.json'),
-        },
-      })
-      .debug()
-      .expect('code', 0)
-      .end();
-  });
-
-  it.skip('should compile error with app-ts/error', async () => {
-    await coffee
-      .spawn('node', ['--require', 'ts-node/register/type-check', getFilepath('app-ts/app-error.ts')], {
-        env: {
-          ...process.env,
-          TS_NODE_PROJECT: getFilepath('app-ts/tsconfig.json'),
-        },
-      })
-      .debug()
-      .expect('stderr', /Property 'abb' does not exist on type 'EggCore<{ env: string; }>'/)
-      .expect('stderr', /Property 'abc' does not exist on type 'typeof BaseContextClass'/)
-      .expect('stderr', /'loadPlugin' is protected/)
-      .expect('stderr', /'loadConfig' is protected/)
-      .expect('stderr', /'loadApplicationExtend' is protected/)
-      .expect('stderr', /'loadAgentExtend' is protected/)
-      .expect('stderr', /'loadRequestExtend' is protected/)
-      .expect('stderr', /'loadResponseExtend' is protected/)
-      .expect('stderr', /'loadContextExtend' is protected/)
-      .expect('stderr', /'loadHelperExtend' is protected/)
-      .expect('stderr', /'loadCustomAgent' is protected/)
-      .expect('stderr', /'loadService' is protected/)
-      .expect('stderr', /'loadController' is protected/)
-      .expect('stderr', /Property 'checkEnvType' does not exist on type 'string'/)
-      .expect('stderr', /'ctx' is protected/)
-      .expect('code', 1)
-      .end();
   });
 });

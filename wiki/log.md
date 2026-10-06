@@ -532,3 +532,53 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 
 - Removed the exact packageManager pin, restored the utoo catalog range to ^1, and switched CI/bootstrap instructions to latest at the user’s request. Native workspace/catalog configuration remains authoritative.
 - Removed the E2E-only utoo@1.1.1 temporary installation; packing now reuses the latest CLI from setup-utoo and the tracked native configuration.
+
+## 2026-10-06 — TypeScript 7 task 07
+
+- Verified npm stable 7.0.2 and Microsoft migration guidance; recorded explicit native invocation, API compatibility dependencies, source adjustments, verification and performance sample in workflows/typescript-7.md.
+- Full-suite DAL failure and utoo root dispatch failure remain verification limits; final 02 rehearsal must rerun after integration.
+
+## 2026-10-06 — tsdown retry after 02a
+
+- Retried stable tsdown 0.23.0 using the committed 02a native utoo configuration. Root typecheck passed; tsdown automatic pnpm selection still failed. Explicit utoo packing and strict publint passed for all 85 tarballs. Restored the trial and documented the remaining build integration in workflows/typescript-7.md.
+
+## 2026-10-06 — Persistent tsdown upgrade
+
+- Retained tsdown ^0.23.0 with an explicit utoo tarball/publint build hook, isolated package copies and four CI regression tests. Verified all 85 public packages, filtered builds and examples. Recorded unresolved DNS test failures and 02a native catalog integration requirements in workflows/typescript-7.md.
+
+### 2026-10-06 — Remove framework ts-node dependency
+
+- Replaced remaining CLI development loaders and implicit ESM fallback with Oxc;
+  plain JS ESM apps no longer receive a TS loader. Kept application-owned custom
+  compiler support and its explicit ts-node fixture.
+- Removed catalog dependency and obsolete skipped type-check tests; updated
+  TypeScript migration workflow with compatibility boundaries and validation.
+
+### 2026-10-06 — Expanded 07 CI and cnpmcore verification
+
+- Complete local Node 24 main coverage run passed (3677 tests, 82.86% lines) after
+  isolating ORM databases and bypassing Surge; CLI coverage, adapter workers,
+  examples, site build and 87 typechecks passed.
+- cnpmcore uses the pinned upstream commit and 85 local tarballs without ts-node.
+  Three full runs retained intermittent TeamController/BinarySyncer failures;
+  isolated retries pass. Deployment and snapshot health checks pass. Full consumer
+  stability and the unrun remote matrix remain explicit limits.
+- Added local-ci guidance for scoped Surge bypass and serial CLI process suites.
+
+### 07 compiler command cleanup
+
+- Replaced workspace compiler path wrappers with `tsc --noEmit`; deleted scripts/tsc.js. Fresh utoo resolution selects TS7.0.2 and all workspace typechecks passed.
+- Egg 4 templates and the HTTP benchmark now declare typescript ^7.0.2 directly. TS5.9 remains in the monorepo for SWC compiler API compatibility; TS7 replacement reproduces an API error in @swc-node/register 1.12.1. Four CLI compiler initialization tests passed.
+
+### 07 authoritative catalog and compiler verification
+
+- Deleted legacy pnpm-workspace.yaml. Default TypeScript catalog is now TS7; only root and egg-bin compatibility tests select the named compiler-api TS5 catalog.
+- Added an installed-toolchain guard that checks the actual tsc version from every workspace bin path; all checks select TS7. All workspace typechecks passed after fresh utoo resolution.
+- Full build/declarations and public tarball validation passed; 17 tooling guards and four CLI compiler initialization tests passed after this catalog separation.
+
+## 2026-10-06 — Scripts Windows sourcemap regression coverage
+
+- Added Windows Node.js 24 coverage for ESM file URL preloads, special-character paths, CJS preloads, and foreground child exit handling in `.github/workflows/ci.yml` and `tools/scripts/test/start-unit.test.ts`.
+- Refreshed [Local CI](./workflows/local-ci.md) to describe the targeted Windows job and scripts-only build prerequisite.
+
+- Windows source-level regression tests skip the Linux CLI build step: utoo interprets its tsdown path filter as a workspace selection on Windows, while these tests do not require `dist`.

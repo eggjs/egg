@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = () => {
-  if (require.extensions['.ts']) {
-    console.log('### inject ts-node/register at agent');
+  if (process.env.EGG_TEST_REQUIRE_HOOK === 'true') {
+    console.log('### inject additional require hook at agent');
   }
 };

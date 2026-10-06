@@ -86,7 +86,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit --project tsconfig.typecheck.json"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
