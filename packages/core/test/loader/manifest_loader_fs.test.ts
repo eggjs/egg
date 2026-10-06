@@ -3,10 +3,10 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
+import { ManifestLoaderFS, RealLoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
 import { setBundleModuleLoader } from '@eggjs/utils';
 import { afterEach, describe, it } from 'vitest';
 
-import { ManifestLoaderFS, RealLoaderFS, type LoaderFSGlobOptions } from '../../src/loader/loader_fs.ts';
 import { ManifestStore, type StartupManifest } from '../../src/loader/manifest.ts';
 
 describe('test/loader/manifest_loader_fs.test.ts', () => {

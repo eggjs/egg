@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import yaml from 'js-yaml';
+import semver from 'semver';
 
 // Dependency fields whose `workspace:` / `catalog:` specifiers must be resolved
 // before publishing with npm.
@@ -226,4 +227,33 @@ export function applyPublishConfigOverrides(manifest) {
     }
   }
   return overridden;
+}
+
+// Project the same versions as version.js without changing source manifests.
+// This option is only permitted during packing previews, never real publishing.
+export function projectPublishVersions(packages, versionMap, { dryRun, versionType, prereleaseTag = 'beta' }) {
+  if (!versionType) return { packages, versionMap };
+  if (!dryRun) throw new Error('--version-type requires --dry-run');
+  if (!['major', 'minor', 'patch', 'prerelease', 'prepatch', 'preminor', 'premajor'].includes(versionType)) {
+    throw new Error(`Invalid version type: ${versionType}`);
+  }
+  if (!['alpha', 'beta', 'rc'].includes(prereleaseTag)) throw new Error(`Invalid prerelease tag: ${prereleaseTag}`);
+  const projectedMap = { ...versionMap };
+  const projected = packages.map((pkg) => {
+    const version = semver.inc(pkg.version, versionType, prereleaseTag);
+    if (!version) throw new Error(`Invalid version for ${pkg.name}: ${pkg.version}`);
+    projectedMap[pkg.name] = version;
+    return { ...pkg, version };
+  });
+  return { packages: projected, versionMap: projectedMap };
+}
+
+export function assertPublishTag(packages, tag) {
+  for (const pkg of packages) {
+    assertValidNpmPackageName(pkg.name);
+    if (!semver.valid(pkg.version)) throw new Error(`Invalid version for ${pkg.name}: ${pkg.version}`);
+    if (tag === 'latest' && semver.prerelease(pkg.version)) {
+      throw new Error(`Refusing to publish prerelease ${pkg.name}@${pkg.version} to latest`);
+    }
+  }
 }

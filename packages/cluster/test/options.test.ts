@@ -152,6 +152,65 @@ describe('test/options.test.ts', () => {
     });
   });
 
+  describe('worker files / snapshot blobs', () => {
+    const baseDir = path.join(__dirname, '..');
+
+    it('should resolve appWorkerFile and agentWorkerFile against baseDir', async () => {
+      const options = await parseOptions({
+        baseDir,
+        appWorkerFile: 'package.json',
+        agentWorkerFile: 'package.json',
+      });
+      assert.equal(options.appWorkerFile, path.join(baseDir, 'package.json'));
+      assert.equal(options.agentWorkerFile, path.join(baseDir, 'package.json'));
+    });
+
+    for (const optionName of ['appWorkerFile', 'agentWorkerFile'] as const) {
+      it(`should reject a missing ${optionName}`, async () => {
+        await assert.rejects(
+          parseOptions({ baseDir, [optionName]: 'no-such-worker.js' }),
+          new RegExp(`options\\.${optionName} file should exist`),
+        );
+      });
+
+      it(`should accept ${optionName} with worker_threads startMode`, async () => {
+        const options = await parseOptions({ baseDir, [optionName]: 'package.json', startMode: 'worker_threads' });
+        assert.equal(options[optionName], path.join(baseDir, 'package.json'));
+      });
+
+      it(`should normalize an empty ${optionName}`, async () => {
+        const options = await parseOptions({ baseDir, [optionName]: '' });
+        assert.equal(options[optionName], undefined);
+      });
+    }
+
+    for (const optionName of ['appSnapshotBlob', 'agentSnapshotBlob'] as const) {
+      it(`should resolve ${optionName} against baseDir without requiring a worker file`, async () => {
+        const options = await parseOptions({ baseDir, [optionName]: 'package.json' });
+        assert.equal(options[optionName], path.join(baseDir, 'package.json'));
+      });
+
+      it(`should reject a missing ${optionName}`, async () => {
+        await assert.rejects(
+          parseOptions({ baseDir, [optionName]: 'no-such-snapshot.blob' }),
+          new RegExp(`options\\.${optionName} file should exist`),
+        );
+      });
+
+      it(`should reject ${optionName} with worker_threads startMode`, async () => {
+        await assert.rejects(
+          parseOptions({ baseDir, [optionName]: 'package.json', startMode: 'worker_threads' }),
+          new RegExp(`options\\.${optionName} only supports startMode "process"`),
+        );
+      });
+
+      it(`should normalize an empty ${optionName}`, async () => {
+        const options = await parseOptions({ baseDir, [optionName]: '' });
+        assert.equal(options[optionName], undefined);
+      });
+    }
+  });
+
   // TODO: flaky test on windows, Hook timed out in 20000ms
   describe.skipIf(process.platform === 'win32')('options', () => {
     let app: any;

@@ -1,0 +1,7 @@
+{
+  "name": "dalmanagerinject",
+  "type": "module",
+  "eggModule": {
+    "name": "dalmanagerinject"
+  }
+}

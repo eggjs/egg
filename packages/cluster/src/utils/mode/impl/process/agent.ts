@@ -1,7 +1,6 @@
 import { fork, type ChildProcess, type ForkOptions } from 'node:child_process';
 import { debuglog } from 'node:util';
 
-import { graceful as gracefulExit, type Options as gracefulExitOptions } from 'graceful-process';
 import { sendmessage } from 'sendmessage';
 
 import { ClusterAgentWorkerError } from '../../../../error/ClusterAgentWorkerError.ts';
@@ -18,20 +17,6 @@ export class AgentProcessWorker extends BaseAgentWorker<ChildProcess> {
 
   send(message: MessageBody): void {
     sendmessage(this.instance, message);
-  }
-
-  static send(message: MessageBody): void {
-    message.senderWorkerId = String(process.pid);
-    process.send!(message);
-  }
-
-  static kill(): void {
-    process.exitCode = 1;
-    process.kill(process.pid);
-  }
-
-  static gracefulExit(options: gracefulExitOptions): void {
-    gracefulExit(options);
   }
 }
 
@@ -55,9 +40,17 @@ export class AgentProcessUtils extends BaseAgentUtils {
     if (this.options.isDebug) {
       forkOptions.execArgv = process.execArgv.concat([`--inspect-port=${debugPort}`]);
     }
+    if (this.options.agentSnapshotBlob) {
+      forkOptions.execArgv = [
+        ...(forkOptions.execArgv ?? process.execArgv),
+        '--snapshot-blob',
+        this.options.agentSnapshotBlob,
+      ];
+    }
 
     debug('forkOptions: %j, args: %s', forkOptions, args);
-    const agentProcess = (this.#agentProcess = fork(this.getAgentWorkerFile(), args, forkOptions));
+    const agentWorkerFile = this.options.agentWorkerFile || this.getAgentWorkerFile();
+    const agentProcess = (this.#agentProcess = fork(agentWorkerFile, args, forkOptions));
     const agentWorker = (this.instance = new AgentProcessWorker(agentProcess));
     agentWorker.status = 'starting';
     agentWorker.id = ++this.#id;

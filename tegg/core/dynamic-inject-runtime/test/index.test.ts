@@ -1,9 +1,8 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
-import { LoadUnitFactory } from '@eggjs/metadata';
 import { EggTestContext, CoreTestHelper } from '@eggjs/module-test-util';
-import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+import { type LoadUnitInstance } from '@eggjs/tegg-runtime';
 import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { HelloService } from './fixtures/modules/dynamic-inject-module/HelloService.js';
@@ -18,10 +17,7 @@ describe('test/dynamic-inject-runtime.test.ts', () => {
   });
 
   afterEach(async () => {
-    for (const module of modules) {
-      await LoadUnitFactory.destroyLoadUnit(module.loadUnit);
-      await LoadUnitInstanceFactory.destroyLoadUnitInstance(module);
-    }
+    await CoreTestHelper.destroyModules(modules);
   });
 
   it('should work', async () => {

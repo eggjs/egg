@@ -1,29 +1,43 @@
 # Bundle output structure
 
-`@eggjs/egg-bundler` produces a self-contained, runnable CJS bundle under the
-configured `outputDir`. Everything except declared externals is inlined into
-the chunks.
+`@eggjs/egg-bundler` produces a runnable CJS bundle under the configured
+`outputDir`. Everything except configured or auto-detected externals is inlined
+into the generated worker file by default.
 
 ## Layout
 
 ```
 <outputDir>/
-├── worker.js                          # main entry chunk produced from the synthetic worker.entry.ts
-├── worker.js.map                      # sourcemap for the worker entry
-├── _root-of-the-server___<hash>.js    # module graph chunk (@utoo/pack)
-├── _root-of-the-server___<hash>.js.map
-├── _turbopack__runtime.js             # @utoo/pack runtime shim
-├── _turbopack__runtime.js.map
-├── app/port/binary.html               # app runtime asset copied from <baseDir>/app/port/binary.html
-├── app/port/login.html                # app runtime asset copied from <baseDir>/app/port/login.html
-├── tsconfig.json                      # written by PackRunner; SWC reads decorator options from here
-├── package.json                       # written by PackRunner; `{ "type": "commonjs" }` so node parses *.js as CJS
-└── bundle-manifest.json               # written by Bundler; reference / debug metadata
+├── worker.js             # self-contained entry produced from worker.entry.ts
+├── app/port/binary.html  # runtime asset copied from <baseDir>/app/port/binary.html
+├── app/port/login.html   # runtime asset copied from <baseDir>/app/port/login.html
+├── package.json          # `{ "type": "commonjs" }`, so Node parses generated *.js as CJS
+└── bundle-manifest.json  # reference/debug metadata written by Bundler
 ```
 
-Chunk filenames prefixed with `_turbopack__` or `_root-of-the-server___` come
-from `@utoo/pack`'s internal chunking; exact names (and their count) can
-change across @utoo/pack versions, so treat them as opaque.
+`pack.singleFile` defaults to `true`. When a programmatic caller explicitly
+sets it to `false`, `@utoo/pack` may also emit opaque module-graph and runtime
+chunks such as `_root-of-the-server___<hash>.js` and
+`_turbopack__runtime.js`. Snapshot builds always force single-file output. The
+compiler `tsconfig.json` is written to the bundler's generated entry directory,
+not to the deploy output.
+
+For `target: 'cluster'`, `worker.js` is replaced by two role-specific entry
+files:
+
+```text
+<outputDir>/
+├── app_worker.js         # self-contained application worker entry
+├── agent_worker.js       # self-contained agent worker entry
+├── app/...               # copied runtime assets, when present
+├── package.json          # `{ "type": "commonjs" }`
+└── bundle-manifest.json
+```
+
+The source generator shares its rendering logic, but each role is a separate
+entry. With the default single-file setting, `@utoo/pack` inlines the complete
+dependency graph into both outputs; snapshot builds rely on this so each file
+can independently build and restore its own V8 snapshot blob.
 
 ## Running the bundle
 
@@ -41,6 +55,28 @@ the deploy output directory separate from the original app paths: the bundle map
 is keyed by relKey, output-dir absolute paths, precomputed original app absolute
 paths, and manifest `resolveCache` request aliases. Application code and plugins
 may still use `fs` for resources such as config, views, or assets.
+
+The supported ordinary cluster workflow is:
+
+```bash
+egg-bin bundle --cluster
+egg-scripts start --bundle --bundle-dir ./dist-bundle
+```
+
+`egg-scripts` resolves `app_worker.js` and `agent_worker.js` from
+`--bundle-dir`, then supplies them to the cluster launcher. Plain bundles
+support process and `worker_threads` start modes. To build and restore
+role-specific V8 snapshots:
+
+```bash
+egg-bin snapshot build --cluster
+egg-scripts start --bundle \
+  --app-snapshot-blob ./dist-bundle/app.snapshot.blob \
+  --agent-snapshot-blob ./dist-bundle/agent.snapshot.blob
+```
+
+Either role blob may be omitted; that role then starts from its bundle
+JavaScript. Snapshot blobs require process mode.
 
 ## Runtime assets
 
@@ -64,8 +100,10 @@ bundle:
     roots:
       - app
     forceCopyDirs:
-      - app/port
       - app/public
+      - app/assets
+      - app/static
+      - app/port
 ```
 
 Applications may also replace the scanned roots with
@@ -81,11 +119,12 @@ A reference file produced by `Bundler` (not consumed at runtime). Shape:
   "version": 1,
   "generatedAt": "2026-04-11T00:00:00.000Z",
   "mode": "production",
+  "target": "single",
   "baseDir": "/abs/path/to/app",
   "framework": "egg",
   "entries": [{ "name": "worker", "source": "/abs/path/to/app/.egg-bundle/entries/worker.entry.ts" }],
-  "externals": ["egg", "ioredis", "mysql2", "..."],
-  "chunks": ["worker.js", "worker.js.map", "..."]
+  "externals": ["some-native-addon", "..."],
+  "chunks": ["package.json", "worker.js", "..."]
 }
 ```
 
@@ -105,10 +144,12 @@ The native addon and missing optional peer checks run only while resolving the
 app's root dependencies/optionalDependencies; `ExternalsResolver` does not
 recursively scan every transitive dependency. `externals.inline`
 removes an auto-detected external unless the same name is also present in
-`externals.force`. External packages must be installed alongside the bundle —
-typically by copying the app's `package.json` next to `worker.js` and running
-`npm ci --omit=dev`, or by deploying into an environment where these dependencies
-are already installed. ESM-only packages, `egg`, `@swc/helpers`, and `@eggjs/*`
+`externals.force`. External packages must be resolvable from the output worker.
+A typical deployment keeps `outputDir` below the application or deployment root
+and installs production dependencies at that root. Do not overwrite the
+generated output `package.json`: its `{ "type": "commonjs" }` marker is required
+when the parent application package uses ESM. ESM-only packages, `egg`,
+`@swc/helpers`, and `@eggjs/*`
 packages are bundled by default unless an explicit or auto-detected external
 rule applies, such as `externals.force`, peer/optional dependency metadata,
 native addon detection, or missing optional peer detection. For wrappers around
@@ -119,9 +160,10 @@ external.
 
 ## Known limitations
 
-- **Agent process**: the bundled app runs in `mode: 'single'`, so the agent
-  runs in-process with the worker. Cluster-mode bundles (separate agent
-  chunk) are not yet supported.
+- **Cluster bootstrap modules**: bundled cluster workers do not support
+  `options.require`; the supported launcher fails before spawning workers.
+- **Snapshot blobs and worker threads**: plain cluster bundles support
+  `worker_threads`, but custom V8 snapshot blobs require process mode.
 - **Native addons**: always external. If a native module is missing from the
   deployment target, the bundle will fail to start at runtime with the usual
   Node module resolution error.

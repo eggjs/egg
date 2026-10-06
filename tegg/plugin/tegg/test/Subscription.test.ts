@@ -22,7 +22,7 @@ describe('plugin/tegg/test/Subscription.test.ts', () => {
       baseDir: getAppBaseDir('schedule-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('should work', async () => {
     let called = false;

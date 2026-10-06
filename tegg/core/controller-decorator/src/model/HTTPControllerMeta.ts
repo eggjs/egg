@@ -1,8 +1,15 @@
 import path from 'node:path';
 
-import type { ControllerMetadata, EggPrototypeName, MiddlewareFunc } from '@eggjs/tegg-types';
+import type {
+  ControllerMetadata,
+  EggProtoImplClass,
+  EggPrototypeName,
+  IAdvice,
+  MiddlewareFunc,
+} from '@eggjs/tegg-types';
 import { ControllerType } from '@eggjs/tegg-types';
 
+import { ControllerAdviceMeta } from './ControllerAdviceMeta.ts';
 import { HTTPMethodMeta } from './HTTPMethodMeta.ts';
 
 export class HTTPControllerMeta implements ControllerMetadata {
@@ -12,6 +19,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
   public readonly type: ControllerType = ControllerType.HTTP;
   public readonly path?: string;
   public readonly middlewares: readonly MiddlewareFunc[];
+  public readonly advices: readonly EggProtoImplClass<IAdvice>[];
   public readonly methods: readonly HTTPMethodMeta[];
   public readonly needAcl: boolean;
   public readonly aclCode?: string;
@@ -29,12 +37,14 @@ export class HTTPControllerMeta implements ControllerMetadata {
     aclCode: string | undefined,
     hosts: string[] | undefined,
     timeout: number | undefined,
+    advices: EggProtoImplClass<IAdvice>[] = [],
   ) {
     this.protoName = protoName;
     this.controllerName = controllerName;
     this.className = className;
     this.path = path;
     this.middlewares = middlewares;
+    this.advices = advices;
     this.methods = methods;
     this.needAcl = needAcl;
     this.aclCode = aclCode;
@@ -65,6 +75,12 @@ export class HTTPControllerMeta implements ControllerMetadata {
       return [...this.middlewares, ...method.middlewares];
     }
     return [...method.middlewares];
+  }
+
+  getMethodAdvices(method: HTTPMethodMeta): ControllerAdviceMeta[] {
+    return [...method.advices, ...this.advices].map(
+      (clazz, index) => new ControllerAdviceMeta(this.className, method.name, clazz, index),
+    );
   }
 
   hasMethodAcl(method: HTTPMethodMeta): boolean {

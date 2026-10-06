@@ -1,0 +1,7 @@
+{
+  "name": "load-unit-lifecycle-proto",
+  "type": "module",
+  "eggModule": {
+    "name": "loadUnitLifecycleApp"
+  }
+}

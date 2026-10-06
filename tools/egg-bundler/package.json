@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/egg-bundler",
-  "version": "0.0.1-beta.8",
+  "version": "0.0.1-rc.0",
   "description": "Bundle an Egg.js application into a deployable artifact using @utoo/pack",
   "homepage": "https://github.com/eggjs/egg/tree/next/tools/egg-bundler",
   "bugs": {
@@ -44,10 +44,13 @@
       "types": "./src/lib/PackRunner.ts",
       "import": "./src/lib/PackRunner.ts"
     },
+    "./lib/StandaloneWorkerBundler": {
+      "types": "./src/lib/StandaloneWorkerBundler.ts",
+      "import": "./src/lib/StandaloneWorkerBundler.ts"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
@@ -74,7 +77,8 @@
         "import": "./dist/lib/PackRunner.js"
       },
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "test": "vitest run",
@@ -87,6 +91,7 @@
   },
   "dependencies": {
     "@eggjs/core": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
     "@eggjs/typings": "workspace:*",
     "@utoo/pack": "catalog:",
     "execa": "catalog:",

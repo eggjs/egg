@@ -64,7 +64,7 @@ export interface FileLoaderParseItem {
 type NormalizedFileLoaderOptions = FileLoaderOptions & Required<Pick<FileLoaderOptions, 'caseStyle' | 'loaderFS'>>;
 
 function getDefaultFileLoaderMatch(): string[] {
-  return isSupportTypeScript() ? ['**/*.(js|ts)', '!**/*.d.ts'] : ['**/*.js'];
+  return isSupportTypeScript() ? ['**/*.(js|ts|mjs|cjs)', '!**/*.d.ts'] : ['**/*.{js,mjs,cjs}'];
 }
 
 /**
@@ -220,8 +220,12 @@ export class FileLoader {
       for (const filepath of filepaths) {
         const fullpath = path.join(directory, filepath);
         if (!this.options.loaderFS.stat(fullpath).isFile()) continue;
-        if (filepath.endsWith('.js')) {
-          const filepathTs = filepath.replace(/\.js$/, '.ts');
+        // A compiled `.js` / `.mjs` / `.cjs` sitting next to its `.ts` source (e.g. `tsc`
+        // or `tsdown` output kept in the same directory during development) must not be
+        // loaded on top of the source file — otherwise both are attached to the same
+        // property and `can't overwrite property` is thrown. The `.ts` source always wins.
+        if (filepath.endsWith('.js') || filepath.endsWith('.mjs') || filepath.endsWith('.cjs')) {
+          const filepathTs = filepath.replace(/\.(?:js|mjs|cjs)$/, '.ts');
           if (filepaths.includes(filepathTs)) {
             debug('[parse] ignore %s, because %s exists', fullpath, filepathTs);
             continue;

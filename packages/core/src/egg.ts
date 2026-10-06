@@ -9,6 +9,7 @@ import {
   type MiddlewareFunc as KoaMiddlewareFunc,
   type Next,
 } from '@eggjs/koa';
+import type { LoaderFS } from '@eggjs/loader-fs';
 import { EggRouter as Router, type RegisterOptions, type ResourcesController } from '@eggjs/router';
 import { EggConsoleLogger, type Logger } from 'egg-logger';
 import type { ReadyFunctionArg } from 'get-ready';
@@ -16,7 +17,6 @@ import type { ReadyFunctionArg } from 'get-ready';
 import { BaseContextClass } from './base_context_class.ts';
 import { Lifecycle } from './lifecycle.ts';
 import { EggLoader } from './loader/egg_loader.ts';
-import type { LoaderFS } from './loader/loader_fs.ts';
 import { Singleton, type SingletonCreateMethod, type SingletonOptions } from './singleton.ts';
 import type { EggAppConfig } from './types.ts';
 import utils, { type Fun } from './utils/index.ts';

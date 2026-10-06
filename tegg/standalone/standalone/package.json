@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/standalone",
-  "version": "4.0.2-beta.18",
+  "version": "4.0.2-rc.0",
   "description": "tegg standalone",
   "keywords": [
     "async",
@@ -33,22 +33,25 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@eggjs/aop-runtime": "workspace:*",
+    "@eggjs/aop-plugin": "workspace:*",
     "@eggjs/dal-plugin": "workspace:*",
+    "@eggjs/dynamic-inject-runtime": "workspace:*",
     "@eggjs/lifecycle": "workspace:*",
+    "@eggjs/loader-fs": "workspace:*",
     "@eggjs/metadata": "workspace:*",
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"

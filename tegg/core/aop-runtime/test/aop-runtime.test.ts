@@ -3,9 +3,9 @@ import path from 'node:path';
 import { mock } from 'node:test';
 
 import { CrosscutAdviceFactory } from '@eggjs/aop-decorator';
-import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } from '@eggjs/metadata';
-import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
-import { EggObjectLifecycleUtil, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+import { EggPrototypeLifecycleUtil, LoadUnitLifecycleUtil } from '@eggjs/metadata';
+import { CoreTestHelper, EggTestContext, LoaderUtil } from '@eggjs/module-test-util';
+import { EggObjectLifecycleUtil } from '@eggjs/tegg-runtime';
 import type { LoadUnitInstance } from '@eggjs/tegg-types';
 import { describe, beforeEach, afterEach, it } from 'vitest';
 
@@ -13,6 +13,7 @@ import { describe, beforeEach, afterEach, it } from 'vitest';
 import { Hello } from './fixtures/modules/hello_succeed/Hello.js';
 
 import { crossCutGraphHook } from '../src/CrossCutGraphHook.js';
+import { AopContextAdviceRegistry } from '../src/AopContextAdviceRegistry.js';
 import { EggObjectAopHook } from '../src/EggObjectAopHook.js';
 import { EggPrototypeCrossCutHook } from '../src/EggPrototypeCrossCutHook.js';
 import { LoadUnitAopHook } from '../src/LoadUnitAopHook.js';
@@ -21,6 +22,13 @@ import { HelloConstructorInject } from './fixtures/modules/constructor_inject_ao
 import { CallTrace } from './fixtures/modules/hello_cross_cut/CallTrace.js';
 import { crosscutAdviceParams } from './fixtures/modules/hello_cross_cut/HelloCrossCut.js';
 import { pointcutAdviceParams } from './fixtures/modules/hello_point_cut/HelloPointCut.js';
+
+function createLoadUnitAopHook(crosscutAdviceFactory: CrosscutAdviceFactory): LoadUnitAopHook {
+  const loadUnitAopHook = new LoadUnitAopHook();
+  Reflect.set(loadUnitAopHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
+  Reflect.set(loadUnitAopHook, 'aopContextAdviceRegistry', new AopContextAdviceRegistry());
+  return loadUnitAopHook;
+}
 
 describe('test/aop-runtime.test.ts', () => {
   afterEach(() => {
@@ -37,15 +45,15 @@ describe('test/aop-runtime.test.ts', () => {
     beforeEach(async () => {
       crosscutAdviceFactory = new CrosscutAdviceFactory();
       eggObjectAopHook = new EggObjectAopHook();
-      loadUnitAopHook = new LoadUnitAopHook(crosscutAdviceFactory);
-      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook(crosscutAdviceFactory);
+      loadUnitAopHook = createLoadUnitAopHook(crosscutAdviceFactory);
+      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook();
+      Reflect.set(eggPrototypeCrossCutHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
       EggPrototypeLifecycleUtil.registerLifecycle(eggPrototypeCrossCutHook);
       LoadUnitLifecycleUtil.registerLifecycle(loadUnitAopHook);
       EggObjectLifecycleUtil.registerLifecycle(eggObjectAopHook);
 
       modules = await CoreTestHelper.prepareModules(
         [
-          path.join(__dirname, '..'),
           path.join(__dirname, 'fixtures/modules/hello_succeed'),
           path.join(__dirname, 'fixtures/modules/hello_point_cut'),
           path.join(__dirname, 'fixtures/modules/state_point_cut'),
@@ -56,10 +64,7 @@ describe('test/aop-runtime.test.ts', () => {
     });
 
     afterEach(async () => {
-      for (const module of modules) {
-        await LoadUnitFactory.destroyLoadUnit(module.loadUnit);
-        await LoadUnitInstanceFactory.destroyLoadUnitInstance(module);
-      }
+      await CoreTestHelper.destroyModules(modules);
       EggPrototypeLifecycleUtil.deleteLifecycle(eggPrototypeCrossCutHook);
       LoadUnitLifecycleUtil.deleteLifecycle(loadUnitAopHook);
       EggObjectLifecycleUtil.deleteLifecycle(eggObjectAopHook);
@@ -166,20 +171,31 @@ describe('test/aop-runtime.test.ts', () => {
     beforeEach(async () => {
       crosscutAdviceFactory = new CrosscutAdviceFactory();
       eggObjectAopHook = new EggObjectAopHook();
-      loadUnitAopHook = new LoadUnitAopHook(crosscutAdviceFactory);
-      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook(crosscutAdviceFactory);
+      loadUnitAopHook = createLoadUnitAopHook(crosscutAdviceFactory);
+      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook();
+      Reflect.set(eggPrototypeCrossCutHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
       EggPrototypeLifecycleUtil.registerLifecycle(eggPrototypeCrossCutHook);
       LoadUnitLifecycleUtil.registerLifecycle(loadUnitAopHook);
       EggObjectLifecycleUtil.registerLifecycle(eggObjectAopHook);
     });
 
+    afterEach(() => {
+      EggPrototypeLifecycleUtil.deleteLifecycle(eggPrototypeCrossCutHook);
+      LoadUnitLifecycleUtil.deleteLifecycle(loadUnitAopHook);
+      EggObjectLifecycleUtil.deleteLifecycle(eggObjectAopHook);
+    });
+
     it('should throw', async () => {
-      await assert.rejects(async () => {
-        await CoreTestHelper.prepareModules([
-          path.join(__dirname, '..'),
-          path.join(__dirname, 'fixtures/modules/should_throw'),
-        ]);
-      }, /Aop Advice\(PointcutAdvice\) not found in loadUnits/);
+      const modulePath = path.join(__dirname, 'fixtures/modules/should_throw');
+      const { innerObjectLoadUnitInstance } = await LoaderUtil.buildGlobalGraph([modulePath]);
+      try {
+        await assert.rejects(
+          () => CoreTestHelper.getLoadUnitInstance(modulePath),
+          /Aop Advice\(PointcutAdvice\) not found in loadUnits/,
+        );
+      } finally {
+        await CoreTestHelper.destroyModules([innerObjectLoadUnitInstance]);
+      }
     });
   });
 
@@ -193,15 +209,15 @@ describe('test/aop-runtime.test.ts', () => {
     beforeEach(async () => {
       crosscutAdviceFactory = new CrosscutAdviceFactory();
       eggObjectAopHook = new EggObjectAopHook();
-      loadUnitAopHook = new LoadUnitAopHook(crosscutAdviceFactory);
-      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook(crosscutAdviceFactory);
+      loadUnitAopHook = createLoadUnitAopHook(crosscutAdviceFactory);
+      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook();
+      Reflect.set(eggPrototypeCrossCutHook, 'crosscutAdviceFactory', crosscutAdviceFactory);
       EggPrototypeLifecycleUtil.registerLifecycle(eggPrototypeCrossCutHook);
       LoadUnitLifecycleUtil.registerLifecycle(loadUnitAopHook);
       EggObjectLifecycleUtil.registerLifecycle(eggObjectAopHook);
 
       modules = await CoreTestHelper.prepareModules(
         [
-          path.join(__dirname, '..'),
           path.join(__dirname, 'fixtures/modules/constructor_inject_aop'),
           path.join(__dirname, 'fixtures/modules/hello_point_cut'),
           path.join(__dirname, 'fixtures/modules/hello_cross_cut'),
@@ -211,10 +227,7 @@ describe('test/aop-runtime.test.ts', () => {
     });
 
     afterEach(async () => {
-      for (const module of modules) {
-        await LoadUnitFactory.destroyLoadUnit(module.loadUnit);
-        await LoadUnitInstanceFactory.destroyLoadUnitInstance(module);
-      }
+      await CoreTestHelper.destroyModules(modules);
       EggPrototypeLifecycleUtil.deleteLifecycle(eggPrototypeCrossCutHook);
       LoadUnitLifecycleUtil.deleteLifecycle(loadUnitAopHook);
       EggObjectLifecycleUtil.deleteLifecycle(eggObjectAopHook);

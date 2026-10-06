@@ -14,12 +14,26 @@ describe('plugin/config/test/DuplicateOptionalModule.test.ts', () => {
       baseDir: getFixtures('apps/duplicate-optional-module'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('should work', async () => {
-    console.log(app.moduleReferences);
-    console.log(app.moduleConfigs);
-    expect(app.moduleReferences.length).toBe(2);
-    expect(Object.keys(app.moduleConfigs).length).toBe(2);
+    expect(app.moduleReferences.map((reference) => reference.name)).toEqual([
+      'used',
+      'teggConfig',
+      'teggAjv',
+      'teggAop',
+      'teggController',
+      'teggDal',
+      'unused',
+    ]);
+    expect(Object.keys(app.moduleConfigs)).toEqual([
+      'used',
+      'teggConfig',
+      'teggAjv',
+      'teggAop',
+      'teggController',
+      'teggDal',
+      'unused',
+    ]);
   });
 });

@@ -17,6 +17,17 @@ import {
 import { type ProtoSelectorContext } from './graph/index.ts';
 import { ClassProtoDescriptor } from './ProtoDescriptor/index.ts';
 
+/**
+ * Context to create a ProtoDescriptor from a plain prototype class. The
+ * optional define* fields support protos that are defined in one module but
+ * instantiated in another load unit (e.g. inner objects collected into the
+ * InnerObjectLoadUnit).
+ */
+export interface CreateProtoDescriptorContext extends MultiInstancePrototypeGetObjectsContext {
+  defineModuleName?: string;
+  defineUnitPath?: string;
+}
+
 export class ProtoDescriptorHelper {
   static addDefaultQualifier(
     qualifiers: QualifierInfo[],
@@ -147,10 +158,7 @@ export class ProtoDescriptorHelper {
     return res;
   }
 
-  static createByInstanceClazz(
-    clazz: EggProtoImplClass,
-    ctx: MultiInstancePrototypeGetObjectsContext,
-  ): ProtoDescriptor {
+  static createByInstanceClazz(clazz: EggProtoImplClass, ctx: CreateProtoDescriptorContext): ProtoDescriptor {
     assert(PrototypeUtil.isEggPrototype(clazz), `clazz ${clazz.name} is not EggPrototype`);
     assert(!PrototypeUtil.isEggMultiInstancePrototype(clazz), `clazz ${clazz.name} is not Prototype`);
 
@@ -178,8 +186,8 @@ export class ProtoDescriptorHelper {
       injectObjects,
       instanceDefineUnitPath: ctx.unitPath,
       instanceModuleName: ctx.moduleName,
-      defineUnitPath: ctx.unitPath,
-      defineModuleName: ctx.moduleName,
+      defineUnitPath: ctx.defineUnitPath || ctx.unitPath,
+      defineModuleName: ctx.defineModuleName || ctx.moduleName,
       clazz,
       properQualifiers: {},
     });

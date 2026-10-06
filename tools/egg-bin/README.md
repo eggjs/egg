@@ -109,7 +109,7 @@ Create `.vscode/launch.json` file:
 
 ### test
 
-Using [vitest] to run test.
+Using [vitest] 5 to run tests. Vitest 4 is no longer supported.
 
 ```bash
 egg-bin test [...files] [options]
@@ -155,6 +155,8 @@ TESTS=test/a.test.ts egg-bin test
 
 The reporter can be set with `TEST_REPORTER` env (any vitest reporter), default is `default`.
 
+`TEST_REPORTER=json` writes the report to `.vitest/json/output.json` in the application directory.
+
 ```bash
 TEST_REPORTER=verbose egg-bin test
 ```
@@ -179,6 +181,8 @@ Coverage reports are written to `coverage/` and include: `text-summary`, `json-s
 #### cov environment
 
 You can set `COV_EXCLUDES` env to add glob patterns to exclude from coverage (comma-separated).
+
+Patterns match paths relative to the application directory. Absolute paths and directory patterns such as `ignore/` are also supported.
 
 ```bash
 COV_EXCLUDES="app/plugins/c*,app/autocreate/**" egg-bin cov

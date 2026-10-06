@@ -358,7 +358,9 @@ cp.exec('bash /home/admin/ali-knowledge-graph-backend/initrun.sh ' + this.helper
 
 ### .escapeShellArg()
 
-命令行参数转义。给字符串增加一对单引号并且能引用或者转码任何已经存在的单引号， 这样以确保能够直接将一个字符串传入 shell 函数，并且还是确保安全的。
+POSIX shell 命令行参数转义。给字符串增加一对单引号并且能引用或者转码任何已经存在的单引号， 这样以确保能够直接将一个字符串传入 shell 函数，并且还是确保安全的。
+
+如果可以，优先使用 `child_process.execFile()` 或 `child_process.spawn()` 的参数数组。这个 helper 只用于 POSIX shell 命令字符串里的单个参数，不适用于 Windows `cmd.exe` 或 PowerShell 转义。
 
 ```js
 const ip = '127.0.0.1 && cat /etc/passwd';

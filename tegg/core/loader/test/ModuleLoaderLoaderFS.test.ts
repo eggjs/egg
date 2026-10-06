@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
-import { RealLoaderFS, type LoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
+import { ManifestLoaderFS, RealLoaderFS, type LoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
+import { TeggScope } from '@eggjs/tegg-types';
 import { describe, it } from 'vitest';
 
 import { ModuleLoader } from '../src/impl/ModuleLoader.ts';
@@ -36,14 +37,45 @@ describe('core/loader/test/ModuleLoaderLoaderFS.test.ts', () => {
     assert.equal(loaderFS.globCalls[0].options?.cwd, repoModulePath);
   });
 
-  it('should not call glob when precomputed files are provided', async () => {
-    const loaderFS = new StubLoaderFS(['UserRepo.ts']);
-    const loader = new ModuleLoader(repoModulePath, { precomputedFiles: ['AppRepo.ts'], loaderFS });
-    const prototypes = await loader.load();
+  it('should use the manifest view instead of its fallback glob', async () => {
+    const originalTsEnable = process.env.EGG_TS_ENABLE;
+    process.env.EGG_TS_ENABLE = 'false';
+    const fallback = new StubLoaderFS(['UserRepo.ts']);
+    try {
+      const loaderFS = new ManifestLoaderFS(
+        {
+          baseDir: repoModulePath,
+          data: { fileDiscovery: { '': ['AppRepo.ts'] }, resolveCache: {} },
+        },
+        fallback,
+      );
+      const loader = new ModuleLoader(repoModulePath, { loaderFS });
+      const prototypes = await loader.load();
 
-    // AppRepo.ts has 2 decorated classes; glob is never consulted.
-    assert.equal(prototypes.length, 2);
-    assert.equal(loaderFS.globCalls.length, 0);
+      assert.deepStrictEqual(prototypes.map((prototype) => prototype.name).sort(), ['AppRepo', 'AppRepo2']);
+      assert.equal(fallback.globCalls.length, 0);
+    } finally {
+      if (originalTsEnable === undefined) {
+        delete process.env.EGG_TS_ENABLE;
+      } else {
+        process.env.EGG_TS_ENABLE = originalTsEnable;
+      }
+    }
+  });
+
+  it('should preserve an authoritative empty manifest directory', async () => {
+    const fallback = new StubLoaderFS(['UserRepo.ts']);
+    const loaderFS = new ManifestLoaderFS(
+      {
+        baseDir: repoModulePath,
+        data: { fileDiscovery: { '': [] }, resolveCache: {} },
+      },
+      fallback,
+    );
+    const loader = new ModuleLoader(repoModulePath, { loaderFS });
+
+    assert.deepStrictEqual(await loader.load(), []);
+    assert.equal(fallback.globCalls.length, 0);
   });
 
   it('should default to RealLoaderFS discovery when no LoaderFS is injected', async () => {
@@ -57,11 +89,45 @@ describe('core/loader/test/ModuleLoaderLoaderFS.test.ts', () => {
 
   it('createModuleLoader should forward the injected LoaderFS', async () => {
     const loaderFS = new StubLoaderFS(['SprintRepo.ts']);
-    const loader = ModuleLoader.createModuleLoader(repoModulePath, loaderFS);
-    const prototypes = await loader.load();
+    const prototypes = await TeggScope.run(TeggScope.createBag(), async () => {
+      const loader = ModuleLoader.createModuleLoader(repoModulePath, loaderFS);
+      return await loader.load();
+    });
 
     assert.equal(prototypes.length, 1);
     assert(prototypes.find((t) => t.name === 'SprintRepo'));
     assert.equal(loaderFS.globCalls.length, 1);
+  });
+
+  it('should isolate manifest file views between concurrent app scopes', async () => {
+    const fallbackA = new StubLoaderFS(['UserRepo.ts']);
+    const fallbackB = new StubLoaderFS(['AppRepo.ts']);
+    const loaderFSA = new ManifestLoaderFS(
+      {
+        baseDir: repoModulePath,
+        data: { fileDiscovery: { '': ['AppRepo.ts'] }, resolveCache: {} },
+      },
+      fallbackA,
+    );
+    const loaderFSB = new ManifestLoaderFS(
+      {
+        baseDir: repoModulePath,
+        data: { fileDiscovery: { '': ['UserRepo.ts'] }, resolveCache: {} },
+      },
+      fallbackB,
+    );
+
+    const [prototypesA, prototypesB] = await Promise.all([
+      TeggScope.run(TeggScope.createBag(), () => ModuleLoader.createModuleLoader(repoModulePath, loaderFSA).load()),
+      TeggScope.run(TeggScope.createBag(), () => ModuleLoader.createModuleLoader(repoModulePath, loaderFSB).load()),
+    ]);
+
+    assert.deepStrictEqual(prototypesA.map((prototype) => prototype.name).sort(), ['AppRepo', 'AppRepo2']);
+    assert.deepStrictEqual(
+      prototypesB.map((prototype) => prototype.name),
+      ['UserRepo'],
+    );
+    assert.equal(fallbackA.globCalls.length, 0);
+    assert.equal(fallbackB.globCalls.length, 0);
   });
 });

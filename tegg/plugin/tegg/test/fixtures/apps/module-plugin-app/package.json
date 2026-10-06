@@ -1,0 +1,7 @@
+{
+  "name": "module-plugin-app",
+  "type": "module",
+  "egg": {
+    "framework": "../framework"
+  }
+}

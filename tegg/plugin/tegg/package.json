@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-plugin",
-  "version": "4.0.2-beta.18",
+  "version": "4.0.2-rc.0",
   "description": "module plugin for egg",
   "keywords": [
     "egg",
@@ -27,6 +27,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
     "./app": "./src/app.ts",
     "./app/extend/application": "./src/app/extend/application.ts",
     "./app/extend/application.unittest": "./src/app/extend/application.unittest.ts",
@@ -35,7 +36,6 @@
     "./lib/AppLoadUnit": "./src/lib/AppLoadUnit.ts",
     "./lib/AppLoadUnitInstance": "./src/lib/AppLoadUnitInstance.ts",
     "./lib/CompatibleUtil": "./src/lib/CompatibleUtil.ts",
-    "./lib/ConfigSourceLoadUnitHook": "./src/lib/ConfigSourceLoadUnitHook.ts",
     "./lib/ctx_lifecycle_middleware": "./src/lib/ctx_lifecycle_middleware.ts",
     "./lib/EggAppLoader": "./src/lib/EggAppLoader.ts",
     "./lib/EggCompatibleObject": "./src/lib/EggCompatibleObject.ts",
@@ -53,9 +53,9 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
       "./app": "./dist/app.js",
       "./app/extend/application": "./dist/app/extend/application.js",
       "./app/extend/application.unittest": "./dist/app/extend/application.unittest.js",
@@ -64,7 +64,6 @@
       "./lib/AppLoadUnit": "./dist/lib/AppLoadUnit.js",
       "./lib/AppLoadUnitInstance": "./dist/lib/AppLoadUnitInstance.js",
       "./lib/CompatibleUtil": "./dist/lib/CompatibleUtil.js",
-      "./lib/ConfigSourceLoadUnitHook": "./dist/lib/ConfigSourceLoadUnitHook.js",
       "./lib/ctx_lifecycle_middleware": "./dist/lib/ctx_lifecycle_middleware.js",
       "./lib/EggAppLoader": "./dist/lib/EggAppLoader.js",
       "./lib/EggCompatibleObject": "./dist/lib/EggCompatibleObject.js",
@@ -80,7 +79,8 @@
       "./lib/Utils": "./dist/lib/Utils.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

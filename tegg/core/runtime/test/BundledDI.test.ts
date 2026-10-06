@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 
 import { type EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
-import { RealLoaderFS, type LoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
+import { ManifestLoaderFS, RealLoaderFS, type LoaderFS, type LoaderFSGlobOptions } from '@eggjs/loader-fs';
 import {
   EggLoadUnitType,
   EggPrototypeFactory,
@@ -25,7 +25,7 @@ import AppService from './fixtures/modules/multi-module/multi-module-service/App
  * Theme G (attempt) — bundled cross-module DI regression.
  *
  * Drives the same multi-module fixtures as LoadUnitInstance.test.ts, but loads
- * every module through the manifest path (precomputed `decoratedFiles`) instead
+ * every module through the manifest-backed LoaderFS instead
  * of globby discovery. A LoaderFS whose `glob` throws guarantees the whole chain
  * never falls back to a real filesystem scan, mirroring how a bundled app loads
  * from a manifest-backed VFS. Verifies that cross-module dependency injection
@@ -48,12 +48,21 @@ describe('test/BundledDI.test.ts', () => {
       throw new Error('discovery must come from the manifest, glob should never be called');
     }
   }
-  const loaderFS = new NoGlobLoaderFS();
+  const loaderFS = new ManifestLoaderFS(
+    {
+      baseDir: fixturesRoot,
+      data: {
+        fileDiscovery: Object.fromEntries(manifest.map(({ dir, decoratedFiles }) => [dir, decoratedFiles])),
+        resolveCache: {},
+      },
+    },
+    new NoGlobLoaderFS(),
+  );
 
   const loadUnitInstances: LoadUnitInstance[] = [];
 
-  async function loadModuleProtos(absPath: string, decoratedFiles: string[]): Promise<EggProtoImplClass[]> {
-    return new ModuleLoader(absPath, { precomputedFiles: decoratedFiles, loaderFS }).load();
+  async function loadModuleProtos(absPath: string): Promise<EggProtoImplClass[]> {
+    return new ModuleLoader(absPath, { loaderFS }).load();
   }
 
   beforeAll(async () => {
@@ -63,10 +72,10 @@ describe('test/BundledDI.test.ts', () => {
 
     // Build the global module graph from manifest-discovered protos.
     GlobalGraph.instance = new GlobalGraph();
-    for (const { absPath, decoratedFiles } of absModules) {
-      const clazzList = await loadModuleProtos(absPath, decoratedFiles);
+    for (const { dir, absPath } of absModules) {
+      const clazzList = await loadModuleProtos(absPath);
       const eggProtoClass = clazzList.filter((clazz) => PrototypeUtil.isEggPrototype(clazz));
-      const builder = GlobalModuleNodeBuilder.create(absPath, false);
+      const builder = new GlobalModuleNodeBuilder({ name: dir, unitPath: absPath, optional: false });
       for (const clazz of eggProtoClass) {
         builder.addClazz(clazz);
       }
@@ -78,9 +87,9 @@ describe('test/BundledDI.test.ts', () => {
     GlobalGraph.instance.sort();
 
     // Create runtime load unit instances, again via the manifest loaders.
-    for (const { absPath, decoratedFiles } of absModules) {
-      const loader = new ModuleLoader(absPath, { precomputedFiles: decoratedFiles, loaderFS });
-      const loadUnit = await LoadUnitFactory.createLoadUnit(absPath, EggLoadUnitType.MODULE, loader);
+    for (const { dir, absPath } of absModules) {
+      const loader = new ModuleLoader(absPath, { loaderFS });
+      const loadUnit = await LoadUnitFactory.createLoadUnit(absPath, EggLoadUnitType.MODULE, loader, dir);
       loadUnitInstances.push(await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit));
     }
   });

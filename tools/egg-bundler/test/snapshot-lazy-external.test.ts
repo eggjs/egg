@@ -13,6 +13,15 @@ import {
 } from '../src/lib/prelude.ts';
 
 describe('snapshot lazy-external', () => {
+  function makeSnapshotBuildProcess() {
+    return {
+      getBuiltinModule(id: string) {
+        if (id === 'node:v8') return { startupSnapshot: { isBuildingSnapshot: () => true } };
+        return process.getBuiltinModule(id);
+      },
+    };
+  }
+
   describe('resolveSnapshotLazyModules', () => {
     let tmp: string;
 
@@ -41,6 +50,17 @@ describe('snapshot lazy-external', () => {
       const result = await resolveSnapshotLazyModules(tmp);
       expect(result).toContain('undici');
       expect(result).toContain('urllib');
+    });
+
+    it('lazy-externalizes cluster so restored workers load the worker implementation', async () => {
+      // Node selects cluster's primary/worker implementation at first evaluation.
+      // Snapshot construction happens in a non-worker process, so restoring an
+      // eagerly loaded cluster module would retain the wrong implementation.
+      expect(DEFAULT_SNAPSHOT_LAZY_MODULES).toContain('cluster');
+      expect(DEFAULT_SNAPSHOT_LAZY_MODULES).toContain('node:cluster');
+      const result = await resolveSnapshotLazyModules(tmp);
+      expect(result).toContain('cluster');
+      expect(result).toContain('node:cluster');
     });
 
     it('returns the default list when package.json has no egg.snapshot.lazyModules', async () => {
@@ -186,7 +206,9 @@ describe('snapshot lazy-external', () => {
 
   describe('runtime __makeLazyExt behavior (prelude evaluated in a vm)', () => {
     function makeContext(lazy: readonly string[]) {
-      const sandbox: Record<string, unknown> = {};
+      const sandbox: Record<string, unknown> = {
+        process: makeSnapshotBuildProcess(),
+      };
       vm.createContext(sandbox);
       vm.runInContext(renderSnapshotPrelude(lazy), sandbox);
       const makeLazyExt = sandbox.__makeLazyExt as (id: string, thunk: unknown) => unknown;
@@ -250,6 +272,30 @@ describe('snapshot lazy-external', () => {
       expect(http.METHODS).toEqual(['REALGET']);
     });
 
+    it('restore time: static accessors on a proxied base see the subclass receiver', () => {
+      const { makeLazyExt, sandbox } = makeContext(['leoric']);
+      const stub = makeLazyExt('leoric', null) as Record<string, any>;
+      class User extends (stub.Bone as any) {}
+
+      const marker = Symbol('marker');
+      class RealBone {
+        static set synchronized(value: unknown) {
+          (this as any)[marker] = value;
+        }
+
+        static get synchronized() {
+          return (this as any)[marker];
+        }
+      }
+      sandbox.__RUNTIME_REQUIRE = (id: string) => (id === 'leoric' ? { Bone: RealBone } : undefined);
+
+      (User as any).synchronized = true;
+      expect((User as any).synchronized).toBe(true);
+      expect((User as any)[marker]).toBe(true);
+      expect(Object.hasOwn(User, 'synchronized')).toBe(false);
+      expect((RealBone as any).synchronized).toBeUndefined();
+    });
+
     it('restore time: structural traps reflect the real module exports', () => {
       const { makeLazyExt, sandbox } = makeContext(['http']);
       const realHttp = { createServer: () => 'srv', METHODS: ['GET'] };
@@ -277,12 +323,15 @@ describe('snapshot lazy-external', () => {
   });
 
   describe('runtime __installWebGlobalsLazy behavior (prelude evaluated in a vm)', () => {
-    // The vm sandbox has no `process`, so the installer's getBuiltin falls back to
-    // __RUNTIME_REQUIRE — which the tests supply, standing in for node:buffer/undici.
+    // Evaluate the prelude in snapshot-build mode, then install __RUNTIME_REQUIRE to
+    // simulate the deserialize callback before exercising the restore-only installer.
     function makeRestoreContext() {
-      const sandbox: Record<string, any> = {};
+      const sandbox: Record<string, any> = { process: makeSnapshotBuildProcess() };
       vm.createContext(sandbox);
       vm.runInContext(renderSnapshotPrelude(['http']), sandbox);
+      // A restored callback resolves the real modules through __RUNTIME_REQUIRE.
+      // Remove the build-process shim so the installer exercises that route.
+      delete sandbox.process;
       return sandbox;
     }
 

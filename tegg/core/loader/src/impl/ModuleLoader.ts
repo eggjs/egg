@@ -2,29 +2,27 @@ import path from 'node:path';
 import { debuglog } from 'node:util';
 
 import { RealLoaderFS, type LoaderFS } from '@eggjs/loader-fs';
-import type { EggProtoImplClass, Loader } from '@eggjs/tegg-types';
+import { type EggProtoImplClass, type Loader, TeggScope } from '@eggjs/tegg-types';
 
 import { LoaderFactory } from '../LoaderFactory.ts';
 import { LoaderUtil } from '../LoaderUtil.ts';
 
 const debug = debuglog('egg/tegg/loader/impl/ModuleLoader');
+const LOADER_FS_SLOT = Symbol('tegg:loader:moduleLoaderFS');
 
 export interface ModuleLoaderOptions {
-  /** Pre-computed file list from manifest (only decorated files) */
-  precomputedFiles?: string[];
-  /** File system abstraction used for discovery; manifest-backed in bundle mode */
+  /** File system abstraction used for discovery. */
   loaderFS?: LoaderFS;
 }
 
 export class ModuleLoader implements Loader {
   private readonly moduleDir: string;
   private protoClazzList: EggProtoImplClass[];
-  private readonly precomputedFiles?: string[];
+  private loadPromise?: Promise<EggProtoImplClass[]>;
   private readonly loaderFS: LoaderFS;
 
   constructor(moduleDir: string, options: ModuleLoaderOptions = {}) {
     this.moduleDir = moduleDir;
-    this.precomputedFiles = options.precomputedFiles;
     this.loaderFS = options.loaderFS ?? new RealLoaderFS();
   }
 
@@ -33,12 +31,29 @@ export class ModuleLoader implements Loader {
     if (this.protoClazzList) {
       return this.protoClazzList;
     }
+    if (this.loadPromise) {
+      return this.loadPromise;
+    }
+
+    const loadPromise = this.loadOnce();
+    this.loadPromise = loadPromise;
+    try {
+      return await loadPromise;
+    } finally {
+      if (this.loadPromise === loadPromise) {
+        this.loadPromise = undefined;
+      }
+    }
+  }
+
+  private async loadOnce(): Promise<EggProtoImplClass[]> {
     const protoClassList: EggProtoImplClass[] = [];
 
-    let files: string[];
-    if (this.precomputedFiles) {
-      files = this.precomputedFiles;
-      debug('load from manifest, files: %o, moduleDir: %o', files, this.moduleDir);
+    const knownFiles = this.loaderFS.getKnownFiles?.(this.moduleDir);
+    let files: readonly string[];
+    if (knownFiles !== undefined) {
+      files = knownFiles;
+      debug('load known files: %o, moduleDir: %o', files, this.moduleDir);
     } else {
       const filePattern = LoaderUtil.filePattern();
       files = this.loaderFS.glob(filePattern, { cwd: this.moduleDir });
@@ -55,8 +70,18 @@ export class ModuleLoader implements Loader {
     return this.protoClazzList;
   }
 
-  static createModuleLoader(path: string, loaderFS?: LoaderFS): ModuleLoader {
-    return new ModuleLoader(path, { loaderFS });
+  static createModuleLoader(modulePath: string, loaderFS?: LoaderFS): ModuleLoader {
+    const scopedLoaderFS = TeggScope.resolve(
+      LOADER_FS_SLOT,
+      () => loaderFS ?? new RealLoaderFS(),
+      'ModuleLoader.loaderFS',
+    );
+    // A host-provided view is authoritative. This also allows a manifest view
+    // to replace a RealLoaderFS that an earlier module loader initialized.
+    if (loaderFS && loaderFS !== scopedLoaderFS) {
+      TeggScope.set(LOADER_FS_SLOT, loaderFS);
+    }
+    return new ModuleLoader(modulePath, { loaderFS: loaderFS ?? scopedLoaderFS });
   }
 }
 

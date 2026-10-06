@@ -82,7 +82,7 @@ export class EggLoader {
   dirs?: EggDirInfo[];
   /** Startup manifest — loaded from cache or collecting for generation */
   readonly manifest: ManifestStore;
-  readonly loaderFS: LoaderFS;
+  loaderFS: LoaderFS;
 
   /**
    * @class

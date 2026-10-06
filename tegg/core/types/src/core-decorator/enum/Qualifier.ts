@@ -1,5 +1,7 @@
 export const ConfigSourceQualifierAttribute: symbol = Symbol.for('Qualifier.ConfigSource');
 
+export const DefineModuleQualifierAttribute: symbol = Symbol.for('Qualifier.DefineModule');
+
 export const EggQualifierAttribute: symbol = Symbol.for('Qualifier.Egg');
 
 export const InitTypeQualifierAttribute: symbol = Symbol.for('Qualifier.InitType');

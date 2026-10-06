@@ -1,4 +1,4 @@
-import { AccessLevel, ContextProto, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, ContextProto, Inject, ObjectInitType, SingletonProto } from '@eggjs/tegg';
 import { Advice, type AdviceContext, Crosscut, type IAdvice, Pointcut, PointcutType } from '@eggjs/tegg/aop';
 import type { EggLogger } from 'egg';
 
@@ -49,7 +49,7 @@ export class CrosscutAdvice implements IAdvice<Hello> {
   }
 }
 
-@Advice()
+@Advice({ initType: ObjectInitType.CONTEXT })
 export class ContextPointcutAdvice implements IAdvice<SingletonHello> {
   async around(ctx: AdviceContext<Hello>, next: () => Promise<any>): Promise<any> {
     ctx.args[0] = `withContextPointAroundParam(${ctx.args[0]})`;

@@ -91,6 +91,24 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       await LoadUnitFactory.destroyLoadUnit(loadUnit);
     });
 
+    it('should create from provided unit name without reading package.json', async () => {
+      const modulePath = path.join(__dirname, './fixtures/modules/no-package-module');
+      const loader = new TestLoader(modulePath);
+      await buildGlobalGraph([], []);
+
+      const loadUnit = await LoadUnitFactory.createLoadUnit(
+        modulePath,
+        EggLoadUnitType.MODULE,
+        loader,
+        'manifestModule',
+      );
+
+      assert(loadUnit.id === 'LOAD_UNIT:manifestModule');
+      assert(loadUnit.name === 'manifestModule');
+      assert(loadUnit.unitPath === modulePath);
+      await LoadUnitFactory.destroyLoadUnit(loadUnit);
+    });
+
     it('recursive deps should should throw error', async () => {
       const repoModulePath = path.join(__dirname, './fixtures/modules/recursive-load-unit');
       const loader = new TestLoader(repoModulePath);

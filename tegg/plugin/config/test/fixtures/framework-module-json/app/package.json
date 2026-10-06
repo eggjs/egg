@@ -1,0 +1,7 @@
+{
+  "name": "framework-module-json-app",
+  "type": "module",
+  "egg": {
+    "framework": "chair-framework"
+  }
+}

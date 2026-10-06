@@ -1,0 +1,7 @@
+{
+  "name": "app-module",
+  "type": "module",
+  "eggModule": {
+    "name": "appModule"
+  }
+}

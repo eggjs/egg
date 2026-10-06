@@ -70,7 +70,10 @@ vi.mock('../src/lib/ExternalsResolver.ts', () => ({
 vi.mock('../src/lib/EntryGenerator.ts', () => ({
   EntryGenerator: vi.fn().mockImplementation(function () {
     return {
-      generate: async () => ({ workerEntry: mocks.workerEntry, entryDir: mocks.entryDir }),
+      generate: async () => ({
+        entries: [{ name: 'worker' as const, filepath: mocks.workerEntry }],
+        entryDir: mocks.entryDir,
+      }),
     };
   }),
 }));
@@ -91,28 +94,41 @@ describe('snapshot lazy-external — real @utoo/pack build', () => {
     await fs.rm(baseDir, { recursive: true, force: true });
   });
 
-  it('lazy-externalizes node:http: stub at build, real module after __RUNTIME_REQUIRE', async () => {
+  it('uses the same artifact for plain execution, snapshot build, and restore', async () => {
     await fs.writeFile(path.join(baseDir, 'package.json'), JSON.stringify({ name: 'snaplazy-rb-app' }));
 
     const entryDir = path.join(baseDir, '.egg-bundle', 'entries');
     await fs.mkdir(entryDir, { recursive: true });
     const entry = path.join(entryDir, 'worker.entry.ts');
-    // CommonJS require mirrors how egg's real http consumers (urllib/undici, node
-    // internals) load the network stack: externalRequire returns the live lazy proxy
-    // directly, with no ESM interop namespace copy in between.
+    const requireBase = JSON.stringify(path.join(baseDir, 'package.json'));
+    // CommonJS require mirrors Egg's real HTTP consumers. The entry uses Node's
+    // actual startup-snapshot state and emits a probe in each of the three phases.
     await fs.writeFile(
       entry,
       [
         '// @ts-nocheck',
+        'const v8 = process.getBuiltinModule("node:v8");',
         'const http = require("node:http");',
-        'const g = globalThis;',
-        'const probe = {',
+        'const probe = () => ({',
         '  methodsHasGet: Array.isArray(http.METHODS) && http.METHODS.includes("GET"),',
         '  maxHeaderSize: http.maxHeaderSize,',
         '  createServerCall: typeof http.createServer(),',
-        '  restored: !!g.__RUNTIME_REQUIRE,',
+        '  runtimeRequire: !!globalThis.__RUNTIME_REQUIRE,',
+        '});',
+        'const emit = (phase) => process.stdout.write(phase + ":" + JSON.stringify(probe()) + "\\n");',
+        'if (v8.startupSnapshot.isBuildingSnapshot()) {',
+        '  emit("BUILD");',
+        '  v8.startupSnapshot.setDeserializeMainFunction(() => {',
+        '    const { createRequire } = process.getBuiltinModule("node:module");',
+        `    const req = createRequire(${requireBase});`,
+        '    const rt = (id) => req(id);',
+        '    rt.resolve = (id, options) => req.resolve(id, options);',
+        '    globalThis.__RUNTIME_REQUIRE = rt;',
+        '    emit("RESTORE");',
+        '  });',
+        '} else {',
+        '  emit("PLAIN");',
         '};',
-        'process.stdout.write(JSON.stringify(probe));',
         '',
       ].join('\n'),
     );
@@ -136,30 +152,38 @@ describe('snapshot lazy-external — real @utoo/pack build', () => {
     // The injected + prepended source is still valid JS.
     await execFileAsync(process.execPath, ['--check', workerPath]);
 
-    // BUILD context: run worker.js directly. http must be the stub.
-    const built = await execFileAsync(process.execPath, [workerPath], { cwd: outputDir });
-    expect(JSON.parse(built.stdout)).toEqual({
+    // Plain execution is not snapshot construction: the prelude installs a real
+    // require hook before the bundle IIFE and node:http loads normally.
+    const plain = await execFileAsync(process.execPath, [workerPath], { cwd: outputDir });
+    expect(JSON.parse(plain.stdout.slice('PLAIN:'.length))).toEqual({
+      methodsHasGet: true,
+      maxHeaderSize: 16384,
+      createServerCall: 'object',
+      runtimeRequire: true,
+    });
+
+    // Snapshot construction is selected by Node itself, not an environment flag.
+    const blobPath = path.join(outputDir, 'worker.snapshot.blob');
+    const built = await execFileAsync(process.execPath, ['--snapshot-blob', blobPath, '--build-snapshot', workerPath], {
+      cwd: outputDir,
+    });
+    const buildMarker = 'BUILD:';
+    const buildProbe = JSON.parse(built.stdout.slice(built.stdout.lastIndexOf(buildMarker) + buildMarker.length));
+    expect(buildProbe).toEqual({
       methodsHasGet: true, // __HTTP_CONSTS.METHODS (read from build Node), real http never loaded
       maxHeaderSize: 16384, // __HTTP_CONSTS.maxHeaderSize, real http never loaded
       createServerCall: 'object', // build: a call-result member-proxy uses an object target (typeof 'object', mirroring the real instance); still chainable for x.y(z).w
-      restored: false,
+      runtimeRequire: false,
     });
 
-    // RESTORE context: install __RUNTIME_REQUIRE before the worker runs, exactly as
-    // the generated snapshot deserialize main would. The same proxy forwards to real http.
-    const runner = path.join(outputDir, 'restore-runner.cjs');
-    await fs.writeFile(
-      runner,
-      [
-        'const { createRequire } = require("node:module");',
-        'globalThis.__RUNTIME_REQUIRE = createRequire(__filename);',
-        'require("./worker.js");',
-        '',
-      ].join('\n'),
+    // Restore does not re-run the top-level file. V8 invokes the serialized
+    // deserialize main, which installs the runtime require before using the proxy.
+    const restored = await execFileAsync(process.execPath, ['--snapshot-blob', blobPath], { cwd: outputDir });
+    const restoreMarker = 'RESTORE:';
+    const restoreProbe = JSON.parse(
+      restored.stdout.slice(restored.stdout.lastIndexOf(restoreMarker) + restoreMarker.length),
     );
-    const restored = await execFileAsync(process.execPath, [runner], { cwd: outputDir });
-    const restoreProbe = JSON.parse(restored.stdout);
-    expect(restoreProbe.restored).toBe(true);
+    expect(restoreProbe.runtimeRequire).toBe(true);
     expect(restoreProbe.methodsHasGet).toBe(true); // real http.METHODS also has GET
     expect(restoreProbe.createServerCall).toBe('object'); // real http.createServer() -> Server
   }, 60_000);
@@ -170,30 +194,35 @@ describe('snapshot lazy-external — real @utoo/pack build', () => {
     const entryDir = path.join(baseDir, '.egg-bundle', 'entries');
     await fs.mkdir(entryDir, { recursive: true });
     const entry = path.join(entryDir, 'worker.entry.ts');
-    // The prelude (prepended by bundle()) stubs the web globals at load. This entry
-    // simulates the snapshot restore-main: it calls __installWebGlobalsLazy (the
-    // restore-runner installs __RUNTIME_REQUIRE first), then exercises the now-real
-    // fetch/Headers/Blob against a local server.
+    const requireBase = JSON.stringify(path.join(REPO_ROOT, 'packages/egg', 'package.json'));
+    // The real snapshot build serializes the restore-only installer. The
+    // deserialize main installs runtime require first, then exercises the real
+    // undici-backed globals without opening a network listener.
     await fs.writeFile(
       entry,
       [
         '// @ts-nocheck',
-        "if (typeof globalThis.__installWebGlobalsLazy === 'function') globalThis.__installWebGlobalsLazy();",
-        '(async () => {',
-        "  const http = globalThis.__RUNTIME_REQUIRE('node:http');",
-        "  const server = http.createServer((req, res) => res.end('pong'));",
-        "  await new Promise((r) => server.listen(0, '127.0.0.1', r));",
-        '  const port = server.address().port;',
-        '  const out = { installerPresent: typeof globalThis.__installWebGlobalsLazy, fetchType: typeof globalThis.fetch, BlobType: typeof globalThis.Blob };',
-        '  try {',
-        "    const resp = await fetch('http://127.0.0.1:' + port + '/');",
-        '    out.body = await resp.text();',
-        "    out.headerOk = new Headers({ x: '1' }).get('x') === '1';",
-        "    out.blobText = await new Blob(['z']).text();",
-        '  } catch (e) { out.err = String((e && e.message) || e); }',
-        '  await new Promise((r) => server.close(r));',
-        "  process.stdout.write('WGPROBE:' + JSON.stringify(out), () => process.exit(0));",
-        '})();',
+        'const v8 = process.getBuiltinModule("node:v8");',
+        'if (v8.startupSnapshot.isBuildingSnapshot()) {',
+        '  v8.startupSnapshot.setDeserializeMainFunction(() => {',
+        '    const { createRequire } = process.getBuiltinModule("node:module");',
+        `    const req = createRequire(${requireBase});`,
+        '    const rt = (id) => req(id);',
+        '    rt.resolve = (id, options) => req.resolve(id, options);',
+        '    globalThis.__RUNTIME_REQUIRE = rt;',
+        '    globalThis.__installWebGlobalsLazy();',
+        '    setImmediate(async () => {',
+        '      const out = { installerPresent: typeof globalThis.__installWebGlobalsLazy, fetchType: typeof globalThis.fetch, BlobType: typeof globalThis.Blob };',
+        '      try {',
+        "        const resp = await fetch('data:text/plain,pong');",
+        '        out.body = await resp.text();',
+        "        out.headerOk = new Headers({ x: '1' }).get('x') === '1';",
+        "        out.blobText = await new Blob(['z']).text();",
+        '      } catch (e) { out.err = String((e && e.message) || e); }',
+        "      process.stdout.write('WGPROBE:' + JSON.stringify(out), () => process.exit(0));",
+        '    });',
+        '  });',
+        '}',
         '',
       ].join('\n'),
     );
@@ -203,31 +232,18 @@ describe('snapshot lazy-external — real @utoo/pack build', () => {
     const outputDir = path.join(baseDir, 'dist');
     await bundle({ baseDir, outputDir, snapshot: true });
 
-    // Restore-runner installs __RUNTIME_REQUIRE (with resolve) pointing where
-    // urllib/undici live, exactly as the generated deserialize main would.
-    const runner = path.join(outputDir, 'wg-restore-runner.cjs');
-    await fs.writeFile(
-      runner,
-      [
-        'const { createRequire } = require("node:module");',
-        'const req = createRequire(process.env.EGG_TEST_REQUIRE_BASE);',
-        'const rt = (id) => req(id);',
-        'rt.resolve = (id, o) => req.resolve(id, o);',
-        'globalThis.__RUNTIME_REQUIRE = rt;',
-        'require("./worker.js");',
-        '',
-      ].join('\n'),
-    );
-    const ran = await execFileAsync(process.execPath, [runner], {
+    const workerPath = path.join(outputDir, 'worker.js');
+    const blobPath = path.join(outputDir, 'worker.snapshot.blob');
+    await execFileAsync(process.execPath, ['--snapshot-blob', blobPath, '--build-snapshot', workerPath], {
       cwd: outputDir,
-      env: { ...process.env, EGG_TEST_REQUIRE_BASE: path.join(REPO_ROOT, 'packages/egg', 'package.json') },
     });
+    const ran = await execFileAsync(process.execPath, ['--snapshot-blob', blobPath], { cwd: outputDir });
     const marker = 'WGPROBE:';
     const probe = JSON.parse(ran.stdout.slice(ran.stdout.indexOf(marker) + marker.length));
 
     expect(probe.installerPresent).toBe('function'); // prelude defined it
     expect(probe.fetchType).toBe('function'); // re-installed, not the WebGlobalStub
-    expect(probe.body).toBe('pong'); // a real fetch round-trip works
+    expect(probe.body).toBe('pong'); // a real undici fetch works
     expect(probe.headerOk).toBe(true); // real undici Headers
     expect(probe.BlobType).toBe('function');
     expect(probe.blobText).toBe('z'); // real node:buffer Blob
@@ -272,15 +288,39 @@ describe('snapshot lazy-external — real @utoo/pack build', () => {
       entry,
       [
         '// @ts-nocheck',
+        'const v8 = process.getBuiltinModule("node:v8");',
         // captured at module-eval; the `extends` link freezes against whatever this is
         "const { Base } = require('lazy-base');",
         'class Sub extends Base {',
         '  constructor(opt) { super(opt); this.tag = "sub"; }',
         '  describe() { return this.tag + ":" + this.greet(); }',
         '}',
-        // defer instantiation so the runner controls the build/restore boundary
-        'globalThis.__makeSub = (n) => new Sub(n);',
-        'process.stdout.write("ENTRY_OK");',
+        'const fullProbe = () => {',
+        '  const inst = new Sub(7);',
+        '  return {',
+        '    runtimeRequire: !!globalThis.__RUNTIME_REQUIRE,',
+        '    realLoads: globalThis.__LAZY_BASE_LOADS || 0,',
+        '    tag: inst.tag,',
+        '    greet: inst.greet(),',
+        '    describe: inst.describe(),',
+        '  };',
+        '};',
+        'if (v8.startupSnapshot.isBuildingSnapshot()) {',
+        '  const buildProbe = { runtimeRequire: !!globalThis.__RUNTIME_REQUIRE, realLoads: globalThis.__LAZY_BASE_LOADS || 0 };',
+        '  new Sub(7);',
+        '  buildProbe.realLoadsAfterConstruct = globalThis.__LAZY_BASE_LOADS || 0;',
+        '  process.stdout.write("BUILD:" + JSON.stringify(buildProbe) + "\\n");',
+        '  v8.startupSnapshot.setDeserializeMainFunction(() => {',
+        '    const { createRequire } = process.getBuiltinModule("node:module");',
+        `    const req = createRequire(${JSON.stringify(path.join(baseDir, 'package.json'))});`,
+        '    const rt = (id) => req(id);',
+        '    rt.resolve = (id, options) => req.resolve(id, options);',
+        '    globalThis.__RUNTIME_REQUIRE = rt;',
+        '    process.stdout.write("RESTORE:" + JSON.stringify(fullProbe()) + "\\n");',
+        '  });',
+        '} else {',
+        '  process.stdout.write("PLAIN:" + JSON.stringify(fullProbe()) + "\\n");',
+        '}',
         '',
       ].join('\n'),
     );
@@ -296,74 +336,44 @@ describe('snapshot lazy-external — real @utoo/pack build', () => {
     expect(worker).toMatch(/function\s+externalRequire\s*\(/);
     await execFileAsync(process.execPath, ['--check', workerPath]);
 
-    const basePathLiteral = JSON.stringify(basePkgDir);
-
-    // BUILD context: define + construct the subclass with no __RUNTIME_REQUIRE. The base
-    // is the member-proxy stub, so the instance is not a real lazy-base instance, nothing
-    // throws, and crucially the real lazy-base module is NEVER loaded (realLoads === 0) —
-    // proving the bundle used the build-time stub rather than resolving the package.
-    const buildRunner = path.join(outputDir, 'build-runner.cjs');
-    await fs.writeFile(
-      buildRunner,
-      [
-        'const probe = { phase: "build" };',
-        'try {',
-        '  require("./worker.js");',
-        '  globalThis.__makeSub(7);',
-        '  probe.restored = !!globalThis.__RUNTIME_REQUIRE;',
-        '  probe.realLoads = globalThis.__LAZY_BASE_LOADS || 0;',
-        '  probe.threw = false;',
-        '} catch (e) { probe.threw = true; probe.err = e.message; }',
-        'process.stdout.write("\\n" + JSON.stringify(probe));',
-        '',
-      ].join('\n'),
-    );
-    const built = await execFileAsync(process.execPath, [buildRunner], { cwd: outputDir });
-    expect(JSON.parse(built.stdout.split('\n').pop() ?? '')).toMatchObject({
-      restored: false,
-      threw: false,
-      realLoads: 0, // real lazy-base never loaded at build
+    // Plain mode bypasses every build stub. The prelude installs runtime require
+    // before the IIFE, so the external package is loaded and the class is ordinary.
+    const plain = await execFileAsync(process.execPath, [workerPath], { cwd: outputDir });
+    expect(JSON.parse(plain.stdout.slice('PLAIN:'.length))).toEqual({
+      runtimeRequire: true,
+      realLoads: 1,
+      tag: 'sub',
+      greet: 'base#7',
+      describe: 'sub:base#7',
     });
 
-    // RESTORE context (cross-phase, one process): require worker.js with __RUNTIME_REQUIRE
-    // still unset (freezing `extends` against the stub), THEN install it, THEN instantiate.
-    // The load counters prove the real lazy-base is pulled in ONLY when the member-proxy
-    // resolves through the `__RUNTIME_REQUIRE` hook (loadedBeforeMakeSub === 0,
-    // loadedAfterMakeSub === 1) — i.e. via the lazy hook, not native pre-resolution.
-    //
+    // During a real snapshot build, `extends` sees the member proxy and even
+    // construction must not load the external package.
+    const blobPath = path.join(outputDir, 'worker.snapshot.blob');
+    const built = await execFileAsync(process.execPath, ['--snapshot-blob', blobPath, '--build-snapshot', workerPath], {
+      cwd: outputDir,
+    });
+    const buildMarker = 'BUILD:';
+    expect(JSON.parse(built.stdout.slice(built.stdout.lastIndexOf(buildMarker) + buildMarker.length))).toEqual({
+      runtimeRequire: false,
+      realLoads: 0,
+      realLoadsAfterConstruct: 0,
+    });
+
     // `instanceof Base` is intentionally NOT asserted: makeMember's `protoProxy` exposes
     // only a `get` trap (no `getPrototypeOf`), so inherited methods forward to the real
     // prototype but the snapshot-frozen subclass's prototype chain does not literally
-    // contain the real `Base.prototype` — identity-by-prototype is a known non-goal of the
-    // upstream member-proxy.
-    const restoreRunner = path.join(outputDir, 'restore-runner.cjs');
-    await fs.writeFile(
-      restoreRunner,
-      [
-        'require("./worker.js");',
-        'const loadedBeforeRT = globalThis.__LAZY_BASE_LOADS || 0;',
-        `globalThis.__RUNTIME_REQUIRE = (id) => id === "lazy-base" ? require(${basePathLiteral}) : require(id);`,
-        'const loadedBeforeMakeSub = globalThis.__LAZY_BASE_LOADS || 0;',
-        'const inst = globalThis.__makeSub(7);',
-        'const probe = {',
-        '  restored: true,',
-        '  loadedBeforeRT,',
-        '  loadedBeforeMakeSub,',
-        '  loadedAfterMakeSub: globalThis.__LAZY_BASE_LOADS || 0,',
-        '  tag: inst.tag,',
-        '  greet: inst.greet(),',
-        '  describe: inst.describe(),',
-        '};',
-        'process.stdout.write("\\n" + JSON.stringify(probe));',
-        '',
-      ].join('\n'),
-    );
-    const restored = await execFileAsync(process.execPath, [restoreRunner], { cwd: outputDir });
-    expect(JSON.parse(restored.stdout.split('\n').pop() ?? '')).toEqual({
-      restored: true,
-      loadedBeforeRT: 0, // building the worker did not load the real module
-      loadedBeforeMakeSub: 0, // installing __RUNTIME_REQUIRE does not eagerly load it
-      loadedAfterMakeSub: 1, // loaded exactly once, when the member-proxy resolved via the hook
+    // contain the real `Base.prototype` — identity-by-prototype is a known non-goal.
+    //
+    // Restore keeps the snapshot-frozen subclass but resolves its base lazily
+    // through the runtime hook on first construction.
+    const restored = await execFileAsync(process.execPath, ['--snapshot-blob', blobPath], { cwd: outputDir });
+    const restoreMarker = 'RESTORE:';
+    expect(
+      JSON.parse(restored.stdout.slice(restored.stdout.lastIndexOf(restoreMarker) + restoreMarker.length)),
+    ).toEqual({
+      runtimeRequire: true,
+      realLoads: 1,
       tag: 'sub', // subclass constructor ran
       greet: 'base#7', // inherited real method + real field (opt=7) — real base constructed
       describe: 'sub:base#7', // subclass method invoking the inherited one

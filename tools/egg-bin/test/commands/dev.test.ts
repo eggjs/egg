@@ -127,7 +127,7 @@ describe('test/commands/dev.test.ts', () => {
   it('should startCluster with execArgv --inspect', () => {
     return (
       coffee
-        .fork(eggBin, ['dev', '--inspect'], { cwd })
+        .fork(eggBin, ['dev', '--inspect'], { cwd, env: { NODE_OPTIONS: '--inspect-port=0' } })
         // .debug()
         .expect('stderr', /Debugger listening on ws:\/\/127.0.0.1:\d+/)
         .expect('code', 0)
@@ -259,5 +259,19 @@ describe('test/commands/dev.test.ts', () => {
           .end()
       );
     });
+  });
+
+  // signals don't carry exit-status semantics on Windows
+  it.runIf(process.platform !== 'win32')('should exit 128 + signal number on signal death', () => {
+    return (
+      coffee
+        .fork(eggBin, ['dev'], { cwd: getFixtures('demo-app-kill-self') })
+        // .debug()
+        .expect('stdout', /startCluster kill self with SIGTERM/)
+        .expect('stderr', /was killed by signal SIGTERM/)
+        // 128 + SIGTERM(15)
+        .expect('code', 143)
+        .end()
+    );
   });
 });

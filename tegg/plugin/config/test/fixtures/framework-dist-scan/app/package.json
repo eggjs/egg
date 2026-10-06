@@ -1,0 +1,7 @@
+{
+  "name": "framework-dist-scan-app",
+  "type": "module",
+  "egg": {
+    "framework": "chair-framework"
+  }
+}

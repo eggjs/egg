@@ -1,0 +1,7 @@
+{
+  "name": "inner-object-proto",
+  "type": "module",
+  "eggModule": {
+    "name": "innerObjectProtoApp"
+  }
+}

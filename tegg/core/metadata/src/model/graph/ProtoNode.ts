@@ -29,8 +29,15 @@ export class ProtoNode implements GraphNodeObj {
     this.proto = proto;
   }
 
-  toString() {
-    return `${String(this.proto.name)}@${this.proto.instanceDefineUnitPath}`;
+  toString(): string {
+    const qualifiers = this.proto.qualifiers
+      .map((qualifier) => `${String(qualifier.attribute)}=${String(qualifier.value)}`)
+      .join(',');
+    return (
+      `${String(this.proto.name)}@${this.proto.instanceDefineUnitPath}` +
+      ` define:${this.proto.defineModuleName}@${this.proto.defineUnitPath}` +
+      ` qualifiers:[${qualifiers}]`
+    );
   }
 
   selectProto(ctx: ProtoSelectorContext): boolean {

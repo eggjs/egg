@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/aop-plugin",
-  "version": "4.0.2-beta.18",
+  "version": "4.0.2-rc.0",
   "description": "tegg aop plugin",
   "keywords": [
     "aop",
@@ -28,19 +28,21 @@
   "exports": {
     ".": "./src/index.ts",
     "./app": "./src/app.ts",
+    "./InnerObjects": "./src/InnerObjects.ts",
     "./lib/AopContextHook": "./src/lib/AopContextHook.ts",
     "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
+      "./InnerObjects": "./dist/InnerObjects.js",
       "./lib/AopContextHook": "./dist/lib/AopContextHook.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"
@@ -69,6 +71,9 @@
   },
   "engines": {
     "node": ">=22.18.0"
+  },
+  "eggModule": {
+    "name": "teggAop"
   },
   "eggPlugin": {
     "name": "teggAop",

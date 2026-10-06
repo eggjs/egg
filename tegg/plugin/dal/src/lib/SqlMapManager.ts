@@ -1,14 +1,8 @@
+import { AccessLevel, InnerObjectProto } from '@eggjs/core-decorator';
 import type { TableSqlMap } from '@eggjs/dal-runtime';
-import { TeggScope } from '@eggjs/tegg-types';
 
-const SQL_MAP_MANAGER_SLOT = Symbol('tegg:dal:sqlMapManager');
-
+@InnerObjectProto({ name: 'sqlMapManager', accessLevel: AccessLevel.PUBLIC })
 export class SqlMapManager {
-  // Per-app: keyed by module name (collides across apps); resolved from scope.
-  static get instance(): SqlMapManager {
-    return TeggScope.resolve(SQL_MAP_MANAGER_SLOT, () => new SqlMapManager(), 'SqlMapManager.instance');
-  }
-
   private sqlMaps: Map</* moduleName */ string, Map<string, TableSqlMap>>;
 
   constructor() {

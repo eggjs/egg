@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/standalone-decorator",
-  "version": "4.0.2-beta.18",
+  "version": "4.0.2-rc.0",
   "description": "tegg standalone decorator",
   "keywords": [
     "decorator",
@@ -32,16 +32,20 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/dynamic-inject": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "catalog:",
     "typescript": "catalog:"

@@ -26,7 +26,8 @@ import path from 'node:path';
 
 import {
   applyPublishConfigOverrides,
-  assertValidNpmPackageName,
+  assertPublishTag,
+  projectPublishVersions,
   getCatalogs,
   getPublishablePackages,
   getWorkspaceVersionMap,
@@ -44,32 +45,19 @@ if (tagArg) {
 }
 
 const baseDir = path.join(import.meta.dirname, '..');
-const packages = getPublishablePackages(baseDir);
-const versionMap = getWorkspaceVersionMap(baseDir);
+const { packages, versionMap } = projectPublishVersions(
+  getPublishablePackages(baseDir),
+  getWorkspaceVersionMap(baseDir),
+  {
+    dryRun: isDryRun,
+    versionType: args.find((arg) => arg.startsWith('--version-type='))?.slice('--version-type='.length),
+    prereleaseTag: args.find((arg) => arg.startsWith('--prerelease-tag='))?.slice('--prerelease-tag='.length),
+  },
+);
 const catalogs = getCatalogs(baseDir);
 const npmBin = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
-// Reject any malformed package name before it reaches `npm publish` (a typo'd
-// name would otherwise publish a brand-new bogus package).
-for (const pkg of packages) {
-  assertValidNpmPackageName(pkg.name);
-}
-
-// Never let a prerelease version land on the `latest` dist-tag (that would make
-// it the default install for every consumer). The release workflow derives the
-// tag, but this is the last line of defence regardless of how it was invoked.
-if (npmTag === 'latest') {
-  const prereleases = packages.filter((pkg) => pkg.version.includes('-'));
-  if (prereleases.length > 0) {
-    const sample = prereleases
-      .slice(0, 5)
-      .map((pkg) => `${pkg.name}@${pkg.version}`)
-      .join(', ');
-    const more = prereleases.length > 5 ? ` (+${prereleases.length - 5} more)` : '';
-    console.error(`❌ Refusing to publish prerelease version(s) to the "latest" tag: ${sample}${more}`);
-    process.exit(1);
-  }
-}
+assertPublishTag(packages, npmTag);
 
 console.log(
   `📦 Publishing ${packages.length} packages (tag: ${npmTag}${isDryRun ? ', dry-run' : ''}${useProvenance ? ', provenance' : ''})`,
@@ -118,10 +106,13 @@ function publishOne(pkg) {
   const originalManifest = fs.readFileSync(manifestPath, 'utf8');
 
   try {
-    const withVersions = resolveWorkspaceProtocols(JSON.parse(originalManifest), {
-      versionMap,
-      catalogs,
-    });
+    const withVersions = resolveWorkspaceProtocols(
+      { ...JSON.parse(originalManifest), version: pkg.version },
+      {
+        versionMap,
+        catalogs,
+      },
+    );
     const resolved = applyPublishConfigOverrides(withVersions);
     fs.writeFileSync(manifestPath, `${JSON.stringify(resolved, null, 2)}\n`);
 

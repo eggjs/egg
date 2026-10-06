@@ -11,26 +11,28 @@ Egg 可以把一个完全加载好的应用固化成 [V8 启动快照](https://n
 堆序列化成一个 blob。恢复 blob 时只需继续执行剩余生命周期（`didReady`）并开始监听，
 进程几乎可以立即对外服务。
 
-它构建在 [Bundle 部署](../core/bundle.md) 之上：快照是从单文件自包含 bundle 产出的，
-因此可以把快照理解为「预启动好的 bundle」。
+它构建在 [Bundle 部署](../core/bundle.md) 之上：快照是从自包含 bundle 产出的，因此可以把
+快照理解为「预启动好的 bundle」。单进程模式会生成一个 bundle 和一个 blob；cluster
+模式会分别生成 app 与 agent bundle，每个角色都有独立的 blob 和 V8 堆。
 
 ## Node.js 版本要求
 
-| 阶段             | 命令                                | Node.js |
-| ---------------- | ----------------------------------- | ------- |
-| **构建**快照     | `egg-bin snapshot build`            | >= 22   |
-| **恢复**（运行） | `egg-scripts start --snapshot-blob` | >= 24   |
+| 阶段                    | 命令                                             | Node.js |
+| ----------------------- | ------------------------------------------------ | ------- |
+| **构建**快照            | `egg-bin snapshot build`                         | >= 22   |
+| 启动普通 cluster bundle | 不提供角色 blob 的 `egg-scripts start --bundle`  | >= 22   |
+| **恢复**快照堆          | `--snapshot-blob`，或提供角色 blob 的 `--bundle` | >= 24   |
 
 ::: warning 恢复必须使用 Node.js >= 24
 快照可以在 Node.js >= 22 上**构建**，但在 Node.js 22 上**恢复**一个非平凡的 Egg 堆时，
 进程会在反序列化阶段以原生 fatal 错误崩溃（`Check failed: current == end_slot_index`，
 属于 V8 的 bug）。请始终在 Node.js **>= 24** 上恢复。
 
-受支持的启动方式会强制拦截：`egg-scripts start --snapshot-blob` 在 Node.js < 24 时会在
-启动任何进程前直接报清晰错误并拒绝启动。如果你绕过它、在 Node.js 22 上直接运行
-`node --snapshot-blob`，进程仍会在反序列化阶段以上面的原生 fatal 崩溃——快照自带的运行时
-拦截只能在「能完成反序列化但仍低于 24」的版本上打印友好提示。因此请始终通过 `egg-scripts`
-在 Node.js >= 24 上恢复。
+受支持的启动方式会同时拦截单进程 `--snapshot-blob`，以及提供了角色 blob 的 cluster
+`--bundle` 启动：Node.js < 24 时会在启动任何进程前直接报清晰错误并拒绝启动。如果你
+绕过它、在 Node.js 22 上直接运行 `node --snapshot-blob`，进程仍会在反序列化阶段以上面的
+原生 fatal 崩溃——快照自带的运行时拦截只能在「能完成反序列化但仍低于 24」的版本上打印
+友好提示。因此请始终通过 `egg-scripts` 在 Node.js >= 24 上恢复。
 :::
 
 ## 使用 CLI 构建与恢复
@@ -48,12 +50,24 @@ $ egg-bin snapshot build
 
 默认会把 bundle 写到 `./dist-bundle`，blob 写到 `./dist-bundle/snapshot.blob`。常用参数：
 
-| 参数               | 说明                                               |
-| ------------------ | -------------------------------------------------- |
-| `--output <dir>`   | bundle 输出目录（`worker.js` 所在目录）。          |
-| `--blob <path>`    | 快照 blob 路径，默认 `<output>/snapshot.blob`。    |
-| `--force-external` | 始终保持 external 的包，可重复（见「已知限制」）。 |
-| `--skip-bundle`    | 从已有的 `worker.js` 构建 blob（跳过打包）。       |
+为 cluster 模式构建相互独立的 app 和 agent 快照：
+
+```bash
+$ egg-bin snapshot build --cluster
+```
+
+默认会在 `./dist-bundle` 下生成 `app_worker.js`、`agent_worker.js`、
+`app.snapshot.blob` 和 `agent.snapshot.blob`。常用参数：
+
+| 参数                           | 说明                                                           |
+| ------------------------------ | -------------------------------------------------------------- |
+| `--output <dir>`               | bundle 输出目录。                                              |
+| `--cluster`                    | 分别构建 app、agent worker bundle 和 blob。                    |
+| `--blob <path>`                | 单进程 blob 路径，默认 `<output>/snapshot.blob`。              |
+| `--app-snapshot-blob <path>`   | cluster app blob 路径，默认 `<output>/app.snapshot.blob`。     |
+| `--agent-snapshot-blob <path>` | cluster agent blob 路径，默认 `<output>/agent.snapshot.blob`。 |
+| `--force-external`             | 始终保持 external 的包，可重复（见「已知限制」）。             |
+| `--skip-bundle`                | 从已有的 snapshot-ready worker 入口重建 blob，跳过再次打包。   |
 
 ### 恢复并提供服务
 
@@ -67,9 +81,22 @@ $ egg-scripts start --snapshot-blob ./dist-bundle/snapshot.blob --port 7001
 不做框架解析）。快照主函数从 `PORT`（或 `--port`）读取监听端口，执行
 `snapshotDidDeserialize` 钩子，然后调用 `app.listen()`。
 
+cluster 模式需要启用 bundle worker 入口，并提供一个或两个角色的 blob：
+
+```bash
+$ egg-scripts start --bundle \
+    --app-snapshot-blob ./dist-bundle/app.snapshot.blob \
+    --agent-snapshot-blob ./dist-bundle/agent.snapshot.blob
+```
+
+`--bundle-dir` 默认是 `./dist-bundle`。app 和 agent blob 相互独立：只提供其中一个时，
+对应角色从 blob 恢复，另一个角色仍从生成的 bundle JavaScript 正常启动。使用 snapshot
+blob 的 cluster worker 必须采用 process 模式；不带 blob 的普通 cluster bundle 也支持
+`worker_threads`。
+
 ## 对外 API
 
-如果需要自定义入口文件，Egg 也从 `egg` 导出两个方法：
+如果需要自定义单进程入口文件，Egg 也从 `egg` 导出两个方法：
 
 ```ts
 import { buildSnapshot, restoreSnapshot } from 'egg';
@@ -105,6 +132,8 @@ await app.listen(7001);
 `restoreSnapshot()` 会从 `configDidLoad` 继续执行正常启动流程直到 `didReady`，因此返回的
 `app` 已经可以继续执行运行期初始化逻辑，例如启动服务或建立外部连接。
 
+这些方法只表示一个应用堆。cluster 工作流由 CLI 生成和恢复 app、agent 两个角色入口。
+
 ## 工作原理
 
 在构建阶段，Egg 会以 `snapshot: true` 运行。此时 Egg 会加载应用元数据，但在
@@ -117,10 +146,13 @@ await app.listen(7001);
 恢复阶段，V8 先反序列化堆，随后快照主函数运行 `snapshotDidDeserialize` 钩子重建这些
 运行期资源，跑完延后的生命周期直到 `didReady`，然后开始监听。
 
+cluster 模式下，app 和 agent worker 会独立执行这套流程。每个 blob 捕获由对应角色入口
+构建出的堆；每个恢复进程也只继续该角色的生命周期和通信协议。
+
 保持 external 且惰性加载的模块集合默认是 Node 网络栈（`http`、`https`、`http2`、`tls`、
-`dns`、`inspector`，含它们的 `node:` 形式）。如果该列表之外的某个 builtin 在 import 时
-初始化了原生状态，可以通过应用 `package.json` 里的 `egg.snapshot.lazyModules` 扩展这个
-集合：
+`dns`）、`inspector` 和 `cluster`（含它们的 `node:` 形式），以及 `undici`、`urllib`。
+如果该列表之外的某个 builtin 或包在 import 时初始化了原生状态，可以通过应用
+`package.json` 里的 `egg.snapshot.lazyModules` 扩展这个集合：
 
 ```json
 {
@@ -162,22 +194,25 @@ module.exports = AppBootHook;
 
 ## 性能
 
-由于模块图已经加载、应用也已启动到 `configWillLoad`，恢复阶段只需要付出 `didReady` 与
-连接/监听的成本。在 [cnpmcore](https://github.com/cnpm/cnpmcore) 上实测：
+由于模块图已经加载、应用也已启动到 `configWillLoad`，恢复阶段主要执行 `configDidLoad`
+之后的运行期初始化、`didReady` 与连接/监听。下面在
+[cnpmcore](https://github.com/cnpm/cnpmcore) 4.32.1、Node.js 24.18.1、Apple M1 Pro、prod
+环境下，对同一份生成的 JavaScript 产物进行实测；每种模式预热 1 次，再交错测量 10 次。
+单进程计时范围为直接 spawn Node.js 到开始监听；Cluster 使用 process 模式、1 个 agent +
+2 个 app worker，并采用 master 内部 ready 计时，排除 launcher 和 master 引导开销：
 
-| 启动方式         | 恢复 → 监听          |
-| ---------------- | -------------------- |
-| 普通 bundle 启动 | ~942 ms              |
-| 快照恢复         | ~233 ms（快约 4 倍） |
-
-模块图越大（插件、tegg 模块、Router 越多），收益越明显——这正是快照在构建期提前承担的
-开销。
+| 进程模型         | Bundle 中位数 | Snapshot 中位数 | 提升                   |
+| ---------------- | ------------- | --------------- | ---------------------- |
+| 单进程           | 947 ms        | 379 ms          | 快 2.50 倍，降低 59.9% |
+| Cluster（2 app） | 1356 ms       | 591 ms          | 快 2.30 倍，降低 56.5% |
 
 ## 已知限制
 
 - **恢复需要 Node.js >= 24**（见上文）。
-- **仅单进程**：快照以单个自包含进程运行（`mode: 'single'`），与 bundle 一致，不支持
-  cluster 模式。
+- **Cluster snapshot blob 仅支持 process 模式**：普通 cluster bundle 支持
+  `worker_threads`，但 Node 无法在 worker thread 内恢复自定义 V8 启动 blob。
+- **不支持 snapshot 与 bundle cluster 启动模块**：使用 `options.require` 的
+  `--snapshot-blob` 或 cluster bundle 会在创建 worker 前直接报错。
 - **原生 addon 为 external**，必须在部署目标上存在。
 - **第三方依赖受限**：任何在模块求值阶段就打开活跃资源或捕获不可序列化状态的依赖
   （打开的 socket、原生 HTTP/2 绑定、后台 timer、文件句柄）都必须要么保持 external

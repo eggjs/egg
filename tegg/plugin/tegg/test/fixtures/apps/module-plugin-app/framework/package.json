@@ -1,0 +1,7 @@
+{
+  "name": "module-plugin-test-framework",
+  "type": "module",
+  "egg": {
+    "framework": true
+  }
+}

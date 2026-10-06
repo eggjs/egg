@@ -1,3 +1,4 @@
+export * from './EggLifecycleInfo.ts';
 export * from './EggMultiInstancePrototypeInfo.ts';
 export * from './EggPrototypeInfo.ts';
 export * from './InjectConstructorInfo.ts';

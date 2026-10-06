@@ -7,6 +7,7 @@ exports[`should export stable 1`] = `
   "ClassProtoDescriptor": [Function],
   "ClassUtil": [Function],
   "ClazzMap": [Function],
+  "EggInnerObjectPrototypeImpl": [Function],
   "EggLoadUnitType": {
     "APP": "APP",
     "MODULE": "MODULE",
@@ -39,6 +40,7 @@ exports[`should export stable 1`] = `
   "GlobalModuleNode": [Function],
   "GlobalModuleNodeBuilder": [Function],
   "IncompatibleProtoInject": [Function],
+  "InjectObjectPrototypeFinder": [Function],
   "LoadUnitFactory": [Function],
   "LoadUnitLifecycleUtil": {
     "clearObjectLifecycle": [Function],
@@ -65,6 +67,7 @@ exports[`should export stable 1`] = `
   "ProtoDescriptorType": {
     "CLASS": "CLASS",
   },
+  "ProtoGraphUtils": [Function],
   "ProtoNode": [Function],
   "TeggError": [Function],
   "eggPrototypeLifecycleUtilFromBag": [Function],

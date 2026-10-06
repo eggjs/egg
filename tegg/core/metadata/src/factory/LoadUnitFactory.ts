@@ -45,13 +45,19 @@ export class LoadUnitFactory {
     return await creator(ctx);
   }
 
-  static async createLoadUnit(unitPath: string, type: EggLoadUnitTypeLike, loader: Loader): Promise<LoadUnit> {
+  static async createLoadUnit(
+    unitPath: string,
+    type: EggLoadUnitTypeLike,
+    loader: Loader,
+    unitName?: string,
+  ): Promise<LoadUnit> {
     const loadUnitMap = LoadUnitFactory.loadUnitMap;
     if (loadUnitMap.has(unitPath)) {
       return loadUnitMap.get(unitPath)!.loadUnit;
     }
     const ctx: LoadUnitLifecycleContext = {
       unitPath,
+      unitName,
       loader,
     };
     const loadUnit = await LoadUnitFactory.getLoanUnit(ctx, type);
@@ -65,9 +71,15 @@ export class LoadUnitFactory {
     return loadUnit;
   }
 
-  static async createPreloadLoadUnit(unitPath: string, type: EggLoadUnitTypeLike, loader: Loader): Promise<LoadUnit> {
+  static async createPreloadLoadUnit(
+    unitPath: string,
+    type: EggLoadUnitTypeLike,
+    loader: Loader,
+    unitName?: string,
+  ): Promise<LoadUnit> {
     const ctx: LoadUnitLifecycleContext = {
       unitPath,
+      unitName,
       loader,
     };
     return await LoadUnitFactory.getLoanUnit(ctx, type);

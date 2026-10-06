@@ -41,12 +41,12 @@
     "@eggjs/tsconfig": "beta",
     "@oxc-node/core": "^0.1.0",
     "@types/node": "24",
-    "@vitest/coverage-v8": "4",
+    "@vitest/coverage-v8": "^5.0.1",
     "cross-env": "10",
     "oxlint": "1",
     "oxlint-tsgolint": "^0.11.0",
     "typescript": "5",
-    "vitest": "4"
+    "vitest": "^5.0.1"
   },
   "engines": {
     "node": ">=22.18.0"

@@ -1,3 +1,5 @@
+export * from './AbstractControllerAdvice.ts';
+export type { ControllerAdviceMeta } from './ControllerAdviceMeta.ts';
 export * from './HTTPControllerMeta.ts';
 export * from './HTTPCookies.ts';
 export * from './HTTPMethodMeta.ts';

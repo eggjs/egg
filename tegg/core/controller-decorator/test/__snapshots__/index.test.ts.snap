@@ -3,6 +3,7 @@
 exports[`should export stable 1`] = `
 {
   "AGENT_CONTROLLER_PROTO_IMPL_TYPE": "AGENT_CONTROLLER_PROTO",
+  "AbstractControllerAdvice": [Function],
   "Acl": [Function],
   "AgentController": [Function],
   "AgentInfoUtil": [Function],
@@ -36,6 +37,7 @@ exports[`should export stable 1`] = `
   "CONTROLLER_NAME": Symbol(EggPrototype#controllerName),
   "CONTROLLER_TIMEOUT_METADATA": Symbol(EggPrototype#controller#timeout),
   "CONTROLLER_TYPE": Symbol(EggPrototype#controllerType),
+  "ControllerAdviceInfoUtil": [Function],
   "ControllerInfoUtil": [Function],
   "ControllerMetaBuilderFactory": [Function],
   "ControllerMetadataUtil": [Function],

@@ -50,6 +50,10 @@ export const SNAPSHOT_PRELUDE_MARKER = '@eggjs/egg-bundler:snapshot-prelude';
  *   (readline/repl + http2 nghttp2 native), making the heap unserializable. Keep
  *   it lazy so the build-time stub is used; the live process gets the real module
  *   on restore.
+ * - `cluster`: Node selects the primary or worker implementation when the module
+ *   is first evaluated. A snapshot build runs outside a cluster worker, so loading
+ *   it eagerly would freeze the primary implementation into restored workers and
+ *   break Node's worker bootstrap before Egg starts.
  * - `undici` / `urllib`: egg's HTTP client stack, built during boot
  *   (`class HttpClient extends urllib.HttpClient`, and urllib's own
  *   `class BaseAgent extends undici.Agent`). undici instantiates an llhttp
@@ -74,6 +78,8 @@ export const DEFAULT_SNAPSHOT_LAZY_MODULES: readonly string[] = [
   'node:dns',
   'inspector',
   'node:inspector',
+  'cluster',
+  'node:cluster',
   'undici',
   'urllib',
 ];
@@ -171,6 +177,20 @@ export function renderSnapshotPrelude(
 /* eslint-disable */
 (function eggBundlerSnapshotPrelude() {
   'use strict';
+  // A snapshot-ready bundle is also a normal runnable bundle. Use Node's actual
+  // runtime state instead of an environment convention to choose the phase.
+  // During a plain run, install the runtime require before the bundle IIFE so
+  // transformed dynamic requires work and leave the real web globals untouched.
+  if (!process.getBuiltinModule('node:v8').startupSnapshot.isBuildingSnapshot()) {
+    if (!globalThis.__RUNTIME_REQUIRE) {
+      var __runtimeRequire = process.getBuiltinModule('node:module').createRequire(__filename);
+      var __requireWithResolve = function (id) { return __runtimeRequire(id); };
+      __requireWithResolve.resolve = function (id, options) { return __runtimeRequire.resolve(id, options); };
+      globalThis.__RUNTIME_REQUIRE = __requireWithResolve;
+    }
+    return;
+  }
+
   // Neutralize Node's undici-backed web globals (fetch/Headers/Request/...) so they
   // never lazily initialize Node's undici stack (llhttp HTTPParser + nghttp2), whose
   // native bindings a V8 startup snapshot cannot serialize.
@@ -239,7 +259,9 @@ export function renderSnapshotPrelude(
     // e.g. \`class X extends urllib.HttpClient\` (build: stub superclass; restore:
     // real super()/methods) and \`DataTypes.INTEGER(11).UNSIGNED\` keep working.
     function makeMember(ops) {
+      var __resolved, __hasResolved = false;
       var resolve = function () {
+        if (__hasResolved) return __resolved;
         var v = realMod(), prev;
         for (var i = 0; i < ops.length; i++) {
           if (v == null) return undefined;
@@ -253,9 +275,24 @@ export function renderSnapshotPrelude(
           else if (op.t === 'a') { v = (typeof v === 'function') ? Reflect.apply(v, prev, resolveArgs(op.args)) : undefined; prev = undefined; }
           else if (op.t === 'c') { v = (typeof v === 'function') ? Reflect.construct(v, resolveArgs(op.args)) : undefined; prev = undefined; }
         }
+        if (v !== undefined) { __resolved = v; __hasResolved = true; }
         return v;
       };
-      var protoProxy = new Proxy({}, { get: function (t, p) { var r = resolve(); return r && r.prototype ? r.prototype[p] : undefined; } });
+      // Accessors on the real prototype must keep the original receiver when
+      // this proxy sits in an inheritance chain. Direct access to the proxy
+      // still uses the real prototype so accessors never observe a proxy \`this\`.
+      var protoProxy = new Proxy({}, {
+        get: function (t, p, receiver) {
+          var r = resolve();
+          if (!(r && r.prototype)) return undefined;
+          return Reflect.get(r.prototype, p, receiver === protoProxy || receiver === undefined ? r.prototype : receiver);
+        },
+        set: function (t, p, v, receiver) {
+          var r = resolve();
+          if (r && r.prototype) return Reflect.set(r.prototype, p, v, receiver === protoProxy || receiver === undefined ? r.prototype : receiver);
+          return Reflect.set(t, p, v, receiver);
+        },
+      });
       // Pick the proxy target so \`typeof member\` matches what the resolved value will be:
       // a call/construct RESULT is normally an instance (typeof 'object'), while a plain
       // member access is usually a class/function (typeof 'function'). Libraries branch on
@@ -266,7 +303,8 @@ export function renderSnapshotPrelude(
       var __lastOp = ops.length ? ops[ops.length - 1] : null;
       var __target = __lastOp && (__lastOp.t === 'a' || __lastOp.t === 'c') ? {} : function () {};
       var member = new Proxy(__target, {
-        get: function (t, p) { if (p === __MR) return resolve(); if (p === 'prototype') return protoProxy; var r = resolve(); if (r != null) return r[p]; if (p === 'then') return undefined; if (typeof p === 'symbol') return undefined; return makeMember(ops.concat([{ t: 'g', k: p }])); },
+        get: function (t, p, receiver) { if (p === __MR) return resolve(); if (p === 'prototype') return protoProxy; var r = resolve(); if (r != null) return Reflect.get(Object(r), p, receiver === member || receiver === undefined ? r : receiver); if (p === 'then') return undefined; if (typeof p === 'symbol') return undefined; return makeMember(ops.concat([{ t: 'g', k: p }])); },
+        set: function (t, p, v, receiver) { var r = resolve(); if (r != null) return Reflect.set(Object(r), p, v, receiver === member || receiver === undefined ? r : receiver); return Reflect.set(t, p, v, receiver); },
         apply: function (t, thisArg, args) { var r = resolve(); if (typeof r === 'function') return Reflect.apply(r, thisArg, resolveArgs(args)); return makeMember(ops.concat([{ t: 'a', args: args }])); },
         construct: function (t, args, nt) { var r = resolve(); if (typeof r === 'function') return Reflect.construct(r, resolveArgs(args), nt || r); return makeMember(ops.concat([{ t: 'c', args: args }])); }
       });
@@ -274,11 +312,11 @@ export function renderSnapshotPrelude(
     }
 
     var proxy = new Proxy(function () {}, {
-      get: function (target, prop) {
+      get: function (target, prop, receiver) {
         if (prop === __MR) return realMod();
         if (prop === 'default') return proxy;
         var real = realMod();
-        if (real != null) return real[prop];
+        if (real != null) return Reflect.get(Object(real), prop, receiver === proxy || receiver === undefined ? real : receiver);
         // Build-time http constants so a library iterating http.METHODS etc.
         // (e.g. \`for (const m of http.METHODS)\`) does not crash.
         if (isHttp && typeof prop === 'string' && globalThis.__HTTP_CONSTS && Object.prototype.hasOwnProperty.call(globalThis.__HTTP_CONSTS, prop)) return globalThis.__HTTP_CONSTS[prop];

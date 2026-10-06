@@ -6,5 +6,7 @@ exports[`should export stable 1`] = `
   "LoaderUtil": [Function],
   "ModuleLoader": [Function],
   "TEGG_MANIFEST_KEY": "tegg",
+  "buildTeggManifestData": [Function],
+  "createTeggManifestLoaderFS": [Function],
 }
 `;

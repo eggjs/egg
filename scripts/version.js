@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { execFileSync, execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -41,7 +41,7 @@ if (versionType.includes('pre') && !validPrereleaseTags.includes(prereleaseTag))
 
 // Check if git working directory is clean
 try {
-  const status = execSync('git status --porcelain', { encoding: 'utf8' });
+  const status = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' });
   if (status.trim() && !isDryRun) {
     console.error('Git working directory is not clean. Please commit or stash your changes first.');
     process.exit(1);
@@ -53,6 +53,7 @@ try {
 
 const baseDir = path.join(__dirname, '..');
 const packageFolders = getPublishablePackages(baseDir);
+for (const pkg of packageFolders) assertValidNpmPackageName(pkg.name);
 
 console.log(`🚀 ${isDryRun ? '[DRY RUN] ' : ''}Bumping ${versionType} version for all packages...`);
 
@@ -67,7 +68,6 @@ packageFolders.forEach(({ folder, directory }) => {
 
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-    assertValidNpmPackageName(packageJson.name);
     const originalContent = JSON.stringify(packageJson, null, 2) + '\n';
 
     if (!isDryRun) {
@@ -129,7 +129,7 @@ if (isDryRun) {
 try {
   // Stage all changes
   console.log('\n📝 Staging changes...');
-  execSync('git add .', { stdio: 'inherit' });
+  execFileSync('git', ['add', '.'], { stdio: 'inherit' });
 
   // Create commit message with [skip ci] to avoid triggering CI for release commits
   const commitMessage = `chore(release): ${versionType} version bump

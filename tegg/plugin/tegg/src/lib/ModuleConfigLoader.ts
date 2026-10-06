@@ -53,15 +53,15 @@ export class ModuleConfigLoader {
     const result: EggProtoImplClass[] = [];
     const moduleConfigMap: Record<string, ModuleConfigHolder> = {};
     for (const reference of this.app.moduleReferences) {
-      const moduleName = ModuleConfigUtil.readModuleNameSync(reference.path);
-      const defaultConfig = ModuleConfigUtil.loadModuleConfigSync(reference.path, undefined, this.app.config.env);
+      const resolved = ModuleConfigUtil.resolveModuleConfigTolerant(reference, this.app.baseDir, this.app.config.env);
       // @eggjs/tegg-config moduleConfigs[module].config overwrite
-      const config = extend(true, {}, defaultConfig, this.app.moduleConfigs[moduleName]?.config);
-      moduleConfigMap[moduleName] = {
-        name: moduleName,
+      const config = extend(true, {}, resolved.config, this.app.moduleConfigs[resolved.name]?.config);
+      moduleConfigMap[resolved.name] = {
+        name: resolved.name,
         reference: {
-          name: moduleName,
-          path: reference.path,
+          name: resolved.name,
+          package: reference.package,
+          path: resolved.path,
         },
         config,
       };
@@ -87,7 +87,7 @@ export class ModuleConfigLoader {
       QualifierUtil.addProtoQualifier(func, LoadUnitNameQualifierAttribute, 'app');
       QualifierUtil.addProtoQualifier(func, InitTypeQualifierAttribute, ObjectInitType.SINGLETON);
       QualifierUtil.addProtoQualifier(func, EggQualifierAttribute, EggType.APP);
-      QualifierUtil.addProtoQualifier(func, ConfigSourceQualifierAttribute, moduleName);
+      QualifierUtil.addProtoQualifier(func, ConfigSourceQualifierAttribute, resolved.name);
       result.push(func);
     }
     const moduleConfigs = this.loadModuleConfigs(moduleConfigMap);

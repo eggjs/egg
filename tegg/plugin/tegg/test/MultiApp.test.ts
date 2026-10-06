@@ -5,7 +5,10 @@ import { describe, it } from 'vitest';
 
 import { BackgroundCounterService } from './fixtures/apps/multi-app-isolation/modules/counter-module/BackgroundCounterService.ts';
 import { CounterProducer } from './fixtures/apps/multi-app-isolation/modules/counter-module/CounterEvent.ts';
-import { CounterService } from './fixtures/apps/multi-app-isolation/modules/counter-module/CounterService.ts';
+import {
+  CounterInnerState,
+  CounterService,
+} from './fixtures/apps/multi-app-isolation/modules/counter-module/CounterService.ts';
 import { getAppBaseDir } from './utils.ts';
 
 async function waitFor(predicate: () => boolean, timeout = 2000): Promise<void> {
@@ -54,6 +57,26 @@ describe('plugin/tegg/test/MultiApp.test.ts', () => {
       counter1.save('foo', 42);
       assert.equal(counter1.load('foo'), 42);
       assert.equal(counter2.load('foo'), undefined, 'app2 store must not see app1 data');
+    } finally {
+      await Promise.all([app1.close(), app2.close()]);
+    }
+  });
+
+  it('should isolate public inner object state between two concurrent apps', async () => {
+    const app1 = mm.app({ baseDir: getAppBaseDir('multi-app-isolation') });
+    const app2 = mm.app({ baseDir: getAppBaseDir('multi-app-isolation-b') });
+    await Promise.all([app1.ready(), app2.ready()]);
+    try {
+      const inner1 = await app1.getEggObject(CounterInnerState);
+      const inner2 = await app2.getEggObject(CounterInnerState);
+      assert.notStrictEqual(inner1, inner2, 'each app must have its own CounterInnerState inner object');
+
+      const counter1 = await app1.getEggObject(CounterService);
+      const counter2 = await app2.getEggObject(CounterService);
+      counter1.incrementInnerState();
+      counter1.incrementInnerState();
+      assert.equal(counter1.getInnerStateCount(), 2);
+      assert.equal(counter2.getInnerStateCount(), 0, 'app2 inner object must not be affected by app1 mutations');
     } finally {
       await Promise.all([app1.close(), app2.close()]);
     }

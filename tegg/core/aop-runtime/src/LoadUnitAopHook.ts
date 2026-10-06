@@ -1,4 +1,5 @@
 import { AspectInfoUtil, AspectMetaBuilder, CrosscutAdviceFactory } from '@eggjs/aop-decorator';
+import { Inject, LoadUnitLifecycleProto } from '@eggjs/core-decorator';
 import { EggPrototypeFactory, TeggError } from '@eggjs/metadata';
 import type {
   EggPrototype,
@@ -8,12 +9,15 @@ import type {
   LoadUnitLifecycleContext,
 } from '@eggjs/tegg-types';
 
+import { AopContextAdviceRegistry } from './AopContextAdviceRegistry.js';
+
+@LoadUnitLifecycleProto()
 export class LoadUnitAopHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
+  @Inject()
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
 
-  constructor(crosscutAdviceFactory: CrosscutAdviceFactory) {
-    this.crosscutAdviceFactory = crosscutAdviceFactory;
-  }
+  @Inject()
+  private readonly aopContextAdviceRegistry: AopContextAdviceRegistry;
 
   async postCreate(_: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
     for (const proto of loadUnit.iterateEggPrototype()) {
@@ -39,6 +43,7 @@ export class LoadUnitAopHook implements LifecycleHook<LoadUnitLifecycleContext, 
             qualifiers: [],
             proto: adviceProto as EggPrototype,
           });
+          this.aopContextAdviceRegistry.addAdvice(advice.name, adviceProto as EggPrototype);
         }
       }
     }

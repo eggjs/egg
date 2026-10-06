@@ -7,5 +7,8 @@
   },
   {
     "path": "../modules/multi-module-service"
+  },
+  {
+    "path": "../modules/multi-module-controller"
   }
 ]

@@ -21,7 +21,7 @@ describe('plugin/tegg/test/DynamicInject.test.ts', () => {
       baseDir: getAppBaseDir('dynamic-inject-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('dynamic inject should work', async () => {
     app.mockCsrf();

@@ -71,6 +71,22 @@ export interface ClusterOptions {
    */
   startMode?: ClusterStartMode;
   /**
+   * custom app worker file
+   */
+  appWorkerFile?: string;
+  /**
+   * custom agent worker file
+   */
+  agentWorkerFile?: string;
+  /**
+   * V8 startup snapshot blob used to restore app workers, only available in process mode
+   */
+  appSnapshotBlob?: string;
+  /**
+   * V8 startup snapshot blob used to restore the agent worker, only available in process mode
+   */
+  agentSnapshotBlob?: string;
+  /**
    * startup port of each app worker, such as: `[7001, 7002, 7003]`, only effects when the startMode is `'worker_threads'`
    */
   ports?: number[];
@@ -167,6 +183,25 @@ export async function parseOptions(options?: ClusterOptions): Promise<ParsedClus
     }
   }
 
+  for (const optionName of ['appWorkerFile', 'agentWorkerFile'] as const) {
+    const workerFile = options[optionName];
+    if (!workerFile) {
+      options[optionName] = undefined;
+      continue;
+    }
+    options[optionName] = path.resolve(options.baseDir!, workerFile);
+    assert(fs.existsSync(options[optionName]), `options.${optionName} file should exist: ${options[optionName]}`);
+  }
+  for (const optionName of ['appSnapshotBlob', 'agentSnapshotBlob'] as const) {
+    const snapshotBlob = options[optionName];
+    if (!snapshotBlob) {
+      options[optionName] = undefined;
+      continue;
+    }
+    options[optionName] = path.resolve(options.baseDir!, snapshotBlob);
+    assert(fs.existsSync(options[optionName]), `options.${optionName} file should exist: ${options[optionName]}`);
+    assert(options.startMode !== 'worker_threads', `options.${optionName} only supports startMode "process"`);
+  }
   // don't print deprecated message in production env.
   // it will print to stderr.
   if (process.env.NODE_ENV === 'production') {

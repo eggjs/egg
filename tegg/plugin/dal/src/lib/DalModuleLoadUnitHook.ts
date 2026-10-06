@@ -1,23 +1,40 @@
+import { Inject, InjectOptional, LoadUnitLifecycleProto } from '@eggjs/core-decorator';
 import { DatabaseForker, type DataSourceOptions } from '@eggjs/dal-runtime';
-import type { LifecycleHook } from '@eggjs/lifecycle';
+import { LifecycleDestroy, type LifecycleHook } from '@eggjs/lifecycle';
 import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/metadata';
-import type { Logger, ModuleConfigHolder } from '@eggjs/tegg-types';
+import type { ModuleConfigs, RuntimeConfig } from '@eggjs/tegg-common-util';
+import type { Logger } from '@eggjs/tegg-types';
 
 import { MysqlDataSourceManager } from './MysqlDataSourceManager.ts';
+import { SqlMapManager } from './SqlMapManager.ts';
+import { TableModelManager } from './TableModelManager.ts';
 
+@LoadUnitLifecycleProto()
 export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
-  private readonly moduleConfigs: Record<string, ModuleConfigHolder>;
-  private readonly env: string;
+  @Inject()
+  private readonly moduleConfigs: ModuleConfigs;
+
+  @Inject()
+  private readonly runtimeConfig: Partial<RuntimeConfig>;
+
+  @InjectOptional()
   private readonly logger?: Logger;
 
-  constructor(env: string, moduleConfigs: Record<string, ModuleConfigHolder>, logger?: Logger) {
-    this.env = env;
-    this.moduleConfigs = moduleConfigs;
-    this.logger = logger;
+  @Inject()
+  private readonly mysqlDataSourceManager: MysqlDataSourceManager;
+
+  @Inject()
+  private readonly sqlMapManager: SqlMapManager;
+
+  @Inject()
+  private readonly tableModelManager: TableModelManager;
+
+  private get env(): string {
+    return this.runtimeConfig.env ?? '';
   }
 
   async preCreate(_: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
-    const moduleConfigHolder = this.moduleConfigs[loadUnit.name];
+    const moduleConfigHolder = this.moduleConfigs.inner[loadUnit.name];
     if (!moduleConfigHolder) return;
     const dataSourceConfig: Record<string, DataSourceOptions> | undefined = (moduleConfigHolder.config as any)
       .dataSource;
@@ -35,7 +52,7 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
         }
 
         try {
-          await MysqlDataSourceManager.instance.createDataSource(loadUnit.name, name, dataSourceOptions);
+          await this.mysqlDataSourceManager.createDataSource(loadUnit.name, name, dataSourceOptions);
         } catch (e) {
           if (e instanceof Error) {
             e.message = `create module ${loadUnit.name} datasource ${name} failed: ${e.message}`;
@@ -44,5 +61,20 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
         }
       }),
     );
+  }
+
+  /**
+   * Self lifecycle of the hook object: runs when the InnerObjectLoadUnit
+   * instance goes down — AFTER every business load unit — so the dal module
+   * clears its own per-app managers on app shutdown (the standalone
+   * counterpart of this plugin's egg-side beforeClose). Must be declared via
+   * decorator: inner objects never fall back to interface method names
+   * (EggInnerObjectImpl#callObjectLifecycle).
+   */
+  @LifecycleDestroy()
+  async destroyManagers(): Promise<void> {
+    this.mysqlDataSourceManager.clear();
+    this.sqlMapManager.clear();
+    this.tableModelManager.clear();
   }
 }

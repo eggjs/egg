@@ -10,5 +10,6 @@ export * from './orm.ts';
 export * from './runtime/index.ts';
 export * from './scope/index.ts';
 export * from './schedule.ts';
+export * from './standalone/index.ts';
 export * from './transaction.ts';
 export * from './agent-runtime/index.ts';

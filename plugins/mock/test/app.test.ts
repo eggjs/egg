@@ -6,7 +6,7 @@ import mm, { type MockApplication } from '../src/index.ts';
 import { createApp as createParallelApp } from '../src/lib/parallel/app.ts';
 import { getFixtures } from './helper.ts';
 
-describe.sequential('test/app.test.ts', () => {
+describe('test/app.test.ts', { concurrent: false }, () => {
   afterEach(mm.restore);
 
   // test mm.app

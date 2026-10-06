@@ -65,7 +65,10 @@ vi.mock('../src/lib/ExternalsResolver.ts', () => ({
 vi.mock('../src/lib/EntryGenerator.ts', () => ({
   EntryGenerator: vi.fn().mockImplementation(function () {
     return {
-      generate: async () => ({ workerEntry: mocks.workerEntry, entryDir: mocks.entryDir }),
+      generate: async () => ({
+        entries: [{ name: 'worker' as const, filepath: mocks.workerEntry }],
+        entryDir: mocks.entryDir,
+      }),
     };
   }),
 }));

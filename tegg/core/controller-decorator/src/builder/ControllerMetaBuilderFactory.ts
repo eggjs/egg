@@ -1,4 +1,3 @@
-import { Pointcut } from '@eggjs/aop-decorator';
 import type {
   ControllerMetaBuilder,
   ControllerMetaBuilderCreator,
@@ -7,7 +6,7 @@ import type {
   EggProtoImplClass,
 } from '@eggjs/tegg-types';
 
-import { ControllerInfoUtil, MethodInfoUtil } from '../util/index.ts';
+import { ControllerInfoUtil } from '../util/index.ts';
 
 export class ControllerMetaBuilderFactory {
   private static builderCreatorMap: Map<ControllerTypeLike, ControllerMetaBuilderCreator> = new Map();
@@ -39,19 +38,6 @@ export class ControllerMetaBuilderFactory {
   static build(clazz: EggProtoImplClass, controllerType?: ControllerTypeLike): ControllerMetadata | undefined {
     const builder = ControllerMetaBuilderFactory.createControllerMetaBuilder(clazz, controllerType);
     if (!builder) return;
-    const metadata = builder.build();
-    if (!metadata) return;
-    const controllerAopMws = ControllerInfoUtil.getControllerAopMiddlewares(clazz);
-    for (const { name } of metadata.methods) {
-      const methodAopMws = MethodInfoUtil.getMethodAopMiddlewares(clazz, name);
-      if (MethodInfoUtil.shouldRegisterAopMiddlewarePointCut(clazz, name)) {
-        for (const mw of [...methodAopMws, ...controllerAopMws].reverse()) {
-          Pointcut(mw)(clazz.prototype, name);
-        }
-        MethodInfoUtil.registerAopMiddlewarePointcut(clazz, name);
-      }
-    }
-
-    return metadata;
+    return builder.build();
   }
 }

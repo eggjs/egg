@@ -31,9 +31,10 @@ order: 9
 
 ::: tip Egg 已经替你处理了什么
 bundler 默认把 Node 网络栈保持为 external 且惰性加载（`http`、`https`、`http2`、
-`tls`、`dns`、`inspector`，以及它们的 `node:` 形式），并把 undici 支撑的 web 全局
-对象替换为构建期桩。只有当某个**第三方依赖**或**不在该列表上的 builtin**触发了约束时，
-你才需要本页。机制细节见 [工作原理](./snapshot.md#工作原理)。
+`tls`、`dns`、`inspector` 和 `cluster`，以及它们的 `node:` 形式），同时让 `undici`、
+`urllib` 保持 external 且惰性加载，并把 undici 支撑的 web 全局对象替换为构建期桩。只有
+当某个**第三方依赖**或**不在该列表上的 builtin**触发了约束时，你才需要本页。机制细节见
+[工作原理](./snapshot.md#工作原理)。
 :::
 
 ## 第 1 步——确定失败发生面
@@ -84,15 +85,15 @@ could not be injected (its signature did not match). …
 `egg-scripts start --snapshot-blob <blob>`（或 `node --snapshot-blob`）会恢复堆。
 常见特征：
 
-| 现象                                                                               | 含义                                                                                                                                                                     |
-| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 反序列化中途原生 fatal `Check failed: current == end_slot_index`                   | 在 **Node.js < 24** 上恢复。请始终在 Node.js >= 24 上恢复。`egg-scripts` 在能判定目标 < 24 时会拒绝启动；若自定义 `--node` 的版本无法读取，则会落到下面的快照内守卫。    |
-| `[egg-bundler] V8 snapshot restore requires Node.js >= 24, but this process is vX` | 快照自带的守卫触发了（你绕过了 `egg-scripts`，或它的版本探测 fail-open 了）。                                                                                            |
-| `Error: Cannot find module '<pkg>'`                                                | 某个 **external** 依赖缺失。external 在恢复时会被 `require()` 真实加载，且解析根锚定在 `worker.js` 所在目录——请让 `worker.js` 与包含这些依赖的 `node_modules` 放在一起。 |
-| `Aop Advice(X) not found in loadUnits`                                             | 某个 tegg 装饰类在 bundle 里保留了错误的源码路径（见 [tegg 装饰器](#tegg-aop-advice)）。                                                                                 |
-| 某个「打包前还好好的」库内部深处抛 `TypeError`                                     | 该库错误地处理了构建期的成员代理桩（见 [惰性 external 边界情况](#lazy-external-edge-cases)）。                                                                           |
-| `globalThis.fetch(...)` 静默无反应                                                 | 恢复后 web 全局对象仍是空操作桩（见 [已知限制](./snapshot.md#已知限制)）。                                                                                               |
-| `[egg-bundler] failed to restore snapshot: <err>`                                  | 在完成延后生命周期（`snapshotDidDeserialize` → `didReady` → `listen`）时抛出的任何其他错误。                                                                             |
+| 现象                                                                               | 含义                                                                                                                                                                  |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 反序列化中途原生 fatal `Check failed: current == end_slot_index`                   | 在 **Node.js < 24** 上恢复。请始终在 Node.js >= 24 上恢复。`egg-scripts` 在能判定目标 < 24 时会拒绝启动；若自定义 `--node` 的版本无法读取，则会落到下面的快照内守卫。 |
+| `[egg-bundler] V8 snapshot restore requires Node.js >= 24, but this process is vX` | 快照自带的守卫触发了（你绕过了 `egg-scripts`，或它的版本探测 fail-open 了）。                                                                                         |
+| `Error: Cannot find module '<pkg>'`                                                | 某个 **external** 依赖缺失。external 在恢复时会被 `require()` 真实加载，并从 worker 目录按 Node 的普通父目录规则解析——请把它安装到可解析到的 `node_modules` 中。      |
+| `Aop Advice(X) not found in loadUnits`                                             | 某个 tegg 装饰类在 bundle 里保留了错误的源码路径（见 [tegg 装饰器](#tegg-aop-advice)）。                                                                              |
+| 某个「打包前还好好的」库内部深处抛 `TypeError`                                     | 该库错误地处理了构建期的成员代理桩（见 [惰性 external 边界情况](#lazy-external-edge-cases)）。                                                                        |
+| 模块求值期捕获的 `fetch`/`Request` 引用恢复后仍像桩                                | 捕获的是构建期引用。web 全局对象本身会重新安装，应在调用处读取（见 [已知限制](./snapshot.md#已知限制)）。                                                             |
+| `[egg-bundler] failed to restore snapshot: <err>`                                  | 在完成延后生命周期（`snapshotDidDeserialize` → `didReady` → `listen`）时抛出的任何其他错误。                                                                          |
 
 ## 第 2 步——定位罪魁祸首模块（构建失败）
 
@@ -139,8 +140,7 @@ $ NODE_DEBUG='egg/scripts/commands/start' egg-scripts start --snapshot-blob ./di
 
 ```bash
 $ cd ./dist-bundle
-$ EGG_BUNDLE_SNAPSHOT=build \
-    node --snapshot-blob ./snapshot.blob --build-snapshot ./worker.js
+$ node --snapshot-blob ./snapshot.blob --build-snapshot ./worker.js
 ```
 
 序列化器中止时通常会指出它无法编码的对象类型（例如某个原生句柄），其周边栈会指向
@@ -152,9 +152,10 @@ $ EGG_BUNDLE_SNAPSHOT=build \
 
 ### 用 `--skip-bundle` 二分
 
-`--skip-bundle` 只对已有的 `worker.js` **重跑快照步骤**，跳过（缓慢的）打包。由于
-bundle 是单一自包含文件，你可以在 `worker.js` 里注释掉某个 `import`/`require`，
-几秒钟内重跑快照步骤：
+`--skip-bundle` 只对之前由 `egg-bin snapshot build` 生成的 snapshot-ready worker 入口
+**重跑快照步骤**，跳过（缓慢的）打包；它不能把任意普通 bundle 直接转换成快照产物。
+由于每个角色 bundle 都是单一自包含文件，你可以在 `worker.js` 里注释掉某个
+`import`/`require`，几秒钟内重跑快照步骤：
 
 ```bash
 # 1. 打包一次
@@ -164,13 +165,15 @@ $ egg-bin snapshot build --output ./dist-bundle
 $ egg-bin snapshot build --output ./dist-bundle --skip-bundle
 ```
 
-如果去掉某个模块的求值后 blob 能构建成功，那这个模块就是元凶。
+如果去掉某个模块的求值后 blob 能构建成功，那这个模块就是元凶。使用 `--cluster` 时，
+同一个参数会复用 `app_worker.js` 和 `agent_worker.js`，重新构建两个角色的 blob。
 
 ### 用 `--force-external` 确认
 
-把嫌疑包推**出** bundle 既是诊断手段也是修复手段。external 永远不会在构建期被求值
-——它在恢复时被真实 `require()`——所以如果 `--force-external <pkg>` 让构建成功了，
-说明该包在 import 时捕获了不可序列化状态：
+把嫌疑包推**出** bundle 既是诊断手段也是修复手段。external 包自身的实现不会在构建期
+被求值；快照 prelude 会给 bundle 内的调用方提供成员代理桩，并在恢复时真实加载该包。
+所以如果 `--force-external <pkg>` 让构建成功了，说明该包或它在 import 时加载的某个依赖
+会捕获不可序列化状态：
 
 ```bash
 $ egg-bin snapshot build --force-external some-native-client
@@ -211,8 +214,8 @@ id），在 `package.json` 里添加。它会被合并到默认值之上，在�
 }
 ```
 
-内建默认值已经覆盖了 `http`、`https`、`http2`、`tls`、`dns` 和 `inspector`（含它们的
-`node:` 形式）——这些无需自行列出。
+内建默认值已经覆盖了 `http`、`https`、`http2`、`tls`、`dns`、`inspector` 和 `cluster`
+（含它们的 `node:` 形式），以及 `undici`、`urllib` 两个包——这些无需自行列出。
 
 ### 3. 实现快照生命周期钩子
 
@@ -244,6 +247,8 @@ module.exports = AppBootHook;
 `agent.js` Boot 类的钩子也会运行——agent 的 `snapshotWillSerialize`/
 `snapshotDidDeserialize` 在 app 的**之前**触发——因此 `agent.js` 持有的资源需要同样的
 处理，且 `failed to restore snapshot` 错误也可能来自 agent 钩子。
+cluster 模式下 app 与 agent 有各自的 bundle 和 blob，因此每个角色只围绕自己的堆运行
+对应钩子。
 
 ### 4. 把工作移出模块作用域
 
@@ -262,19 +267,19 @@ function getClient() {
 }
 ```
 
-### 5. 避开 web 全局对象
+### 5. 在调用处引用 web 全局对象
 
-`globalThis.fetch` 和其他 undici 支撑的全局对象在恢复后仍是**空操作桩**（Node 的
-惰性 getter 无法被重新装回恢复后的堆）。请改用按需懒加载的 HTTP 客户端——把 `urllib`
-或 `undici` 保持 external，在恢复时真实 require：
+Egg 会在恢复后重新安装 `globalThis.fetch` 和其他 undici 支撑的全局对象。但在模块求值期
+捕获的引用仍会指向固化进 blob 的构建期桩。请在使用处读取全局对象，或者按需加载保持
+external 的 `urllib`、`undici` 等 HTTP 客户端：
 
 ```js
-// ✗ 恢复后空操作
-await fetch(url);
-
-// ✓ 真实客户端，恢复时真实加载
-const { request } = require('urllib');
+// ✗ 捕获构建期桩
+const request = globalThis.fetch;
 await request(url);
+
+// ✓ 在调用处读取恢复后的全局对象
+await globalThis.fetch(url);
 ```
 
 ## 失败模式详解
@@ -301,15 +306,17 @@ external 模块在构建期由一个**成员代理**表示：一个会记录对�
 模板里把它强转成字符串，或基于某种奇特的 `typeof` 分支——就可能错误处理这个桩并抛出
 令人困惑的 `TypeError`。如果你看到类似 `String.prototype.toString requires that 'this'
 be a String` 的错误、源头在某个依赖内部且发生在恢复期，说明该依赖在期望具体值的地方
-收到了成员代理。把该依赖保持 `--force-external`（这样它永远不会被代理）是可靠的修复。
+收到了成员代理。把该依赖保持 `--force-external`（使其自身实现不再对构建期代理求值）是
+可靠的修复；bundle 内的调用方在恢复前仍会拿到这个 external 包的成员代理。
 
 ### 请求期文件缺失（运行期资源） {#runtime-assets}
 
-一个能干净恢复的快照，仍可能在某个处理器读取文件时 `ENOENT`。只有 **`app/` 下的
-非源码文件**（加上强制拷贝目录 `app/public`、`app/assets`、`app/static`）会被拷贝到
-`worker.js` 旁边。源码扩展名文件（`.ts`/`.js`/`.json`/…）、`app/` 之外的资源、以及
-符号链接资源**都不会**被拷贝。而且由于 bundle 把 `__dirname` 和 `import.meta.url`
-重写成了输出目录，一个执行 `fs.readFileSync(path.join(__dirname, 'tpl.html'))` 或
+一个能干净恢复的快照，仍可能在某个处理器读取文件时 `ENOENT`。在 `app/` 下，manifest
+已知模块文件和源码类代码文件（`.ts`、`.js`、`.mjs`、`.cjs` 及其变体）会被排除，其他
+资源会被拷贝；强制拷贝目录 `app/public`、`app/assets`、`app/static` 则会原样复制。配置的
+roots 之外的资源和符号链接资源不会被拷贝。而且由于 bundle 把 `__dirname` 和
+`import.meta.url` 重写成了输出目录，一个执行
+`fs.readFileSync(path.join(__dirname, 'tpl.html'))` 或
 `new URL('./x', import.meta.url)` 的模块会相对 bundle 输出目录解析——如果该文件从未
 被拷贝过去，就会在请求期（而非构建或恢复期）失败。
 
@@ -319,7 +326,7 @@ be a String` 的错误、源头在某个依赖内部且发生在恢复期，说�
 bundle:
   runtimeAssets:
     roots: ['app', 'resources']
-    forceCopyDirs: ['app/public', 'resources/templates']
+    forceCopyDirs: ['app/public', 'app/assets', 'app/static', 'resources/templates']
 ```
 
 ### 构建成功，但 blob 缺失
@@ -339,7 +346,7 @@ bundle:
 | `egg.snapshot.lazyModules`                             | 应用 `package.json`                     | 向惰性 external 集合添加 builtin/类 builtin 的 id（合并到默认值之上）。                         |
 | `snapshotWillSerialize()` / `snapshotDidDeserialize()` | `app.js` / `agent.js` Boot 类           | 释放并重建你自己代码持有的资源。                                                                |
 | `--pack-alias <spec>=<target>`                         | `egg-bin snapshot build` 标志（可重复） | 打包期重定向某个模块说明符。                                                                    |
-| `--skip-bundle`                                        | `egg-bin snapshot build` 标志           | 只对已有 `worker.js` 重跑快照步骤。                                                             |
+| `--skip-bundle`                                        | `egg-bin snapshot build` 标志           | 只对已有的 snapshot-ready worker 入口重跑快照步骤。                                             |
 | `--dry-run`                                            | `egg-bin snapshot build` 标志           | 打印 `node --build-snapshot` 命令但不 spawn。                                                   |
 | `bundle.runtimeAssets.roots` / `forceCopyDirs`         | 应用 `module.yml`                       | 把额外的非源码文件拷进 bundle，使其在请求期存在。                                               |
 | `--no-sourcemap`                                       | `egg-scripts start` 标志                | 当自动注入的 `--import source-map-support/register` 干扰恢复启动时（TypeScript 应用）将其去掉。 |

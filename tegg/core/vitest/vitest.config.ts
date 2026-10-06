@@ -23,7 +23,7 @@ export default defineConfig({
     environment: 'node',
     include: ['test/**/*.test.ts'],
     // Register TS loader (ts-node) before tests so Egg can load .ts via Module._extensions.
-    setupFiles: ['test/setup.ts'],
+    setupFiles: ['./src/setup.ts', 'test/setup.ts'],
     // Custom runner for tegg context injection via enterWith + held beginModuleScope.
     runner: './src/runner.ts',
   },

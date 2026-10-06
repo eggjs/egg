@@ -1,13 +1,14 @@
 import '@eggjs/tegg-plugin/types';
 import type { ControllerMetaBuilderFactory } from '@eggjs/controller-decorator';
+import type { RootProtoManager } from '@eggjs/controller-runtime';
 
-import type { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';
-import type { RootProtoManager } from './lib/RootProtoManager.ts';
+import type { EggMcpRouter } from './lib/impl/mcp/EggMcpRouter.ts';
 
 declare module 'egg' {
   interface Application {
     rootProtoManager: RootProtoManager;
-    controllerRegisterFactory: ControllerRegisterFactory;
     controllerMetaBuilderFactory: typeof ControllerMetaBuilderFactory;
+    /** Available when the MCP proxy plugin is enabled. */
+    mcpRouter?: EggMcpRouter;
   }
 }

@@ -36,6 +36,12 @@ const DEFAULT_READ_MODULE_REF_OPTS = {
 
 const CONFIG_NAMES_SLOT = Symbol('tegg:common-util:moduleConfigNames');
 
+export interface ResolvedModuleConfig {
+  name: string;
+  path: string;
+  config: ModuleConfig;
+}
+
 export class ModuleConfigUtil {
   // Per-app/per-Runner: each standalone Runner (and app) has distinct config
   // names (env-based); a process-global static races across them (the standalone
@@ -80,15 +86,21 @@ export class ModuleConfigUtil {
         const pkgJson = path.posix.join(moduleReferenceConfig.package, 'package.json');
         const file = importResolve(pkgJson, options);
         const modulePath = path.dirname(file);
+        const pkg = ModuleConfigUtil.readPackageJsonSync(modulePath);
         moduleReference = {
           path: modulePath,
-          name: ModuleConfigUtil.readModuleNameSync(modulePath),
+          name: ModuleConfigUtil.getModuleName(pkg),
+          package: ModuleConfigUtil.getPackageName(pkg),
+          ...(moduleReferenceConfig.optional === undefined ? {} : { optional: moduleReferenceConfig.optional }),
         };
       } else if (ModuleReferenceConfigHelp.isInlineModuleReference(moduleReferenceConfig)) {
         const modulePath = path.join(configDir, moduleReferenceConfig.path);
+        const pkg = ModuleConfigUtil.readPackageJsonSync(modulePath);
         moduleReference = {
           path: modulePath,
-          name: ModuleConfigUtil.readModuleNameSync(modulePath),
+          name: ModuleConfigUtil.getModuleName(pkg),
+          package: ModuleConfigUtil.getPackageName(pkg),
+          ...(moduleReferenceConfig.optional === undefined ? {} : { optional: moduleReferenceConfig.optional }),
         };
       } else {
         throw new Error('unknown type of module reference config: ' + JSON.stringify(moduleReferenceConfig));
@@ -138,15 +150,18 @@ export class ModuleConfigUtil {
       }
       moduleDirSet.add(moduleDir);
 
+      let pkg: any;
       let name: string;
       try {
-        name = this.readModuleNameSync(moduleDir);
+        pkg = this.readPackageJsonSync(moduleDir);
+        name = this.getModuleName(pkg);
       } catch {
         continue;
       }
       ref.push({
         path: moduleDir,
         name,
+        package: this.getPackageName(pkg),
       });
     }
     const moduleReferences = this.readModuleFromNodeModules(baseDir);
@@ -157,10 +172,7 @@ export class ModuleConfigUtil {
           throw new Error('duplicate import of module reference: ' + moduleBasePath);
         }
       });
-      ref.push({
-        path: moduleReference.path,
-        name: moduleReference.name,
-      });
+      ref.push(moduleReference);
     }
     return ref;
   }
@@ -188,10 +200,11 @@ export class ModuleConfigUtil {
       const absolutePkgPath = path.dirname(packageJsonPath);
       const realPkgPath = fs.realpathSync(absolutePkgPath);
       try {
-        const name = this.readModuleNameSync(realPkgPath);
+        const pkg = this.readPackageJsonSync(realPkgPath);
         ref.push({
           path: realPkgPath,
-          name,
+          name: this.getModuleName(pkg),
+          package: this.getPackageName(pkg),
         });
       } catch {
         continue;
@@ -213,6 +226,15 @@ export class ModuleConfigUtil {
     return pkg.eggModule.name;
   }
 
+  private static getPackageName(pkg: any): string | undefined {
+    return pkg.name;
+  }
+
+  private static readPackageJsonSync(moduleDir: string): any {
+    const pkgContent = fs.readFileSync(path.join(moduleDir, 'package.json'), 'utf8');
+    return JSON.parse(pkgContent);
+  }
+
   public static async readModuleName(baseDir: string, moduleDir: string): Promise<string> {
     moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
     const pkgContent = await fsPromise.readFile(path.join(moduleDir, 'package.json'), 'utf8');
@@ -222,8 +244,7 @@ export class ModuleConfigUtil {
 
   public static readModuleNameSync(moduleDir: string, baseDir?: string): string {
     moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
-    const pkgContent = fs.readFileSync(path.join(moduleDir, 'package.json'), 'utf8');
-    const pkg = JSON.parse(pkgContent);
+    const pkg = ModuleConfigUtil.readPackageJsonSync(moduleDir);
     return ModuleConfigUtil.getModuleName(pkg);
   }
 
@@ -304,6 +325,32 @@ export class ModuleConfigUtil {
     }
 
     return target;
+  }
+
+  public static resolveModuleConfigTolerant(
+    reference: ModuleReference,
+    baseDir?: string,
+    env?: string,
+  ): ResolvedModuleConfig {
+    if (!path.isAbsolute(reference.path)) {
+      assert(baseDir, 'baseDir is required for relative module reference path');
+    }
+    const modulePath = path.isAbsolute(reference.path) ? reference.path : path.resolve(baseDir!, reference.path);
+
+    if (!fs.existsSync(modulePath) && reference.name) {
+      return {
+        name: reference.name,
+        path: modulePath,
+        config: {},
+      };
+    }
+
+    const name = ModuleConfigUtil.readModuleNameSync(modulePath);
+    return {
+      name,
+      path: modulePath,
+      config: ModuleConfigUtil.loadModuleConfigSync(modulePath, undefined, env),
+    };
   }
 
   static #loadOneSync(moduleDir: string, configName: string): ModuleConfig | undefined {

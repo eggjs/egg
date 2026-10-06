@@ -69,6 +69,7 @@ site/.dumi/
 # egg-bin
 tools/egg-bin/test/fixtures/**/node_modules/
 !tools/egg-bin/test/fixtures/demo-app/node_modules/
+!tools/egg-bin/test/fixtures/demo-app-kill-self/node_modules/
 !tools/egg-bin/test/fixtures/demo-app-debug/node_modules/
 !tools/egg-bin/test/fixtures/demo-app-commonjs/node_modules/
 !tools/egg-bin/test/fixtures/demo-app-detect-port/node_modules/

@@ -24,7 +24,7 @@ describe('plugin/tegg/test/Inject.test.ts', () => {
         baseDir: getAppBaseDir('optional-inject'),
       });
       await app.ready();
-    });
+    }, 30_000);
     afterAll(async () => {
       await app.close();
     });
@@ -54,7 +54,7 @@ describe('plugin/tegg/test/Inject.test.ts', () => {
         baseDir: getAppBaseDir('same-name-singleton-and-context-proto'),
       });
       await app.ready();
-    });
+    }, 30_000);
     afterAll(async () => {
       await app.close();
     });

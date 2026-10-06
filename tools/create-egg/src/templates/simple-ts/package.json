@@ -41,7 +41,7 @@
     "oxlint": "1",
     "oxlint-tsgolint": "^0.11.0",
     "typescript": "5",
-    "vitest": "beta"
+    "vitest": "^5.0.1"
   },
   "engines": {
     "node": ">=22.18.0"

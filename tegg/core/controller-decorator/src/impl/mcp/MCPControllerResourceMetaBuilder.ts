@@ -21,6 +21,7 @@ export class MCPControllerResourceMetaBuilder {
       return undefined;
     }
     const middlewares = MethodInfoUtil.getMethodMiddlewares(this.clazz, this.methodName);
+    const advices = MethodInfoUtil.getMethodAopMiddlewares(this.clazz, this.methodName);
     const needAcl = MethodInfoUtil.hasMethodAcl(this.clazz, this.methodName);
     const aclCode = MethodInfoUtil.getMethodAcl(this.clazz, this.methodName);
     const params = MCPInfoUtil.getMCPResourceParams(this.clazz, this.methodName);
@@ -29,6 +30,7 @@ export class MCPControllerResourceMetaBuilder {
     return new MCPResourceMeta({
       name: this.methodName,
       middlewares,
+      advices,
       needAcl,
       aclCode,
       extra,

@@ -29,6 +29,13 @@ describe('core/loader/test/LoaderUtil.test.ts', () => {
   }
 
   describe('supportExtensions()', () => {
+    it('should include .mjs/.cjs as first-class module extensions', () => {
+      process.env.EGG_TS_ENABLE = 'false';
+      const extensions = LoaderUtil.supportExtensions();
+      assert(extensions.includes('.mjs'));
+      assert(extensions.includes('.cjs'));
+    });
+
     it('should not include TypeScript extensions when EGG_TS_ENABLE=false', () => {
       process.env.EGG_TS_ENABLE = 'false';
       const extensions = LoaderUtil.supportExtensions();
@@ -45,6 +52,16 @@ describe('core/loader/test/LoaderUtil.test.ts', () => {
       assert(extensions.includes('.ts'));
       assert(extensions.includes('.mts'));
       assert(extensions.includes('.cts'));
+    });
+  });
+
+  describe('filePattern()', () => {
+    it('should discover .mjs/.cjs files even when TypeScript loading is disabled', () => {
+      process.env.EGG_TS_ENABLE = 'false';
+      const patterns = LoaderUtil.filePattern();
+      const positivePattern = patterns[0];
+      assert(positivePattern.includes('mjs'));
+      assert(positivePattern.includes('cjs'));
     });
   });
 });

@@ -2,11 +2,191 @@
 
 Dates use the workspace-local Asia/Shanghai calendar date.
 
-## [2026-06-28] decision | secure release pipeline design + P0 hardening
+## [2026-08-06] fix | restore standalone public dynamic injection
 
-- sources touched: `.github/workflows/release.yml`, `scripts/version.js`, `scripts/publish.js`, `scripts/utils.js`, `scripts/sync-cnpm.js`
-- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/decisions/secure-release-pipeline.md`
-- note: Recorded the target secure-release design from a multi-agent design pass (3 architectures red-teamed → synthesized). Maintainer chose a GitHub-Release-triggered model: `release-prepare.yml` (dispatch) bumps + signs + drafts a Release; publishing the Release triggers `release.yml` (`on: release`, read from default branch `next`) → guard → zero-secret build → Environment-gated OIDC publish → finalize. Verified GitHub facts: release events read the workflow from the default branch with `GITHUB_SHA`=tag commit; `choice` inputs aren't API-enforced; egg default branch is `next`. P0 (code/workflow hardening: argv git ops, npm-name validation, prerelease→latest guard, isPublished 404-handling, notice loglevel, branch choice+guard) landed in #6017; `--ignore-scripts` deferred to P1 because `@eggjs/egg-bundler` has a `prepublishOnly` build.
+- sources touched: `tegg/standalone/{standalone,service-worker-runtime}`
+- pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Made `@eggjs/dynamic-inject-runtime` a direct standalone dependency so the built-in standalone package-root scan always supplies the canonical PUBLIC `eggObjectFactory`. Removed the service-worker runtime's duplicate PRIVATE factory and made its runner depend only on the shared factory contract. Kept `@eggjs/ajv-plugin` opt-in rather than adding it to the service-worker defaults. Standalone and service-worker tests, focused typechecks, and the Cloudflare bundle/manifest check cover the restored wiring.
+
+## [2026-08-05] docs | record the Leoric snapshot compatibility boundary
+
+- sources touched: `tools/egg-bundler/src/compat/leoric/{index.ts,runtime-require-loader.cjs}`, `tools/egg-bundler/src/lib/Bundler.ts`, related tests
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Documented why snapshot builds can neither externalize all of Leoric nor inline its expression-based runtime requires unchanged, how the scoped loader keeps Leoric core bundled while deferring drivers and filesystem modules, and why the version-coupled shim must fail closed and eventually be removed in favor of an upstream dynamic-require contract.
+
+## [2026-08-05] docs | replace snapshot startup benchmark with a reproducible baseline
+
+- sources touched: `site/docs/{zh-CN/,}advanced/snapshot.md`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced startup numbers whose original timing boundary and artifact parity could not be established. The cnpmcore benchmark now holds snapshot-ready JavaScript constant between plain execution and blob restore and interleaves one warm-up plus ten measured runs per mode. Single process measures direct Node spawn to listening; cluster uses the master's internal orchestration-to-ready timer to exclude launcher and master-bootstrap overhead.
+
+## [2026-08-05] fix | harden cluster worker and snapshot output contracts
+
+- sources touched: `packages/cluster/src/{worker_protocol,utils/mode}`, `tools/egg-bin/src/commands/snapshot.ts`, `tools/scripts/src/commands/start.ts`, `tools/egg-bundler/src/lib/prelude.ts`, related tests and user docs
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Blank worker paths normalize before launch. Snapshot builds reject colliding role blob paths, remove stale outputs before validating the current build, and reject bootstrap modules that would otherwise be silently ignored. Lazy-external call-result proxies now memoize their first resolved object so mutations persist after restore.
+
+## [2026-08-03] fix | preserve authoritative manifest discovery in Tegg loaders
+
+- sources touched: `packages/loader-fs/src/{index.ts,manifest_loader_fs.ts}`, `tegg/core/loader/src/impl/ModuleLoader.ts`, related tests and package docs
+- pages updated: `wiki/log.md`, `wiki/packages/{loader-fs,egg-bundler}.md`
+- note: Added an optional authoritative directory-file view to `LoaderFS`. `ModuleLoader` consumes exact manifest lists, including TypeScript-origin keys and authoritative empty directories, before falling back to runtime extension patterns and glob discovery. This prevents `egg-scripts start` with `EGG_TS_ENABLE=false` from dropping bundled Tegg controllers/services, without coupling `LoaderUtil` to bundle globals or changing real-filesystem TypeScript behavior.
+
+## [2026-08-03] fix | keep snapshot-ready bundles directly runnable
+
+- sources touched: `tools/egg-bundler/src/{index.ts,lib/EntryGenerator.ts,lib/prelude.ts}`, `tools/egg-bin/src/commands/snapshot.ts`, `site/docs/{zh-CN/,}advanced/snapshot-troubleshooting.md`, related tests
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced the `EGG_BUNDLE_SNAPSHOT` build convention with Node's `v8.startupSnapshot.isBuildingSnapshot()` state. A snapshot-ready JavaScript artifact now installs its real runtime require hook and follows the ordinary bundle path when executed without a blob; only a real snapshot build stubs lazy externals and web globals. Added a real `@utoo/pack` regression covering plain execution, `--build-snapshot`, and blob restore with the same artifact.
+
+## [2026-08-03] fix | load cluster builtins after snapshot restore
+
+- sources touched: `tools/egg-bundler/src/lib/prelude.ts`, `tools/egg-bundler/test/{snapshot-lazy-external,snapshot-lazy-bundler}.test.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added `cluster` and `node:cluster` to the framework snapshot lazy-external defaults. Node chooses the primary or worker cluster implementation at first module evaluation; deferring both specifiers prevents snapshot construction from freezing the primary implementation into restored app workers. Added coverage for default resolution and bundle-manifest externalization.
+
+## [2026-07-22] fix | preserve lazy-external accessor receivers after restore
+
+- sources touched: `tools/egg-bundler/src/lib/prelude.ts`, `tools/egg-bundler/test/snapshot-lazy-external.test.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Lazy-external member and prototype proxies now use receiver-aware `Reflect.get`/`Reflect.set`. Accessors inherited through a snapshot-frozen proxy run with the application subclass or instance as `this`, so symbol-backed state such as Leoric's `Bone.synchronized` is not read from or written to the shared real base class.
+
+## [2026-07-22] feature | launch cluster workers from separate snapshot blobs
+
+- sources touched: `tools/scripts/src/commands/start.ts`, `tools/scripts/test/snapshot-start.test.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added explicit `egg-scripts start --bundle` mode. `--bundle-dir` defaults worker entries to `app_worker.js` and `agent_worker.js`, while independent `--app-snapshot-blob` and `--agent-snapshot-blob` options enable restore only for the supplied roles. Blob paths never infer worker locations; `--snapshot-blob` remains single-process-only.
+
+## [2026-07-22] feature | build separate app and agent snapshot blobs
+
+- sources touched: `tools/egg-bin/src/commands/snapshot.ts`, `tools/egg-bin/test/commands/snapshot.test.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added `egg-bin snapshot build --cluster`, which selects the bundler's explicit cluster target and builds independently configurable `app.snapshot.blob` from `app_worker.js` plus `agent.snapshot.blob` from `agent_worker.js`. `--app-snapshot-blob` and `--agent-snapshot-blob` configure cluster outputs; the existing `--blob` remains single-process-only. Each entry owns its role, so the build no longer uses an environment variable to switch one bundle between app and agent.
+
+## [2026-07-21] architecture | generate explicit app and agent bundle entries
+
+- sources touched: `tools/egg-bundler/src/lib/EntryGenerator.ts`, `tools/egg-bundler/src/lib/Bundler.ts`, `tools/egg-bundler/src/index.ts`
+- pages updated: `tools/egg-bundler/README.md`, `tools/egg-bundler/docs/output-structure.md`, `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added a `cluster` bundle target that emits role-specific `app_worker.js` and `agent_worker.js` files. Runtime role selection is removed from the generated workers; snapshot mode independently inlines the full graph into both outputs instead of producing a shared chunk.
+
+## [2026-07-21] architecture | enforce the startup-snapshot runtime boundary
+
+- sources touched: `AGENTS.md`, `packages/core/src/lifecycle.ts`, `packages/egg/src/lib/egg.ts`, `plugins/watcher/src/lib/boot.ts`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Made `configDidLoad` or later the required initialization phase for plugin runtime resources, documented explicit plugin dependencies for runtime consumers, made `clusterWrapper()` fail fast during snapshot construction, and moved watcher creation out of its boot constructor. Deferred placeholder/replay wrappers are explicitly rejected as a lifecycle workaround.
+
+## [2026-07-21] refactor+docs | make controller extension hooks declarative
+
+- sources touched: `tegg/core/controller-runtime/src/lib/MiddlewareGraphHook.ts`, `tegg/plugin/controller`, `tegg/plugin/mcp-proxy`, `tegg/standalone/service-worker-controller`
+- pages updated: `wiki/concepts/{tegg-module-plugin,controller-advice}.md`, `wiki/packages/{egg-bundler,service-worker}.md`, `wiki/log.md`
+- note: Replaced the controller boot hook for middleware graph weaving with a scanned `ControllerGraphHookRegistrar`, and replaced the MCP proxy's static scope-backed hook list/configWillLoad registration with a scanned DI registrar plus per-router instance state. Corrected stale docs for Egg MCP finalization, manifest-backed dynamic DAL loading, controller Advice nesting, and per-app service-worker state. The MCP proxy regression fixture now uses normal package plugin configuration so its eggModule registrar is represented in the generated manifest.
+
+## [2026-07-21] refactor | separate controller advice execution from method AOP
+
+- sources touched: `tegg/core/{types,aop-decorator,controller-decorator,controller-runtime,tegg}`, `tegg/plugin/controller`, `tegg/standalone/{service-worker-controller,service-worker}`
+- pages updated: `wiki/concepts/controller-advice.md`, `wiki/packages/service-worker.md`, `wiki/index.md`, `wiki/log.md`
+- note: `@Middleware(AdviceClass)` is recorded in the built-in HTTP/MCP controller metadata and resolved through the active host container. Every class is composed through `around()`; `AbstractControllerAdvice.around()` forwards the host context, `next`, and `AdviceContext` to `middleware()`. HTTP writes its method result before `next()` unwinds. MCP method-level Advice wraps the bound SDK callback, while the service-worker host keeps controller-level Advice outside transport dispatch so legacy middleware can inspect or replace the streaming response after `next()`. The shared `IS_ADVICE` marker avoids a controller-to-AOP package dependency, while explicit `@Pointcut` remains independently owned by AOP.
+
+## [2026-07-20] refactor+docs | clarify HTTP registration phases and service-worker usage
+
+- sources touched: `tegg/core/controller-runtime/src/lib/impl/http/{HTTPControllerRegister.ts,HTTPMethodRegister.ts}`, `tegg/core/controller-runtime/test/HTTPControllerRegister.test.ts`, `tegg/plugin/controller/test/lib/HTTPMethodRegister.test.ts`, `examples/helloworld-service-worker/README.md`, `tegg/standalone/{standalone,service-worker,service-worker-runtime}/README.md`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: HTTP methods are now represented by one `HTTPMethodRegister` instance across the existing validate-then-register phases. The first phase checks the real router and uses the existing `checkRouters` state for host-gated conflict checks; the second phase performs normal registration. Reworked the affected READMEs around public installation, runtime, configuration, HTTP/MCP, and deployment contracts, removing implementation-plan narration and correcting stale controller package, cookie, MCP option, and method-handling claims.
+
+## [2026-07-20] fix | run standalone metadata scan with the detected TypeScript loader
+
+- sources touched: `tools/egg-bin/src/commands/bundle.ts`, `tools/egg-bin/scripts/standalone-metadata.mjs`, `tools/egg-bin/test/{commands/bundle.test.ts,fixtures/standalone-bundle-ts/*}`, `examples/helloworld-service-worker/{package.json,README.md}`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/log.md`
+- note: `BaseCommand` installs the detected TypeScript compiler in the environment inherited by child processes, but standalone bundle metadata was previously loaded in the already-running CLI process. Moved framework resolution and `loadMetadata()` to a dedicated child process, matching the existing dev/manifest command model and preserving custom `--require`/`--import` hooks. The example no longer sets an outer `NODE_OPTIONS`; a decorator-bearing TypeScript fixture verifies that scanning happens in a distinct loader-enabled process.
+
+## [2026-07-20] refactor | finalize MCP registration once like HTTP
+
+- sources touched: `tegg/core/controller-runtime/src/lib/impl/mcp/{MCPControllerRegister.ts,McpRouter.ts}`, `tegg/core/controller-runtime/test/MCPControllerRegister.test.ts`, `tegg/plugin/controller/src/lib/impl/mcp/{EggMCPRegisterProvider.ts,EggMcpRouter.ts}`, `tegg/standalone/service-worker-controller/src/{http/FetchEventHandler.ts,mcp/MCPRegisterProvider.ts,mcp/ServiceWorkerMcpRouter.ts}`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: MCP per-proto `register()` now only collects, matching HTTP. A single `MCPControllerRegister.doRegister()` groups complete records by server name and calls the host router once per server; this removes `registeredControllerProtos`, the persistent `registerMap`, and the service-worker router's second `doRegister()`/pending-registration state. Egg finalizes on `CONTROLLER_LOAD_UNIT`; the fetch host finalizes before taking its router middleware snapshot on the first event. `MCPServerHelper` remains request/session-scoped because MCP SDK transports are single-use. This supersedes the older log note that egg MCP had no deferred finalization.
+
+## [2026-07-20] refactor | align MCP controller resolution with HTTP
+
+- sources touched: `tegg/core/controller-runtime/src/lib/impl/mcp/{MCPControllerRegister.ts,MCPServerHelper.ts,McpRouter.ts}`, `tegg/plugin/controller/src/lib/impl/mcp/EggMcpRouter.ts`, `tegg/standalone/service-worker-controller/src/mcp/ServiceWorkerMcpRouter.ts`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: MCP registration records now contain only the controller proto and tool/resource/prompt metadata. Removed the identical bound `getOrCreateEggObject` callback from every record and removed `MCPControllerRegister`'s concrete factory dependency. As with HTTP method registration, each host supplies its container factory once when constructing `MCPServerHelper`; the request-time SDK callback then resolves the controller lazily through the helper.
+
+## [2026-07-20] docs | simplify the standalone service-worker example
+
+- sources touched: `examples/helloworld-service-worker/{README.md,package.json,.gitignore,wrangler.jsonc,fetch-event.ts,worker-sw.ts,run-sw.mjs}`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Reduced the minimal example to its two actual entry points: `main.ts` for the Node HTTP server and `worker.ts` for the deployable Cloudflare module worker. Removed the redundant unbundled fetch-event shim and the classic-service-worker Node harness, plus their npm scripts and generated-output ignore. The bundler's public `service-worker` format remains supported; it is no longer presented as a primary runtime path in this minimal example. Also removed stale references to the deleted hand-written `bundle-cf.mjs`/`bundle-sw.mjs` scripts.
+
+## [2026-07-20] fix+feature | standalone bundle dynamic-load parity, DAL fix, egg-bin bundle CLI
+
+- sources touched: `tegg/core/loader/src/impl/ModuleLoader.ts`, `tegg/plugin/dal/src/lib/DataSource.ts`, `tegg/standalone/service-worker/src/{index.ts,ServiceWorkerApp.ts}`, `tegg/standalone/service-worker/tsdown.config.ts`, `tegg/standalone/service-worker-controller/package.json`, `tools/egg-bundler/src/lib/importMetaPatch.ts`, `tools/egg-bin/src/commands/bundle.ts`, `examples/helloworld-service-worker/*`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/log.md`
+- note: Fixed the standalone bundle's dynamic-module-loading gap so it aligns with the egg app bundle: `ModuleLoader.createModuleLoader` now reuses the manifest's decorated files from `globalThis.__EGG_BUNDLE_MANIFEST__` in bundle mode, so DAL's multiInstance `getObjects` (which does `LoaderFactory.createLoader(unitPath).load()`) no longer globs non-decorated files (an egg plugin's `app.ts`) missing from the bundle map. Root cause traced through `createByDynamicMultiInstanceClazz → getObjects → ModuleLoader.load`; the egg app avoided it by bundling all `fileDiscovery` files + a `ManifestLoaderFS`, which standalone (decorated-only) lacked. Also fixed DAL's `DataSource.getObjects` to return before loading a module with no `dataSource` config. This lets a standalone service-worker bundle include teggDal without `excludeModules`. Added `egg-bin bundle` support for standalone targets (selected by `--entry`/`--target standalone`; `--framework` names an app package exporting `loadMetadata`, e.g. `@eggjs/service-worker` which now exports it) — the example replaces its hand-written bundle-cf.mjs/bundle-sw.mjs with `egg-bin bundle`. Also cleared CI build blockers: isolatedDeclarations types on `importMetaPatch` + `ServiceWorkerApp.loadMetadata`, and unplugin-unused deps (dropped unused `@eggjs/service-worker-runtime` from the controller, ignored the scan-only `@eggjs/service-worker-controller` on the host). Verified: `ut run build` green; both module + service-worker formats bundle via the CLI and run on Node + workerd (teggDal included) — `/hello` + `/mcp/calc/stream` 200.
+
+## [2026-07-19] refactor | standalone service worker Cloudflare bundle → injection-based seam
+
+- sources touched: `tools/egg-bundler/src/lib/StandaloneWorkerBundler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`, `packages/typings/src/global.ts`, `examples/helloworld-service-worker/{worker.ts,bundle-cf.mjs,README.md,.gitignore}`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Reworked `StandaloneWorkerBundler` from synthesizing the host entry (hardcoded `export default { fetch }`) to an INJECTION seam. The user now authors a plain, locally-runnable `worker.ts` (`new ServiceWorkerApp(dir)` + `export default { fetch }` or `addEventListener`); the bundler takes an `entry` path + `format` ('module' | 'service-worker') and prepends a scanned-imports + manifest prelude to a build-managed copy beside `worker.ts` (so relative imports/`import.meta` resolve unchanged, no build-only specifier leaks). `StandaloneApp.init` falls back to `globalThis.__EGG_BUNDLE_MANIFEST__` (declared in `packages/typings/src/global.ts`, mirroring `__EGG_BUNDLE_MODULE_LOADER__`) when no `manifest` option is given, so one `worker.ts` runs bundled (global manifest) and unbundled (runtime fs scan). ESM wrapper re-exports the entry default (module worker) or runs it for side effects (service-worker). Also corrected a long-standing mislabel: `@eggjs/egg-bundler`'s `@utoo/pack` engine is **Turbopack**, not mako; it only emits CJS (`OutputType` = standalone|export), which is why worker output needs the thin ESM wrapper (source-confirmed at tag `utoopack-v1.4.17`). Verified on Node and workerd (`wrangler dev`): example `GET /hello/` + `POST /mcp/calc/stream` both 200.
+
+## [2026-07-15] feature | fetch-host `@HTTPCookies` (fetch-native cookies)
+
+- sources touched: `tegg/standalone/service-worker-controller/src/http/{ServiceWorkerCookies.ts,FetchHTTPMethodRegister.ts}`, `tegg/standalone/service-worker-controller/src/index.ts`, `tegg/standalone/service-worker/test/{ServiceWorkerApp.test.ts,fixtures/hello-app/EdgeController.ts}`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Added `@HTTPCookies()` to the fetch host — `FetchHTTPMethodRegister` gains the `HTTPParamType.COOKIES` branch binding a fetch-native `ServiceWorkerCookies` (`@eggjs/cookies`-compatible `get`/`set`; Set-Cookie attrs path/domain/expires/maxAge/httpOnly/secure/sameSite/partitioned/priority/overwrite) that reads the `Cookie` header + writes `Set-Cookie` onto `ctx.responseHeaders`. Previously the fetch host had no COOKIES param branch (threw "unsupported param type"). Unsigned by design (edge-clean; not `@eggjs/cookies`, which has app coupling + heavy deps) — signing/encryption are not implemented; a host that needs them injects `@eggjs/cookies`. Users annotate `@HTTPCookies() cookies: Cookies` with the `Cookies` type from `@eggjs/tegg`; `ServiceWorkerCookies` is the internal impl.
+
+## [2026-07-15] fix | fetch-host streaming keepalive via tee + context preDestroy
+
+- sources touched: `tegg/standalone/service-worker-controller/src/http/FetchEventHandler.ts`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Reworked streaming keepalive from the BackgroundTaskHelper passthrough to `stream.tee()` + a request-context `preDestroy` (`EggContextLifecycleUtil.registerObjectLifecycle`) that awaits the monitor branch draining — no `backgroundTask.timeout` cap, so a legitimately long stream (SSE) is never cut short.
+
+## [2026-07-14] feature | fetch-host MCP config-selected transport provider
+
+- sources touched: `tegg/standalone/service-worker-controller/src/mcp/{ServiceWorkerMcpRouter.ts,types.ts}`, `tegg/standalone/service-worker/test/MCP.test.ts`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: `config.mcp.transport` selects the fetch-host MCP transport per app: the built-in `'web'` (web-standard streamable, default) or a host-registered alternative by name via `ServiceWorkerMcpRouter.registerTransport(name, provider)`. The selected provider fully owns the server's transport (mutually exclusive with the built-in), so a host can swap in an alternative transport (e.g. a node-based SSE `/sse`+`/messages` + streamable) WHOLESALE via config — no router fork, no facade `mcp` option, no IoC override, no module swap; node:http stays in the registering host. Registry is `TeggScope`-scoped per app (mirrors `EggMcpRouter.hooks`); unknown name falls back to built-in. `McpTransportProvider` gets an `McpServerMountContext` (router, live registration, serverName/basePath, shared authenticate/createServerHelper/selectMiddlewares/compose). Built-in path shares `#mountStreamable` + `#createServerHelper`.
+
+## [2026-07-14] behavior | service-worker standalone: single config surface + capability-object seam
+
+- sources touched: `tegg/standalone/standalone/src/{StandaloneApp.ts,main.ts}`, `tegg/standalone/standalone/README.md`, `tegg/standalone/service-worker/src/ServiceWorkerApp.ts`, `tegg/standalone/service-worker-controller/src/{mcp/ServiceWorkerMcpRouter.ts,types.ts}`, `tegg/standalone/service-worker/test/{ServiceWorkerApp.test.ts,MCP.test.ts,fixtures/hello-app/*}`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: `StandaloneApp` exposes the entry app module's `module.yml` (the module scanned from `baseDir`) as the framework-owned app-wide `config` inner object — the single user config surface, with NO programmatic override (subsystems read their slice, e.g. `config.backgroundTask.timeout`, `config.mcp.*`). Capability objects are `@InjectOptional()` inner objects supplied via the generic `innerObjectHandlers` seam, each defaulting when absent: `mcpAuthHandler` (absent → allow-all), `fetchContextFactory`, `errorResponseMapper`. So `ServiceWorkerApp` has no bespoke options — `ServiceWorkerAppOptions` aliases `StandaloneAppOptions`. Removed the earlier `mcp` facade option + `mcpTransportOptions` inner object; DNS-rebinding options move to `config.mcp`. Tests use `module.<env>.yml` fixtures (via `env`) for per-app mcp config and `innerObjectHandlers` for auth.
+
+## [2026-07-14] package | service-worker framework-module auto-discovery (drop hand-ordered frameworkDeps)
+
+- sources touched: `tegg/standalone/service-worker-runtime/src/StandaloneEggObjectFactory.ts`, `tegg/standalone/service-worker/src/{ServiceWorkerApp.ts,index.ts}`, `tegg/standalone/service-worker/test/ServiceWorkerApp.test.ts`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: `ServiceWorkerApp` hand-listed `service-worker-runtime` + `-controller` as explicit `frameworkDeps` in a fixed order (with a long comment about the order being load-bearing), because single-root auto-discovery from the controller root threw `EggPrototypeNotFound: eggObjectFactory in LOAD_UNIT:serviceWorkerRuntime` when the runtime module scanned second. Root cause (reproduced by pointing frameworkDeps at one controller root): `StandaloneEggObjectFactory extends EggObjectFactory` omitted `name`, so it registered as `standaloneEggObjectFactory` and did NOT satisfy `ServiceWorkerRunner`'s by-name `@Inject() eggObjectFactory` locally — the inject fell back to the global PUBLIC `eggObjectFactory` in `@eggjs/dynamic-inject-runtime`, whose availability depended on module scan order. NOT a topological-sort bug (the coupling was a name mismatch forcing reliance on a global proto). Fix: pin `name: 'eggObjectFactory'` on `StandaloneEggObjectFactory` → local, order-independent resolution. That unblocked the upstream reference structure (`standalone-next`): `ServiceWorkerApp` now uses a single frameworkDep = its own package root (`path.join(__dirname, '..')`), auto-discovering runtime + controller via the node_modules eggModule convention; removed the manual `import.meta.resolve` list + the stale comment. Also dropped `export * from '@eggjs/service-worker-controller'` from the facade `index.ts` (align to reference — only exports ServiceWorkerApp; the one SW test using `FetchEventImpl` now imports it from the controller package). Did NOT convert composition→`extends StandaloneApp` (our facade is richer: `serve()` node:http bridge, narrow public surface). Green: SW suite (21) + standalone + controller + tegg (142 passed, only pre-existing dal/MySQL skips); typecheck/oxfmt clean.
+
+## [2026-07-14] concept | single PUBLIC copy of app-scoped compat protos (dedup)
+
+- sources touched: `tegg/plugin/tegg/src/lib/{ModuleHandler,EggAppLoader}.ts`
+- pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/log.md`
+- note: The `() => app[name]` APP-scoped compat protos (router / logger / runtimeConfig / ...) were DUPLICATED — a PUBLIC copy in the APP load unit (for business modules) plus a PRIVATE copy in the inner-object load unit (for inner objects), the PRIVATE-ness chosen to avoid two PUBLIC copies colliding. Verified empirically that business modules resolve the inner-object load unit's PUBLIC protos fine (whole tegg/controller/aop/eventbus/schedule/service-worker suite green, incl. MultiApp, with the APP-unit copy removed), so consolidated to ONE PUBLIC copy in the inner-object load unit: `ModuleHandler` feeds `buildAppSingletonCompatClazzList()` (now default PUBLIC) and `EggAppLoader.load()` no longer prepends `buildAppSingletonCompatClazzList()` — it provides only the CONTEXT-scoped compat + `moduleConfigs`. The `accessLevel` param on `buildClazz`/`buildAppLoggerClazz`/`buildAppSingletonCompatClazzList` existed only to build the PRIVATE copy and was removed (compat protos are always PUBLIC). `EggCompatibleProtoImpl` still honors the descriptor accessLevel (left as-is, just always PUBLIC now). `moduleConfigs` stays the one explicit PRIVATE provided inner object. Pre-existing `tegg-config/DuplicateOptionalModule.test.ts` failure is unrelated (fails on baseline too; asserts a `moduleReferences` list).
+
+## [2026-07-13] concept | egg HTTP register via LoadUnitInstance hook + inner-object instantiation is complete
+
+- sources touched: `tegg/plugin/controller/src/lib/impl/http/EggHTTPControllerRegistrar.ts` (new, merges the former `EggHTTPRegisterProvider` + a short-lived separate `EggHTTPRegisterHook`), `tegg/plugin/controller/src/app.ts`
+- pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: Replaced the egg controller boot's manual `httpRegisterProvider.doRegister(...)` (and its by-name `getPrototype` resolve of the provider) with a container-native trigger. `EggHTTPControllerRegistrar` is one class that (a) plugs the HTTP register creator into the factory via `@LifecyclePostInject` and (b) is a `@LoadUnitInstanceLifecycleProto` whose `postCreate` mounts all collected controllers priority-sorted onto `app.router` when the `CONTROLLER_LOAD_UNIT` (`app/controller`, egg's last controller-bearing load unit) instance is created — `postCreate` fires per instance so it filters on `instance.loadUnit.type`. The boot still resolves `rootProtoManager` (teggRootProto middleware reads `ctx.app.rootProtoManager`, non-DI). Two durable findings recorded: (1) inner-object instantiation is NOT reachability-gated — `InnerObjectLoadUnitBuilder#buildProtoGraph` returns EVERY scanned proto (graph is ordering/cycle/missing-dep only), so "a scanned inner object wasn't instantiated" means the scan input was stale, not graph pruning; (2) the failure that first looked like graph gating was a stale fixture `.egg` compile-cache — its scan manifest omitted the newly-added hook file, so acl-app (controllers only in `app/controller`, no module controllers) 404'd while module-having apps passed. Clearing `.egg` under the fixtures fixed it; both the separate-hook and merged-registrar forms then pass. No merge for standalone (lazy, no `CONTROLLER_LOAD_UNIT`; trigger lives in `FetchEventHandler.doInitRoutes` which also drives MCP + the fetch-router snapshot) or egg MCP (`MCPControllerRegister.register()` mounts immediately, no deferred doRegister). Follow-up (same day): reverted `RootProtoManager` from an egg inner object to an app-mounted APP compat proto. It is now host-agnostic pure logic with NO proto decorator in controller-runtime; the fetch host applies `InnerObjectProto(PUBLIC)(RootProtoManager)` imperatively in its `runtimeProtos` barrel and injects it, while the egg boot mounts `new RootProtoManager()` on `app.rootProtoManager` before `moduleHandler.ready()` so it becomes a `() => app[name]` compat proto (like `app.mcpRouter`) injected via `@EggQualifier(EggType.APP)` in `EggHTTPControllerRegistrar`, and still backs the plain `teggRootProto` middleware. This dropped the last boot-hook `#resolveInnerObject` (helper deleted) and, being vestigial, `rootProtoManager` was removed from `ControllerLoadUnitHook` + the `ControllerRegister.register(loadUnit?)` interface param. Regression green: controller full suite (incl. acl/priority/module/multi-app) + `mcp-tegg-register` + service-worker (92 tests); typecheck/oxfmt clean; dal fails only on missing MySQL.
+
+## [2026-07-13] concept | inner objects inject app properties via egg compat protos
+
+- sources touched: `tegg/plugin/tegg/src/lib/{ModuleHandler,EggAppLoader,EggCompatibleProtoImpl}.ts`, `tegg/core/runtime/src/impl/InnerObjectLoadUnitBuilder.ts`, `tegg/plugin/controller/src/{app.ts,lib/impl/http/EggHTTPRegisterProvider.ts}` (+ deleted `EggHTTPControllerRegister.ts`), controller-runtime `ControllerModule.ts` fold-in
+- pages updated: `wiki/concepts/tegg-module-plugin.md`, `wiki/log.md`
+- note: A controller/tegg refactor arc. (1) Folded the `Egg*` inner-object shell subclasses into the runtime base classes (decorators moved onto `RootProtoManager`/`ControllerRegisterFactory`/`ControllerLoadUnitHook`/`ControllerPrototypeHook`; hosts re-export the bases). (2) Made the egg HTTP register a container citizen: `EggHTTPRegisterProvider` (@InnerObjectProto) replaces the static-TeggScope-slot `EggHTTPControllerRegister`, mirroring the fetch host's provider. (2b, commit `0e59ce453`) Did the same for the egg MCP register: mount the per-app `EggMcpRouter` on `app.mcpRouter` in the controller boot (it needs the live `app`, so it is still built imperatively) so its compat proto reaches inner objects; an `EggMCPRegisterProvider` optional-injects `@EggQualifier(EggType.APP) mcpRouter` and plugs in the MCP creator. With both HTTP and MCP on providers, the imperative enqueue/drain bypass `ControllerRegisterDefaults` (and `ControllerRegisterFactory.applyDefaultRegisters`) is DELETED — egg and standalone now differ only in their router/mcpRouter implementations. Added the first running egg MCP-controller test (`mcp-proxy/test/mcp-tegg-register.test.ts`: teggController + mcpProxy + a tegg `@MCPController`, asserts `app.mcpRouter` mounted and `GET /mcp/stateless/stream` → 405). (3) The load-bearing change: instead of ModuleHandler hand-providing `logger`/`runtimeConfig`/`router` as PRIVATE `ProvidedInnerObjectProto`s, it now feeds `EggAppLoader.buildAppSingletonCompatClazzList(PRIVATE)` into the inner-object graph via `InnerObjectLoadUnitBuilder.addCompatibleClazzList`, so inner objects inject app properties through the same `() => app[name]` compat protos business modules use. Enablers/gotchas: `EggCompatibleProtoImpl` now honors the descriptor accessLevel (was hardcoded PUBLIC) so the inner-unit copies are PRIVATE and don't collide with the app load unit's PUBLIC copies; CONTEXT-scoped compat protos are excluded (inner objects are singletons); compat protos are fed AFTER scanned inner objects and skip name clashes (inner object wins); `moduleConfigs` stays an explicit provided instance (blacklisted in EggAppLoader + wants a `ModuleConfigs` wrapper); an app property whose name is also a ctx property (`router`) needs `@EggQualifier(EggType.APP)` because `EggQualifierProtoHook` stamps a plain inject CONTEXT-first. Regression green (tegg/controller/mcp-client/aop/eventbus/config/schedule/service-worker) modulo the pre-existing 5000ms-suite-default flaky (`ControllerMetaManager` boot-error, `MultiApp` isolate — both pass in isolation) and dal tests needing MySQL.
+
+## [2026-07-10] package | four-package controller layering (runtime library + per-host plugins)
+
+- sources touched: `tegg/core/controller-runtime/*` (new), `tegg/standalone/service-worker-controller/*` (new), `tegg/plugin/controller/src/{index.ts,lib/ControllerModule.ts}`, `tegg/standalone/service-worker/src/{ServiceWorkerApp.ts,index.ts,ControllerModule.ts}` (moved)
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Split the controller stack into four packages mirroring the egg/standalone host boundary. Extracted the egg-free host-agnostic runtime into `@eggjs/controller-runtime` — a plain LIBRARY, NOT an eggModule (it defines the base register classes, collect-only `MCPControllerRegister`, `McpRouter`/`Router` abstractions, `MCPServerHelper`, and the controller inner-object prototypes, but is never scanned). The scanned eggModule stays a HOST package: the egg host's `teggController` plugin (`@eggjs/controller-plugin`) and the fetch host's `serviceWorker` module (extracted into a new `@eggjs/service-worker-controller` package) each re-export the runtime's protos into their own module (`ControllerModule.ts`, collected by `LoaderUtil.loadFile`). `@eggjs/service-worker` is now just the `ServiceWorkerApp` host facade, depending on the egg-free runtime + the fetch controller package — never on the egg plugin. Package-identity module binding (the C2/C3 reconcile) keeps the egg host promoting its own `teggController`. Regression green across controller/service-worker/mcp-proxy/example/MultiApp; typecheck clean; the runtime and fetch-controller packages carry no `egg` dependency.
+
+## [2026-07-10] package | host-agnostic MCP register via McpRouter boundary
+
+- sources touched: `tegg/plugin/controller/src/lib/impl/mcp/{McpRouter,EggMcpRouter,MCPControllerRegister}.ts`, `tegg/plugin/controller/src/{app.ts,lib/ControllerModule.ts}`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/service-worker/src/mcp/{ServiceWorkerMcpRouter,MCPRegisterProvider}.ts`, `tegg/plugin/mcp-proxy/src/{app,index}.ts`
+- pages updated: `wiki/packages/service-worker.md`, `wiki/log.md`
+- note: Fixed the C4 host-boundary leak — the MCP controller register mixed record collection with egg-specific transport and the egg host threaded its `Application` into the module inner-object DI graph as a PRIVATE `eggApp` provided object. Extracted a `McpRouter` transport boundary: the shared `MCPControllerRegister` now only collects tool/resource/prompt records and calls `mcpRouter.registerServer(reg)`; egg node-HTTP transport moved to `EggMcpRouter` (built in `app.ts` with `app`), SW fetch transport to `ServiceWorkerMcpRouter`. Both provide the `mcpRouter` DI name (host plugins never coexist). `eggApp` provided object removed from `ModuleHandler`; `EggControllerRegisterFactory` dropped its host generic/injection. `MCPServerHelper` was already host-agnostic and is unchanged. Regression green (controller/service-worker/mcp-proxy/example/MultiApp) modulo a pre-existing controller boot-error test that only times out under the 5000ms suite-default and dal tests that need MySQL.
 
 ## [2026-06-28] workflow | record egg-bin Windows shell probe hotspot
 
@@ -120,3 +300,214 @@ Full **isolate:false suite validated GREEN** under CI-faithful parallelism (`--m
 - sources touched: `packages/utils/src/import.ts`, `packages/utils/README.md`, `packages/utils/test/module-importer.test.ts`, `packages/utils/test/fixtures/module-importer-require-esm/run.mjs`, `packages/typings/src/index.ts`
 - pages updated: `wiki/log.md`, `wiki/packages/utils.md`
 - note: Documented the `__EGG_BUNDLE_MODULE_LOADER__` → snapshot loader (`setSnapshotModuleLoader`) → `__EGG_MODULE_IMPORTER__` → native priority as a formal contract (JSDoc on `BundleModuleLoader`/`ModuleImporter` + README). Added regression coverage for the V8 snapshot-restore path where `__EGG_MODULE_IMPORTER__ = require` loads ESM with no dynamic-import callback (inline sync-require test + spawned `node:vm` fixture). No load-semantics change — types/declarations already existed.
+
+## [2026-07-04] architecture | tegg module plugin mechanism (both hosts)
+
+- sources touched: `tegg/core/{types,core-decorator,loader,metadata,runtime}`, `tegg/core/aop-runtime`, `tegg/plugin/{tegg,aop,dal}`, `tegg/standalone/standalone`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Ported tegg#325's declarative module plugin core to next and completed it: @InnerObjectProto/@EggLifecycleProto five variants, host-agnostic InnerObjectLoadUnit instantiated before the business graph builds (restores the two-phase ordering so declarative graph build hooks land in-window), egg-host wiring (#325 left app mode out), and conversion of the built-in AOP/DAL/ConfigSource hooks to module plugins on both hosts. Runner renamed to StandaloneApp (no alias). Also fixed plugin/controller's middlewareGraphHook silent no-op (registered on a not-yet-created graph) on branch fix/controller-middleware-graph-hook.
+
+## [2026-07-09] docs | correct tegg module plugin feeding rules
+
+- sources touched: `tegg/core/runtime/src/impl/InnerObjectLoadUnitBuilder.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/plugin/{aop,config,dal}/src/app.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Corrected stale feeding-rule notes: inner object/lifecycle classes now arrive only through `ModuleDescriptor.innerObjectClazzList`; built-in AOP/DAL/ConfigSource hooks are discovered as normal module plugin classes rather than hard-fed lists, and duplicate inner-object proto ids are errors instead of class-level dedupe.
+
+## [2026-07-09] docs | align tegg module plugin notes with review fixes
+
+- sources touched: `tegg/plugin/aop/src/lib/AopContextHook.ts`, `tegg/core/aop-runtime/src/AopContextAdviceRegistry.ts`, `tegg/core/aop-runtime/src/LoadUnitAopHook.ts`, `tegg/plugin/dal/src/index.ts`, `tegg/plugin/dal/src/lib/DalModuleLoadUnitHook.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Replaced stale DAL source paths and updated the AOP note after `AopContextHook` moved to lifecycle-proto/inner-object registration backed by `AopContextAdviceRegistry`.
+
+## [2026-07-12] architecture | harden module plugin discovery and lifecycle contracts
+
+- sources touched: `tegg/plugin/config/src/app.ts`, `tegg/plugin/config/src/lib/ModuleScanner.ts`, `tegg/core/runtime/src/impl/InnerObjectLoadUnitInstance.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/core/metadata/src/model/graph/GlobalGraph.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Recorded plugin-aware module discovery, strict per-root versus nearest-framework reference dedupe, explicit GlobalGraph build state, reverse actual-creation teardown for inner objects, the shared inner-unit PRIVATE boundary, qualifier rules, and standalone migration details.
+
+## [2026-07-13] architecture | make tegg startup failure cleanup atomic
+
+- sources touched: `tegg/core/metadata/src/factory/LoadUnitFactory.ts`, `tegg/core/lifecycle/src/LifycycleUtil.ts`, `tegg/core/runtime/src/factory/{LoadUnitInstanceFactory,EggObjectFactory}.ts`, `tegg/core/runtime/src/impl/{EggObjectImpl,EggInnerObjectImpl,ModuleLoadUnitInstance}.ts`, `tegg/plugin/tegg/src/lib/AppLoadUnitInstance.ts`, `tegg/standalone/standalone/src/{EggModuleLoader,StandaloneApp}.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Made load-unit and instance creation single-flight and atomic on failure, restricted provisional instance lookup to the active DI chain, added failed-init rollback for standard business/inner EggObjects, made object/lifecycle teardown await and aggregate every cleanup, removed host-side partial-instance recovery, made standalone business-unit loading transactional, and defined StandaloneApp as single-use with terminal cleanup and re-entrant init-chain destroy rejection.
+
+## [2026-07-13] decision | keep module-plugin lifecycle failures fail-fast
+
+- sources touched: `tegg/core/metadata/src/factory/LoadUnitFactory.ts`, `tegg/core/runtime/src/factory/LoadUnitInstanceFactory.ts`, `tegg/core/runtime/src/impl/{EggObjectImpl,EggInnerObjectImpl,InnerObjectLoadUnitInstance}.ts`, `tegg/core/runtime/src/model/AbstractEggContext.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/{EggModuleLoader,StandaloneApp}.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Reverted the broad single-flight, failed-init rollback, and multi-phase error aggregation hardening because it was not required by module-plugin startup. Kept the core inner-object behavior: decorator-only self lifecycle dispatch, lifecycle registration, and reverse actual-creation teardown.
+
+## [2026-07-13] decision | keep StandaloneApp lifecycle linear
+
+- sources touched: `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/standalone/standalone/test/index.test.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Removed shared init/destroy promises, AsyncLocalStorage re-entry detection, concurrent lifecycle coordination, and partial-resource wrappers from StandaloneApp. Kept a linear single-use lifecycle, fail-fast teardown, scope release, and the required business-before-inner destroy order.
+
+## [2026-07-13] architecture | give host logger a dedicated inner-unit input
+
+- sources touched: `tegg/core/runtime/src/impl/InnerObjectLoadUnitBuilder.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/standalone/standalone/README.md`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Separated the host logger from generic `innerObjects` input. Standalone accepts logger only through its dedicated logger option and rejects `innerObjectHandlers.logger`; the builder still represents that value as an injectable provided proto internally.
+
+## [2026-07-13] api | keep StandaloneApp runtime state private
+
+- sources touched: `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/standalone/standalone/test/index.test.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Removed test-only getters for module references, module configs, load units, and load-unit instances. Tests now verify manifest, config, and teardown behavior through the public lifecycle; `scopeBag` remains available for owning-scope object resolution.
+
+## [2026-07-13] behavior | reserve StandaloneApp framework inner objects
+
+- sources touched: `tegg/standalone/standalone/src/StandaloneApp.ts`, `tegg/standalone/standalone/test/index.test.ts`, `tegg/standalone/standalone/README.md`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Framework-owned `moduleConfigs`, `moduleConfig`, and `runtimeConfig` now take precedence over host input. Same-name host entries are silently ignored.
+
+## [2026-07-13] refactor | keep logger specialization at the standalone API boundary
+
+- sources touched: `tegg/core/runtime/src/impl/InnerObjectLoadUnitBuilder.ts`, `tegg/plugin/tegg/src/lib/ModuleHandler.ts`, `tegg/standalone/standalone/src/StandaloneApp.ts`
+- pages updated: `wiki/log.md`, `wiki/concepts/tegg-module-plugin.md`
+- note: Kept logger as a dedicated Standalone public option, but removed the logger-specific builder channel. Each host now adds its logger to the complete provided-inner-object map before invoking the host-agnostic builder.
+
+## [2026-07-05] package | standalone service worker (方案二 complete)
+
+- sources touched: `tegg/plugin/controller`, `tegg/standalone/{service-worker-runtime,service-worker}`, `examples/helloworld-service-worker`
+- pages updated: `wiki/index.md`, `wiki/log.md`, `wiki/packages/service-worker.md`
+- note: Completed the service-worker migration on top of the module plugin mechanism: made the controller plugin a dual-host module carrying its host-agnostic runtime under `lib/runtime/`, added the two service worker packages (fetch adapter + protocol-agnostic runtime), MCP stateless streamable HTTP via the SDK's web-standard transport (SDK >= 1.29 forbids stateless transport reuse — fresh server+transport per request), streaming-response lifecycle via BackgroundTaskHelper drain, unified `{ code, message }` errors, `mcpAuthHandler` auth extension point, and a runnable example. Gotcha recorded: frameworkDeps module scans must exclude `test/**` or framework test fixtures load as business modules.
+
+## [2026-07-21] architecture | share manifest-aware module loading across hosts
+
+- sources touched: `packages/loader-fs`, `tegg/core/{types,loader}`, `tegg/plugin/tegg`, `tegg/standalone/standalone`, `tools/egg-bundler`
+- pages updated: `wiki/log.md`, `wiki/packages/{loader-fs,egg-bundler}.md`
+- note: Promoted the host-neutral `TeggManifest` contract, moved `ManifestLoaderFS` to the shared loader-fs package, and made Egg and standalone use the same manifest-backed file view through module scanning, load units, preload, and dynamic DAL discovery. `ModuleLoader.createModuleLoader()` installs its initialized filesystem into the current `TeggScope`; explicit host views replace earlier defaults, so later module loaders reuse the per-app view without expanding multi-instance callback context. Generic `LoaderFS` construction remains host-neutral and side-effect free. Module identity travels separately through `ModuleDescriptor -> GlobalGraph -> LoadUnit`.
+
+## [2026-08-04] behavior | support cluster bundles in worker threads
+
+- sources touched: `packages/cluster/src/worker_protocol`, `packages/cluster/src/{app_worker,agent_worker}.ts`, `tools/egg-bundler/src/lib/EntryGenerator.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added a shared `parentPort` worker transport and made generated app/agent bundle entries select it when the cluster master supplies `startMode: worker_threads`. Plain bundle workers now support both process and thread modes; custom V8 snapshot blobs remain process-only.
+
+## [2026-08-04] behavior | reject unsupported bundle bootstrap modules
+
+- sources touched: `tools/scripts/src/commands/start.ts`, `tools/egg-bundler/src/lib/EntryGenerator.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced the bundled cluster worker's warning-and-ignore behavior for `options.require` with explicit startup errors in both ordinary bundle and snapshot restore modes. The scripts CLI rejects the supported `--bundle` path before spawning; generated workers retain a defense-in-depth assertion for direct/programmatic launches.
+
+## [2026-08-04] api | expose ordinary cluster bundle production
+
+- sources touched: `tools/egg-bin/src/commands/bundle.ts`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Added `egg-bin bundle --cluster` as the non-snapshot producer for `app_worker.js` and `agent_worker.js`, completing the CLI path to `egg-scripts start --bundle`. The app-only flag is rejected when standalone mode is selected through `--target standalone` or `--entry`.
+
+## [2026-08-04] docs | document cluster bundle and snapshot workflows
+
+- sources touched: `site/docs/{core/bundle,advanced/snapshot,advanced/snapshot-troubleshooting}.md`, `site/docs/zh-CN/{core/bundle,advanced/snapshot,advanced/snapshot-troubleshooting}.md`, `tools/egg-bundler/{README,docs/output-structure}.md`
+- pages updated: `wiki/log.md`, `wiki/packages/egg-bundler.md`
+- note: Replaced stale single-process-only guidance with the supported `egg-bin bundle --cluster`, role-specific snapshot build, and `egg-scripts start --bundle` workflows. Corrected the default single-file artifact layout, external dependency deployment guidance, lazy-module defaults, restored web-global behavior, and runtime-asset examples.
+
+## [2026-08-03] fix | preserve signal exit codes in CLI child-process handling
+
+- sources touched: `tools/scripts/src/commands/start.ts`, `tools/egg-bin/src/baseCommand.ts`, `tools/create-egg/src/index.ts`
+- pages updated: `wiki/log.md`, `wiki/workflows/local-ci.md`
+- note: A child killed by a signal reports `code=null` on its exit event; three CLIs mishandled that (egg-scripts foreground start exited 0, egg-bin forkNode reported "exit with code null" and flattened every child failure to exit 1, create-egg's latent custom-command path ran `process.exit(status ?? 0)`). All three now map signal deaths to the shell convention `128 + signal number`, and egg-bin propagates the child's exit code through `ForkError.oclif.exit`. Durable finding recorded in local-ci.md: egg-bin's coffee tests run the compiled `dist/commands` CLI, so its suite needs `ut run build -- --workspace ./tools/egg-bin` first (the dedicated `test-egg-bin` CI job does exactly this), unlike the rest of the repo which tests unbuilt sources.
+
+## [2026-08-06] workflow | use package-name --workspace filters in CI
+
+- sources touched: `.github/workflows/ci.yml`, `AGENTS.md`, `tegg/plugin/eventbus/test/eventbus.test.ts`
+- pages updated: `wiki/log.md`, `wiki/workflows/local-ci.md`
+- note: The `ut run build -- --workspace ./tools/egg-bin` path-form filter does not match any workspace on Windows, so the test-egg-bin Windows job ran without a dist and failed every coffee test with "command dev not found" (broken on next since at least #6022's run). CI now builds in a dedicated step with the name form (`--workspace @eggjs/bin`), which works on every platform; the name form only works for packages with their own script, so @eggjs/scripts (no build script, ubuntu-only job) keeps the root tsdown path filter `ut run build -- --workspace ./tools/scripts`. Also, vitest glob projects do not inherit the root config's hookTimeout: tegg plugin app-boot beforeAll hooks ran under the default 10s and flaked on slow Windows runners (observed in eventbus, langchain, then mcp-client across consecutive runs). Every async beforeAll in `tegg/plugin/*/test` and `tegg/standalone/*/test` now passes an explicit 30s hook timeout (54 hooks). Making glob projects inherit the root config's hookTimeout remains a cleaner follow-up. Two more flake classes surfaced during rerun validation: plugins/development boots mm.cluster in beforeAll and needed the 60s hook budget plugins/schedule already uses, and packages/cluster after-start.test.ts asserted on stdout after fixed 5s sleeps, now replaced with bounded polling (waitFor pattern from tools/scripts/test/utils.ts).
+
+## [2026-09-19] compatibility | support Vitest 5 in the tegg runner
+
+- sources touched: `tegg/core/vitest/{package.json,src/runner.ts,test/fixture_app.test.ts}`, `plugins/mock/package.json`
+- pages updated: `wiki/index.md`, `wiki/packages/tegg-vitest.md`, `wiki/log.md`
+- note: The adapter now uses `TestRunner` from `vitest`, supports Vitest 4.1 and 5, and forwards version-specific lifecycle arguments. Retry coverage exposed a context propagation bug: entering the new async-local context after awaiting the previous scope's cleanup left the test continuation in the old context. The runner now enters the context synchronously before cleanup.
+
+## [2026-09-19] compatibility | preserve Leoric snapshot loading after dependency updates
+
+- sources touched: `tools/egg-bundler/src/compat/leoric/{index.ts,runtime-require-loader.cjs}`, `tools/egg-bundler/src/lib/Bundler.ts`, `.github/workflows/e2e-test.yml`
+- pages updated: `wiki/packages/egg-bundler.md`, `wiki/log.md`
+- note: Leoric 2.16 adds a separate ESM entry and compiles runtime imports to Promise callbacks in CommonJS. Snapshot builds now select the CommonJS entry and rewrite those callbacks through the existing runtime require hook. Leoric model identity remains in the snapshot, and optional database clients load after restore.
+
+## [2026-09-19] workflow | tolerate small coverage changes
+
+- sources touched: `codecov.yml`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: Codecov project coverage now permits a one percentage-point decrease from the base commit. Patch coverage uses a fixed 75% minimum instead of the base project's coverage ratio. Both checks remain enabled.
+
+## [2026-09-19] test | check Vitest compatibility and concurrent app retries
+
+- sources touched: `.github/workflows/ci.yml`, `tegg/core/vitest/test/runner-multi-app.test.ts`, `tegg/plugin/orm/test/index.test.ts`
+- pages updated: `wiki/packages/tegg-vitest.md`, `wiki/log.md`
+- note: Dedicated CI jobs now typecheck and test the adapter with the minimum supported Vitest 4.1.0 and the latest Vitest 5, using isolated and shared workers. A concurrent-app regression checks retry contexts, service identity, lifecycle argument forwarding, and scope cleanup. The ORM test logger now skips an undefined optional Model.
+
+## [2026-09-23] compatibility | require Vitest 5
+
+- sources touched: `pnpm-workspace.yaml`, `vitest.config.ts`, `plugins/mock/package.json`, `tegg/core/vitest/{package.json,src/runner.ts,test/runner-multi-app.test.ts}`, `tools/create-egg/src/templates/{simple-ts,tegg}/package.json`, `tools/egg-bin/src/commands/{test,cov}.ts`, `tools/egg-bin/test/commands/{test,cov}.test.ts`, `.github/workflows/ci.yml`
+- pages updated: `wiki/index.md`, `wiki/packages/tegg-vitest.md`, `wiki/workflows/ci-parallel-test-metrics.md`, `wiki/log.md`
+- note: The catalog and application templates now use Vitest 5.0.1 or later in the same major. The mock and tegg adapter peers no longer accept Vitest 4. The adapter CI job uses the catalog and retains both isolated and shared worker tests. Suites that used the removed `describe.sequential` API now use `concurrent: false`. The root config uses the stable `test.fsModuleCache` option. The CLI uses the current startup API and relative coverage exclusions; its JSON reporter now writes `.vitest/json/output.json`. Verified that the Vitest 5 JSON reporter still derives file intervals from test timings, so the parallelism caveat remains applicable.
+
+## [2026-09-23] test | add Node.js 26 to CI
+
+- sources touched: `.github/workflows/ci.yml`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/packages/tegg-vitest.md`, `wiki/log.md`
+- note: Node.js 26 now runs the main suite on Linux, macOS, and Windows, the egg-bin suite on Linux and Windows, and the egg-scripts and tegg adapter suites on Linux. The adapter matrix includes both isolated and shared workers, with separate concurrency groups for each Node.js version. Coverage reports remain on the Linux Node.js 24 jobs.
+
+## [2026-09-23] compatibility | fix Node.js 26 and ecosystem test failures
+
+- sources touched: `plugins/mock/src/lib/mock_agent.ts`, `plugins/mock/test/mock-agent.test.ts`, `tools/scripts/src/commands/start.ts`, `tools/scripts/test/start-unit.test.ts`, `pnpm-workspace.yaml`, `ecosystem-ci/patch-project.ts`
+- pages updated: `wiki/concepts/vitest-isolate-false-state-leaks.md`, `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: HTTP mocks now preserve default clients' global dispatcher behavior and restore each session's original dispatcher. Custom clients can join an existing mock session. The daemon launcher closes its log handles after spawning the child, including on startup errors. The catalog uses tsx 4.23.15 for Node.js 26 loader compatibility. Ecosystem applications receive the catalog's Vitest packages alongside workspace tarballs, so an external Vitest 4 dependency cannot conflict with the local Vitest 5 CLI.
+
+## [2026-09-23] test | use cnpmcore's upstream Vitest 5 migration
+
+- sources touched: `ecosystem-ci/repo.json`, `ecosystem-ci/patch-project.ts`, `https://github.com/cnpm/cnpmcore/commit/9dbac59b086a94765a24a072ab8c22603fc58807`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: Both cnpmcore jobs now pin upstream commit 9dbac59b, which declares Vitest 5.0.1 and its matching coverage provider. The temporary ecosystem Vitest overrides are removed; workspace tarball substitution remains unchanged.
+
+## [2026-09-23] compatibility | preserve HTTP interceptors on Node.js 26
+
+- sources touched: `packages/egg/src/lib/core/httpclient.ts`, `packages/egg/test/lib/core/httpclient_interceptor.test.ts`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: Configured HTTP interceptors now remove Undici 7's top-level dispatcher routing option before calling the original instance dispatcher. This preserves header injection with Node.js 26's built-in dispatcher, which rejects that option on instance methods.
+
+## [2026-09-23] test | accept cnpmcore startup warnings in the deployment smoke test
+
+- sources touched: `.github/workflows/e2e-test.yml`
+- pages updated: `wiki/workflows/local-ci.md`, `wiki/log.md`
+- note: cnpmcore's updated WebAuthn dependency emits experimental Web Crypto warnings on Node.js 24. Its daemon smoke test now permits startup stderr and continues to gate success on the existing HTTP health check.
+
+## [2026-09-23] workflow | publish PR preview packages by label
+
+- sources touched: `.github/workflows/pkg-pr-new.yml`, `scripts/publish-preview.js`, `scripts/utils.js`, `CONTRIBUTING.md`, `CONTRIBUTING.zh-CN.md`, `site/docs/{community/index,releases/pr-preview-packages}.md`, `site/docs/zh-CN/{community/index,releases/pr-preview-packages}.md`, `site/.vitepress/config.mts`, `https://github.com/stackblitz-labs/pkg.pr.new`, `https://blog.stackblitz.com/posts/cloudflare-backing-pkg-pr-new-data-infrastructure/`
+- pages updated: `wiki/workflows/pr-preview-packages.md`, `wiki/index.md`, `wiki/log.md`
+- note: The `pkg.pr.new` label enables public workspace previews, including stacked PRs; new commits and reopened PRs publish while labeled. The utoo build and shared release helpers feed `pkg-pr-new@latest`, preserve internal preview links, and restore manifests afterward. Publication uses read-only workflow permissions and the pkg.pr.new GitHub App. English and Chinese `/releases/` guides cover installation, rollback, and upstream retention: more than one month without downloads or more than six months old. The version menu, Community landing pages, and contribution guides link to them; only the version menu is active.
+
+## [2026-09-24] analysis | measure CI latency and propose a performance rollout
+
+- sources inspected: `.github/workflows/{ci,e2e-test}.yml`, `vitest.config.ts`, benchmark scripts, schedule and inspector tests, ten GitHub CI runs and three E2E runs from September 23
+- pages added: `wiki/sources/ci-performance-baseline.md`, `wiki/workflows/ci-performance-plan.md`; index and log updated
+- note: Main-suite execution and delayed runner starts dominate latency; dependency installation has a 4-second median in the inspected sample. The proposal combines a smaller PR matrix with full pre-merge compatibility, conservative sharding, complete coverage aggregation, and targeted test fixes. The latest CLI failure exposed an inspector-port collision candidate; the final `done` job was skipped after failure. The plan is not implemented, and its targets remain unmeasured.
+
+## [2026-09-24] workflow | implement PR shards and reliable CI aggregation
+
+- sources touched: `.github/workflows/ci.yml`, `scripts/ci-{plan,coverage,reporter}.*`, `scripts/test/ci.test.js`, `vitest.config.ts`, schedule tests, egg-bin inspector tests and option matching
+- pages updated: CI performance plan, local CI, parallel test metrics, shared-worker state-leak context, index and log
+- note: PRs use five platform/version combinations across nine jobs; merge groups retain all nine combinations. Coverage aggregation rejects missing or overlapping shards. The final gate rejects unexpected skips. Resolved Vitest 5 settings exposed a conflict with prior wiki claims: file-based projects currently use isolated forks. Hosted-run performance verification is pending.
+
+## [2026-09-24] workflow | resolve one Node version for coverage shards
+
+- sources inspected: [first draft-PR CI run](https://github.com/eggjs/egg/actions/runs/35947286821), `.github/workflows/ci.yml`, `scripts/ci-plan.js`, `scripts/ci-coverage.js`
+- pages updated: CI performance plan, parallel test metrics, index and log
+- note: All platform tests passed, but coverage shards resolved Node.js 24 to different cached patch releases. The coverage guard rejected the mismatch. The planner now supplies one exact version to all coverage producers and the merge job. Full-profile overrides also apply to documentation-only changes, and change detection retains previous paths for renamed files. A separate shared-worker experiment failed; isolated workers remain in use.
+
+## [2026-09-24] workflow | restore Codecov signature-key retrieval
+
+- sources inspected: [second hosted attempt](https://github.com/eggjs/egg/actions/runs/35948525958), [Codecov v5.5.5](https://github.com/codecov/codecov-action/releases/tag/v5.5.5), `.github/workflows/ci.yml`
+- pages updated: CI performance plan and log
+- note: All tests and the coverage inventory/merge passed in 14m 52s with 89.35 runner-minutes. The required upload exposed the old Codecov action's obsolete Keybase endpoint. CI now pins the upstream patch release that updates that endpoint, while retaining signature verification and upload failure propagation. Failed-run timings remain separate from successful performance evidence.
+
+## 2026-10-06 — Local PR 6017 repair
+
+- Integrated release hardening against current next without copying outdated PR index/log contents. Added full branch-ref validation and dry-run-only projected versions so RC-to-stable patch packing passes the prerelease guard.
+- Added release regression tests for git argv, illegal refs, prerelease-to-latest refusal, projected workspace dependencies and manifest restoration. See [Secure release pipeline](./decisions/secure-release-pipeline.md). No push, dispatch or publication performed.
+
+- Follow-up local verification: full build, 85 offline npm publish dry-runs and inspection of all 85 real tarballs passed; all 1099 temporary manifests restored. Targeted tests passed on Node 22 and 26. Registry/OIDC and the workflow Node 24 environment remain outside this local verification.

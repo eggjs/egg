@@ -12,6 +12,7 @@ import { LoaderFactory } from '@eggjs/tegg-loader';
 import {
   ContextHandler,
   EggContainerFactory,
+  INNER_OBJECT_LOAD_UNIT_TYPE,
   type EggContext,
   type LoadUnitInstance,
   LoadUnitInstanceFactory,
@@ -41,13 +42,33 @@ export class CoreTestHelper {
     return await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
   }
   static async prepareModules(moduleDirs: string[], hooks?: GlobalGraphBuildHook[]): Promise<Array<LoadUnitInstance>> {
-    await LoaderUtil.buildGlobalGraph(moduleDirs, hooks);
     EggContextStorage.register();
     const instances: Array<LoadUnitInstance> = [];
+    const { innerObjectLoadUnitInstance: innerInstance } = await LoaderUtil.buildGlobalGraph(moduleDirs, hooks);
     for (const { path } of GlobalGraph.instance!.moduleConfigList) {
-      instances.push(await CoreTestHelper.getLoadUnitInstance(path));
+      const loader = LoaderFactory.createLoader(path, EggLoadUnitType.MODULE);
+      const loadUnit = await LoadUnitFactory.createLoadUnit(path, EggLoadUnitType.MODULE, loader);
+      instances.push(await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit));
     }
+    instances.push(innerInstance);
     return instances;
+  }
+
+  static async destroyModules(instances: LoadUnitInstance[]): Promise<void> {
+    const innerInstance = instances.find((instance) => instance.loadUnit.type === INNER_OBJECT_LOAD_UNIT_TYPE);
+    const businessInstances = instances.filter((instance) => instance !== innerInstance);
+    instances.length = 0;
+
+    for (const instance of businessInstances.reverse()) {
+      await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);
+    }
+    for (const instance of businessInstances) {
+      await LoadUnitFactory.destroyLoadUnit(instance.loadUnit);
+    }
+    if (innerInstance) {
+      await LoadUnitInstanceFactory.destroyLoadUnitInstance(innerInstance);
+      await LoadUnitFactory.destroyLoadUnit(innerInstance.loadUnit);
+    }
   }
   static async getObject<T>(clazz: EggProtoImplClass<T>): Promise<T> {
     const proto = PrototypeUtil.getClazzProto(clazz as any) as EggPrototype;

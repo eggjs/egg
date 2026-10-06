@@ -28,6 +28,11 @@ export class LoaderUtil {
 
   static supportExtensions(): string[] {
     const extensions = Object.keys((Module as any)._extensions);
+    // ESM-only packages and explicit CommonJS entry files are valid Node.js
+    // module files, but they are not guaranteed to appear in Module._extensions.
+    for (const ext of ['.mjs', '.cjs']) {
+      if (!extensions.includes(ext)) extensions.push(ext);
+    }
     // TypeScript loaders such as tsx and Node's native type stripping register
     // via ESM loader hooks rather than `Module._extensions`, so `_extensions`
     // may not list `.ts` even when TS files are loadable (e.g. during manifest
@@ -76,6 +81,10 @@ export class LoaderUtil {
       '!**/node_modules',
       // node load type definitions
       '!**/*.d.ts',
+      '!**/*.d.mts',
+      '!**/*.d.cts',
+      // test runner configuration is not an application module
+      '!**/vitest.config.*',
       // not load test/coverage files
       '!**/test',
       '!**/coverage',

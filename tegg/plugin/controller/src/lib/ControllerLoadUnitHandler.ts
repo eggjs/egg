@@ -1,11 +1,10 @@
 import path from 'node:path';
 
+import { CONTROLLER_LOAD_UNIT } from '@eggjs/controller-runtime';
 import type { EggLoadUnitType, LoadUnit } from '@eggjs/metadata';
 import type { LoadUnitInstance } from '@eggjs/tegg-runtime';
 import type { Application } from 'egg';
 import { Base } from 'sdk-base';
-
-import { CONTROLLER_LOAD_UNIT } from './ControllerLoadUnit.ts';
 
 export class ControllerLoadUnitHandler extends Base {
   private readonly app: Application;
