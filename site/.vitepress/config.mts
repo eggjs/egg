@@ -54,6 +54,7 @@ export default defineConfig({
           '/core/': { base: '/core/', items: sidebarCore() },
           '/tutorials/': { base: '/tutorials/', items: sidebarTutorials() },
           '/community/': { base: '/community/', items: sidebarCommunity() },
+          '/releases/': { base: '/releases/', items: sidebarReleases() },
           '/faq/': { base: '/faq/', items: sidebarFaq() },
         },
       },
@@ -166,6 +167,7 @@ function nav(): DefaultTheme.NavItem[] {
     {
       text: `v${version}`,
       items: [
+        { text: 'Egg 4 Release Notes', link: '/releases/egg-v4' },
         { text: 'PR Preview Packages', link: '/releases/pr-preview-packages' },
         {
           text: 'v3.x',
@@ -485,6 +487,24 @@ function sidebarFaq(): DefaultTheme.SidebarItem[] {
     {
       text: 'FAQ',
       items: faqItems,
+    },
+  ];
+}
+
+function sidebarReleases(): DefaultTheme.SidebarItem[] {
+  return [
+    {
+      text: 'Egg 4 Release Notes',
+      items: [
+        { text: 'Egg 4 Release Notes', link: 'egg-v4' },
+        { text: 'Monorepo Collaboration', link: 'egg-v4-monorepo' },
+        { text: 'Developer Toolchain', link: 'egg-v4-toolchain' },
+        { text: 'Plugin Upgrades', link: 'egg-v4-plugins' },
+        { text: 'TypeScript and ESM', link: 'egg-v4-typescript-esm' },
+        { text: 'Tegg Modules', link: 'egg-v4-tegg' },
+        { text: 'Bundles and Startup Snapshots', link: 'egg-v4-bundle-snapshot' },
+        { text: 'PR Preview Packages', link: 'pr-preview-packages' },
+      ],
     },
   ];
 }
