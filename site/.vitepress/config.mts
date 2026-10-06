@@ -228,7 +228,7 @@ function navZhCN(): DefaultTheme.NavItem[] {
     {
       text: `v${version}`,
       items: [
-        { text: 'Egg 4 发布说明', link: '/zh-CN/releases/egg-v4' },
+        { text: 'Egg 4', link: '/zh-CN/releases/egg-v4' },
         { text: 'PR 预览包', link: '/zh-CN/releases/pr-preview-packages' },
         {
           text: 'v3.x',
@@ -512,7 +512,7 @@ function sidebarReleases(): DefaultTheme.SidebarItem[] {
 function sidebarReleasesZhCN(): DefaultTheme.SidebarItem[] {
   return [
     {
-      text: 'Egg 4 发布说明',
+      text: 'Egg 4',
       items: [
         { text: 'Egg 4 发布说明', link: 'egg-v4' },
         { text: 'Monorepo 协作', link: 'egg-v4-monorepo' },
