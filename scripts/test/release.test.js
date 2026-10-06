@@ -21,7 +21,10 @@ const workflow = yaml.load(fs.readFileSync(path.join(root, '.github/workflows/re
 test('release guard requires an allowed branch and its full branch ref', () => {
   const guard = workflow.jobs.release.steps[0];
   assert.equal(guard.env.DISPATCH_REF, '${{ github.ref }}');
+  const defaultBranch = workflow.on.workflow_dispatch.inputs.branch.default;
+  assert.equal(defaultBranch, 'main');
   for (const [branch, ref, succeeds] of [
+    [defaultBranch, `refs/heads/${defaultBranch}`, true],
     ['next', 'refs/heads/next', true],
     ['main', 'refs/heads/main', true],
     ['master', 'refs/heads/master', false],

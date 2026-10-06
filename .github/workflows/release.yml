@@ -10,7 +10,7 @@ on:
       branch:
         description: 'Branch to release from (must be a protected release branch)'
         required: true
-        default: 'next'
+        default: 'main'
         type: choice
         options:
           - next
