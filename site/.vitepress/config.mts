@@ -54,6 +54,7 @@ export default defineConfig({
           '/core/': { base: '/core/', items: sidebarCore() },
           '/tutorials/': { base: '/tutorials/', items: sidebarTutorials() },
           '/community/': { base: '/community/', items: sidebarCommunity() },
+          '/releases/': { base: '/releases/', items: sidebarReleases() },
           '/faq/': { base: '/faq/', items: sidebarFaq() },
         },
       },
@@ -82,6 +83,10 @@ export default defineConfig({
           '/zh-CN/community/': {
             base: '/zh-CN/community/',
             items: sidebarCommunityZhCN(),
+          },
+          '/zh-CN/releases/': {
+            base: '/zh-CN/releases/',
+            items: sidebarReleasesZhCN(),
           },
           '/zh-CN/faq/': { base: '/zh-CN/faq/', items: sidebarFaq() },
         },
@@ -162,6 +167,7 @@ function nav(): DefaultTheme.NavItem[] {
     {
       text: `v${version}`,
       items: [
+        { text: 'Egg 4 Release Notes', link: '/releases/egg-v4' },
         { text: 'PR Preview Packages', link: '/releases/pr-preview-packages' },
         {
           text: 'v3.x',
@@ -222,6 +228,7 @@ function navZhCN(): DefaultTheme.NavItem[] {
     {
       text: `v${version}`,
       items: [
+        { text: 'Egg 4', link: '/zh-CN/releases/egg-v4' },
         { text: 'PR 预览包', link: '/zh-CN/releases/pr-preview-packages' },
         {
           text: 'v3.x',
@@ -480,6 +487,42 @@ function sidebarFaq(): DefaultTheme.SidebarItem[] {
     {
       text: 'FAQ',
       items: faqItems,
+    },
+  ];
+}
+
+function sidebarReleases(): DefaultTheme.SidebarItem[] {
+  return [
+    {
+      text: 'Egg 4 Release Notes',
+      items: [
+        { text: 'Egg 4 Release Notes', link: 'egg-v4' },
+        { text: 'Monorepo Collaboration', link: 'egg-v4-monorepo' },
+        { text: 'Developer Toolchain', link: 'egg-v4-toolchain' },
+        { text: 'Plugin Upgrades', link: 'egg-v4-plugins' },
+        { text: 'TypeScript and ESM', link: 'egg-v4-typescript-esm' },
+        { text: 'Tegg Modules', link: 'egg-v4-tegg' },
+        { text: 'Bundles and Startup Snapshots', link: 'egg-v4-bundle-snapshot' },
+        { text: 'PR Preview Packages', link: 'pr-preview-packages' },
+      ],
+    },
+  ];
+}
+
+function sidebarReleasesZhCN(): DefaultTheme.SidebarItem[] {
+  return [
+    {
+      text: 'Egg 4',
+      items: [
+        { text: 'Egg 4 发布说明', link: 'egg-v4' },
+        { text: 'Monorepo 协作', link: 'egg-v4-monorepo' },
+        { text: '开发工具链', link: 'egg-v4-toolchain' },
+        { text: '插件升级', link: 'egg-v4-plugins' },
+        { text: 'TypeScript 与 ESM', link: 'egg-v4-typescript-esm' },
+        { text: 'Tegg 模块化', link: 'egg-v4-tegg' },
+        { text: 'Bundle 与启动快照', link: 'egg-v4-bundle-snapshot' },
+        { text: 'PR 预览包', link: 'pr-preview-packages' },
+      ],
     },
   ];
 }

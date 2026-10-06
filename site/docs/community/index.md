@@ -14,6 +14,7 @@ Use [PR preview packages](../releases/pr-preview-packages.md) to try a fix or fe
 - Others
   - [awesome-egg](https://github.com/eggjs/awesome-egg)
 - Articles
+  - [Egg 4 Release Notes](../releases/egg-v4.md)
   - [How to evaluate Ali's open source enterprise-level Node.js framework Egg?](https://www.zhihu.com/question/50526101/answer/144952130) By [@day pig](https://github.com/atian25)
   - You can also read our article at [Kuroshiami column](https://www.zhihu.com/column/eggjs)
 
