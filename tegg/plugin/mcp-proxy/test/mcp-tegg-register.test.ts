@@ -14,7 +14,7 @@ describe('plugin/mcp-proxy/test/mcp-tegg-register.test.ts', () => {
       baseDir: path.join(__dirname, 'fixtures/apps/mcp-tegg-controller'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await app.close();

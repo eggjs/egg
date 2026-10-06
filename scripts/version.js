@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import semver from 'semver';
 
-import { getPublishablePackages } from './utils.js';
+import { assertValidNpmPackageName, getPublishablePackages } from './utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,7 +41,7 @@ if (versionType.includes('pre') && !validPrereleaseTags.includes(prereleaseTag))
 
 // Check if git working directory is clean
 try {
-  const status = execSync('git status --porcelain', { encoding: 'utf8' });
+  const status = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' });
   if (status.trim() && !isDryRun) {
     console.error('Git working directory is not clean. Please commit or stash your changes first.');
     process.exit(1);
@@ -53,6 +53,7 @@ try {
 
 const baseDir = path.join(__dirname, '..');
 const packageFolders = getPublishablePackages(baseDir);
+for (const pkg of packageFolders) assertValidNpmPackageName(pkg.name);
 
 console.log(`🚀 ${isDryRun ? '[DRY RUN] ' : ''}Bumping ${versionType} version for all packages...`);
 
@@ -128,21 +129,22 @@ if (isDryRun) {
 try {
   // Stage all changes
   console.log('\n📝 Staging changes...');
-  execSync('git add .', { stdio: 'inherit' });
+  execFileSync('git', ['add', '.'], { stdio: 'inherit' });
 
   // Create commit message with [skip ci] to avoid triggering CI for release commits
   const commitMessage = `chore(release): ${versionType} version bump
 
 ${updatedVersions.map((pkg) => `- ${pkg.name}@${pkg.newVersion}`).join('\n')}`;
 
-  // Commit changes
+  // Commit changes. Pass the message as an argv entry (execFileSync), never as
+  // an interpolated shell string — the message embeds package names.
   console.log('\n💾 Creating version commit...');
-  execSync(`git commit -m "${commitMessage}"`, { stdio: 'inherit' });
+  execFileSync('git', ['commit', '-m', commitMessage], { stdio: 'inherit' });
 
   // Create tag using the main egg version
   const tagName = `v${eggVersion}`;
   console.log(`\n🏷️  Creating tag ${tagName}...`);
-  execSync(`git tag ${tagName}`, { stdio: 'inherit' });
+  execFileSync('git', ['tag', tagName], { stdio: 'inherit' });
 
   console.log('\n✅ Version bump complete!');
   console.log(`\nTo publish, push the changes and tag:`);

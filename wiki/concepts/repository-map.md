@@ -3,7 +3,7 @@ title: Repository Map
 type: concept
 summary: High-level map of the main Egg.js repository areas and their roles.
 source_files:
-  - CLAUDE.md
+  - AGENTS.md
   - packages/
   - plugins/
   - tools/

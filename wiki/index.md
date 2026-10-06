@@ -13,9 +13,12 @@ Read this file before exploring raw sources.
 
 ## Workflows
 
-- [CI parallel test metrics](./workflows/ci-parallel-test-metrics.md) - How the CI test gate surfaces avg/peak concurrency + parallel-efficiency metrics for the isolate:false suite, and how to read or reproduce them.
+- [Package release workflow](./workflows/release.md) - Choose release inputs, preview versions and tarballs, and diagnose partial releases.
+- [GitHub Actions performance plan](./workflows/ci-performance-plan.md) - PR/full matrix, sharding, test-runtime improvements, and acceptance criteria based on measured CI bottlenecks.
+- [CI parallel test metrics](./workflows/ci-parallel-test-metrics.md) - Test concurrency, resolved worker settings, retries, and shard inventories in CI artifacts.
 - [Docs and API Updates](./workflows/docs-and-api-updates.md) - How to handle changes that affect user-facing docs or durable project understanding.
 - [Local CI](./workflows/local-ci.md) - Local validation should run tests from clean sources and avoid stale artifacts (`dist/` duplicate-proto; fixture `.egg` scan-manifest caches) before tegg tests.
+- [PR preview packages](./workflows/pr-preview-packages.md) - Publish workspace previews through a pull request label and install them in consumer applications, including from stacked PRs.
 - [Egg-bin Windows shell probe hotspot](./workflows/egg-bin-windows-shell-probe.md) - How PR #6014 diagnosed hosted-Windows egg-bin startup slowness and why the final fix only presets SHELL.
 
 ## Decisions
@@ -29,9 +32,10 @@ Read this file before exploring raw sources.
 - [Loader FS Package](./packages/loader-fs.md) - Shared loader-facing filesystem boundary for Egg loaders and future bundled runtimes.
 - [Onerror Plugin](./packages/onerror.md) - Default Egg error-handling plugin and configurable response negotiation layer.
 - [Standalone Service Worker](./packages/service-worker.md) - Fetch-semantics standalone runtime serving HTTP controllers and MCP tools from a tegg module without an egg application.
+- [Tegg Vitest Adapter](./packages/tegg-vitest.md) - Vitest 5 requirements, request context injection, and module scope cleanup across retries.
 - [Typings Package](./packages/typings.md) - Shared TypeScript type surface for cross-package Egg typings.
 - [Utils Package](./packages/utils.md) - Shared utility package for module loading and bundled module-loader integration.
 
 ## Sources
 
-- No standalone source summary pages seeded yet.
+- [CI performance baseline, September 2026](./sources/ci-performance-baseline.md) - Job and step timings from ten CI runs and three E2E runs, including runner delays and an inspector-port failure.

@@ -67,7 +67,7 @@ function getDurationMs(result) {
 }
 
 // Absolute wall-clock interval (epoch ms) for a file's run, used to reconstruct the
-// concurrency timeline. The Vitest 4 JSON reporter derives a file's startTime/endTime
+// concurrency timeline. The Vitest 5 JSON reporter derives a file's startTime/endTime
 // from TEST-level timings only (min test start .. max test end), so the interval covers
 // test bodies + per-test beforeEach/afterEach but EXCLUDES suite-level beforeAll/afterAll
 // (where egg boots its apps — often the dominant per-file cost) and module

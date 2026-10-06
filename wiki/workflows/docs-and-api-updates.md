@@ -7,7 +7,7 @@ source_files:
   - README.md
   - README.zh-CN.md
   - CHANGELOG.md
-  - CLAUDE.md
+  - AGENTS.md
 updated_at: 2026-04-21
 status: active
 ---
@@ -21,7 +21,7 @@ Use this workflow when a task touches public APIs, developer-facing behavior, or
 1. Inspect the code or diff to determine whether behavior visible to users or contributors changed.
 2. Check the existing docs surface, especially `site/docs/` and relevant root markdown files.
 3. If the change affects durable understanding, update the relevant wiki pages as well as the docs.
-4. If there is no existing page for the concept, create the smallest useful page instead of expanding `CLAUDE.md`.
+4. If there is no existing page for the concept, create the smallest useful page instead of expanding `AGENTS.md`.
 5. Update `wiki/index.md` when new pages are added.
 6. Append a short entry to `wiki/log.md` for material wiki changes.
 

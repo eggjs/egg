@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import yaml from 'js-yaml';
+import semver from 'semver';
+import { parse } from 'smol-toml';
 
 // Dependency fields whose `workspace:` / `catalog:` specifiers must be resolved
 // before publishing with npm.
@@ -29,21 +30,36 @@ const PUBLISH_CONFIG_OVERRIDE_FIELDS = [
   'os',
 ];
 
-function readWorkspaceConfig(baseDir) {
-  const workspaceFile = path.join(baseDir, 'pnpm-workspace.yaml');
+// Valid npm package name (scoped or unscoped). Names that fail this are
+// rejected before they reach a git command (release commit message) or an
+// `npm publish` invocation — defence in depth against a malicious or
+// malformed `name` field smuggling shell metacharacters or a typo'd package.
+const NPM_NAME_RE = /^(?:@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/;
 
-  if (!fs.existsSync(workspaceFile)) {
-    throw new Error('pnpm-workspace.yaml not found');
-  }
-
-  return yaml.load(fs.readFileSync(workspaceFile, 'utf8')) || {};
+/**
+ * Whether `name` is a syntactically valid npm package name (scoped or unscoped,
+ * 1-214 chars, lowercase, URL-safe).
+ * @param {unknown} name
+ * @returns {boolean}
+ */
+export function isValidNpmPackageName(name) {
+  return typeof name === 'string' && name.length > 0 && name.length <= 214 && NPM_NAME_RE.test(name);
 }
 
-// Walk every workspace package declared in pnpm-workspace.yaml
-// (utoo consumes the same workspace manifest) and yield a lightweight record
-// for each one, regardless of whether it is private.
+/**
+ * Throw if `name` is not a valid npm package name. Used to reject a malicious or
+ * typo'd `name` before it reaches a git command or `npm publish`.
+ * @param {unknown} name
+ */
+export function assertValidNpmPackageName(name) {
+  if (!isValidNpmPackageName(name)) {
+    throw new Error(`Invalid npm package name: ${JSON.stringify(name)}`);
+  }
+}
+
+// Workspace patterns are owned by the root manifest.
 function collectWorkspacePackages(baseDir) {
-  const { packages = [] } = readWorkspaceConfig(baseDir);
+  const { workspaces: packages = [] } = JSON.parse(fs.readFileSync(path.join(baseDir, 'package.json'), 'utf8'));
   const collected = [];
 
   const pushPackage = (directory, folder, packageJsonPath) => {
@@ -106,10 +122,10 @@ export function getWorkspaceVersionMap(baseDir) {
   return versions;
 }
 
-// Read the pnpm/utoo catalogs: the default `catalog` table and any named
+// Read the native utoo catalogs: the default `catalog` table and any named
 // `catalogs.<name>` tables.
 export function getCatalogs(baseDir) {
-  const config = readWorkspaceConfig(baseDir);
+  const config = parse(fs.readFileSync(path.join(baseDir, '.utoo.toml'), 'utf8'));
   return {
     default: config.catalog || {},
     named: config.catalogs || {},
@@ -199,4 +215,33 @@ export function applyPublishConfigOverrides(manifest) {
     }
   }
   return overridden;
+}
+
+// Project the same versions as version.js without changing source manifests.
+// This option is only permitted during packing previews, never real publishing.
+export function projectPublishVersions(packages, versionMap, { dryRun, versionType, prereleaseTag = 'beta' }) {
+  if (!versionType) return { packages, versionMap };
+  if (!dryRun) throw new Error('--version-type requires --dry-run');
+  if (!['major', 'minor', 'patch', 'prerelease', 'prepatch', 'preminor', 'premajor'].includes(versionType)) {
+    throw new Error(`Invalid version type: ${versionType}`);
+  }
+  if (!['alpha', 'beta', 'rc'].includes(prereleaseTag)) throw new Error(`Invalid prerelease tag: ${prereleaseTag}`);
+  const projectedMap = { ...versionMap };
+  const projected = packages.map((pkg) => {
+    const version = semver.inc(pkg.version, versionType, prereleaseTag);
+    if (!version) throw new Error(`Invalid version for ${pkg.name}: ${pkg.version}`);
+    projectedMap[pkg.name] = version;
+    return { ...pkg, version };
+  });
+  return { packages: projected, versionMap: projectedMap };
+}
+
+export function assertPublishTag(packages, tag) {
+  for (const pkg of packages) {
+    assertValidNpmPackageName(pkg.name);
+    if (!semver.valid(pkg.version)) throw new Error(`Invalid version for ${pkg.name}: ${pkg.version}`);
+    if (tag === 'latest' && semver.prerelease(pkg.version)) {
+      throw new Error(`Refusing to publish prerelease ${pkg.name}@${pkg.version} to latest`);
+    }
+  }
 }

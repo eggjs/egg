@@ -2,8 +2,6 @@ import fs from 'node:fs';
 import { glob } from 'node:fs/promises';
 import { dirname, join, relative } from 'node:path';
 
-import yaml from 'js-yaml';
-
 import repos from './repo.json' with { type: 'json' };
 
 const projectDir = import.meta.dirname;
@@ -19,17 +17,17 @@ if (!projects.includes(project)) {
   process.exit(1);
 }
 
-// Read pnpm-workspace.yaml to get workspace patterns
-const workspaceConfig = yaml.load(fs.readFileSync(join(rootDir, 'pnpm-workspace.yaml'), 'utf8')) as {
-  packages: string[];
+// Read native workspace patterns from the root manifest
+const workspaceConfig = JSON.parse(fs.readFileSync(join(rootDir, 'package.json'), 'utf8')) as {
+  workspaces: string[];
 };
 
 // Use glob to find all package directories dynamically
 async function discoverPackages(): Promise<[string, string][]> {
   const packages: [string, string][] = [];
 
-  for (const pattern of workspaceConfig.packages) {
-    // Convert pnpm patterns (e.g., 'packages/*') to glob patterns for package.json
+  for (const pattern of workspaceConfig.workspaces) {
+    // Convert workspace patterns (e.g., 'packages/*') to glob patterns for package.json
     const globPattern = `${pattern}/package.json`;
 
     for await (const entry of glob(globPattern, { cwd: rootDir })) {

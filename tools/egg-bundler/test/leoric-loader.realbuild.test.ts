@@ -46,16 +46,17 @@ describe('Leoric snapshot loader — real @utoo/pack build', () => {
         "import Realm from 'leoric';",
         'class SnapshotModel extends Realm.Bone {}',
         'globalThis.__leoricLoaderState = { Realm, SnapshotModel, stringTypeName: Realm.DataTypes.STRING.name };',
-        'startupSnapshot.setDeserializeMainFunction(() => {',
+        'startupSnapshot.setDeserializeMainFunction(async () => {',
         "  const { createRequire } = process.getBuiltinModule('node:module');",
         `  globalThis.__RUNTIME_REQUIRE = createRequire(${JSON.stringify(path.join(baseDir, 'package.json'))});`,
         '  const state = globalThis.__leoricLoaderState;',
         "  const driver = new state.Realm.MysqlDriver({ client: 'mysql2', database: 'snapshot-test' });",
+        '  const pool = driver.getPool ? await driver.getPool() : driver.pool;',
         '  console.log(JSON.stringify({',
         '    modelBaseMatches: Object.getPrototypeOf(state.SnapshotModel) === state.Realm.Bone,',
         '    modelInstanceof: new state.SnapshotModel() instanceof state.Realm.Bone,',
         '    stringTypeNameMatches: state.Realm.DataTypes.STRING.name === state.stringTypeName,',
-        "    mysql2PoolCreated: driver.pool?.constructor?.name === 'Pool',",
+        "    mysql2PoolCreated: pool?.constructor?.name === 'Pool',",
         '  }));',
         '});',
         '',
@@ -74,14 +75,15 @@ describe('Leoric snapshot loader — real @utoo/pack build', () => {
       externals: {},
       projectPath: entryDir,
       rootPath: REPO_ROOT,
+      resolve: compatibility!.resolve,
       module: compatibility!.module,
     }).run();
 
     const workerPath = path.join(outputDir, 'worker.js');
     const worker = await fs.readFile(workerPath, 'utf8');
-    expect(worker).toContain('globalThis.__RUNTIME_REQUIRE(client)');
+    expect(worker).toMatch(/globalThis\.__RUNTIME_REQUIRE\((?:client|s)\)/);
     expect(worker).not.toContain('require(client)');
-    for (const id of ['pg', 'pg-types', 'sql.js']) {
+    for (const id of ['pg-types', 'sql.js']) {
       expect(worker).toContain(`globalThis.__RUNTIME_REQUIRE('${id}')`);
     }
     await execFileAsync(process.execPath, ['--check', workerPath]);

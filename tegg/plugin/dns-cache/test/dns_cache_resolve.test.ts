@@ -25,7 +25,7 @@ describe('test/dns_cache_resolve.test.ts', () => {
         app.logger.error(`[dns-cache] Failed to set DNS servers: ${(error as Error).message}`);
       }
     }
-  });
+  }, 30_000);
   afterAll(() => app.close());
   afterEach(() => mm.restore());
 

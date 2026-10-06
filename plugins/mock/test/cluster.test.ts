@@ -7,9 +7,10 @@ import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';
 
 // Node.js v20: SyntaxError: Unexpected identifier 'SingleModeApplication'
-describe
-  .skipIf(process.platform === 'win32' || process.version.startsWith('v20.'))
-  .sequential('test/cluster.test.ts', () => {
+describe.skipIf(process.platform === 'win32' || process.version.startsWith('v20.'))(
+  'test/cluster.test.ts',
+  { concurrent: false },
+  () => {
     afterEach(mm.restore);
 
     describe('normal', () => {
@@ -342,4 +343,5 @@ describe
         app.expect('stdout', new RegExp(`egg started on http://127.0.0.1:${port}`));
       });
     });
-  });
+  },
+);

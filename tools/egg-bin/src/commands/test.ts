@@ -173,9 +173,9 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       process.env.NODE_OPTIONS = nodeOptions;
     }
 
-    // pass configFile:false as vite override to prevent vitest from walking up
+    // Disable config discovery to prevent vitest from walking up
     // the directory tree and picking up a parent vitest.config.ts
-    const vitest = await startVitest('test', [], config, { configFile: false } as Record<string, unknown>);
+    const vitest = await startVitest([], { ...config, config: false });
     if (!vitest) {
       throw new ForkError('vitest failed to start', 1);
     }
@@ -274,7 +274,6 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       pool: flags.pool as 'forks' | 'threads',
       isolate: process.env.EGG_VITEST_ISOLATE !== 'false',
       fileParallelism: process.env.EGG_FILE_PARALLELISM === 'true',
-      // vitest 4 moved poolOptions to top-level
       execArgv: [...this.globalExecArgv],
       watch: flags.watch,
       // inject vitest globals (describe, it, expect, beforeAll, etc.) so plain JS test files work without imports

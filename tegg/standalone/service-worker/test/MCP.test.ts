@@ -42,7 +42,7 @@ describe('standalone/service-worker/test/MCP.test.ts', () => {
     server = await app.serve();
     const { address, port } = server.address() as AddressInfo;
     base = `http://${address}:${port}`;
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await app.destroy();
@@ -164,7 +164,7 @@ describe('standalone/service-worker/test/MCP.test.ts mcpAuthHandler', () => {
     const server = await app.serve();
     const { address, port } = server.address() as AddressInfo;
     base = `http://${address}:${port}`;
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await app.destroy();

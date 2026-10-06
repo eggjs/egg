@@ -68,6 +68,13 @@ describe('leoric-runtime-require-loader', () => {
     expect(cacheable).toHaveBeenCalledOnce();
   });
 
+  it('preserves the Promise and namespace conversion for compiled dynamic imports', () => {
+    const source = 'Promise.resolve(`${client}`).then(s => tslib_1.__importStar(require(s)))';
+    expect(transform('/app/node_modules/leoric/lib/drivers/mysql/index.js', source)).toBe(
+      'Promise.resolve(`${client}`).then(s => tslib_1.__importStar(globalThis.__RUNTIME_REQUIRE(s)))',
+    );
+  });
+
   it('leaves unrelated JavaScript unchanged', () => {
     const source = 'const value = require(name);';
     expect(transform('/app/src/user.js', source)).toBe(source);

@@ -1,5 +1,7 @@
 # Skills 编写与评测规范
 
+遵循[根目录 AGENTS.md](../../AGENTS.md) 中的共享仓库指引。以下补充 `packages/skills/` 的专属约定。
+
 `packages/skills/` 目录包含 AI agent skills — 纯 markdown 文档，指导 AI 助手使用 Egg 框架。以 `@eggjs/skills` npm 包发布，仅含 `.md` 文件。
 
 > **Skill 编写基础知识**：SKILL.md 格式、frontmatter 规范、目录结构、progressive disclosure、写作风格等通用知识请使用 `/skill-creator` skill 获取指导。以下仅记录 Egg 项目特有的约定。

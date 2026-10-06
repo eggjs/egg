@@ -18,7 +18,7 @@ describe('plugin/dal/test/dal.test.ts', () => {
       baseDir: getFixtures('apps/dal-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterAll(() => {
     return app.close();

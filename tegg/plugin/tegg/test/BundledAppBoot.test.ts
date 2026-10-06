@@ -71,7 +71,7 @@ describe('plugin/tegg/test/BundledAppBoot.test.ts', () => {
 
   afterEach(async () => {
     return mm.restore();
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await app?.close();

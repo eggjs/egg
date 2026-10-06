@@ -1,8 +1,10 @@
 import { strict as assert } from 'node:assert';
 import http from 'node:http';
 
-import { describe, it, beforeAll, afterAll } from 'vitest';
+import { getGlobalDispatcher } from 'urllib';
+import { describe, it, beforeAll, afterAll, vi } from 'vitest';
 
+import { HttpClient } from '../../../src/lib/core/httpclient.ts';
 import { createApp, type MockApplication, startNewLocalServer } from '../../utils.js';
 
 describe('test/lib/core/httpclient_interceptor.test.ts', () => {
@@ -48,6 +50,20 @@ describe('test/lib/core/httpclient_interceptor.test.ts', () => {
       const res = await app.httpClient.request(url + '/get_headers', { dataType: 'json' });
       assert.equal(res.status, 200);
       assert.equal(res.data.headers['x-trace-id'], 'trace-123');
+    });
+
+    it('should remove the routing option before calling the original dispatcher', async () => {
+      const dispatch = vi.spyOn(getGlobalDispatcher(), 'dispatch');
+      try {
+        const httpClient = new HttpClient(app);
+        const res = await httpClient.request(url + '/get_headers', { dataType: 'json' });
+        assert.equal(res.status, 200);
+        assert.equal(res.data.headers['x-trace-id'], 'trace-123');
+        assert.equal(dispatch.mock.calls.length, 1);
+        assert.equal('dispatcher' in dispatch.mock.calls[0][0], false);
+      } finally {
+        dispatch.mockRestore();
+      }
     });
   });
 

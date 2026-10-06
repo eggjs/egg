@@ -1,5 +1,6 @@
 import { spawn, type SpawnOptions, type ChildProcess, execFile as _execFile } from 'node:child_process';
-import { mkdir, rename, stat, open } from 'node:fs/promises';
+import { mkdir, rename, stat, open, type FileHandle } from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 import { debuglog, promisify } from 'node:util';
@@ -443,31 +444,33 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     // whether run in the background.
     if (flags.daemon) {
       this.log(`Save log file to ${logDir}`);
-      const [stdout, stderr] = await Promise.all([getRotateLog(flags.stdout!), getRotateLog(flags.stderr!)]);
-      options.stdio = ['ignore', stdout, stderr, 'ipc'];
-      options.detached = true;
-      const child = (this.#child = spawn(command, eggArgs, options));
-      this.isReady = false;
-      child.on('message', (msg: any) => {
-        // https://github.com/eggjs/cluster/blob/master/src/master.ts#L119
-        if (msg && msg.action === 'egg-ready') {
-          this.isReady = true;
-          this.log('%s started on %s', displayName, msg.data.address);
-          child.unref();
-          child.disconnect();
-        }
-      });
+      const stdout = await getRotateLog(flags.stdout!);
+      let stderr: FileHandle | undefined;
+      try {
+        stderr = await getRotateLog(flags.stderr!);
+        options.stdio = ['ignore', stdout.fd, stderr.fd, 'ipc'];
+        options.detached = true;
+        const child = (this.#child = spawn(command, eggArgs, options));
+        this.isReady = false;
+        child.on('message', (msg: any) => {
+          // https://github.com/eggjs/cluster/blob/master/src/master.ts#L119
+          if (msg && msg.action === 'egg-ready') {
+            this.isReady = true;
+            this.log('%s started on %s', displayName, msg.data.address);
+            child.unref();
+            child.disconnect();
+          }
+        });
+      } finally {
+        // The child owns copies of these descriptors after spawn.
+        await Promise.all([stdout.close(), stderr?.close()]);
+      }
 
       // check start status
       await this.checkStatus();
     } else {
       options.stdio = ['inherit', 'inherit', 'inherit', 'ipc'];
       const child = (this.#child = spawn(command, eggArgs, options));
-      child.once('exit', (code) => {
-        if (!code) return;
-        // command should exit after child process exit
-        this.exit(code);
-      });
 
       // attach master signal to child
       const signals = ['SIGINT', 'SIGQUIT', 'SIGTERM'] as NodeJS.Signals[];
@@ -477,6 +480,18 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
           child.kill(event);
         });
       });
+
+      // the command's lifetime is the child's lifetime: wait for the child
+      // inside the run stack so the exit code flows through oclif's normal
+      // exit path and the command lifecycle (catch/finally) still applies
+      const code = await new Promise<number>((resolve, reject) => {
+        // a spawn failure emits 'error' and may never emit 'exit'
+        child.once('error', reject);
+        child.once('exit', (code, signal) => resolve(toExitCode(code, signal)));
+      });
+      if (code !== 0) {
+        this.exit(code);
+      }
     }
   }
 
@@ -533,6 +548,14 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
   }
 }
 
+// A child killed by a signal reports code=null on exit; map it to the
+// shell convention of 128 + signal number so it does not read as success.
+function toExitCode(code: number | null, signal: NodeJS.Signals | null): number {
+  if (code !== null) return code;
+  const signalNumber = signal ? os.constants.signals[signal] : undefined;
+  return signalNumber ? 128 + signalNumber : 1;
+}
+
 function stringify(obj: Record<string, any>, ignore: string[]) {
   const result: Record<string, any> = {};
   Object.keys(obj).forEach((key) => {
@@ -554,5 +577,5 @@ async function getRotateLog(logFile: string) {
     await rename(logFile, logFile + timestamp);
   }
 
-  return (await open(logFile, 'a')).fd;
+  return await open(logFile, 'a');
 }

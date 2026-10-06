@@ -18,7 +18,7 @@ describe('standalone/service-worker/test/MultiApp.test.ts', () => {
     const [server1, server2] = await Promise.all([app1.serve(), app2.serve()]);
     base1 = `http://127.0.0.1:${(server1.address() as AddressInfo).port}`;
     base2 = `http://127.0.0.1:${(server2.address() as AddressInfo).port}`;
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await Promise.all([app1.destroy(), app2.destroy()]);

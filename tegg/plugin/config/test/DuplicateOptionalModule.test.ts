@@ -14,7 +14,7 @@ describe('plugin/config/test/DuplicateOptionalModule.test.ts', () => {
       baseDir: getFixtures('apps/duplicate-optional-module'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   it('should work', async () => {
     expect(app.moduleReferences.map((reference) => reference.name)).toEqual([

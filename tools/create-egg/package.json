@@ -1,6 +1,6 @@
 {
   "name": "create-egg",
-  "version": "4.1.2-beta.25",
+  "version": "4.1.2-rc.0",
   "description": "Scaffolding Your First Egg.js Project",
   "homepage": "https://github.com/eggjs/egg/tree/next/tools/create-egg",
   "bugs": {
@@ -29,12 +29,12 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./cli": "./dist/cli.js",
       "./package.json": "./package.json"
-    }
+    },
+    "access": "public"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"
@@ -53,6 +53,6 @@
     "execa": "catalog:"
   },
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=22.18.0"
   }
 }

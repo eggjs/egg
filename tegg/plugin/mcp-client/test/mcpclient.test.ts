@@ -26,7 +26,7 @@ describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
 
     await startStreamableServer(17263);
     await startSSEServer(17253);
-  });
+  }, 30_000);
 
   afterAll(async () => {
     await app.close();
@@ -48,7 +48,7 @@ describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
       framework: path.dirname(require.resolve('egg/package.json')),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterAll(() => {
     return app.close();

@@ -8,10 +8,13 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to release from'
+        description: 'Branch to release from (must be a protected release branch)'
         required: true
         default: 'next'
-        type: string
+        type: choice
+        options:
+          - next
+          - master
       version_type:
         description: 'Version bump type'
         required: true
@@ -55,6 +58,23 @@ jobs:
       id-token: write
 
     steps:
+      # Validate the release branch and require the workflow ref to match it.
+      # Use the full ref to reject tags with the same name as a release branch.
+      - name: Guard release branch
+        env:
+          INPUT_BRANCH: ${{ github.event.inputs.branch }}
+          DISPATCH_REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          case "$INPUT_BRANCH" in
+            next|master) ;;
+            *) echo "::error::Disallowed release branch '$INPUT_BRANCH' (allowed: next, master)"; exit 1 ;;
+          esac
+          if [ "$DISPATCH_REF" != "refs/heads/$INPUT_BRANCH" ]; then
+            echo "::error::Dispatched from '$DISPATCH_REF' but branch input is '$INPUT_BRANCH'. Re-run 'Use workflow from' set to '$INPUT_BRANCH'."
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
@@ -64,6 +84,8 @@ jobs:
 
       - name: Setup utoo
         uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # pinned from main
+        with:
+          utoo-version: 'latest'
 
       - name: Setup Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
@@ -73,8 +95,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          ut install --from pnpm
-          git restore package.json
+          ut install
           git diff --exit-code -- package.json
 
       - name: Configure Git
@@ -158,9 +179,9 @@ jobs:
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
           if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-            node scripts/publish.js --tag=${{ github.event.inputs.prerelease_tag }} --dry-run
+            node scripts/publish.js --tag=${{ github.event.inputs.prerelease_tag }} --dry-run --version-type=${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }}
           else
-            node scripts/publish.js --tag=latest --dry-run
+            node scripts/publish.js --tag=latest --dry-run --version-type=${{ github.event.inputs.version_type }}
           fi
 
       - name: Publish packages

@@ -188,8 +188,12 @@ describe('Bundler snapshot lazy-external wiring', () => {
     await writePkg();
     const leoricDir = path.join(tmpApp, 'node_modules', 'leoric');
     await fs.mkdir(leoricDir, { recursive: true });
-    await fs.writeFile(path.join(leoricDir, 'package.json'), JSON.stringify({ name: 'leoric', main: 'index.js' }));
+    await fs.writeFile(
+      path.join(leoricDir, 'package.json'),
+      JSON.stringify({ name: 'leoric', exports: { import: './esm.js', require: './index.js' } }),
+    );
     await fs.writeFile(path.join(leoricDir, 'index.js'), 'module.exports = class Realm {};\n');
+    await fs.writeFile(path.join(leoricDir, 'esm.js'), 'export default class Realm {}\n');
     mocks.externalsResolve.mockResolvedValue({ leoric: 'leoric', other: 'other' });
 
     let packConfig: Record<string, any> | undefined;
@@ -198,6 +202,7 @@ describe('Bundler snapshot lazy-external wiring', () => {
       outputDir: tmpOutput,
       snapshot: true,
       pack: {
+        resolve: { alias: { custom: './custom.js' } },
         buildFunc: async (wrapped) => {
           packConfig = (wrapped as { config: Record<string, any> }).config;
           await fs.writeFile(path.join(tmpOutput, 'worker.js'), SYNTHETIC_WORKER);
@@ -206,6 +211,10 @@ describe('Bundler snapshot lazy-external wiring', () => {
     });
 
     expect(packConfig?.externals.leoric).toBeUndefined();
+    expect(packConfig?.resolve.alias).toMatchObject({
+      leoric: await fs.realpath(path.join(leoricDir, 'index.js')),
+      custom: './custom.js',
+    });
     for (const id of ['mysql', 'mysql2', 'sqlite3', 'pg', 'pg-types', 'sql.js']) {
       expect(packConfig?.externals[id]).toBeUndefined();
     }

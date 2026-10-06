@@ -1,7 +1,7 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, beforeAll, expect } from 'vitest';
+import { describe, it, afterAll, beforeAll, expect, vi } from 'vitest';
 
 import { contains, getFixtures, getLogContent } from './utils.ts';
 
@@ -15,14 +15,15 @@ describe('cluster - subscription', () => {
   afterAll(() => app.close());
 
   it('should support interval and cron', async () => {
-    // interval is 4000ms; give the forked agent/worker boot + IPC + log flush
-    // enough slack on busy CI runners so the task fires at least once.
-    await sleep(process.env.CI ? 10000 : 5000);
-
-    const log = getLogContent('subscription');
-    // console.log(log);
-    expect(contains(log, 'interval')).toBeGreaterThanOrEqual(1);
-    expect(contains(log, 'cron')).toBeGreaterThanOrEqual(1);
+    // Keep the real 4-second interval and wait for both schedules to run.
+    await vi.waitFor(
+      () => {
+        const log = getLogContent('subscription');
+        expect(contains(log, 'interval')).toBeGreaterThanOrEqual(1);
+        expect(contains(log, 'cron')).toBeGreaterThanOrEqual(1);
+      },
+      { timeout: 10000, interval: 100 },
+    );
   });
 });
 
@@ -39,9 +40,12 @@ describe('cluster - subscription-generator', () => {
   afterAll(() => app.close());
 
   it('should throw error on generator function', async () => {
-    await sleep(3000);
-
-    app.expect('stderr', /"schedule" generator function is not support, should use async function instead/);
+    await vi.waitFor(
+      () => {
+        expect(app.stderr).toMatch(/"schedule" generator function is not support, should use async function instead/);
+      },
+      { timeout: 5000, interval: 100 },
+    );
   });
 });
 

@@ -1,6 +1,7 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Follow the shared repository guidance in [the root AGENTS.md](../AGENTS.md).
+This file adds guidance for working in `tegg/`.
 
 ## Overview
 
@@ -28,9 +29,9 @@ standalone/    # 1 standalone package - standalone runtime without Egg.js
 
 - Uses utoo workspaces with `catalog:` protocol for shared external dependencies
 - Uses `workspace:*` protocol for internal monorepo dependencies (both tegg and egg packages)
-- All shared dependency versions centralized in the root `pnpm-workspace.yaml` (not in tegg/)
+- All shared dependency versions centralized in the root `.utoo.toml` (not in tegg/)
 - `catalogMode: prefer` set in root `.npmrc` for automatic catalog usage
-- Tegg packages are defined in root pnpm-workspace.yaml as `tegg/core/*`, `tegg/plugin/*`, `tegg/standalone/*`
+- Tegg workspace patterns are defined in root package.json as `tegg/core/*`, `tegg/plugin/*`, `tegg/standalone/*`
 
 ### Key Core Packages
 
@@ -113,7 +114,7 @@ ut run version:rc          # Bump prerelease rc version
 
 ```bash
 # Install dependencies
-ut install --from pnpm              # Install all dependencies from pnpm workspace files
+ut install              # Install all dependencies from native utoo configuration
 
 # Type check specific packages
 ut run typecheck                    # Type check all packages

@@ -6,7 +6,7 @@
 
 - Use Node.js `>=22.18.0`.
 - Make sure the Utoo CLI is available as `ut`. The CI workflow uses `utooland/setup-utoo` before dependency installation.
-- Install workspace dependencies from the repository root with `ut install --from pnpm`, matching the CI workflow.
+- Install workspace dependencies from the repository root with `ut install`, matching the CI workflow.
 - Run commands from the repository root so workspace paths and `vitest.config.ts` defaults can be detected.
 - Keep Redis and MySQL available when benchmarking suites that require them. The CI test job uses Redis 7 on the default Redis port and MySQL 8 with a `test` database; the benchmark harness mirrors the CI Vitest flags but does not start external services.
 - For CI-like metadata, set the relevant environment variables before running the command, for example `CI=1`, `GITHUB_SHA`, `RUNNER_OS`, or worker-related `VITEST_*` variables.
@@ -36,7 +36,7 @@ Tests run with `isolate: false` (full parallelism; the tegg `TeggScope` per-app 
 - **Parallel efficiency** — `avg concurrency ÷ worker ceiling` (the ceiling mirrors `vitest.config.ts`: Windows CI caps workers, otherwise the machine's available parallelism).
 - **Critical path** — the longest single-file span (the wall-clock floor with unlimited workers).
 
-> **Interval caveat:** the Vitest 4 JSON reporter derives a file's `startTime`/`endTime` from test-level timings only, so the span covers test bodies and per-test `beforeEach`/`afterEach` but **excludes suite-level `beforeAll`/`afterAll` (where egg boots its apps — often the dominant per-file cost) and module transform/import**. That excluded time still occupies the worker threads, so **avg concurrency and parallel efficiency are lower bounds** on real worker utilization; for `beforeAll`-heavy suites avg can read below 1 while peak is high. Use **peak concurrency** as the primary signal. Fully-skipped files (no test timings) are dropped from the calculation.
+> **Interval caveat:** the Vitest 5 JSON reporter derives a file's `startTime`/`endTime` from test-level timings only, so the span covers test bodies and per-test `beforeEach`/`afterEach` but **excludes suite-level `beforeAll`/`afterAll` (where egg boots its apps — often the dominant per-file cost) and module transform/import**. That excluded time still occupies the worker threads, so **avg concurrency and parallel efficiency are lower bounds** on real worker utilization; for `beforeAll`-heavy suites avg can read below 1 while peak is high. Use **peak concurrency** as the primary signal. Fully-skipped files (no test timings) are dropped from the calculation.
 
 ## CI integration
 

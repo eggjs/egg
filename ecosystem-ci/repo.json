@@ -2,12 +2,12 @@
   "cnpmcore": {
     "repository": "https://github.com/cnpm/cnpmcore.git",
     "branch": "master",
-    "hash": "98463c33188bbd32513a74e6c3a2c4cc559ef5da"
+    "hash": "9dbac59b086a94765a24a072ab8c22603fc58807"
   },
   "cnpmcore-snapshot": {
     "repository": "https://github.com/cnpm/cnpmcore.git",
     "branch": "master",
-    "hash": "98463c33188bbd32513a74e6c3a2c4cc559ef5da"
+    "hash": "9dbac59b086a94765a24a072ab8c22603fc58807"
   },
   "examples": {
     "repository": "https://github.com/eggjs/examples.git",

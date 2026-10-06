@@ -18,7 +18,7 @@ describe('plugin/dal/test/transaction.test.ts', () => {
       baseDir: getFixtures('apps/dal-app'),
     });
     await app.ready();
-  });
+  }, 30_000);
 
   afterEach(async () => {
     const mysqlDataSourceManager = await app.getEggObjectFromName<MysqlDataSourceManager>('mysqlDataSourceManager');

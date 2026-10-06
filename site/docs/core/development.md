@@ -275,7 +275,7 @@ App starts by `env: local` when executing debug . The configuration comes from t
 
 #### Debug with [DevTools]
 
-The latest DevTools only supports [Inspector Protocol]. Thus you will need to install Node.js 8.x or higher verions to be able to use it.
+DevTools uses [Inspector Protocol]. Use supported Node.js >=22.18.0.
 
 Execute `npm run debug` to start it:
 

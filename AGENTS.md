@@ -18,19 +18,19 @@ Egg is maintained as a utoo monorepo.
 
 ## Core Commands
 
-The repository runs on [utoo](https://github.com/utooland/utoo) (`ut`); the workspace is still defined in `pnpm-workspace.yaml` (catalog mode), so `ut install` reads it via `--from pnpm`.
+The repository runs on [utoo](https://github.com/utooland/utoo) (`ut`); workspace patterns and overrides live in `package.json`, and shared catalogs live in the tracked `.utoo.toml`. CI installs the latest utoo release; the old pnpm configuration is retained only as a migration reference.
 
-- `corepack enable utoo` enables utoo on a clean machine.
-- `ut install --from pnpm` hydrates the workspace.
+- `npm install --global utoo@latest` installs the latest utoo release on a clean machine.
+- `ut install` hydrates the workspace.
 - `ut run build` builds all packages.
 - `ut run test` runs the main test suite.
 - `ut run lint` runs linting.
 - `ut run typecheck` runs TypeScript checking.
-- use filtered commands for focused work, for example `ut run test --workspace @eggjs/bin` or `ut run build -- --workspace ./tools/egg-bin`.
+- use filtered commands for focused work, for example `ut run test --workspace @eggjs/bin` or `ut run build --workspace @eggjs/bin`; prefer the package-name form of `--workspace` (the `./tools/...` path form does not match on Windows); a package without its own script (for example `build` in @eggjs/scripts) needs the root script plus the tsdown workspace path filter instead: `ut run build -- --workspace ./tools/scripts`.
 
 ### Local CI
 
-Run tests **without building first**. The CI workflow (`ut install --from pnpm → ut run ci`) never runs `build` before tests. If `dist/` directories exist from a prior build, tegg plugin tests will fail with `duplicate proto` errors because globby scans both `src/*.ts` and `dist/*.js`, loading the same decorated class twice.
+Run tests **without building first**. The CI workflow (`ut install → ut run ci`) never runs `build` before tests. If `dist/` directories exist from a prior build, tegg plugin tests will fail with `duplicate proto` errors because globby scans both `src/*.ts` and `dist/*.js`, loading the same decorated class twice.
 
 When you see `duplicate proto` failures locally:
 
@@ -55,7 +55,7 @@ Then re-run tests.
   extra wrap; detached/escape-point access (timers, emitter listeners, proxy
   handlers, module-level lifecycle-util statics) must run inside
   `TeggScope.run(app._teggScopeBag, ...)`. See the "Multi-App Isolation
-  (TeggScope)" section in `tegg/CLAUDE.md` for the full rules.
+  (TeggScope)" section in `tegg/AGENTS.md` for the full rules.
 - **V8 startup snapshot lifecycle**: a snapshot build runs through
   `configWillLoad` and resumes from `configDidLoad` only after restore. Plugin
   constructors and `configWillLoad` must therefore keep only serializable
@@ -108,7 +108,7 @@ Then re-run tests.
 
 - review `SECURITY.md` before handling vulnerability-related work
 - do not commit secrets, credentials, or local-only URLs
-- keep local Node.js, utoo, and pnpm versions aligned with the repository configuration (`engines.node`, `packageManager`)
+- keep local Node.js aligned with `engines.node` and use the latest utoo release
 
 ## Shared Knowledge Workflow
 

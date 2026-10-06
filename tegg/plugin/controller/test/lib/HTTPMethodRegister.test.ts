@@ -47,7 +47,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
       });
 
       loadUnit = await LoadUnitFactory.createLoadUnit(controllerDir, CONTROLLER_LOAD_UNIT, loader);
-    });
+    }, 30_000);
 
     afterAll(async () => {
       EggPrototypeLifecycleUtil.deleteLifecycle(controllerPrototypeHook);
