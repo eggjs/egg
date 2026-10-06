@@ -19,7 +19,7 @@ Use the **Manual Release** workflow in `.github/workflows/release.yml` to releas
 
 ## Choose the release inputs
 
-Set **Use workflow from** and the `branch` input to the same branch: `next` or `main`. The input defaults to `next` during the branch migration. The guard requires `github.ref` to equal `refs/heads/<branch>`, so tags and other branches (including `master`) are rejected. The guard does not inspect branch protection settings. The release job references the `release` environment, including for dry runs; its deployment branch policy must also allow the dispatch branch. Changing the workflow allowlist does not rename a branch or change the repository's default branch.
+Set **Use workflow from** and the `branch` input to the same branch: `next` or `main`. The input defaults to `next` during the branch migration. The guard requires `github.ref` to equal `refs/heads/<branch>`, so tags and other branches are rejected. The guard does not inspect branch protection settings. The release job references the `release` environment, including for dry runs; its deployment branch policy must also allow the dispatch branch. Changing the workflow allowlist does not rename a branch or change the repository's default branch.
 
 Choose `version_type` according to the intended result. `patch`, `minor` and `major` use the `latest` npm tag. `prerelease`, `prepatch`, `preminor` and `premajor` use the selected `prerelease_tag` (`alpha`, `beta` or `rc`). Check the per-package version plan rather than assuming all packages will receive the same version. For example, a patch bump takes `4.1.2-rc.0` to `4.1.2`, while `1.0.0` becomes `1.0.1`.
 
