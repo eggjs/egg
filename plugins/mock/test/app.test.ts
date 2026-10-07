@@ -173,6 +173,31 @@ describe('test/app.test.ts', { concurrent: false }, () => {
     await app.close();
   });
 
+  it.each([false, true])('should handle parallel startup errors (custom listener: %s)', async (customListener) => {
+    const error = new Error('parallel startup failed');
+    const errors: Error[] = [];
+    const app = createParallelApp({
+      baseDir: getFixtures('server'),
+      framework: getFixtures('parallel-framework'),
+      cache: false,
+      clean: false,
+      beforeInit: async (parallelApp) => {
+        parallelApp.options.clusterPort = 1;
+        parallelApp.options.readyError = error;
+      },
+    });
+    if (customListener) {
+      app.on('error', (err: Error) => errors.push(err));
+    }
+    try {
+      await assert.rejects(app.ready(), (err) => err === error);
+      assert.deepEqual((app as any).errors, customListener ? [] : [error]);
+      assert.deepEqual(errors, customListener ? [error] : []);
+    } finally {
+      await app.close();
+    }
+  });
+
   // Node.js v20: SyntaxError: Unexpected identifier 'SingleModeApplication'
   it.skipIf(process.version.startsWith('v20.'))('should FrameworkErrorformater work during app boot', async () => {
     // let logMsg = '';

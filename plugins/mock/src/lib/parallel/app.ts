@@ -53,6 +53,10 @@ export class MockParallelApplication extends Base {
     this.__APP_INIT__ = true;
     debug('this[APP_INIT] = true');
     this.#bindEvents();
+    // Koa normally installs this in callback(), but startup can emit errors before then.
+    if (!app.listenerCount('error')) {
+      app.on('error', (app as any).onerror.bind(app));
+    }
     // Wait for middleware loading before app.callback() composes the request handler.
     await app.ready();
     debug('http server instantiate');

@@ -6,6 +6,7 @@ class Application extends EventEmitter {
     this.options = options;
     this.context = {};
     this.config = {};
+    this.errors = [];
     this.messenger = {
       messages: [],
       onMessage: (msg) => this.messenger.messages.push(msg),
@@ -21,7 +22,15 @@ class Application extends EventEmitter {
   }
 
   async ready() {
+    if (this.options.readyError) {
+      this.emit('error', this.options.readyError);
+      throw this.options.readyError;
+    }
     this.readyAt = true;
+  }
+
+  onerror(err) {
+    this.errors.push(err);
   }
 
   async close() {}
