@@ -17,11 +17,6 @@ import { sleep, rimrafSync } from './utils.ts';
 const debug = debuglog('egg/mock/lib/cluster');
 
 const clusters = new Map();
-declare global {
-  // define the global variable to avoid the port conflict in parallel process mode
-  var eggMockMasterPort: number;
-}
-globalThis.eggMockMasterPort = 17000 + (process.pid % 1000);
 
 let serverBin = path.join(import.meta.dirname, 'start-cluster.js');
 if (!existsSync(serverBin)) {
@@ -81,8 +76,6 @@ export class ClusterApplication extends Coffee {
     const opt = options.opt;
     delete options.opt;
 
-    // incremental port
-    options.port = options.port ?? ++globalThis.eggMockMasterPort;
     // Set 1 worker when test
     if (!options.workers) {
       options.workers = 1;
@@ -99,7 +92,9 @@ export class ClusterApplication extends Coffee {
 
     Ready.mixin(this);
 
-    this.port = options.port;
+    // The child selects a default port before starting the cluster. The real
+    // port is available once ready(), including when options.port is zero.
+    this.port = options.port ?? 0;
     this.baseDir = options.baseDir;
 
     // print stdout and stderr when DEBUG, otherwise stderr.
@@ -118,6 +113,7 @@ export class ClusterApplication extends Coffee {
           case 'egg-ready':
             // data: { port: 17703, address: 'http://127.0.0.1:17703', protocol: 'http' }
             debug('on message egg-ready %o', msg);
+            this.port = msg.data.port;
             this._address = msg.data.address;
             this.emit('close', 0);
             break;

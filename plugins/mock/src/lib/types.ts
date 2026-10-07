@@ -85,7 +85,6 @@ export interface MockApplicationOptions extends MockOptions {
 export interface MockClusterApplicationOptions extends MockClusterOptions {
   baseDir: string;
   framework: string;
-  port: number;
 }
 
 export type {
