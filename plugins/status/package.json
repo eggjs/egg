@@ -1,0 +1,60 @@
+{
+  "name": "@eggjs/status",
+  "version": "4.1.2",
+  "description": "Health check middleware for Egg applications",
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "health-check",
+    "status"
+  ],
+  "homepage": "https://github.com/eggjs/egg/tree/main/plugins/status",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/status"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/middleware/status": "./src/app/middleware/status.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/middleware/status": "./dist/app/middleware/status.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}
