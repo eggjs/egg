@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
 
+import { request } from '@eggjs/supertest';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import mm, { type MockApplication } from '../src/index.ts';
@@ -81,12 +82,8 @@ describe('test/app.test.ts', { concurrent: false }, () => {
   });
 
   it('should run onServer after ready (server event not lost)', async () => {
-    // @eggjs/mock emits the `server` event before `app.ready()`, while egg core
-    // registers its `once("server", ...)` listener inside Application.load()
-    // (during app.ready()). egg core re-emits `server` after the listener is
-    // registered so onServer still runs and wires up the `clientError` handler
-    // (plus graceful shutdown / server timeout / websocket). Regression guard:
-    // assert the clientError listener is wired after ready.
+    // Application.load() registers the server listener during app.ready().
+    // Mock startup must emit server afterward so onServer attaches clientError.
     const baseDir = getFixtures('server');
     const app = mm.app({
       baseDir,
@@ -104,7 +101,23 @@ describe('test/app.test.ts', { concurrent: false }, () => {
     }
   });
 
-  it('should emit server after ready in parallel app', async () => {
+  it('should compose HTTP middleware after app is ready', async () => {
+    const app = mm.app({
+      baseDir: getFixtures('app'),
+      framework: getFixtures('snapshot-framework'),
+      cache: false,
+    });
+    try {
+      await app.ready();
+      assert(app.server, 'app.server not exists');
+      await request(app.server).get('/').expect(200, 'foo');
+      await app.httpRequest().get('/').expect(200, 'foo');
+    } finally {
+      await app.close();
+    }
+  });
+
+  it('should create and emit server after ready in parallel app', async () => {
     // cover the parallel app worker's post-ready `server` emit (lib/parallel/app.ts)
     const baseDir = getFixtures('server');
     let emittedServer: unknown;
@@ -127,6 +140,7 @@ describe('test/app.test.ts', { concurrent: false }, () => {
       assert(app.server, 'app.server not exists');
       assert.equal(emittedServer, app.server);
       assert.equal(emittedAfterReady, true);
+      await request(app.server).get('/').expect(200, 'ok');
     } finally {
       await app.close();
     }

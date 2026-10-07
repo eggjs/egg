@@ -13,7 +13,11 @@ class Application extends EventEmitter {
   }
 
   callback() {
-    return (_req, res) => res.end('ok');
+    const ready = this.readyAt;
+    return (_req, res) => {
+      res.statusCode = ready ? 200 : 503;
+      res.end(ready ? 'ok' : 'not ready');
+    };
   }
 
   async ready() {

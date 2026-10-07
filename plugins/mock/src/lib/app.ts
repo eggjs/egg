@@ -99,13 +99,11 @@ class MockApplicationWorker extends Base {
     this[APP_INIT] = true;
     debug('this[APP_INIT] = true');
     this.#bindEvent();
+    // Wait for middleware loading before app.callback() composes the request handler.
+    await app.ready();
     debug('http server instantiate');
     createServer(app);
-    await app.ready();
-    // emit `server` after ready: egg core registers its `once('server', ...)`
-    // listener inside `Application.load()` (during `app.ready()` above), and
-    // `onServer` reads loaded config, so the event must be emitted now rather
-    // than at createServer() time. Mirrors @eggjs/cluster's post-ready emit.
+    // Application.load() registers the onServer listener during app.ready().
     if (app.server) {
       app.emit('server', app.server);
     }

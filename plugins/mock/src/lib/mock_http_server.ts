@@ -12,11 +12,7 @@ export function createServer(app: any): Server {
       app.server = server;
     }
   }
-  // NOTE: don't emit the `server` event here. egg core registers its
-  // `once('server', ...)` listener inside `Application.load()` (during
-  // `app.ready()`), so emitting at server-creation time (before ready) would be
-  // missed and `onServer` (clientError logging / graceful / timeout / websocket)
-  // never runs. The caller emits `server` after `app.ready()` instead — just
-  // like @eggjs/cluster, which emits it after the app is ready.
+  // Mock startup emits `server` once after app.ready(). HTTP requests also use
+  // this helper to get the cached server and must not emit the event again.
   return server;
 }
