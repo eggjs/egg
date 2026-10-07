@@ -108,6 +108,9 @@
       "path": "./plugins/redis"
     },
     {
+      "path": "./plugins/status"
+    },
+    {
       "path": "./tools/egg-bin"
     },
     {
