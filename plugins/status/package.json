@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/status",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "description": "Health check middleware for Egg applications",
   "keywords": [
     "egg",
