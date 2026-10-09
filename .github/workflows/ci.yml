@@ -53,28 +53,46 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Setup utoo
-        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
-        with:
-          utoo-version: 'latest'
+      # Resolve the digest before installation, then reuse it without scanning node_modules.
+      - name: Compute dependency cache key
+        id: cache-key
+        shell: bash
+        env:
+          DEPENDENCY_HASH: ${{ hashFiles('.utoo.toml', '**/package.json') }}
+        run: echo "hash=$DEPENDENCY_HASH" >> "$GITHUB_OUTPUT"
 
-      - name: Set up Node.js
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
-        with:
-          node-version: '24'
+      - parallel:
+          - name: Setup utoo
+            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+            with:
+              utoo-version: 'latest'
 
-      - name: Cache utoo package store
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: ${{ runner.temp }}/utoo-store
-          key: pkgstore-${{ runner.os }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
-          restore-keys: |
-            pkgstore-${{ runner.os }}-
+          - name: Set up Node.js
+            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            with:
+              node-version: '24'
+
+          - name: Restore utoo package store
+            id: package-store
+            uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+            with:
+              path: ${{ runner.temp }}/utoo-store
+              key: pkgstore-${{ runner.os }}-${{ steps.cache-key.outputs.hash }}
+              restore-keys: |
+                pkgstore-${{ runner.os }}-
 
       - name: Install dependencies
         env:
           UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
         run: ut install
+
+      # This job is the sole Linux package-store writer, including docs-only PRs.
+      - name: Save utoo package store
+        if: ${{ steps.package-store.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/utoo-store
+          key: ${{ steps.package-store.outputs.cache-primary-key }}
 
       - name: Check workspace and release tooling
         run: node --test scripts/test/workspace.test.js scripts/test/release.test.js
@@ -115,13 +133,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
+      # Resolve the digest before installation, then reuse it without scanning node_modules.
+      - name: Compute dependency cache key
+        id: cache-key
+        shell: bash
+        env:
+          DEPENDENCY_HASH: ${{ hashFiles('.utoo.toml', '**/package.json') }}
+        run: echo "hash=$DEPENDENCY_HASH" >> "$GITHUB_OUTPUT"
+
+      # Services can start while tools and dependencies are installed.
       - name: Start Redis (MacOS or Linux)
+        background: true
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
         uses: shogo82148/actions-setup-redis@cff708d63a30aebc0bfaa7276fb709d173f36cb6 # v1
         with:
           redis-version: '7'
           auto-start: 'true'
 
+      # Keep Chocolatey installations sequential: Memurai finishes before MySQL starts.
       - name: Start Redis (Windows via Memurai)
         if: ${{ matrix.os == 'windows-latest' }}
         shell: pwsh
@@ -174,17 +203,14 @@ jobs:
 
       # install and start MySQL (will automatically start mysqld)
       - name: Start MySQL (macOS or Linux)
+        background: true
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
         uses: shogo82148/actions-setup-mysql@27e74fac04c136a9f4c2dc2ed457df57331b3e0c # v1
         with:
           mysql-version: '8'
           auto-start: 'true'
-      - name: Init DB (macOS or Linux)
-        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
-        run: |
-          mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
-
       - name: Start MySQL (Windows)
+        background: true
         if: ${{ matrix.os == 'windows-latest' }}
         shell: pwsh
         run: |
@@ -205,23 +231,34 @@ jobs:
           # & mysqladmin -u root password root
           & mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
 
-      - name: Setup utoo
-        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
-        with:
-          utoo-version: 'latest'
+      - parallel:
+          - name: Setup utoo
+            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+            with:
+              utoo-version: 'latest'
 
-      - name: Set up Node.js
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
-        with:
-          node-version: ${{ matrix.coverage && needs.plan.outputs.coverage-node || matrix.node }}
+          - name: Set up Node.js
+            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            with:
+              node-version: ${{ matrix.coverage && needs.plan.outputs.coverage-node || matrix.node }}
 
-      - name: Cache Node compile cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: ${{ runner.temp }}/node-compile-cache
-          key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
-          restore-keys: |
-            node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+          - name: Restore Node compile cache
+            id: compile-cache
+            uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+            with:
+              path: ${{ runner.temp }}/node-compile-cache
+              key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ steps.cache-key.outputs.hash }}
+              restore-keys: |
+                node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+
+          - name: Restore utoo package store
+            id: package-store
+            uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+            with:
+              path: ${{ runner.temp }}/utoo-store
+              key: pkgstore-${{ runner.os }}-${{ steps.cache-key.outputs.hash }}
+              restore-keys: |
+                pkgstore-${{ runner.os }}-
 
       - name: Enable Node compile cache
         # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
@@ -229,18 +266,18 @@ jobs:
         shell: bash
         run: echo "NODE_COMPILE_CACHE=${{ runner.temp }}/node-compile-cache" >> "$GITHUB_ENV"
 
-      - name: Cache utoo package store
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: ${{ runner.temp }}/utoo-store
-          key: pkgstore-${{ runner.os }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
-          restore-keys: |
-            pkgstore-${{ runner.os }}-
-
       - name: Install dependencies
         env:
           UTOO_CACHE_DIR: ${{ runner.temp }}/utoo-store
         run: ut install
+
+      # Join service startup before using its PATH changes or running database tests.
+      - wait-all:
+
+      - name: Init DB (macOS or Linux)
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
+        run: |
+          mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
 
       - name: Run tests (with coverage)
         if: ${{ matrix.coverage }}
@@ -270,23 +307,41 @@ jobs:
         if: ${{ matrix.os != 'windows-latest' && matrix.shardIndex == 1 }}
         run: ut run example:test:all
 
+      # One package-store writer per OS; typecheck owns Linux. Only shard 1 saves
+      # each OS/Node compile cache. Other shards and tool jobs only restore caches.
+      - parallel:
+          - name: Save utoo package store
+            if: ${{ matrix.os != 'ubuntu-latest' && matrix.node == '24' && matrix.shardIndex == 1 && steps.package-store.outputs.cache-hit != 'true' }}
+            uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+            with:
+              path: ${{ runner.temp }}/utoo-store
+              key: ${{ steps.package-store.outputs.cache-primary-key }}
+          - name: Save Node compile cache
+            if: ${{ matrix.shardIndex == 1 && steps.compile-cache.outputs.cache-hit != 'true' }}
+            uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+            with:
+              path: ${{ runner.temp }}/node-compile-cache
+              key: ${{ steps.compile-cache.outputs.cache-primary-key }}
+
   coverage:
     needs: [plan, test]
     if: needs.plan.outputs.tests == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-      - uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
-        with:
-          utoo-version: 'latest'
-      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
-        with:
-          node-version: ${{ needs.plan.outputs.coverage-node }}
+      - parallel:
+          - uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+            with:
+              utoo-version: 'latest'
+          - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            with:
+              node-version: ${{ needs.plan.outputs.coverage-node }}
+          - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+            with:
+              pattern: ci-results-ubuntu-latest-node24-*
+              path: benchmark/ci-test/shards
+
       - run: ut install
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
-        with:
-          pattern: ci-results-ubuntu-latest-node24-*
-          path: benchmark/ci-test/shards
       - name: Check coverage inventory
         run: node scripts/ci-coverage.js benchmark/ci-test/shards benchmark/ci-test/blobs
       - name: Merge coverage
@@ -326,37 +381,48 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Setup utoo
-        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
-        with:
-          utoo-version: 'latest'
+      # Resolve the digest before installation, then reuse it without scanning node_modules.
+      - name: Compute dependency cache key
+        id: cache-key
+        shell: bash
+        env:
+          DEPENDENCY_HASH: ${{ hashFiles('.utoo.toml', '**/package.json') }}
+        run: echo "hash=$DEPENDENCY_HASH" >> "$GITHUB_OUTPUT"
 
-      - name: Set up Node.js
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
-        with:
-          node-version: ${{ matrix.node }}
+      - parallel:
+          - name: Setup utoo
+            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+            with:
+              utoo-version: 'latest'
 
-      - name: Cache Node compile cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: ${{ runner.temp }}/node-compile-cache
-          key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
-          restore-keys: |
-            node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+          - name: Set up Node.js
+            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            with:
+              node-version: ${{ matrix.node }}
+
+          - name: Restore Node compile cache
+            id: compile-cache
+            uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+            with:
+              path: ${{ runner.temp }}/node-compile-cache
+              key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ steps.cache-key.outputs.hash }}
+              restore-keys: |
+                node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+
+          - name: Restore utoo package store
+            id: package-store
+            uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+            with:
+              path: ${{ runner.temp }}/utoo-store
+              key: pkgstore-${{ runner.os }}-${{ steps.cache-key.outputs.hash }}
+              restore-keys: |
+                pkgstore-${{ runner.os }}-
 
       - name: Enable Node compile cache
         # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
         # here (bash on every OS) — every later step and forked child inherits it.
         shell: bash
         run: echo "NODE_COMPILE_CACHE=${{ runner.temp }}/node-compile-cache" >> "$GITHUB_ENV"
-
-      - name: Cache utoo package store
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: ${{ runner.temp }}/utoo-store
-          key: pkgstore-${{ runner.os }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
-          restore-keys: |
-            pkgstore-${{ runner.os }}-
 
       - name: Install dependencies
         env:
@@ -413,37 +479,48 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Setup utoo
-        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
-        with:
-          utoo-version: 'latest'
+      # Resolve the digest before installation, then reuse it without scanning node_modules.
+      - name: Compute dependency cache key
+        id: cache-key
+        shell: bash
+        env:
+          DEPENDENCY_HASH: ${{ hashFiles('.utoo.toml', '**/package.json') }}
+        run: echo "hash=$DEPENDENCY_HASH" >> "$GITHUB_OUTPUT"
 
-      - name: Set up Node.js
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
-        with:
-          node-version: ${{ matrix.node }}
+      - parallel:
+          - name: Setup utoo
+            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+            with:
+              utoo-version: 'latest'
 
-      - name: Cache Node compile cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: ${{ runner.temp }}/node-compile-cache
-          key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
-          restore-keys: |
-            node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+          - name: Set up Node.js
+            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            with:
+              node-version: ${{ matrix.node }}
+
+          - name: Restore Node compile cache
+            id: compile-cache
+            uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+            with:
+              path: ${{ runner.temp }}/node-compile-cache
+              key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ steps.cache-key.outputs.hash }}
+              restore-keys: |
+                node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+
+          - name: Restore utoo package store
+            id: package-store
+            uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+            with:
+              path: ${{ runner.temp }}/utoo-store
+              key: pkgstore-${{ runner.os }}-${{ steps.cache-key.outputs.hash }}
+              restore-keys: |
+                pkgstore-${{ runner.os }}-
 
       - name: Enable Node compile cache
         # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
         # here (bash on every OS) — every later step and forked child inherits it.
         shell: bash
         run: echo "NODE_COMPILE_CACHE=${{ runner.temp }}/node-compile-cache" >> "$GITHUB_ENV"
-
-      - name: Cache utoo package store
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: ${{ runner.temp }}/utoo-store
-          key: pkgstore-${{ runner.os }}-${{ hashFiles('.utoo.toml', '**/package.json') }}
-          restore-keys: |
-            pkgstore-${{ runner.os }}-
 
       - name: Install dependencies
         env:
@@ -493,15 +570,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Setup utoo
-        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
-        with:
-          utoo-version: 'latest'
+      - parallel:
+          - name: Setup utoo
+            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+            with:
+              utoo-version: 'latest'
 
-      - name: Set up Node.js
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
-        with:
-          node-version: ${{ matrix.node }}
+          - name: Set up Node.js
+            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            with:
+              node-version: ${{ matrix.node }}
 
       - name: Install dependencies
         run: ut install
