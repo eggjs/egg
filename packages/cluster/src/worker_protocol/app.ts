@@ -132,7 +132,7 @@ export function startAppWorker(
     } else {
       server = createHttpServer(app.callback());
       if (debugPort) {
-        debugPortServer = server;
+        debugPortServer = createHttpServer(app.callback());
       }
     }
 
