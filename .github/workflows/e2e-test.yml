@@ -182,11 +182,14 @@ jobs:
               cd ..
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-      - parallel:
-          - uses: ./.github/actions/clone
-            with:
-              ecosystem-ci-project: ${{ matrix.project.name }}
+      - name: Clone ecosystem project
+        id: ecosystem-project
+        background: true
+        uses: ./.github/actions/clone
+        with:
+          ecosystem-ci-project: ${{ matrix.project.name }}
 
+      - parallel:
           - name: Setup utoo
             uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
             with:
@@ -205,6 +208,9 @@ jobs:
 
       - name: Pack packages into tgz
         run: node ecosystem-ci/pack-all.mjs
+
+      # The local build and pack steps do not need the ecosystem checkout.
+      - wait: ecosystem-project
 
       - name: Override dependencies from tgz in ${{ matrix.project.name }}
         working-directory: ecosystem-ci/${{ matrix.project.name }}

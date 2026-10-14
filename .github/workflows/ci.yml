@@ -106,11 +106,13 @@ jobs:
       - name: Run format check
         run: ut run fmtcheck
 
-      - name: Run build
-        run: ut run build
+      # Keep both builds after dist cleanup; they write to separate output directories.
+      - parallel:
+          - name: Run build
+            run: ut run build
 
-      - name: Run site build
-        run: ut run site:build
+          - name: Run site build
+            run: ut run site:build
 
   test:
     needs: plan
@@ -294,6 +296,8 @@ jobs:
         run: node scripts/ci-test-benchmark.js --report-only --vitest-json benchmark/ci-test/ci-run/vitest-results.json --output-dir benchmark/ci-test/ci-run --name "Parallel test metrics (${{ matrix.os }}, Node ${{ matrix.node }}, shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})"
 
       - name: Upload test results
+        id: test-results
+        background: true
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -306,6 +310,9 @@ jobs:
       - name: Run example tests
         if: ${{ matrix.os != 'windows-latest' && matrix.shardIndex == 1 }}
         run: ut run example:test:all
+
+      # Example tests do not write the main suite's report directory.
+      - wait: test-results
 
       # One package-store writer per OS; typecheck owns Linux. Only shard 1 saves
       # each OS/Node compile cache. Other shards and tool jobs only restore caches.
@@ -329,6 +336,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - name: Download coverage reports
+        id: coverage-reports
+        background: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: ci-results-ubuntu-latest-node24-*
+          path: benchmark/ci-test/shards
+
       - parallel:
           - uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
             with:
@@ -336,12 +351,9 @@ jobs:
           - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
             with:
               node-version: ${{ needs.plan.outputs.coverage-node }}
-          - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
-            with:
-              pattern: ci-results-ubuntu-latest-node24-*
-              path: benchmark/ci-test/shards
 
       - run: ut install
+      - wait: coverage-reports
       - name: Check coverage inventory
         run: node scripts/ci-coverage.js benchmark/ci-test/shards benchmark/ci-test/blobs
       - name: Merge coverage
