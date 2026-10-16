@@ -72,6 +72,7 @@ describe('test/worker-protocol.test.ts', () => {
 
       assert.ok(server);
       assert.ok(listen);
+      assert.equal(server.listenerCount('error'), 1);
       assert.deepEqual(listen.mock.calls, debugPort && !separateDebugServer ? [[7001], [debugPort]] : [[7001]]);
       assert.equal(app.callback.mock.calls.length, debugPort && separateDebugServer ? 2 : 1);
       server.close();

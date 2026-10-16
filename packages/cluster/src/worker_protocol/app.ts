@@ -136,10 +136,14 @@ export function startAppWorker(
       }
     }
 
-    server.once('error', (err: any) => {
+    const serverErrorHandler = (err: Error & { code?: string }) => {
       consoleLogger.error('[app_worker] server got error: %s, code: %s', err.message, err.code);
       exitProcess();
-    });
+    };
+    server.once('error', serverErrorHandler);
+    if (debugPortServer && debugPortServer !== server) {
+      debugPortServer.once('error', serverErrorHandler);
+    }
 
     // emit `server` event in app
     app.emit('server', server);
