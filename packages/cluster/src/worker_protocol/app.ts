@@ -132,7 +132,7 @@ export function startAppWorker(
     } else {
       server = createHttpServer(app.callback());
       if (debugPort) {
-        debugPortServer = createHttpServer(app.callback());
+        debugPortServer = clusterConfig.separateDebugServer ? createHttpServer(app.callback()) : server;
       }
     }
 

@@ -49,6 +49,7 @@ describe('test/debug-port.test.ts', () => {
     const debugPort = await detectPort();
     assert.notEqual(port, debugPort);
     mm(process.env, 'EGG_TEST_CLUSTER_DEBUG_HOSTNAME', hostname);
+    mm(process.env, 'EGG_TEST_CLUSTER_SEPARATE_DEBUG_SERVER', String(protocol === 'http'));
 
     const options = {
       workers: 1,

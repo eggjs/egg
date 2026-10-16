@@ -278,6 +278,8 @@ export interface EggAppConfig extends EggCoreAppConfig {
   serverTimeout: number | null;
 
   cluster: {
+    /** Use a separate HTTP server for debugPort on HTTP applications, defaults to `false`. */
+    separateDebugServer?: boolean;
     listen: {
       path: string;
       port: number;

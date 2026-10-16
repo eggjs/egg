@@ -355,6 +355,7 @@ const factory: EggConfigFactory = defineConfigFactory((appInfo): PartialEggConfi
   /**
    * The options of cluster
    * @member {Object} Config#cluster
+   * @property {Boolean} separateDebugServer - use a separate HTTP server for debugPort on HTTP applications, default is `false`.
    * @property {Object} listen - listen options, see {@link https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback}
    * @property {String} listen.path - set a unix sock path when server listen
    * @property {Number} listen.port - set a port when server listen
@@ -363,6 +364,7 @@ const factory: EggConfigFactory = defineConfigFactory((appInfo): PartialEggConfi
    *   Only available on Linux 3.9+, DragonFlyBSD 3.6+, FreeBSD 12.0+, Solaris 11.4, and AIX 7.2.5+.
    */
   config.cluster = {
+    separateDebugServer: false,
     listen: {
       path: '',
       port: 7001,

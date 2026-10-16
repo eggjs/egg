@@ -4,7 +4,7 @@ import type { Server } from 'node:http';
 import os from 'node:os';
 import { Worker } from 'node:worker_threads';
 
-import { describe, it, vi } from 'vitest';
+import { describe, it, vi, type MockInstance } from 'vitest';
 
 import { startAgentWorker } from '../src/worker_protocol/agent.ts';
 import { startAppWorker } from '../src/worker_protocol/app.ts';
@@ -35,6 +35,49 @@ vi.mock('node:http', async (importOriginal) => {
 });
 
 describe('test/worker-protocol.test.ts', () => {
+  describe.each([undefined, false, true])('separateDebugServer: %s', (separateDebugServer) => {
+    it.each([undefined, 7002])('preserves the HTTP listener behavior with debugPort: %s', async (debugPort) => {
+      const app = new EventEmitter() as any;
+      app.config = {
+        cluster: {
+          listen: { port: 7001 },
+          ...(separateDebugServer === undefined ? {} : { separateDebugServer }),
+        },
+      };
+      app.options = {};
+      app.ready = (callback: (err?: Error) => void) => callback();
+      app.callback = vi.fn(() => (_request: unknown, response: { end(): void }) => response.end());
+      app.close = () => {};
+
+      let server: Server | undefined;
+      let listen: MockInstance<Server['listen']> | undefined;
+      app.once('server', (value: Server) => {
+        server = value;
+        listen = vi.spyOn(value, 'listen');
+      });
+      startAppWorker(
+        app,
+        { debugPort },
+        {
+          workerId: 1,
+          send() {},
+          kill() {
+            assert.fail('HTTP app should not be killed');
+          },
+          gracefulExit() {},
+          on() {},
+        },
+      );
+      await Promise.resolve();
+
+      assert.ok(server);
+      assert.ok(listen);
+      assert.deepEqual(listen.mock.calls, debugPort && !separateDebugServer ? [[7001], [debugPort]] : [[7001]]);
+      assert.equal(app.callback.mock.calls.length, debugPort && separateDebugServer ? 2 : 1);
+      server.close();
+    });
+  });
+
   it('uses parentPort without terminating the main process', async () => {
     const worker = new Worker(new URL('./fixtures/worker-thread-io.mjs', import.meta.url));
     const workerId = worker.threadId;

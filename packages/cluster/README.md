@@ -71,6 +71,25 @@ startCluster({
 | ports     | `Array`         | startup port of each app worker, such as: [7001, 7002, 7003], only effects when the startMode is 'worker_threads' |
 | env       | `String`        | custom env, default is process.env.EGG_SERVER_ENV                                                                 |
 
+### Separate HTTP Debug Server
+
+For an HTTP application, set `config.cluster.separateDebugServer` to `true` to
+serve the configured `debugPort` on a separate HTTP server:
+
+```js
+// config/config.default.js
+exports.cluster = {
+  separateDebugServer: true,
+};
+```
+
+Pass `port` and `debugPort` to `startCluster` as usual. Both ports serve the same
+application callback. The option defaults to `false`, preserving the existing
+HTTP behavior of reusing the application server for `debugPort`. Enable it when
+an HTTP application needs both listeners, since a Node.js server cannot listen
+on two ports at once. HTTPS applications already use a separate HTTP server for
+`debugPort` and are unaffected by this option.
+
 ## Env
 
 `EGG_APP_CLOSE_TIMEOUT`: app worker boot timeout value
