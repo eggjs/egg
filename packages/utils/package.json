@@ -33,7 +33,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/typings": "workspace:*"
@@ -41,8 +41,7 @@
   "devDependencies": {
     "coffee": "catalog:",
     "mm": "catalog:",
-    "runscript": "catalog:",
-    "typescript": "catalog:"
+    "runscript": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

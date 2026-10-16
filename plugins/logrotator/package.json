@@ -71,7 +71,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "moment": "catalog:",
@@ -83,8 +83,7 @@
     "@types/node": "catalog:",
     "egg": "workspace:*",
     "egg-logger": "catalog:",
-    "glob": "catalog:",
-    "typescript": "catalog:"
+    "glob": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"

@@ -49,7 +49,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/controller-plugin": "workspace:*",
@@ -74,8 +74,7 @@
     "@eggjs/tegg-plugin": "workspace:*",
     "@types/node": "catalog:",
     "egg": "workspace:*",
-    "eventsource": "^3.0.5",
-    "typescript": "catalog:"
+    "eventsource": "^3.0.5"
   },
   "peerDependencies": {
     "@eggjs/tegg-plugin": "workspace:*",

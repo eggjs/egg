@@ -38,7 +38,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@types/superagent": "catalog:",
@@ -50,8 +50,7 @@
     "@types/express": "catalog:",
     "body-parser": "catalog:",
     "cookie-parser": "catalog:",
-    "express": "catalog:",
-    "typescript": "catalog:"
+    "express": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

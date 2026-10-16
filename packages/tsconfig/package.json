@@ -26,8 +26,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "coffee": "catalog:",
-    "typescript": "catalog:"
+    "coffee": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

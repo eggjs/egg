@@ -46,7 +46,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@koa/cors": "catalog:"
@@ -56,8 +56,7 @@
     "@eggjs/security": "workspace:*",
     "@types/koa__cors": "catalog:",
     "@types/node": "catalog:",
-    "egg": "workspace:*",
-    "typescript": "catalog:"
+    "egg": "workspace:*"
   },
   "peerDependencies": {
     "egg": "workspace:*"

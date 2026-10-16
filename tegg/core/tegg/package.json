@@ -56,7 +56,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/agent-runtime": "workspace:*",
@@ -81,8 +81,7 @@
     "@eggjs/transaction-decorator": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "typescript": "catalog:"
+    "@types/node": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"
