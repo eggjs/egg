@@ -32,8 +32,8 @@ describe('test/lib/core/loader/load_service.test.ts', () => {
   it('should service support es6', async () => {
     app = createApp('apps/services_loader_verify');
     await app.ready();
-    assert(Object.prototype.hasOwnProperty.call(app.serviceClasses, 'foo'));
-    assert(['bar'].every((p) => Object.prototype.hasOwnProperty.call(app.serviceClasses.foo, p)));
+    assert(Object.hasOwn(app.serviceClasses, 'foo'));
+    assert(['bar'].every((p) => Object.hasOwn(app.serviceClasses.foo, p)));
   });
 
   it('should support extend app.Service class', async () => {

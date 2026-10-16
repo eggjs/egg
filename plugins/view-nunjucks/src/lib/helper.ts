@@ -71,9 +71,7 @@ export function createHelper(app: Application, buildInFilters: BuildInFilters): 
 
   // fill view helper with nunjucks build-in filters
   for (const key in buildInFilters) {
-    if ((NunjucksViewHelper.prototype as any)[key] == null) {
-      (NunjucksViewHelper.prototype as any)[key] = buildInFilters[key];
-    }
+    (NunjucksViewHelper.prototype as any)[key] ??= buildInFilters[key];
   }
 
   return NunjucksViewHelper as HelperClass;

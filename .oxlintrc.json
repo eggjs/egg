@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["@e18e/eslint-plugin"],
   "env": {
     "node": true
   },
@@ -11,6 +12,18 @@
   ],
   "rules": {
     "no-unused-vars": "error",
-    "preserve-caught-error": "error"
+    "preserve-caught-error": "error",
+    "e18e/prefer-array-at": "error",
+    "e18e/prefer-array-fill": "error",
+    "e18e/prefer-includes": "error",
+    "e18e/prefer-nullish-coalescing": "error",
+    "e18e/prefer-object-has-own": "error",
+    "e18e/prefer-url-canparse": "error",
+    "e18e/prefer-array-from-map": "error",
+    "e18e/prefer-timer-args": "error",
+    "e18e/prefer-date-now": "error",
+    "e18e/prefer-regex-test": "error",
+    "e18e/prefer-array-some": "error",
+    "e18e/prefer-string-fromcharcode": "error"
   }
 }

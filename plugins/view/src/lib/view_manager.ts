@@ -129,5 +129,5 @@ async function resolvePath(names: string[], root: string[]) {
 }
 
 function inpath(parent: string, sub: string) {
-  return sub.indexOf(parent) > -1;
+  return sub.includes(parent);
 }

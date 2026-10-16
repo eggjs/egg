@@ -40,7 +40,7 @@ describe.skipIf(process.platform === 'win32')('test/StackUtil.test.ts', () => {
       const parts = callerFile.split(':');
       expect(parts.length).toBeGreaterThanOrEqual(3);
       const lineNumber = parseInt(parts[parts.length - 2]);
-      const columnNumber = parseInt(parts[parts.length - 1]);
+      const columnNumber = parseInt(parts.at(-1)!);
       expect(lineNumber).not.toBeNaN();
       expect(columnNumber).not.toBeNaN();
     });

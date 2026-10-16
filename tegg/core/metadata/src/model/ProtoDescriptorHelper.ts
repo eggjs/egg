@@ -46,7 +46,7 @@ export class ProtoDescriptorHelper {
     ];
     const res = [...qualifiers];
     for (const defaultQualifier of defaultQualifiers) {
-      if (!qualifiers.find((t) => t.attribute === defaultQualifier.attribute)) {
+      if (!qualifiers.some((t) => t.attribute === defaultQualifier.attribute)) {
         res.push(defaultQualifier);
       }
     }

@@ -27,6 +27,6 @@ export function getScheduleLogContent(name: string): string {
 
 export function contains(content: string, match: string | RegExp): number {
   return content.split('\n').filter((line) => {
-    return match instanceof RegExp ? match.test(line) : line.indexOf(match) >= 0;
+    return match instanceof RegExp ? match.test(line) : line.includes(match);
   }).length;
 }

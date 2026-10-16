@@ -49,7 +49,7 @@ export class InnerObjectLoadUnitBuilder {
   readonly #protoGraph: Graph<ProtoNode, ProtoDependencyMeta> = new Graph();
 
   static #addDefaultDefineModuleQualifier(qualifiers: QualifierInfo[], moduleName: string): QualifierInfo[] {
-    if (qualifiers.find((t) => t.attribute === DefineModuleQualifierAttribute)) {
+    if (qualifiers.some((t) => t.attribute === DefineModuleQualifierAttribute)) {
       return qualifiers;
     }
     return [

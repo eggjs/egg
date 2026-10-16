@@ -30,7 +30,7 @@ export class EventInfoUtil {
   static getEventName(clazz: EggProtoImplClass): EventName | undefined {
     const eventNameList = MetadataUtil.initOwnArrayMetaData<EventName>(EVENT_NAME, clazz, []);
     if (eventNameList.length !== 0) {
-      return eventNameList[eventNameList.length - 1];
+      return eventNameList.at(-1);
     }
     return undefined;
   }

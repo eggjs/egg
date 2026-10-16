@@ -106,7 +106,7 @@ export class QualifierUtil {
 
   static matchQualifiers(clazzQualifiers: QualifierInfo[], requestQualifiers: QualifierInfo[]): boolean {
     for (const request of requestQualifiers) {
-      if (!clazzQualifiers.find((t) => t.attribute === request.attribute && t.value === request.value)) {
+      if (!clazzQualifiers.some((t) => t.attribute === request.attribute && t.value === request.value)) {
         return false;
       }
     }

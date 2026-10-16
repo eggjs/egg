@@ -85,7 +85,7 @@ export class InjectObjectPrototypeFinder {
       if (
         !(
           e instanceof MultiPrototypeFound &&
-          !propertyQualifiers.find((t) => t.attribute === InitTypeQualifierAttribute)
+          !propertyQualifiers.some((t) => t.attribute === InitTypeQualifierAttribute)
         )
       ) {
         throw e;

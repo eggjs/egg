@@ -40,7 +40,7 @@ function makeManifest(overrides: Partial<StartupManifest> = {}): StartupManifest
 }
 
 function extractImports(workerSource: string): { index: number; specifier: string }[] {
-  return [...workerSource.matchAll(/import \* as __m(\d+) from "([^"]+)";/g)].map((m) => ({
+  return Array.from(workerSource.matchAll(/import \* as __m(\d+) from "([^"]+)";/g), (m) => ({
     index: Number(m[1]),
     specifier: m[2]!,
   }));

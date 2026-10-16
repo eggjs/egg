@@ -93,7 +93,7 @@ export class GraphLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext
       const graphProto = obj.getEggPrototype(graphName, [])[0];
       if (graphProto) {
         const compiledGraphProto = this.graphCompiledNameMap.get(graphName) as CompiledStateGraphProto;
-        if (!compiledGraphProto.injectObjects.find((injectObject) => injectObject.objName === graphProto.name)) {
+        if (!compiledGraphProto.injectObjects.some((injectObject) => injectObject.objName === graphProto.name)) {
           compiledGraphProto.injectObjects.push({
             refName: 'stateGraph',
             objName: graphProto.name,

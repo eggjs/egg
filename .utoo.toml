@@ -2,6 +2,7 @@
 
 [catalog]
 "@clack/prompts" = "^0.11.0"
+"@e18e/eslint-plugin" = "^0.8.1"
 "@eggjs/compressible" = "^3.0.0"
 "@eggjs/cookies" = "^3.1.0"
 "@eggjs/ip" = "^2.1.0"

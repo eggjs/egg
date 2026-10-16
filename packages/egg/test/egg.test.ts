@@ -149,7 +149,8 @@ describe('test/egg.test.ts', { concurrent: false }, () => {
 
     it.skip('should disable timing after ready', () => {
       const json = app.timing.toJSON();
-      const last = json[json.length - 1];
+      const last = json.at(-1);
+      assert(last);
       app.timing.start('a');
       app.timing.end('a');
       const json2 = app.timing.toJSON();
