@@ -48,6 +48,11 @@ jobs:
     name: Manual Release
     runs-on: ubuntu-latest
     environment: release
+    env:
+      RELEASE_BRANCH: ${{ github.event.inputs.branch }}
+      RELEASE_VERSION_TYPE: ${{ github.event.inputs.version_type }}
+      RELEASE_PRERELEASE_TAG: ${{ github.event.inputs.prerelease_tag }}
+      RELEASE_DRY_RUN: ${{ github.event.inputs.dry_run }}
 
     concurrency:
       group: release-${{ github.event.inputs.branch }}
@@ -76,11 +81,12 @@ jobs:
           fi
 
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
           token: ${{ secrets.GIT_TOKEN }}
+          persist-credentials: true # zizmor: ignore[artipacked] -- Push the release commit and tags with GIT_TOKEN.
 
       - name: Setup utoo
         uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # pinned from main
@@ -88,7 +94,7 @@ jobs:
           utoo-version: 'latest'
 
       - name: Setup Node.js
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
@@ -147,20 +153,20 @@ jobs:
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
           echo "🧪 Running version bump in dry-run mode..."
-          if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-            node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }} --dry-run
+          if [[ "$RELEASE_VERSION_TYPE" == pre* ]]; then
+            node scripts/version.js "$RELEASE_VERSION_TYPE" --prerelease-tag="$RELEASE_PRERELEASE_TAG" --dry-run
           else
-            node scripts/version.js ${{ github.event.inputs.version_type }} --dry-run
+            node scripts/version.js "$RELEASE_VERSION_TYPE" --dry-run
           fi
 
       - name: Version bump
         if: ${{ github.event.inputs.dry_run != 'true' && steps.detect.outputs.skip_version_bump != 'true' }}
         run: |
           echo "🚀 Running version bump..."
-          if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-            node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }}
+          if [[ "$RELEASE_VERSION_TYPE" == pre* ]]; then
+            node scripts/version.js "$RELEASE_VERSION_TYPE" --prerelease-tag="$RELEASE_PRERELEASE_TAG"
           else
-            node scripts/version.js ${{ github.event.inputs.version_type }}
+            node scripts/version.js "$RELEASE_VERSION_TYPE"
           fi
 
           NEW_TAG=$(git describe --tags --abbrev=0)
@@ -169,8 +175,8 @@ jobs:
       - name: Push version commit and tags
         if: ${{ github.event.inputs.dry_run != 'true' && steps.detect.outputs.need_push != 'false' }}
         run: |
-          echo "📤 Pushing to origin/${{ github.event.inputs.branch }} with tags..."
-          git push origin ${{ github.event.inputs.branch }} --tags
+          echo "📤 Pushing to origin/$RELEASE_BRANCH with tags..."
+          git push origin "$RELEASE_BRANCH" --tags
 
       - name: Run build
         run: ut run build
@@ -178,17 +184,17 @@ jobs:
       - name: Publish packages (dry run)
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
-          if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-            node scripts/publish.js --tag=${{ github.event.inputs.prerelease_tag }} --dry-run --version-type=${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }}
+          if [[ "$RELEASE_VERSION_TYPE" == pre* ]]; then
+            node scripts/publish.js --tag="$RELEASE_PRERELEASE_TAG" --dry-run --version-type="$RELEASE_VERSION_TYPE" --prerelease-tag="$RELEASE_PRERELEASE_TAG"
           else
-            node scripts/publish.js --tag=latest --dry-run --version-type=${{ github.event.inputs.version_type }}
+            node scripts/publish.js --tag=latest --dry-run --version-type="$RELEASE_VERSION_TYPE"
           fi
 
       - name: Publish packages
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
-          if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-            node scripts/publish.js --tag=${{ github.event.inputs.prerelease_tag }} --provenance
+          if [[ "$RELEASE_VERSION_TYPE" == pre* ]]; then
+            node scripts/publish.js --tag="$RELEASE_PRERELEASE_TAG" --provenance
           else
             node scripts/publish.js --tag=latest --provenance
           fi
@@ -200,7 +206,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const tag = process.env.NEW_TAG;
-            const versionType = '${{ github.event.inputs.version_type }}';
+            const versionType = process.env.RELEASE_VERSION_TYPE;
 
             // Idempotent: check if release already exists (safe for retry)
             try {
@@ -260,30 +266,32 @@ jobs:
 
       - name: Summary
         if: ${{ !cancelled() }}
+        env:
+          SKIP_VERSION_BUMP: ${{ steps.detect.outputs.skip_version_bump }}
         run: |
           echo "## 🎉 Release Summary" >> $GITHUB_STEP_SUMMARY
 
-          if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+          if [ "$RELEASE_DRY_RUN" == "true" ]; then
             echo "### 🧪 Dry Run Completed" >> $GITHUB_STEP_SUMMARY
-            echo "- Version bump: **${{ github.event.inputs.version_type }}**" >> $GITHUB_STEP_SUMMARY
-            echo "- Branch: **${{ github.event.inputs.branch }}**" >> $GITHUB_STEP_SUMMARY
-            if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-              echo "- npm tag: **${{ github.event.inputs.prerelease_tag }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- Version bump: **$RELEASE_VERSION_TYPE**" >> $GITHUB_STEP_SUMMARY
+            echo "- Branch: **$RELEASE_BRANCH**" >> $GITHUB_STEP_SUMMARY
+            if [[ "$RELEASE_VERSION_TYPE" == pre* ]]; then
+              echo "- npm tag: **$RELEASE_PRERELEASE_TAG**" >> $GITHUB_STEP_SUMMARY
             else
               echo "- npm tag: **latest**" >> $GITHUB_STEP_SUMMARY
             fi
             echo "- Status: **Dry run - no changes made**" >> $GITHUB_STEP_SUMMARY
           else
-            if [ "${{ steps.detect.outputs.skip_version_bump }}" == "true" ]; then
+            if [ "$SKIP_VERSION_BUMP" == "true" ]; then
               echo "### 🔄 Retry Release Completed" >> $GITHUB_STEP_SUMMARY
             else
               echo "### ✅ Release Completed" >> $GITHUB_STEP_SUMMARY
             fi
-            echo "- Version bump: **${{ github.event.inputs.version_type }}**" >> $GITHUB_STEP_SUMMARY
-            echo "- Branch: **${{ github.event.inputs.branch }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- Version bump: **$RELEASE_VERSION_TYPE**" >> $GITHUB_STEP_SUMMARY
+            echo "- Branch: **$RELEASE_BRANCH**" >> $GITHUB_STEP_SUMMARY
             echo "- Tag: **$NEW_TAG**" >> $GITHUB_STEP_SUMMARY
-            if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
-              echo "- npm tag: **${{ github.event.inputs.prerelease_tag }}**" >> $GITHUB_STEP_SUMMARY
+            if [[ "$RELEASE_VERSION_TYPE" == pre* ]]; then
+              echo "- npm tag: **$RELEASE_PRERELEASE_TAG**" >> $GITHUB_STEP_SUMMARY
             else
               echo "- npm tag: **latest**" >> $GITHUB_STEP_SUMMARY
             fi

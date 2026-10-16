@@ -14,13 +14,16 @@ runs:
       shell: bash
       id: ecosystem-ci-project-hash
       if: ${{ inputs.ecosystem-ci-project != '' }}
+      env:
+        ECOSYSTEM_CI_PROJECT: ${{ inputs.ecosystem-ci-project }}
       run: |
-        node -e "const fs = require('fs'); const data = JSON.parse(fs.readFileSync('./ecosystem-ci/repo.json', 'utf8')); const project = data['${{ inputs.ecosystem-ci-project }}']; console.log('ECOSYSTEM_CI_PROJECT_HASH=' + project.hash);" >> $GITHUB_OUTPUT
-        node -e "const fs = require('fs'); const data = JSON.parse(fs.readFileSync('./ecosystem-ci/repo.json', 'utf8')); const project = data['${{ inputs.ecosystem-ci-project }}']; console.log('ECOSYSTEM_CI_PROJECT_REPOSITORY=' + project.repository.replace('https://github.com/', '').replace('.git', ''));" >> $GITHUB_OUTPUT
+        node -e "const fs = require('fs'); const data = JSON.parse(fs.readFileSync('./ecosystem-ci/repo.json', 'utf8')); const project = data[process.env.ECOSYSTEM_CI_PROJECT]; console.log('ECOSYSTEM_CI_PROJECT_HASH=' + project.hash);" >> "$GITHUB_OUTPUT"
+        node -e "const fs = require('fs'); const data = JSON.parse(fs.readFileSync('./ecosystem-ci/repo.json', 'utf8')); const project = data[process.env.ECOSYSTEM_CI_PROJECT]; console.log('ECOSYSTEM_CI_PROJECT_REPOSITORY=' + project.repository.replace('https://github.com/', '').replace('.git', ''));" >> "$GITHUB_OUTPUT"
 
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       if: ${{ inputs.ecosystem-ci-project != '' }}
       with:
+        persist-credentials: false
         repository: ${{ steps.ecosystem-ci-project-hash.outputs.ECOSYSTEM_CI_PROJECT_REPOSITORY }}
         path: ecosystem-ci/${{ inputs.ecosystem-ci-project }}
         ref: ${{ steps.ecosystem-ci-project-hash.outputs.ECOSYSTEM_CI_PROJECT_HASH }}
