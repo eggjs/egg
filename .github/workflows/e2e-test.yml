@@ -39,7 +39,7 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
       redis:
-        image: redis
+        image: redis:8.10.2@sha256:2c2dff791878316e3b083188be0d578423b24813cdda5de0e80ea4f7b3e6bfd6
         ports:
           - 6379:6379
     strategy:
@@ -181,22 +181,26 @@ jobs:
               node ../../scripts/verify-manifest.mjs
               cd ..
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
       - name: Clone ecosystem project
         id: ecosystem-project
         background: true
-        uses: ./.github/actions/clone
+        # The runner cannot unpack our fixture symlinks through the $/ action archive.
+        # Load the action from the checkout before dependency installation or builds.
+        uses: ./.github/actions/clone # zizmor: ignore[self-repository]
         with:
           ecosystem-ci-project: ${{ matrix.project.name }}
 
       - parallel:
           - name: Setup utoo
-            uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # main
+            uses: utooland/setup-utoo@3a51006d0b66afcc32d1b9177a4b200b74f4a8cb # pinned from main
             with:
               utoo-version: 'latest'
 
           - name: Set up Node.js
-            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.project.node-version }}
 

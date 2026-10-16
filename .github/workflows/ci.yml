@@ -12,9 +12,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
-  id-token: write
-  actions: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -23,14 +20,19 @@ concurrency:
 jobs:
   plan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
       tests: ${{ steps.plan.outputs.tests }}
       profile: ${{ steps.plan.outputs.profile }}
       coverage-node: ${{ steps.node.outputs.node-version }}
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         id: node
         with:
           node-version: '24'
@@ -51,7 +53,9 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       # Resolve the digest before installation, then reuse it without scanning node_modules.
       - name: Compute dependency cache key
@@ -63,12 +67,12 @@ jobs:
 
       - parallel:
           - name: Setup utoo
-            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # pinned from main
             with:
               utoo-version: 'latest'
 
           - name: Set up Node.js
-            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: '24'
 
@@ -126,6 +130,7 @@ jobs:
     env:
       CI_TEST_REPORT: '1'
       CI_COVERAGE_REPORT: ${{ matrix.coverage && '1' || '0' }}
+      CI_TEST_SHARD: ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
     concurrency:
       group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-${{ matrix.os }}-${{ matrix.node }}-${{ matrix.shardIndex }}
@@ -133,7 +138,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       # Resolve the digest before installation, then reuse it without scanning node_modules.
       - name: Compute dependency cache key
@@ -147,7 +154,7 @@ jobs:
       - name: Start Redis (MacOS or Linux)
         background: true
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
-        uses: shogo82148/actions-setup-redis@cff708d63a30aebc0bfaa7276fb709d173f36cb6 # v1
+        uses: shogo82148/actions-setup-redis@cff708d63a30aebc0bfaa7276fb709d173f36cb6 # v1.45.0
         with:
           redis-version: '7'
           auto-start: 'true'
@@ -207,7 +214,7 @@ jobs:
       - name: Start MySQL (macOS or Linux)
         background: true
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
-        uses: shogo82148/actions-setup-mysql@27e74fac04c136a9f4c2dc2ed457df57331b3e0c # v1
+        uses: shogo82148/actions-setup-mysql@27e74fac04c136a9f4c2dc2ed457df57331b3e0c # v1.47.0
         with:
           mysql-version: '8'
           auto-start: 'true'
@@ -235,12 +242,12 @@ jobs:
 
       - parallel:
           - name: Setup utoo
-            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # pinned from main
             with:
               utoo-version: 'latest'
 
           - name: Set up Node.js
-            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.coverage && needs.plan.outputs.coverage-node || matrix.node }}
 
@@ -283,17 +290,22 @@ jobs:
 
       - name: Run tests (with coverage)
         if: ${{ matrix.coverage }}
-        run: ut run ci -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        shell: bash
+        run: ut run ci -- --shard="$CI_TEST_SHARD"
 
       - name: Run tests
         if: ${{ !matrix.coverage }}
-        run: ut run test -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        shell: bash
+        run: ut run test -- --shard="$CI_TEST_SHARD"
 
       - name: Report parallelism metrics
         if: always()
         # Call node directly: `ut run <script> -- ...` re-serializes forwarded args into
         # a shell string without re-quoting, so the parentheses in --name break it.
-        run: node scripts/ci-test-benchmark.js --report-only --vitest-json benchmark/ci-test/ci-run/vitest-results.json --output-dir benchmark/ci-test/ci-run --name "Parallel test metrics (${{ matrix.os }}, Node ${{ matrix.node }}, shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})"
+        env:
+          CI_METRICS_NAME: Parallel test metrics (${{ matrix.os }}, Node ${{ matrix.node }}, shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+        shell: bash
+        run: node scripts/ci-test-benchmark.js --report-only --vitest-json benchmark/ci-test/ci-run/vitest-results.json --output-dir benchmark/ci-test/ci-run --name "$CI_METRICS_NAME"
 
       - name: Upload test results
         id: test-results
@@ -334,8 +346,13 @@ jobs:
     needs: [plan, test]
     if: needs.plan.outputs.tests == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Authenticate Codecov uploads with OIDC.
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
       - name: Download coverage reports
         id: coverage-reports
         background: true
@@ -345,10 +362,10 @@ jobs:
           path: benchmark/ci-test/shards
 
       - parallel:
-          - uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+          - uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # pinned from main
             with:
               utoo-version: 'latest'
-          - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+          - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ needs.plan.outputs.coverage-node }}
 
@@ -367,6 +384,9 @@ jobs:
   test-egg-bin:
     needs: plan
     if: needs.plan.outputs.tests == 'true'
+    permissions:
+      contents: read
+      id-token: write # Authenticate Codecov uploads with OIDC.
     strategy:
       fail-fast: false
       matrix:
@@ -391,7 +411,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       # Resolve the digest before installation, then reuse it without scanning node_modules.
       - name: Compute dependency cache key
@@ -403,12 +425,12 @@ jobs:
 
       - parallel:
           - name: Setup utoo
-            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # pinned from main
             with:
               utoo-version: 'latest'
 
           - name: Set up Node.js
-            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
 
@@ -462,6 +484,9 @@ jobs:
   test-egg-scripts:
     needs: plan
     if: needs.plan.outputs.tests == 'true'
+    permissions:
+      contents: read
+      id-token: write # Authenticate Codecov uploads with OIDC.
     strategy:
       fail-fast: false
       matrix:
@@ -489,7 +514,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       # Resolve the digest before installation, then reuse it without scanning node_modules.
       - name: Compute dependency cache key
@@ -501,12 +528,12 @@ jobs:
 
       - parallel:
           - name: Setup utoo
-            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # pinned from main
             with:
               utoo-version: 'latest'
 
           - name: Set up Node.js
-            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
 
@@ -580,16 +607,18 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
 
       - parallel:
           - name: Setup utoo
-            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # main
+            uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # pinned from main
             with:
               utoo-version: 'latest'
 
           - name: Set up Node.js
-            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+            uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
 
@@ -617,7 +646,9 @@ jobs:
       - test-tegg-vitest
       - typecheck
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
       - name: Require all planned checks
         env:
           CI_NEEDS: ${{ toJSON(needs) }}
