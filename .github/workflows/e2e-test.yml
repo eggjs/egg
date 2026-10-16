@@ -187,7 +187,9 @@ jobs:
       - name: Clone ecosystem project
         id: ecosystem-project
         background: true
-        uses: $/.github/actions/clone
+        # The runner cannot unpack our fixture symlinks through the $/ action archive.
+        # Load the action from the checkout before dependency installation or builds.
+        uses: ./.github/actions/clone # zizmor: ignore[self-repository]
         with:
           ecosystem-ci-project: ${{ matrix.project.name }}
 
