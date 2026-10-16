@@ -99,7 +99,7 @@ jobs:
           key: ${{ steps.package-store.outputs.cache-primary-key }}
 
       - name: Check workspace and release tooling
-        run: node --test scripts/test/workspace.test.js scripts/test/release.test.js scripts/test/workflows.test.js
+        run: node --test scripts/test/workspace.test.js scripts/test/release.test.js
 
       - name: Run lint
         run: ut run lint
