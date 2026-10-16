@@ -110,6 +110,9 @@ jobs:
       - name: Run format check
         run: ut run fmtcheck
 
+      - name: Check unused code and dependencies
+        run: ut run fallow
+
       # Keep both builds after dist cleanup; they write to separate output directories.
       - parallel:
           - name: Run build
