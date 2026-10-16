@@ -200,7 +200,7 @@ export class GraphPrototypeHook implements LifecycleHook<EggPrototypeLifecycleCo
       // 注入到所有用到 checkpoint 的 graph 上
       for (const [graphProto, checkpoint] of this.graphCheckpointProtoMap.entries()) {
         if (checkpoint === graphMetadata?.checkpoint) {
-          if (!graphProto.injectObjects.find((injectObject) => injectObject.refName === 'checkpoint')) {
+          if (!graphProto.injectObjects.some((injectObject) => injectObject.refName === 'checkpoint')) {
             continue;
           }
           graphProto.injectObjects.push({
@@ -223,7 +223,7 @@ export class GraphPrototypeHook implements LifecycleHook<EggPrototypeLifecycleCo
       // 如果有 graph 依赖这个 CheckpointSaver，则注入
       const graphProto = this.checkPointGraphMap.get(ctx.clazz) ?? [];
       for (let i = 0; i < graphProto.length; i++) {
-        if (!graphProto[i].injectObjects.find((injectObject) => injectObject.refName === 'checkpoint')) {
+        if (!graphProto[i].injectObjects.some((injectObject) => injectObject.refName === 'checkpoint')) {
           continue;
         }
         graphProto[i].injectObjects.push({
@@ -244,7 +244,7 @@ export class GraphPrototypeHook implements LifecycleHook<EggPrototypeLifecycleCo
       for (const [graphProto, nodeProtos] of this.graphNodeProtoMap.entries()) {
         if (nodeProtos.includes(ctx.clazz)) {
           if (
-            graphProto.injectObjects.find(
+            graphProto.injectObjects.some(
               (injectObject) => injectObject.refName === `__GRAPH_NODE_${String(ctx.clazz)}__`,
             )
           ) {
@@ -268,7 +268,7 @@ export class GraphPrototypeHook implements LifecycleHook<EggPrototypeLifecycleCo
       for (const [graphProto, edgeProtos] of this.graphEdgeProtoMap.entries()) {
         if (edgeProtos.includes(ctx.clazz)) {
           if (
-            graphProto.injectObjects.find(
+            graphProto.injectObjects.some(
               (injectObject) => injectObject.refName === `__GRAPH_EDGE_${String(ctx.clazz)}__`,
             )
           ) {

@@ -737,7 +737,7 @@ export class AgentRuntime {
       const waitForEvent = () =>
         new Promise<'event' | 'heartbeat'>((resolve) => {
           waitResolve = () => resolve('event');
-          setTimeout(() => resolve('heartbeat'), HEARTBEAT_INTERVAL_MS);
+          setTimeout(resolve, HEARTBEAT_INTERVAL_MS, 'heartbeat');
         });
 
       while (!buffer.done || queue.length > 0) {

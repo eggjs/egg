@@ -54,7 +54,7 @@ export class EggPrototypeCreatorFactory {
       );
       for (const obj of multiInstanceProtoInfo.objects) {
         defaultQualifier.forEach((qualifier) => {
-          if (!obj.qualifiers.find((t) => t.attribute === qualifier.attribute)) {
+          if (!obj.qualifiers.some((t) => t.attribute === qualifier.attribute)) {
             obj.qualifiers.push(qualifier);
           }
         });
@@ -75,7 +75,7 @@ export class EggPrototypeCreatorFactory {
         property.qualifiers = [];
       }
       defaultQualifier.forEach((qualifier) => {
-        if (!property.qualifiers!.find((t) => t.attribute === qualifier.attribute)) {
+        if (!property.qualifiers!.some((t) => t.attribute === qualifier.attribute)) {
           property.qualifiers!.push(qualifier);
         }
       });

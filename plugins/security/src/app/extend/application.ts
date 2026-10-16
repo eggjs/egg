@@ -14,7 +14,7 @@ export default class SecurityApplication extends Application {
   injectCsrf(html: string): string {
     html = html.replace(/(<form.*?>)([\s\S]*?)<\/form>/gi, (_, $1, $2) => {
       const match = $2;
-      if (match.indexOf('name="_csrf"') !== -1 || match.indexOf("name='_csrf'") !== -1) {
+      if (match.includes('name="_csrf"') || match.includes("name='_csrf'")) {
         return $1 + match + '</form>';
       }
       return $1 + match + INPUT_CSRF;

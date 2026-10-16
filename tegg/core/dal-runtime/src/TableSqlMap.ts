@@ -35,7 +35,7 @@ export class TableSqlMap {
 
     for (const key in this.blocks) {
       // istanbul ignore if
-      if (!this.blocks.hasOwnProperty(key)) continue;
+      if (!Object.hasOwn(this.blocks, key)) continue;
       env.addGlobal(key, this.blocks[key]);
     }
 
@@ -67,7 +67,7 @@ export class TableSqlMap {
 
     for (const key in map) {
       // istanbul ignore if
-      if (!map.hasOwnProperty(key)) continue;
+      if (!Object.hasOwn(map, key)) continue;
 
       const sqlMap = map[key];
 

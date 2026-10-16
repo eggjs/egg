@@ -79,7 +79,7 @@ export class Application extends EggApplicationCore {
       return;
     }
 
-    const body = raw.body == null ? DEFAULT_BAD_REQUEST_HTML : raw.body;
+    const body = raw.body ?? DEFAULT_BAD_REQUEST_HTML;
     const headers = raw.headers || {};
     const status = raw.status || 400;
 

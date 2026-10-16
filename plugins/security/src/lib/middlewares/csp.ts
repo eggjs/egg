@@ -41,7 +41,7 @@ export default (options: SecurityConfig['csp']): MiddlewareFunc => {
         let values = (Array.isArray(value) ? value : [value]) as string[];
         if (key === 'script-src') {
           const hasNonce = values.some(function (val) {
-            return val.indexOf('nonce-') !== -1;
+            return val.includes('nonce-');
           });
 
           if (!hasNonce) {

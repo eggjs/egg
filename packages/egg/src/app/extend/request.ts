@@ -173,7 +173,7 @@ export default class Request extends EggCoreRequest {
    */
   get acceptJSON(): boolean {
     if (this.path.endsWith('.json')) return true;
-    if (this.response.type && this.response.type.indexOf('json') >= 0) return true;
+    if (this.response.type && this.response.type.includes('json')) return true;
     if (this.accepts('html', 'text', 'json') === 'json') return true;
     return false;
   }

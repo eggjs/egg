@@ -67,7 +67,7 @@ export class SqlUtil {
 
         case 'MAY_BE_LAST_BLOCK_COMMENT':
           if (ch === '/') {
-            if (ret && !isWhiteChar(ret[ret.length - 1])) ret += ' ';
+            if (ret && !isWhiteChar(ret.at(-1)!)) ret += ' ';
             state = 'IN_SPACE';
           } else {
             state = 'IN_BLOCK_COMMENT';
@@ -86,7 +86,7 @@ export class SqlUtil {
 
         case 'IN_COMMENT':
           if (ch === '\n' || ch === '\r') {
-            if (ret && !isWhiteChar(ret[ret.length - 1])) ret += ' ';
+            if (ret && !isWhiteChar(ret.at(-1)!)) ret += ' ';
             state = 'IN_SPACE';
           }
           break;

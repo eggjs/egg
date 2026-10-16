@@ -28,7 +28,7 @@ describe('test/cookies.test.ts', () => {
     cookies.ctx.request.headers.cookie = cookie;
     const value = cookies.get('foo', { encrypt: true });
     assert(value, 'bar');
-    assert(cookie.indexOf('bar') === -1);
+    assert(!cookie.includes('bar'));
   });
 
   it('should cache keygrip', () => {
@@ -60,8 +60,8 @@ describe('test/cookies.test.ts', () => {
     cookies.ctx.request.headers.cookie = cookie;
     const value = cookies.get('foo', { encrypt: true });
     assert(value, 'bar');
-    assert(cookie.indexOf('bar') === -1);
-    assert(cookie.indexOf('sig') === -1);
+    assert(!cookie.includes('bar'));
+    assert(!cookie.includes('sig'));
   });
 
   it('should work with secure ok', () => {
@@ -116,8 +116,8 @@ describe('test/cookies.test.ts', () => {
     const cookies = Cookies();
     cookies.set('foo', 'bar', { signed: true });
     const cookie = cookies.ctx.response.headers['set-cookie'].join(';');
-    assert(cookie.indexOf('foo=bar') >= 0);
-    assert(cookie.indexOf('foo.sig=') >= 0);
+    assert(cookie.includes('foo=bar'));
+    assert(cookie.includes('foo.sig='));
     cookies.ctx.request.headers.cookie = cookie;
     let value = cookies.get('foo', { signed: true });
     assert(value === 'bar');

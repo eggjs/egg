@@ -9,7 +9,7 @@ export default function pathFilter(this: BaseContextClass, path: string): string
 
   const pathSource = path;
 
-  while (path.indexOf('%') !== -1) {
+  while (path.includes('%')) {
     try {
       path = decodeURIComponent(path);
     } catch {
@@ -20,7 +20,7 @@ export default function pathFilter(this: BaseContextClass, path: string): string
       break;
     }
   }
-  if (path.indexOf('..') !== -1 || path[0] === '/') {
+  if (path.includes('..') || path[0] === '/') {
     return null;
   }
   return pathSource;

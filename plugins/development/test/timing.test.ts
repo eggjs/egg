@@ -33,7 +33,7 @@ describe('test/timing.test.ts', () => {
     assert.deepEqual(first.range, [first.start, first.end]);
     assert.equal(first.title, 'agent(0)');
 
-    const last = json[json.length - 1];
+    const last = json.at(-1);
     // console.log(last);
     assert.match(last.type, /^app_\d+$/);
     assert.equal(typeof last.pid, 'string');

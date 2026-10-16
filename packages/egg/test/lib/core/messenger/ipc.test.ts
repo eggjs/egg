@@ -162,7 +162,7 @@ describe.skip('test/lib/core/messenger/ipc.test.ts', () => {
     it('app should accept agent message', async () => {
       function count(data: string, key: string) {
         return data.split('\n').filter((line) => {
-          return line.indexOf(key) >= 0;
+          return line.includes(key);
         }).length;
       }
       await scheduler.wait(500);
@@ -189,7 +189,7 @@ describe.skip('test/lib/core/messenger/ipc.test.ts', () => {
     it('app should accept agent message', async () => {
       function count(data: string, key: string) {
         return data.split('\n').filter((line) => {
-          return line.indexOf(key) >= 0;
+          return line.includes(key);
         }).length;
       }
 

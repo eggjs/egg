@@ -21,7 +21,7 @@ describe('test/lib/plugins/development.test.ts', () => {
 
     it('should ignore assets', async () => {
       mm(app.logger, 'info', (msg: string) => {
-        if (msg.match(/status /)) {
+        if (/status /.test(msg)) {
           throw new Error('should not log status');
         }
       });

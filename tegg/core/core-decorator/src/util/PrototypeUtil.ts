@@ -299,7 +299,7 @@ export class PrototypeUtil {
       ];
       for (const object of objects) {
         defaultQualifier.forEach((qualifier) => {
-          if (!object.qualifiers.find((t) => t.attribute === qualifier.attribute)) {
+          if (!object.qualifiers.some((t) => t.attribute === qualifier.attribute)) {
             object.qualifiers.push(qualifier);
           }
         });
