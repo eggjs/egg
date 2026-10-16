@@ -44,7 +44,7 @@
     "prepublishOnly": "pnpm run build",
     "start": "egg-scripts start --daemon",
     "stop": "egg-scripts stop",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node ../../scripts/tsrs.js --noEmit",
     "build": "tsdown"
   },
   "dependencies": {
@@ -57,7 +57,6 @@
     "@eggjs/mock": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "tsdown": "catalog:",
-    "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "engines": {

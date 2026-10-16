@@ -46,7 +46,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "ylru": "catalog:"
@@ -57,8 +57,7 @@
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@types/node": "catalog:",
-    "egg": "workspace:*",
-    "typescript": "catalog:"
+    "egg": "workspace:*"
   },
   "peerDependencies": {
     "@eggjs/tegg-plugin": "workspace:*",

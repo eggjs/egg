@@ -106,7 +106,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/ip": "catalog:",
@@ -135,8 +135,7 @@
     "benchmark": "catalog:",
     "egg": "workspace:*",
     "egg-view-nunjucks": "catalog:",
-    "spy": "catalog:",
-    "typescript": "catalog:"
+    "spy": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"

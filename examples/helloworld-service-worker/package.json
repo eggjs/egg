@@ -8,7 +8,7 @@
     "start": "node --import=@oxc-node/core/register main.ts",
     "bundle:cf": "egg-bin bundle --framework @eggjs/service-worker --entry worker.ts -o .worker-cf --root ../..",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/service-worker": "workspace:*",
@@ -20,7 +20,6 @@
     "@eggjs/tsconfig": "workspace:*",
     "@oxc-node/core": "catalog:",
     "@types/node": "catalog:",
-    "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "engines": {

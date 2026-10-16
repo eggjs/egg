@@ -39,11 +39,10 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../../scripts/tsrs.js --noEmit"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "typescript": "catalog:"
+    "@types/node": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

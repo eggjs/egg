@@ -29,7 +29,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "should-send-same-site-none": "catalog:",
@@ -40,8 +40,7 @@
     "beautify-benchmark": "catalog:",
     "benchmark": "catalog:",
     "cookies": "catalog:",
-    "keygrip": "catalog:",
-    "typescript": "catalog:"
+    "keygrip": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

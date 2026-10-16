@@ -63,7 +63,7 @@
     "build": "tsdown",
     "clean": "rimraf dist",
     "lint": "oxlint --type-aware",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node ../../scripts/tsrs.js --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
@@ -82,7 +82,6 @@
     "mm": "catalog:",
     "oxlint": "catalog:",
     "rimraf": "catalog:",
-    "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "engines": {
