@@ -132,14 +132,18 @@ export function startAppWorker(
     } else {
       server = createHttpServer(app.callback());
       if (debugPort) {
-        debugPortServer = server;
+        debugPortServer = clusterConfig.separateDebugServer ? createHttpServer(app.callback()) : server;
       }
     }
 
-    server.once('error', (err: any) => {
+    const serverErrorHandler = (err: Error & { code?: string }) => {
       consoleLogger.error('[app_worker] server got error: %s, code: %s', err.message, err.code);
       exitProcess();
-    });
+    };
+    server.once('error', serverErrorHandler);
+    if (debugPortServer && debugPortServer !== server) {
+      debugPortServer.once('error', serverErrorHandler);
+    }
 
     // emit `server` event in app
     app.emit('server', server);
