@@ -63,6 +63,18 @@ npm i --legacy-peer-deps
 
 Then you can submit a PR directly in the "Issues" list to notify the author in time.
 
+### Unused Code and Dependencies
+
+Run `ut run fallow` to check for new unused code, dependency issues, and import cycles. CI runs this command before the build.
+The configuration accounts for public package APIs, runtime-loaded modules, and test fixtures.
+
+Existing findings are recorded in `.fallow-baseline.json`. Run `ut run fallow:report` to see all findings, including the baseline.
+Investigate new findings before changing the baseline. After removing existing findings, prune their entries with
+`ut execute fallow baselines prune --dead-code-baseline .fallow-baseline.json`.
+When an intentional change requires a new baseline, run `ut run fallow:report -- --save-baseline .fallow-baseline.json`
+and review the baseline diff. Keep the Fallow catalog version pinned so analyzer updates and baseline changes can be reviewed together.
+The report command can exit with a nonzero status when it finds issues, even when it saves the baseline.
+
 ### Pull Request Guide
 
 If you are a developer of egg repo and you are willing to contribute, feel free to create a new branch, finish your modification and submit a PR. Egg group will review your work and merge it to master branch.

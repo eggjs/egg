@@ -114,6 +114,7 @@
 "express" = "^4.21.2"
 "extend" = "^3.0.2"
 "extend2" = "^4.0.0"
+"fallow" = "3.33.1"
 "formstream" = "^1.5.1"
 "fresh" = "~0.5.2"
 "fs-readdir-recursive" = "^1.1.0"
