@@ -83,7 +83,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/background-task": "workspace:*",
@@ -110,8 +110,7 @@
     "@eggjs/tracer": "workspace:*",
     "@types/node": "catalog:",
     "egg": "workspace:*",
-    "egg-logger": "catalog:",
-    "typescript": "catalog:"
+    "egg-logger": "catalog:"
   },
   "peerDependencies": {
     "@eggjs/tegg-config": "workspace:*",

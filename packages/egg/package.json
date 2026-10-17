@@ -137,7 +137,7 @@
     "tag": "beta"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/ajv-plugin": "workspace:*",
@@ -199,8 +199,7 @@
     "mm": "catalog:",
     "runscript": "catalog:",
     "sdk-base": "catalog:",
-    "spy": "catalog:",
-    "typescript": "catalog:"
+    "spy": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

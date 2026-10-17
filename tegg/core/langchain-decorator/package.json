@@ -86,7 +86,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit --project tsconfig.typecheck.json"
+    "typecheck": "node ../../../scripts/tsrs.js --noEmit --project tsconfig.typecheck.json"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
@@ -100,7 +100,6 @@
   "devDependencies": {
     "@eggjs/controller-decorator": "workspace:*",
     "@types/node": "catalog:",
-    "typescript": "catalog:",
     "vitest": "catalog:",
     "zod": "catalog:"
   },

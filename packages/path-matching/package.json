@@ -41,7 +41,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "path-to-regexp": "catalog:"
@@ -49,8 +49,7 @@
   "devDependencies": {
     "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
-    "path-to-regexp-v8": "npm:path-to-regexp@^8.3.0",
-    "typescript": "catalog:"
+    "path-to-regexp-v8": "npm:path-to-regexp@^8.3.0"
   },
   "engines": {
     "node": ">=22.18.0"

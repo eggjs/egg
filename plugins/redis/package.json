@@ -50,7 +50,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "ioredis": "catalog:"
@@ -61,8 +61,7 @@
     "@types/node": "catalog:",
     "detect-port": "^2.1.0",
     "egg": "workspace:*",
-    "ioredis-mock": "catalog:",
-    "typescript": "catalog:"
+    "ioredis-mock": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"

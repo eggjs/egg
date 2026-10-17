@@ -1,1 +1,1 @@
-export function resolveTypeScriptCompiler(from: string): string;
+export function resolveTypeScriptCompiler(): string;

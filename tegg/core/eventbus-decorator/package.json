@@ -39,7 +39,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
@@ -48,8 +48,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "coffee": "catalog:",
-    "typescript": "catalog:"
+    "coffee": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

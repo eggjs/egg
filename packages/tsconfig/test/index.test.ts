@@ -6,14 +6,14 @@ import { test, expect } from 'vitest';
 
 import { resolveTypeScriptCompiler } from '../../../scripts/test/resolve-typescript.mjs';
 
-test('should tsc build work', async () => {
-  const tsc = resolveTypeScriptCompiler(import.meta.url);
+test('should tsrs build work', async () => {
+  const compiler = resolveTypeScriptCompiler();
   const fixturePath = path.join(import.meta.dirname, 'fixtures/apps/ts-proj');
   const tsconfigPath = path.join(fixturePath, 'tsconfig.json');
-  console.log('%s -p %s, cwd: %s', tsc, tsconfigPath, fixturePath);
+  console.log('%s -p %s, cwd: %s', compiler, tsconfigPath, fixturePath);
 
   await coffee
-    .fork(tsc, ['-p', tsconfigPath], {
+    .fork(compiler, ['-p', tsconfigPath], {
       cwd: fixturePath,
     })
     .debug()

@@ -38,7 +38,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
@@ -49,8 +49,7 @@
   "devDependencies": {
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "@types/pluralize": "catalog:",
-    "typescript": "catalog:"
+    "@types/pluralize": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

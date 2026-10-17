@@ -5,7 +5,7 @@
     "start": "eggctl start --workers 4",
     "stop": "eggctl stop",
     "dev": "egg-bin dev",
-    "build": "tsc",
+    "build": "node ../../../scripts/tsrs.js",
     "prebench": "npm run build",
     "bench": "sh run.sh"
   },
@@ -16,7 +16,6 @@
   },
   "devDependencies": {
     "@eggjs/bin": "beta",
-    "@eggjs/scripts": "beta",
-    "typescript": "^7.0.2"
+    "@eggjs/scripts": "beta"
   }
 }

@@ -63,7 +63,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit --project tsconfig.typecheck.json",
+    "typecheck": "node ../../../scripts/tsrs.js --noEmit --project tsconfig.typecheck.json",
     "pretest": "node ./test/fixtures/prepare.js"
   },
   "dependencies": {
@@ -86,8 +86,7 @@
     "@eggjs/tracer": "workspace:*",
     "@types/node": "catalog:",
     "egg": "workspace:*",
-    "mysql2": "catalog:",
-    "typescript": "catalog:"
+    "mysql2": "catalog:"
   },
   "peerDependencies": {
     "@eggjs/tegg-plugin": "workspace:*",

@@ -59,7 +59,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "nunjucks": "catalog:"
@@ -73,8 +73,7 @@
     "common-tags": "catalog:",
     "egg": "workspace:*",
     "marked": "catalog:",
-    "nunjucks-markdown": "catalog:",
-    "typescript": "catalog:"
+    "nunjucks-markdown": "catalog:"
   },
   "peerDependencies": {
     "@eggjs/view": "workspace:*",

@@ -39,7 +39,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit --project tsconfig.typecheck.json"
+    "typecheck": "node ../../../scripts/tsrs.js --noEmit --project tsconfig.typecheck.json"
   },
   "dependencies": {
     "@eggjs/service-worker-controller": "workspace:*",
@@ -50,7 +50,6 @@
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.23.0",
     "@types/node": "catalog:",
-    "typescript": "catalog:",
     "zod": "catalog:"
   },
   "engines": {
