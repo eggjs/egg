@@ -75,6 +75,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: '24'
+              check-latest: true
 
           - name: Restore utoo package store
             id: package-store
@@ -214,7 +215,7 @@ jobs:
       - name: Start MySQL (macOS or Linux)
         background: true
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
-        uses: shogo82148/actions-setup-mysql@27e74fac04c136a9f4c2dc2ed457df57331b3e0c # v1.47.0
+        uses: shogo82148/actions-setup-mysql@82f905a724a02641b2a3e6e72b5a41087668fa04 # v1.56.0
         with:
           mysql-version: '8'
           auto-start: 'true'
@@ -250,6 +251,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.coverage && needs.plan.outputs.coverage-node || matrix.node }}
+              check-latest: true
 
           - name: Restore Node compile cache
             id: compile-cache
@@ -433,6 +435,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
+              check-latest: true
 
           - name: Restore Node compile cache
             id: compile-cache
@@ -536,6 +539,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
+              check-latest: true
 
           - name: Restore Node compile cache
             id: compile-cache
@@ -621,6 +625,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
+              check-latest: true
 
       - name: Install dependencies
         run: ut install
