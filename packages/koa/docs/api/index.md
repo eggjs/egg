@@ -1,11 +1,11 @@
 # Installation
 
-Koa requires **node v7.6.0** or higher for ES2015 and async function support.
+@eggjs/koa requires **Node.js >=22.18.0**. Use the latest patch of a supported LTS release for production.
 
 You can quickly install a supported version of node with your favorite version manager:
 
 ```bash
-$ nvm install 7
+$ nvm install 24.22.1
 $ npm i koa
 $ node my-koa-app.js
 ```

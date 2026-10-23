@@ -75,6 +75,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: '24'
+              check-latest: true
 
           - name: Restore utoo package store
             id: package-store
@@ -250,6 +251,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.coverage && needs.plan.outputs.coverage-node || matrix.node }}
+              check-latest: true
 
           - name: Restore Node compile cache
             id: compile-cache
@@ -433,6 +435,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
+              check-latest: true
 
           - name: Restore Node compile cache
             id: compile-cache
@@ -536,6 +539,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
+              check-latest: true
 
           - name: Restore Node compile cache
             id: compile-cache
@@ -621,6 +625,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
+              check-latest: true
 
       - name: Install dependencies
         run: ut install
