@@ -411,6 +411,28 @@ describe('test/lib/router.test.js', () => {
   });
 
   describe('Router#allowedMethods()', () => {
+    it.each([/\/package\/([\w.-]+\/[\w.-]+)$/gi, /\/package\/([\w.-]+\/[\w.-]+)$/iy])(
+      'keeps regexp captures and matches after OPTIONS and 405 requests for %s',
+      async (pattern) => {
+        const app = new Koa();
+        const router = new Router();
+        router.get(pattern, (ctx) => {
+          ctx.body = { captures: ctx.captures, params: ctx.params };
+        });
+        app.use(router.routes()).use(router.allowedMethods());
+
+        const client = request(app.callback());
+        const path = '/PACKAGE/egg/1.0.0';
+        const body = { captures: ['egg/1.0.0'], params: { 0: 'egg/1.0.0' } };
+
+        expect((await client.get(path).expect(200)).body).toEqual(body);
+        await client.options(path).expect('Allow', 'HEAD, GET').expect(200);
+        expect((await client.get(path).expect(200)).body).toEqual(body);
+        await client.post(path).expect('Allow', 'HEAD, GET').expect(405);
+        expect((await client.get(path).expect(200)).body).toEqual(body);
+      },
+    );
+
     it('responds to OPTIONS requests', async () => {
       const app = new Koa();
       const router = new Router();

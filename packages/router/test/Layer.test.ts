@@ -25,6 +25,20 @@ describe('test/Layer.test.ts', () => {
   });
 
   describe('Layer#match()', () => {
+    it.each([/\/users\/(\d+)/g, /\/users\/(\d+)/y])(
+      'matches %s repeatedly and leaves the input regexp alone',
+      (pattern) => {
+        pattern.lastIndex = 1;
+        const layer = new Layer(pattern, ['GET'], () => {}, { ignoreCaptures: true });
+
+        expect(layer.match('/users/42')).toBe(true);
+        expect(layer.captures('/users/42')).toEqual([]);
+        expect(layer.match('/users/42')).toBe(true);
+        expect(layer.match('/prefix/users/42')).toBe(!pattern.sticky);
+        expect(pattern.lastIndex).toBe(1);
+      },
+    );
+
     it('captures URL path parameters', async () => {
       const app = new Application();
       const router = new Router();
