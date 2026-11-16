@@ -8,6 +8,7 @@ nav:
 - [Quick Start](../intro/quickstart.md)
 - [Progressive Development](../intro/progressive.md)
 - [RESTful API](./restful.md)
+- [Better Auth](./better-auth.md)
 
 ## Boilerplate Type Description
 

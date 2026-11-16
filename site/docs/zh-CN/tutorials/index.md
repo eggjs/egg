@@ -3,6 +3,7 @@
 - [快速入门](../intro/quickstart.md)
 - [渐进式开发](../intro/progressive.md)
 - [RESTful API](./restful.md)
+- [Better Auth 鉴权](./better-auth.md)
 
 ## 骨架类型说明
 
