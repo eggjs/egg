@@ -5,9 +5,9 @@
 You can quickly install a supported version of node with your favorite version manager:
 
 ```bash
-$ nvm install 24.22.1
-$ npm i koa
-$ node my-koa-app.js
+$ nvm install 24.22.3
+$ npm i @eggjs/koa
+$ node my-koa-app.mjs
 ```
 
 # Application
@@ -28,7 +28,7 @@ The obligatory hello world application:
 <!-- runkit:endpoint -->
 
 ```js
-const Koa = require('koa');
+import Koa from '@eggjs/koa';
 const app = new Koa();
 
 app.use(async (ctx) => {
@@ -55,7 +55,7 @@ its upstream behaviour.
 <!-- runkit:endpoint -->
 
 ```js
-const Koa = require('koa');
+import Koa from '@eggjs/koa';
 const app = new Koa();
 
 // logger
@@ -99,14 +99,14 @@ the following are supported:
 You can pass the settings to the constructor:
 
 ```js
-const Koa = require('koa');
+import Koa from '@eggjs/koa';
 const app = new Koa({ proxy: true });
 ```
 
 or dynamically:
 
 ```js
-const Koa = require('koa');
+import Koa from '@eggjs/koa';
 const app = new Koa();
 app.proxy = true;
 ```
@@ -121,7 +121,7 @@ Create and return an HTTP server, passing the given arguments to
 `Server#listen()`. These arguments are documented on [nodejs.org](http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback). The following is a useless Koa application bound to port `3000`:
 
 ```js
-const Koa = require('koa');
+import Koa from '@eggjs/koa';
 const app = new Koa();
 app.listen(3000);
 ```
@@ -129,8 +129,9 @@ app.listen(3000);
 The `app.listen(...)` method is simply sugar for the following:
 
 ```js
-const http = require('http');
-const Koa = require('koa');
+import http from 'node:http';
+
+import Koa from '@eggjs/koa';
 const app = new Koa();
 http.createServer(app.callback()).listen(3000);
 ```
@@ -139,9 +140,10 @@ This means you can spin up the same application as both HTTP and HTTPS
 or on multiple addresses:
 
 ```js
-const http = require('http');
-const https = require('https');
-const Koa = require('koa');
+import http from 'node:http';
+import https from 'node:https';
+
+import Koa from '@eggjs/koa';
 const app = new Koa();
 http.createServer(app.callback()).listen(3000);
 https.createServer(app.callback()).listen(3001);
