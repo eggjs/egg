@@ -75,6 +75,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: '24'
+              check-latest: true
 
           - name: Restore utoo package store
             id: package-store
@@ -214,7 +215,7 @@ jobs:
       - name: Start MySQL (macOS or Linux)
         background: true
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
-        uses: shogo82148/actions-setup-mysql@1d4ebc60ba1227dd13fc7e6ba845bd3997928d75 # v1.54.2
+        uses: shogo82148/actions-setup-mysql@82f905a724a02641b2a3e6e72b5a41087668fa04 # v1.56.0
         with:
           mysql-version: '8'
           auto-start: 'true'
@@ -247,18 +248,11 @@ jobs:
               utoo-version: 'latest'
 
           - name: Set up Node.js
+            id: node
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.coverage && needs.plan.outputs.coverage-node || matrix.node }}
-
-          - name: Restore Node compile cache
-            id: compile-cache
-            uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-            with:
-              path: ${{ runner.temp }}/node-compile-cache
-              key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ steps.cache-key.outputs.hash }}
-              restore-keys: |
-                node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+              check-latest: true
 
           - name: Restore utoo package store
             id: package-store
@@ -268,6 +262,15 @@ jobs:
               key: pkgstore-${{ runner.os }}-${{ steps.cache-key.outputs.hash }}
               restore-keys: |
                 pkgstore-${{ runner.os }}-
+
+      - name: Restore Node compile cache
+        id: compile-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/node-compile-cache
+          key: node-compile-cache-${{ runner.os }}-node${{ steps.node.outputs.node-version }}-${{ steps.cache-key.outputs.hash }}
+          restore-keys: |
+            node-compile-cache-${{ runner.os }}-node${{ steps.node.outputs.node-version }}-
 
       - name: Enable Node compile cache
         # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
@@ -430,18 +433,11 @@ jobs:
               utoo-version: 'latest'
 
           - name: Set up Node.js
+            id: node
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
-
-          - name: Restore Node compile cache
-            id: compile-cache
-            uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-            with:
-              path: ${{ runner.temp }}/node-compile-cache
-              key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ steps.cache-key.outputs.hash }}
-              restore-keys: |
-                node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+              check-latest: true
 
           - name: Restore utoo package store
             id: package-store
@@ -451,6 +447,15 @@ jobs:
               key: pkgstore-${{ runner.os }}-${{ steps.cache-key.outputs.hash }}
               restore-keys: |
                 pkgstore-${{ runner.os }}-
+
+      - name: Restore Node compile cache
+        id: compile-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/node-compile-cache
+          key: node-compile-cache-${{ runner.os }}-node${{ steps.node.outputs.node-version }}-${{ steps.cache-key.outputs.hash }}
+          restore-keys: |
+            node-compile-cache-${{ runner.os }}-node${{ steps.node.outputs.node-version }}-
 
       - name: Enable Node compile cache
         # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
@@ -533,18 +538,11 @@ jobs:
               utoo-version: 'latest'
 
           - name: Set up Node.js
+            id: node
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
-
-          - name: Restore Node compile cache
-            id: compile-cache
-            uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-            with:
-              path: ${{ runner.temp }}/node-compile-cache
-              key: node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-${{ steps.cache-key.outputs.hash }}
-              restore-keys: |
-                node-compile-cache-${{ runner.os }}-node${{ matrix.node }}-
+              check-latest: true
 
           - name: Restore utoo package store
             id: package-store
@@ -554,6 +552,15 @@ jobs:
               key: pkgstore-${{ runner.os }}-${{ steps.cache-key.outputs.hash }}
               restore-keys: |
                 pkgstore-${{ runner.os }}-
+
+      - name: Restore Node compile cache
+        id: compile-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ runner.temp }}/node-compile-cache
+          key: node-compile-cache-${{ runner.os }}-node${{ steps.node.outputs.node-version }}-${{ steps.cache-key.outputs.hash }}
+          restore-keys: |
+            node-compile-cache-${{ runner.os }}-node${{ steps.node.outputs.node-version }}-
 
       - name: Enable Node compile cache
         # runner.* is not available in job-level env, so export NODE_COMPILE_CACHE
@@ -621,6 +628,7 @@ jobs:
             uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
             with:
               node-version: ${{ matrix.node }}
+              check-latest: true
 
       - name: Install dependencies
         run: ut install

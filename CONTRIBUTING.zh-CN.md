@@ -176,19 +176,12 @@ BREAKING CHANGE:
 
 如果你修改了 site 文件夹下的 docs 中的某个 md 文件内容，需要重新生成文档，然后才能看到效果。
 
-如果你使用的 Node 版本在 14——16 之间，请使用如下命令：
-
-```bash
-$ npm run site:devWithNode14-16
-```
-
-否则请使用此命令：
+请使用 [`.node-version`](.node-version) 指定的 Node.js 版本，然后运行：
 
 ```bash
 $ npm run site:dev
 ```
 
-这是因为 Node.js 在 17.X 之后编译文档存在兼容性问题，因此必须降级“OpenSSL”方可正常打包编译。
 如仅仅是编译打包生成文档，使用 `site:build` 相关命令即可。
 
 ## 发布管理

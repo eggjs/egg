@@ -1,30 +1,34 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, beforeAll, expect } from 'vitest';
+import { describe, it, afterAll, afterEach, beforeAll, beforeEach, expect, vi } from 'vitest';
 
 import { getFixtures, getLogContent } from './utils.ts';
 
 // FIXME: flaky test on windows, Hook timed out in 20000ms
 describe.skipIf(process.platform === 'win32')('cluster - context', () => {
   let app: MockApplication;
-  beforeAll(async () => {
+  // Recreate the cluster on retries after a transient startup failure.
+  beforeEach(async () => {
     app = mm.cluster({ baseDir: getFixtures('context'), workers: 1 });
     // app.debug();
     await app.ready();
   });
-  afterAll(() => app.close());
+  afterEach(() => app.close());
 
   it('should work', async () => {
-    await sleep(5000);
-    const log = getLogContent('context');
-    // console.log(log);
-    expect(log).toMatch(/method: SCHEDULE/);
-    expect(log).toMatch(/path: \/__schedule/);
-    expect(log).toMatch(/(.*?)sub(\/|\\)cron\.js/);
-    expect(log).toMatch(/"type":"worker"/);
-    expect(log).toMatch(/"cron":"\*\/5 \* \* \* \* \*"/);
-    expect(log).toMatch(/hello busi/);
+    await vi.waitFor(
+      () => {
+        const log = getLogContent('context');
+        expect(log).toMatch(/method: SCHEDULE/);
+        expect(log).toMatch(/path: \/__schedule/);
+        expect(log).toMatch(/(.*?)sub(\/|\\)cron\.js/);
+        expect(log).toMatch(/"type":"worker"/);
+        expect(log).toMatch(/"cron":"\*\/5 \* \* \* \* \*"/);
+        expect(log).toMatch(/hello busi/);
+      },
+      { timeout: 10000, interval: 100 },
+    );
   });
 });
 
