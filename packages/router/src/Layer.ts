@@ -93,7 +93,9 @@ export class Layer {
     });
 
     this.path = path;
-    this.regexp = pathToRegExp(path, this.paramNames, this.opts);
+    const regexp = pathToRegExp(path, this.paramNames, this.opts);
+    // Keep lastIndex independent of the caller and other layers using this pattern.
+    this.regexp = regexp.global || regexp.sticky ? new RegExp(regexp) : regexp;
 
     debug('defined route %s %s', this.methods, this.opts.prefix + this.path);
   }
@@ -106,6 +108,7 @@ export class Layer {
    * @private
    */
   match(path: string): boolean {
+    if (this.regexp.global || this.regexp.sticky) this.regexp.lastIndex = 0;
     return this.regexp.test(path);
   }
 
@@ -140,7 +143,8 @@ export class Layer {
    */
   captures(path: string): Array<string> {
     if (this.opts.ignoreCaptures) return [];
-    const m = path.match(this.regexp);
+    if (this.regexp.global || this.regexp.sticky) this.regexp.lastIndex = 0;
+    const m = this.regexp.exec(path);
     return m ? m.slice(1) : [];
   }
 
