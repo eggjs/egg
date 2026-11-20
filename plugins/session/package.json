@@ -49,7 +49,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "koa-session": "catalog:",
@@ -60,8 +60,7 @@
     "@eggjs/redis": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@types/node": "catalog:",
-    "egg": "workspace:*",
-    "typescript": "catalog:"
+    "egg": "workspace:*"
   },
   "peerDependencies": {
     "egg": "workspace:*"

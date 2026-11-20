@@ -40,7 +40,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/compressible": "^3.0.0",
@@ -55,7 +55,6 @@
     "@types/fs-readdir-recursive": "catalog:",
     "@types/mime-types": "catalog:",
     "@types/node": "catalog:",
-    "typescript": "catalog:",
     "ylru": "^2.0.0"
   },
   "engines": {

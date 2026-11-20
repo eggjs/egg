@@ -52,7 +52,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/utils": "workspace:*",
@@ -67,8 +67,7 @@
     "@types/js-yaml": "catalog:",
     "@types/node": "catalog:",
     "egg": "workspace:*",
-    "egg-view-nunjucks": "catalog:",
-    "typescript": "catalog:"
+    "egg-view-nunjucks": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"

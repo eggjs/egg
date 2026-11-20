@@ -6,9 +6,9 @@ import { it } from 'vitest';
 import { resolveTypeScriptCompiler } from '../../../../scripts/test/resolve-typescript.mjs';
 
 it('should check enum value', async () => {
-  const tsc = resolveTypeScriptCompiler(import.meta.url);
+  const compiler = resolveTypeScriptCompiler();
   await coffee
-    .fork(tsc, ['--noEmit', '-p', './tsconfig.json'], {
+    .fork(compiler, ['--noEmit', '-p', './tsconfig.json'], {
       cwd: path.join(__dirname, 'fixtures/modules/wrong-enum-module'),
     })
     // .debug()
@@ -18,9 +18,9 @@ it('should check enum value', async () => {
 });
 
 it('should check extends', async () => {
-  const tsc = resolveTypeScriptCompiler(import.meta.url);
+  const compiler = resolveTypeScriptCompiler();
   await coffee
-    .fork(tsc, ['--noEmit', '-p', './tsconfig.json'], {
+    .fork(compiler, ['--noEmit', '-p', './tsconfig.json'], {
       cwd: path.join(__dirname, 'fixtures/modules/wrong-extends-module'),
     })
     // .debug()

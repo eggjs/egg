@@ -8,7 +8,7 @@ import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 
 import { resolveTypeScriptCompiler } from '../../../scripts/test/resolve-typescript.mjs';
 
-const compilerPath = resolveTypeScriptCompiler(import.meta.url);
+const compilerPath = resolveTypeScriptCompiler();
 
 function getFixtures(name: string) {
   return path.resolve(import.meta.dirname, 'fixtures', name);

@@ -70,28 +70,28 @@ test('release helpers resolve native default/named catalogs and discover private
   }
 });
 
-test('workspace tsc commands resolve to TypeScript 7, including local bin directories', async () => {
+test('workspace typecheck commands use the shared tsrs runner', async () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-  const directories = [root];
+  const commands = [{ cwd: root, runner: path.join(root, 'scripts/tsrs.js') }];
   for (const pattern of manifest.workspaces) {
     for await (const file of glob(`${pattern}/package.json`, { cwd: root })) {
       const pkg = JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
-      if (pkg.scripts?.typecheck?.startsWith('tsc ')) directories.push(path.dirname(path.join(root, file)));
+      if (!pkg.scripts?.typecheck) continue;
+      const match = /^node (\S+) --noEmit(?: |$)/.exec(pkg.scripts.typecheck);
+      assert.ok(match, `${pkg.name}: ${pkg.scripts.typecheck}`);
+      const cwd = path.dirname(path.join(root, file));
+      const runner = path.resolve(cwd, match[1]);
+      assert.equal(runner, path.join(root, 'scripts/tsrs.js'));
+      commands.push({ cwd, runner });
     }
   }
-  for (const cwd of directories) {
-    const bins = [];
-    for (let dir = cwd; ; dir = path.dirname(dir)) {
-      bins.push(path.join(dir, 'node_modules/.bin'));
-      if (dir === root) break;
-    }
-    const result = spawnSync('tsc', ['--version'], {
+  assert.ok(commands.length > 1, 'must validate real workspace scripts');
+  for (const { cwd, runner } of commands) {
+    const result = spawnSync(process.execPath, [runner, '--version'], {
       cwd,
-      env: { ...process.env, PATH: [...bins, process.env.PATH].join(path.delimiter) },
       encoding: 'utf8',
-      shell: process.platform === 'win32',
     });
     assert.equal(result.status, 0, `${cwd}: ${result.error ?? result.stderr}`);
-    assert.match(result.stdout.trim(), /^Version 7\./, `${cwd}: ${result.stdout}`);
+    assert.match(result.stdout.trim(), /^Version 7\..+\(tsrs /, `${cwd}: ${result.stdout}`);
   }
 });

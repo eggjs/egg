@@ -40,7 +40,7 @@
     "access": "public"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node ../../../scripts/tsrs.js --noEmit"
   },
   "dependencies": {
     "@eggjs/aop-plugin": "workspace:*",
@@ -63,8 +63,7 @@
     "@eggjs/dal-decorator": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "@types/node": "catalog:",
-    "mm": "catalog:",
-    "typescript": "catalog:"
+    "mm": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

@@ -31,7 +31,7 @@ describe.skip('test/ts.test.ts', () => {
     beforeEach(async () => {
       fixturePath = path.join(__dirname, 'fixtures/ts');
       await cleanup(fixturePath);
-      cp.spawnSync('npm', ['run', isWindows ? 'windows-build' : 'build'], {
+      cp.spawnSync('npm', ['run', 'build'], {
         cwd: fixturePath,
         shell: isWindows,
       });
@@ -99,7 +99,7 @@ describe.skip('test/ts.test.ts', () => {
     beforeEach(async () => {
       fixturePath = path.join(__dirname, 'fixtures/ts-pkg');
       await cleanup(fixturePath);
-      cp.spawnSync('npm', ['run', isWindows ? 'windows-build' : 'build'], {
+      cp.spawnSync('npm', ['run', 'build'], {
         cwd: fixturePath,
         shell: isWindows,
       });
