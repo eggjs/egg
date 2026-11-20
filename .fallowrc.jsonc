@@ -1,0 +1,36 @@
+{
+  "$schema": "./node_modules/fallow/schema.json",
+  // Published package APIs are also used outside this monorepo.
+  "publicPackages": ["egg", "@eggjs/*"],
+  "entry": [
+    "ecosystem-ci/*.{js,ts}",
+    "ecosystem-ci/scripts/*.mjs",
+    "scripts/ci-reporter.ts",
+    "**/{benchmark,bench,example}/**/*.{js,cjs,mjs,ts}",
+    "tools/*/{bin,scripts}/*.{js,cjs,mjs}",
+    "tegg/core/vitest/runner.ts",
+  ],
+  // Egg discovers application modules and fixture files by directory convention.
+  "dynamicallyLoaded": ["examples/*/{app,config}/**/*.{js,ts}", "**/test/fixtures/**/*.{js,cjs,mjs,ts}"],
+  // Keep fixture imports in the graph, but do not report intentionally broken fixtures.
+  "ignoreFindings": ["**/test/fixtures/**"],
+  "ignorePatterns": [
+    // Scaffolding templates have independent manifests and are copied before use.
+    "tools/create-egg/src/templates/**",
+    // These fixtures intentionally contain invalid JavaScript or TypeScript.
+    "packages/core/test/fixtures/load_context_syntax_error/**",
+    "packages/core/test/fixtures/load_dirs/syntax_error/**",
+    "packages/core/test/fixtures/syntaxerror/**",
+    "tegg/core/loader/test/fixtures/modules/loader-failed/AppRepo.ts",
+  ],
+  "rules": {
+    "unused-dev-dependencies": "error",
+    "unused-optional-dependencies": "error",
+  },
+  "ignoreDependencies": [
+    // Alias supplies the native TypeScript checker; the compiler API uses TypeScript 5.
+    "@typescript/native",
+    // utoo's Windows platform alias is loaded by its launcher.
+    "@utoo/utoo-mingw64_nt-10.0-26100-x64",
+  ],
+}
