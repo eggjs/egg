@@ -3,6 +3,7 @@ import dns from 'node:dns';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, afterAll, beforeAll, expect, afterEach } from 'vitest';
 
+import * as securityUtils from '../src/lib/utils.ts';
 import { getFixtures } from './utils.ts';
 
 let app: MockApplication;
@@ -219,6 +220,37 @@ describe('hostnameExceptionList', () => {
     await app.safeCurl(url, { dataType: 'json' });
     await app.agent.safeCurl(url, { dataType: 'json' });
     await ctx.safeCurl(url, { dataType: 'json' });
+  });
+});
+
+describe('ipBlackList with ipv6 address', () => {
+  function buildCheckAddress(ipBlackList: string[], ipExceptionList?: string[]) {
+    const config: any = { ssrf: { ipBlackList, ipExceptionList } };
+    securityUtils.preprocessConfig(config);
+    return config.ssrf.checkAddress as (addresses: any, family: number | string, hostname: string) => boolean;
+  }
+
+  it('should block ipv6 address that is in the blacklist', () => {
+    const checkAddress = buildCheckAddress(['::1/128', 'fd00::/8']);
+    // resolved addresses are `{ address, family }` objects on Node.js >= 20
+    expect(checkAddress([{ address: '::1', family: 6 }], 6, 'evil.example.com')).toBe(false);
+    expect(checkAddress([{ address: 'fd12::3', family: 6 }], 6, 'evil.example.com')).toBe(false);
+    // a public ipv6 address that is not blacklisted is still allowed
+    expect(checkAddress([{ address: '2400:cb00::1', family: 6 }], 6, 'example.com')).toBe(true);
+  });
+
+  it('should block IPv4-mapped IPv6 address against IPv4 blacklist rules', () => {
+    const checkAddress = buildCheckAddress(['127.0.0.1', '10.0.0.0/8']);
+    expect(checkAddress([{ address: '::ffff:127.0.0.1', family: 6 }], 6, 'evil.example.com')).toBe(false);
+    expect(checkAddress([{ address: '::ffff:10.1.2.3', family: 6 }], 6, 'evil.example.com')).toBe(false);
+  });
+
+  it('should respect ipExceptionList for ipv6 address', () => {
+    const checkAddress = buildCheckAddress(['::/0'], ['::1/128']);
+    // ::1 is in the exception list, allowed even though ::/0 blacklists everything
+    expect(checkAddress([{ address: '::1', family: 6 }], 6, 'host')).toBe(true);
+    // another ipv6 address is blocked by ::/0
+    expect(checkAddress([{ address: 'fd00::1', family: 6 }], 6, 'host')).toBe(false);
   });
 });
 
