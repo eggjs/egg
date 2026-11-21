@@ -3,6 +3,7 @@ import cluster from 'node:cluster';
 import querystring from 'node:querystring';
 import { Readable } from 'node:stream';
 import url from 'node:url';
+import { fetch, Agent } from 'undici';
 
 import { EggMcpRouter } from '@eggjs/controller-plugin/lib/impl/mcp/EggMcpRouter';
 import type { MCPControllerHook } from '@eggjs/controller-plugin/lib/impl/mcp/EggMcpRouter';
@@ -369,11 +370,10 @@ export class MCPProxyApiClient extends APIClientBase {
           ctx.req.headers['mcp-proxy-type'] = action;
           ctx.req.headers['mcp-proxy-sessionid'] = sessionId;
           const resp = await fetch(`http://localhost:${detail.port}/mcp/message?sessionId=${sessionId}`, {
-            // dispatcher: new Agent({
-            //   connect: {
-            //     socketPath,
-            //   },
-            // }),
+            dispatcher: new Agent({
+              bodyTimeout: 0,
+              headersTimeout: 0,
+            }),
             headers: ctx.req.headers as unknown as Record<string, string>,
             body: body as string,
             method: ctx.req.method,
@@ -415,11 +415,10 @@ export class MCPProxyApiClient extends APIClientBase {
           ctx.req.headers['mcp-proxy-type'] = action;
           ctx.req.headers['mcp-proxy-sessionid'] = sessionId;
           const response = await fetch(`http://localhost:${detail.port}`, {
-            // dispatcher: new Agent({
-            //   connect: {
-            //     socketPath,
-            //   },
-            // }),
+            dispatcher: new Agent({
+              bodyTimeout: 0,
+              headersTimeout: 0,
+            }),
             headers: ctx.req.headers as unknown as Record<string, string>,
             method: ctx.req.method,
             ...(ctx.req.method !== 'GET'
@@ -439,7 +438,14 @@ export class MCPProxyApiClient extends APIClientBase {
           }
           ctx.set(headers);
           ctx.res.statusCode = response.status;
-          Readable.fromWeb(response.body! as any).pipe(ctx.res);
+          const readable = Readable.fromWeb(response.body!);
+          readable.on('error', err => {
+            this.logger.error('[mcp-proxy] stream proxy error: %s', err.message);
+            if (!ctx.res.writableEnded) {
+              ctx.res.end();
+            }
+          });
+          readable.pipe(ctx.res);
           break;
         }
       }
@@ -490,8 +496,10 @@ export class MCPProxyApiClient extends APIClientBase {
         ctx.res.write('event: terminate');
       } catch (error) {
         ctx.res.statusCode = 500;
-        ctx.res.write(`see stream error ${error}`);
-        ctx.res.end();
+        if (!ctx.res.writableEnded) {
+          ctx.res.statusCode = 500;
+          ctx.res.end();
+        }
       }
     };
     processStream();
