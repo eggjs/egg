@@ -27,18 +27,20 @@ export class ContextObjectGraph {
       return ContextObjectGraph.eggObjectInitRecorder.get(proto)!;
     }
     const holder = new InjectProtoHolder();
-    this.doGetContextProto(proto, holder);
+    this.doGetContextProto(proto, holder, new Set());
     const injectObjectProtos = holder.dumpProtos();
     ContextObjectGraph.eggObjectInitRecorder.set(proto, injectObjectProtos);
     return injectObjectProtos;
   }
 
-  private static doGetContextProto(proto: EggPrototype, holder: InjectProtoHolder) {
+  private static doGetContextProto(proto: EggPrototype, holder: InjectProtoHolder, expanded: Set<EggPrototype>) {
+    if (expanded.has(proto)) return;
     for (const injectObject of proto.injectObjects) {
       if (injectObject.proto.initType === ObjectInitType.CONTEXT && proto.initType !== ObjectInitType.CONTEXT) {
         holder.addInjectProto(injectObject);
       }
-      ContextObjectGraph.doGetContextProto(injectObject.proto, holder);
+      ContextObjectGraph.doGetContextProto(injectObject.proto, holder, expanded);
     }
+    expanded.add(proto);
   }
 }
